@@ -1,0 +1,83 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import Editable from "./Editable";
+
+export default function Footer() {
+  return (
+    <footer className="mt-20 border-t border-gray-100 bg-brand-dark px-4 py-10 text-gray-300">
+      <div className="mx-auto max-w-6xl">
+        <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
+          {/* 브랜드 */}
+          <div className="max-w-sm">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logo/app-icon-white.png"
+                alt="모두의공공조달"
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-lg"
+              />
+              <span className="text-base font-extrabold text-white">
+                모두의공공조달
+              </span>
+            </div>
+            <Editable
+              id="footer-tagline"
+              as="p"
+              className="mt-3 text-sm leading-relaxed text-gray-400"
+            >
+              정책자금 브로커 수수료 5% 대신, 직접 배워서 신청하세요. 저희는 신청 방법·전략을 알려드리는 경영 자문 컨설팅입니다.
+            </Editable>
+            <Editable
+              id="footer-nowarranty"
+              as="p"
+              className="mt-3 rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
+            >
+              ⚠️ 본 서비스는 신청 방법·전략 자문 서비스이며, 자금 승인을 보장하지 않습니다. 대행 신청을 하지 않으며 승인 수수료를 받지 않습니다.
+            </Editable>
+          </div>
+
+          {/* 링크 */}
+          <div className="grid grid-cols-2 gap-x-10 gap-y-2 text-sm">
+            <Link href="/pricing" className="hover:text-white">
+              요금 안내
+            </Link>
+            <Link href="/diagnosis" className="hover:text-white">
+              무료 진단
+            </Link>
+            <Link href="/community" className="hover:text-white">
+              커뮤니티
+            </Link>
+            <Link href="/terms" className="hover:text-white">
+              이용약관
+            </Link>
+            <Link href="/privacy" className="hover:text-white">
+              개인정보처리방침
+            </Link>
+            <Link href="/refund" className="hover:text-white">
+              환불정책
+            </Link>
+            <Link href="/business-info" className="hover:text-white">
+              사업자정보
+            </Link>
+          </div>
+        </div>
+
+        {/* 사업자 정보 */}
+        <div className="mt-8 border-t border-white/10 pt-6 text-xs leading-relaxed text-gray-500">
+          <Editable id="footer-bizinfo" as="p">
+            상호: 모두의공공조달 (Public Procurement For All) · 대표: [대표자명] · 사업자등록번호: [000-00-00000]
+          </Editable>
+          <Editable id="footer-bizinfo2" as="p" className="mt-1">
+            주소: 인천광역시 서구 [상세주소] · 통신판매업신고: [신고번호] · 문의: [이메일]
+          </Editable>
+          <p className="mt-3 text-gray-600">
+            © {new Date().getFullYear()} 모두의공공조달. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
