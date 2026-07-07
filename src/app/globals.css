@@ -1,0 +1,134 @@
+/* Pretendard 폰트 */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+/* 보조 폰트 */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-yellow: #fee500;
+  --brand-orange: #ff9500;
+  --brand-dark: #191919;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Pretendard Variable", Pretendard, "Noto Sans KR", system-ui, sans-serif;
+  color: #191919;
+  background: #ffffff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 스크롤바 숨김 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 브랜드 그라데이션 버튼 */
+.btn-brand {
+  background: linear-gradient(135deg, #ffd500 0%, #ff9500 100%);
+  color: #191919;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.btn-brand:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(255, 149, 0, 0.35);
+}
+.btn-brand:active {
+  transform: translateY(0);
+}
+
+/* 아웃라인 버튼 */
+.btn-outline {
+  background: #ffffff;
+  color: #191919;
+  border: 2px solid #191919;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.btn-outline:hover {
+  background: #191919;
+  color: #ffffff;
+}
+
+/* 리본 배지 (가장 인기) */
+.ribbon {
+  position: absolute;
+  top: 18px;
+  left: -34px;
+  transform: rotate(-30deg);
+  background: #ff3b30;
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 4px 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+}
+
+/* 인라인 편집 하이라이트 */
+[data-editable].mpp-edit-active {
+  outline: 1.5px dashed rgba(255, 149, 0, 0.6);
+  outline-offset: 2px;
+  cursor: text;
+  border-radius: 3px;
+  transition: outline 0.15s ease;
+}
+[data-editable].mpp-edit-active:hover {
+  outline: 2px dashed #ff9500;
+  background: rgba(254, 229, 0, 0.08);
+}
+[data-editable].mpp-edit-active:focus {
+  outline: 2px solid #ff9500;
+  background: rgba(254, 229, 0, 0.12);
+}
+
+/* 블러 처리 (미리보기) */
+.blur-locked {
+  filter: blur(6px);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 애니메이션 */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadeUp {
+  animation: fadeUp 0.6s ease both;
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 149, 0, 0);
+  }
+}
+.animate-pulseGlow {
+  animation: pulseGlow 2s infinite;
+}

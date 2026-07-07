@@ -1,0 +1,50 @@
+import type { Metadata, Viewport } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "모두의공공조달 | 정책자금·정부지원사업 통합 매칭 자문",
+  description:
+    "정책자금 브로커 수수료 5%, 아직도 비싸게 쓰고 계신가요? 39,000원으로 직접 방법을 배워 무료로 신청하세요. 정책자금·정부지원금·창업지원·바우처·인증·교육 통합 자문 서비스.",
+  keywords: [
+    "정책자금",
+    "정부지원사업",
+    "소상공인",
+    "중소기업",
+    "청년창업사관학교",
+    "K-Startup",
+    "정부지원금",
+    "창업지원",
+    "경영컨설팅",
+    "모두의공공조달",
+  ],
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "모두의공공조달 | 정책자금 통합 매칭 자문",
+    description:
+      "브로커 수수료 5% 대신, 39,000원으로 직접 방법을 배우세요. 정책자금·정부지원금·창업지원 통합 자문.",
+    type: "website",
+    locale: "ko_KR",
+    siteName: "모두의공공조달",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="ko">
+      <body>{children}</body>
+    </html>
+  );
+}
