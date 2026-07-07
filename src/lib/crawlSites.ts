@@ -1,0 +1,108 @@
+// 매일 자동 크롤링 대상 89개 공식 사이트
+export type CrawlSite = {
+  no: number;
+  name: string;
+  url: string;
+  group: "정책자금" | "창업금융교육" | "실무데이터" | "인증확인서";
+};
+
+export const CRAWL_SITES: CrawlSite[] = [
+  // 정책자금·지자체 자금 (30)
+  { no: 1, name: "기업마당", url: "https://www.bizinfo.go.kr/", group: "정책자금" },
+  { no: 2, name: "새출발기금", url: "https://www.newstartfund.or.kr/", group: "정책자금" },
+  { no: 3, name: "소상공인정책자금 (OLS)", url: "https://ols.sbiz.or.kr/", group: "정책자금" },
+  { no: 4, name: "소상공인시장진흥공단", url: "https://www.semas.or.kr/", group: "정책자금" },
+  { no: 5, name: "소상공인스마트상점", url: "https://www.sbiz.or.kr/smst/index.do", group: "정책자금" },
+  { no: 6, name: "소상공인 지식배움터", url: "https://edu.sbiz.or.kr/", group: "정책자금" },
+  { no: 7, name: "중소벤처기업진흥공단", url: "https://www.kosmes.or.kr/", group: "정책자금" },
+  { no: 8, name: "신용보증기금 (KODIT)", url: "https://www.kodit.or.kr/", group: "정책자금" },
+  { no: 9, name: "기술보증기금 (KIBO)", url: "https://www.kibo.or.kr/", group: "정책자금" },
+  { no: 10, name: "한국콘텐츠진흥원 (KOCCA)", url: "https://www.kocca.kr/", group: "정책자금" },
+  { no: 11, name: "한국무역보험공사 (K-SURE)", url: "https://www.ksure.or.kr/", group: "정책자금" },
+  { no: 12, name: "국민체육진흥공단 (KSPO)", url: "https://www.kspo.or.kr/", group: "정책자금" },
+  { no: 13, name: "농림수산업자신용보증기금", url: "https://nongshinbo.nonghyup.com/", group: "정책자금" },
+  { no: 14, name: "인천테크노파크 비즈오케이", url: "https://bizok.incheon.go.kr/", group: "정책자금" },
+  { no: 15, name: "경기도 중소기업육성자금", url: "https://g-money.gg.go.kr/", group: "정책자금" },
+  { no: 16, name: "강원테크노파크", url: "https://www.gwtp.or.kr/", group: "정책자금" },
+  { no: 17, name: "강원경제진흥원", url: "http://www.gwep.or.kr/", group: "정책자금" },
+  { no: 18, name: "세종 일자리경제진흥원", url: "https://sjepa.or.kr/", group: "정책자금" },
+  { no: 19, name: "충북기업진흥원", url: "https://www.cba.ne.kr/", group: "정책자금" },
+  { no: 20, name: "충남경제진흥원", url: "https://www.cepa.or.kr/", group: "정책자금" },
+  { no: 21, name: "충북테크노파크", url: "https://www.cbtp.or.kr/", group: "정책자금" },
+  { no: 22, name: "충남경제진흥원 자금관리", url: "https://www.cnfund.kr/", group: "정책자금" },
+  { no: 23, name: "광주경제진흥 상생일자리재단", url: "https://www.gjep.or.kr/", group: "정책자금" },
+  { no: 24, name: "전북 중소기업 종합지원", url: "https://www.jbok.kr/", group: "정책자금" },
+  { no: 25, name: "전남 중소기업 경제진흥원", url: "https://www.jnfund.kr/", group: "정책자금" },
+  { no: 26, name: "경북 중소기업육성자금", url: "https://www.gfund.kr/", group: "정책자금" },
+  { no: 27, name: "경남 투자경제진흥원", url: "https://giba.or.kr/", group: "정책자금" },
+  { no: 28, name: "울산 기금융자관리시스템", url: "https://hext.ubpi.or.kr/", group: "정책자금" },
+  { no: 29, name: "부산 경제진흥원", url: "https://www.bepa.kr/", group: "정책자금" },
+  { no: 30, name: "제주 경제통상진흥원", url: "http://www.jba.or.kr/", group: "정책자금" },
+
+  // 창업·서민금융·교육 (25)
+  { no: 31, name: "보조금24 (정부24)", url: "https://www.gov.kr/", group: "창업금융교육" },
+  { no: 32, name: "고용24 개인", url: "https://www.work24.go.kr/", group: "창업금융교육" },
+  { no: 33, name: "고용24 기업", url: "https://www.work24.go.kr/cm/main.do?topArea=EBM00", group: "창업금융교육" },
+  { no: 34, name: "정책브리핑", url: "https://www.korea.kr/", group: "창업금융교육" },
+  { no: 35, name: "국가법령정보센터", url: "https://www.law.go.kr/", group: "창업금융교육" },
+  { no: 36, name: "KOSIS 국가통계포털", url: "https://kosis.kr/", group: "창업금융교육" },
+  { no: 37, name: "K-Startup 창업지원포털", url: "https://www.k-startup.go.kr/", group: "창업금융교육" },
+  { no: 38, name: "창업진흥원 (KISED)", url: "https://www.kised.or.kr/", group: "창업금융교육" },
+  { no: 39, name: "서민금융진흥원", url: "https://www.kinfa.or.kr/", group: "창업금융교육" },
+  { no: 40, name: "신용취약소상공인 온라인 교육", url: "https://edu.sbiz.or.kr/edu/channel/alei2017/main.do", group: "창업금융교육" },
+  { no: 41, name: "서울시 자영업지원센터", url: "https://www.seoulsbdc.or.kr/", group: "창업금융교육" },
+  { no: 42, name: "서울특별시 소상공인아카데미", url: "https://edu.seoulsbdc.or.kr/", group: "창업금융교육" },
+  { no: 43, name: "희망리턴패키지", url: "https://www.sbiz.or.kr/nhrp/intro/bizIntroduce.do", group: "창업금융교육" },
+  { no: 44, name: "청년창업사관학교", url: "https://start.kosmes.or.kr/", group: "창업금융교육" },
+  { no: 45, name: "중기부 통합 공고", url: "https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=310", group: "창업금융교육" },
+  { no: 46, name: "중진공 담당자 연락처", url: "https://www.kosmes.or.kr/nsh/SH/SIT/SHSIT136M0.do", group: "창업금융교육" },
+  { no: 47, name: "신보 담당 영업점", url: "https://www.kodit.or.kr/kodit/sd/srchDept.do?mi=2486", group: "창업금융교육" },
+  { no: 48, name: "기보 문화콘텐츠 전담센터", url: "https://www.kibo.or.kr/main/board/boardType88.do", group: "창업금융교육" },
+  { no: 49, name: "콘텐츠가치평가시스템", url: "https://assess.kocca.kr/", group: "창업금융교육" },
+  { no: 50, name: "한국직업능력진흥원", url: "https://www.hrdkorea.or.kr/", group: "창업금융교육" },
+  { no: 51, name: "소진공 담당자 연락처", url: "https://www.semas.or.kr/web/ORG01/ORG0111/ORG011102.kmdc", group: "창업금융교육" },
+
+  // 실무·데이터 도구 (11)
+  { no: 52, name: "웰로 정책 추천", url: "https://www.welfarehello.com/", group: "실무데이터" },
+  { no: 53, name: "중소기업현황정보시스템", url: "https://sminfo.mss.go.kr/", group: "실무데이터" },
+  { no: 54, name: "혁신사업지원센터 IBSC", url: "https://www.ibsc.co.kr/", group: "실무데이터" },
+  { no: 55, name: "국세청 홈택스", url: "https://www.hometax.go.kr/", group: "실무데이터" },
+  { no: 56, name: "나이스지키미", url: "https://www.credit.co.kr/", group: "실무데이터" },
+  { no: 57, name: "한국신용정보원", url: "https://www.kcredit.or.kr/", group: "실무데이터" },
+  { no: 58, name: "소상공인 빅데이터 365", url: "https://bigdata.sbiz.or.kr/", group: "실무데이터" },
+  { no: 59, name: "대출 이자 계산기 (금감원)", url: "https://fine.fss.or.kr/fine/fnctip/lonCalc/view.do?menuNo=900019", group: "실무데이터" },
+  { no: 60, name: "올크레딧 대출 조회", url: "https://www.allcredit.co.kr/", group: "실무데이터" },
+  { no: 61, name: "네이버페이 마이비즈", url: "https://finsupport.naver.com/", group: "실무데이터" },
+  { no: 62, name: "통계분류포털 (KSSC)", url: "http://kssc.kostat.go.kr/", group: "실무데이터" },
+
+  // 인증·확인서·법인 관리 (22)
+  { no: 63, name: "인터넷 등기소", url: "https://www.iros.go.kr/", group: "인증확인서" },
+  { no: 64, name: "국민건강보험", url: "https://si4n.nhis.or.kr/", group: "인증확인서" },
+  { no: 65, name: "4대사회보험 정보연계센터", url: "https://www.4insure.or.kr/", group: "인증확인서" },
+  { no: 66, name: "고용·산재보험 토탈서비스", url: "https://total.comwel.or.kr/", group: "인증확인서" },
+  { no: 67, name: "ONECLICK 중진공 자료제출", url: "https://www.one-click.co.kr/", group: "인증확인서" },
+  { no: 68, name: "KOfind 기보 자료제출", url: "https://www.kofind.co.kr/", group: "인증확인서" },
+  { no: 69, name: "중소벤처24 통합로그인", url: "https://www.smes.go.kr/", group: "인증확인서" },
+  { no: 70, name: "중소기업 전략기술 로드맵", url: "https://smroadmap.smtech.go.kr/", group: "인증확인서" },
+  { no: 71, name: "수출바우처", url: "https://www.exportvoucher.com/", group: "인증확인서" },
+  { no: 72, name: "중소기업확인서", url: "https://sminfo.mss.go.kr/", group: "인증확인서" },
+  { no: 73, name: "한국무역협회 수출실적증명서", url: "https://membership.kita.net/cert/oncert/expImpCertGuide.do", group: "인증확인서" },
+  { no: 74, name: "TRASS 수출실적증명서", url: "https://www.bandtrass.or.kr/", group: "인증확인서" },
+  { no: 75, name: "구매확인서 (간접수출)", url: "https://ulocal.utradehub.or.kr/", group: "인증확인서" },
+  { no: 76, name: "창업기업확인시스템", url: "https://cert.k-startup.go.kr/", group: "인증확인서" },
+  { no: 77, name: "여성기업 종합정보 포털", url: "https://wbiz.or.kr/", group: "인증확인서" },
+  { no: 78, name: "중소기업제품 종합정보망", url: "https://www.smpp.go.kr/", group: "인증확인서" },
+  { no: 79, name: "사회적기업 포털", url: "https://www.seis.or.kr/", group: "인증확인서" },
+  { no: 80, name: "벤처확인시스템", url: "https://www.smes.go.kr/venturein/", group: "인증확인서" },
+  { no: 81, name: "국가뿌리산업진흥센터", url: "https://www.kpic.re.kr/", group: "인증확인서" },
+  { no: 82, name: "INNOBIZ 기술혁신형", url: "https://www.innobiz.net/", group: "인증확인서" },
+  { no: 83, name: "MAINBIZ 경영혁신형", url: "https://www.smes.go.kr/mainbiz/", group: "인증확인서" },
+  { no: 84, name: "온라인법인설립시스템", url: "https://www.startbiz.go.kr/", group: "인증확인서" },
+];
+
+export const CRAWL_GROUPS = [
+  { key: "정책자금", label: "📗 정책자금·지자체 자금", emoji: "📗" },
+  { key: "창업금융교육", label: "📘 창업·서민금융·교육", emoji: "📘" },
+  { key: "실무데이터", label: "📙 실무·데이터 도구", emoji: "📙" },
+  { key: "인증확인서", label: "📕 인증·확인서·법인 관리", emoji: "📕" },
+] as const;

@@ -8,6 +8,10 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         PORT: 3000,
+        OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+        OPENAI_BASE_URL:
+          process.env.OPENAI_BASE_URL ||
+          "https://www.genspark.ai/api/llm_proxy/v1",
       },
       watch: false,
       instances: 1,
