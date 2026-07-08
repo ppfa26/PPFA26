@@ -82,7 +82,7 @@ export default function Footer() {
             문의 : biospartners@naver.com
           </Editable>
           <p className="mt-3 text-gray-600">
-            © {new Date().getFullYear()} 모두의공공조달. All rights reserved.
+            © 모두의공공조달. All rights reserved.
           </p>
         </div>
       </div>

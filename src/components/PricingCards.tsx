@@ -107,7 +107,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
 
       {/* 공통 안내 */}
       <div className="mx-auto mt-8 max-w-2xl rounded-2xl bg-gray-50 p-5">
-        <ul className="space-y-1.5 text-xs text-brand-dark sm:text-sm">
+        <ul className="space-y-1.5 text-[11px] text-brand-dark sm:text-xs">
           {COMMON_NOTES.map((n, i) => (
             <li key={i} className="break-keep leading-relaxed">
               {n}

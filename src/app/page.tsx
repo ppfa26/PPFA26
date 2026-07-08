@@ -215,7 +215,7 @@ export default function Home() {
                 <Editable
                   id="home-compare-broker"
                   as="p"
-                  className="break-keep text-xs font-bold leading-snug text-brand-dark sm:text-sm"
+                  className="break-keep text-[13px] font-bold leading-snug text-brand-dark sm:text-sm"
                 >
                   정책자금 브로커 대행 수수료 : 최소 500만원
                 </Editable>
@@ -225,7 +225,7 @@ export default function Home() {
                 <Editable
                   id="home-compare-us"
                   as="p"
-                  className="break-keep text-xs font-bold leading-snug text-brand-dark sm:text-sm"
+                  className="break-keep text-[13px] font-bold leading-snug text-brand-dark sm:text-sm"
                 >
                   모두의공공조달 : 99,000원부터 ~
                 </Editable>
@@ -311,7 +311,7 @@ export default function Home() {
               as="p"
               className="mt-3 break-keep text-sm text-brand-dark/70"
             >
-              3분이면 나에게 맞는 정책자금·지원사업을 찾을 수 있습니다.
+              1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.
             </Editable>
             <Editable
               id="home-cta-button"
