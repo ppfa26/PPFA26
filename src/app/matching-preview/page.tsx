@@ -69,7 +69,7 @@ export default function MatchingPreview() {
               전체 매칭 결과와 신청 방법이 궁금하신가요?
             </h2>
             <p className="mt-2 text-sm text-brand-dark/70">
-              신청 사이트·필요 서류·승인 확률 전략까지, 39,000원으로 모두 확인하세요.
+              신청 사이트·필요 서류·승인 확률 전략까지, 99,000원으로 모두 확인하세요.
             </p>
             <Link href="/pricing" className="mt-5 inline-block rounded-full bg-brand-dark px-8 py-3 font-bold text-white hover:opacity-90">
               상품 보고 전체 결과 확인하기

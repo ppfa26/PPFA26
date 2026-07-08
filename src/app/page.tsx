@@ -76,7 +76,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-brand-gray sm:text-lg"
             >
-              {`브로커 대행시 수수료는 5,000만원 승인시 250만원, 1억원 승인시 500만원. 39,000원으로 직접 방법을 배워서 무료로 신청하세요. 커피 몇잔 아껴서 사업운영 꿀팁을 배워 평생 써먹으세요.`}
+              {`브로커 대행 수수료는 1억원 승인시 최소 500만원. 99,000원으로 직접 방법을 배워서 무료로 신청하세요. 커피 몇 잔 아껴서 사업 운영 꿀팁을 배워 평생 써먹으세요.`}
             </Editable>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -125,7 +125,7 @@ export default function Home() {
               as="h2"
               className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
             >
-              39,000원으로 이 모든 걸 알려드립니다
+              99,000원으로 이 모든 걸 알려드립니다
             </Editable>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {VALUES.map((v, i) => (
@@ -157,7 +157,7 @@ export default function Home() {
               as="h2"
               className="text-center text-2xl font-extrabold text-brand-dark sm:text-3xl"
             >
-              비교해보세요
+              혁신적인 서비스 이용료
             </Editable>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-red/30 bg-white p-6">
@@ -167,7 +167,7 @@ export default function Home() {
                   as="p"
                   className="whitespace-nowrap text-[13px] font-bold text-brand-dark sm:text-base"
                 >
-                  브로커 대행 = 최소 250만원 수수료
+                  정책자금 브로커 대행 = 최소 500만원 수수료
                 </Editable>
               </div>
               <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-green bg-white p-6">
@@ -177,7 +177,7 @@ export default function Home() {
                   as="p"
                   className="whitespace-nowrap text-[13px] font-bold text-brand-dark sm:text-base"
                 >
-                  모두의공공조달 = 39,000원부터 ~
+                  모두의공공조달 = 99,000원부터 ~
                 </Editable>
               </div>
             </div>

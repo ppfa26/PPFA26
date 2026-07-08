@@ -39,13 +39,37 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               {tier.subtitle}
             </Editable>
 
-            <div className="mt-4 flex items-end gap-1">
-              <span className="text-3xl font-black text-brand-dark">
-                {tier.priceLabel}
-              </span>
-              <span className="mb-1 text-sm text-brand-gray">
-                / {tier.period}
-              </span>
+            <div className="mt-4">
+              {/* 정가(앵커) + 할인율 */}
+              <div className="flex items-center gap-2">
+                <span
+                  className={`text-sm line-through ${
+                    tier.popular ? "text-brand-dark/50" : "text-brand-gray/70"
+                  }`}
+                >
+                  {tier.originalPriceLabel}
+                </span>
+                <span className="rounded-full bg-brand-red px-2 py-0.5 text-[11px] font-bold text-white">
+                  {Math.round((1 - tier.price / tier.originalPrice) * 100)}% 할인
+                </span>
+              </div>
+              {/* 판매가 */}
+              <div className="mt-0.5 flex items-end gap-1">
+                <span className="text-3xl font-black text-brand-dark">
+                  {tier.priceLabel}
+                </span>
+                <span className="mb-1 text-sm text-brand-gray">
+                  / {tier.period}
+                </span>
+              </div>
+              {/* 월 환산 */}
+              <p
+                className={`mt-1 text-xs font-semibold ${
+                  tier.popular ? "text-brand-dark/70" : "text-brand-gray"
+                }`}
+              >
+                {tier.monthlyLabel} <span className="font-normal">(12개월 환산)</span>
+              </p>
             </div>
 
             <ul className="mt-5 flex-1 space-y-2.5">

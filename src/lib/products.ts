@@ -1,4 +1,5 @@
-// 상품 구성 (가격 절대 변경 금지: 39,000 / 89,000 / 198,000)
+// 상품 구성 (확정 가격: 99,000 / 199,000 / 490,000)
+// originalPrice = 정가(앵커링용 취소선), monthly = 12개월 환산 참고 표기
 export type Tier = {
   id: "basic" | "premier" | "pro";
   icon: string;
@@ -6,6 +7,9 @@ export type Tier = {
   subtitle: string;
   price: number;
   priceLabel: string;
+  originalPrice: number;
+  originalPriceLabel: string;
+  monthlyLabel: string;
   period: string;
   popular: boolean;
   features: string[];
@@ -18,8 +22,11 @@ export const TIERS: Tier[] = [
     icon: "📚",
     name: "베이직",
     subtitle: "셀프 신청 가이드",
-    price: 39000,
-    priceLabel: "39,000원",
+    price: 99000,
+    priceLabel: "99,000원",
+    originalPrice: 149000,
+    originalPriceLabel: "149,000원",
+    monthlyLabel: "월 8,250원",
     period: "1개월",
     popular: false,
     features: [
@@ -35,8 +42,11 @@ export const TIERS: Tier[] = [
     icon: "🎯",
     name: "프리미어",
     subtitle: "1:1 코칭 패키지",
-    price: 89000,
-    priceLabel: "89,000원",
+    price: 199000,
+    priceLabel: "199,000원",
+    originalPrice: 299000,
+    originalPriceLabel: "299,000원",
+    monthlyLabel: "월 16,600원",
     period: "1개월",
     popular: true,
     features: [
@@ -50,8 +60,11 @@ export const TIERS: Tier[] = [
     icon: "🏆",
     name: "프로",
     subtitle: "전문가 멘토링",
-    price: 198000,
-    priceLabel: "198,000원",
+    price: 490000,
+    priceLabel: "490,000원",
+    originalPrice: 790000,
+    originalPriceLabel: "790,000원",
+    monthlyLabel: "월 40,800원",
     period: "1개월",
     popular: false,
     features: [
@@ -68,7 +81,7 @@ export const TIER_MAP = Object.fromEntries(TIERS.map((t) => [t.id, t]));
 
 // 공통 안내 문구
 export const COMMON_NOTES = [
-  "✅ 1회 결제 · 자동결제 없음",
+  "✅ 일시불 1회 결제 · 자동결제 없음 (월 환산 금액은 12개월 기준 참고 표기)",
   "✅ 만족 시 1개월 단위 연장 가능",
   "✅ 환불 : 사이트 이용 로그가 있으면 관련 법규와 법령에 따라 환불이 불가합니다. 서비스 이용 전 100% 환불 가능",
   "⚠️ 본 서비스는 신청 방법·전략 자문 서비스이며, 자금 승인을 보장하지 않습니다",
