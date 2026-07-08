@@ -25,11 +25,8 @@ export default function Header() {
             <span className="text-[19px] font-extrabold leading-tight tracking-[-0.005em] text-brand-dark sm:text-[21px]">
               모두의공공조달
             </span>
-            <span
-              className="mt-[2px] block w-full text-[8px] font-semibold uppercase leading-tight text-brand-gray sm:text-[8.5px]"
-              style={{ textAlignLast: "justify" }}
-            >
-              Public Procurement For All
+            <span className="mt-[2px] block w-full break-keep text-[9px] font-semibold leading-tight text-brand-gray sm:text-[10px]">
+              정부지원사업 통합 매칭 자문 플랫폼
             </span>
           </span>
         </Link>
