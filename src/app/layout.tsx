@@ -1,7 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의공공조달.kr";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "모두의공공조달 | 정부지원사업 통합 매칭 자문 플랫폼",
   description:
     "정책자금 브로커 수수료 5%, 아직도 비싸게 쓰고 계신가요? 99,000원으로 직접 방법을 배워 무료로 신청하세요. 정책자금·정부지원금·창업지원·바우처·인증·교육 통합 자문 서비스.",
