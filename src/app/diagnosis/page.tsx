@@ -13,16 +13,18 @@ const STEP1 = {
   age: ["39세 이하", "39세 이상"],
   region: ["서울시", "경기도", "인천시", "세종시", "충청도", "전라도", "강원도", "경상도", "제주도"],
 };
-const PURPOSES = ["창업자금", "운전자금", "시설자금", "수출자금", "재기자금", "R&D자금"];
+const INDUSTRIES = ["음식점", "서비스업", "제조업", "수출업", "기타"];
+const PURPOSES = ["창업자금", "운전자금", "시설자금", "수출자금", "정부지원금", "인증및특허"];
 const AMOUNTS = ["1,000만원 미만", "5,000만원 미만", "1억 미만", "5억 미만", "5억 이상"];
 const INTERESTS = ["정책자금", "정부지원금", "창업지원", "바우처", "인증", "교육"];
+const EMPLOYEES = ["0명", "5명 이하", "10명 이하", "10명 이상"];
 const CREDIT = ["700점 이하", "839점 이하", "839점 이상"];
 const YESNO = ["있음", "없음"];
 
 export default function Diagnosis() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<any>({ purposes: [], interests: [] });
+  const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [] });
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
   const toggle = (k: string, v: string) =>
@@ -101,14 +103,7 @@ export default function Diagnosis() {
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
               <h1 className="mb-5 text-xl font-extrabold text-brand-dark">1단계 · 기본 정보</h1>
               <Field label="사업자 유형"><Radio k="businessType" opts={STEP1.businessType} /></Field>
-              <Field label="업종">
-                <input
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-orange"
-                  placeholder="예: 음식점, 제조업, IT서비스"
-                  value={form.industry || ""}
-                  onChange={(e) => set("industry", e.target.value)}
-                />
-              </Field>
+              <Field label="업종 (중복 선택)"><Multi k="industries" opts={INDUSTRIES} /></Field>
               <Field label="매출 규모"><Radio k="revenue" opts={STEP1.revenue} /></Field>
               <Field label="업력"><Radio k="years" opts={STEP1.years} /></Field>
               <Field label="대표자 연령"><Radio k="age" opts={STEP1.age} /></Field>
@@ -118,9 +113,9 @@ export default function Diagnosis() {
 
           {step === 2 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">2단계 · 자금·지원 목적</h1>
-              <Field label="자금 목적 (다중 선택)"><Multi k="purposes" opts={PURPOSES} /></Field>
-              <Field label="희망 규모"><Radio k="desiredAmount" opts={AMOUNTS} /></Field>
+              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">2단계 · 상담 목적</h1>
+              <Field label="상담 목적 (다중 선택)"><Multi k="purposes" opts={PURPOSES} /></Field>
+              <Field label="정책자금 및 지원금 희망 규모"><Radio k="desiredAmount" opts={AMOUNTS} /></Field>
               <Field label="관심 분야 (다중 선택)"><Multi k="interests" opts={INTERESTS} /></Field>
             </div>
           )}
@@ -132,19 +127,11 @@ export default function Diagnosis() {
               <Field label="담보 유무"><Radio k="collateral" opts={YESNO} /></Field>
               <Field label="회생·파산 이력"><Radio k="bankruptcy" opts={YESNO} /></Field>
               <Field label="4대보험 가입 여부"><Radio k="insurance" opts={YESNO} /></Field>
-              <Field label="가입 지원수 (대표자 제외)">
-                <input
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-orange"
-                  placeholder="예: 2명"
-                  value={form.insuranceCount || ""}
-                  onChange={(e) => set("insuranceCount", e.target.value)}
-                />
-              </Field>
+              <Field label="가입 직원수 (대표자 제외)"><Radio k="employees" opts={EMPLOYEES} /></Field>
               <div className="mt-6 rounded-xl bg-gray-50 p-4">
                 <p className="mb-3 font-bold text-brand-dark">연락처</p>
                 <input className="mb-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-orange" placeholder="이름" value={form.name || ""} onChange={(e) => set("name", e.target.value)} />
-                <input className="mb-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-orange" placeholder="휴대폰" value={form.phone || ""} onChange={(e) => set("phone", e.target.value)} />
-                <input className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-orange" placeholder="이메일" value={form.email || ""} onChange={(e) => set("email", e.target.value)} />
+                <input className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-orange" placeholder="휴대폰 번호" value={form.phone || ""} onChange={(e) => set("phone", e.target.value)} />
               </div>
             </div>
           )}

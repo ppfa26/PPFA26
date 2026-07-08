@@ -10,29 +10,35 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-3 sm:px-5">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-3 sm:px-5">
         {/* 로고 + 상호명 */}
-        <Link href="/" className="flex min-w-0 items-center gap-2">
+        <Link href="/" className="flex min-w-0 items-center gap-2.5">
           <Image
             src="/logo/app-icon-white.png"
             alt="모두의공공조달 로고"
-            width={32}
-            height={32}
-            className="h-8 w-8 shrink-0 rounded-lg"
+            width={44}
+            height={44}
+            className="h-10 w-10 shrink-0 rounded-lg sm:h-11 sm:w-11"
             priority
           />
-          <span className="flex min-w-0 flex-col leading-none">
-            <span className="truncate text-[15px] font-extrabold text-brand-dark sm:text-base">
+          <span className="flex min-w-0 flex-col leading-tight">
+            <span className="truncate text-[17px] font-extrabold tracking-tight text-brand-dark sm:text-lg">
               모두의공공조달
             </span>
-            <span className="hidden truncate text-[10px] text-brand-gray sm:block">
-              Public Procurement For All
+            <span className="hidden truncate text-[10.5px] tracking-[0.055em] text-brand-gray sm:block">
+              Public&nbsp;Procurement&nbsp;For&nbsp;All
             </span>
           </span>
         </Link>
 
         {/* 네비 + CTA */}
         <nav className="flex shrink-0 items-center gap-1.5 sm:gap-4">
+          <Link
+            href="/#pricing-section"
+            className="hidden text-sm font-semibold text-brand-dark hover:text-brand-orange lg:block"
+          >
+            서비스
+          </Link>
           <Link
             href="/pricing"
             className="hidden text-sm font-semibold text-brand-dark hover:text-brand-orange sm:block"

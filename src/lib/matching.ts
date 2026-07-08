@@ -4,12 +4,13 @@ export type DiagnosisProfile = {
   // 1단계
   businessType?: string; // 예비창업자/개인사업자/법인/프리랜서
   industry?: string;
+  industries?: string[]; // 음식점/서비스업/제조업/수출업/기타 (중복 선택)
   revenue?: string; // 매출없음/1억미만/5억미만/5억이상
   years?: string; // 창업예정/1년미만/3년미만/7년미만/7년이상
   age?: string; // 39세이하/39세이상
   region?: string;
-  // 2단계
-  purposes?: string[]; // 창업자금/운전자금/시설자금/수출자금/재기자금/R&D자금
+  // 2단계 (상담 목적)
+  purposes?: string[]; // 창업자금/운전자금/시설자금/수출자금/정부지원금/인증및특허
   desiredAmount?: string;
   interests?: string[]; // 정책자금/정부지원금/창업지원/바우처/인증/교육
   // 3단계
@@ -17,6 +18,7 @@ export type DiagnosisProfile = {
   collateral?: string;
   bankruptcy?: string;
   insurance?: string;
+  employees?: string; // 0명/5명이하/10명이하/10명이상
   // 연락처
   name?: string;
   phone?: string;
@@ -44,6 +46,8 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   if (p.years?.includes("1년")) tags.add("1년미만");
 
   (p.purposes || []).forEach((x) => tags.add(x.replace(/\s/g, "")));
+  (p.industries || []).forEach((x) => tags.add(x.replace(/\s/g, "")));
+  if (p.industries?.includes("수출업")) tags.add("수출자금");
   if (p.collateral?.includes("없")) tags.add("담보없음");
   if (p.bankruptcy && (p.bankruptcy.includes("있") || p.bankruptcy.includes("회생") || p.bankruptcy.includes("파산")))
     tags.add("회생파산");

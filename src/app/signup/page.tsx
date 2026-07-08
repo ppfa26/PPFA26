@@ -137,6 +137,45 @@ function SignupInner() {
           </Editable>
         </div>
 
+        {/* 소셜 로그인 (간편 가입) */}
+        <div className="mb-5 space-y-2">
+          <button
+            type="button"
+            onClick={() => setMsg("카카오 간편가입은 준비 중입니다. 아래 이메일로 가입해 주세요.")}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95"
+          >
+            <span className="text-base">💬</span> 카카오톡으로 시작하기
+          </button>
+          <button
+            type="button"
+            onClick={() => setMsg("네이버 간편가입은 준비 중입니다. 아래 이메일로 가입해 주세요.")}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#03C75A] py-3 text-sm font-bold text-white transition hover:brightness-95"
+          >
+            <span className="text-base font-black">N</span> 네이버로 시작하기
+          </button>
+          <button
+            type="button"
+            onClick={() => setMsg("구글 간편가입은 준비 중입니다. 아래 이메일로 가입해 주세요.")}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50"
+          >
+            <span className="text-base font-black text-[#4285F4]">G</span> 구글로 시작하기
+          </button>
+          <button
+            type="button"
+            onClick={() => setMsg("애플 간편가입은 준비 중입니다. 아래 이메일로 가입해 주세요.")}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-sm font-bold text-white transition hover:brightness-110"
+          >
+            <span className="text-base"></span> Apple로 시작하기
+          </button>
+        </div>
+
+        {/* 구분선 */}
+        <div className="mb-5 flex items-center gap-3">
+          <span className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs text-brand-gray">또는 이메일로 가입</span>
+          <span className="h-px flex-1 bg-gray-200" />
+        </div>
+
         {/* 모드 전환 탭 */}
         <div className="mb-5 grid grid-cols-2 gap-1 rounded-xl bg-gray-100 p-1">
           <button

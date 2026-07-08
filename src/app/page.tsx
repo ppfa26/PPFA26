@@ -59,7 +59,7 @@ export default function Home() {
           className="relative overflow-hidden px-4 pb-14 pt-12 sm:pt-20"
         >
           <div className="mx-auto max-w-3xl text-center animate-fadeUp">
-            <div className="mb-5 inline-block rounded-full bg-brand-yellow px-4 py-1.5 text-xs font-bold text-brand-dark">
+            <div className="mb-5 inline-block rounded-full bg-brand-yellow px-6 py-2.5 text-sm font-bold text-brand-dark sm:text-base">
               정책자금·정부지원사업 통합 매칭 자문
             </div>
             <Editable
@@ -74,17 +74,9 @@ export default function Home() {
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-6 max-w-md whitespace-pre-line text-base leading-relaxed text-brand-gray sm:text-lg"
+              className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-brand-gray sm:text-lg"
             >
-              {`브로커 대행시 수수료
-5,000만원 승인시 250만원.
-1억원 승인시 500만원.
-
-39,000원으로 직접 방법을
-배워서 무료로 신청하세요.
-
-커피 몇잔 아껴서 사업운영
-꿀팁을 배워서 평생써먹으세요.`}
+              {`브로커 대행시 수수료는 5,000만원 승인시 250만원, 1억원 승인시 500만원. 39,000원으로 직접 방법을 배워서 무료로 신청하세요. 커피 몇잔 아껴서 사업운영 꿀팁을 배워 평생 써먹으세요.`}
             </Editable>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -168,22 +160,22 @@ export default function Home() {
               비교해보세요
             </Editable>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border-2 border-brand-red/30 bg-white p-6">
-                <div className="text-2xl">❌</div>
+              <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-red/30 bg-white p-6">
+                <div className="shrink-0 text-2xl">❌</div>
                 <Editable
                   id="home-compare-broker"
                   as="p"
-                  className="mt-2 font-bold text-brand-dark"
+                  className="whitespace-nowrap text-[13px] font-bold text-brand-dark sm:text-base"
                 >
-                  브로커 대행 = 5,000만원 승인시 최소 250만원 수수료
+                  브로커 대행 = 최소 250만원 수수료
                 </Editable>
               </div>
-              <div className="rounded-2xl border-2 border-brand-green bg-white p-6">
-                <div className="text-2xl">✅</div>
+              <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-green bg-white p-6">
+                <div className="shrink-0 text-2xl">✅</div>
                 <Editable
                   id="home-compare-us"
                   as="p"
-                  className="mt-2 font-bold text-brand-dark"
+                  className="whitespace-nowrap text-[13px] font-bold text-brand-dark sm:text-base"
                 >
                   모두의공공조달 = 39,000원부터 ~
                 </Editable>
