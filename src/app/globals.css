@@ -24,6 +24,20 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* 모바일 가로 잘림 방지: 긴 문자열(이메일·URL·영문 등)이
+   화면 밖으로 삐져나가지 않고 강제로 줄바꿈되게 한다. */
+p,
+span,
+li,
+a,
+h1,
+h2,
+h3,
+h4 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 /* 스크롤바 숨김 */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

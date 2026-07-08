@@ -104,7 +104,7 @@ export default function Home() {
             <Editable
               id="hero-headline"
               as="h1"
-              className="text-3xl font-black leading-tight text-brand-dark sm:text-5xl"
+              className="break-keep text-3xl font-black leading-tight text-brand-dark sm:text-5xl"
             >
               정부지원사업 브로커 수수료 5%,<br />
               아직도 비싸게 쓰고 계신가요?
@@ -212,7 +212,7 @@ export default function Home() {
                 <Editable
                   id="home-compare-broker"
                   as="p"
-                  className="text-sm font-bold leading-snug text-brand-dark sm:text-base"
+                  className="break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base"
                 >
                   정책자금 브로커 대행 = 최소 500만원 수수료
                 </Editable>
@@ -222,7 +222,7 @@ export default function Home() {
                 <Editable
                   id="home-compare-us"
                   as="p"
-                  className="text-sm font-bold leading-snug text-brand-dark sm:text-base"
+                  className="break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base"
                 >
                   모두의공공조달 = 99,000원부터 ~
                 </Editable>

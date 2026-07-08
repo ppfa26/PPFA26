@@ -79,7 +79,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                   <Editable
                     id={`${prefix}-tier-${tier.id}-feat-${i}`}
                     as="span"
-                    className="text-brand-dark"
+                    className="break-keep text-brand-dark"
                   >
                     {f}
                   </Editable>
@@ -109,7 +109,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
       <div className="mx-auto mt-8 max-w-2xl rounded-2xl bg-gray-50 p-5">
         <ul className="space-y-1.5 text-sm text-brand-dark">
           {COMMON_NOTES.map((n, i) => (
-            <li key={i} className="leading-relaxed">
+            <li key={i} className="break-keep leading-relaxed">
               {n}
             </li>
           ))}
