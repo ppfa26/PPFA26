@@ -102,6 +102,32 @@ function PaymentInner() {
     }
   };
 
+  // ⚠️ [데모 전용] 실제 결제 없이 "결제 완료" 처리 후 대시보드로 이동.
+  // 실결제 키(live) 연동 후에는 반드시 이 함수와 아래 버튼을 삭제하세요.
+  const handleDemoPay = async () => {
+    setPaying(true);
+    const orderId = makeOrderId();
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData.session?.user;
+      if (user) {
+        await supabase.from("payments").insert({
+          user_id: user.id,
+          order_id: orderId,
+          tier,
+          amount: product.price,
+          status: "demo", // 데모 결제 표시(실결제와 구분)
+          payment_key: "DEMO",
+          email: user.email,
+          paid_at: new Date().toISOString(),
+        });
+      }
+    } catch {
+      // 저장 실패해도 데모 흐름은 계속 진행
+    }
+    router.replace("/dashboard");
+  };
+
   return (
     <PageShell pageKey="payment">
       <Header />
@@ -179,6 +205,20 @@ function PaymentInner() {
         >
           {paying ? "결제창을 여는 중..." : `${product.priceLabel} 결제하기`}
         </button>
+
+        {/* ⚠️ [데모 전용 버튼] 실결제 키 연동 후 반드시 삭제 */}
+        <div className="mt-4 rounded-xl border border-dashed border-brand-orange bg-brand-yellow/10 p-3">
+          <p className="mb-2 text-center text-[11px] font-semibold text-brand-orange">
+            🧪 데모 모드 · 실제 결제 없이 화면 흐름을 확인합니다 (배포 시 제거)
+          </p>
+          <button
+            onClick={handleDemoPay}
+            disabled={paying}
+            className="w-full rounded-xl border-2 border-brand-dark bg-white py-2.5 text-sm font-bold text-brand-dark transition hover:bg-brand-dark hover:text-white disabled:opacity-60"
+          >
+            결제했다고 가정하고 다음으로 넘어가기 →
+          </button>
+        </div>
 
         <p className="mt-4 text-center text-xs text-brand-gray">
           결제에 문제가 있나요?{" "}
