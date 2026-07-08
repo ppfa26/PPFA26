@@ -105,30 +105,25 @@ export default function Diagnosis() {
       ))}
     </div>
   );
-  // 혁신성장 테마처럼 항목이 많은 다중선택 → 2줄 그리드로 정돈 배치
-  const MultiGrid = ({ k, opts }: { k: string; opts: string[] }) => {
-    const cols = Math.ceil(opts.length / 2); // 9개 → 5열 2줄
-    return (
-      <div
-        className="grid gap-2"
-        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-      >
-        {opts.map((o) => (
-          <button
-            key={o}
-            onClick={() => toggle(k, o)}
-            className={`rounded-xl border px-2 py-2.5 text-center text-xs font-semibold leading-tight transition sm:text-sm ${
-              (form[k] || []).includes(o)
-                ? "border-brand-orange bg-brand-grad text-brand-dark"
-                : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
-            }`}
-          >
-            {o}
-          </button>
-        ))}
-      </div>
-    );
-  };
+  // 혁신성장 테마처럼 항목이 많은 다중선택 → 반응형 그리드
+  //  모바일: 2열 (글자 안 잘리게) / 작은태블릿: 3열 / 큰화면: 5열(2줄)
+  const MultiGrid = ({ k, opts }: { k: string; opts: string[] }) => (
+    <div className="grid grid-cols-2 gap-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-5">
+      {opts.map((o) => (
+        <button
+          key={o}
+          onClick={() => toggle(k, o)}
+          className={`min-h-[44px] break-keep rounded-xl border px-2 py-2.5 text-center text-xs font-semibold leading-tight transition sm:text-sm ${
+            (form[k] || []).includes(o)
+              ? "border-brand-orange bg-brand-grad text-brand-dark"
+              : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+          }`}
+        >
+          {o}
+        </button>
+      ))}
+    </div>
+  );
   const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
     <div className="mb-6">
       <p className="mb-2 font-bold text-brand-dark">{label}</p>

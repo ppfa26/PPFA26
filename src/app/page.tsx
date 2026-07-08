@@ -226,7 +226,7 @@ export default function Home() {
                 <Editable
                   id="home-compare-broker"
                   as="p"
-                  className="whitespace-nowrap text-[13px] font-bold text-brand-dark sm:text-base"
+                  className="text-sm font-bold leading-snug text-brand-dark sm:text-base"
                 >
                   정책자금 브로커 대행 = 최소 500만원 수수료
                 </Editable>
@@ -236,7 +236,7 @@ export default function Home() {
                 <Editable
                   id="home-compare-us"
                   as="p"
-                  className="whitespace-nowrap text-[13px] font-bold text-brand-dark sm:text-base"
+                  className="text-sm font-bold leading-snug text-brand-dark sm:text-base"
                 >
                   모두의공공조달 = 99,000원부터 ~
                 </Editable>

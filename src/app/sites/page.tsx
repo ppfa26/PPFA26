@@ -25,24 +25,24 @@ export default function SitesPage() {
             </span>
           </h2>
           <div className="mt-3 overflow-hidden rounded-2xl border border-gray-200">
-            <table className="w-full text-left text-sm">
+            <table className="w-full table-fixed text-left text-sm">
               <tbody className="divide-y divide-gray-100">
                 {cat.sites.map((site, i) => (
                   <tr key={i} className="align-top hover:bg-gray-50">
-                    <td className="w-10 bg-gray-50 px-3 py-3 text-center font-semibold text-brand-gray">
+                    <td className="w-9 bg-gray-50 px-2 py-3 text-center font-semibold text-brand-gray sm:w-10 sm:px-3">
                       {i + 1}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="break-words px-3 py-3 sm:px-4">
                       <a
                         href={site.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-brand-dark underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-brand-orange"
+                        className="break-words font-semibold text-brand-dark underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-brand-orange"
                       >
                         {site.name}
                       </a>
                       {site.note && (
-                        <span className="mt-0.5 block text-xs text-brand-gray">
+                        <span className="mt-0.5 block break-words text-xs text-brand-gray">
                           {site.note}
                         </span>
                       )}

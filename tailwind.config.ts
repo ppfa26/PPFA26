@@ -6,6 +6,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "400px", // 초소형 모바일 대응 breakpoint
+      },
       colors: {
         brand: {
           yellow: "#FEE500",
