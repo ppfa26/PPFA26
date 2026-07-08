@@ -28,22 +28,26 @@ export default function Footer() {
               as="p"
               className="mt-3 break-keep text-sm leading-relaxed text-gray-400"
             >
-              정부지원사업 브로커 수수료 5% 대신, 직접 배워서 무료로
-              신청하세요.
+              정부지원사업 브로커 수수료 5% 대신,
               <br />
-              저희는 사업장에 알맞는 정부지원사업을 안내하고 신청 방법을
-              자문해드립니다.
+              직접 배워서 무료로 신청하세요.
+              <br />
+              저희는 사업장에 알맞는 정부지원사업을
+              <br />
+              안내하고 신청 방법을 자문해드립니다.
             </Editable>
             <Editable
               id="footer-nowarranty"
               as="p"
               className="mt-3 break-keep rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
             >
-              ⚠️ 본 서비스는 정부지원사업 안내 및 자문 서비스이며 승인을
-              보장하지 않습니다.
+              ⚠️ 본 서비스는 정부지원사업 안내 및 자문 서비스이며
               <br />
-              또한 행정대행을 하지 않으며, 승인 후 추가 수수료를 요구하지
-              않습니다.
+              승인을 보장하지 않습니다.
+              <br />
+              또한 행정대행을 하지 않으며,
+              <br />
+              승인 후 추가 수수료를 요구하지 않습니다.
             </Editable>
           </div>
 
