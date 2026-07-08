@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "모두의공공조달 | 정책자금·정부지원사업 통합 매칭 자문",
+  title: "모두의공공조달 | 정부지원사업 통합 매칭 자문 플랫폼",
   description:
     "정책자금 브로커 수수료 5%, 아직도 비싸게 쓰고 계신가요? 99,000원으로 직접 방법을 배워 무료로 신청하세요. 정책자금·정부지원금·창업지원·바우처·인증·교육 통합 자문 서비스.",
   keywords: [
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "모두의공공조달 | 정책자금 통합 매칭 자문",
+    title: "모두의공공조달 | 정부지원사업 통합 매칭 자문 플랫폼",
     description:
       "브로커 수수료 5% 대신, 99,000원으로 직접 방법을 배우세요. 정책자금·정부지원금·창업지원 통합 자문.",
     type: "website",
