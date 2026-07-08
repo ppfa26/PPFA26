@@ -28,7 +28,7 @@ export default function Footer() {
               as="p"
               className="mt-3 break-keep text-sm leading-relaxed text-gray-400"
             >
-              내 사업장에 알맞는 정부지원사업 찾는 가장 빠른 방법
+              내 사업장에 알맞은 정부지원사업을 찾는 가장 빠른 방법
             </Editable>
             <Editable
               id="footer-nowarranty"
