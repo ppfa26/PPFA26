@@ -56,7 +56,7 @@ export const PROGRAMS: Program[] = [
       "「소상공인기본법」상 소상공인(업력 무관)이면 신청할 수 있는 일반 경영안정 융자입니다. 신용점수 제한이나 사전 교육 요건이 없어 가장 많은 소상공인이 이용합니다.",
     target: ["소상공인", "개인사업자", "신용양호", "매출없음", "1억미만"],
     amount: "연간 7,000만원 이내 · 기준금리 +0.6%p (변동)",
-    applyUrl: "https://ols.semas.or.kr/",
+    applyUrl: "https://ols.sbiz.or.kr/",
     applySite: "소상공인정책자금",
     loanType: "대리대출",
     docs: [],
@@ -73,7 +73,7 @@ export const PROGRAMS: Program[] = [
       "NCB(NICE) 개인신용평점 839점 이하 중·저신용 소상공인 전용 소진공 직접대출입니다. 신청 전 '신용관리교육' 사전 이수가 반드시 필요합니다.",
     target: ["소상공인", "개인사업자", "신용취약", "담보없음"],
     amount: "3,000만원 · 기준금리 +1.6%p (1년 후 신용개선 시 0.5%p 인하)",
-    applyUrl: "https://ols.semas.or.kr/",
+    applyUrl: "https://ols.sbiz.or.kr/",
     applySite: "소상공인정책자금",
     loanType: "직접대출",
     docs: [],
@@ -101,13 +101,13 @@ export const PROGRAMS: Program[] = [
   {
     id: "kodit-guarantee",
     category: "정책자금",
-    name: "신용보증기금 신용보증서",
+    name: "신용보증기금 보증부 대출",
     organization: "신용보증기금",
     summary:
       "담보가 부족한 기업이 은행 대출을 받을 수 있도록 신용보증기금이 보증서를 발급합니다. 소상공인부터 중소·중견기업까지, 특히 매출·사업 규모가 어느 정도 되는 기업에 적합합니다.",
     target: ["개인사업자", "법인", "중소기업", "담보없음", "매출5억이상", "신용양호"],
     amount: "기업별 보증한도 산정 (프로그램별 상이) · 보증서 발급 후 은행 대출",
-    applyUrl: "https://www.kodit.co.kr/",
+    applyUrl: "https://www.kodit.or.kr/",
     applySite: "신용보증기금",
     loanType: "보증서(대리)",
     docs: [],
@@ -118,7 +118,7 @@ export const PROGRAMS: Program[] = [
   {
     id: "kibo-tech-guarantee",
     category: "정책자금",
-    name: "기술보증기금 기술보증서",
+    name: "기술보증기금 보증부 대출",
     organization: "기술보증기금",
     summary:
       "제조·IT·기술기업 대상 기술평가 기반 보증입니다. 매출이 낮아도 특허·기술력·벤처·이노비즈 등 기술 경쟁력이 있으면 보증받을 수 있어, 창업 초기·기술기업에 유리합니다.",
@@ -135,7 +135,7 @@ export const PROGRAMS: Program[] = [
   {
     id: "ksure-export-guarantee",
     category: "정책자금",
-    name: "수출신용보증 (선적전/선적후)",
+    name: "한국무역보험공사 수출신용보증 (선적전/선적후)",
     organization: "한국무역보험공사",
     summary:
       "수출기업이 수출물품 제조·조달 자금을 은행에서 대출받을 때 무역보험공사가 연대보증하는 제도입니다. 신보·기보 보증한도와 별개로 운영되어, 수출기업은 함께 활용하면 자금 여력이 커집니다.",
@@ -369,7 +369,7 @@ export const PROGRAMS: Program[] = [
       "재창업·채무조정 성실상환·재도약 유망 소상공인을 위한 소진공 직접대출입니다.",
     target: ["재기자금", "회생파산", "예비창업자", "소상공인", "개인사업자"],
     amount: "일반형 7,000만원 / 희망형 1억원 / 도약형 2억원 · 기준금리 +0.4~1.6%p",
-    applyUrl: "https://ols.semas.or.kr/",
+    applyUrl: "https://ols.sbiz.or.kr/",
     applySite: "소상공인정책자금",
     loanType: "직접대출",
     docs: [],
@@ -386,8 +386,8 @@ export const PROGRAMS: Program[] = [
       "폐업(예정) 소상공인의 재기·재취업·재창업을 위한 교육·컨설팅·점포철거비·전직 지원입니다.",
     target: ["소상공인", "자영업자", "재기자금"],
     amount: "점포철거비·재창업 교육 등 지원",
-    applyUrl: "https://www.sbiz24.kr/",
-    applySite: "소상공인24",
+    applyUrl: "https://www.sbiz.or.kr/nhrp/intro/bizIntroduce.do",
+    applySite: "희망리턴패키지",
     loanType: "비융자",
     docs: [],
     strategy:

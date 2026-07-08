@@ -112,8 +112,8 @@ export default function FundDetailPage({
               </ul>
             ) : (
               <p className="mt-3 rounded-2xl bg-gray-50 px-4 py-4 text-sm leading-relaxed text-brand-dark">
-                필요 서류는 <strong>기관·상품·개별 사업장 상황에 따라 달라집니다</strong>. 정확한
-                서류 목록은 1:1 상담을 통해 대표님 상황에 맞게 안내해 드립니다.
+                필요 서류는 <strong>기관·상품·개별 사업장 상황에 따라 달라집니다</strong>.{" "}
+                <strong>상담 필요시 1:1 채팅으로 안내</strong>해 드립니다.
               </p>
             )}
           </section>

@@ -54,6 +54,9 @@ export default function Footer() {
             <Link href="/community" className="hover:text-white">
               커뮤니티
             </Link>
+            <Link href="/sites" className="hover:text-white">
+              공식 사이트 모음
+            </Link>
             <Link href="/terms" className="hover:text-white">
               이용약관
             </Link>
