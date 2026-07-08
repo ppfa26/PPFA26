@@ -272,8 +272,9 @@ function SignupInner() {
           <Link href="/terms" className="underline">이용약관</Link> 및{" "}
           <Link href="/privacy" className="underline">개인정보처리방침</Link>에 동의하게 됩니다.
         </p>
-        <p className="mt-3 text-center text-[11px] leading-relaxed text-brand-gray">
-          ⚠️ 본 서비스는 신청 가능 상품 안내 및 자문 서비스이며 정부지원사업 승인을 보장하지 않습니다.
+        <p className="mt-3 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
+          ⚠️ 본 서비스는 신청 가능 상품 안내 및 자문 서비스이며 정부지원사업 승인을
+          보장하지 않습니다.
         </p>
       </main>
       <Footer />

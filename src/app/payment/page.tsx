@@ -186,9 +186,10 @@ function PaymentInner() {
             onChange={(e) => setAgree(e.target.checked)}
             className="mt-0.5 h-4 w-4"
           />
-          <span>
-            1회 결제(자동결제 없음)이며, 본 서비스는 자문 서비스로{" "}
-            <strong>자금 승인을 보장하지 않음</strong>을 확인했습니다.
+          <span className="break-keep leading-relaxed">
+            1회 결제(자동결제 없음)이며, 본 서비스는 신청 가능 상품 안내 및 자문
+            서비스로{" "}
+            <strong>정부지원사업 승인을 보장하지 않음</strong>을 확인했습니다.
           </span>
         </label>
 

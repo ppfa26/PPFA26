@@ -200,9 +200,10 @@ export default function DashboardPage() {
                 👥 대표님 오픈 단톡방 참여
               </a>
             </div>
-            <p className="mt-4 text-xs text-brand-dark/60">
-              ⚠️ 본 서비스는 자문 서비스이며 승인을 보장하지 않습니다. 대행 신청을
-              하지 않으며 승인 수수료를 받지 않습니다.
+            <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/60">
+              ⚠️ 본 서비스는 신청 가능 상품 안내 및 자문 서비스이며 정부지원사업
+              승인을 보장하지 않습니다. 대행 신청을 하지 않으며 승인 수수료를 받지
+              않습니다.
             </p>
           </section>
         </div>
