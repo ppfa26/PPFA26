@@ -2,8 +2,10 @@
 //
 // ── 최신화 정책 (대표님 지시) ────────────────────────────────
 //  • 원칙: 2026년 자료만 노출한다.
-//  • 예외: 신용보증기금 / 기술보증기금 2025년 자료는 유지한다.
-//    (d10 2025 기보 업무안내, d13 2025 신보 업무가이드 = 유지 확정)
+//  • 신보/기보 2026년 신규 자료 반영 완료 (2026-07 최신화):
+//    - d10 = 2026 기보 업무안내 책자, d13 = 2026 신보 업무가이드 책자
+//    - d14 = 2026 기보 리플렛, d15 = 2026 신보 업무설명 PPT
+//    ⇒ 기존 2025 예외 조항은 2026본 출간으로 해소됨.
 //  • 연도 미표기 자료(제도 안내·서류 양식 등)는 상시 유효 자료로 간주해 유지.
 //  • 모든 URL은 2026년 실제 업로드 공문 최신본으로 갱신됨.
 // ────────────────────────────────────────────────────────────
@@ -26,10 +28,12 @@ export const OFFICIAL_DOCS: OfficialDoc[] = [
   { id: "d08", category: "정책자금융자", title: "(붙임1) 재도전특별자금 신청안내자료", url: "https://www.genspark.ai/api/files/s/EnwBoScv" },
 
   // 기관 업무 안내
-  { id: "d10", category: "기관업무안내", title: "2025년도 기술보증기금 업무안내(책자)", url: "https://www.genspark.ai/api/files/s/WXtoIh82" },
+  { id: "d10", category: "기관업무안내", title: "2026 기술보증기금 업무안내(책자)", url: "https://www.genspark.ai/api/files/s/6CaW6Vta" },
+  { id: "d14", category: "기관업무안내", title: "2026 기술보증기금 업무안내 리플렛", url: "https://www.genspark.ai/api/files/s/i9w0KXFp" },
   { id: "d11", category: "기관업무안내", title: "(기술보증기금) 기술보증 지원제도 소개", url: "https://www.genspark.ai/api/files/s/QmFaZNAR" },
+  { id: "d13", category: "기관업무안내", title: "2026 신용보증기금 업무가이드(책자)", url: "https://www.genspark.ai/api/files/s/0iVpxDw9" },
+  { id: "d15", category: "기관업무안내", title: "2026 신용보증기금 업무설명 PPT", url: "https://www.genspark.ai/api/files/s/oSiMQuW6" },
   { id: "d12", category: "기관업무안내", title: "(신용보증기금) 2026년 신용보증기금 업무설명", url: "https://www.genspark.ai/api/files/s/fgza5vrz" },
-  { id: "d13", category: "기관업무안내", title: "2025 신용보증기금 업무가이드", url: "https://www.genspark.ai/api/files/s/jkO6QeiQ" },
 
   // 2026년 통합 공고
   { id: "d16", category: "2026통합공고", title: "2026년 소진공(소상공인시장진흥공단) 주요 공문", url: "https://www.genspark.ai/api/files/s/DsEWpl6G" },
