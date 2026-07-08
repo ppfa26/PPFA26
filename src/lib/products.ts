@@ -1,4 +1,4 @@
-// 상품 구성 (확정 가격: 99,000 / 199,000 / 490,000)
+// 상품 구성 (확정 가격: 99,000 / 199,000 / 399,000)
 // originalPrice = 정가(앵커링용 취소선), monthly = 12개월 환산 참고 표기
 export type Tier = {
   id: "basic" | "premier" | "pro";
@@ -60,11 +60,11 @@ export const TIERS: Tier[] = [
     icon: "🏆",
     name: "프로",
     subtitle: "전문가 멘토링",
-    price: 490000,
-    priceLabel: "490,000원",
-    originalPrice: 790000,
-    originalPriceLabel: "790,000원",
-    monthlyLabel: "월 40,800원",
+    price: 399000,
+    priceLabel: "399,000원",
+    originalPrice: 690000,
+    originalPriceLabel: "690,000원",
+    monthlyLabel: "월 33,250원",
     period: "1개월",
     popular: false,
     features: [
