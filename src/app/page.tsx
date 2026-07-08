@@ -107,7 +107,8 @@ export default function Home() {
               as="h1"
               className="break-keep text-[22px] font-black leading-tight text-brand-dark xs:text-[26px] sm:text-5xl"
             >
-              정부지원사업 브로커 수수료 5%,
+              정부지원사업 브로커{" "}
+              <span className="text-brand-red">수수료 5%</span>
               <br />
               아직도 비싸게 쓰고 계신가요?
             </Editable>
@@ -120,7 +121,7 @@ export default function Home() {
               정부지원사업 브로커 대행 수수료는 1억원 승인 시 최소 500만원입니다.
               <br className="hidden sm:inline" />{" "}
               모두의공공조달에서{" "}
-              <strong className="text-brand-dark">99,000원</strong>으로 직접
+              <strong className="text-brand-red">99,000원</strong>으로 직접
               신청하는 방법을 배워 무료로 신청하세요.
             </Editable>
 
