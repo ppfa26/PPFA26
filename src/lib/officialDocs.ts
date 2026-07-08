@@ -3,9 +3,9 @@
 // ── 최신화 정책 (대표님 지시) ────────────────────────────────
 //  • 원칙: 2026년 자료만 노출한다.
 //  • 예외: 신용보증기금 / 기술보증기금 2025년 자료는 유지한다.
-//    (d10 2025 기보 업무안내, d13·d14 2025 신보 업무가이드/PPT = 유지 확정)
+//    (d10 2025 기보 업무안내, d13 2025 신보 업무가이드 = 유지 확정)
 //  • 연도 미표기 자료(제도 안내·서류 양식 등)는 상시 유효 자료로 간주해 유지.
-//  • 만약 옛날 자료로 확인되면 아래 OFFICIAL_DOCS 배열에서 해당 항목만 삭제.
+//  • 모든 URL은 2026년 실제 업로드 공문 최신본으로 갱신됨.
 // ────────────────────────────────────────────────────────────
 export type OfficialDoc = {
   id: string;
@@ -20,53 +20,38 @@ export type OfficialDoc = {
 };
 
 export const OFFICIAL_DOCS: OfficialDoc[] = [
-  // 정책자금·융자
-  { id: "d01", category: "정책자금융자", title: "(공개) 주요 부처별 달라지는 기업제도 안내", url: "https://www.genspark.ai/api/files/s/IS7apln6" },
-  { id: "d02", category: "정책자금융자", title: "(붙임) 신용취약소상공인자금 사전 이수 교육", url: "https://www.genspark.ai/api/files/s/xxEgO0ur" },
-  { id: "d03", category: "정책자금융자", title: "(붙임1) 긴급경영안정자금(직접대출)", url: "https://www.genspark.ai/api/files/s/Ky52kKD4" },
-  { id: "d04", category: "정책자금융자", title: "(붙임1) 민간투자연계형매칭융자", url: "https://www.genspark.ai/api/files/s/XmAXJvRp" },
-  { id: "d05", category: "정책자금융자", title: "(붙임1) 상생성장지원자금", url: "https://www.genspark.ai/api/files/s/7Fb2NSlm" },
-  { id: "d06", category: "정책자금융자", title: "(붙임1) 신용취약소상공인자금", url: "https://www.genspark.ai/api/files/s/Fn7Z3jyb" },
-  { id: "d07", category: "정책자금융자", title: "(붙임1) 일시적경영애로자금(직접대출)", url: "https://www.genspark.ai/api/files/s/O3F64Jy7" },
-  { id: "d08", category: "정책자금융자", title: "(붙임1) 재도전특별자금", url: "https://www.genspark.ai/api/files/s/pK7q36qy" },
-  { id: "d09", category: "정책자금융자", title: "(붙임1) 혁신성장촉진자금", url: "https://www.genspark.ai/api/files/s/44kfWywt" },
+  // 정책자금·융자 (2026 소진공 주요 공문 및 붙임 자료)
+  { id: "d02", category: "정책자금융자", title: "(붙임) 신용취약소상공인자금 사전 이수 교육 수료 안내", url: "https://www.genspark.ai/api/files/s/kpzQc4O8" },
+  { id: "d06", category: "정책자금융자", title: "(붙임1) 신용취약소상공인자금 신청안내자료", url: "https://www.genspark.ai/api/files/s/PmXDAzh8" },
+  { id: "d08", category: "정책자금융자", title: "(붙임1) 재도전특별자금 신청안내자료", url: "https://www.genspark.ai/api/files/s/EnwBoScv" },
 
   // 기관 업무 안내
-  { id: "d10", category: "기관업무안내", title: "2025년도 기술보증기금 업무안내", url: "https://www.genspark.ai/api/files/s/lTcQwO8W" },
-  { id: "d11", category: "기관업무안내", title: "(기술보증기금) 기술보증 지원제도 소개", url: "https://www.genspark.ai/api/files/s/NT1tVl5c" },
-  { id: "d12", category: "기관업무안내", title: "(신용보증기금) 2026년 업무설명", url: "https://www.genspark.ai/api/files/s/dGBTcawT" },
-  { id: "d13", category: "기관업무안내", title: "2025 신용보증기금 업무가이드", url: "https://www.genspark.ai/api/files/s/hKxFZed1" },
-  { id: "d14", category: "기관업무안내", title: "2025 신용보증기금 업무설명 PPT", url: "https://www.genspark.ai/api/files/s/zH7yjGV3" },
-  { id: "d15", category: "기관업무안내", title: "신용보증재단 매뉴얼", url: "https://www.genspark.ai/api/files/s/XMiaswoJ" },
+  { id: "d10", category: "기관업무안내", title: "2025년도 기술보증기금 업무안내(책자)", url: "https://www.genspark.ai/api/files/s/WXtoIh82" },
+  { id: "d11", category: "기관업무안내", title: "(기술보증기금) 기술보증 지원제도 소개", url: "https://www.genspark.ai/api/files/s/QmFaZNAR" },
+  { id: "d12", category: "기관업무안내", title: "(신용보증기금) 2026년 신용보증기금 업무설명", url: "https://www.genspark.ai/api/files/s/fgza5vrz" },
+  { id: "d13", category: "기관업무안내", title: "2025 신용보증기금 업무가이드", url: "https://www.genspark.ai/api/files/s/jkO6QeiQ" },
 
   // 2026년 통합 공고
-  { id: "d16", category: "2026통합공고", title: "2026년 소진공 주요 공문", url: "https://www.genspark.ai/api/files/s/qF6AGaqc" },
-  { id: "d17", category: "2026통합공고", title: "2026년 중진공 주요 공문", url: "https://www.genspark.ai/api/files/s/kbHaIM4S" },
-  { id: "d18", category: "2026통합공고", title: "2026년 창업지원사업 통합 공고문", url: "https://www.genspark.ai/api/files/s/6qzujvfE" },
-  { id: "d19", category: "2026통합공고", title: "2026년 소상공인 지원사업 통합 공고", url: "https://www.genspark.ai/api/files/s/voMabPR4" },
-  { id: "d20", category: "2026통합공고", title: "2026년 경기도 중소기업육성자금", url: "https://www.genspark.ai/api/files/s/EVNxSbSf" },
-  { id: "d21", category: "2026통합공고", title: "2026년도 중소기업 수출지원사업 통합공고", url: "https://www.genspark.ai/api/files/s/kJl0z9Rg" },
-  { id: "d22", category: "2026통합공고", title: "2026년 중소기업 핵심사업 동시 안내", url: "https://www.genspark.ai/api/files/s/16iPfXeG" },
+  { id: "d16", category: "2026통합공고", title: "2026년 소진공(소상공인시장진흥공단) 주요 공문", url: "https://www.genspark.ai/api/files/s/DsEWpl6G" },
+  { id: "d17", category: "2026통합공고", title: "2026년 중진공(중소벤처기업진흥공단) 주요 공문", url: "https://www.genspark.ai/api/files/s/WZWqlnKn" },
+  { id: "d18", category: "2026통합공고", title: "2026년 창업지원사업 통합 공고문", url: "https://www.genspark.ai/api/files/s/06BJSDtA" },
+  { id: "d19", category: "2026통합공고", title: "2026년 중소벤처기업부 소상공인 지원사업 통합 공고", url: "https://www.genspark.ai/api/files/s/YR94kQ4E" },
+  { id: "d20", category: "2026통합공고", title: "2026년 경기도 중소기업육성자금 지원계획", url: "https://www.genspark.ai/api/files/s/E30FmK9b" },
+  { id: "d21", category: "2026통합공고", title: "2026년도 중소기업 수출지원사업 통합공고", url: "https://www.genspark.ai/api/files/s/RflkjenN" },
 
   // 지원사업 안내
-  { id: "d23", category: "지원사업안내", title: "성장촉진분야", url: "https://www.genspark.ai/api/files/s/Ka2gxZjb" },
-  { id: "d24", category: "지원사업안내", title: "소상공인 성장촉진 보증부 대출", url: "https://www.genspark.ai/api/files/s/BSCQktXy" },
-  { id: "d25", category: "지원사업안내", title: "소상공인 신규자금 금융지원방안", url: "https://www.genspark.ai/api/files/s/GzLtbf6e" },
-  { id: "d26", category: "지원사업안내", title: "(창업진흥원) 2026년도 창업지원사업 안내", url: "https://www.genspark.ai/api/files/s/GET0yCJc" },
-  { id: "d27", category: "지원사업안내", title: "(중소벤처기업부) 2026년 수출분야 시책", url: "https://www.genspark.ai/api/files/s/TOjfCX50" },
-  { id: "d28", category: "지원사업안내", title: "중소중견기업 지원제도 안내 (K-SURE)", url: "https://www.genspark.ai/api/files/s/A9dpmWUa" },
-  { id: "d29", category: "지원사업안내", title: "한국콘텐츠진흥원 보증상품", url: "https://www.genspark.ai/api/files/s/L6hhELXu" },
-  { id: "d30", category: "지원사업안내", title: "(중소기업기술정보진흥원) 2026년 R&D 지원사업", url: "https://www.genspark.ai/api/files/s/Neo9IYHE" },
-  { id: "d31", category: "지원사업안내", title: "(중소벤처기업진흥공단) 2026년 정책자금 융자사업", url: "https://www.genspark.ai/api/files/s/ISzeWqCq" },
-  { id: "d32", category: "지원사업안내", title: "[공개] (1권 중소벤처기업부편) 2026년도 중소벤처기업 지원사업", url: "https://www.genspark.ai/api/files/s/9PbtC6fz" },
-  { id: "d33", category: "지원사업안내", title: "[공개] (2권 유관기관편) 2026년도 중소벤처기업 지원사업", url: "https://www.genspark.ai/api/files/s/Sn2JaEhp" },
-  { id: "d34", category: "지원사업안내", title: "(소상공인시장진흥공단) 2026년 소상공인 전통시장 지원시책", url: "https://www.genspark.ai/api/files/s/xHrVbz8C" },
+  { id: "d26", category: "지원사업안내", title: "(창업진흥원) 2026년도 창업지원사업 안내", url: "https://www.genspark.ai/api/files/s/FUrUHTHW" },
+  { id: "d27", category: "지원사업안내", title: "(중소벤처기업부) 2026년 수출분야 시책", url: "https://www.genspark.ai/api/files/s/jx35psqF" },
+  { id: "d28", category: "지원사업안내", title: "중소중견기업 지원제도 안내 (K-SURE 한국무역보험공사)", url: "https://www.genspark.ai/api/files/s/bwhMmbDX" },
+  { id: "d30", category: "지원사업안내", title: "(중소기업기술정보진흥원) 2026년 중소기업 R&D 지원사업 안내", url: "https://www.genspark.ai/api/files/s/I1TyNqkH" },
+  { id: "d31", category: "지원사업안내", title: "(중소벤처기업진흥공단) 2026년 중소기업 정책자금 융자사업 안내", url: "https://www.genspark.ai/api/files/s/0W3fmuXR" },
+  { id: "d34", category: "지원사업안내", title: "(소상공인시장진흥공단) 2026년 소상공인 전통시장 지원시책", url: "https://www.genspark.ai/api/files/s/TUQtAVa4" },
 
   // 서류 양식·예시
-  { id: "d35", category: "서류양식", title: "주식·주주명부 양식 (docx)", url: "https://www.genspark.ai/api/files/s/ujQVfBBQ" },
-  { id: "d36", category: "서류양식", title: "중소기업확인서 예시", url: "https://www.genspark.ai/api/files/s/Ix3PcIYp" },
-  { id: "d37", category: "서류양식", title: "창업기업확인서 예시", url: "https://www.genspark.ai/api/files/s/1VXjirpw" },
-  { id: "d38", category: "서류양식", title: "전자계약 방법 안내", url: "https://www.genspark.ai/api/files/s/9jIZ9sQU" },
+  { id: "d35", category: "서류양식", title: "주식·주주명부 양식 (docx)", url: "https://www.genspark.ai/api/files/s/PTT7NQbf" },
+  { id: "d36", category: "서류양식", title: "중소기업확인서 예시", url: "https://www.genspark.ai/api/files/s/iTiiN1I0" },
+  { id: "d37", category: "서류양식", title: "창업기업확인서 예시", url: "https://www.genspark.ai/api/files/s/O9bvW9sZ" },
+  { id: "d38", category: "서류양식", title: "전자계약 방법 안내", url: "https://www.genspark.ai/api/files/s/i1ibDcda" },
 ];
 
 export const DOC_CATEGORIES = [

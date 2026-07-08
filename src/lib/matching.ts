@@ -34,8 +34,13 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   if (bt.includes("법인")) tags.add("법인");
   if (bt.includes("프리")) tags.add("자영업자");
 
-  // 소상공인/중소기업 판단 (매출 기준 단순화)
-  if (p.revenue?.includes("5억이상") || p.businessType?.includes("법인")) {
+  // 소상공인/중소기업 판단 (공문 기준: 매출 규모)
+  //  - 매출 5억 이상 또는 법인 → 사업체 '규모'가 있어 신용보증기금(신보) 유리
+  //  - 그 외 → 소상공인(지역신용보증재단/소진공 유리)
+  if (p.revenue?.includes("5억이상") || p.revenue?.includes("5억 이상")) {
+    tags.add("중소기업");
+    tags.add("매출5억이상");
+  } else if (p.businessType?.includes("법인")) {
     tags.add("중소기업");
   } else {
     tags.add("소상공인");
@@ -47,7 +52,21 @@ function profileTags(p: DiagnosisProfile): Set<string> {
 
   (p.purposes || []).forEach((x) => tags.add(x.replace(/\s/g, "")));
   (p.industries || []).forEach((x) => tags.add(x.replace(/\s/g, "")));
-  if (p.industries?.includes("수출업")) tags.add("수출자금");
+  // 수출업 → 수출자금 + 수출기업 태그 (무역보험공사 병행 매칭용)
+  if (p.industries?.includes("수출업")) {
+    tags.add("수출자금");
+    tags.add("수출기업");
+  }
+  // 제조업/기술기업 → 기술보증기금(기보) 유리
+  if (p.industries?.includes("제조업")) tags.add("제조업");
+  if (
+    p.industries?.includes("제조업") ||
+    p.purposes?.some((x) => x.includes("인증") || x.includes("특허") || x.includes("R&D"))
+  ) {
+    tags.add("기술기업");
+  }
+  // 경기도 소재 → 경기 태그 (경기신용보증재단 매칭용)
+  if (p.region?.includes("경기")) tags.add("경기");
   if (p.collateral?.includes("없")) tags.add("담보없음");
   if (p.bankruptcy && (p.bankruptcy.includes("있") || p.bankruptcy.includes("회생") || p.bankruptcy.includes("파산")))
     tags.add("회생파산");
@@ -151,6 +170,42 @@ export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
     if (program.id === "sbiz-policy-fund" && tags.has("신용양호")) {
       score += 2;
       reasons.push("신용점수 양호 → 신용 제한 없는 일반경영안정자금 대상");
+    }
+
+    // ── 기관 구조 기반 정밀 매칭 (공문 기준) ──────────────────────
+    // 신용보증기금: 매출 5억 이상 / 사업체 규모가 있는 기업에 유리 (대리대출·보증서)
+    if (program.id === "kodit-guarantee") {
+      if (tags.has("매출5억이상")) {
+        score += 3;
+        reasons.push("매출 5억원 이상 → 사업 규모를 보는 신용보증기금 보증이 유리합니다");
+      } else if (tags.has("중소기업")) {
+        score += 1;
+      }
+    }
+    // 기술보증기금: 제조/IT/기술력/특허 기업 — 매출 낮아도 기술력으로 보증
+    if (program.id === "kibo-tech-guarantee") {
+      if (tags.has("기술기업") || tags.has("제조업")) {
+        score += 3;
+        reasons.push("제조·기술기업 → 매출이 낮아도 기술력으로 보증받는 기술보증기금이 유리합니다");
+      }
+    }
+    // 무역보험공사: 수출기업 전용 (신보/기보 한도와 별개 → 병행 안내)
+    if (program.id === "ksure-export-guarantee") {
+      if (tags.has("수출기업")) {
+        score += 4;
+        reasons.push("수출기업 → 소진공·중진공·(신보 또는 기보)에 더해 무역보험공사까지 4곳 병행 활용이 가능합니다(한도 미합산)");
+      } else {
+        score = 0; // 수출기업이 아니면 노출하지 않음
+      }
+    }
+    // 경기도 중소기업육성자금: 경기도 소재 기업만
+    if (program.id === "gyeonggi-fund") {
+      if (tags.has("경기")) {
+        score += 3;
+        reasons.push("경기도 소재 → 지역신용보증재단(경기신보) 이차보전 자금 대상");
+      } else {
+        score = 0; // 경기도가 아니면 노출하지 않음
+      }
     }
 
     if (score >= 2 && reasons.length === 0) {
