@@ -12,21 +12,24 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-3 sm:px-5">
         {/* 로고 + 상호명 */}
-        <Link href="/" className="flex min-w-0 items-center gap-2.5">
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo/app-icon-white.png"
             alt="모두의공공조달 로고"
             width={44}
             height={44}
-            className="h-10 w-10 shrink-0 rounded-lg sm:h-11 sm:w-11"
+            className="h-10 w-10 shrink-0 rounded-[9px] sm:h-11 sm:w-11"
             priority
           />
-          <span className="flex min-w-0 flex-col justify-center leading-none gap-[3px]">
-            <span className="truncate text-[17px] font-extrabold tracking-tight text-brand-dark sm:text-lg">
+          <span className="flex flex-col justify-center leading-none">
+            <span className="text-[18px] font-extrabold leading-[1.05] tracking-[-0.01em] text-brand-dark sm:text-[19px]">
               모두의공공조달
             </span>
-            <span className="hidden truncate text-[11px] font-medium tracking-[0.12em] text-brand-gray sm:block">
-              Public&nbsp;Procurement&nbsp;For&nbsp;All
+            <span
+              className="mt-[2px] hidden w-full text-[9.5px] font-semibold uppercase leading-none text-brand-gray sm:block"
+              style={{ textAlignLast: "justify" }}
+            >
+              Public Procurement For All
             </span>
           </span>
         </Link>
