@@ -7,13 +7,13 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 
 const STEP1 = {
-  businessType: ["예비창업자", "개인사업자", "법인", "프리랜서"],
+  businessType: ["예비창업자", "개인사업자", "법인사업자"],
   revenue: ["매출 없음", "1억 미만", "5억 미만", "5억 이상"],
   years: ["창업 예정", "1년 미만", "3년 미만", "7년 미만", "7년 이상"],
   age: ["39세 이하", "39세 이상"],
   region: ["서울", "경기", "인천", "세종", "충청", "강원", "전라", "경상", "제주"],
 };
-const INDUSTRIES = ["음식점", "서비스업", "제조업", "수출업", "기타"];
+const INDUSTRIES = ["제조업", "수출업", "서비스업", "도소매업", "음식점업", "기타"];
 const PURPOSES = ["창업자금", "운전자금", "시설자금", "수출자금", "정부지원금", "인증및특허"];
 const AMOUNTS = ["1,000만원 미만", "5,000만원 미만", "1억 미만", "5억 미만", "5억 이상"];
 const INTERESTS = ["정책자금", "정부지원금", "창업지원", "바우처", "인증", "교육"];

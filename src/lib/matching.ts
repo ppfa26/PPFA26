@@ -2,9 +2,9 @@ import { PROGRAMS, Program } from "./programs";
 
 export type DiagnosisProfile = {
   // 1단계
-  businessType?: string; // 예비창업자/개인사업자/법인/프리랜서
+  businessType?: string; // 예비창업자/개인사업자/법인사업자
   industry?: string;
-  industries?: string[]; // 음식점/서비스업/제조업/수출업/기타 (중복 선택)
+  industries?: string[]; // 제조업/수출업/서비스업/도소매업/음식점업/기타 (중복 선택)
   revenue?: string; // 매출없음/1억미만/5억미만/5억이상
   years?: string; // 창업예정/1년미만/3년미만/7년미만/7년이상
   age?: string; // 39세이하/39세이상
