@@ -154,7 +154,7 @@ export default function Diagnosis() {
               {/* 사업자번호 자동 조회 (국세청 연동) */}
               <div className="mb-6 overflow-hidden rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4">
                 <p className="mb-2 font-bold text-brand-dark">
-                  {BNO_TEXT.title} <span className="text-xs font-medium text-brand-gray">{BNO_TEXT.badge}</span>
+                  {BNO_TEXT.title}
                 </p>
                 <div className="flex w-full items-center gap-1.5">
                   <input
