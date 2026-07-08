@@ -73,7 +73,7 @@ export const STEP1_FIELDS = {
 export const STEP2_TITLE = "2단계 · 상담 목적";
 export const STEP2_FIELDS = {
   purposes: {
-    label: "상담 목적 (다중 선택)",
+    label: "상담 목적 (중복 선택)",
     opts: ["창업자금", "운전자금", "시설자금", "수출자금", "정부지원금", "인증및특허"],
   },
   desiredAmount: {
@@ -81,7 +81,7 @@ export const STEP2_FIELDS = {
     opts: ["1,000만원 미만", "5,000만원 미만", "1억 미만", "5억 미만", "5억 이상"],
   },
   interests: {
-    label: "관심 분야 (다중 선택)",
+    label: "관심 분야 (중복 선택)",
     opts: ["정책자금", "정부지원금", "창업지원", "바우처", "인증", "교육"],
   },
 };
