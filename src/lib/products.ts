@@ -69,7 +69,6 @@ export const TIERS: Tier[] = [
     popular: false,
     features: [
       "프리미어 전체 혜택",
-      "전화 심층 멘토링 30분",
       "사업장 진단 리포트 PDF",
       "승인 확률 극대화 전략 컨설팅 추가",
     ],

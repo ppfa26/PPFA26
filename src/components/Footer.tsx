@@ -28,14 +28,18 @@ export default function Footer() {
               as="p"
               className="mt-3 text-sm leading-relaxed text-gray-400"
             >
-              정책자금 브로커 수수료 5% 대신, 직접 배워서 신청하세요. 저희는 신청 방법·전략을 알려드리는 경영 자문 컨설팅입니다.
+              정책자금 브로커 수수료 5% 대신, 직접 배워서 신청하세요.
+              <br />
+              저희는 신청 방법 및 전략을 알려드리는 경영 자문 플랫폼입니다.
             </Editable>
             <Editable
               id="footer-nowarranty"
               as="p"
               className="mt-3 rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
             >
-              ⚠️ 본 서비스는 신청 방법·전략 자문 서비스이며, 자금 승인을 보장하지 않습니다. 대행 신청을 하지 않으며 승인 수수료를 받지 않습니다.
+              ⚠️ 본 서비스는 신청 방법 및 전략 자문 서비스이며, 자금 승인을 보장하지 않습니다.
+              <br />
+              대행 신청을 하지 않으며 따라서 승인 수수료를 받지 않습니다.
             </Editable>
           </div>
 
@@ -71,7 +75,7 @@ export default function Footer() {
             상호: 모두의공공조달 (Public Procurement For All) · 대표: 신주엽 · 사업자등록번호: 597-12-02897
           </Editable>
           <Editable id="footer-bizinfo2" as="p" className="mt-1">
-            주소: 인천광역시 서구 청라커낼로288번길 26, 285호 · 통신판매업신고: [신고번호] · 문의: biospartners@naver.com
+            주소: 인천광역시 서구 청라커낼로 288번길 26 285호 · 통신판매업신고: [신고번호] · 문의: biospartners@naver.com
           </Editable>
           <p className="mt-3 text-gray-600">
             © {new Date().getFullYear()} 모두의공공조달. All rights reserved.
