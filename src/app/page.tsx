@@ -105,7 +105,7 @@ export default function Home() {
             <Editable
               id="hero-headline"
               as="h1"
-              className="break-keep text-[26px] font-black leading-tight text-brand-dark xs:text-3xl sm:text-5xl"
+              className="break-keep text-[22px] font-black leading-tight text-brand-dark xs:text-[26px] sm:text-5xl"
             >
               정부지원사업 브로커 수수료 5%,
               <br />
