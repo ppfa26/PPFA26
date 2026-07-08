@@ -51,6 +51,14 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   if (p.collateral?.includes("없")) tags.add("담보없음");
   if (p.bankruptcy && (p.bankruptcy.includes("있") || p.bankruptcy.includes("회생") || p.bankruptcy.includes("파산")))
     tags.add("회생파산");
+
+  // 신용점수 판정 (공문 기준: 신용취약소상공인자금 = NCB 839점 이하)
+  // "700점 이하" / "839점 이하" → 신용취약 / "839점 이상" → 신용양호
+  if (p.credit?.includes("839점 이상") || p.credit?.includes("839 이상")) {
+    tags.add("신용양호");
+  } else if (p.credit && (p.credit.includes("이하") || p.credit.includes("취약"))) {
+    tags.add("신용취약");
+  }
   return tags;
 }
 
@@ -105,6 +113,44 @@ export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
     if (tags.has("예비창업자") && program.category === "창업지원") {
       score += 3;
       reasons.push("예비창업자 대상 사업");
+    }
+
+    // ── 교육·컨설팅 노출 규칙 (공문 기준 반영) ──────────────────
+    // "교육 이수"가 필요한 프로필: 신용취약(NCB 839점 이하) / 폐업·재기 / 예비창업.
+    // 일반 경영자금을 찾는 '신용양호 소상공인'에게는 교육을 추천하지 않는다.
+    if (program.category === "교육컨설팅") {
+      const eduNeeded =
+        tags.has("신용취약") ||
+        tags.has("회생파산") ||
+        tags.has("재기자금") ||
+        tags.has("예비창업자") ||
+        interests.has("교육");
+      if (eduNeeded) {
+        score += 2;
+        if (tags.has("신용취약"))
+          reasons.push("신용점수 839점 이하 → 정책자금 신청 전 신용관리교육 이수가 필요합니다");
+      } else {
+        // 교육이 필요 없는 프로필이면 목록에서 제외
+        score = 0;
+      }
+    }
+
+    // ── 신용취약소상공인자금 노출 규칙 ──────────────────────────
+    // 이 자금은 NCB 839점 이하만 대상. 신용양호 프로필에는 노출하지 않는다.
+    if (program.id === "sbiz-credit-weak-fund") {
+      if (tags.has("신용취약")) {
+        score += 4;
+        reasons.push("신용점수 839점 이하 중·저신용 소상공인 전용 직접대출");
+      } else {
+        score = 0;
+      }
+    }
+
+    // ── 일반경영안정자금 노출 규칙 ─────────────────────────────
+    // 신용양호 소상공인의 '일반 경영자금'에 우선. (신용취약자는 위 전용자금이 우선)
+    if (program.id === "sbiz-policy-fund" && tags.has("신용양호")) {
+      score += 2;
+      reasons.push("신용점수 양호 → 신용 제한 없는 일반경영안정자금 대상");
     }
 
     if (score >= 2 && reasons.length === 0) {
