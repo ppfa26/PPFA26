@@ -112,7 +112,7 @@ export default function Home() {
               as="div"
               className="mb-5 inline-block rounded-full bg-brand-yellow px-6 py-2.5 text-sm font-bold text-brand-dark sm:text-base"
             >
-              정책자금·정부지원사업 통합 매칭 자문
+              정부지원사업 통합 매칭 자문 플랫폼
             </Editable>
             <Editable
               id="hero-headline"
