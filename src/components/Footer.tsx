@@ -71,12 +71,15 @@ export default function Footer() {
         </div>
 
         {/* 사업자 정보 */}
-        <div className="mt-8 border-t border-white/10 pt-6 text-xs leading-relaxed text-gray-500">
+        <div className="mt-8 break-keep border-t border-white/10 pt-6 text-[11px] leading-relaxed text-gray-500">
           <Editable id="footer-bizinfo" as="p">
-            상호 : 모두의공공조달 · 대표: 신주엽 · 사업자등록번호: 597-12-02897
+            상호 : 모두의공공조달 · 대표: 신주엽 · 주소 : 인천광역시 서구 청라커낼로 288번길 26
           </Editable>
           <Editable id="footer-bizinfo2" as="p" className="mt-1">
-            주소 : 인천광역시 서구 청라커낼로 288번길 26 · 통신판매업신고: [신고번호] · 문의: biospartners@naver.com
+            사업자등록번호 : 597-12-02897 · 통신판매업신고 : [신고번호]
+          </Editable>
+          <Editable id="footer-bizinfo3" as="p" className="mt-1">
+            문의 : biospartners@naver.com
           </Editable>
           <p className="mt-3 text-gray-600">
             © {new Date().getFullYear()} 모두의공공조달. All rights reserved.
