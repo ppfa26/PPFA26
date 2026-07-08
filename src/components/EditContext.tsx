@@ -30,6 +30,11 @@ export type EditValue = {
 };
 
 const STORAGE_KEY = "mpp_page_inline_edits_v3";
+const META_KEY = "mpp_page_inline_meta_v1"; // 페이지별 콘텐츠 버전 저장
+
+// 코드 문구를 크게 바꿀 때 이 숫자를 올리면, 이전에 브라우저에 저장된
+// 인라인 편집본이 자동으로 정리되고 최신 코드 문구가 표시됩니다.
+export const CONTENT_VERSION = 2;
 
 const EditCtx = createContext<EditState | null>(null);
 
@@ -45,13 +50,32 @@ export function EditProvider({
   const [toast, setToast] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
-  // LocalStorage 로드
+  // LocalStorage 로드 (콘텐츠 버전 체크 포함)
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const all = JSON.parse(raw);
-        if (all[pageKey]) setEdits(all[pageKey]);
+      // 이 페이지의 저장된 콘텐츠 버전 확인
+      const metaRaw = localStorage.getItem(META_KEY);
+      const meta = metaRaw ? JSON.parse(metaRaw) : {};
+      const savedVersion = meta[pageKey];
+
+      if (savedVersion !== CONTENT_VERSION) {
+        // 코드 문구가 갱신됨 → 이 페이지의 옛 편집본 폐기하고 최신 코드 사용
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const all = raw ? JSON.parse(raw) : {};
+        if (all[pageKey]) {
+          delete all[pageKey];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+        }
+        meta[pageKey] = CONTENT_VERSION;
+        localStorage.setItem(META_KEY, JSON.stringify(meta));
+        setEdits({});
+      } else {
+        // 버전 동일 → 대표님이 저장한 편집본 그대로 사용
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const all = JSON.parse(raw);
+          if (all[pageKey]) setEdits(all[pageKey]);
+        }
       }
     } catch {
       /* ignore */
@@ -66,6 +90,11 @@ export function EditProvider({
         const all = raw ? JSON.parse(raw) : {};
         all[pageKey] = next;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+        // 편집 저장 시 현재 콘텐츠 버전도 함께 기록
+        const metaRaw = localStorage.getItem(META_KEY);
+        const meta = metaRaw ? JSON.parse(metaRaw) : {};
+        meta[pageKey] = CONTENT_VERSION;
+        localStorage.setItem(META_KEY, JSON.stringify(meta));
         return true;
       } catch {
         return false;
