@@ -5,26 +5,21 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
-
-const STEP1 = {
-  businessType: ["예비창업자", "개인사업자", "법인사업자"],
-  revenue: ["매출 없음", "1억 미만", "5억 미만", "5억 이상"],
-  years: ["창업 예정", "1년 미만", "3년 미만", "7년 미만", "7년 이상"],
-  age: ["39세 이하", "39세 이상"],
-  region: ["서울", "경기", "인천", "세종", "충청", "강원", "전라", "경상", "제주"],
-};
-const INDUSTRIES = ["제조업", "수출업", "서비스업", "도소매업", "음식점업", "기타"];
-const PURPOSES = ["창업자금", "운전자금", "시설자금", "수출자금", "정부지원금", "인증및특허"];
-const AMOUNTS = ["1,000만원 미만", "5,000만원 미만", "1억 미만", "5억 미만", "5억 이상"];
-const INTERESTS = ["정책자금", "정부지원금", "창업지원", "바우처", "인증", "교육"];
-const EMPLOYEES = ["0명", "5명 이하", "10명 이하", "10명 이상"];
-const CREDIT = ["700점 이하", "839점 이하", "839점 이상"];
-const YESNO = ["있음", "없음"];
+import {
+  DIAGNOSIS_TEXT,
+  BNO_TEXT,
+  STEP1_TITLE,
+  STEP1_FIELDS,
+  STEP2_TITLE,
+  STEP2_FIELDS,
+  STEP3_TITLE,
+  STEP3_FIELDS,
+} from "@/lib/diagnosisConfig";
 
 export default function Diagnosis() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [] });
+  const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [], certifications: [] });
 
   // 사업자번호 조회 상태
   const [bno, setBno] = useState("");
@@ -35,7 +30,7 @@ export default function Diagnosis() {
     setBnoResult(null);
     const digits = bno.replace(/[^0-9]/g, "");
     if (digits.length !== 10) {
-      setBnoResult({ ok: false, message: "사업자등록번호 10자리를 정확히 입력해 주세요." });
+      setBnoResult({ ok: false, message: BNO_TEXT.errorLength });
       return;
     }
     setBnoLoading(true);
@@ -54,7 +49,7 @@ export default function Diagnosis() {
         set("bnoTaxType", data.taxType);
       }
     } catch {
-      setBnoResult({ ok: false, message: "조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." });
+      setBnoResult({ ok: false, message: BNO_TEXT.errorServer });
     } finally {
       setBnoLoading(false);
     }
@@ -125,7 +120,7 @@ export default function Diagnosis() {
           {/* 진행률 바 */}
           <div className="mb-6">
             <div className="mb-2 flex justify-between text-sm font-semibold text-brand-gray">
-              <span>{step}단계 / 3단계</span>
+              <span>{step}{DIAGNOSIS_TEXT.stepLabel} / {DIAGNOSIS_TEXT.totalStepLabel}</span>
               <span>{Math.round(progress)}%</span>
             </div>
             <div className="h-2 w-full rounded-full bg-gray-200">
@@ -135,12 +130,12 @@ export default function Diagnosis() {
 
           {step === 1 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">1단계 · 기본 정보</h1>
+              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP1_TITLE}</h1>
 
               {/* 사업자번호 자동 조회 (국세청 연동) */}
               <div className="mb-6 rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4">
                 <p className="mb-2 font-bold text-brand-dark">
-                  🔍 사업자등록번호로 자동 조회 <span className="text-xs font-medium text-brand-gray">(선택 · 국세청 실시간)</span>
+                  {BNO_TEXT.title} <span className="text-xs font-medium text-brand-gray">{BNO_TEXT.badge}</span>
                 </p>
                 <div className="flex gap-2">
                   <input
@@ -149,7 +144,7 @@ export default function Diagnosis() {
                     value={bno}
                     onChange={(e) => setBno(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && checkBno()}
-                    placeholder="예: 597-12-02897"
+                    placeholder={BNO_TEXT.placeholder}
                     className="flex-1 rounded-full border border-gray-300 px-4 py-2.5 text-sm text-brand-dark focus:border-brand-orange focus:outline-none"
                   />
                   <button
@@ -157,7 +152,7 @@ export default function Diagnosis() {
                     disabled={bnoLoading}
                     className="btn-brand shrink-0 rounded-full px-5 py-2.5 text-sm font-semibold disabled:opacity-60"
                   >
-                    {bnoLoading ? "조회 중..." : "조회"}
+                    {bnoLoading ? BNO_TEXT.buttonLoading : BNO_TEXT.button}
                   </button>
                 </div>
                 {bnoResult && (
@@ -169,7 +164,7 @@ export default function Diagnosis() {
                     ) : (
                       <div className="rounded-xl bg-white px-4 py-3">
                         <p className="font-semibold text-brand-dark">
-                          {bnoResult.statusCode === "01" ? "✅" : "⚠️"} 사업자 상태:{" "}
+                          {bnoResult.statusCode === "01" ? "✅" : "⚠️"} {BNO_TEXT.statusPrefix}{" "}
                           <span
                             className={
                               bnoResult.statusCode === "01"
@@ -181,46 +176,45 @@ export default function Diagnosis() {
                           </span>
                         </p>
                         {bnoResult.taxType && (
-                          <p className="mt-1 text-brand-gray">과세유형: {bnoResult.taxType}</p>
+                          <p className="mt-1 text-brand-gray">{BNO_TEXT.taxTypePrefix} {bnoResult.taxType}</p>
                         )}
                         {bnoResult.endDate && (
-                          <p className="mt-1 text-brand-gray">폐업일: {bnoResult.endDate}</p>
+                          <p className="mt-1 text-brand-gray">{BNO_TEXT.endDatePrefix} {bnoResult.endDate}</p>
                         )}
                       </div>
                     )}
                   </div>
                 )}
-                <p className="mt-2 text-xs text-brand-gray">
-                  ※ 국세청 등록 정보(정상/휴업/폐업·과세유형)를 실시간 확인합니다. 매출·재무는 조회되지 않습니다.
-                </p>
+                <p className="mt-2 text-xs text-brand-gray">{BNO_TEXT.note}</p>
               </div>
 
-              <Field label="사업자 유형"><Radio k="businessType" opts={STEP1.businessType} /></Field>
-              <Field label="업종 (중복 선택)"><Multi k="industries" opts={INDUSTRIES} /></Field>
-              <Field label="매출 규모"><Radio k="revenue" opts={STEP1.revenue} /></Field>
-              <Field label="업력"><Radio k="years" opts={STEP1.years} /></Field>
-              <Field label="대표자 연령"><Radio k="age" opts={STEP1.age} /></Field>
-              <Field label="지역"><Radio k="region" opts={STEP1.region} /></Field>
+              <Field label={STEP1_FIELDS.businessType.label}><Radio k="businessType" opts={STEP1_FIELDS.businessType.opts} /></Field>
+              <Field label={STEP1_FIELDS.industries.label}><Multi k="industries" opts={STEP1_FIELDS.industries.opts} /></Field>
+              <Field label={STEP1_FIELDS.revenue.label}><Radio k="revenue" opts={STEP1_FIELDS.revenue.opts} /></Field>
+              <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} /></Field>
+              <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} /></Field>
+              <Field label={STEP1_FIELDS.region.label}><Radio k="region" opts={STEP1_FIELDS.region.opts} /></Field>
             </div>
           )}
 
           {step === 2 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">2단계 · 상담 목적</h1>
-              <Field label="상담 목적 (다중 선택)"><Multi k="purposes" opts={PURPOSES} /></Field>
-              <Field label="정책자금 및 지원금 희망 규모"><Radio k="desiredAmount" opts={AMOUNTS} /></Field>
-              <Field label="관심 분야 (다중 선택)"><Multi k="interests" opts={INTERESTS} /></Field>
+              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP2_TITLE}</h1>
+              <Field label={STEP2_FIELDS.purposes.label}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} /></Field>
+              <Field label={STEP2_FIELDS.desiredAmount.label}><Radio k="desiredAmount" opts={STEP2_FIELDS.desiredAmount.opts} /></Field>
+              <Field label={STEP2_FIELDS.interests.label}><Multi k="interests" opts={STEP2_FIELDS.interests.opts} /></Field>
             </div>
           )}
 
           {step === 3 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">3단계 · 신용·특이사항</h1>
-              <Field label="신용등급"><Radio k="credit" opts={CREDIT} /></Field>
-              <Field label="담보 유무"><Radio k="collateral" opts={YESNO} /></Field>
-              <Field label="회생·파산 이력"><Radio k="bankruptcy" opts={YESNO} /></Field>
-              <Field label="4대보험 가입 여부"><Radio k="insurance" opts={YESNO} /></Field>
-              <Field label="가입 직원수 (대표자 제외)"><Radio k="employees" opts={EMPLOYEES} /></Field>
+              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP3_TITLE}</h1>
+              <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
+              <Field label={STEP3_FIELDS.certifications.label}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
+              <Field label={STEP3_FIELDS.collateral.label}><Radio k="collateral" opts={STEP3_FIELDS.collateral.opts} /></Field>
+              <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
+              <Field label={STEP3_FIELDS.insurance.label}><Radio k="insurance" opts={STEP3_FIELDS.insurance.opts} /></Field>
+              <Field label={STEP3_FIELDS.employees.label}><Radio k="employees" opts={STEP3_FIELDS.employees.opts} /></Field>
             </div>
           )}
 
@@ -228,21 +222,21 @@ export default function Diagnosis() {
           <div className="mt-6 flex gap-3">
             {step > 1 && (
               <button onClick={() => setStep(step - 1)} className="btn-outline flex-1 rounded-full py-3">
-                이전
+                {DIAGNOSIS_TEXT.prevButton}
               </button>
             )}
             {step < 3 ? (
               <button onClick={() => setStep(step + 1)} className="btn-brand flex-1 rounded-full py-3">
-                다음 단계
+                {DIAGNOSIS_TEXT.nextButton}
               </button>
             ) : (
               <button onClick={submit} className="btn-brand flex-1 rounded-full py-3">
-                결과 확인하기
+                {DIAGNOSIS_TEXT.submitButton}
               </button>
             )}
           </div>
           <p className="mt-4 text-center text-xs text-brand-gray">
-            ⚠️ 본 서비스는 신청 방법·전략 자문 서비스이며, 자금 승인을 보장하지 않습니다.
+            {DIAGNOSIS_TEXT.disclaimer}
           </p>
         </div>
       </main>
