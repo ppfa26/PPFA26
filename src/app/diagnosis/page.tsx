@@ -128,11 +128,6 @@ export default function Diagnosis() {
               <Field label="회생·파산 이력"><Radio k="bankruptcy" opts={YESNO} /></Field>
               <Field label="4대보험 가입 여부"><Radio k="insurance" opts={YESNO} /></Field>
               <Field label="가입 직원수 (대표자 제외)"><Radio k="employees" opts={EMPLOYEES} /></Field>
-              <div className="mt-6 rounded-xl bg-gray-50 p-4">
-                <p className="mb-3 font-bold text-brand-dark">연락처</p>
-                <input className="mb-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-orange" placeholder="이름" value={form.name || ""} onChange={(e) => set("name", e.target.value)} />
-                <input className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-orange" placeholder="휴대폰 번호" value={form.phone || ""} onChange={(e) => set("phone", e.target.value)} />
-              </div>
             </div>
           )}
 

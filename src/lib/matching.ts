@@ -19,7 +19,7 @@ export type DiagnosisProfile = {
   bankruptcy?: string;
   insurance?: string;
   employees?: string; // 0명/5명이하/10명이하/10명이상
-  // 연락처
+  // 연락처(이름·휴대폰은 회원가입 단계에서 수집 — 진단에서는 미수집)
   name?: string;
   phone?: string;
   email?: string;
