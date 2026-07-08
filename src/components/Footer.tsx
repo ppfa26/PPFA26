@@ -13,7 +13,7 @@ export default function Footer() {
           <div className="max-w-sm">
             <div className="flex items-center gap-2">
               <Image
-                src="/logo/app-icon-white.png"
+                src="/logo/brand-footer-dark.png"
                 alt="모두의공공조달"
                 width={28}
                 height={28}

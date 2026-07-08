@@ -14,19 +14,19 @@ export default function Header() {
         {/* 로고 + 상호명 */}
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logo/app-icon-white.png"
+            src="/logo/brand-header.png"
             alt="모두의공공조달 로고"
             width={40}
             height={40}
             className="h-9 w-9 shrink-0 rounded-[9px] sm:h-10 sm:w-10"
             priority
           />
-          <span className="flex flex-col justify-center leading-none">
-            <span className="text-[19px] font-extrabold leading-none tracking-[-0.01em] text-brand-dark sm:text-[21px]">
+          <span className="flex flex-col justify-center">
+            <span className="text-[19px] font-extrabold leading-tight tracking-[-0.005em] text-brand-dark sm:text-[21px]">
               모두의공공조달
             </span>
             <span
-              className="mt-[3px] block w-full text-[8px] font-semibold uppercase leading-none text-brand-gray sm:text-[8.5px]"
+              className="mt-[2px] block w-full text-[8px] font-semibold uppercase leading-tight text-brand-gray sm:text-[8.5px]"
               style={{ textAlignLast: "justify" }}
             >
               Public Procurement For All

@@ -28,6 +28,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "모두의공공조달",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "모두의공공조달 — 정부지원사업 통합 매칭 자문 플랫폼",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "모두의공공조달 | 정부지원사업 통합 매칭 자문 플랫폼",
+    description:
+      "브로커 수수료 5% 대신, 99,000원으로 직접 방법을 배우세요.",
+    images: ["/og-image.png"],
   },
 };
 
