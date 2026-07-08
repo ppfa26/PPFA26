@@ -206,7 +206,7 @@ export default function Home() {
         <section className="bg-gray-50 px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-4xl text-center">
             <Editable
-              id="home-value-title"
+              id="home-value-title-v2"
               as="h2"
               className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
             >
