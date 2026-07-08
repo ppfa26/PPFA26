@@ -28,7 +28,7 @@ export default function Footer() {
               as="p"
               className="mt-3 break-keep text-sm leading-relaxed text-gray-400"
             >
-              내 사업장의 알맞는 정부지원사업 찾는 가장 빠른 방법
+              내 사업장에 알맞는 정부지원사업 찾는 가장 빠른 방법
             </Editable>
             <Editable
               id="footer-nowarranty"
@@ -37,7 +37,7 @@ export default function Footer() {
             >
               ⚠️ 본 서비스는 정부지원사업 승인을 보장하지 않습니다.
               <br />
-              정부지원사업 안내 및 신청 방법을 자문하는 자문 플랫폼입니다.
+              정부지원사업 안내 및 신청 방법을 자문하는 플랫폼입니다.
             </Editable>
           </div>
 
