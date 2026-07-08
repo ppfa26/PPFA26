@@ -103,7 +103,7 @@ export default function Home() {
               정부지원사업 통합 매칭 자문 플랫폼
             </Editable>
             <Editable
-              id="hero-headline"
+              id="hero-headline-v2"
               as="h1"
               className="break-keep text-[22px] font-black leading-tight text-brand-dark xs:text-[26px] sm:text-5xl"
             >
@@ -210,7 +210,7 @@ export default function Home() {
               as="h2"
               className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
             >
-              99,000원으로 이 모든 걸 알려드립니다
+              99,000원으로 이 모든 걸 알려드립니다.
             </Editable>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {VALUES.map((v, i) => (
