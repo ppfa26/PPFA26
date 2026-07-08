@@ -26,9 +26,8 @@ const FAQS = [
     q: "Q1. 자동결제인가요?",
     a: (
       <>
-        아닙니다. 1회 결제이며, 자동으로 재결제되지 않습니다.
-        <br />
-        만족하시면 1개월 단위로 추가 결제 후 자유롭게 연장할 수 있습니다.
+        아닙니다. 1회 결제이며, 자동으로 재결제되지 않습니다. 만족하시면 1개월
+        단위로 추가 결제 후 자유롭게 연장할 수 있습니다.
       </>
     ),
   },
@@ -36,13 +35,10 @@ const FAQS = [
     q: "Q2. 행정대행 신청해주시나요?",
     a: (
       <>
-        아닙니다. 저희는 방법을 알려드리는 경영 자문 플랫폼입니다.
-        <br />
-        서류발급부터 신청까지 대표님이 직접 하셔야 합니다.
-        <br />
-        브로커 대행 시 승인 수수료는 1억 승인 시 약 500만원 — 너무 큰 돈입니다.
-        <br />
-        방법만 안다면 신청은 그렇게 어렵지 않습니다.
+        아닙니다. 저희는 방법을 알려드리는 경영 자문 플랫폼입니다. 서류발급부터
+        신청까지 대표님이 직접 하셔야 합니다. 브로커 대행 시 승인 수수료는 1억
+        승인 시 약 500만원 — 너무 큰 돈입니다. 방법만 안다면 신청은 그렇게 어렵지
+        않습니다.
       </>
     ),
   },
@@ -50,12 +46,9 @@ const FAQS = [
     q: "Q3. 승인을 보장하나요?",
     a: (
       <>
-        아닙니다. 저희는 신청 방법과 전략을 자문해드리는 서비스이며,
-        <br />
-        자금 승인 여부는 각 정책자금 기관의 심사에 따라 결정됩니다.
-        <br />
-        저희 서비스는 대표님의 정부지원 사업 승인 확률을 높이는 데 도움을 드리는
-        것을 목적으로 합니다.
+        아닙니다. 저희는 신청 방법과 전략을 자문해드리는 서비스이며, 자금 승인
+        여부는 각 정책자금 기관의 심사에 따라 결정됩니다. 저희 서비스는 대표님의
+        정부지원 사업 승인 확률을 높이는 데 도움을 드리는 것을 목적으로 합니다.
       </>
     ),
   },
@@ -63,11 +56,9 @@ const FAQS = [
     q: "Q4. 환불되나요?",
     a: (
       <>
-        서비스 이용(열람) 전에는 7일 이내 100% 환불 가능합니다.
-        <br />
-        「전자상거래 등에서의 소비자보호에 관한 법률(전자상거래법)」을 따릅니다.
-        <br />
-        단, 서비스 이용(열람) 이후에는 관련 법령·법규에 따라 환불이 불가합니다.
+        서비스 이용(열람) 전에는 7일 이내 100% 환불 가능합니다. 「전자상거래
+        등에서의 소비자보호에 관한 법률(전자상거래법)」을 따릅니다. 단, 서비스
+        이용(열람) 이후에는 관련 법령·법규에 따라 환불이 불가합니다.
       </>
     ),
   },
@@ -76,10 +67,8 @@ const FAQS = [
     a: (
       <>
         정책자금 대출뿐 아니라 정부 지원금, 청년창업사관학교, K-Startup,
-        <br />
-        예비창업패키지, 창업대학, 지자체 지원사업, 바우처, 각종 인증제도까지
-        <br />
-        국내 모든 정부 지원 사업을 포괄 안내합니다.
+        예비창업패키지, 창업대학, 지자체 지원사업, 바우처, 각종 인증제도까지 국내
+        모든 정부 지원 사업을 포괄 안내합니다.
       </>
     ),
   },
@@ -87,10 +76,8 @@ const FAQS = [
     q: "Q6. 정보는 얼마나 최신인가요?",
     a: (
       <>
-        매일 자동으로 89개 공식 사이트를 크롤링하여 최신 공고를 반영합니다.
-        <br />
-        또한 40여 개 부처의 최신 공문 자료를 기반으로 정확한 팩트체크 후
-        답변합니다.
+        매일 자동으로 89개 공식 사이트를 크롤링하여 최신 공고를 반영합니다. 또한
+        40여 개 부처의 최신 공문 자료를 기반으로 정확한 팩트체크 후 답변합니다.
       </>
     ),
   },
@@ -104,7 +91,7 @@ export default function Home() {
         {/* 히어로 */}
         <section
           id="hero-section"
-          className="relative overflow-hidden px-4 pb-14 pt-12 sm:pt-20"
+          className="relative overflow-hidden px-4 pb-10 pt-10 sm:pb-14 sm:pt-20"
         >
           <div className="mx-auto max-w-3xl text-center animate-fadeUp">
             <Editable
@@ -179,7 +166,7 @@ export default function Home() {
         </section>
 
         {/* 가치 제안 4단계 */}
-        <section className="px-4 py-16">
+        <section className="px-4 py-10 sm:py-16">
           <div className="mx-auto max-w-4xl text-center">
             <Editable
               id="home-value-title"
@@ -211,7 +198,7 @@ export default function Home() {
         </section>
 
         {/* 비교 섹션 */}
-        <section className="bg-gray-50 px-4 py-16">
+        <section className="bg-gray-50 px-4 py-10 sm:py-16">
           <div className="mx-auto max-w-3xl">
             <Editable
               id="home-compare-title"
@@ -246,7 +233,7 @@ export default function Home() {
         </section>
 
         {/* 가격표 */}
-        <section id="pricing-section" className="px-4 py-16">
+        <section id="pricing-section" className="px-4 py-10 sm:py-16">
           <div className="mx-auto max-w-5xl">
             <Editable
               id="home-pricing-title"
@@ -269,7 +256,7 @@ export default function Home() {
         </section>
 
         {/* FAQ */}
-        <section className="bg-gray-50 px-4 py-16">
+        <section className="bg-gray-50 px-4 py-10 sm:py-16">
           <div className="mx-auto max-w-3xl">
             <Editable
               id="home-faq-title"
@@ -296,7 +283,7 @@ export default function Home() {
                   <Editable
                     id={`home-faq-a-${i}`}
                     as="p"
-                    className="mt-3 text-sm leading-relaxed text-brand-gray"
+                    className="mt-3 break-keep text-sm leading-relaxed text-brand-gray"
                   >
                     {f.a}
                   </Editable>
@@ -307,7 +294,7 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA */}
-        <section className="px-4 py-16">
+        <section className="px-4 py-10 sm:py-16">
           <div className="mx-auto max-w-2xl rounded-3xl bg-brand-grad p-10 text-center">
             <Editable
               id="home-cta-title"

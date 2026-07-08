@@ -35,11 +35,11 @@ export default function Footer() {
             <Editable
               id="footer-nowarranty"
               as="p"
-              className="mt-3 rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
+              className="mt-3 break-keep rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
             >
-              ⚠️ 본 서비스는 신청 방법 및 전략 자문 서비스이며, 자금 승인을 보장하지 않습니다.
-              <br />
-              대행 신청을 하지 않으며 따라서 승인 수수료를 받지 않습니다.
+              ⚠️ 본 서비스는 신청 가능 상품 안내 및 자문 서비스이며 정부지원사업
+              승인을 보장하지 않습니다. 대행 신청을 하지 않으며 따라서 승인
+              수수료를 받지 않습니다.
             </Editable>
           </div>
 

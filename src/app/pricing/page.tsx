@@ -25,7 +25,7 @@ export default function PricingPage() {
   return (
     <PageShell pageKey="pricing">
       <Header />
-      <main className="px-4 py-14">
+      <main className="px-4 py-10 sm:py-14">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <Editable
@@ -49,7 +49,7 @@ export default function PricingPage() {
           </div>
 
           {/* 가격 FAQ */}
-          <div className="mx-auto mt-16 max-w-3xl">
+          <div className="mx-auto mt-10 max-w-3xl sm:mt-16">
             <Editable
               id="pricing-faq-title"
               as="h2"
