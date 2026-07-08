@@ -92,7 +92,7 @@ export default function Home() {
         {/* 히어로 */}
         <section
           id="hero-section"
-          className="relative overflow-hidden px-4 pb-10 pt-10 sm:pb-14 sm:pt-20"
+          className="relative overflow-hidden px-4 pb-7 pt-7 sm:pb-12 sm:pt-16"
         >
           <div className="mx-auto max-w-3xl text-center animate-fadeUp">
             <Editable
@@ -125,7 +125,7 @@ export default function Home() {
               신청하는 방법을 배워 무료로 신청하세요.
             </Editable>
 
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Editable
                 id="hero-cta-primary"
                 as="a"
@@ -168,7 +168,7 @@ export default function Home() {
         </section>
 
         {/* 가치 제안 4단계 */}
-        <section className="px-4 py-10 sm:py-16">
+        <section className="px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-4xl text-center">
             <Editable
               id="home-value-title"
@@ -200,7 +200,7 @@ export default function Home() {
         </section>
 
         {/* 비교 섹션 */}
-        <section className="bg-gray-50 px-4 py-10 sm:py-16">
+        <section className="bg-gray-50 px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-3xl">
             <Editable
               id="home-compare-title"
@@ -235,7 +235,7 @@ export default function Home() {
         </section>
 
         {/* 가격표 */}
-        <section id="pricing-section" className="px-4 py-10 sm:py-16">
+        <section id="pricing-section" className="px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-5xl">
             <Editable
               id="home-pricing-title"
@@ -259,7 +259,7 @@ export default function Home() {
         </section>
 
         {/* FAQ */}
-        <section className="bg-gray-50 px-4 py-10 sm:py-16">
+        <section className="bg-gray-50 px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-3xl">
             <Editable
               id="home-faq-title"
@@ -297,7 +297,7 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA */}
-        <section className="px-4 py-10 sm:py-16">
+        <section className="px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-2xl rounded-3xl bg-brand-grad p-10 text-center">
             <Editable
               id="home-cta-title"
