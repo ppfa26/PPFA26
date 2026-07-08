@@ -23,7 +23,7 @@ const FONTS = [
 ];
 
 export default function EditToolbar() {
-  const { editMode, setEditMode, resetAll } = useEdit();
+  const { editMode, setEditMode, resetAll, showToast } = useEdit();
   const [selected, setSelected] = useState<{
     id: string;
     apply: (v: EditValue) => void;
@@ -51,18 +51,29 @@ export default function EditToolbar() {
 
   return (
     <>
-      {/* 편집 모드 토글 버튼 (우측 하단 고정) */}
-      <button
-        onClick={() => setEditMode(!editMode)}
-        aria-label="편집 모드 토글"
-        className={`fixed bottom-5 right-5 z-[9998] flex h-14 w-14 items-center justify-center rounded-full text-2xl shadow-lg transition ${
-          editMode
-            ? "bg-brand-grad"
-            : "bg-white border-2 border-gray-200 hover:border-brand-orange"
-        }`}
-      >
-        {editMode ? "✏️" : "🔒"}
-      </button>
+      {/* 편집 모드 토글 버튼 (우측 하단 고정) - 큼직한 글자 버튼 */}
+      {!editMode ? (
+        <button
+          onClick={() => setEditMode(true)}
+          aria-label="글자 수정하기"
+          className="fixed bottom-5 right-5 z-[9998] flex items-center gap-2 rounded-full border-2 border-brand-orange bg-white px-5 py-3.5 text-sm font-bold text-brand-dark shadow-lg transition hover:bg-brand-orange hover:text-white sm:text-base"
+        >
+          <span className="text-lg">✏️</span>
+          글자 수정하기
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            setEditMode(false);
+            showToast("저장 완료 ✓");
+          }}
+          aria-label="저장하고 끝내기"
+          className="fixed bottom-5 right-5 z-[9998] flex items-center gap-2 rounded-full bg-brand-green px-5 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-105 sm:text-base"
+        >
+          <span className="text-lg">💾</span>
+          저장하고 끝내기
+        </button>
+      )}
 
       {/* 편집 툴바 (상단 고정) */}
       {editMode && (
@@ -155,19 +166,28 @@ export default function EditToolbar() {
               </button>
             </div>
 
-            {/* 초기화 */}
-            <button
-              onClick={handleReset}
-              className="ml-auto rounded-full bg-brand-red px-3 py-1 font-bold text-white"
-            >
-              초기화
-            </button>
+            {/* 저장하고 끝내기 + 초기화 */}
+            <div className="ml-auto flex items-center gap-1.5">
+              <button
+                onClick={() => {
+                  setEditMode(false);
+                  showToast("저장 완료 ✓");
+                }}
+                className="rounded-full bg-brand-green px-3 py-1 font-bold text-white"
+              >
+                💾 저장
+              </button>
+              <button
+                onClick={handleReset}
+                className="rounded-full bg-brand-red px-3 py-1 font-bold text-white"
+              >
+                초기화
+              </button>
+            </div>
           </div>
-          {!selected && (
-            <p className="mx-auto max-w-5xl pt-1 text-[11px] text-brand-gray">
-              👆 수정할 텍스트를 클릭한 뒤, 위 도구로 크기·색상·폰트를 바꾸세요. 글자를 직접 눌러 내용도 바로 고칠 수 있어요.
-            </p>
-          )}
+          <p className="mx-auto max-w-5xl pt-1 text-[11px] text-brand-gray">
+            👆 고칠 <b>글자를 클릭</b>하고 바로 타이핑하세요. 다른 곳을 누르면 자동 저장됩니다. 다 하시면 오른쪽 <b>💾 저장</b> 버튼을 누르세요.
+          </p>
         </div>
       )}
 
