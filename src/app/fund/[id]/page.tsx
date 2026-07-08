@@ -86,11 +86,11 @@ export default function FundDetailPage({
               rel="noopener noreferrer"
               className="btn-brand mt-5 inline-flex w-full items-center justify-center rounded-full px-8 py-3.5 text-center font-bold sm:w-auto"
             >
-              🔗 {program.applySite} 바로가기
+              🔗 {program.applySite} 사이트 바로가기
             </a>
           </section>
 
-          {/* 필요 서류 */}
+          {/* 필요 서류 — 정확히 확정된 경우에만 노출. 아니면 상담 안내로 대체 */}
           <section
             id="fund-docs"
             className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card sm:p-8"
@@ -98,17 +98,24 @@ export default function FundDetailPage({
             <h2 className="text-lg font-extrabold text-brand-dark">
               📋 필요 서류
             </h2>
-            <ul className="mt-4 space-y-2">
-              {program.docs.map((doc, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-2 text-sm text-brand-dark"
-                >
-                  <span className="mt-0.5 text-brand-green">✔</span>
-                  <span>{doc}</span>
-                </li>
-              ))}
-            </ul>
+            {program.docs && program.docs.length > 0 ? (
+              <ul className="mt-4 space-y-2">
+                {program.docs.map((doc, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-sm text-brand-dark"
+                  >
+                    <span className="mt-0.5 text-brand-green">✔</span>
+                    <span>{doc}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 rounded-2xl bg-gray-50 px-4 py-4 text-sm leading-relaxed text-brand-dark">
+                필요 서류는 <strong>기관·상품·개별 사업장 상황에 따라 달라집니다</strong>. 정확한
+                서류 목록은 1:1 상담을 통해 대표님 상황에 맞게 안내해 드립니다.
+              </p>
+            )}
           </section>
 
           {/* 승인 전략 */}
