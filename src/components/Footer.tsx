@@ -35,7 +35,7 @@ export default function Footer() {
               as="p"
               className="mt-3 break-keep rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
             >
-              ⚠️ 본 서비스는 정부지원사업 승인을 보장하지않습니다.
+              ⚠️ 본 서비스는 정부지원사업 승인을 보장하지 않습니다.
             </Editable>
           </div>
 
