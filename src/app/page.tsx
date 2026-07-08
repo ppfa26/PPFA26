@@ -8,9 +8,9 @@ import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
 
 const TRUST_BADGES = [
-  { icon: "🏛️", text: "89개 공식 사이트 매일 크롤링" },
-  { icon: "📚", text: "40여개 부처 최신 공문 기반 자문" },
-  { icon: "🔒", text: "승인 보장 없음 · 자문 전용 플랫폼" },
+  { icon: "🏛️", text: "89개 정부 사이트 크롤링" },
+  { icon: "📚", text: "40여개 부처 최신 공문 자문" },
+  { icon: "🔒", text: "승인 보장 X · 자문 플랫폼" },
   { icon: "🚫", text: "대행 없음 · 승인 수수료 없음" },
 ];
 
@@ -98,7 +98,7 @@ export default function Home() {
             <Editable
               id="hero-badge"
               as="div"
-              className="mb-5 inline-block rounded-full bg-brand-yellow px-6 py-2.5 text-sm font-bold text-brand-dark sm:text-base"
+              className="mb-5 inline-block rounded-full bg-brand-yellow px-6 py-2.5 text-base font-bold text-brand-dark sm:text-lg"
             >
               정부지원사업 통합 매칭 자문 플랫폼
             </Editable>
@@ -121,7 +121,7 @@ export default function Home() {
               정부지원사업 브로커 대행 수수료는 1억원 승인 시 최소 500만원입니다.
               <br className="hidden sm:inline" />{" "}
               모두의공공조달에서{" "}
-              <strong className="text-brand-red">99,000원</strong>으로 직접
+              <strong className="text-brand-dark">99,000원</strong>으로 직접
               신청하는 방법을 배워 무료로 신청하세요.
             </Editable>
 
@@ -173,7 +173,7 @@ export default function Home() {
             <Editable
               id="home-value-title"
               as="h2"
-              className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
+              className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
             >
               99,000원으로 이 모든 걸 알려드립니다
             </Editable>
@@ -215,7 +215,7 @@ export default function Home() {
                 <Editable
                   id="home-compare-broker"
                   as="p"
-                  className="break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base"
+                  className="break-keep text-xs font-bold leading-snug text-brand-dark sm:text-sm"
                 >
                   정책자금 브로커 대행 수수료 : 최소 500만원
                 </Editable>
@@ -225,7 +225,7 @@ export default function Home() {
                 <Editable
                   id="home-compare-us"
                   as="p"
-                  className="break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base"
+                  className="break-keep text-xs font-bold leading-snug text-brand-dark sm:text-sm"
                 >
                   모두의공공조달 : 99,000원부터 ~
                 </Editable>
@@ -302,14 +302,14 @@ export default function Home() {
             <Editable
               id="home-cta-title"
               as="h2"
-              className="text-2xl font-black text-brand-dark sm:text-3xl"
+              className="break-keep text-xl font-black text-brand-dark sm:text-2xl"
             >
               지금 무료로 진단받아 보세요
             </Editable>
             <Editable
               id="home-cta-sub"
               as="p"
-              className="mt-3 text-brand-dark/70"
+              className="mt-3 break-keep text-sm text-brand-dark/70"
             >
               3분이면 나에게 맞는 정책자금·지원사업을 찾을 수 있습니다.
             </Editable>
