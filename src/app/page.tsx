@@ -106,7 +106,7 @@ export default function Home() {
               as="h1"
               className="text-3xl font-black leading-tight text-brand-dark sm:text-5xl"
             >
-              정책자금 브로커 수수료 5%,<br />
+              정부지원사업 브로커 5%,<br />
               아직도 비싸게 쓰고 계신가요?
             </Editable>
 
