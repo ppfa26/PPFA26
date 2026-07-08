@@ -26,8 +26,8 @@ const FAQS = [
     q: "Q1. 자동결제인가요?",
     a: (
       <>
-        아닙니다. 1회 결제이며, 자동으로 재결제되지 않습니다. 만족하시면 1개월
-        단위로 추가 결제 후 자유롭게 연장할 수 있습니다.
+        아닙니다. 1회성 결제이며, 자동으로 재결제되지 않습니다. 만족하시면
+        1개월 단위로 추가 결제 후 자유롭게 연장할 수 있습니다.
       </>
     ),
   },
@@ -36,9 +36,9 @@ const FAQS = [
     a: (
       <>
         아닙니다. 저희는 방법을 알려드리는 경영 자문 플랫폼입니다. 서류발급부터
-        신청까지 대표님이 직접 하셔야 합니다. 브로커 대행 시 승인 수수료는 1억
-        승인 시 약 500만원 — 너무 큰 돈입니다. 방법만 안다면 신청은 그렇게 어렵지
-        않습니다.
+        신청까지 대표님이 직접 하셔야 합니다. 정부지원사업 브로커 대행 시 승인
+        수수료는 1억 승인 시 약 500만원이며 너무 큰 돈입니다. 신청하는 방법만
+        안다면 직접 신청은 그렇게 어렵지 않습니다.
       </>
     ),
   },
@@ -46,9 +46,10 @@ const FAQS = [
     q: "Q3. 승인을 보장하나요?",
     a: (
       <>
-        아닙니다. 저희는 신청 방법과 전략을 자문해드리는 서비스이며, 자금 승인
-        여부는 각 정책자금 기관의 심사에 따라 결정됩니다. 저희 서비스는 대표님의
-        정부지원 사업 승인 확률을 높이는 데 도움을 드리는 것을 목적으로 합니다.
+        아닙니다. 저희는 정부지원사업을 안내하고 방법을 자문해드리는
+        플랫폼입니다. 자금 승인 여부는 각 정책자금 정부 기관의 심사에 따라
+        결정됩니다. 저희 서비스는 대표님에게 알맞는 정부지원사업을 안내하고
+        신청방법을 자문해드리는 것을 목표로 합니다.
       </>
     ),
   },
@@ -214,7 +215,7 @@ export default function Home() {
                   as="p"
                   className="break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base"
                 >
-                  정책자금 브로커 대행 = 최소 500만원 수수료
+                  정책자금 브로커 대행 수수료 : 최소 500만원
                 </Editable>
               </div>
               <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-green bg-white p-6">
@@ -224,7 +225,7 @@ export default function Home() {
                   as="p"
                   className="break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base"
                 >
-                  모두의공공조달 = 99,000원부터 ~
+                  모두의공공조달 : 99,000원부터 ~
                 </Editable>
               </div>
             </div>
@@ -246,7 +247,8 @@ export default function Home() {
               as="p"
               className="mx-auto mt-2 max-w-xl text-center text-sm text-brand-gray"
             >
-              모든 플랜은 1회 결제이며 자동결제가 없습니다. 필요할 때만 연장하세요.
+              모든 플랜은 1회성 결제이며 자동결제가 아닙니다. 필요할 때만 1개월
+              단위로 연장하세요.
             </Editable>
             <div className="mt-10">
               <PricingCards prefix="home" />

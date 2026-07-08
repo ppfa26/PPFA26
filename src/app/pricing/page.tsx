@@ -40,7 +40,7 @@ export default function PricingPage() {
               as="p"
               className="mx-auto mt-3 max-w-xl text-brand-gray"
             >
-              브로커 수수료 5% 대신, 커피 몇 잔 값으로 방법을 배우세요. 모든 플랜은 1회 결제이며 자동결제가 없습니다.
+              모든 플랜은 1회성 결제이며 자동결제가 아닙니다. 필요할 때만 1개월 단위로 연장하세요.
             </Editable>
           </div>
 
