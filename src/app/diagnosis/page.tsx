@@ -26,6 +26,40 @@ export default function Diagnosis() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [] });
 
+  // 사업자번호 조회 상태
+  const [bno, setBno] = useState("");
+  const [bnoLoading, setBnoLoading] = useState(false);
+  const [bnoResult, setBnoResult] = useState<any>(null);
+
+  const checkBno = async () => {
+    setBnoResult(null);
+    const digits = bno.replace(/[^0-9]/g, "");
+    if (digits.length !== 10) {
+      setBnoResult({ ok: false, message: "사업자등록번호 10자리를 정확히 입력해 주세요." });
+      return;
+    }
+    setBnoLoading(true);
+    try {
+      const res = await fetch("/api/business-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bno: digits }),
+      });
+      const data = await res.json();
+      setBnoResult(data);
+      if (data.ok && data.found) {
+        // 조회 결과를 진단 데이터에 함께 저장
+        set("bno", digits);
+        set("bnoStatus", data.status);
+        set("bnoTaxType", data.taxType);
+      }
+    } catch {
+      setBnoResult({ ok: false, message: "조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." });
+    } finally {
+      setBnoLoading(false);
+    }
+  };
+
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
   const toggle = (k: string, v: string) =>
     setForm((f: any) => {
@@ -102,6 +136,65 @@ export default function Diagnosis() {
           {step === 1 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
               <h1 className="mb-5 text-xl font-extrabold text-brand-dark">1단계 · 기본 정보</h1>
+
+              {/* 사업자번호 자동 조회 (국세청 연동) */}
+              <div className="mb-6 rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4">
+                <p className="mb-2 font-bold text-brand-dark">
+                  🔍 사업자등록번호로 자동 조회 <span className="text-xs font-medium text-brand-gray">(선택 · 국세청 실시간)</span>
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={bno}
+                    onChange={(e) => setBno(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && checkBno()}
+                    placeholder="예: 597-12-02897"
+                    className="flex-1 rounded-full border border-gray-300 px-4 py-2.5 text-sm text-brand-dark focus:border-brand-orange focus:outline-none"
+                  />
+                  <button
+                    onClick={checkBno}
+                    disabled={bnoLoading}
+                    className="btn-brand shrink-0 rounded-full px-5 py-2.5 text-sm font-semibold disabled:opacity-60"
+                  >
+                    {bnoLoading ? "조회 중..." : "조회"}
+                  </button>
+                </div>
+                {bnoResult && (
+                  <div className="mt-3 text-sm">
+                    {!bnoResult.ok ? (
+                      <p className="text-brand-red">⚠️ {bnoResult.message}</p>
+                    ) : !bnoResult.found ? (
+                      <p className="text-brand-red">⚠️ {bnoResult.message}</p>
+                    ) : (
+                      <div className="rounded-xl bg-white px-4 py-3">
+                        <p className="font-semibold text-brand-dark">
+                          {bnoResult.statusCode === "01" ? "✅" : "⚠️"} 사업자 상태:{" "}
+                          <span
+                            className={
+                              bnoResult.statusCode === "01"
+                                ? "text-brand-green"
+                                : "text-brand-red"
+                            }
+                          >
+                            {bnoResult.status}
+                          </span>
+                        </p>
+                        {bnoResult.taxType && (
+                          <p className="mt-1 text-brand-gray">과세유형: {bnoResult.taxType}</p>
+                        )}
+                        {bnoResult.endDate && (
+                          <p className="mt-1 text-brand-gray">폐업일: {bnoResult.endDate}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <p className="mt-2 text-xs text-brand-gray">
+                  ※ 국세청 등록 정보(정상/휴업/폐업·과세유형)를 실시간 확인합니다. 매출·재무는 조회되지 않습니다.
+                </p>
+              </div>
+
               <Field label="사업자 유형"><Radio k="businessType" opts={STEP1.businessType} /></Field>
               <Field label="업종 (중복 선택)"><Multi k="industries" opts={INDUSTRIES} /></Field>
               <Field label="매출 규모"><Radio k="revenue" opts={STEP1.revenue} /></Field>
