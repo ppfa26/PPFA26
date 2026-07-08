@@ -167,40 +167,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 가치 제안 4단계 */}
-        <section className="px-4 py-7 sm:py-12">
-          <div className="mx-auto max-w-4xl text-center">
-            <Editable
-              id="home-value-title"
-              as="h2"
-              className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
-            >
-              99,000원으로 이 모든 걸 알려드립니다
-            </Editable>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {VALUES.map((v, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-5 text-left shadow-sm"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-green text-sm font-bold text-white">
-                    ✓
-                  </span>
-                  <Editable
-                    id={`home-value-${i}`}
-                    as="span"
-                    className="font-semibold text-brand-dark"
-                  >
-                    {v}
-                  </Editable>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* 비교 섹션 */}
-        <section className="bg-gray-50 px-4 py-7 sm:py-12">
+        <section className="px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-3xl">
             <Editable
               id="home-compare-title"
@@ -230,6 +198,38 @@ export default function Home() {
                   모두의공공조달 : 99,000원부터 ~
                 </Editable>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 가치 제안 4단계 */}
+        <section className="bg-gray-50 px-4 py-7 sm:py-12">
+          <div className="mx-auto max-w-4xl text-center">
+            <Editable
+              id="home-value-title"
+              as="h2"
+              className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+            >
+              99,000원으로 이 모든 걸 알려드립니다
+            </Editable>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {VALUES.map((v, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-5 text-left shadow-sm"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-green text-sm font-bold text-white">
+                    ✓
+                  </span>
+                  <Editable
+                    id={`home-value-${i}`}
+                    as="span"
+                    className="font-semibold text-brand-dark"
+                  >
+                    {v}
+                  </Editable>
+                </div>
+              ))}
             </div>
           </div>
         </section>
