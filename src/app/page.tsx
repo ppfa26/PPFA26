@@ -59,9 +59,13 @@ export default function Home() {
           className="relative overflow-hidden px-4 pb-14 pt-12 sm:pt-20"
         >
           <div className="mx-auto max-w-3xl text-center animate-fadeUp">
-            <div className="mb-5 inline-block rounded-full bg-brand-yellow px-6 py-2.5 text-sm font-bold text-brand-dark sm:text-base">
+            <Editable
+              id="hero-badge"
+              as="div"
+              className="mb-5 inline-block rounded-full bg-brand-yellow px-6 py-2.5 text-sm font-bold text-brand-dark sm:text-base"
+            >
               정책자금·정부지원사업 통합 매칭 자문
-            </div>
+            </Editable>
             <Editable
               id="hero-headline"
               as="h1"
@@ -85,18 +89,22 @@ export default function Home() {
             </Editable>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link
+              <Editable
+                id="hero-cta-primary"
+                as="a"
                 href="/diagnosis"
                 className="btn-brand w-full rounded-full px-8 py-4 text-lg animate-pulseGlow sm:w-auto"
               >
                 무료 진단 시작하기
-              </Link>
-              <Link
+              </Editable>
+              <Editable
+                id="hero-cta-secondary"
+                as="a"
                 href="/pricing"
                 className="btn-outline w-full rounded-full px-8 py-4 text-lg sm:w-auto"
               >
                 상품 자세히 보기
-              </Link>
+              </Editable>
             </div>
           </div>
         </section>
@@ -267,12 +275,14 @@ export default function Home() {
             >
               3분이면 나에게 맞는 정책자금·지원사업을 찾을 수 있습니다.
             </Editable>
-            <Link
+            <Editable
+              id="home-cta-button"
+              as="a"
               href="/diagnosis"
               className="mt-6 inline-block rounded-full bg-brand-dark px-10 py-4 text-lg font-bold text-white hover:opacity-90"
             >
               무료 진단 시작하기
-            </Link>
+            </Editable>
           </div>
         </section>
       </main>

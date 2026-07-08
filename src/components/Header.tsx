@@ -21,11 +21,11 @@ export default function Header() {
             className="h-10 w-10 shrink-0 rounded-lg sm:h-11 sm:w-11"
             priority
           />
-          <span className="flex min-w-0 flex-col leading-tight">
+          <span className="flex min-w-0 flex-col justify-center leading-none gap-[3px]">
             <span className="truncate text-[17px] font-extrabold tracking-tight text-brand-dark sm:text-lg">
               모두의공공조달
             </span>
-            <span className="hidden truncate text-[10.5px] tracking-[0.055em] text-brand-gray sm:block">
+            <span className="hidden truncate text-[11px] font-medium tracking-[0.12em] text-brand-gray sm:block">
               Public&nbsp;Procurement&nbsp;For&nbsp;All
             </span>
           </span>
