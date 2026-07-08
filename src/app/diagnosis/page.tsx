@@ -152,11 +152,11 @@ export default function Diagnosis() {
               <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP1_TITLE}</h1>
 
               {/* 사업자번호 자동 조회 (국세청 연동) */}
-              <div className="mb-6 rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4">
+              <div className="mb-6 overflow-hidden rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4">
                 <p className="mb-2 font-bold text-brand-dark">
                   {BNO_TEXT.title} <span className="text-xs font-medium text-brand-gray">{BNO_TEXT.badge}</span>
                 </p>
-                <div className="flex gap-2">
+                <div className="flex w-full items-center gap-1.5">
                   <input
                     type="text"
                     inputMode="numeric"
@@ -164,12 +164,12 @@ export default function Diagnosis() {
                     onChange={(e) => setBno(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && checkBno()}
                     placeholder={BNO_TEXT.placeholder}
-                    className="flex-1 rounded-full border border-gray-300 px-4 py-2.5 text-sm text-brand-dark focus:border-brand-orange focus:outline-none"
+                    className="min-w-0 flex-1 rounded-full border border-gray-300 px-3 py-2 text-xs text-brand-dark focus:border-brand-orange focus:outline-none xs:text-sm sm:px-4 sm:py-2.5"
                   />
                   <button
                     onClick={checkBno}
                     disabled={bnoLoading}
-                    className="btn-brand shrink-0 rounded-full px-5 py-2.5 text-sm font-semibold disabled:opacity-60"
+                    className="btn-brand shrink-0 rounded-full px-3 py-2 text-xs font-semibold disabled:opacity-60 sm:px-5 sm:py-2.5 sm:text-sm"
                   >
                     {bnoLoading ? BNO_TEXT.buttonLoading : BNO_TEXT.button}
                   </button>
