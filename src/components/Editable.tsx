@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useEdit, EditValue } from "./EditContext";
 
 type Tag =
@@ -62,11 +62,9 @@ export default function Editable({
   const { editMode, edits, saveEdit } = useEdit();
   const ref = useRef<HTMLElement>(null);
   const saved = edits[id];
-  // 대표님이 실제로 텍스트를 고친 경우에만 저장된 HTML을 사용.
-  // 그렇지 않으면 항상 코드의 최신 문구(children)를 보여줌 → "미리보기 항상 최신화"
-  const [initialHtml] = useState<string | null>(
-    saved?.edited && saved?.html ? saved.html : null
-  );
+  // 대표님이 실제로 직접 고친 항목만 저장된 HTML을 보여준다.
+  // (useState로 고정하면 저장본이 늦게 로드될 때 반영이 안 되므로 매 렌더마다 최신 saved 값을 사용)
+  const savedHtml = saved?.edited && saved?.html ? saved.html : null;
 
   // 저장된 스타일 적용
   const styleObj: React.CSSProperties = {};
@@ -125,13 +123,11 @@ export default function Editable({
     if (onClick) commonProps.onClick = onClick;
   }
 
-  // 대표님이 직접 편집한 항목만 저장된 HTML을 렌더 (그 외엔 항상 최신 코드 문구)
-  if (initialHtml !== null && saved?.edited) {
+  // 대표님이 직접 고친 항목이면 저장된 HTML을 보여줌 (새로고침해도 유지).
+  // 그 외 항목은 항상 코드의 최신 문구(children)를 보여줌 → "미리보기 항상 최신화".
+  if (savedHtml !== null) {
     return (
-      <Tag
-        {...commonProps}
-        dangerouslySetInnerHTML={{ __html: saved?.html ?? initialHtml }}
-      />
+      <Tag {...commonProps} dangerouslySetInnerHTML={{ __html: savedHtml }} />
     );
   }
 
