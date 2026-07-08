@@ -25,7 +25,10 @@ export default function Header() {
             <span className="text-[19px] font-extrabold leading-tight tracking-[-0.005em] text-brand-dark sm:text-[21px]">
               모두의공공조달
             </span>
-            <span className="mt-[2px] block w-full break-keep text-[9px] font-semibold leading-tight text-brand-gray sm:text-[10px]">
+            <span
+              className="mt-[2px] block w-full break-keep text-[8.5px] font-semibold leading-tight text-brand-gray sm:text-[9.5px]"
+              style={{ textAlignLast: "justify" }}
+            >
               정부지원사업 통합 매칭 자문 플랫폼
             </span>
           </span>
@@ -35,15 +38,9 @@ export default function Header() {
         <nav className="flex shrink-0 items-center gap-1.5 sm:gap-4">
           <Link
             href="/#pricing-section"
-            className="hidden text-sm font-semibold text-brand-dark hover:text-brand-orange lg:block"
-          >
-            서비스
-          </Link>
-          <Link
-            href="/pricing"
             className="hidden text-sm font-semibold text-brand-dark hover:text-brand-orange sm:block"
           >
-            요금
+            서비스
           </Link>
           <Link
             href="/community"
