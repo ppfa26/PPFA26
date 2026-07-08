@@ -19,7 +19,7 @@ import {
 export default function Diagnosis() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [], certifications: [] });
+  const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [], certifications: [], innovation: [], currentInstitutions: [] });
 
   // 사업자번호 조회 상태
   const [bno, setBno] = useState("");
@@ -105,6 +105,30 @@ export default function Diagnosis() {
       ))}
     </div>
   );
+  // 혁신성장 테마처럼 항목이 많은 다중선택 → 2줄 그리드로 정돈 배치
+  const MultiGrid = ({ k, opts }: { k: string; opts: string[] }) => {
+    const cols = Math.ceil(opts.length / 2); // 9개 → 5열 2줄
+    return (
+      <div
+        className="grid gap-2"
+        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+      >
+        {opts.map((o) => (
+          <button
+            key={o}
+            onClick={() => toggle(k, o)}
+            className={`rounded-xl border px-2 py-2.5 text-center text-xs font-semibold leading-tight transition sm:text-sm ${
+              (form[k] || []).includes(o)
+                ? "border-brand-orange bg-brand-grad text-brand-dark"
+                : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+            }`}
+          >
+            {o}
+          </button>
+        ))}
+      </div>
+    );
+  };
   const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
     <div className="mb-6">
       <p className="mb-2 font-bold text-brand-dark">{label}</p>
@@ -211,6 +235,8 @@ export default function Diagnosis() {
               <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP3_TITLE}</h1>
               <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
               <Field label={STEP3_FIELDS.certifications.label}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
+              <Field label={STEP3_FIELDS.innovation.label}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
+              <Field label={STEP3_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP3_FIELDS.currentInstitutions.opts} /></Field>
               <Field label={STEP3_FIELDS.collateral.label}><Radio k="collateral" opts={STEP3_FIELDS.collateral.opts} /></Field>
               <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
               <Field label={STEP3_FIELDS.insurance.label}><Radio k="insurance" opts={STEP3_FIELDS.insurance.opts} /></Field>
