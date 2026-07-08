@@ -76,7 +76,12 @@ export default function Home() {
               as="p"
               className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-brand-gray sm:text-lg"
             >
-              {`브로커 대행 수수료는 1억원 승인시 최소 500만원. 99,000원으로 직접 방법을 배워서 무료로 신청하세요. 커피 몇 잔 아껴서 사업 운영 꿀팁을 배워 평생 써먹으세요.`}
+              브로커 대행 수수료는 1억원 승인 시 최소 500만원.
+              <br />
+              단돈 <strong className="text-brand-dark">99,000원</strong>으로
+              직접 신청하는 방법을 배워 무료로 신청하세요.
+              <br />
+              커피 몇 잔 아껴서 배운 노하우, 사업 운영에 평생 써먹으세요.
             </Editable>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

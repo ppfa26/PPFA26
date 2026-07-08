@@ -62,7 +62,11 @@ export default function Editable({
   const { editMode, edits, saveEdit } = useEdit();
   const ref = useRef<HTMLElement>(null);
   const saved = edits[id];
-  const [initialHtml] = useState<string | null>(saved?.html ?? null);
+  // 대표님이 실제로 텍스트를 고친 경우에만 저장된 HTML을 사용.
+  // 그렇지 않으면 항상 코드의 최신 문구(children)를 보여줌 → "미리보기 항상 최신화"
+  const [initialHtml] = useState<string | null>(
+    saved?.edited && saved?.html ? saved.html : null
+  );
 
   // 저장된 스타일 적용
   const styleObj: React.CSSProperties = {};
@@ -80,7 +84,8 @@ export default function Editable({
   const handleBlur = () => {
     if (!ref.current) return;
     const html = ref.current.innerHTML;
-    saveEdit(id, { html });
+    // 대표님이 직접 고친 것으로 표시 (edited: true) → 이후 이 항목만 저장본 유지
+    saveEdit(id, { html, edited: true });
   };
 
   const handleFocus = () => {
@@ -120,8 +125,8 @@ export default function Editable({
     if (onClick) commonProps.onClick = onClick;
   }
 
-  // 저장된 HTML이 있으면 그것을 우선 렌더
-  if (initialHtml !== null) {
+  // 대표님이 직접 편집한 항목만 저장된 HTML을 렌더 (그 외엔 항상 최신 코드 문구)
+  if (initialHtml !== null && saved?.edited) {
     return (
       <Tag
         {...commonProps}

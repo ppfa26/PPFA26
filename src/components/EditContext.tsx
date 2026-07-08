@@ -27,6 +27,7 @@ export type EditValue = {
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
+  edited?: boolean; // 대표님이 실제로 텍스트를 직접 고쳤는지 여부
 };
 
 const STORAGE_KEY = "mpp_page_inline_edits_v3";
@@ -34,7 +35,7 @@ const META_KEY = "mpp_page_inline_meta_v1"; // 페이지별 콘텐츠 버전 저
 
 // 코드 문구를 크게 바꿀 때 이 숫자를 올리면, 이전에 브라우저에 저장된
 // 인라인 편집본이 자동으로 정리되고 최신 코드 문구가 표시됩니다.
-export const CONTENT_VERSION = 2;
+export const CONTENT_VERSION = 3;
 
 const EditCtx = createContext<EditState | null>(null);
 
