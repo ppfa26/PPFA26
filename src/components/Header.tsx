@@ -21,12 +21,12 @@ export default function Header() {
             className="h-9 w-9 shrink-0 rounded-[9px] sm:h-10 sm:w-10"
             priority
           />
-          <span className="flex flex-col justify-center">
+          <span className="flex w-[132px] flex-col justify-center xs:w-[148px] sm:w-auto">
             <span className="text-[16.5px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
               모두의공공조달
             </span>
             <span
-              className="mt-[2px] block w-full break-keep text-[9px] font-semibold leading-tight text-brand-gray sm:text-[9.5px]"
+              className="mt-[2px] block w-full whitespace-nowrap text-[7.5px] font-semibold leading-tight tracking-[-0.02em] text-brand-gray xs:text-[8.5px] sm:text-[9.5px] sm:tracking-normal"
               style={{ textAlignLast: "justify" }}
             >
               정부지원사업 통합 매칭 자문 플랫폼
