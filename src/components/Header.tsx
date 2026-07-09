@@ -22,10 +22,24 @@ export default function Header() {
             priority
           />
           <span className="flex flex-col justify-center">
-            <span className="whitespace-nowrap text-[15px] font-extrabold leading-tight tracking-[0.055em] text-brand-dark xs:text-[17px] sm:text-[21px] sm:tracking-[-0.01em]">
+            {/* PC: 기존 한 줄 그대로 */}
+            <span className="hidden whitespace-nowrap text-[21px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark sm:block">
               모두의공공조달
             </span>
-            <span className="mt-[2px] whitespace-nowrap text-[8px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray xs:text-[9px] sm:text-[9.5px] sm:tracking-normal">
+            {/* 모바일: 글자를 아래 문구 폭에 균등 분배해 가로폭 맞춤 */}
+            <span
+              aria-hidden="true"
+              className="flex w-full justify-between text-[17px] font-extrabold leading-tight text-brand-dark xs:text-[18px] sm:hidden"
+            >
+              <span>모</span>
+              <span>두</span>
+              <span>의</span>
+              <span>공</span>
+              <span>공</span>
+              <span>조</span>
+              <span>달</span>
+            </span>
+            <span className="mt-[2px] block w-full whitespace-nowrap text-[9px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray xs:text-[10px] sm:w-auto sm:text-[9.5px] sm:tracking-normal">
               정부지원사업 통합 매칭 자문 플랫폼
             </span>
           </span>
