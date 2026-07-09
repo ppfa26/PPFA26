@@ -300,7 +300,7 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA */}
-        <section className="px-4 py-7 sm:py-12">
+        <section className="px-4 pb-4 pt-7 sm:pb-6 sm:pt-12">
           <div className="mx-auto max-w-2xl rounded-3xl bg-brand-grad p-10 text-center">
             <Editable
               id="home-cta-title"
