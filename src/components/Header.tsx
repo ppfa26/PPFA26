@@ -10,7 +10,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-3 sm:px-5">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-3 sm:gap-4 sm:px-5">
         {/* 로고 + 상호명 */}
         <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Image
@@ -35,28 +35,28 @@ export default function Header() {
         </Link>
 
         {/* 네비 + CTA */}
-        <nav className="flex shrink-0 items-center gap-2 xs:gap-2.5 sm:gap-4">
+        <nav className="flex shrink-0 items-center gap-3 xs:gap-3.5 sm:gap-5">
           <Link
             href="/#pricing-section"
-            className="whitespace-nowrap text-[13px] font-semibold text-brand-dark hover:text-brand-orange sm:text-sm"
+            className="whitespace-nowrap text-[12.5px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
           >
             서비스
           </Link>
           <Link
             href="/community"
-            className="whitespace-nowrap text-[13px] font-semibold text-brand-dark hover:text-brand-orange sm:text-sm"
+            className="whitespace-nowrap text-[12.5px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
           >
             후기
           </Link>
           <Link
             href="/signup"
-            className="whitespace-nowrap text-[13px] font-semibold text-brand-dark hover:text-brand-orange sm:text-sm"
+            className="whitespace-nowrap text-[12.5px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
           >
             로그인
           </Link>
           <Link
             href="/diagnosis"
-            className="btn-brand whitespace-nowrap rounded-full px-2.5 py-2 text-[13px] sm:px-5 sm:text-sm"
+            className="btn-brand ml-0.5 whitespace-nowrap rounded-full px-3 py-2 text-[12.5px] font-bold sm:ml-0 sm:px-5 sm:text-sm"
           >
             무료 진단
           </Link>
