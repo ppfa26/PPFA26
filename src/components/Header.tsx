@@ -26,7 +26,7 @@ export default function Header() {
               모두의공공조달
             </span>
             <span className="mt-[2px] whitespace-nowrap text-[9px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray xs:text-[10px] sm:text-[9.5px] sm:tracking-normal">
-              정부지원사업 매칭 자문 플랫폼
+              정부지원사업 통합 매칭 플랫폼
             </span>
           </span>
         </Link>
