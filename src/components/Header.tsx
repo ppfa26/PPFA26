@@ -22,10 +22,18 @@ export default function Header() {
             priority
           />
           <span className="flex flex-col justify-center pr-3 sm:pr-0">
-            <span className="whitespace-nowrap text-[17px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
+            <span className="block whitespace-nowrap text-[17px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
               모두의공공조달
             </span>
-            <span className="mt-[2px] whitespace-nowrap text-[9px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray xs:text-[10px] sm:text-[9.5px] sm:tracking-normal">
+            {/* 모바일: 자연스러운 폭 */}
+            <span className="mt-[2px] block whitespace-nowrap text-[9px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray xs:text-[10px] sm:hidden">
+              정부지원사업 통합 매칭 플랫폼
+            </span>
+            {/* PC: 브랜드명 폭에 맞춰 글자 양끝정렬 */}
+            <span
+              className="mt-[3px] hidden w-full whitespace-nowrap text-[11px] font-semibold leading-tight text-brand-gray sm:block"
+              style={{ textAlignLast: "justify" }}
+            >
               정부지원사업 통합 매칭 플랫폼
             </span>
           </span>
