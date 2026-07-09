@@ -115,7 +115,7 @@ export default function TermsPage() {
         <Editable id="terms-9-body" as="p" className="mt-2">
           본 약관과 관련한 문의는 아래 연락처로 해주시기 바랍니다.
           <br />
-          상호: 모두의공공조달 · 대표: 신주엽 · 이메일: biospartners@naver.com
+          상호: 모두의공공조달 · 이메일: biospartners@naver.com
         </Editable>
       </section>
     </LegalLayout>

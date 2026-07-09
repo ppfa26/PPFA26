@@ -98,11 +98,9 @@ export default function PrivacyPage() {
           6. 개인정보 보호책임자
         </h2>
         <Editable id="privacy-6-body" as="p" className="mt-2">
-          성명: 신주엽 (대표)
+          상호: 모두의공공조달 (Public Procurement For All)
           <br />
           이메일: biospartners@naver.com
-          <br />
-          상호: 모두의공공조달 (Public Procurement For All)
         </Editable>
       </section>
     </LegalLayout>
