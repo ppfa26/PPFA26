@@ -62,14 +62,6 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                   / {tier.period}
                 </span>
               </div>
-              {/* 월 환산 */}
-              <p
-                className={`mt-1 text-xs font-semibold ${
-                  tier.popular ? "text-brand-dark/70" : "text-brand-gray"
-                }`}
-              >
-                {tier.monthlyLabel} <span className="font-normal">(12개월 환산)</span>
-              </p>
             </div>
 
             <ul className="mt-5 flex-1 space-y-2.5">
