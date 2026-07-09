@@ -30,6 +30,7 @@ export const TIERS: Tier[] = [
     period: "1개월",
     popular: false,
     features: [
+      "내 사업장에 알맞는 정부지원사업 추천",
       "신청 방법 완벽 가이드 사이트 열람권 (1개월)",
       "신청 사이트 안내 및 채널톡 Q&A 상담 (1개월)",
     ],
