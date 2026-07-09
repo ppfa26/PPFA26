@@ -75,7 +75,7 @@ export default function MatchingPreview() {
                         as="p"
                         className="mt-1 text-center text-sm text-brand-dark/70"
                       >
-                        단돈 99,000원으로 전체 결과·신청 사이트·필요 서류·승인 전략까지 지금 바로 확인하세요.
+                        단돈 149,000원으로 전체 결과·신청 사이트·필요 서류·승인 전략까지 지금 바로 확인하세요.
                       </Editable>
                       <Editable
                         id="preview-inline-cta"
@@ -98,7 +98,7 @@ export default function MatchingPreview() {
               전체 매칭 결과와 신청 방법이 궁금하신가요?
             </Editable>
             <Editable id="preview-cta-sub" as="p" className="mt-2 text-sm text-brand-dark/70">
-              신청 사이트·필요 서류·승인 확률 전략까지, 99,000원으로 모두 확인하세요.
+              신청 사이트·필요 서류·승인 확률 전략까지, 149,000원으로 모두 확인하세요.
             </Editable>
             <Editable
               id="preview-cta-button"
@@ -123,7 +123,7 @@ export default function MatchingPreview() {
               전체 결과 잠금 해제
             </Editable>
             <Editable id="preview-sticky-sub" as="p" className="truncate text-xs text-brand-gray">
-              99,000원 · 신청 방법·서류·승인 전략 전체 공개
+              149,000원 · 신청 방법·서류·승인 전략 전체 공개
             </Editable>
           </div>
           <Editable
