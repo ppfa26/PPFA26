@@ -235,7 +235,10 @@ export default function Home() {
         </section>
 
         {/* 가격표 */}
-        <section id="pricing-section" className="px-4 py-7 sm:py-12">
+        <section
+          id="pricing-section"
+          className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-12"
+        >
           <div className="mx-auto max-w-5xl">
             <Editable
               id="home-pricing-title"
