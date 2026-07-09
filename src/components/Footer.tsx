@@ -72,15 +72,33 @@ export default function Footer() {
 
         {/* 사업자 정보 */}
         <div className="mt-8 break-keep border-t border-white/10 pt-6 text-[11px] leading-relaxed text-gray-500">
-          <Editable id="footer-bizinfo" as="p">
-            상호 : 모두의공공조달 · 대표: 신주엽 · 주소 : 인천광역시 서구 청라커낼로 288번길 26
-          </Editable>
-          <Editable id="footer-bizinfo2" as="p" className="mt-1">
-            사업자등록번호 : 597-12-02897 · 통신판매업신고 : [신고번호]
-          </Editable>
-          <Editable id="footer-bizinfo3" as="p" className="mt-1">
-            문의 : biospartners@naver.com
-          </Editable>
+          {/* 모바일: 항목별 줄바꿈 */}
+          <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1 sm:hidden">
+            <dt className="shrink-0 text-gray-400">상호</dt>
+            <dd className="text-gray-500">모두의공공조달</dd>
+            <dt className="shrink-0 text-gray-400">대표</dt>
+            <dd className="text-gray-500">신주엽</dd>
+            <dt className="shrink-0 text-gray-400">주소</dt>
+            <dd className="text-gray-500">인천광역시 서구 청라커낼로 288번길 26</dd>
+            <dt className="shrink-0 text-gray-400">사업자등록번호</dt>
+            <dd className="text-gray-500">597-12-02897</dd>
+            <dt className="shrink-0 text-gray-400">통신판매업신고</dt>
+            <dd className="text-gray-500">[신고번호]</dd>
+            <dt className="shrink-0 text-gray-400">문의</dt>
+            <dd className="break-all text-gray-500">biospartners@naver.com</dd>
+          </dl>
+
+          {/* PC: 기존 한 줄(가운뎃점) 형태 유지 */}
+          <div className="hidden sm:block">
+            <p>
+              상호 : 모두의공공조달 · 대표 : 신주엽 · 주소 : 인천광역시 서구 청라커낼로 288번길 26
+            </p>
+            <p className="mt-1">
+              사업자등록번호 : 597-12-02897 · 통신판매업신고 : [신고번호]
+            </p>
+            <p className="mt-1">문의 : biospartners@naver.com</p>
+          </div>
+
           <p className="mt-3 text-gray-600">
             © 모두의공공조달. All rights reserved.
           </p>
