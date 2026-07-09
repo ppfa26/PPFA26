@@ -10,7 +10,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-3 sm:gap-4 sm:px-5">
+      <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:gap-4 sm:px-6">
         {/* 로고 + 상호명 */}
         <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Image
@@ -18,15 +18,15 @@ export default function Header() {
             alt="모두의공공조달 로고"
             width={40}
             height={40}
-            className="h-8 w-8 shrink-0 rounded-[9px] xs:h-9 xs:w-9 sm:h-10 sm:w-10"
+            className="h-9 w-9 shrink-0 rounded-[9px] sm:h-10 sm:w-10"
             priority
           />
           <span className="flex flex-col justify-center">
-            <span className="text-[16px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
+            <span className="text-[16.5px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
               모두의공공조달
             </span>
             <span
-              className="mt-[2px] block w-full break-keep text-[8.5px] font-semibold leading-tight text-brand-gray sm:text-[9.5px]"
+              className="mt-[2px] block w-full break-keep text-[9px] font-semibold leading-tight text-brand-gray sm:text-[9.5px]"
               style={{ textAlignLast: "justify" }}
             >
               정부지원사업 통합 매칭 자문 플랫폼
@@ -35,7 +35,7 @@ export default function Header() {
         </Link>
 
         {/* 네비 + CTA */}
-        <nav className="flex shrink-0 items-center gap-3 xs:gap-3.5 sm:gap-5">
+        <nav className="flex shrink-0 items-center gap-3.5 xs:gap-4 sm:gap-5">
           <Link
             href="/#pricing-section"
             className="whitespace-nowrap text-[12.5px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
@@ -56,7 +56,7 @@ export default function Header() {
           </Link>
           <Link
             href="/diagnosis"
-            className="btn-brand ml-0.5 whitespace-nowrap rounded-full px-3 py-2 text-[12.5px] font-bold sm:ml-0 sm:px-5 sm:text-sm"
+            className="btn-brand ml-1 whitespace-nowrap rounded-full px-3.5 py-2.5 text-[12.5px] font-bold sm:ml-0 sm:px-5 sm:py-2 sm:text-sm"
           >
             무료 진단
           </Link>
