@@ -89,10 +89,6 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             >
               {tier.cta}
             </Link>
-
-            <p className="mt-3 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
-              ⚠️ 자문 서비스 · 정부지원사업 승인 보장 상품이 아님
-            </p>
           </div>
         ))}
       </div>

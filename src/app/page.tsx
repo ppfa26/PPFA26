@@ -252,8 +252,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-2 max-w-xl text-center text-sm text-brand-gray"
             >
-              모든 플랜은 1회성 결제이며 자동결제가 아닙니다. 필요할 때만 1개월
-              단위로 연장하세요.
+              모든 플랜은 1회성 결제이며 월 구독 결제가 아닙니다.
             </Editable>
             <div className="mt-10">
               <PricingCards prefix="home" />
