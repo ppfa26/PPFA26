@@ -35,28 +35,22 @@ export default function Header() {
         </Link>
 
         {/* 네비 + CTA */}
-        <nav className="flex shrink-0 items-center gap-3.5 xs:gap-4 sm:gap-5">
-          <Link
-            href="/#pricing-section"
-            className="whitespace-nowrap text-[12.5px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
-          >
-            서비스
-          </Link>
+        <nav className="flex shrink-0 items-center gap-4 xs:gap-5 sm:gap-6">
           <Link
             href="/community"
-            className="whitespace-nowrap text-[12.5px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
+            className="whitespace-nowrap text-[13px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
           >
             후기
           </Link>
           <Link
             href="/signup"
-            className="whitespace-nowrap text-[12.5px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
+            className="whitespace-nowrap text-[13px] font-medium text-brand-gray transition-colors hover:text-brand-orange sm:text-sm sm:font-semibold sm:text-brand-dark"
           >
             로그인
           </Link>
           <Link
             href="/diagnosis"
-            className="btn-brand ml-1 whitespace-nowrap rounded-full px-3.5 py-2.5 text-[12.5px] font-bold sm:ml-0 sm:px-5 sm:py-2 sm:text-sm"
+            className="btn-brand whitespace-nowrap rounded-full px-4 py-2.5 text-[13px] font-bold sm:px-5 sm:py-2 sm:text-sm"
           >
             무료 진단
           </Link>
