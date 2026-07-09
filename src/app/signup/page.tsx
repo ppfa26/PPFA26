@@ -39,8 +39,8 @@ function SignupInner() {
     router.push(tier ? `/payment?tier=${tier}` : "/dashboard");
   };
 
-  // 소셜 로그인 (카카오 / 구글) — Supabase OAuth
-  const handleOAuth = async (provider: "kakao" | "google") => {
+  // 소셜 로그인 (카카오 / 네이버 / 구글) — Supabase OAuth
+  const handleOAuth = async (provider: "kakao" | "google", label = "") => {
     setMsg(null);
     setLoading(true);
     try {
@@ -54,17 +54,20 @@ function SignupInner() {
       });
       if (error) {
         setMsg(
-          provider === "kakao"
-            ? "카카오 로그인 연결이 아직 설정되지 않았습니다. 잠시 후 다시 시도해 주세요."
-            : "구글 로그인 연결이 아직 설정되지 않았습니다. 잠시 후 다시 시도해 주세요."
+          `${label || provider} 로그인 연결이 아직 설정되지 않았습니다. 잠시 후 다시 시도해 주세요.`
         );
         setLoading(false);
       }
-      // 성공 시 카카오/구글 페이지로 리다이렉트되므로 별도 처리 불필요
+      // 성공 시 소셜 로그인 페이지로 리다이렉트되므로 별도 처리 불필요
     } catch {
       setMsg("잠시 후 다시 시도해 주세요.");
       setLoading(false);
     }
+  };
+
+  // 네이버는 Supabase 기본 provider가 아니므로 커스텀 처리(안내)
+  const handleNaver = () => {
+    setMsg("네이버 로그인은 곧 연결됩니다. 카카오 또는 구글로 시작해 주세요.");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,7 +173,7 @@ function SignupInner() {
           <button
             type="button"
             disabled={loading}
-            onClick={() => handleOAuth("kakao")}
+            onClick={() => handleOAuth("kakao", "카카오")}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95 disabled:opacity-60"
           >
             <span className="text-base">💬</span> 카카오톡으로 시작하기
@@ -178,7 +181,15 @@ function SignupInner() {
           <button
             type="button"
             disabled={loading}
-            onClick={() => handleOAuth("google")}
+            onClick={handleNaver}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#03C75A] py-3 text-sm font-bold text-white transition hover:brightness-95 disabled:opacity-60"
+          >
+            <span className="text-base font-black">N</span> 네이버로 시작하기
+          </button>
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => handleOAuth("google", "구글")}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50 disabled:opacity-60"
           >
             <span className="text-base font-black text-[#4285F4]">G</span> 구글로 시작하기
