@@ -39,6 +39,34 @@ function SignupInner() {
     router.push(tier ? `/payment?tier=${tier}` : "/dashboard");
   };
 
+  // 소셜 로그인 (카카오 / 구글) — Supabase OAuth
+  const handleOAuth = async (provider: "kakao" | "google") => {
+    setMsg(null);
+    setLoading(true);
+    try {
+      const redirectTo =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/signup${tier ? `?tier=${tier}` : ""}`
+          : undefined;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo },
+      });
+      if (error) {
+        setMsg(
+          provider === "kakao"
+            ? "카카오 로그인 연결이 아직 설정되지 않았습니다. 잠시 후 다시 시도해 주세요."
+            : "구글 로그인 연결이 아직 설정되지 않았습니다. 잠시 후 다시 시도해 주세요."
+        );
+        setLoading(false);
+      }
+      // 성공 시 카카오/구글 페이지로 리다이렉트되므로 별도 처리 불필요
+    } catch {
+      setMsg("잠시 후 다시 시도해 주세요.");
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMsg(null);
@@ -141,31 +169,19 @@ function SignupInner() {
         <div className="mb-5 space-y-2">
           <button
             type="button"
-            onClick={() => setMsg("카카오 간편가입은 준비 중입니다. 아래 이메일로 가입해 주세요.")}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95"
+            disabled={loading}
+            onClick={() => handleOAuth("kakao")}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95 disabled:opacity-60"
           >
             <span className="text-base">💬</span> 카카오톡으로 시작하기
           </button>
           <button
             type="button"
-            onClick={() => setMsg("네이버 간편가입은 준비 중입니다. 아래 이메일로 가입해 주세요.")}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#03C75A] py-3 text-sm font-bold text-white transition hover:brightness-95"
-          >
-            <span className="text-base font-black">N</span> 네이버로 시작하기
-          </button>
-          <button
-            type="button"
-            onClick={() => setMsg("구글 간편가입은 준비 중입니다. 아래 이메일로 가입해 주세요.")}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50"
+            disabled={loading}
+            onClick={() => handleOAuth("google")}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50 disabled:opacity-60"
           >
             <span className="text-base font-black text-[#4285F4]">G</span> 구글로 시작하기
-          </button>
-          <button
-            type="button"
-            onClick={() => setMsg("애플 간편가입은 준비 중입니다. 아래 이메일로 가입해 주세요.")}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-sm font-bold text-white transition hover:brightness-110"
-          >
-            <span className="text-base"></span> Apple로 시작하기
           </button>
         </div>
 
