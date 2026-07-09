@@ -239,7 +239,7 @@ export default function Page() {
           </h2>
           <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-gray-300 sm:text-base">
             내 사업장에 맞는 정책자금·지원금·바우처, 지금 무료로 진단받아 보세요.
-            부결 걱정 없이, 가능한 것부터 정확하게 안내해 드립니다.
+            실제로 승인 가능한 것부터 순차적으로 정확하게 안내해 드립니다.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -249,10 +249,12 @@ export default function Page() {
               무료 진단 시작하기
             </Link>
             <a
-              href="tel:15517886"
-              className="w-full rounded-full border border-white/30 px-8 py-3 text-sm font-bold text-white hover:bg-white/10 sm:w-auto"
+              href="https://open.kakao.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-full bg-brand-yellow px-8 py-3 text-sm font-bold text-brand-dark hover:brightness-95 sm:w-auto"
             >
-              📞 1551-7886 상담
+              💬 카카오톡 상담
             </a>
           </div>
         </section>
