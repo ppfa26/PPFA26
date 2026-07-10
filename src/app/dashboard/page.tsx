@@ -104,14 +104,14 @@ export default function DashboardPage() {
             )}
           </section>
 
-          {/* 카테고리 필터 탭 */}
+          {/* 카테고리 필터 탭 — 한 줄 유지(넘치면 좌우 스크롤, 모바일 안전) */}
           <nav
             id="category-filter"
-            className="mt-7 flex flex-wrap justify-center gap-2"
+            className="mt-7 -mx-4 flex flex-nowrap gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:justify-center sm:px-0"
           >
             <button
               onClick={() => setActiveCat("전체")}
-              className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+              className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition ${
                 activeCat === "전체"
                   ? "bg-brand-dark text-white"
                   : "bg-white text-brand-gray shadow-sm hover:bg-gray-100"
@@ -126,7 +126,7 @@ export default function DashboardPage() {
                 <button
                   key={cat}
                   onClick={() => setActiveCat(cat)}
-                  className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition ${
                     activeCat === cat
                       ? "bg-brand-dark text-white"
                       : "bg-white text-brand-gray shadow-sm hover:bg-gray-100"
@@ -230,7 +230,7 @@ export default function DashboardPage() {
             </p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
               <a
-                href="https://open.kakao.com/"
+                href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-brand-dark px-7 py-3 font-bold text-white hover:opacity-90"

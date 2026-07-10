@@ -208,8 +208,7 @@ export default function AdvancedScreeningPanel() {
             정확한 진단을 위해 아래 질문에 답해 주세요
           </p>
           <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
-            어려운 용어 없이 <b className="text-brand-orange">쉬운 질문 몇 개</b>만 답하시면, 어떤 정부지원사업의 승인
-            가능성이 높은지·예상 한도까지 정확하게 판독해 드립니다. 정확한 판독을 위해 끝까지 작성 부탁드립니다.
+            어려운 용어 없이 <b className="text-brand-orange">쉬운 질문 몇 개</b>만 답하시면, 승인 가능성이 높은 정부지원사업과 예상 한도를 정확하게 판독해 드립니다.
           </p>
         </div>
       )}
