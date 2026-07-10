@@ -94,6 +94,108 @@ const STATS = [
   { label: "모든 기관 상품", value: "AI 활용" },
 ];
 
+/* ────────────────────────────────────────────
+   이용자 정부지원사업 승인후기
+   - 정책자금 / 보증 / 바우처 / 인증(벤처·이노비즈·메인비즈 등)
+   - 개인정보 비공개, 업종·지역·승인내용 중심으로 요약
+──────────────────────────────────────────── */
+type ApprovalKind = "정책자금" | "보증" | "바우처" | "인증" | "지원금";
+
+type Approval = {
+  kind: ApprovalKind;
+  business: string;
+  region: string;
+  program: string; // 승인/선정된 사업·인증명
+  agency: string; // 기관
+  amount?: string; // 금액 (인증은 생략 가능)
+  note?: string; // 한 줄 코멘트
+};
+
+const APPROVALS: Approval[] = [
+  {
+    kind: "보증",
+    business: "문화콘텐츠 제조",
+    region: "인천 서구",
+    program: "문화산업보증 · 신용보증한도",
+    agency: "한국무역보험공사(K-SURE)",
+    amount: "5억원",
+    note: "최대 승인 사례",
+  },
+  {
+    kind: "정책자금",
+    business: "제조업",
+    region: "인천",
+    program: "혁신성장촉진자금 (운전)",
+    agency: "소상공인시장진흥공단",
+    amount: "2억원",
+  },
+  {
+    kind: "바우처",
+    business: "수출 제조기업",
+    region: "인천 남동구",
+    program: "수출바우처 선정",
+    agency: "중소벤처기업진흥공단",
+    amount: "1억원",
+    note: "정책자금과 동시 설계",
+  },
+  {
+    kind: "인증",
+    business: "IT·소프트웨어",
+    region: "경기 성남",
+    program: "벤처기업 인증 취득",
+    agency: "벤처확인기관",
+    note: "R&D·세제감면·정책자금 우대 연계",
+  },
+  {
+    kind: "인증",
+    business: "부품 제조 (뿌리기업)",
+    region: "인천 서구",
+    program: "이노비즈(INNO-BIZ) 인증",
+    agency: "중소벤처기업부",
+    note: "기술혁신형 중소기업 확인",
+  },
+  {
+    kind: "인증",
+    business: "도소매·유통",
+    region: "경기 부천",
+    program: "메인비즈(MAIN-BIZ) 인증",
+    agency: "중소벤처기업부",
+    note: "경영혁신형 중소기업 확인",
+  },
+  {
+    kind: "정책자금",
+    business: "수출기업",
+    region: "인천",
+    program: "글로벌화 자금",
+    agency: "중소벤처기업진흥공단",
+    amount: "1.5억원",
+  },
+  {
+    kind: "보증",
+    business: "소상공인",
+    region: "인천",
+    program: "지역맞춤형 특례보증",
+    agency: "신용보증재단",
+    amount: "5,000만원",
+  },
+  {
+    kind: "지원금",
+    business: "일반 중소기업",
+    region: "인천",
+    program: "일반경영안정자금 (운전)",
+    agency: "소상공인시장진흥공단",
+    amount: "7,000만원",
+  },
+];
+
+const approvalKindStyle: Record<ApprovalKind, string> = {
+  정책자금: "bg-orange-50 text-brand-orange",
+  보증: "bg-yellow-50 text-yellow-700",
+  바우처: "bg-blue-50 text-blue-600",
+  인증: "bg-purple-50 text-purple-600",
+  지원금: "bg-green-50 text-brand-green",
+};
+
 function Stars({ n }: { n: number }) {
   return (
     <span className="text-brand-yellow" aria-label={`별점 ${n}점`}>
@@ -126,7 +228,10 @@ export default function Page() {
           <p className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base">
             <span className="font-semibold text-brand-dark">모두의공공조달</span>
             은 2년간 약 300여 기업의 자금 고민을 함께 풀어왔습니다.
-            당근마켓·네이버 블로그·카카오 채널에서 만난 대표님들의 실제 이야기입니다.
+            <br className="hidden sm:block" />
+            당근마켓·네이버 블로그·카카오 채널에서 만난
+            <br className="hidden sm:block" />
+            대표님들의 실제 이야기입니다.
           </p>
         </section>
 
@@ -134,11 +239,11 @@ export default function Page() {
         <section className="mx-auto mt-10 max-w-3xl">
           <div className="grid grid-cols-2 divide-x divide-y divide-gray-100 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm sm:grid-cols-4 sm:divide-y-0">
             {STATS.map((s) => (
-              <div key={s.label} className="px-4 py-6 text-center">
-                <p className="break-keep text-xl font-extrabold text-brand-dark xs:text-2xl sm:text-[1.7rem]">
+              <div key={s.label} className="px-2 py-6 text-center sm:px-3">
+                <p className="whitespace-nowrap text-lg font-extrabold leading-none text-brand-dark xs:text-xl sm:text-2xl">
                   {s.value}
                 </p>
-                <p className="mt-1.5 break-keep text-[11px] font-medium text-brand-gray sm:text-xs">
+                <p className="mt-1.5 whitespace-nowrap text-[10px] font-medium leading-none text-brand-gray xs:text-[11px] sm:text-xs">
                   {s.label}
                 </p>
               </div>
@@ -146,30 +251,76 @@ export default function Page() {
           </div>
         </section>
 
-        {/* ── 실제 승인 실적 이미지 ── */}
-        <section className="mt-20 text-center">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-brand-orange">
-            Verified Records
-          </p>
-          <h2 className="mt-2 break-keep text-xl font-extrabold tracking-tight text-brand-dark sm:text-3xl">
-            실제 승인 실적
-          </h2>
-          <p className="mx-auto mt-3 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray">
-            모두의공공조달이 직접 매칭·컨설팅하여 승인된 실제 사례입니다.
-            고객 동의 하에 개인정보(상호·대표자·사업자번호 등)는 일절 표기하지 않고
-            승인 정보만 공개합니다.
-          </p>
-          <div className="mx-auto mt-7 max-w-3xl overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-md ring-1 ring-black/[0.02]">
-            <img
-              src="/images/approval-cases.jpg"
-              alt="모두의공공조달 실제 승인 실적 - 문화산업보증 5억원(한국무역보험공사), 혁신성장촉진자금 2억원(소상공인시장진흥공단), 수출기업 글로벌화 1.5억원(중소벤처기업진흥공단) 등 정책자금·보증 승인 사례"
-              className="h-auto w-full"
-              loading="lazy"
-            />
+        {/* ── 이용자 정부지원사업 승인후기 ── */}
+        <section className="mt-20">
+          <div className="text-center">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-brand-orange">
+              Verified Records
+            </p>
+            <h2 className="mt-2 break-keep text-xl font-extrabold tracking-tight text-brand-dark sm:text-3xl">
+              이용자 정부지원사업 승인후기
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray">
+              정책자금·보증·바우처는 물론 벤처·이노비즈·메인비즈 등
+              <br className="hidden sm:block" />
+              각종 인증까지, 실제로 승인·선정된 사례를 요약해 공개합니다.
+            </p>
           </div>
-          <p className="mx-auto mt-4 max-w-2xl break-keep text-[11px] leading-relaxed text-gray-400">
-            ※ 게시된 사례는 고객 동의 하에 개인정보를 가려 요약 공개하며, 개별
-            결과는 기업 상황·심사 기준에 따라 달라질 수 있습니다.
+
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {APPROVALS.map((a, i) => (
+              <article
+                key={i}
+                className="flex flex-col rounded-3xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-yellow/40 hover:shadow-lg sm:p-6"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${approvalKindStyle[a.kind]}`}
+                  >
+                    {a.kind}
+                  </span>
+                  {a.amount ? (
+                    <span className="shrink-0 break-keep text-lg font-extrabold text-brand-dark">
+                      {a.amount}
+                    </span>
+                  ) : (
+                    <span className="shrink-0 rounded-full bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green">
+                      취득 완료
+                    </span>
+                  )}
+                </div>
+                <h3 className="mt-4 break-keep text-[16px] font-bold leading-snug text-brand-dark">
+                  {a.program}
+                </h3>
+                <p className="mt-1.5 break-keep text-xs text-brand-gray">
+                  {a.agency}
+                </p>
+                {a.note && (
+                  <p className="mt-3 break-keep text-[13px] leading-relaxed text-brand-gray">
+                    {a.note}
+                  </p>
+                )}
+                <div className="mt-auto flex items-center gap-2 border-t border-gray-100 pt-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-xs">
+                    🏢
+                  </span>
+                  <p className="min-w-0 truncate text-[12px] text-brand-gray">
+                    {a.business} · {a.region}
+                  </p>
+                  {a.amount && (
+                    <span className="ml-auto shrink-0 rounded-md bg-brand-green/10 px-2 py-0.5 text-[11px] font-bold text-brand-green">
+                      지급완료
+                    </span>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <p className="mx-auto mt-6 max-w-2xl break-keep text-center text-[11px] leading-relaxed text-gray-400">
+            ※ 게시된 사례는 고객 동의 하에 개인정보(상호·대표자·사업자번호 등)를
+            가려 요약 공개하며, 개별 결과는 기업 상황·심사 기준에 따라 달라질 수
+            있습니다.
           </p>
         </section>
 
