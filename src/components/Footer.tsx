@@ -77,7 +77,7 @@ export default function Footer() {
             <dt className="shrink-0 text-gray-400">상호</dt>
             <dd className="text-gray-500">모두의공공조달</dd>
             <dt className="shrink-0 text-gray-400">대표자</dt>
-            <dd className="text-gray-500">[대표자명]</dd>
+            <dd className="text-gray-500">신주엽</dd>
             <dt className="shrink-0 text-gray-400">주소</dt>
             <dd className="text-gray-500">인천광역시 서해구 청라커낼로 288번길 26</dd>
             <dt className="shrink-0 text-gray-400">사업자등록번호</dt>
@@ -85,7 +85,7 @@ export default function Footer() {
             <dt className="shrink-0 text-gray-400">통신판매업신고</dt>
             <dd className="text-gray-500">[신고번호]</dd>
             <dt className="shrink-0 text-gray-400">전화</dt>
-            <dd className="text-gray-500">[전화번호]</dd>
+            <dd className="text-gray-500">1551-7886</dd>
             <dt className="shrink-0 text-gray-400">문의</dt>
             <dd className="break-all text-gray-500">biospartners@naver.com</dd>
           </dl>
@@ -93,12 +93,12 @@ export default function Footer() {
           {/* PC: 기존 한 줄(가운뎃점) 형태 유지 */}
           <div className="hidden sm:block">
             <p>
-              상호 : 모두의공공조달 · 대표자 : [대표자명] · 주소 : 인천광역시 서해구 청라커낼로 288번길 26
+              상호 : 모두의공공조달 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로 288번길 26
             </p>
             <p className="mt-1">
               사업자등록번호 : 597-12-02897 · 통신판매업신고 : [신고번호]
             </p>
-            <p className="mt-1">전화 : [전화번호] · 문의 : biospartners@naver.com</p>
+            <p className="mt-1">전화 : 1551-7886 · 문의 : biospartners@naver.com</p>
           </div>
 
           <p className="mt-3 text-gray-600">
