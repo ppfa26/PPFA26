@@ -62,6 +62,10 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                   / {tier.period}
                 </span>
               </div>
+              {/* 부가세 포함 표기 */}
+              <p className="mt-1 text-[11px] text-brand-gray">
+                * 부가가치세(VAT) 포함가
+              </p>
             </div>
 
             <ul className="mt-5 flex-1 space-y-2.5">

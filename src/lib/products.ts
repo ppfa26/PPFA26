@@ -1,4 +1,4 @@
-// 상품 구성 (확정 가격: 149,000 / 299,000 / 599,000)
+// 상품 구성 (확정 가격: 297,000 / 497,000 / 897,000, 모두 부가세 포함가)
 // originalPrice = 정가(앵커링용 취소선), monthly = 12개월 환산 참고 표기
 export type Tier = {
   id: "basic" | "premier" | "pro";
@@ -9,6 +9,7 @@ export type Tier = {
   priceLabel: string;
   originalPrice: number;
   originalPriceLabel: string;
+  discountLabel: string; // 할인율 표기 (예: "39% 할인")
   monthlyLabel: string;
   period: string;
   popular: boolean;
@@ -22,11 +23,12 @@ export const TIERS: Tier[] = [
     icon: "📚",
     name: "베이직",
     subtitle: "셀프 신청 가이드",
-    price: 149000,
-    priceLabel: "149,000원",
-    originalPrice: 199000,
-    originalPriceLabel: "199,000원",
-    monthlyLabel: "월 12,420원",
+    price: 297000,
+    priceLabel: "297,000원",
+    originalPrice: 490000,
+    originalPriceLabel: "490,000원",
+    discountLabel: "39% 할인",
+    monthlyLabel: "월 24,750원",
     period: "1개월",
     popular: false,
     features: [
@@ -41,11 +43,12 @@ export const TIERS: Tier[] = [
     icon: "🎯",
     name: "프리미어",
     subtitle: "1:1 코칭 패키지",
-    price: 299000,
-    priceLabel: "299,000원",
-    originalPrice: 399000,
-    originalPriceLabel: "399,000원",
-    monthlyLabel: "월 24,920원",
+    price: 497000,
+    priceLabel: "497,000원",
+    originalPrice: 890000,
+    originalPriceLabel: "890,000원",
+    discountLabel: "44% 할인",
+    monthlyLabel: "월 41,420원",
     period: "1개월",
     popular: true,
     features: [
@@ -60,11 +63,12 @@ export const TIERS: Tier[] = [
     icon: "🏆",
     name: "프로",
     subtitle: "전문가 멘토링",
-    price: 599000,
-    priceLabel: "599,000원",
-    originalPrice: 799000,
-    originalPriceLabel: "799,000원",
-    monthlyLabel: "월 49,920원",
+    price: 897000,
+    priceLabel: "897,000원",
+    originalPrice: 1690000,
+    originalPriceLabel: "1,690,000원",
+    discountLabel: "47% 할인",
+    monthlyLabel: "월 74,750원",
     period: "1개월",
     popular: false,
     features: [
@@ -80,6 +84,7 @@ export const TIER_MAP = Object.fromEntries(TIERS.map((t) => [t.id, t]));
 
 // 공통 안내 문구
 export const COMMON_NOTES = [
+  "💡 모든 가격은 부가가치세(VAT)가 포함된 금액입니다",
   "✅ 1회성 결제 · 월 구독제 아님",
   "✅ 서비스 제공기간 : 결제 즉시 이용 개시, 결제일로부터 1개월 (별도 배송 없는 무형 디지털 자문 서비스)",
   "✅ 환불정책 : 사이트 이용 로그가 있으면 관련 법규에 따라 처리됩니다. 환불 정책을 참고 부탁드립니다.",

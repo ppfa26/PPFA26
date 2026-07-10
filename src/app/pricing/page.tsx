@@ -31,6 +31,10 @@ const PRICING_FAQ = [
     q: "Q6. 정보는 얼마나 최신인가요?",
     a: "매일 자동으로 89개 공식 사이트를 크롤링하여 최신 공고를 반영합니다. 또한 40여 개 부처의 최신 공문 자료를 기반으로 정확한 팩트체크 후 답변합니다.",
   },
+  {
+    q: "Q7. 부가세 별도인가요?",
+    a: "아닙니다. 모든 표시가격은 부가가치세(VAT)가 포함된 금액입니다. 결제 시 추가로 부과되는 금액은 없습니다.",
+  },
 ];
 
 export default function PricingPage() {
@@ -54,6 +58,9 @@ export default function PricingPage() {
             >
               모든 플랜은 1회성 결제이며 월 구독 결제가 아닙니다.
             </Editable>
+            <p className="mx-auto mt-4 inline-block break-keep rounded-full bg-brand-yellow/40 px-4 py-2 text-sm font-semibold text-brand-dark">
+              💡 모든 가격은 부가세가 포함된 금액입니다
+            </p>
           </div>
 
           <div className="mt-12">

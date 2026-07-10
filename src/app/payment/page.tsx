@@ -149,7 +149,10 @@ function PaymentInner() {
                 {product.subtitle} · {product.period}
               </p>
             </div>
-            <p className="text-2xl font-extrabold text-brand-dark">{product.priceLabel}</p>
+            <div className="text-right">
+              <p className="text-2xl font-extrabold text-brand-dark">{product.priceLabel}</p>
+              <p className="mt-0.5 text-xs text-brand-gray">(VAT 포함)</p>
+            </div>
           </div>
           <ul className="mt-4 space-y-1.5 border-t border-gray-100 pt-4">
             {product.features.map((f, i) => (

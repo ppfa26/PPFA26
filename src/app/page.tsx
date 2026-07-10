@@ -121,7 +121,7 @@ export default function Home() {
               정부지원사업 브로커 대행 수수료는 1억원 승인 시 최소 500만원입니다.
               <br className="hidden sm:inline" />{" "}
               모두의공공조달에서{" "}
-              <strong className="text-brand-dark">149,000원</strong>으로 직접
+              <strong className="text-brand-dark">297,000원부터</strong> 직접
               신청하는 방법을 배워 무료로 신청하세요.
             </Editable>
 
@@ -195,7 +195,7 @@ export default function Home() {
                   as="p"
                   className="break-keep text-[13px] font-bold leading-snug text-brand-dark sm:text-sm"
                 >
-                  모두의공공조달 : 149,000원부터 ~
+                  모두의공공조달 : 297,000원부터 ~
                 </Editable>
               </div>
             </div>
@@ -210,7 +210,7 @@ export default function Home() {
               as="h2"
               className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
             >
-              149,000원으로 이 모든 걸 알려드립니다.
+              297,000원부터 이 모든 걸 알려드립니다.
             </Editable>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {VALUES.map((v, i) => (
