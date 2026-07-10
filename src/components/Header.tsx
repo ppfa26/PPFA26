@@ -82,10 +82,11 @@ export default function Header() {
               >
                 마이페이지
               </Link>
+              {/* 로그아웃은 PC에서만 노출(모바일은 마이페이지 안에서 로그아웃) */}
               <button
                 type="button"
                 onClick={handleLogout}
-                className="whitespace-nowrap text-[12.5px] font-semibold text-brand-gray transition-colors hover:text-brand-orange sm:text-sm"
+                className="hidden whitespace-nowrap text-[12.5px] font-semibold text-brand-gray transition-colors hover:text-brand-orange sm:inline sm:text-sm"
               >
                 로그아웃
               </button>
