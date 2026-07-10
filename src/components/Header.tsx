@@ -67,7 +67,7 @@ export default function Header() {
         </Link>
 
         {/* 네비 + CTA */}
-        <nav className="flex shrink-0 items-center gap-3.5 xs:gap-4 sm:gap-6">
+        <nav className="flex shrink-0 items-center gap-3 xs:gap-3.5 sm:gap-5">
           <Link
             href="/community"
             className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
@@ -75,13 +75,21 @@ export default function Header() {
             후기
           </Link>
           {loggedIn ? (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
-            >
-              로그아웃
-            </button>
+            <>
+              <Link
+                href="/mypage"
+                className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
+              >
+                마이페이지
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="whitespace-nowrap text-[12.5px] font-semibold text-brand-gray transition-colors hover:text-brand-orange sm:text-sm"
+              >
+                로그아웃
+              </button>
+            </>
           ) : (
             <Link
               href="/signup"
