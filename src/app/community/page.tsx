@@ -113,52 +113,53 @@ export default function Page() {
   return (
     <PageShell pageKey="community">
       <Header />
-      <main className="mx-auto w-full max-w-5xl px-4 pb-20 pt-10 sm:px-6">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-20 pt-12 sm:px-6 sm:pt-16">
         {/* ── 상단 히어로 ── */}
         <section className="text-center">
-          <span className="inline-block rounded-full bg-brand-yellow/20 px-4 py-1.5 text-xs font-bold text-brand-dark break-keep sm:text-sm">
-            고객 후기 · 성공 사례
+          <span className="inline-block rounded-full border border-brand-yellow/50 bg-brand-yellow/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-orange break-keep sm:text-xs">
+            Customer Stories · 고객 성공 사례
           </span>
-          <h1 className="mt-4 break-keep text-2xl font-extrabold leading-snug text-brand-dark xs:text-3xl sm:text-4xl">
+          <h1 className="mt-5 break-keep text-2xl font-extrabold leading-tight tracking-tight text-brand-dark xs:text-3xl sm:text-[2.6rem]">
             대표님들의 진짜 후기로
             <br className="sm:hidden" /> 증명합니다
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base">
+          <p className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base">
             <span className="font-semibold text-brand-dark">모두의공공조달</span>
-            은 다년간 쌓아온 노하우로, 2년간 약 300여 기업의 자금 고민을 함께
-            풀어왔습니다. 아래는 당근마켓·네이버 블로그·카카오 채널 상담을 통해 만난
-            대표님들의 실제 후기입니다.
+            은 2년간 약 300여 기업의 자금 고민을 함께 풀어왔습니다.
+            당근마켓·네이버 블로그·카카오 채널에서 만난 대표님들의 실제 이야기입니다.
           </p>
         </section>
 
-        {/* ── 통계 배너 ── */}
-        <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {STATS.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-2xl border border-gray-100 bg-white p-4 text-center shadow-sm"
-            >
-              <p className="break-keep text-lg font-extrabold text-brand-orange xs:text-xl sm:text-2xl">
-                {s.value}
-              </p>
-              <p className="mt-1 break-keep text-[11px] font-medium text-brand-gray sm:text-xs">
-                {s.label}
-              </p>
-            </div>
-          ))}
+        {/* ── 통계 바 (구분선형 미니멀) ── */}
+        <section className="mx-auto mt-10 max-w-3xl">
+          <div className="grid grid-cols-2 divide-x divide-y divide-gray-100 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm sm:grid-cols-4 sm:divide-y-0">
+            {STATS.map((s) => (
+              <div key={s.label} className="px-4 py-6 text-center">
+                <p className="break-keep text-xl font-extrabold text-brand-dark xs:text-2xl sm:text-[1.7rem]">
+                  {s.value}
+                </p>
+                <p className="mt-1.5 break-keep text-[11px] font-medium text-brand-gray sm:text-xs">
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* ── 실제 승인 실적 이미지 ── */}
-        <section className="mt-12">
-          <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
-            📊 실제 승인 실적
+        <section className="mt-20 text-center">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-brand-orange">
+            Verified Records
+          </p>
+          <h2 className="mt-2 break-keep text-xl font-extrabold tracking-tight text-brand-dark sm:text-3xl">
+            실제 승인 실적
           </h2>
-          <p className="mt-2 break-keep text-sm text-brand-gray">
-            모두의공공조달이 직접 매칭·컨설팅하여 승인된 실제 사례입니다. 고객
-            동의 하에 개인정보(상호·대표자·사업자번호 등)는 일절 표기하지 않고
+          <p className="mx-auto mt-3 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray">
+            모두의공공조달이 직접 매칭·컨설팅하여 승인된 실제 사례입니다.
+            고객 동의 하에 개인정보(상호·대표자·사업자번호 등)는 일절 표기하지 않고
             승인 정보만 공개합니다.
           </p>
-          <div className="mt-5 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="mx-auto mt-7 max-w-3xl overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-md ring-1 ring-black/[0.02]">
             <img
               src="/images/approval-cases.jpg"
               alt="모두의공공조달 실제 승인 실적 - 문화산업보증 5억원(한국무역보험공사), 혁신성장촉진자금 2억원(소상공인시장진흥공단), 수출기업 글로벌화 1.5억원(중소벤처기업진흥공단) 등 정책자금·보증 승인 사례"
@@ -166,22 +167,27 @@ export default function Page() {
               loading="lazy"
             />
           </div>
-          <p className="mt-3 break-keep text-[11px] text-gray-400">
+          <p className="mx-auto mt-4 max-w-2xl break-keep text-[11px] leading-relaxed text-gray-400">
             ※ 게시된 사례는 고객 동의 하에 개인정보를 가려 요약 공개하며, 개별
             결과는 기업 상황·심사 기준에 따라 달라질 수 있습니다.
           </p>
         </section>
 
         {/* ── 이용 후기 카드 그리드 ── */}
-        <section className="mt-14">
-          <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
-            💬 이용 후기
-          </h2>
-          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <section className="mt-20">
+          <div className="text-center">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-brand-orange">
+              Reviews
+            </p>
+            <h2 className="mt-2 break-keep text-xl font-extrabold tracking-tight text-brand-dark sm:text-3xl">
+              이용 후기
+            </h2>
+          </div>
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
             {REVIEWS.map((r, i) => (
               <article
                 key={i}
-                className="flex flex-col rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md"
+                className="flex flex-col rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-yellow/40 hover:shadow-lg sm:p-7"
               >
                 <div className="flex items-center justify-between gap-2">
                   <Stars n={r.rating} />
@@ -191,19 +197,19 @@ export default function Page() {
                     {r.channel}
                   </span>
                 </div>
-                <h3 className="mt-3 break-keep text-base font-bold leading-snug text-brand-dark">
+                <h3 className="mt-4 break-keep text-[17px] font-bold leading-snug text-brand-dark">
                   {r.title}
                 </h3>
-                <p className="mt-2 flex-1 break-keep text-sm leading-relaxed text-brand-gray">
+                <p className="mt-2.5 flex-1 break-keep text-sm leading-relaxed text-brand-gray">
                   {r.body}
                 </p>
                 {r.result && (
-                  <p className="mt-3 inline-flex items-center gap-1 self-start rounded-lg bg-brand-green/10 px-2.5 py-1 text-xs font-bold text-brand-green break-keep">
+                  <p className="mt-4 inline-flex items-center gap-1.5 self-start rounded-lg bg-brand-green/10 px-3 py-1.5 text-xs font-bold text-brand-green break-keep">
                     ✅ {r.result}
                   </p>
                 )}
-                <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-sm font-bold text-brand-dark">
+                <div className="mt-5 flex items-center gap-2.5 border-t border-gray-100 pt-4">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-sm font-bold text-brand-dark">
                     {r.name.slice(0, 1)}
                   </span>
                   <div className="min-w-0">
@@ -227,7 +233,7 @@ export default function Page() {
         <ReviewWriteSection />
 
         {/* ── 하단 CTA ── */}
-        <section className="mt-14 rounded-3xl bg-brand-dark px-6 py-10 text-center">
+        <section className="mt-20 rounded-3xl bg-brand-dark px-6 py-10 text-center">
           <h2 className="break-keep text-xl font-extrabold text-white sm:text-2xl">
             다음 후기의 주인공은 대표님입니다
           </h2>
@@ -312,21 +318,24 @@ function LiveReviews() {
   if (!loading && rows.length === 0) return null;
 
   return (
-    <section className="mt-14">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
-          ⭐ 실제 이용 고객 후기
+    <section className="mt-20">
+      <div className="text-center">
+        <p className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider text-brand-orange">
+          Live
+          <span className="rounded-full bg-brand-green/10 px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-brand-green">
+            실시간
+          </span>
+        </p>
+        <h2 className="mt-2 break-keep text-xl font-extrabold tracking-tight text-brand-dark sm:text-3xl">
+          실제 이용 고객 후기
         </h2>
-        <span className="shrink-0 rounded-full bg-brand-green/10 px-3 py-1 text-[11px] font-bold text-brand-green">
-          실시간
-        </span>
+        <p className="mt-3 break-keep text-sm text-brand-gray">
+          모두의공공조달을 직접 이용하신 대표님들이 남겨주신 후기입니다.
+        </p>
       </div>
-      <p className="mt-2 break-keep text-sm text-brand-gray">
-        모두의공공조달을 직접 이용하신 대표님들이 남겨주신 후기입니다.
-      </p>
 
       {loading ? (
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
           {[0, 1].map((i) => (
             <div
               key={i}
@@ -335,11 +344,11 @@ function LiveReviews() {
           ))}
         </div>
       ) : (
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
           {rows.map((r) => (
             <article
               key={r.id}
-              className="flex flex-col rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md"
+              className="flex flex-col rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-yellow/40 hover:shadow-lg sm:p-7"
             >
               <div className="flex items-center justify-between gap-2">
                 <Stars n={r.rating} />
@@ -347,19 +356,19 @@ function LiveReviews() {
                   {fmtDate(r.created_at)}
                 </span>
               </div>
-              <h3 className="mt-3 break-keep text-base font-bold leading-snug text-brand-dark">
+              <h3 className="mt-4 break-keep text-[17px] font-bold leading-snug text-brand-dark">
                 {r.title}
               </h3>
-              <p className="mt-2 flex-1 whitespace-pre-line break-keep text-sm leading-relaxed text-brand-gray">
+              <p className="mt-2.5 flex-1 whitespace-pre-line break-keep text-sm leading-relaxed text-brand-gray">
                 {r.body}
               </p>
               {r.result && (
-                <p className="mt-3 inline-flex items-center gap-1 self-start rounded-lg bg-brand-green/10 px-2.5 py-1 text-xs font-bold text-brand-green break-keep">
+                <p className="mt-4 inline-flex items-center gap-1.5 self-start rounded-lg bg-brand-green/10 px-3 py-1.5 text-xs font-bold text-brand-green break-keep">
                   ✅ {r.result}
                 </p>
               )}
-              <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-sm font-bold text-brand-dark">
+              <div className="mt-5 flex items-center gap-2.5 border-t border-gray-100 pt-4">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-sm font-bold text-brand-dark">
                   {(r.author_name || "?").slice(0, 1)}
                 </span>
                 <div className="min-w-0">
@@ -456,7 +465,7 @@ function ReviewWriteSection() {
   };
 
   return (
-    <section className="mt-14 rounded-3xl border border-brand-yellow/40 bg-brand-yellow/10 px-5 py-8 sm:px-8">
+    <section className="mt-20 rounded-3xl border border-brand-yellow/40 bg-brand-yellow/10 px-5 py-8 sm:px-8">
       <div className="text-center">
         <span className="inline-block rounded-full bg-brand-orange/10 px-3 py-1 text-[11px] font-bold text-brand-orange sm:text-xs">
           🎁 후기 작성 이벤트 진행 중
