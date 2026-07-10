@@ -59,6 +59,7 @@ export default function AdvancedScreeningPanel() {
   const [equity억, setEquity억] = useState(""); // 자기자본(법인만)
   const [ceoAge, setCeoAge] = useState("");
   const [years, setYears] = useState("");
+  const [employees, setEmployees] = useState<"0" | "under5" | "5plus" | "">(""); // 4대보험 상시직원 수
 
   // 신용점수 (모름 허용)
   const [creditKnown, setCreditKnown] = useState<Tri>("");
@@ -77,9 +78,13 @@ export default function AdvancedScreeningPanel() {
 
   // ── 판정 실행 ──────────────────────────────────────────────
   const handleRun = () => {
+    const empCount = employees === "5plus" ? 5 : employees === "under5" ? 2 : employees === "0" ? 0 : undefined;
     const company: Company = {
       industry,
       annual_revenue: toWon(revenue억),
+      // ── 업종·규모 기반 추천 필터 (대표님 실무 기준) ──
+      biz_type: bizType || undefined,
+      employee_count: empCount,
       // ⭐ 판독에는 '신용대출/정책자금'만 반영 (담보대출 제외 → 매출 대비 부채 판정 왜곡 방지)
       total_debt: toWon(creditLoan억),
       // 자기자본은 법인만 (개인사업자는 개념이 없어 미입력 → 판독 영향 없음)
@@ -119,6 +124,7 @@ export default function AdvancedScreeningPanel() {
     { key: "bizType" },
     { key: "industry" },
     { key: "revenue" },
+    { key: "employees" },
     { key: "creditLoan" },
     { key: "securedLoan" },
     { key: "equity", skip: bizType !== "corp" }, // 법인만
@@ -282,6 +288,41 @@ export default function AdvancedScreeningPanel() {
                 placeholder="예: 3"
                 example="💡 3억이면 3, 5천만원이면 0.5, 12억이면 12 이렇게 적어주세요."
               />
+            )}
+
+            {/* 3-1. 4대보험 상시직원 수 (중진공 자격 판정에 중요) */}
+            {cur?.key === "employees" && (
+              <>
+                <h3 className="text-lg font-extrabold text-brand-dark sm:text-xl">4대보험에 가입된 직원이 몇 명인가요?</h3>
+                <p className="mt-2 break-keep text-sm text-brand-gray">
+                  대표님 본인은 빼고, 4대보험(국민연금·건강보험 등)에 가입된 상시 직원 수만 골라주세요. 직원 규모에 따라
+                  신청 가능한 기관이 달라집니다.
+                </p>
+                <div className="mt-5 space-y-3">
+                  <button type="button" className={bigChoice(employees === "0")} onClick={() => setEmployees("0")}>
+                    <span className="text-xl">🙋</span>
+                    <span>
+                      <span className="block">없음 (대표 혼자)</span>
+                      <span className="block text-xs font-medium text-brand-gray">4대보험 가입 직원이 없어요</span>
+                    </span>
+                  </button>
+                  <button type="button" className={bigChoice(employees === "under5")} onClick={() => setEmployees("under5")}>
+                    <span className="text-xl">👥</span>
+                    <span>
+                      <span className="block">1 ~ 4명</span>
+                      <span className="block text-xs font-medium text-brand-gray">소수 인원으로 운영 중</span>
+                    </span>
+                  </button>
+                  <button type="button" className={bigChoice(employees === "5plus")} onClick={() => setEmployees("5plus")}>
+                    <span className="text-xl">🏢</span>
+                    <span>
+                      <span className="block">5명 이상</span>
+                      <span className="block text-xs font-medium text-brand-gray">중소벤처기업진흥공단(중진공)까지 신청 가능</span>
+                    </span>
+                  </button>
+                </div>
+                <p className="mt-3 text-xs text-brand-orange">모르시면 비워두고 넘어가셔도 됩니다.</p>
+              </>
             )}
 
             {/* 4. 신용대출/정책자금 (담보 없는 대출) */}
@@ -541,7 +582,7 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
           🏦 대표님이 이용할 수 있는 기관
         </p>
         <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          신용점수·조건 기준으로 실제 신청 가능한 정책금융 기관입니다.
+          업종·직원수 등 대표님 조건 기준으로 실제 신청 자격이 열리는 정책금융 기관입니다.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {creditMatches.map((m, i) => (
@@ -554,6 +595,10 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
             </div>
           ))}
         </div>
+        <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
+          💡 대출은 보통 <b className="text-brand-dark">직접대출 1곳 + 대리대출(보증서) 1곳, 총 2곳</b>에서 병행
+          진행할 수 있습니다. 어느 기관을 먼저 진행할지 순서 설계는 상담에서 도와드립니다.
+        </p>
       </div>
 
       {/* 예상 대출한도 (있을 때만) */}

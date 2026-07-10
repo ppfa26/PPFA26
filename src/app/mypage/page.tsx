@@ -126,7 +126,43 @@ export default function MyPage() {
                 )}
               </section>
 
-              {/* 결제 내역 */}
+              {/* 진단 결과 요약 (위로) */}
+              <section
+                id="mypage-diagnosis"
+                className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
+              >
+                <h2 className="text-lg font-extrabold text-brand-dark">
+                  🎯 나의 진단 결과
+                </h2>
+                {matchCount === null ? (
+                  <div className="mt-4 rounded-2xl border border-dashed border-gray-300 p-8 text-center text-brand-gray">
+                    아직 진단 결과가 없습니다.
+                    <br />
+                    <Link
+                      href="/diagnosis"
+                      className="mt-2 inline-block font-bold text-brand-orange underline"
+                    >
+                      무료 진단 받으러 가기
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="mt-4 rounded-2xl bg-brand-yellow/30 p-5 text-center">
+                    <p className="text-brand-dark">
+                      {diagName ? `${diagName} 대표님께 ` : ""}맞는 지원사업{" "}
+                      <b className="text-brand-orange">{matchCount}개</b>가
+                      매칭되었습니다.
+                    </p>
+                    <Link
+                      href="/dashboard"
+                      className="btn-brand mt-4 inline-block rounded-full px-8 py-3"
+                    >
+                      대시보드에서 전체 결과 보기
+                    </Link>
+                  </div>
+                )}
+              </section>
+
+              {/* 결제 내역 (아래로) */}
               <section
                 id="mypage-payments"
                 className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
@@ -187,42 +223,6 @@ export default function MyPage() {
                 <p className="mt-3 text-xs text-brand-gray">
                   ✅ 일시불 1회 결제 · 자동결제(정기결제) 없음
                 </p>
-              </section>
-
-              {/* 진단 결과 요약 */}
-              <section
-                id="mypage-diagnosis"
-                className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
-              >
-                <h2 className="text-lg font-extrabold text-brand-dark">
-                  🎯 나의 진단 결과
-                </h2>
-                {matchCount === null ? (
-                  <div className="mt-4 rounded-2xl border border-dashed border-gray-300 p-8 text-center text-brand-gray">
-                    아직 진단 결과가 없습니다.
-                    <br />
-                    <Link
-                      href="/diagnosis"
-                      className="mt-2 inline-block font-bold text-brand-orange underline"
-                    >
-                      무료 진단 받으러 가기
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="mt-4 rounded-2xl bg-brand-yellow/30 p-5 text-center">
-                    <p className="text-brand-dark">
-                      {diagName ? `${diagName} 대표님께 ` : ""}맞는 지원사업{" "}
-                      <b className="text-brand-orange">{matchCount}개</b>가
-                      매칭되었습니다.
-                    </p>
-                    <Link
-                      href="/dashboard"
-                      className="btn-brand mt-4 inline-block rounded-full px-8 py-3"
-                    >
-                      대시보드에서 전체 결과 보기
-                    </Link>
-                  </div>
-                )}
               </section>
 
               <p className="mt-6 break-keep text-center text-xs leading-relaxed text-brand-gray">
