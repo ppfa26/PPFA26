@@ -28,7 +28,7 @@ const REVIEWS: Review[] = [
   {
     name: "정O아 대표",
     business: "도소매 (수출업)",
-    region: "인천 서구",
+    region: "인천 서해구",
     channel: "카카오상담",
     rating: 5,
     title: "생각했던 것보다 훨씬 큰 자금을 확보했습니다",
@@ -38,7 +38,7 @@ const REVIEWS: Review[] = [
   {
     name: "김O호 대표",
     business: "육류 포장처리업",
-    region: "인천 서구",
+    region: "인천 서해구",
     channel: "당근마켓",
     rating: 5,
     title: "얼마전에 부결되서 반포기 상태였는데,, 여기서 자문 받고 승인받았습니다",
@@ -78,7 +78,7 @@ const REVIEWS: Review[] = [
   {
     name: "한O경 대표",
     business: "뿌리기업 (부품)",
-    region: "인천 서구",
+    region: "인천 서해구",
     channel: "카카오상담",
     rating: 5,
     title: "부담 없이 상담받았는데 그대로 승인됐어요",
@@ -562,7 +562,7 @@ function ReviewWriteSection() {
               <input
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                placeholder="예: 인천 서구"
+                placeholder="예: 인천 서해구"
                 className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-brand-orange"
               />
             </div>

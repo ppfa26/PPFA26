@@ -10,7 +10,7 @@ const ROWS: { label: string; id: string; value: string }[] = [
   {
     label: "사업장 주소",
     id: "biz-address",
-    value: "인천광역시 서구 청라커낼로 288번길 26, 285호",
+    value: "인천광역시 서해구 청라커낼로 288번길 26, 285호",
   },
   { label: "이메일", id: "biz-email", value: "biospartners@naver.com" },
   { label: "업종", id: "biz-type", value: "경영 컨설팅업 · 정보 제공(자문) 서비스" },

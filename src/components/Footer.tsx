@@ -77,7 +77,7 @@ export default function Footer() {
             <dt className="shrink-0 text-gray-400">상호</dt>
             <dd className="text-gray-500">모두의공공조달</dd>
             <dt className="shrink-0 text-gray-400">주소</dt>
-            <dd className="text-gray-500">인천광역시 서구 청라커낼로 288번길 26</dd>
+            <dd className="text-gray-500">인천광역시 서해구 청라커낼로 288번길 26</dd>
             <dt className="shrink-0 text-gray-400">사업자등록번호</dt>
             <dd className="text-gray-500">597-12-02897</dd>
             <dt className="shrink-0 text-gray-400">통신판매업신고</dt>
@@ -89,7 +89,7 @@ export default function Footer() {
           {/* PC: 기존 한 줄(가운뎃점) 형태 유지 */}
           <div className="hidden sm:block">
             <p>
-              상호 : 모두의공공조달 · 주소 : 인천광역시 서구 청라커낼로 288번길 26
+              상호 : 모두의공공조달 · 주소 : 인천광역시 서해구 청라커낼로 288번길 26
             </p>
             <p className="mt-1">
               사업자등록번호 : 597-12-02897 · 통신판매업신고 : [신고번호]
