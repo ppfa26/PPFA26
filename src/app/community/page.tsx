@@ -115,7 +115,7 @@ const APPROVALS: Approval[] = [
   {
     kind: "보증",
     business: "문화콘텐츠 제조",
-    region: "인천 서구",
+    region: "인천 서해구",
     program: "문화산업보증 · 신용보증한도",
     agency: "한국무역보험공사(K-SURE)",
     amount: "5억원",
@@ -124,7 +124,7 @@ const APPROVALS: Approval[] = [
   {
     kind: "정책자금",
     business: "제조업",
-    region: "인천",
+    region: "인천 부평구",
     program: "혁신성장촉진자금 (운전)",
     agency: "소상공인시장진흥공단",
     amount: "2억원",
@@ -141,15 +141,15 @@ const APPROVALS: Approval[] = [
   {
     kind: "인증",
     business: "IT·소프트웨어",
-    region: "경기 성남",
-    program: "벤처기업 인증 취득",
+    region: "인천 검단구",
+    program: "벤처기업 인증",
     agency: "벤처확인기관",
     note: "R&D·세제감면·정책자금 우대 연계",
   },
   {
     kind: "인증",
     business: "부품 제조 (뿌리기업)",
-    region: "인천 서구",
+    region: "인천 서해구",
     program: "이노비즈(INNO-BIZ) 인증",
     agency: "중소벤처기업부",
     note: "기술혁신형 중소기업 확인",
@@ -157,7 +157,7 @@ const APPROVALS: Approval[] = [
   {
     kind: "인증",
     business: "도소매·유통",
-    region: "경기 부천",
+    region: "인천 부평구",
     program: "메인비즈(MAIN-BIZ) 인증",
     agency: "중소벤처기업부",
     note: "경영혁신형 중소기업 확인",
@@ -165,7 +165,7 @@ const APPROVALS: Approval[] = [
   {
     kind: "정책자금",
     business: "수출기업",
-    region: "인천",
+    region: "인천 남동구",
     program: "글로벌화 자금",
     agency: "중소벤처기업진흥공단",
     amount: "1.5억원",
@@ -173,7 +173,7 @@ const APPROVALS: Approval[] = [
   {
     kind: "보증",
     business: "소상공인",
-    region: "인천",
+    region: "인천 검단구",
     program: "지역맞춤형 특례보증",
     agency: "신용보증재단",
     amount: "5,000만원",
@@ -181,7 +181,7 @@ const APPROVALS: Approval[] = [
   {
     kind: "지원금",
     business: "일반 중소기업",
-    region: "인천",
+    region: "인천 부평구",
     program: "일반경영안정자금 (운전)",
     agency: "소상공인시장진흥공단",
     amount: "7,000만원",
@@ -279,13 +279,9 @@ export default function Page() {
                   >
                     {a.kind}
                   </span>
-                  {a.amount ? (
+                  {a.amount && (
                     <span className="shrink-0 break-keep text-lg font-extrabold text-brand-dark">
                       {a.amount}
-                    </span>
-                  ) : (
-                    <span className="shrink-0 rounded-full bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green">
-                      취득 완료
                     </span>
                   )}
                 </div>
@@ -322,19 +318,9 @@ export default function Page() {
             가려 요약 공개하며, 개별 결과는 기업 상황·심사 기준에 따라 달라질 수
             있습니다.
           </p>
-        </section>
 
-        {/* ── 이용 후기 카드 그리드 ── */}
-        <section className="mt-20">
-          <div className="text-center">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-brand-orange">
-              Reviews
-            </p>
-            <h2 className="mt-2 break-keep text-xl font-extrabold tracking-tight text-brand-dark sm:text-3xl">
-              이용 후기
-            </h2>
-          </div>
-          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {/* 승인후기와 이어지는 실제 이용 후기(별점) 카드 */}
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
             {REVIEWS.map((r, i) => (
               <article
                 key={i}
