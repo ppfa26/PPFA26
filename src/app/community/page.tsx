@@ -202,15 +202,17 @@ export default function Page() {
         {/* ── 승인 사례 요약 이미지 ── */}
         <section className="mt-14">
           <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
-            📊 승인 사례 요약
+            📊 실제 승인 실적
           </h2>
           <p className="mt-2 break-keep text-sm text-brand-gray">
-            고객 동의 하에 개인정보를 모두 가린 뒤, 승인 사례를 요약해 공유합니다.
+            모두의공공조달이 직접 매칭·컨설팅하여 승인된 실제 사례입니다. 고객
+            동의 하에 개인정보(상호·대표자·사업자번호 등)는 일절 표기하지 않고
+            승인 정보만 공개합니다.
           </p>
           <div className="mt-5 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
             <img
               src="/images/approval-cases.jpg"
-              alt="모두의공공조달 승인 사례 요약 - 무역보험공사, 중진공, 수출바우처, 혁신창업사업화자금, 지역신용보증재단, 기술보증기금 등 승인 사례"
+              alt="모두의공공조달 실제 승인 실적 - 문화산업보증 5억원(한국무역보험공사), 혁신성장촉진자금 2억원(소상공인시장진흥공단), 수출기업 글로벌화 1.5억원(중소벤처기업진흥공단) 등 정책자금·보증 승인 사례"
               className="h-auto w-full"
               loading="lazy"
             />
