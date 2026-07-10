@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
+import { supabase } from "@/lib/supabaseClient";
 
 /* ────────────────────────────────────────────
    후기 데이터
@@ -194,43 +196,33 @@ export default function Page() {
           </div>
         </section>
 
-        {/* ── 성공 사례 이미지 갤러리 (관리자가 이미지 업로드 예정) ── */}
+        {/* ── 실제 고객이 남긴 후기 (Supabase 실시간) ── */}
+        <LiveReviews />
+
+        {/* ── 승인 사례 요약 이미지 ── */}
         <section className="mt-14">
           <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
-            📸 실제 승인·지급 사례
+            📊 승인 사례 요약
           </h2>
           <p className="mt-2 break-keep text-sm text-brand-gray">
-            대표님들의 소중한 개인정보는 모두 가린 뒤, 실제 승인·지급 결과만
-            공유합니다.
+            고객 동의 하에 개인정보를 모두 가린 뒤, 승인 사례를 요약해 공유합니다.
           </p>
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {[
-              "소상공인 정책자금 승인",
-              "보증재단 보증 약정",
-              "직접대출 지급 완료",
-              "수출바우처 선정",
-              "특례보증 승인",
-              "KOSME 전자약정",
-            ].map((label, i) => (
-              <div
-                key={i}
-                className="flex aspect-[3/4] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 p-3 text-center"
-              >
-                <span className="text-2xl">🖼️</span>
-                <span className="mt-2 break-keep text-[11px] font-semibold text-brand-gray sm:text-xs">
-                  {label}
-                </span>
-                <span className="mt-1 text-[10px] text-gray-400">
-                  이미지 준비 중
-                </span>
-              </div>
-            ))}
+          <div className="mt-5 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <img
+              src="/images/approval-cases.jpg"
+              alt="모두의공공조달 승인 사례 요약 - 무역보험공사, 중진공, 수출바우처, 혁신창업사업화자금, 지역신용보증재단, 기술보증기금 등 승인 사례"
+              className="h-auto w-full"
+              loading="lazy"
+            />
           </div>
           <p className="mt-3 break-keep text-[11px] text-gray-400">
-            ※ 게시된 사례는 고객 동의 하에 개인정보를 가려 공개하며, 개별 결과는
-            기업 상황에 따라 달라질 수 있습니다.
+            ※ 게시된 사례는 고객 동의 하에 개인정보를 가려 요약 공개하며, 개별
+            결과는 기업 상황·심사 기준에 따라 달라질 수 있습니다.
           </p>
         </section>
+
+        {/* ── 고객 후기 작성 (로그인 고객) ── */}
+        <ReviewWriteSection />
 
         {/* ── 하단 CTA ── */}
         <section className="mt-14 rounded-3xl bg-brand-dark px-6 py-10 text-center">
@@ -261,5 +253,388 @@ export default function Page() {
       </main>
       <Footer />
     </PageShell>
+  );
+}
+
+/* ────────────────────────────────────────────
+   실제 고객이 남긴 후기 (Supabase에서 승인된 것만 노출)
+──────────────────────────────────────────── */
+type LiveReview = {
+  id: string;
+  author_name: string;
+  business: string | null;
+  region: string | null;
+  rating: number;
+  title: string;
+  body: string;
+  result: string | null;
+  created_at: string;
+};
+
+function fmtDate(iso: string) {
+  try {
+    const d = new Date(iso);
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+  } catch {
+    return "";
+  }
+}
+
+function LiveReviews() {
+  const [rows, setRows] = useState<LiveReview[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select(
+          "id, author_name, business, region, rating, title, body, result, created_at"
+        )
+        .eq("is_approved", true)
+        .order("created_at", { ascending: false })
+        .limit(30);
+      if (!alive) return;
+      if (!error && data) setRows(data as LiveReview[]);
+      setLoading(false);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // 아직 승인된 실제 후기가 없으면 섹션 자체를 숨김 (빈 화면 방지)
+  if (!loading && rows.length === 0) return null;
+
+  return (
+    <section className="mt-14">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
+          ⭐ 실제 이용 고객 후기
+        </h2>
+        <span className="shrink-0 rounded-full bg-brand-green/10 px-3 py-1 text-[11px] font-bold text-brand-green">
+          실시간
+        </span>
+      </div>
+      <p className="mt-2 break-keep text-sm text-brand-gray">
+        모두의공공조달을 직접 이용하신 대표님들이 남겨주신 후기입니다.
+      </p>
+
+      {loading ? (
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {[0, 1].map((i) => (
+            <div
+              key={i}
+              className="h-40 animate-pulse rounded-2xl border border-gray-100 bg-gray-50"
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {rows.map((r) => (
+            <article
+              key={r.id}
+              className="flex flex-col rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <Stars n={r.rating} />
+                <span className="shrink-0 text-[11px] text-gray-400">
+                  {fmtDate(r.created_at)}
+                </span>
+              </div>
+              <h3 className="mt-3 break-keep text-base font-bold leading-snug text-brand-dark">
+                {r.title}
+              </h3>
+              <p className="mt-2 flex-1 whitespace-pre-line break-keep text-sm leading-relaxed text-brand-gray">
+                {r.body}
+              </p>
+              {r.result && (
+                <p className="mt-3 inline-flex items-center gap-1 self-start rounded-lg bg-brand-green/10 px-2.5 py-1 text-xs font-bold text-brand-green break-keep">
+                  ✅ {r.result}
+                </p>
+              )}
+              <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-sm font-bold text-brand-dark">
+                  {(r.author_name || "?").slice(0, 1)}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-brand-dark">
+                    {r.author_name}
+                  </p>
+                  <p className="truncate text-[11px] text-brand-gray">
+                    {[r.business, r.region].filter(Boolean).join(" · ") ||
+                      "이용 고객"}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ────────────────────────────────────────────
+   고객 후기 작성 (로그인 고객만 · 검수 후 노출)
+──────────────────────────────────────────── */
+function ReviewWriteSection() {
+  const [checking, setChecking] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  // 폼 상태
+  const [rating, setRating] = useState(5);
+  const [authorName, setAuthorName] = useState("");
+  const [business, setBusiness] = useState("");
+  const [region, setRegion] = useState("");
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [result, setResult] = useState("");
+
+  const [submitting, setSubmitting] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!alive) return;
+      setLoggedIn(!!user);
+      setChecking(false);
+    })();
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setLoggedIn(!!session?.user);
+    });
+    return () => {
+      alive = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  const submit = async () => {
+    setMsg("");
+    if (!authorName.trim()) return setMsg("표시할 이름을 입력해 주세요.");
+    if (!title.trim()) return setMsg("후기 제목을 입력해 주세요.");
+    if (body.trim().length < 10)
+      return setMsg("후기 내용을 10자 이상 입력해 주세요.");
+
+    setSubmitting(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setSubmitting(false);
+      return setMsg("로그인이 필요합니다. 다시 로그인해 주세요.");
+    }
+
+    const { error } = await supabase.from("reviews").insert({
+      user_id: user.id,
+      author_name: authorName.trim(),
+      business: business.trim() || null,
+      region: region.trim() || null,
+      rating,
+      title: title.trim(),
+      body: body.trim(),
+      result: result.trim() || null,
+    });
+
+    setSubmitting(false);
+    if (error) {
+      setMsg("후기 등록 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+    setDone(true);
+  };
+
+  return (
+    <section className="mt-14 rounded-3xl border border-brand-yellow/40 bg-brand-yellow/10 px-5 py-8 sm:px-8">
+      <div className="text-center">
+        <span className="inline-block rounded-full bg-brand-orange/10 px-3 py-1 text-[11px] font-bold text-brand-orange sm:text-xs">
+          🎁 후기 작성 이벤트 진행 중
+        </span>
+        <h2 className="mt-3 break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
+          이용 후기를 남겨주세요
+        </h2>
+        <p className="mx-auto mt-2 max-w-xl break-keep text-sm leading-relaxed text-brand-gray">
+          모두의공공조달을 이용하신 대표님의 소중한 경험을 들려주세요.
+          <br className="hidden sm:block" />
+          작성해 주신 후기는 검수 후 이 페이지에 소개됩니다.
+        </p>
+      </div>
+
+      {/* 작성 완료 */}
+      {done ? (
+        <div className="mx-auto mt-6 max-w-md rounded-2xl bg-white p-6 text-center shadow-sm">
+          <p className="text-3xl">🙏</p>
+          <p className="mt-3 break-keep text-base font-bold text-brand-dark">
+            소중한 후기 감사합니다!
+          </p>
+          <p className="mt-2 break-keep text-sm leading-relaxed text-brand-gray">
+            관리자 검수 후 이 페이지에 노출됩니다. 보통 1~2일 이내에
+            반영됩니다.
+          </p>
+        </div>
+      ) : checking ? (
+        <div className="mx-auto mt-6 h-12 max-w-xs animate-pulse rounded-full bg-white/60" />
+      ) : !loggedIn ? (
+        /* 비로그인 상태 */
+        <div className="mx-auto mt-6 max-w-md rounded-2xl bg-white p-6 text-center shadow-sm">
+          <p className="break-keep text-sm leading-relaxed text-brand-gray">
+            후기 작성은 <b className="text-brand-dark">로그인 후</b> 가능합니다.
+            <br />
+            간편 로그인으로 바로 시작해 보세요.
+          </p>
+          <Link
+            href="/signup"
+            className="btn-brand mt-4 inline-block w-full rounded-full px-6 py-3 text-sm font-bold sm:w-auto"
+          >
+            로그인하고 후기 작성하기
+          </Link>
+        </div>
+      ) : !open ? (
+        /* 로그인 상태 · 폼 열기 전 */
+        <div className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="btn-brand inline-block w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
+          >
+            ✏️ 후기 작성하기
+          </button>
+        </div>
+      ) : (
+        /* 로그인 상태 · 작성 폼 */
+        <div className="mx-auto mt-6 max-w-2xl rounded-2xl bg-white p-5 shadow-sm sm:p-6">
+          {/* 별점 */}
+          <label className="block break-keep text-sm font-bold text-brand-dark">
+            별점
+          </label>
+          <div className="mt-1 flex gap-1">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setRating(n)}
+                className={`text-2xl leading-none ${
+                  n <= rating ? "text-brand-yellow" : "text-gray-300"
+                }`}
+                aria-label={`별점 ${n}점`}
+              >
+                ★
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div>
+              <label className="block break-keep text-sm font-bold text-brand-dark">
+                표시 이름 *
+              </label>
+              <input
+                value={authorName}
+                onChange={(e) => setAuthorName(e.target.value)}
+                placeholder="예: 김O호 대표"
+                className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-brand-orange"
+              />
+            </div>
+            <div>
+              <label className="block break-keep text-sm font-bold text-brand-dark">
+                업종
+              </label>
+              <input
+                value={business}
+                onChange={(e) => setBusiness(e.target.value)}
+                placeholder="예: 도소매업"
+                className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-brand-orange"
+              />
+            </div>
+            <div>
+              <label className="block break-keep text-sm font-bold text-brand-dark">
+                지역
+              </label>
+              <input
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+                placeholder="예: 인천 서구"
+                className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-brand-orange"
+              />
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <label className="block break-keep text-sm font-bold text-brand-dark">
+              제목 *
+            </label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="예: 부결됐던 자금, 여기서 승인받았어요"
+              className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-brand-orange"
+            />
+          </div>
+
+          <div className="mt-4">
+            <label className="block break-keep text-sm font-bold text-brand-dark">
+              내용 * <span className="font-normal text-brand-gray">(10자 이상)</span>
+            </label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={5}
+              placeholder="상담 과정, 도움받은 점, 결과 등을 자유롭게 남겨주세요."
+              className="mt-1 w-full resize-y rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-brand-orange"
+            />
+          </div>
+
+          <div className="mt-4">
+            <label className="block break-keep text-sm font-bold text-brand-dark">
+              승인 결과 <span className="font-normal text-brand-gray">(선택)</span>
+            </label>
+            <input
+              value={result}
+              onChange={(e) => setResult(e.target.value)}
+              placeholder="예: 정책자금 1억 승인"
+              className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-brand-orange"
+            />
+          </div>
+
+          {msg && (
+            <p className="mt-3 break-keep text-sm font-medium text-brand-red">
+              {msg}
+            </p>
+          )}
+
+          <p className="mt-3 break-keep text-[11px] leading-relaxed text-gray-400">
+            ※ 작성하신 후기는 관리자 검수 후 노출됩니다. 허위·비방·광고성 후기는
+            게재가 제한될 수 있습니다.
+          </p>
+
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={submit}
+              disabled={submitting}
+              className="btn-brand w-full rounded-full px-6 py-3 text-sm font-bold disabled:opacity-60 sm:flex-1"
+            >
+              {submitting ? "등록 중..." : "후기 등록하기"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="w-full rounded-full border border-gray-200 px-6 py-3 text-sm font-bold text-brand-gray hover:bg-gray-50 sm:w-auto"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
