@@ -48,7 +48,7 @@ export default function Header() {
             className="h-9 w-9 shrink-0 rounded-[9px] sm:h-10 sm:w-10"
             priority
           />
-          <span className="flex flex-col justify-center pr-3 sm:pr-0">
+          <span className="flex flex-col justify-center pr-1 sm:pr-0">
             <span className="block whitespace-nowrap text-[17px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
               모두의공공조달
             </span>
