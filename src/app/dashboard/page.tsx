@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { matchPrograms, MatchResult } from "@/lib/matching";
 import { CATEGORY_META, MatchCategory, PROGRAMS } from "@/lib/programs";
+import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
 
 const CATEGORY_ORDER: MatchCategory[] = [
   "정책자금",
@@ -168,6 +169,9 @@ export default function DashboardPage() {
               );
             })}
           </section>
+
+          {/* 정밀 추가진단(선택) — 추가 판정 레이어 (기존 결과 아래에 후처리로 얹음) */}
+          <AdvancedScreeningPanel />
 
           {/* 상담 채널 안내 */}
           <section
