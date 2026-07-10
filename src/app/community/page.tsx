@@ -229,9 +229,7 @@ export default function Page() {
             <span className="font-semibold text-brand-dark">모두의공공조달</span>
             은 2년간 약 300여 기업의 자금 고민을 함께 풀어왔습니다.
             <br className="hidden sm:block" />
-            당근마켓·네이버 블로그·카카오 채널에서 만난
-            <br className="hidden sm:block" />
-            대표님들의 실제 이야기입니다.
+            당근마켓·네이버 블로그·카카오 채널에서 만난 대표님들의 실제 이야기입니다.
           </p>
         </section>
 
