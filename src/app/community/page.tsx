@@ -148,10 +148,34 @@ export default function Page() {
           ))}
         </section>
 
-        {/* ── 후기 카드 그리드 ── */}
+        {/* ── 실제 승인 실적 이미지 ── */}
         <section className="mt-12">
           <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
-            💬 상담 후기
+            📊 실제 승인 실적
+          </h2>
+          <p className="mt-2 break-keep text-sm text-brand-gray">
+            모두의공공조달이 직접 매칭·컨설팅하여 승인된 실제 사례입니다. 고객
+            동의 하에 개인정보(상호·대표자·사업자번호 등)는 일절 표기하지 않고
+            승인 정보만 공개합니다.
+          </p>
+          <div className="mt-5 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <img
+              src="/images/approval-cases.jpg"
+              alt="모두의공공조달 실제 승인 실적 - 문화산업보증 5억원(한국무역보험공사), 혁신성장촉진자금 2억원(소상공인시장진흥공단), 수출기업 글로벌화 1.5억원(중소벤처기업진흥공단) 등 정책자금·보증 승인 사례"
+              className="h-auto w-full"
+              loading="lazy"
+            />
+          </div>
+          <p className="mt-3 break-keep text-[11px] text-gray-400">
+            ※ 게시된 사례는 고객 동의 하에 개인정보를 가려 요약 공개하며, 개별
+            결과는 기업 상황·심사 기준에 따라 달라질 수 있습니다.
+          </p>
+        </section>
+
+        {/* ── 이용 후기 카드 그리드 ── */}
+        <section className="mt-14">
+          <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
+            💬 이용 후기
           </h2>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {REVIEWS.map((r, i) => (
@@ -198,30 +222,6 @@ export default function Page() {
 
         {/* ── 실제 고객이 남긴 후기 (Supabase 실시간) ── */}
         <LiveReviews />
-
-        {/* ── 승인 사례 요약 이미지 ── */}
-        <section className="mt-14">
-          <h2 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
-            📊 실제 승인 실적
-          </h2>
-          <p className="mt-2 break-keep text-sm text-brand-gray">
-            모두의공공조달이 직접 매칭·컨설팅하여 승인된 실제 사례입니다. 고객
-            동의 하에 개인정보(상호·대표자·사업자번호 등)는 일절 표기하지 않고
-            승인 정보만 공개합니다.
-          </p>
-          <div className="mt-5 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-            <img
-              src="/images/approval-cases.jpg"
-              alt="모두의공공조달 실제 승인 실적 - 문화산업보증 5억원(한국무역보험공사), 혁신성장촉진자금 2억원(소상공인시장진흥공단), 수출기업 글로벌화 1.5억원(중소벤처기업진흥공단) 등 정책자금·보증 승인 사례"
-              className="h-auto w-full"
-              loading="lazy"
-            />
-          </div>
-          <p className="mt-3 break-keep text-[11px] text-gray-400">
-            ※ 게시된 사례는 고객 동의 하에 개인정보를 가려 요약 공개하며, 개별
-            결과는 기업 상황·심사 기준에 따라 달라질 수 있습니다.
-          </p>
-        </section>
 
         {/* ── 고객 후기 작성 (로그인 고객) ── */}
         <ReviewWriteSection />
