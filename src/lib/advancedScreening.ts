@@ -50,6 +50,7 @@ export type Company = {
   biz_type?: "personal" | "corp"; // 사업자 유형 (개인/법인)
   employee_count?: number; // 4대보험 가입 상시직원 수
   is_small_business?: boolean; // 소상공인 여부(매출·업종 기준) — 미지정 시 매출로 자동 추정
+  is_exporter?: boolean; // 수출 여부 (100만원이라도 수출 실적 있으면 true)
 
   // ── BLOCK 1: 신보 즉시부결 판정용 필드 (신용보증기금 간이심사 사전조회) ──
   delinquent_loan?: boolean; // 연체대출금 보유
@@ -183,69 +184,181 @@ export type CreditMatch = {
   institution: string;
   criteria: string;
   priority: "HIGH" | "MEDIUM" | "TECH_BASED";
+  loan_type?: "직접대출" | "대리대출"; // 직접대출(공단) / 대리대출(보증서→은행)
+  step?: number; // 신청 권장 순서 (1이 가장 먼저)
 };
 
 // 업종 정규화: 다양한 표기를 대분류 키로 변환
-function normalizeIndustry(industry?: string): "manufacturing" | "retail_food" | "service" | "etc" {
+//  - manufacturing: 제조
+//  - tech_innov: 로봇·AI·바이오·혁신성장·기술창업 등 기술기반(→ 기보 우선 트랙)
+//  - retail_food: 도소매·음식점
+//  - service: 일반 서비스·건설·물류 등
+function normalizeIndustry(
+  industry?: string
+): "manufacturing" | "tech_innov" | "retail_food" | "service" | "etc" {
   const s = (industry || "").replace(/\s/g, "");
   if (s.includes("제조")) return "manufacturing";
+  if (
+    s.includes("로봇") || s.includes("AI") || s.includes("인공지능") || s.includes("바이오") ||
+    s.includes("혁신") || s.includes("소프트") || s.includes("IT") || s.includes("기술") ||
+    s.includes("딥테크") || s.includes("반도체") || s.includes("이차전지")
+  )
+    return "tech_innov";
   if (s.includes("도소매") || s.includes("도매") || s.includes("소매") || s.includes("음식") || s.includes("외식") || s.includes("유통"))
     return "retail_food";
-  if (s.includes("서비스") || s.includes("운수") || s.includes("물류") || s.includes("IT") || s.includes("소프트") || s.includes("건설") || s.includes("농림") || s.includes("어업"))
+  if (s.includes("서비스") || s.includes("운수") || s.includes("물류") || s.includes("건설") || s.includes("농림") || s.includes("어업"))
     return "service";
   return "etc";
 }
 
-// 이용 가능 기관 판정 — 업종·직원수·수출 여부 기준
+// 신용점수 판정 (대표님 실무 기준)
+//  - 800점 이상: 양호 (대부분 승인 잘남)
+//  - 780~799: 사업성/기술력 있으면 가능 (기보·특례 위주)
+//  - 780 미만: 일반적으론 어려움 (단 기보·재단특례는 700점대도 가능)
+export type CreditTier = "good" | "caution" | "hard";
+export function scoreTier(company: Company): CreditTier {
+  const score = Math.max(company.kcb_score ?? 0, company.nice_score ?? 0);
+  if (score === 0) return "caution"; // 미입력 → 주의로 간주
+  if (score >= 800) return "good";
+  if (score >= 780) return "caution";
+  return "hard";
+}
+
+// 이용 가능 기관 판정 — 업종·직원수·수출·신용점수 기준 + 신청 권장 순서
 export function matchInstitutions(company: Company): CreditMatch[] {
   const matches: CreditMatch[] = [];
   const cat = normalizeIndustry(company.industry);
   const employees = company.employee_count ?? 0;
-  const isExport = (company.industry || "").includes("수출");
+  const isExport = (company.industry || "").includes("수출") || company.is_exporter === true;
+  const segment = resolveSegment(company);
+  const isTechTrack = cat === "manufacturing" || cat === "tech_innov";
 
-  if (cat === "manufacturing") {
-    // 제조업 → 직원수와 무관하게 5개 기관 전부 자격
-    matches.push({ institution: "소상공인시장진흥공단", criteria: "제조 소상공인 대상 (대리대출)", priority: "HIGH" });
-    matches.push({ institution: "지역신용보증재단", criteria: "지역 소상공인·중소기업 보증 (이차보전·대리)", priority: "HIGH" });
-    matches.push({ institution: "중소벤처기업진흥공단", criteria: "제조업 → 직원수 무관 정책자금 대상 (직접대출)", priority: "HIGH" });
-    matches.push({ institution: "기술보증기금", criteria: "제조·기술기업 → 기술평가 기반 보증 (보증서·대리)", priority: "TECH_BASED" });
-    matches.push({ institution: "신용보증기금", criteria: "사업 규모 기반 보증 (보증서·대리)", priority: "MEDIUM" });
-  } else if (cat === "retail_food") {
-    // 음식점·도소매 → 재단·신보·소진공 위주 (기보 제외)
-    matches.push({ institution: "소상공인시장진흥공단", criteria: "음식점·도소매 소상공인 대상 (대리대출)", priority: "HIGH" });
-    matches.push({ institution: "지역신용보증재단", criteria: "지역 소상공인 보증 (이차보전·대리)", priority: "HIGH" });
-    matches.push({ institution: "신용보증기금", criteria: "사업 규모 기반 보증 (보증서·대리)", priority: "MEDIUM" });
-    if (employees >= 5) {
+  if (isTechTrack) {
+    // ⚠️ 제조·로봇·AI·혁신 → 반드시 기술보증기금부터!
+    //    (재단 먼저 받으면 기보 신청이 막힘)
+    matches.push({
+      institution: "기술보증기금",
+      criteria: "⚠️ 기술기업은 여기부터! (재단 먼저 받으면 기보 신청 불가) · 기술평가 보증",
+      priority: "TECH_BASED",
+      loan_type: "대리대출",
+      step: 1,
+    });
+    matches.push({
+      institution: "중소벤처기업진흥공단",
+      criteria: "제조·혁신 → 직원수 무관 정책자금 (직접대출, 아이템+동종경력 시 승인 잘남)",
+      priority: "HIGH",
+      loan_type: "직접대출",
+      step: 2,
+    });
+    // 소상공인 규모의 제조·혁신이면 재단·소진공도 병행 가능
+    if (segment === "small") {
       matches.push({
-        institution: "중소벤처기업진흥공단",
-        criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 가능 (직접대출)",
-        priority: "HIGH",
+        institution: "지역신용보증재단",
+        criteria: "소상공인 규모 → 기보 신청 후 병행 가능 (특례→협약→일반 순 승인율)",
+        priority: "MEDIUM",
+        loan_type: "대리대출",
+        step: 3,
+      });
+      matches.push({
+        institution: "소상공인시장진흥공단",
+        criteria: "혁신성장촉진(스마트)자금 등 병행 가능 (직접대출)",
+        priority: "MEDIUM",
+        loan_type: "직접대출",
+        step: 3,
       });
     }
-  } else {
-    // 서비스·기타 → 도소매·음식점과 동일 구조
-    matches.push({ institution: "소상공인시장진흥공단", criteria: "소상공인 대상 (대리대출)", priority: "HIGH" });
-    matches.push({ institution: "지역신용보증재단", criteria: "지역 소상공인 보증 (이차보전·대리)", priority: "HIGH" });
-    matches.push({ institution: "신용보증기금", criteria: "사업 규모 기반 보증 (보증서·대리)", priority: "MEDIUM" });
+  } else if (cat === "retail_food" || cat === "service" || cat === "etc") {
+    // 도소매·음식점·서비스·기타 소상공인 → 재단(특례) + 소진공 세트
+    matches.push({
+      institution: "지역신용보증재단",
+      criteria: "소상공인 1순위 · 특례→협약→일반 순으로 승인율 높음 (인천 희망인천 등 특례 유리)",
+      priority: "HIGH",
+      loan_type: "대리대출",
+      step: 1,
+    });
+    matches.push({
+      institution: "소상공인시장진흥공단",
+      criteria: "재단과 동시 진행 가능 (재도전·신사업·혁신 중 택1) · 직접대출",
+      priority: "HIGH",
+      loan_type: "직접대출",
+      step: 1,
+    });
+    // 매출 5억 이하면 신보는 비권장 (기보·재단으로) → 신보는 제외
+    // 직원 5명 이상이면 중진공까지 확장
     if (employees >= 5) {
       matches.push({
         institution: "중소벤처기업진흥공단",
-        criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 가능 (직접대출)",
-        priority: "HIGH",
+        criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 확장 가능 (직접대출)",
+        priority: "MEDIUM",
+        loan_type: "직접대출",
+        step: 2,
+      });
+    }
+    // 중소기업 규모(매출 5억↑ 또는 법인)면 신보 추가
+    if (segment === "sme") {
+      matches.push({
+        institution: "신용보증기금",
+        criteria: "매출 규모 있는 기업 대상 보증 (매출 5억 초과 시 검토)",
+        priority: "MEDIUM",
+        loan_type: "대리대출",
+        step: 2,
       });
     }
   }
 
-  // 수출기업 → 무역보험공사 병행 (한도 미합산)
+  // 수출기업 → 무역보험공사는 항상 마지막에 병행 (재단·기보·신보와 한도 미합산)
   if (isExport) {
     matches.push({
       institution: "한국무역보험공사",
-      criteria: "수출기업 → 신보·기보 한도와 별도 병행 가능",
+      criteria: "🌏 수출은 최강! 선적전/선적후/문화산업보증 중 1개 · 다른 기관과 한도 별도",
       priority: "HIGH",
+      loan_type: "대리대출",
+      step: 9,
     });
   }
 
+  // step 순서대로 정렬
+  matches.sort((a, b) => (a.step ?? 5) - (b.step ?? 5));
   return matches;
+}
+
+// ── 승인 시기(월별) 안내 (대표님 실무 기준) ──
+//  1~6월: 승인 잘남 / 7~9월: 추경, 일부 / 10~12월: 어려움
+export type TimingAdvice = { level: "good" | "mid" | "low"; message: string };
+export function timingAdvice(month?: number): TimingAdvice {
+  const m = month ?? new Date().getMonth() + 1;
+  if (m >= 1 && m <= 6)
+    return {
+      level: "good",
+      message: `지금은 상반기(${m}월)로 정책자금 예산이 넉넉해 승인이 가장 잘 나는 시기입니다. 지금 신청을 서두르는 것이 유리합니다.`,
+    };
+  if (m >= 7 && m <= 9)
+    return {
+      level: "mid",
+      message: `지금은 추경 시기(${m}월)로 일부 자금 승인이 가능합니다. 다만 10월 이후에는 예산 소진으로 어려워지니, 신청을 서두르는 것이 좋습니다.`,
+    };
+  return {
+    level: "low",
+    message: `지금은 하반기(${m}월)로 예산이 대부분 소진돼 신규 승인이 까다로운 시기입니다. 준비를 미리 해두고 내년 초(1~2월) 신청을 노리는 전략도 유효합니다.`,
+  };
+}
+
+// ── 신용점수 기반 안내 문구 (대표님 실무 기준) ──
+export function creditScoreAdvice(company: Company): { tier: CreditTier; message: string } {
+  const tier = scoreTier(company);
+  if (tier === "good")
+    return { tier, message: "신용점수 양호(800점 이상) → 대부분의 정책금융 기관에서 승인이 잘 나는 구간입니다." };
+  if (tier === "caution")
+    return {
+      tier,
+      message:
+        "신용점수 780~799점 구간 → 사업성·기술력이 뒷받침되면 승인 가능합니다. 기술보증기금(기술기업 700점대도 승인)·재단 특례보증(700점도 가능) 위주로 접근하는 것이 유리합니다.",
+    };
+  return {
+    tier,
+    message:
+      "신용점수 780점 미만 → 일반 보증은 다소 어려울 수 있습니다. 다만 기술력이 있으면 기술보증기금, 오프라인 소상공인이면 재단 특례보증(700점도 승인 사례)으로 길이 열립니다.",
+  };
 }
 
 // 하위호환용 래퍼 (신용점수만 넘어오는 기존 호출부 대비) — 내부적으로 미사용
@@ -635,6 +748,8 @@ export type AdvancedScreeningReport = {
   ventureEligibility: { eligible: boolean; reason: string } | null; // BLOCK 7
   rdDept: RDDeptResult; // BLOCK 7
   govPrograms: GovProgram[]; // BLOCK 4
+  timing: TimingAdvice; // 승인 시기(월별) 안내
+  creditAdvice: { tier: CreditTier; message: string }; // 신용점수 안내
   disclaimer: string;
   revalidation: string;
 };
@@ -663,6 +778,9 @@ export function runAdvancedScreening(company: Company): AdvancedScreeningReport 
   const rdDept = checkRDDeptEligibility(company);
   // 8) BLOCK 4
   const govPrograms = matchGovPrograms(company);
+  // 9) 승인 시기 + 신용점수 안내
+  const timing = timingAdvice();
+  const creditAdvice = creditScoreAdvice(company);
 
   return {
     koditHardReject,
@@ -675,6 +793,8 @@ export function runAdvancedScreening(company: Company): AdvancedScreeningReport 
     ventureEligibility,
     rdDept,
     govPrograms,
+    timing,
+    creditAdvice,
     disclaimer: ADVISORY_DISCLAIMER,
     revalidation: REVALIDATION_NOTICE,
   };

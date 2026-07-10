@@ -60,6 +60,7 @@ export default function AdvancedScreeningPanel() {
   const [ceoAge, setCeoAge] = useState("");
   const [years, setYears] = useState("");
   const [employees, setEmployees] = useState<"0" | "under5" | "5plus" | "">(""); // 4대보험 상시직원 수
+  const [isExporter, setIsExporter] = useState<"yes" | "no" | "">(""); // 수출 여부 (100만원이라도 있으면 yes)
 
   // 신용점수 (모름 허용)
   const [creditKnown, setCreditKnown] = useState<Tri>("");
@@ -85,6 +86,7 @@ export default function AdvancedScreeningPanel() {
       // ── 업종·규모 기반 추천 필터 (대표님 실무 기준) ──
       biz_type: bizType || undefined,
       employee_count: empCount,
+      is_exporter: isExporter === "yes",
       // ⭐ 판독에는 '신용대출/정책자금'만 반영 (담보대출 제외 → 매출 대비 부채 판정 왜곡 방지)
       total_debt: toWon(creditLoan억),
       // 자기자본은 법인만 (개인사업자는 개념이 없어 미입력 → 판독 영향 없음)
@@ -125,6 +127,7 @@ export default function AdvancedScreeningPanel() {
     { key: "industry" },
     { key: "revenue" },
     { key: "employees" },
+    { key: "export" },
     { key: "creditLoan" },
     { key: "securedLoan" },
     { key: "equity", skip: bizType !== "corp" }, // 법인만
@@ -320,6 +323,34 @@ export default function AdvancedScreeningPanel() {
                     <span>
                       <span className="block">5명 이상</span>
                       <span className="block text-xs font-medium text-brand-gray">중소벤처기업진흥공단(중진공)까지 신청 가능</span>
+                    </span>
+                  </button>
+                </div>
+                <p className="mt-3 text-xs text-brand-orange">모르시면 비워두고 넘어가셔도 됩니다.</p>
+              </>
+            )}
+
+            {/* 3-2. 수출 여부 (수출이면 무역보험공사 등 별도 한도 병행 → 승인 매우 유리) */}
+            {cur?.key === "export" && (
+              <>
+                <h3 className="text-lg font-extrabold text-brand-dark sm:text-xl">해외로 수출(직접·간접)을 하고 계신가요?</h3>
+                <p className="mt-2 break-keep text-sm text-brand-gray">
+                  금액이 작아도(100만원이라도) 수출 실적이 있으면 무역보험공사 등에서{" "}
+                  <b className="text-brand-orange">다른 기관과 별도로 추가 자금</b>을 받을 수 있어 매우 유리합니다.
+                </p>
+                <div className="mt-5 space-y-3">
+                  <button type="button" className={bigChoice(isExporter === "yes")} onClick={() => setIsExporter("yes")}>
+                    <span className="text-xl">🌏</span>
+                    <span>
+                      <span className="block">네, 수출하고 있어요</span>
+                      <span className="block text-xs font-medium text-brand-gray">직접수출·간접수출·온라인 해외판매 등 포함</span>
+                    </span>
+                  </button>
+                  <button type="button" className={bigChoice(isExporter === "no")} onClick={() => setIsExporter("no")}>
+                    <span className="text-xl">🏠</span>
+                    <span>
+                      <span className="block">아니요, 국내만 해요</span>
+                      <span className="block text-xs font-medium text-brand-gray">수출 실적이 없습니다</span>
                     </span>
                   </button>
                 </div>
@@ -529,6 +560,8 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
     creditMatches,
     loanLimit,
     govPrograms,
+    timing,
+    creditAdvice,
     disclaimer,
     revalidation,
   } = report;
@@ -542,6 +575,22 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
   return (
     <div id="advanced-result" className="mt-6 space-y-4">
       <h2 className="text-lg font-extrabold text-brand-dark">🔬 정밀 추가진단 결과</h2>
+
+      {/* ⏰ 지금 시기 안내 (월별 승인 유불리) */}
+      <div
+        className={`rounded-2xl border-2 p-4 shadow-card ${
+          timing.level === "good"
+            ? "border-brand-green bg-green-50"
+            : timing.level === "mid"
+            ? "border-brand-orange bg-brand-yellow/20"
+            : "border-brand-red/40 bg-red-50"
+        }`}
+      >
+        <p className="flex items-start gap-2 break-keep text-sm font-bold leading-relaxed text-brand-dark">
+          <span className="shrink-0 text-base">⏰</span>
+          <span>{timing.message}</span>
+        </p>
+      </div>
 
       {/* ① 사전 자가진단 (부결 요인 사전 점검) — 최상단 */}
       <div className={cardCls}>
@@ -593,21 +642,53 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
         <p className="mt-1 break-keep text-xs text-brand-dark/60">
           업종·직원수 등 대표님 조건 기준으로 실제 신청 자격이 열리는 정책금융 기관입니다.
         </p>
-        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="mt-4 space-y-2">
           {creditMatches.map((m, i) => (
             <div
               key={i}
               className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
             >
-              <p className="text-sm font-extrabold text-brand-dark">{m.institution}</p>
-              <p className="mt-0.5 break-keep text-xs text-brand-gray">{m.criteria}</p>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {m.step && m.step <= 3 && (
+                  <span className="shrink-0 rounded-full bg-brand-dark px-2 py-0.5 text-[10px] font-bold text-white">
+                    {m.step === 1 ? "1순위" : m.step === 2 ? "2순위" : "병행"}
+                  </span>
+                )}
+                <span className="text-sm font-extrabold text-brand-dark">{m.institution}</span>
+                {m.loan_type && (
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                      m.loan_type === "직접대출"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-purple-100 text-purple-700"
+                    }`}
+                  >
+                    {m.loan_type}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 break-keep text-xs text-brand-gray">{m.criteria}</p>
             </div>
           ))}
         </div>
-        <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
-          💡 대출은 보통 <b className="text-brand-dark">직접대출 1곳 + 대리대출(보증서) 1곳, 총 2곳</b>에서 병행
-          진행할 수 있습니다. 어느 기관을 먼저 진행할지 순서 설계는 상담에서 도와드립니다.
-        </p>
+        <div className="mt-3 space-y-2">
+          <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
+            💡 대출은 보통 <b>직접대출 1곳(공단 직접) + 대리대출 1곳(보증서→은행), 총 2곳</b>에서 동시에 진행할 수 있습니다.
+            직접대출은 보증료가 없지만 심사가 까다롭고, 대리대출은 보증비율 100%면 은행 심사가 간소화됩니다.
+          </p>
+          {/* 신용점수 안내 */}
+          <p
+            className={`break-keep rounded-lg px-3 py-2 text-[11px] leading-relaxed ${
+              creditAdvice.tier === "good"
+                ? "bg-green-50 text-brand-green"
+                : creditAdvice.tier === "caution"
+                ? "bg-brand-yellow/20 text-brand-dark"
+                : "bg-red-50 text-brand-red"
+            }`}
+          >
+            📊 {creditAdvice.message}
+          </p>
+        </div>
       </div>
 
       {/* ④ 신청 가능한 정부지원사업 (핵심 결과) */}
