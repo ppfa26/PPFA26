@@ -197,17 +197,19 @@ export default function AdvancedScreeningPanel() {
 
   return (
     <section id="advanced-screening" className="mb-2 scroll-mt-4">
-      {/* 필수 작성 안내 배너 */}
-      <div className="mb-3 overflow-hidden rounded-2xl border-2 border-brand-orange bg-brand-yellow/20 p-4 sm:p-5">
-        <p className="flex items-center gap-2 text-sm font-extrabold text-brand-dark sm:text-base">
-          <span className="text-lg">📋</span>
-          정확한 진단을 위해 아래 질문에 답해 주세요
-        </p>
-        <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
-          어려운 용어 없이 <b className="text-brand-orange">쉬운 질문 몇 개</b>만 답하시면, 어떤 정부지원사업의 승인
-          가능성이 높은지·예상 한도까지 정확하게 판독해 드립니다. 정확한 판독을 위해 끝까지 작성 부탁드립니다.
-        </p>
-      </div>
+      {/* 필수 작성 안내 배너 (판정 전에만 노출) */}
+      {!report && (
+        <div className="mb-3 overflow-hidden rounded-2xl border-2 border-brand-orange bg-brand-yellow/20 p-4 sm:p-5">
+          <p className="flex items-center gap-2 text-sm font-extrabold text-brand-dark sm:text-base">
+            <span className="text-lg">📋</span>
+            정확한 진단을 위해 아래 질문에 답해 주세요
+          </p>
+          <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
+            어려운 용어 없이 <b className="text-brand-orange">쉬운 질문 몇 개</b>만 답하시면, 어떤 정부지원사업의 승인
+            가능성이 높은지·예상 한도까지 정확하게 판독해 드립니다. 정확한 판독을 위해 끝까지 작성 부탁드립니다.
+          </p>
+        </div>
+      )}
 
       {/* 입력 카드 (판정 전에만 노출) */}
       {!report && (
@@ -524,7 +526,6 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
   const {
     koditHardReject,
     financials,
-    responsibleMgmt,
     creditMatches,
     loanLimit,
     govPrograms,
@@ -542,7 +543,74 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
     <div id="advanced-result" className="mt-6 space-y-4">
       <h2 className="text-lg font-extrabold text-brand-dark">🔬 정밀 추가진단 결과</h2>
 
-      {/* ★ 맨 위: 신청 가능한 정부지원사업 (핵심 결과) */}
+      {/* ① 사전 자가진단 (부결 요인 사전 점검) — 최상단 */}
+      <div className={cardCls}>
+        <span className="mb-2 block text-sm font-bold text-brand-dark">정부지원사업 사전 자가진단</span>
+        {koditHardReject.result === "PASS" ? (
+          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(true).cls}`}>
+            {verdictStyle(true).icon} 승인에 걸림돌이 되는 항목이 없습니다. (13개 항목 통과)
+          </div>
+        ) : (
+          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(false).cls}`}>
+            {verdictStyle(false).icon} 아래 항목은 미리 준비·정리하시면 승인에 유리합니다:
+            <ul className="mt-1 list-inside list-disc">
+              {koditHardReject.rejectReasons.map((r, i) => (
+                <li key={i}>{r}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* ② 재무비율 검증 */}
+      <div className={cardCls}>
+        <span className="mb-2 block text-sm font-bold text-brand-dark">재무비율 검증</span>
+        <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(financials.kodit_result === "PASS").cls}`}>
+          {verdictStyle(financials.kodit_result === "PASS").icon}{" "}
+          {financials.kodit_result === "PASS" ? "재무 관점 걸림돌 없음" : "재무 관점 점검 필요"}
+        </div>
+        {financials.issues.length > 0 && (
+          <ul className="mt-2 space-y-1 text-xs">
+            {financials.issues.map((it, i) => (
+              <li key={i} className={it.level === "REJECT" ? "text-brand-red" : "text-brand-orange"}>
+                {it.level === "REJECT" ? "🚫" : "⚠️"} {it.reason}
+              </li>
+            ))}
+          </ul>
+        )}
+        {financials.bank_credit_eligible && (
+          <p className="mt-2 break-keep text-xs font-semibold text-brand-green">
+            💡 매출 30억 이상 요건 충족 → 은행 법인신용대출 검토 가능
+          </p>
+        )}
+      </div>
+
+      {/* ③ 신청 가능 기관 — 크고 핵심적으로 */}
+      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
+        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
+          🏦 대표님이 이용할 수 있는 기관
+        </p>
+        <p className="mt-1 break-keep text-xs text-brand-dark/60">
+          업종·직원수 등 대표님 조건 기준으로 실제 신청 자격이 열리는 정책금융 기관입니다.
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {creditMatches.map((m, i) => (
+            <div
+              key={i}
+              className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
+            >
+              <p className="text-sm font-extrabold text-brand-dark">{m.institution}</p>
+              <p className="mt-0.5 break-keep text-xs text-brand-gray">{m.criteria}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
+          💡 대출은 보통 <b className="text-brand-dark">직접대출 1곳 + 대리대출(보증서) 1곳, 총 2곳</b>에서 병행
+          진행할 수 있습니다. 어느 기관을 먼저 진행할지 순서 설계는 상담에서 도와드립니다.
+        </p>
+      </div>
+
+      {/* ④ 신청 가능한 정부지원사업 (핵심 결과) */}
       {govPrograms.length > 0 && (
         <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 p-5 shadow-card">
           <p className="text-base font-extrabold text-brand-dark sm:text-lg">
@@ -576,32 +644,7 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
         </div>
       )}
 
-      {/* 신청 가능 기관 — 크고 핵심적으로 */}
-      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
-        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-          🏦 대표님이 이용할 수 있는 기관
-        </p>
-        <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          업종·직원수 등 대표님 조건 기준으로 실제 신청 자격이 열리는 정책금융 기관입니다.
-        </p>
-        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {creditMatches.map((m, i) => (
-            <div
-              key={i}
-              className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
-            >
-              <p className="text-sm font-extrabold text-brand-dark">{m.institution}</p>
-              <p className="mt-0.5 break-keep text-xs text-brand-gray">{m.criteria}</p>
-            </div>
-          ))}
-        </div>
-        <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
-          💡 대출은 보통 <b className="text-brand-dark">직접대출 1곳 + 대리대출(보증서) 1곳, 총 2곳</b>에서 병행
-          진행할 수 있습니다. 어느 기관을 먼저 진행할지 순서 설계는 상담에서 도와드립니다.
-        </p>
-      </div>
-
-      {/* 예상 대출한도 (있을 때만) */}
+      {/* ⑤ 예상 대출한도 (있을 때만) */}
       {loanLimit && (
         <div className={cardCls}>
           <span className="mb-2 block text-sm font-bold text-brand-dark">업종별 예상 기본 한도 (참고)</span>
@@ -609,61 +652,6 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
           <p className="mt-1 text-xs text-brand-gray">계산식: 연매출 × {loanLimit.ratio}</p>
           <p className="mt-2 break-keep text-xs text-brand-dark">
             📈 한도 상향 가능 요소: {loanLimit.boost_available.join(" · ")}
-          </p>
-        </div>
-      )}
-
-      {/* 사전 자가진단 (부결 요인 사전 점검) */}
-      <div className={cardCls}>
-        <span className="mb-2 block text-sm font-bold text-brand-dark">정부지원사업 사전 자가진단</span>
-        {koditHardReject.result === "PASS" ? (
-          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(true).cls}`}>
-            {verdictStyle(true).icon} 승인에 걸림돌이 되는 항목이 없습니다. (13개 항목 통과)
-          </div>
-        ) : (
-          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(false).cls}`}>
-            {verdictStyle(false).icon} 아래 항목은 미리 준비·정리하시면 승인에 유리합니다:
-            <ul className="mt-1 list-inside list-disc">
-              {koditHardReject.rejectReasons.map((r, i) => (
-                <li key={i}>{r}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {/* 재무비율 검증 */}
-      <div className={cardCls}>
-        <span className="mb-2 block text-sm font-bold text-brand-dark">재무비율 검증</span>
-        <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(financials.kodit_result === "PASS").cls}`}>
-          {verdictStyle(financials.kodit_result === "PASS").icon}{" "}
-          {financials.kodit_result === "PASS" ? "재무 관점 걸림돌 없음" : "재무 관점 점검 필요"}
-        </div>
-        {financials.issues.length > 0 && (
-          <ul className="mt-2 space-y-1 text-xs">
-            {financials.issues.map((it, i) => (
-              <li key={i} className={it.level === "REJECT" ? "text-brand-red" : "text-brand-orange"}>
-                {it.level === "REJECT" ? "🚫" : "⚠️"} {it.reason}
-              </li>
-            ))}
-          </ul>
-        )}
-        {financials.bank_credit_eligible && (
-          <p className="mt-2 break-keep text-xs font-semibold text-brand-green">
-            💡 매출 30억 이상 요건 충족 → 은행 법인신용대출 검토 가능
-          </p>
-        )}
-      </div>
-
-      {/* 책임경영 평가 (미충족 항목 많을 때만 안내) */}
-      {responsibleMgmt.failed_count > 0 && (
-        <div className={cardCls}>
-          <span className="mb-2 block text-sm font-bold text-brand-dark">정부지원사업 책임경영 평가 (참고)</span>
-          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(responsibleMgmt.result === "PASS").cls}`}>
-            {verdictStyle(responsibleMgmt.result === "PASS").icon} {responsibleMgmt.note}
-          </div>
-          <p className="mt-2 break-keep text-[11px] text-brand-gray">
-            ※ 미입력 항목은 &lsquo;미충족&rsquo;으로 계산됩니다. 해당 항목을 확인 후 상담에서 재검토하세요.
           </p>
         </div>
       )}
