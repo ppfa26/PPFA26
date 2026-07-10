@@ -37,7 +37,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-2 pl-4 pr-3.5 sm:h-16 sm:gap-4 sm:px-6">
+      <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-2 pl-2.5 pr-2.5 xs:pl-4 xs:pr-3.5 sm:h-16 sm:gap-4 sm:px-6">
         {/* 로고 + 상호명 */}
         <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Image
@@ -67,7 +67,7 @@ export default function Header() {
         </Link>
 
         {/* 네비 + CTA */}
-        <nav className="flex shrink-0 items-center gap-3 xs:gap-3.5 sm:gap-5">
+        <nav className="flex shrink-0 items-center gap-2.5 xs:gap-3.5 sm:gap-5">
           <Link
             href="/community"
             className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
