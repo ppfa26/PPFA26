@@ -384,7 +384,7 @@ export default function Page() {
               무료 진단 시작하기
             </Link>
             <a
-              href="https://open.kakao.com/"
+              href="http://pf.kakao.com/_VxfWxan/chat"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full rounded-full bg-brand-yellow px-8 py-3 text-sm font-bold text-brand-dark hover:brightness-95 sm:w-auto"

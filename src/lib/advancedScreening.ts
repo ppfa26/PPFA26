@@ -271,14 +271,14 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     // 도소매·음식점·서비스·기타 소상공인 → 재단(특례) + 소진공 세트
     matches.push({
       institution: "지역신용보증재단",
-      criteria: "소상공인 1순위 · 특례→협약→일반 순으로 승인율 높음 (인천 희망인천 등 특례 유리)",
+      criteria: "소상공인 1순위 · 특례→협약→일반 순으로 승인율 높음",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
     });
     matches.push({
       institution: "소상공인시장진흥공단",
-      criteria: "재단과 동시 진행 가능 (재도전·신사업·혁신 중 택1) · 직접대출",
+      criteria: "재단과 동시 진행 가능 · 직접대출",
       priority: "HIGH",
       loan_type: "직접대출",
       step: 1,

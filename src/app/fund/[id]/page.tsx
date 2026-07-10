@@ -174,7 +174,7 @@ export default function FundDetailPage({
               신청 순서·서류 작성까지 1:1로 물어보세요.
             </p>
             <a
-              href="https://open.kakao.com/"
+              href="http://pf.kakao.com/_VxfWxan/chat"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-block rounded-full bg-brand-dark px-8 py-3 font-bold text-white hover:opacity-90"
