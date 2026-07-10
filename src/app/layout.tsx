@@ -56,6 +56,65 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
+// ─────────────────────────────────────────────────────────────
+//  검색엔진 구조화 데이터(JSON-LD)
+//  네이버/구글이 사이트 구조를 인식해 검색결과에 '사이트링크(메뉴)'를
+//  만들 수 있도록 조직·사이트·주요 메뉴 정보를 제공한다.
+// ─────────────────────────────────────────────────────────────
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "모두의공공조달",
+      alternateName: "PPFA 정부지원사업 통합 매칭 플랫폼",
+      url: SITE_URL,
+      logo: `${SITE_URL}/favicon.png`,
+      description:
+        "정책자금·정부지원금·창업지원·바우처·인증·교육을 한 곳에서 진단·매칭하는 정부지원사업 통합 자문 플랫폼입니다.",
+      sameAs: [] as string[],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "모두의공공조달",
+      inLanguage: "ko-KR",
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${SITE_URL}/community?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      // 검색결과 사이트링크용 주요 메뉴
+      "@type": "SiteNavigationElement",
+      "@id": `${SITE_URL}/#navigation`,
+      name: [
+        "무료 진단",
+        "요금 안내",
+        "정부지원사업 정보",
+        "신청 사이트 모음",
+        "커뮤니티",
+        "이용약관",
+      ],
+      url: [
+        `${SITE_URL}/diagnosis`,
+        `${SITE_URL}/pricing`,
+        `${SITE_URL}/business-info`,
+        `${SITE_URL}/sites`,
+        `${SITE_URL}/community`,
+        `${SITE_URL}/terms`,
+      ],
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -64,6 +123,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
