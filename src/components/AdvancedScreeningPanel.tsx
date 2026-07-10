@@ -558,7 +558,6 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
     koditHardReject,
     financials,
     creditMatches,
-    loanLimit,
     govPrograms,
     timing,
     creditAdvice,
@@ -797,37 +796,49 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
             대표님 진단 정보 기준으로 신청 자격이 확인된 2026 정부지원사업입니다.
           </p>
           <div className="mt-4 space-y-2">
-            {govPrograms.map((p, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
-              >
-                <span className="min-w-0 break-keep text-sm font-bold text-brand-dark">
-                  {p.name.replace(/_/g, " ")}
-                </span>
-                {p.amount_max && (
-                  <span className="shrink-0 rounded-full bg-brand-green px-2.5 py-1 text-[11px] font-bold text-white">
-                    최대 {won억(p.amount_max)}
+            {govPrograms.map((p, i) => {
+              const inner = (
+                <>
+                  <span className="min-w-0 break-keep text-sm font-bold text-brand-dark">
+                    {p.name.replace(/_/g, " ")}
                   </span>
-                )}
-              </div>
-            ))}
+                  <span className="flex shrink-0 items-center gap-2">
+                    {p.amount_max && (
+                      <span className="rounded-full bg-brand-green px-2.5 py-1 text-[11px] font-bold text-white">
+                        최대 {won억(p.amount_max)}
+                      </span>
+                    )}
+                    {p.applyUrl && (
+                      <span className="whitespace-nowrap text-[11px] font-bold text-brand-orange">
+                        신청 →
+                      </span>
+                    )}
+                  </span>
+                </>
+              );
+              return p.applyUrl ? (
+                <a
+                  key={i}
+                  href={p.applyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
+                >
+                  {inner}
+                </a>
+              ) : (
+                <div
+                  key={i}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
+                >
+                  {inner}
+                </div>
+              );
+            })}
           </div>
           <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
             ※ 위 목록은 신청 자격이 확인된 사업이며, 최종 선정은 각 기관 심사 결과에 따릅니다.
-            구체적인 신청 방법·서류는 화면 아래 매칭 카드에서 확인하세요.
-          </p>
-        </div>
-      )}
-
-      {/* ⑤ 예상 대출한도 (있을 때만) */}
-      {loanLimit && (
-        <div className={cardCls}>
-          <span className="mb-2 block text-sm font-bold text-brand-dark">업종별 예상 기본 한도 (참고)</span>
-          <p className="text-2xl font-black text-brand-orange">약 {loanLimit.base_limit_display}</p>
-          <p className="mt-1 text-xs text-brand-gray">계산식: 연매출 × {loanLimit.ratio}</p>
-          <p className="mt-2 break-keep text-xs text-brand-dark">
-            📈 한도 상향 가능 요소: {loanLimit.boost_available.join(" · ")}
+            사업명을 누르면 해당 신청·안내 사이트로 이동합니다.
           </p>
         </div>
       )}

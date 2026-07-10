@@ -51,6 +51,7 @@ export type Company = {
   employee_count?: number; // 4대보험 가입 상시직원 수
   is_small_business?: boolean; // 소상공인 여부(매출·업종 기준) — 미지정 시 매출로 자동 추정
   is_exporter?: boolean; // 수출 여부 (100만원이라도 수출 실적 있으면 true)
+  is_tourism?: boolean; // 관광사업체 등록 여부 (관광기업 바우처 자격)
 
   // ── BLOCK 1: 신보 즉시부결 판정용 필드 (신용보증기금 간이심사 사전조회) ──
   delinquent_loan?: boolean; // 연체대출금 보유
@@ -268,41 +269,69 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       });
     }
   } else if (cat === "retail_food" || cat === "service" || cat === "etc") {
-    // 도소매·음식점·서비스·기타 소상공인 → 재단(특례) + 소진공 세트
-    matches.push({
-      institution: "지역신용보증재단",
-      criteria: "소상공인 1순위 · 특례→협약→일반 순으로 승인율 높음",
-      priority: "HIGH",
-      loan_type: "대리대출",
-      step: 1,
-    });
-    matches.push({
-      institution: "소상공인시장진흥공단",
-      criteria: "재단과 동시 진행 가능 · 직접대출",
-      priority: "HIGH",
-      loan_type: "직접대출",
-      step: 1,
-    });
-    // 매출 5억 이하면 신보는 비권장 (기보·재단으로) → 신보는 제외
-    // 직원 5명 이상이면 중진공까지 확장
-    if (employees >= 5) {
-      matches.push({
-        institution: "중소벤처기업진흥공단",
-        criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 확장 가능 (직접대출)",
-        priority: "MEDIUM",
-        loan_type: "직접대출",
-        step: 2,
-      });
-    }
-    // 중소기업 규모(매출 5억↑ 또는 법인)면 신보 추가
-    if (segment === "sme") {
+    // 도소매·음식점·서비스·기타 (비기술 트랙)
+    const revenue = company.annual_revenue ?? 0;
+    const isBigRevenue = revenue >= 500000000 || segment === "sme"; // 매출 5억↑ 또는 중소기업 규모
+
+    if (isBigRevenue) {
+      // ── 매출 5억 이상 → 신용보증기금(신보)이 1순위, 재단 2순위, 소진공은 보너스 (대표님 기준) ──
       matches.push({
         institution: "신용보증기금",
-        criteria: "매출 규모 있는 기업 대상 보증 (매출 5억 초과 시 검토)",
+        criteria: "매출 5억 이상 규모 기업 → 신보 1순위 (사업 규모·매출 기반 보증, 한도 큼)",
+        priority: "HIGH",
+        loan_type: "대리대출",
+        step: 1,
+      });
+      matches.push({
+        institution: "지역신용보증재단",
+        criteria: "신보 다음 2순위 · 특례→협약→일반 순으로 승인율 높음",
         priority: "MEDIUM",
         loan_type: "대리대출",
         step: 2,
       });
+      matches.push({
+        institution: "소상공인시장진흥공단",
+        criteria: "직접대출로 항상 병행 신청 가능 (보너스) · 재단·신보와 별개",
+        priority: "MEDIUM",
+        loan_type: "직접대출",
+        step: 3,
+      });
+      // 직원 5명 이상이면 중진공까지 확장
+      if (employees >= 5) {
+        matches.push({
+          institution: "중소벤처기업진흥공단",
+          criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 확장 가능 (직접대출)",
+          priority: "MEDIUM",
+          loan_type: "직접대출",
+          step: 4,
+        });
+      }
+    } else {
+      // ── 매출 5억 미만 소상공인 → 재단 1순위, 소진공은 보너스, 신보 비권장 ──
+      matches.push({
+        institution: "지역신용보증재단",
+        criteria: "소상공인 1순위 · 특례→협약→일반 순으로 승인율 높음",
+        priority: "HIGH",
+        loan_type: "대리대출",
+        step: 1,
+      });
+      matches.push({
+        institution: "소상공인시장진흥공단",
+        criteria: "직접대출로 항상 병행 신청 가능 (보너스) · 재단과 별개",
+        priority: "MEDIUM",
+        loan_type: "직접대출",
+        step: 2,
+      });
+      // 직원 5명 이상이면 중진공까지 확장
+      if (employees >= 5) {
+        matches.push({
+          institution: "중소벤처기업진흥공단",
+          criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 확장 가능 (직접대출)",
+          priority: "MEDIUM",
+          loan_type: "직접대출",
+          step: 3,
+        });
+      }
     }
   }
 
@@ -445,44 +474,51 @@ export type GovProgram = {
   // ── 세그먼트·업종 필터용 (대표님 기준: 소상공인/중소기업 각자에게 맞는 것만) ──
   segment?: "small" | "sme" | "both"; // 소상공인 전용 / 중소기업 전용 / 공통
   industryOnly?: "manufacturing"; // 특정 업종만(예: 제조업 전용)
+  // ── 정밀 자격 필터 (대표님 기준: 해당 안 되는 건 절대 노출하지 않음) ──
+  requiresExport?: boolean; // 수출기업만 (수출 체크 안 하면 노출 X)
+  requiresTech?: boolean; // 기술 보유(특허·연구소·벤처·이노비즈) 기업만
+  requiresTourism?: boolean; // 관광사업체만
+  isStartupProgram?: boolean; // 창업 지향 사업(창업패키지·사관학교 등) → 예비창업자·창업초기(업력3년내)에만 노출
+  requiresOperating?: boolean; // 운영 중인 기존 사업자 전용(판로·강한소상공인·스마트제조 등) → 예비창업자 제외
+  requiresReFounder?: boolean; // 폐업 후 재기·재창업 지원(희망리턴 등) → 재창업자만
+  applyUrl?: string; // 신청·안내 사이트(클릭 시 바로 이동)
 };
 
 export const GOV_SUPPORT_2026: GovProgram[] = [
-  // 창업(예비·초기) — 예비창업자/재창업자 조건이 붙어 이미 필터됨
-  { name: "예비창업패키지", amount_max: 100000000, condition: "is_pre_founder", segment: "both" },
-  { name: "초기창업패키지", amount_max: 100000000, years_max: 3, self_burden: 0.3, segment: "both" },
-  { name: "청년창업사관학교", amount_max: 100000000, age_max: 39, years_max: 3, segment: "both" },
-  { name: "청년창업사관학교_경험창업자", amount_max: 100000000, age_max: 39, years_max: 7, segment: "both" },
-  { name: "생애최초창업", amount_max: 70000000, age_max: 29, condition: "is_pre_founder", segment: "both" },
-  { name: "공공기술창업", amount_max: 70000000, age_max: 39, condition: "is_pre_founder", segment: "both" },
-  { name: "신사업창업사관학교", amount_max: 40000000, condition: "is_pre_founder", segment: "small" },
-  { name: "재도전성공패키지", amount_max: 100000000, condition: "is_re_founder", segment: "both" },
-  // 중소기업(도약·글로벌·R&D·스마트공장 등) — segment: sme
-  { name: "글로벌창업사관학교", amount_max: 150000000, years_max: 7, segment: "sme" },
-  { name: "창업도약패키지_일반형", amount_max: 300000000, years_min: 3, years_max: 7, segment: "sme" },
-  { name: "창업도약패키지_대기업협업형", amount_max: 200000000, years_min: 3, years_max: 7, segment: "sme" },
-  { name: "스마트공장", amount_per_task: 100000000, amount_max_total: 700000000, self_burden: 0.3, segment: "sme", industryOnly: "manufacturing" },
-  { name: "수출바우처_중기부", amount_min: 30000000, amount_max: 100000000, self_burden_min: 0.3, self_burden_max: 0.5, segment: "sme" },
-  { name: "R&D_창업성장기술개발_디딤돌", amount_max: 120000000, duration: 1, gov_ratio: 0.8, years_max: 7, segment: "sme" },
-  { name: "R&D_전략형", amount_max: 2000000000, duration: 4, gov_ratio: 0.65, segment: "sme" },
-  { name: "R&D_시장확대", amount_max: 600000000, duration: 2, gov_ratio: 0.75, segment: "sme" },
-  { name: "R&D_시장대응", amount_max: 500000000, duration: 2, gov_ratio: 0.75, segment: "sme" },
-  { name: "데이터바우처_일반", amount_max: 32000000, segment: "sme" },
-  { name: "데이터바우처_AI가공", amount_max: 54000000, segment: "sme" },
-  { name: "혁신형중소기업_방송광고_TV", amount_max: 45000000, self_burden: 0.5, condition: "has_mainbiz", segment: "sme" },
-  { name: "혁신형중소기업_방송광고_라디오", amount_max: 3000000, self_burden: 0.7, condition: "has_mainbiz", segment: "sme" },
+  // 창업(예비·초기) — 예비창업자/재창업자·나이·업력 조건이 붙어 해당자만 노출됨
+  { name: "예비창업패키지", amount_max: 100000000, condition: "is_pre_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
+  { name: "초기창업패키지", amount_max: 100000000, years_max: 3, self_burden: 0.3, segment: "both", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
+  { name: "청년창업사관학교", amount_max: 100000000, age_max: 39, years_max: 3, segment: "both", isStartupProgram: true, applyUrl: "https://start.kosmes.or.kr" },
+  { name: "청년창업사관학교_경험창업자", amount_max: 100000000, age_max: 39, years_max: 7, segment: "both", isStartupProgram: true, applyUrl: "https://start.kosmes.or.kr" },
+  { name: "생애최초창업", amount_max: 70000000, age_max: 29, condition: "is_pre_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
+  { name: "공공기술창업", amount_max: 70000000, age_max: 39, condition: "is_pre_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
+  { name: "신사업창업사관학교", amount_max: 40000000, condition: "is_pre_founder", segment: "small", applyUrl: "https://edu.sbiz.or.kr" },
+  { name: "재도전성공패키지", amount_max: 100000000, condition: "is_re_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
+  // 중소기업(도약·글로벌·스마트공장 등) — segment: sme
+  { name: "글로벌창업사관학교", amount_max: 150000000, years_max: 7, segment: "sme", requiresTech: true, isStartupProgram: true, applyUrl: "https://start.kosmes.or.kr" },
+  { name: "창업도약패키지_일반형", amount_max: 300000000, years_min: 3, years_max: 7, segment: "sme", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
+  { name: "창업도약패키지_대기업협업형", amount_max: 200000000, years_min: 3, years_max: 7, segment: "sme", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
+  { name: "스마트공장", amount_per_task: 100000000, amount_max_total: 700000000, self_burden: 0.3, segment: "sme", industryOnly: "manufacturing", applyUrl: "https://www.smart-factory.kr" },
+  // 수출바우처 — 수출기업만 (수출 체크 시에만 노출)
+  { name: "수출바우처_중기부", amount_min: 30000000, amount_max: 100000000, self_burden_min: 0.3, self_burden_max: 0.5, segment: "sme", requiresExport: true, applyUrl: "https://www.exportvoucher.com" },
+  // ── R&D 지원사업은 정책자금 매칭 대상에서 항상 제외 (대표님 기준) ──
+  // (창업성장기술개발 디딤돌/전략형/시장확대/시장대응 등은 안내하지 않음)
+  // ── 데이터바우처는 '데이터 활용 목적' 기업 한정 → 일반 매칭에서 제외 (대표님 기준) ──
+  { name: "혁신형중소기업_방송광고_TV", amount_max: 45000000, self_burden: 0.5, condition: "has_mainbiz", segment: "sme", applyUrl: "https://www.kobaco.co.kr" },
+  { name: "혁신형중소기업_방송광고_라디오", amount_max: 3000000, self_burden: 0.7, condition: "has_mainbiz", segment: "sme", applyUrl: "https://www.kobaco.co.kr" },
   // 소상공인(강한소상공인·판로·희망리턴·스마트제조 등) — segment: small
-  { name: "희망리턴패키지_경영개선", amount_max: 40000000, segment: "small" },
-  { name: "희망리턴패키지_재창업", amount_max: 44000000, segment: "small" },
-  { name: "강한소상공인_로컬브랜드", amount_max: 100000000, segment: "small" },
-  { name: "강한소상공인_온라인셀러", amount_max: 50000000, segment: "small" },
-  { name: "강한소상공인_글로벌", amount_max: 100000000, segment: "small" },
-  { name: "스마트제조_소상공인", amount_max: 42000000, self_burden: 0.3, cash_ratio: 0.5, segment: "small", industryOnly: "manufacturing" },
-  { name: "데이터바우처_구매", amount_max: 5000000, segment: "small" },
-  { name: "판로개척_소상공인", amount_max: 20000000, self_burden: 0.2, segment: "small" },
-  { name: "IP나래", amount_max: 17500000, support_ratio: 0.5, segment: "sme" },
-  { name: "관광기업혁신바우처", amount_min: 20000000, amount_max: 100000000, segment: "both" },
-  { name: "로컬크리에이터", self_burden: 0.2, segment: "small" },
+  { name: "희망리턴패키지_경영개선", amount_max: 40000000, segment: "small", requiresReFounder: true, applyUrl: "https://www.sbiz.or.kr" },
+  { name: "희망리턴패키지_재창업", amount_max: 44000000, segment: "small", requiresReFounder: true, applyUrl: "https://www.sbiz.or.kr" },
+  { name: "강한소상공인_로컬브랜드", amount_max: 100000000, segment: "small", requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
+  { name: "강한소상공인_온라인셀러", amount_max: 50000000, segment: "small", requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
+  { name: "강한소상공인_글로벌", amount_max: 100000000, segment: "small", requiresExport: true, requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
+  { name: "스마트제조_소상공인", amount_max: 42000000, self_burden: 0.3, cash_ratio: 0.5, segment: "small", industryOnly: "manufacturing", requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
+  { name: "판로개척_소상공인", amount_max: 20000000, self_burden: 0.2, segment: "small", requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
+  // IP나래 — 창업 7년 이내 + 기술(특허 등) 보유 중소기업만
+  { name: "IP나래", amount_max: 17500000, support_ratio: 0.5, years_max: 7, segment: "sme", requiresTech: true, applyUrl: "https://pms.ripc.org" },
+  // 관광기업혁신바우처 — 관광사업체만
+  { name: "관광기업혁신바우처", amount_min: 20000000, amount_max: 100000000, segment: "both", requiresTourism: true, applyUrl: "https://www.tourbiz.or.kr" },
+  { name: "로컬크리에이터", self_burden: 0.2, segment: "small", requiresOperating: true, applyUrl: "https://www.k-startup.go.kr" },
 ];
 
 // ── 17개 시·도 지역신용보증재단 상품 안내 ──────────────────────
@@ -528,21 +564,58 @@ export function resolveSegment(company: Company): "small" | "sme" {
 }
 
 export function matchGovPrograms(company: Company): GovProgram[] {
-  const age = company.ceo_age ?? 999;
-  const years_in_business = company.years_in_business ?? 999;
-  const { is_pre_founder, is_re_founder, has_mainbiz } = company;
+  const age = company.ceo_age;
+  const years_in_business = company.years_in_business;
+  const { is_pre_founder, is_re_founder, has_mainbiz, is_exporter, is_tourism } = company;
   const segment = resolveSegment(company);
   const cat = normalizeIndustry(company.industry);
+  // 기술 보유 판정: 특허·벤처·이노비즈·기술경력 중 하나라도 있으면 true
+  const hasTech = Boolean(
+    company.has_patent ||
+      company.has_venture_cert ||
+      company.has_innobiz ||
+      company.has_tech_career
+  );
   const matched: GovProgram[] = [];
 
   GOV_SUPPORT_2026.forEach((p) => {
     let eligible = true;
-    if (p.age_max !== undefined && age > p.age_max) eligible = false;
-    if (p.years_max !== undefined && years_in_business > p.years_max) eligible = false;
-    if (p.years_min !== undefined && years_in_business <= p.years_min) eligible = false;
+
+    // ── 나이·업력 필터 (대표님 기준: 미입력이면 조건부 사업은 숨김) ──
+    // 나이 제한이 있는 사업은 나이를 입력하고 조건을 만족해야만 노출
+    if (p.age_max !== undefined && (age === undefined || age > p.age_max)) eligible = false;
+    // 업력 상한이 있는 사업은 업력을 입력하고 조건을 만족해야만 노출
+    if (p.years_max !== undefined && (years_in_business === undefined || years_in_business > p.years_max)) eligible = false;
+    if (p.years_min !== undefined && (years_in_business === undefined || years_in_business <= p.years_min)) eligible = false;
+
+    // ── 조건 필터 (예비/재창업/메인비즈) ──
     if (p.condition === "is_pre_founder" && !is_pre_founder) eligible = false;
     if (p.condition === "is_re_founder" && !is_re_founder) eligible = false;
     if (p.condition === "has_mainbiz" && !has_mainbiz) eligible = false;
+
+    // ── 수출 필터: 수출기업 전용 사업은 수출 체크한 경우에만 노출 (대표님 기준) ──
+    if (p.requiresExport && !is_exporter) eligible = false;
+    // ── 기술 보유 필터: 기술 보유(특허·벤처·이노비즈 등) 기업만 ──
+    if (p.requiresTech && !hasTech) eligible = false;
+    // ── 관광 필터: 관광사업체만 ──
+    if (p.requiresTourism && !is_tourism) eligible = false;
+
+    // ── 창업 지향 필터 (대표님 기준: '신청 가능한 것만 추려라') ──
+    //   창업패키지·사관학교류는 '창업'을 전제로 하는 사업이므로,
+    //   예비창업자이거나 창업 초기(업력 3년 이내) 기업에만 노출한다.
+    //   업력 5년 된 일반 음식점 같은 성숙기업에는 형식상 걸려도 실질 부적합 → 제외.
+    if (p.isStartupProgram) {
+      const isStartupStage =
+        is_pre_founder === true ||
+        (years_in_business !== undefined && years_in_business <= 3);
+      if (!isStartupStage) eligible = false;
+    }
+
+    // ── 운영 중 사업자 전용(판로·강한소상공인 등): 예비창업자에겐 부적합 → 제외 ──
+    if (p.requiresOperating && is_pre_founder === true) eligible = false;
+
+    // ── 폐업 후 재기·재창업 지원(희망리턴 등): 재창업자에게만 노출 ──
+    if (p.requiresReFounder && !is_re_founder) eligible = false;
 
     // ── 세그먼트 필터: 소상공인에겐 소상공인용만, 중소기업에겐 중소기업용만 ──
     if (p.segment && p.segment !== "both" && p.segment !== segment) eligible = false;

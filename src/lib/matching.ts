@@ -53,6 +53,20 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   if (p.age?.includes("39세 이하") || p.age?.includes("39세이하")) tags.add("청년");
   if (p.years?.includes("1년")) tags.add("1년미만");
 
+  // 업력 태그 (창업지원사업 자격 필터용) — 3년 이내 / 7년 이내 여부
+  //  창업예정=예비, 1년미만·3년미만=3년이내, 7년미만=7년이내
+  if (p.years) {
+    const y = p.years.replace(/\s/g, "");
+    if (y.includes("창업예정")) tags.add("예비창업자");
+    if (y.includes("1년미만") || y.includes("3년미만")) {
+      tags.add("업력3년이내");
+      tags.add("업력7년이내");
+    } else if (y.includes("7년미만")) {
+      tags.add("업력7년이내");
+    }
+    // 7년이상 → 창업지원사업 대상 아님 (태그 없음)
+  }
+
   (p.purposes || []).forEach((x) => tags.add(x.replace(/\s/g, "")));
   (p.industries || []).forEach((x) => tags.add(x.replace(/\s/g, "")));
   // 수출업 → 수출자금 + 수출기업 태그 (무역보험공사 병행 매칭용)
@@ -166,6 +180,42 @@ export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
     if (tags.has("예비창업자") && program.category === "창업지원") {
       score += 3;
       reasons.push("예비창업자 대상 사업");
+    }
+
+    // ══ 창업지원 하드필터 (대표님 기준: 진짜 자격자만 노출) ══════════════
+    //  각 창업지원사업의 실제 신청 자격을 사업별로 확인해 해당 안 되면 완전 제외.
+    if (program.category === "창업지원") {
+      // 예비창업패키지 / 혁신 소상공인 창업지원 → 예비창업자만
+      if (program.id === "k-startup-pre" || program.id === "sbiz-startup-academy") {
+        if (!tags.has("예비창업자")) score = 0;
+      }
+      // 청년창업사관학교 → 청년(39↓) + (예비 또는 업력 7년 이내)
+      else if (program.id === "youth-startup-academy") {
+        if (!tags.has("청년") || !(tags.has("예비창업자") || tags.has("업력7년이내"))) score = 0;
+      }
+      // 초기창업패키지 → 예비 또는 업력 3년 이내 (나이 무관)
+      else if (program.id === "k-startup-early") {
+        if (!(tags.has("예비창업자") || tags.has("업력3년이내"))) score = 0;
+      }
+      // 그 외 창업지원사업 → 예비 또는 업력 7년 이내만
+      else {
+        if (!(tags.has("예비창업자") || tags.has("업력7년이내"))) score = 0;
+      }
+    }
+
+    // ══ 수출 하드필터 (대표님 기준: 수출 체크 안 하면 수출상품 완전 제외) ══
+    //  수출바우처·무역보험 등 수출 관련 상품은 수출기업일 때만 노출.
+    if (
+      (program.id === "export-voucher" || program.id === "ksure-export-guarantee") &&
+      !tags.has("수출기업")
+    ) {
+      score = 0;
+    }
+
+    // ══ 인증 하드필터: 벤처·이노비즈·메인비즈 인증은 기술기업에만 안내 ══
+    //  (일반 도소매·음식점 등 비기술 업종에는 노출하지 않음)
+    if (program.id === "venture-cert" && !tags.has("기술기업")) {
+      score = 0;
     }
 
     // ── 교육·컨설팅 노출 규칙 (공문 기준 반영) ──────────────────
