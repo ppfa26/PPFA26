@@ -31,7 +31,8 @@ function toWon(억: string): number | undefined {
 }
 
 export default function AdvancedScreeningPanel() {
-  const [open, setOpen] = useState(false);
+  // 결제 후 결과창 최상단에 노출 → 기본 펼침(정확한 판독을 위해 작성 필수)
+  const [open, setOpen] = useState(true);
   const [report, setReport] = useState<AdvancedScreeningReport | null>(null);
 
   // 폼 상태 (핵심 필드만 노출)
@@ -86,20 +87,37 @@ export default function AdvancedScreeningPanel() {
   const labelCls = "mb-1 block text-xs font-semibold text-brand-dark";
 
   return (
-    <section id="advanced-screening" className="mt-10">
+    <section id="advanced-screening" className="mb-2 scroll-mt-4">
+      {/* 필수 작성 안내 배너 — 결제 후 결과창 최상단에서 정밀진단 작성을 강하게 유도 */}
+      <div className="mb-3 overflow-hidden rounded-2xl border-2 border-brand-orange bg-brand-yellow/20 p-4 sm:p-5">
+        <p className="flex items-center gap-2 text-sm font-extrabold text-brand-dark sm:text-base">
+          <span className="text-lg">📋</span>
+          정확한 진단을 위해 정밀 진단 리스트를 꼭 작성해 주세요
+        </p>
+        <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
+          아래 정밀 진단 리스트를 <b className="text-brand-orange">반드시 작성</b>해야 신용보증기금 부결 여부·예상 한도까지
+          정확하게 판독할 수 있습니다. 정확한 판독을 위해 작성 부탁드립니다.
+        </p>
+      </div>
+
       {/* 토글 헤더 */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between rounded-2xl border border-gray-200 bg-white px-5 py-4 text-left shadow-card transition hover:shadow-lg"
+        className="flex w-full items-center justify-between rounded-2xl border-2 border-brand-orange bg-white px-5 py-4 text-left shadow-card transition hover:shadow-lg"
       >
-        <span className="flex items-center gap-2">
+        <span className="flex min-w-0 items-center gap-2">
           <span className="text-xl">🔬</span>
-          <span>
-            <span className="block text-sm font-extrabold text-brand-dark sm:text-base">
-              정밀 추가진단 (선택)
+          <span className="min-w-0">
+            <span className="flex flex-wrap items-center gap-1.5">
+              <span className="text-sm font-extrabold text-brand-dark sm:text-base">
+                정밀 추가진단
+              </span>
+              <span className="rounded-full bg-brand-red px-2 py-0.5 text-[10px] font-bold text-white sm:text-[11px]">
+                필수
+              </span>
             </span>
-            <span className="block text-xs text-brand-gray">
+            <span className="mt-0.5 block break-keep text-xs text-brand-gray">
               신용점수·재무 정보를 입력하면 신보 부결 여부·예상 한도까지 정밀 분석
             </span>
           </span>
@@ -110,9 +128,9 @@ export default function AdvancedScreeningPanel() {
       {/* 입력 폼 */}
       {open && (
         <div className="mt-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
-          <p className="mb-4 rounded-xl bg-yellow-50 px-3 py-2 text-xs leading-relaxed text-brand-dark/70">
-            💡 아는 항목만 입력하셔도 됩니다. 입력한 만큼만 판정 결과가 표시됩니다.
-            정확한 판정을 위해 KCB·NICE 신용점수와 재무 정보를 넣어주세요.
+          <p className="mb-4 break-keep rounded-xl bg-yellow-50 px-3 py-2 text-xs leading-relaxed text-brand-dark/70">
+            💡 <b className="text-brand-orange">정확한 진단을 위해 아래 리스트를 꼭 작성해 주세요.</b> 아는 항목만
+            입력하셔도 되지만, KCB·NICE 신용점수와 재무 정보를 함께 넣어주실수록 판독이 정확해집니다.
           </p>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -131,8 +149,8 @@ export default function AdvancedScreeningPanel() {
               <input value={revenue억} onChange={(e) => setRevenue억(e.target.value)} className={inputCls} placeholder="예: 5" inputMode="decimal" />
             </div>
             <div>
-              <label className={labelCls}>총차입금 (억원)</label>
-              <input value={debt억} onChange={(e) => setDebt억(e.target.value)} className={inputCls} placeholder="예: 2" inputMode="decimal" />
+              <label className={labelCls}>갚아야 할 대출·빚 총액 (억원)</label>
+              <input value={debt억} onChange={(e) => setDebt억(e.target.value)} className={inputCls} placeholder="은행대출 등 합계 · 예: 2" inputMode="decimal" />
             </div>
             <div>
               <label className={labelCls}>자기자본 (억원)</label>

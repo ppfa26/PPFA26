@@ -112,6 +112,9 @@ export default function DashboardPage() {
             })}
           </nav>
 
+          {/* 정밀 추가진단 — 결과창 최상단 (정확한 판독을 위해 필수 안내) */}
+          <AdvancedScreeningPanel />
+
           {/* 결과 리스트 */}
           <section id="match-results" className="mt-7 space-y-4">
             {loaded && filtered.length === 0 && (
@@ -169,9 +172,6 @@ export default function DashboardPage() {
               );
             })}
           </section>
-
-          {/* 정밀 추가진단(선택) — 추가 판정 레이어 (기존 결과 아래에 후처리로 얹음) */}
-          <AdvancedScreeningPanel />
 
           {/* 상담 채널 안내 */}
           <section
