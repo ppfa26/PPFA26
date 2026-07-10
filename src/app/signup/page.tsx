@@ -188,17 +188,26 @@ function SignupInner() {
             type="button"
             disabled={loading}
             onClick={() => handleOAuth("kakao", "카카오")}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95 disabled:opacity-60"
+            className="relative flex w-full items-center justify-center rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95 disabled:opacity-60"
           >
-            <span className="text-base">💬</span> 카카오톡으로 시작하기
+            <svg className="absolute left-4 h-5 w-5" viewBox="0 0 24 24" fill="#191600" aria-hidden="true">
+              <path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.9 5.33 4.76 6.74-.16.57-.86 3.09-.9 3.29 0 0-.02.15.08.21.1.06.22.01.22.01.28-.04 3.23-2.12 3.74-2.48.68.1 1.38.15 2.1.15 5.52 0 10-3.58 10-8S17.52 3 12 3z" />
+            </svg>
+            카카오톡으로 시작하기
           </button>
           <button
             type="button"
             disabled={loading}
             onClick={() => handleOAuth("google", "구글")}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50 disabled:opacity-60"
+            className="relative flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50 disabled:opacity-60"
           >
-            <span className="text-base font-black text-[#4285F4]">G</span> 구글로 시작하기
+            <svg className="absolute left-4 h-5 w-5" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z" />
+              <path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z" />
+              <path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z" />
+              <path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z" />
+            </svg>
+            Google로 시작하기
           </button>
         </div>
 
