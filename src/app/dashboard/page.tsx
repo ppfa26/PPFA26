@@ -57,6 +57,19 @@ export default function DashboardPage() {
     return results.filter((r) => r.program.category === activeCat);
   }, [results, activeCat]);
 
+  // 승인 가능성 "높음" 판정 기준
+  //  - 매칭 점수 7점 이상이면 높음 (실무상 조건이 뚜렷하게 맞는 구간)
+  //  - 결과가 적을 때를 대비해, 최고점의 70% 이상도 높음으로 인정
+  const highBar = useMemo(() => {
+    const max = results.reduce((m, r) => Math.max(m, r.score), 0);
+    return Math.max(7, Math.round(max * 0.7));
+  }, [results]);
+  const isHighChance = (score: number) => score >= highBar && score > 0;
+  const highCount = useMemo(
+    () => results.filter((r) => isHighChance(r.score)).length,
+    [results, highBar]
+  );
+
   return (
     <PageShell pageKey="dashboard">
       <Header />
@@ -76,6 +89,19 @@ export default function DashboardPage() {
               <br className="hidden sm:block" />
               각 사업을 눌러 신청 방법·필요 서류·승인 전략을 확인하세요.
             </p>
+
+            {/* 한눈에 보는 핵심 요약 — 승인 가능성 높은 사업 개수 */}
+            {highCount > 0 && (
+              <div className="mx-auto mt-5 max-w-2xl rounded-2xl border-2 border-brand-green bg-green-50 px-5 py-4">
+                <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
+                  ✅ 이 중 <span className="text-brand-green">승인 가능성 높은 사업 {highCount}개</span>를
+                  먼저 신청해 보세요!
+                </p>
+                <p className="mt-1 break-keep text-xs text-brand-dark/60">
+                  아래 <b>✅ 승인 가능성 높음</b> 표시가 붙은 사업부터 확인하시면 됩니다.
+                </p>
+              </div>
+            )}
           </section>
 
           {/* 카테고리 필터 탭 */}
@@ -129,16 +155,24 @@ export default function DashboardPage() {
             )}
             {filtered.map((r) => {
               const meta = CATEGORY_META[r.program.category];
+              const high = isHighChance(r.score);
               return (
                 <Link
                   key={r.program.id}
                   href={`/fund/${r.program.id}`}
-                  className="block rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg"
+                  className={`block rounded-2xl border bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg ${
+                    high ? "border-2 border-brand-green" : "border-gray-200"
+                  }`}
                 >
                   <article className="flex items-start gap-3">
                     <span className="text-2xl">{meta.icon}</span>
                     <div className="flex-1">
                       <div className="mb-1 flex flex-wrap items-center gap-2">
+                        {high && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-brand-green px-2.5 py-0.5 text-[11px] font-bold text-white">
+                            ✅ 승인 가능성 높음
+                          </span>
+                        )}
                         <span className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-brand-gray">
                           {meta.label}
                         </span>
@@ -162,7 +196,7 @@ export default function DashboardPage() {
                       </p>
                       {r.reasons.length > 0 && (
                         <p className="mt-2 text-xs text-brand-orange">
-                          ✅ {r.reasons.join(" · ")}
+                          👉 {r.reasons.join(" · ")}
                         </p>
                       )}
                     </div>
@@ -171,6 +205,14 @@ export default function DashboardPage() {
                 </Link>
               );
             })}
+
+            {/* 승인 가능성 안내 문구 */}
+            {filtered.length > 0 && (
+              <p className="break-keep px-1 pt-1 text-center text-[11px] leading-relaxed text-brand-gray">
+                ✅ 표시는 대표님 진단 정보 기준 승인 가능성이 높다는 표시입니다. 승인을 보장하지는 않으며,
+                심사는 각 기관의 기준표를 기준으로 합니다.
+              </p>
+            )}
           </section>
 
           {/* 상담 채널 안내 */}

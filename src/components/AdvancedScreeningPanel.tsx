@@ -18,7 +18,6 @@ import {
   Company,
   runAdvancedScreening,
   AdvancedScreeningReport,
-  SOURCE_TAGS,
 } from "@/lib/advancedScreening";
 
 // 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
@@ -199,8 +198,8 @@ export default function AdvancedScreeningPanel() {
           정확한 진단을 위해 아래 질문에 답해 주세요
         </p>
         <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
-          어려운 용어 없이 <b className="text-brand-orange">쉬운 질문 몇 개</b>만 답하시면, 신용보증기금 부결 여부·예상
-          한도까지 정확하게 판독해 드립니다. 정확한 판독을 위해 끝까지 작성 부탁드립니다.
+          어려운 용어 없이 <b className="text-brand-orange">쉬운 질문 몇 개</b>만 답하시면, 어떤 정부지원사업의 승인
+          가능성이 높은지·예상 한도까지 정확하게 판독해 드립니다. 정확한 판독을 위해 끝까지 작성 부탁드립니다.
         </p>
       </div>
 
@@ -472,6 +471,7 @@ export default function AdvancedScreeningPanel() {
   );
 }
 
+
 // 등급 → 색상/라벨
 function verdictStyle(ok: boolean): { cls: string; icon: string } {
   return ok
@@ -486,32 +486,98 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
     responsibleMgmt,
     creditMatches,
     loanLimit,
-    manufacturing,
-    mainbizGrade,
     govPrograms,
     disclaimer,
     revalidation,
   } = report;
 
   const cardCls = "rounded-2xl border border-gray-200 bg-white p-5 shadow-card";
-  const srcCls = "mt-2 text-[11px] text-brand-gray";
+
+  // 신청 가능 지원사업 억원 표기 도우미
+  const won억 = (v?: number) =>
+    v ? `${(v / 100000000).toFixed(v % 100000000 === 0 ? 0 : 2)}억` : "";
 
   return (
     <div id="advanced-result" className="mt-6 space-y-4">
       <h2 className="text-lg font-extrabold text-brand-dark">🔬 정밀 추가진단 결과</h2>
 
-      {/* BLOCK 1: 신보 즉시부결 */}
-      <div className={cardCls}>
-        <div className="mb-2 flex items-center gap-2">
-          <span className="text-sm font-bold text-brand-dark">신용보증기금(신보) 사전 자가진단</span>
+      {/* ★ 맨 위: 신청 가능한 정부지원사업 (핵심 결과) */}
+      {govPrograms.length > 0 && (
+        <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 p-5 shadow-card">
+          <p className="text-base font-extrabold text-brand-dark sm:text-lg">
+            🎯 지금 신청 자격이 열리는 정부지원사업{" "}
+            <span className="text-brand-orange">{govPrograms.length}종</span>
+          </p>
+          <p className="mt-1 break-keep text-xs text-brand-dark/60">
+            대표님 진단 정보 기준으로 신청 자격이 확인된 2026 정부지원사업입니다.
+          </p>
+          <div className="mt-4 space-y-2">
+            {govPrograms.map((p, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
+              >
+                <span className="min-w-0 break-keep text-sm font-bold text-brand-dark">
+                  {p.name.replace(/_/g, " ")}
+                </span>
+                {p.amount_max && (
+                  <span className="shrink-0 rounded-full bg-brand-green px-2.5 py-1 text-[11px] font-bold text-white">
+                    최대 {won억(p.amount_max)}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
+            ※ 위 목록은 신청 자격이 확인된 사업이며, 최종 선정은 각 기관 심사 결과에 따릅니다.
+            구체적인 신청 방법·서류는 화면 아래 매칭 카드에서 확인하세요.
+          </p>
         </div>
+      )}
+
+      {/* 신청 가능 기관 — 크고 핵심적으로 */}
+      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
+        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
+          🏦 대표님이 이용할 수 있는 기관
+        </p>
+        <p className="mt-1 break-keep text-xs text-brand-dark/60">
+          신용점수·조건 기준으로 실제 신청 가능한 정책금융 기관입니다.
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {creditMatches.map((m, i) => (
+            <div
+              key={i}
+              className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
+            >
+              <p className="text-sm font-extrabold text-brand-dark">{m.institution}</p>
+              <p className="mt-0.5 break-keep text-xs text-brand-gray">{m.criteria}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 예상 대출한도 (있을 때만) */}
+      {loanLimit && (
+        <div className={cardCls}>
+          <span className="mb-2 block text-sm font-bold text-brand-dark">업종별 예상 기본 한도 (참고)</span>
+          <p className="text-2xl font-black text-brand-orange">약 {loanLimit.base_limit_display}</p>
+          <p className="mt-1 text-xs text-brand-gray">계산식: 연매출 × {loanLimit.ratio}</p>
+          <p className="mt-2 break-keep text-xs text-brand-dark">
+            📈 한도 상향 가능 요소: {loanLimit.boost_available.join(" · ")}
+          </p>
+        </div>
+      )}
+
+      {/* 사전 자가진단 (부결 요인 사전 점검) */}
+      <div className={cardCls}>
+        <span className="mb-2 block text-sm font-bold text-brand-dark">정부지원사업 사전 자가진단</span>
         {koditHardReject.result === "PASS" ? (
           <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(true).cls}`}>
-            {verdictStyle(true).icon} 즉시부결 항목에 해당하지 않습니다. (13개 항목 통과)
+            {verdictStyle(true).icon} 승인에 걸림돌이 되는 항목이 없습니다. (13개 항목 통과)
           </div>
         ) : (
           <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(false).cls}`}>
-            {verdictStyle(false).icon} 아래 항목으로 신보 심사가 어려울 수 있습니다:
+            {verdictStyle(false).icon} 아래 항목은 미리 준비·정리하시면 승인에 유리합니다:
             <ul className="mt-1 list-inside list-disc">
               {koditHardReject.rejectReasons.map((r, i) => (
                 <li key={i}>{r}</li>
@@ -519,110 +585,41 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
             </ul>
           </div>
         )}
-        <p className={srcCls}>{SOURCE_TAGS.KODIT}</p>
       </div>
 
-      {/* BLOCK 5: 재무비율 */}
+      {/* 재무비율 검증 */}
       <div className={cardCls}>
         <span className="mb-2 block text-sm font-bold text-brand-dark">재무비율 검증</span>
         <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(financials.kodit_result === "PASS").cls}`}>
           {verdictStyle(financials.kodit_result === "PASS").icon}{" "}
-          {financials.kodit_result === "PASS" ? "재무 관점 부결 요인 없음" : "재무 관점 부결 요인 발견"}
+          {financials.kodit_result === "PASS" ? "재무 관점 걸림돌 없음" : "재무 관점 점검 필요"}
         </div>
         {financials.issues.length > 0 && (
           <ul className="mt-2 space-y-1 text-xs">
             {financials.issues.map((it, i) => (
               <li key={i} className={it.level === "REJECT" ? "text-brand-red" : "text-brand-orange"}>
-                {it.level === "REJECT" ? "🚫" : "⚠️"} [{it.level}] {it.reason}
+                {it.level === "REJECT" ? "🚫" : "⚠️"} {it.reason}
               </li>
             ))}
           </ul>
         )}
         {financials.bank_credit_eligible && (
-          <p className="mt-2 text-xs font-semibold text-brand-green">
+          <p className="mt-2 break-keep text-xs font-semibold text-brand-green">
             💡 매출 30억 이상 요건 충족 → 은행 법인신용대출 검토 가능
           </p>
         )}
-        <p className={srcCls}>{SOURCE_TAGS.FINANCE}</p>
       </div>
 
-      {/* BLOCK 6: 책임경영 (미입력 항목 많으면 안내) */}
+      {/* 책임경영 평가 (미충족 항목 많을 때만 안내) */}
       {responsibleMgmt.failed_count > 0 && (
         <div className={cardCls}>
-          <span className="mb-2 block text-sm font-bold text-brand-dark">신보 책임경영 평가 (참고)</span>
+          <span className="mb-2 block text-sm font-bold text-brand-dark">정부지원사업 책임경영 평가 (참고)</span>
           <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(responsibleMgmt.result === "PASS").cls}`}>
             {verdictStyle(responsibleMgmt.result === "PASS").icon} {responsibleMgmt.note}
           </div>
-          <p className="mt-2 text-[11px] text-brand-gray">
-            ※ 미입력 항목은 &lsquo;미충족&rsquo;으로 계산됩니다. 정확한 판정은 해당 항목을 확인 후 상담에서 재검토하세요.
+          <p className="mt-2 break-keep text-[11px] text-brand-gray">
+            ※ 미입력 항목은 &lsquo;미충족&rsquo;으로 계산됩니다. 해당 항목을 확인 후 상담에서 재검토하세요.
           </p>
-          <p className={srcCls}>{SOURCE_TAGS.KODIT}</p>
-        </div>
-      )}
-
-      {/* BLOCK 2: 신용점수 기관 매칭 */}
-      <div className={cardCls}>
-        <span className="mb-2 block text-sm font-bold text-brand-dark">신용점수 기반 이용 가능 기관</span>
-        <div className="space-y-2">
-          {creditMatches.map((m, i) => (
-            <div key={i} className="flex flex-wrap items-center gap-2 rounded-xl bg-gray-50 px-3 py-2">
-              <span className="rounded-full bg-brand-dark px-2 py-0.5 text-[11px] font-bold text-white">
-                {m.institution}
-              </span>
-              <span className="text-xs text-brand-gray">{m.criteria}</span>
-            </div>
-          ))}
-        </div>
-        <p className={srcCls}>{SOURCE_TAGS.MICRO} · {SOURCE_TAGS.KODIT}</p>
-      </div>
-
-      {/* BLOCK 3: 예상 대출한도 */}
-      {loanLimit && (
-        <div className={cardCls}>
-          <span className="mb-2 block text-sm font-bold text-brand-dark">업종별 예상 기본 한도 (참고)</span>
-          <p className="text-2xl font-black text-brand-orange">약 {loanLimit.base_limit_display}</p>
-          <p className="mt-1 text-xs text-brand-gray">계산식: 연매출 × {loanLimit.ratio}</p>
-          <p className="mt-2 text-xs text-brand-dark">
-            📈 한도 상향 가능 요소: {loanLimit.boost_available.join(" · ")}
-          </p>
-          <p className={srcCls}>{SOURCE_TAGS.KIBO}</p>
-        </div>
-      )}
-
-      {/* BLOCK 7: 제조업 분류 / 메인비즈 */}
-      {(manufacturing || mainbizGrade) && (
-        <div className={cardCls}>
-          <span className="mb-2 block text-sm font-bold text-brand-dark">인증·제조업 요건 (참고)</span>
-          {manufacturing && (
-            <p className="text-sm text-brand-dark">
-              제조업 분류: <b>{manufacturing.type}</b>
-              {manufacturing.note ? ` (${manufacturing.note})` : manufacturing.tech_evaluation ? " · 기술평가 대상" : ""}
-            </p>
-          )}
-          {mainbizGrade && (
-            <p className="mt-1 text-sm text-brand-dark">
-              메인비즈 예상 등급: <b>{mainbizGrade}</b>
-            </p>
-          )}
-          <p className={srcCls}>{SOURCE_TAGS.KIBO}</p>
-        </div>
-      )}
-
-      {/* BLOCK 4: 2026 지원사업 */}
-      {govPrograms.length > 0 && (
-        <div className={cardCls}>
-          <span className="mb-2 block text-sm font-bold text-brand-dark">
-            신청 자격이 열리는 2026 정부지원사업 ({govPrograms.length}종)
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {govPrograms.map((p, i) => (
-              <span key={i} className="rounded-full bg-brand-yellow px-2.5 py-1 text-[11px] font-semibold text-brand-dark">
-                {p.name.replace(/_/g, " ")}
-                {p.amount_max ? ` · 최대 ${(p.amount_max / 100000000).toFixed(p.amount_max % 100000000 === 0 ? 0 : 2)}억` : ""}
-              </span>
-            ))}
-          </div>
-          <p className={srcCls}>{SOURCE_TAGS.BIZINFO}</p>
         </div>
       )}
 
