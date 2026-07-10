@@ -2,11 +2,38 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const isHome = pathname === "/";
+
+  // 로그인 상태 추적
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // 최초 세션 확인
+    supabase.auth.getSession().then(({ data }) => {
+      setLoggedIn(!!data.session);
+    });
+    // 로그인/로그아웃 등 상태 변화 실시간 반영
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setLoggedIn(!!session);
+    });
+    return () => {
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setLoggedIn(false);
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur">
@@ -47,12 +74,22 @@ export default function Header() {
           >
             후기
           </Link>
-          <Link
-            href="/signup"
-            className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
-          >
-            로그인
-          </Link>
+          {loggedIn ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
+            >
+              로그아웃
+            </button>
+          ) : (
+            <Link
+              href="/signup"
+              className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
+            >
+              로그인
+            </Link>
+          )}
           <Link
             href="/diagnosis"
             className="btn-brand whitespace-nowrap rounded-full px-3.5 py-2 text-[12.5px] font-bold sm:px-5 sm:py-2 sm:text-sm"
