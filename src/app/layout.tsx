@@ -25,6 +25,12 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
     apple: "/apple-touch-icon.png",
   },
+  verification: {
+    // 네이버 서치어드바이저 사이트 소유확인
+    other: {
+      "naver-site-verification": "6da4d9d9a2932bffc7d999048d44370be407d3a9",
+    },
+  },
   openGraph: {
     title: "모두의공공조달 | 정부지원사업 통합 매칭 플랫폼",
     description:
