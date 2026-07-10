@@ -113,7 +113,7 @@ type Approval = {
 
 const APPROVALS: Approval[] = [
   {
-    kind: "보증",
+    kind: "정책자금",
     business: "문화콘텐츠 제조",
     region: "인천 서해구",
     program: "문화산업보증 · 신용보증한도",
@@ -171,7 +171,7 @@ const APPROVALS: Approval[] = [
     amount: "1.5억원",
   },
   {
-    kind: "보증",
+    kind: "정책자금",
     business: "소상공인",
     region: "인천 검단구",
     program: "지역맞춤형 특례보증",
