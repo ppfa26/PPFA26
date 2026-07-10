@@ -9,9 +9,14 @@ import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP, COMMON_NOTES } from "@/lib/products";
-import { loadPaymentWidget, PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
+import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
 const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
+
+// 토스페이먼츠 v2 결제위젯 인스턴스 타입 (SDK가 반환하는 widgets 객체)
+type TossWidgets = Awaited<
+  ReturnType<Awaited<ReturnType<typeof loadTossPayments>>["widgets"]>
+>;
 
 function makeOrderId() {
   const rand = Math.random().toString(36).slice(2, 10);
@@ -24,7 +29,7 @@ function PaymentInner() {
   const tier = (params.get("tier") as "basic" | "premier" | "pro" | null) || "basic";
   const product = TIER_MAP[tier];
 
-  const widgetRef = useRef<PaymentWidgetInstance | null>(null);
+  const widgetRef = useRef<TossWidgets | null>(null);
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
@@ -49,12 +54,27 @@ function PaymentInner() {
       }
 
       try {
-        const customerKey = user.id || "ANONYMOUS";
-        const widget = await loadPaymentWidget(CLIENT_KEY, customerKey);
+        // v2 결제위젯: 로그인 사용자는 user.id를 customerKey로, 없으면 익명(ANONYMOUS)
+        const customerKey = user.id || ANONYMOUS;
+        const tossPayments = await loadTossPayments(CLIENT_KEY);
+        const widgets = tossPayments.widgets({ customerKey });
         if (!mounted) return;
-        widget.renderPaymentMethods("#payment-widget", { value: product.price });
-        widget.renderAgreement("#agreement");
-        widgetRef.current = widget;
+
+        // 결제 금액 설정 (렌더 전에 반드시 호출)
+        await widgets.setAmount({ currency: "KRW", value: product.price });
+
+        await Promise.all([
+          widgets.renderPaymentMethods({
+            selector: "#payment-widget",
+            variantKey: "DEFAULT",
+          }),
+          widgets.renderAgreement({
+            selector: "#agreement",
+            variantKey: "AGREEMENT",
+          }),
+        ]);
+
+        widgetRef.current = widgets;
         setReady(true);
       } catch {
         setNotice("결제 화면을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
@@ -72,8 +92,8 @@ function PaymentInner() {
       setNotice("결제 진행을 위해 안내 사항에 동의해 주세요.");
       return;
     }
-    const widget = widgetRef.current;
-    if (!widget) return;
+    const widgets = widgetRef.current;
+    if (!widgets) return;
 
     setPaying(true);
     const orderId = makeOrderId();
@@ -88,7 +108,7 @@ function PaymentInner() {
 
     const origin = window.location.origin;
     try {
-      await widget.requestPayment({
+      await widgets.requestPayment({
         orderId,
         orderName: `모두의공공조달 ${product.name} 플랜`,
         customerName: userName || "고객",
@@ -100,32 +120,6 @@ function PaymentInner() {
       setPaying(false);
       setNotice("결제가 취소되었거나 오류가 발생했습니다. 다시 시도해 주세요.");
     }
-  };
-
-  // ⚠️ [데모 전용] 실제 결제 없이 "결제 완료" 처리 후 대시보드로 이동.
-  // 실결제 키(live) 연동 후에는 반드시 이 함수와 아래 버튼을 삭제하세요.
-  const handleDemoPay = async () => {
-    setPaying(true);
-    const orderId = makeOrderId();
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const user = sessionData.session?.user;
-      if (user) {
-        await supabase.from("payments").insert({
-          user_id: user.id,
-          order_id: orderId,
-          tier,
-          amount: product.price,
-          status: "demo", // 데모 결제 표시(실결제와 구분)
-          payment_key: "DEMO",
-          email: user.email,
-          paid_at: new Date().toISOString(),
-        });
-      }
-    } catch {
-      // 저장 실패해도 데모 흐름은 계속 진행
-    }
-    router.replace("/dashboard");
   };
 
   return (
@@ -206,20 +200,6 @@ function PaymentInner() {
         >
           {paying ? "결제창을 여는 중..." : `${product.priceLabel} 결제하기`}
         </button>
-
-        {/* ⚠️ [데모 전용 버튼] 실결제 키 연동 후 반드시 삭제 */}
-        <div className="mt-4 rounded-xl border border-dashed border-brand-orange bg-brand-yellow/10 p-3">
-          <p className="mb-2 text-center text-[11px] font-semibold text-brand-orange">
-            🧪 데모 모드 · 실제 결제 없이 화면 흐름을 확인합니다 (배포 시 제거)
-          </p>
-          <button
-            onClick={handleDemoPay}
-            disabled={paying}
-            className="w-full rounded-xl border-2 border-brand-dark bg-white py-2.5 text-sm font-bold text-brand-dark transition hover:bg-brand-dark hover:text-white disabled:opacity-60"
-          >
-            결제했다고 가정하고 다음으로 넘어가기 →
-          </button>
-        </div>
 
         <p className="mt-4 text-center text-xs text-brand-gray">
           결제에 문제가 있나요?{" "}
