@@ -94,17 +94,29 @@ function SignupInner() {
           },
         });
         if (error) {
-          // 이미 가입된 경우 로그인 시도로 안내
+          const em = error.message.toLowerCase();
+          // 이미 가입된 경우 로그인 탭으로 전환
           if (
-            error.message.toLowerCase().includes("already") ||
-            error.message.toLowerCase().includes("registered")
+            em.includes("already") ||
+            em.includes("registered") ||
+            em.includes("exists")
           ) {
             setMode("login");
-            setMsg("이미 가입된 이메일입니다. 로그인해 주세요.");
+            setMsg("이미 가입된 이메일입니다. 아래에 비밀번호를 입력하고 로그인해 주세요.");
             setLoading(false);
             return;
           }
-          setMsg("잠시 후 다시 시도해 주세요.");
+          if (em.includes("password")) {
+            setMsg("비밀번호는 6자 이상으로 입력해 주세요.");
+            setLoading(false);
+            return;
+          }
+          if (em.includes("email") && (em.includes("invalid") || em.includes("valid"))) {
+            setMsg("이메일 형식을 확인해 주세요.");
+            setLoading(false);
+            return;
+          }
+          setMsg(`가입 오류: ${error.message}`);
           setLoading(false);
           return;
         }
@@ -122,7 +134,14 @@ function SignupInner() {
           password,
         });
         if (error) {
-          setMsg("이메일 또는 비밀번호를 확인해 주세요.");
+          const em = error.message.toLowerCase();
+          if (em.includes("invalid") || em.includes("credentials")) {
+            setMsg("비밀번호가 일치하지 않습니다. 다시 확인해 주세요.");
+          } else if (em.includes("not confirmed") || em.includes("confirm")) {
+            setMsg("이메일 인증이 필요합니다. 메일함을 확인해 주세요.");
+          } else {
+            setMsg(`로그인 오류: ${error.message}`);
+          }
           setLoading(false);
           return;
         }
@@ -288,8 +307,10 @@ function SignupInner() {
               ? "처리 중..."
               : mode === "signup"
               ? selected
-                ? `${selected.priceLabel} 결제하러 가기`
+                ? "가입하고 결제 진행하기"
                 : "가입하고 시작하기"
+              : selected
+              ? "로그인하고 결제 진행하기"
               : "로그인"}
           </button>
         </form>
