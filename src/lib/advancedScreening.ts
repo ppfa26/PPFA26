@@ -485,6 +485,36 @@ export const GOV_SUPPORT_2026: GovProgram[] = [
   { name: "로컬크리에이터", self_burden: 0.2, segment: "small" },
 ];
 
+// ── 17개 시·도 지역신용보증재단 상품 안내 ──────────────────────
+// 재단 상품·보증한도·신청시기는 지역마다 다르므로, 대표님 지역 재단 사이트로 바로 연결한다.
+// 신청 앱: 서울=서울신용보증재단 앱 / 경기=이지원 앱 / 그 외=보증드림 앱
+export type RegionSinbo = {
+  region: string; // 시·도명
+  name: string; // 재단 정식명
+  url: string; // 상품 안내 페이지
+  app: "서울신용보증재단 앱" | "이지원 앱" | "보증드림 앱";
+};
+
+export const REGION_SINBO: RegionSinbo[] = [
+  { region: "서울", name: "서울신용보증재단", url: "https://www.seoulshinbo.co.kr/wbase/contents.do?mng_cd=BUSI2346", app: "서울신용보증재단 앱" },
+  { region: "경기", name: "경기신용보증재단", url: "https://www.gcgf.or.kr/gcgf/cm/conts/contsView.do?mi=1051&contsId=1022", app: "이지원 앱" },
+  { region: "인천", name: "인천신용보증재단", url: "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000196", app: "보증드림 앱" },
+  { region: "부산", name: "부산신용보증재단", url: "https://www.busansinbo.or.kr/portal/board/post/list.do?bcIdx=623&mid=0103010000", app: "보증드림 앱" },
+  { region: "대구", name: "대구신용보증재단", url: "https://www.dgsinbo.or.kr/page/10039/10043.tc", app: "보증드림 앱" },
+  { region: "대전", name: "대전신용보증재단", url: "https://www.sinbo.or.kr/sub02_04_01", app: "보증드림 앱" },
+  { region: "광주", name: "광주신용보증재단", url: "https://www.gjsinbo.or.kr/?d=guarantee_product", app: "보증드림 앱" },
+  { region: "울산", name: "울산신용보증재단", url: "https://www.ulsanshinbo.co.kr/02_sinbo/?mcode=0402040500", app: "보증드림 앱" },
+  { region: "세종", name: "세종신용보증재단", url: "https://sjsinbo.or.kr/sub0104/view", app: "보증드림 앱" },
+  { region: "강원", name: "강원신용보증재단", url: "https://www.gwsinbo.or.kr/board/board_list.php?board_name=product", app: "보증드림 앱" },
+  { region: "충북", name: "충북신용보증재단", url: "https://www.cbsinbo.or.kr/sub.php?code=59", app: "보증드림 앱" },
+  { region: "충남", name: "충남신용보증재단", url: "https://www.cnsinbo.co.kr/sub/info.do?m=0204&page=0204&s=cnsinbo", app: "보증드림 앱" },
+  { region: "전북", name: "전북신용보증재단", url: "https://www.jbcredit.or.kr/site/menu/MENU_000000000000040/board/list?site_assets=%2Fassets%2Fsite%2FLET", app: "보증드림 앱" },
+  { region: "전남", name: "전남신용보증재단", url: "https://www.jnsinbo.or.kr/jnsinbo/credit/product/list.do", app: "보증드림 앱" },
+  { region: "경북", name: "경북신용보증재단", url: "https://gbsinbo.co.kr/page/10045/10003.tc", app: "보증드림 앱" },
+  { region: "경남", name: "경남신용보증재단", url: "https://gcgf.gnsinbo.or.kr/bbs/board.php?bo_table=02_01", app: "보증드림 앱" },
+  { region: "제주", name: "제주신용보증재단", url: "https://www.jcgf.or.kr/pages.php?p=2_2_5_1#Sub2Link", app: "보증드림 앱" },
+];
+
 // 소상공인/중소기업 세그먼트 판정 (대표님 기준: 소상공인은 소상공인용만, 중소기업은 중소기업용만)
 //  - is_small_business 명시값 우선
 //  - 없으면: 법인이거나 매출 5억 이상이면 중소기업(sme), 그 외 소상공인(small)

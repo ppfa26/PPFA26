@@ -18,6 +18,7 @@ import {
   Company,
   runAdvancedScreening,
   AdvancedScreeningReport,
+  REGION_SINBO,
 } from "@/lib/advancedScreening";
 
 // 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
@@ -567,6 +568,16 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
 
   const cardCls = "rounded-2xl border border-gray-200 bg-white p-5 shadow-card";
 
+  // 결과창에서 대표님이 고르는 지역(지역신용보증재단 상품 링크·신청앱 안내용)
+  const [sinboRegion, setSinboRegion] = useState("");
+  const selectedSinbo = REGION_SINBO.find((r) => r.region === sinboRegion);
+
+  // 추천 기관 중 지역신용보증재단 포함 여부 → 지역 재단 안내 노출 조건
+  const hasJaedan = creditMatches.some((m) => m.institution.includes("재단"));
+  // 대리대출/직접대출 추천 여부 → 진행절차 안내 노출 조건
+  const hasDae = creditMatches.some((m) => m.loan_type === "대리대출");
+  const hasDirect = creditMatches.some((m) => m.loan_type === "직접대출");
+
   // 신청 가능 지원사업 억원 표기 도우미
   const won억 = (v?: number) =>
     v ? `${(v / 100000000).toFixed(v % 100000000 === 0 ? 0 : 2)}억` : "";
@@ -673,7 +684,6 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
         <div className="mt-3 space-y-2">
           <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
             💡 대출은 보통 <b>직접대출 1곳(공단 직접) + 대리대출 1곳(보증서→은행), 총 2곳</b>에서 동시에 진행할 수 있습니다.
-            직접대출은 보증료가 없지만 심사가 까다롭고, 대리대출은 보증비율 100%면 은행 심사가 간소화됩니다.
           </p>
           {/* 신용점수 안내 */}
           <p
@@ -688,6 +698,92 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
             📊 {creditAdvice.message}
           </p>
         </div>
+
+        {/* 지역신용보증재단 상품 안내 — 재단이 추천기관에 포함될 때만 */}
+        {hasJaedan && (
+          <div className="mt-4 rounded-xl border border-brand-orange/30 bg-brand-orange/5 p-4">
+            <p className="break-keep text-sm font-bold text-brand-dark">
+              📍 내 지역 신용보증재단 상품 바로 보기
+            </p>
+            <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+              재단 상품·보증한도·신청시기는 지역마다 다릅니다. 대표님 사업장 지역을 고르면 해당 재단 상품 페이지로 바로 이동합니다.
+            </p>
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <select
+                value={sinboRegion}
+                onChange={(e) => setSinboRegion(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-brand-dark focus:border-brand-orange focus:outline-none sm:flex-1"
+              >
+                <option value="">지역 선택 (시·도)</option>
+                {REGION_SINBO.map((r) => (
+                  <option key={r.region} value={r.region}>
+                    {r.region} · {r.name}
+                  </option>
+                ))}
+              </select>
+              {selectedSinbo ? (
+                <a
+                  href={selectedSinbo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 rounded-lg bg-brand-orange px-5 py-2.5 text-center text-sm font-bold text-white hover:opacity-90"
+                >
+                  {selectedSinbo.name} 상품 보기 →
+                </a>
+              ) : (
+                <span className="shrink-0 cursor-not-allowed rounded-lg bg-gray-200 px-5 py-2.5 text-center text-sm font-bold text-gray-400">
+                  상품 보기 →
+                </span>
+              )}
+            </div>
+            {selectedSinbo && (
+              <p className="mt-2.5 break-keep rounded-lg bg-white px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
+                📱 <b>신청 방법:</b>{" "}
+                {selectedSinbo.region === "서울"
+                  ? "「서울신용보증재단」 앱"
+                  : selectedSinbo.region === "경기"
+                  ? "「이지원」 앱"
+                  : "「보증드림」 앱"}
+                에서 비대면 신청하거나 대면 예약이 가능합니다. 신청이 어려우면{" "}
+                <b>재단·소진공·중진공 방문상담(전화예약)</b>도 이용할 수 있습니다.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* 신청 → 실행 진행 절차·소요기간 안내 */}
+        {(hasDae || hasDirect) && (
+          <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <p className="break-keep text-sm font-bold text-brand-dark">
+              🗓️ 신청부터 대출 실행까지 (예상 소요기간)
+            </p>
+            {hasDae && (
+              <div className="mt-2.5">
+                <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
+                  대리대출 (보증서→은행)
+                </span>
+                <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark">
+                  신청 → 심사 → <b>모바일 실사</b> → 승인 → 약정 → 대출 실행 ·{" "}
+                  <b className="text-brand-orange">빠르면 3주, 늦으면 6주</b>
+                </p>
+              </div>
+            )}
+            {hasDirect && (
+              <div className="mt-2.5">
+                <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                  직접대출 (공단 직접)
+                </span>
+                <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark">
+                  신청 → 심사 → <b>방문 실사</b> → 약정 → 대출 실행 ·{" "}
+                  <b className="text-brand-orange">약 8주</b> · 필요 서류가 더 많은 편입니다.
+                </p>
+              </div>
+            )}
+            <p className="mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+              ※ 모바일 실사는 재단·소진공의 소상공인 건에서 주로 진행되며, 기술보증기금·신용보증기금 및 금액이 큰 건은 방문 실사로 진행됩니다.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* ④ 신청 가능한 정부지원사업 (핵심 결과) */}
