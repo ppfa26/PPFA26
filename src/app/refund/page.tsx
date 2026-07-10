@@ -15,6 +15,21 @@ export default function RefundPage() {
         </Editable>
       </section>
 
+      <section id="refund-period">
+        <h2 className="text-lg font-extrabold text-brand-dark">
+          서비스 제공기간
+        </h2>
+        <Editable id="refund-period-body" as="p" className="mt-2">
+          본 서비스는 <b>무형(디지털) 자문 서비스</b>로, 서비스 제공기간은 결제
+          시점부터 각 플랜에 명시된 <b>이용기간(1개월)</b> 동안입니다. 결제 즉시
+          가이드 사이트 열람·매칭 추천·상담이 개시되며, 별도 배송이 없는 상품입니다.
+        </Editable>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5">
+          <li>베이직 / 프리미어 / 프로 : <b>결제일로부터 1개월</b> 이용</li>
+          <li>이용기간 종료 시 1개월 단위로 자유롭게 추가 결제·연장 가능</li>
+        </ul>
+      </section>
+
       <section id="refund-1">
         <h2 className="text-lg font-extrabold text-brand-dark">
           1. 청약철회 및 전액 환불 (열람 전)
