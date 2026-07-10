@@ -26,6 +26,8 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   verification: {
+    // 구글 서치콘솔 사이트 소유확인
+    google: "qXMshODwpxOXqi9tFBHIfHwknWk3lxebsnb_rIfq9OQ",
     // 네이버 서치어드바이저 사이트 소유확인
     other: {
       "naver-site-verification": "6da4d9d9a2932bffc7d999048d44370be407d3a9",
