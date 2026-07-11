@@ -912,9 +912,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                         {JAEDAN_CALL_CENTER.telNote}
                       </span>
                     </div>
-                    <p className="break-keep text-[11px] font-semibold text-brand-orange">
-                      👇 아래에서 사업장 지역을 고르면 해당 재단 상품 페이지·신청 앱으로 이동합니다.
-                    </p>
                   </div>
                 )}
               </div>
