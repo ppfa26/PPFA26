@@ -739,10 +739,7 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
     financials,
     creditMatches,
     govPrograms,
-    timing,
     creditAdvice,
-    disclaimer,
-    revalidation,
   } = report;
 
   const cardCls = "rounded-2xl border border-gray-200 bg-white p-5 shadow-card";
@@ -766,22 +763,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
       <h2 className="text-lg font-extrabold text-brand-dark">
         {autoRun ? "🏦 대표님 맞춤 신청 기관·지원사업 안내" : "🔬 정밀 추가진단 결과"}
       </h2>
-
-      {/* ⏰ 지금 시기 안내 (월별 승인 유불리) */}
-      <div
-        className={`rounded-2xl border-2 p-4 shadow-card ${
-          timing.level === "good"
-            ? "border-brand-green bg-green-50"
-            : timing.level === "mid"
-            ? "border-brand-orange bg-brand-yellow/20"
-            : "border-brand-red/40 bg-red-50"
-        }`}
-      >
-        <p className="flex items-start gap-2 break-keep text-sm font-bold leading-relaxed text-brand-dark">
-          <span className="shrink-0 text-base">⏰</span>
-          <span>{timing.message}</span>
-        </p>
-      </div>
 
       {/* ③ 신청 가능 기관 — 크고 핵심적으로 (대표님 요청: 최상단 배치) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
@@ -1032,12 +1013,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
           공식 사이트 모음 보기
         </span>
       </a>
-
-      {/* 면책조항 + 재검증 안내 */}
-      <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
-        <p className="break-keep text-xs leading-relaxed text-brand-dark/60">⚠️ {disclaimer}</p>
-        <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">🗓️ {revalidation}</p>
-      </div>
     </div>
   );
 }

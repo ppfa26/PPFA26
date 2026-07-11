@@ -15,6 +15,7 @@ import {
   toCategoryGroup,
 } from "@/lib/programs";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
+import { ADVISORY_DISCLAIMER, REVALIDATION_NOTICE } from "@/lib/advancedScreening";
 
 export default function DashboardPage() {
   const [results, setResults] = useState<MatchResult[]>([]);
@@ -128,10 +129,9 @@ export default function DashboardPage() {
 
             {/* 한눈에 보는 핵심 요약 — 승인 가능성 높은 사업 개수 */}
             {highCount > 0 && (
-              <div className="mx-auto mt-5 max-w-2xl rounded-2xl border-2 border-brand-green bg-green-50 px-5 py-4">
+              <div className="mx-auto mt-5 max-w-2xl rounded-xl border-2 border-brand-green bg-green-50 px-4 py-2">
                 <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                  ✅ 이 중 <span className="text-brand-green">승인 가능성 높은 사업 {highCount}개</span>를
-                  먼저 신청해 보세요!
+                  ✅ 이 중 <span className="text-brand-green">승인 가능성 높은 사업 {highCount}개</span>를 먼저 신청해 보세요!
                 </p>
               </div>
             )}
@@ -174,12 +174,18 @@ export default function DashboardPage() {
           {/* 기관·정부지원사업 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
           <AdvancedScreeningPanel autoRun />
 
+          {/* 면책조항 + 재검증 안내 — 결과 목록(주황 박스) 바로 위 */}
+          <div className="mt-7 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
+            <p className="break-keep text-xs leading-relaxed text-brand-dark/60">⚠️ {ADVISORY_DISCLAIMER}</p>
+            <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">🗓️ {REVALIDATION_NOTICE}</p>
+          </div>
+
           {/* 결과 리스트 — 정부지원사업 + 정책자금 대출 통합 목록 */}
           <section id="match-results" className="mt-7 space-y-4">
             {filtered.length > 0 && (
               <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 px-5 py-4">
                 <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-                  🎯 지금 바로 노려볼 지원사업·정책자금{" "}
+                  🎯 지금 바로 신청해볼만한 지원사업{" "}
                   <span className="text-brand-orange">{filtered.length}건</span>
                 </p>
                 <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
