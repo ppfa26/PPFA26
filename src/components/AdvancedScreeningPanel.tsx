@@ -761,7 +761,7 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
   return (
     <div id="advanced-result" className="mt-6 space-y-4">
       <h2 className="text-lg font-extrabold text-brand-dark">
-        {autoRun ? "🏦 대표님 맞춤 신청 기관·지원사업 안내" : "🔬 정밀 추가진단 결과"}
+        {autoRun ? "🏦 대표님 맞춤으로 신청가능 기관 및 상품 안내" : "🔬 정밀 추가진단 결과"}
       </h2>
 
       {/* ③ 신청 가능 기관 — 크고 핵심적으로 (대표님 요청: 최상단 배치) */}
@@ -966,28 +966,28 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
           </p>
         </div>
         )}
-      </div>
 
-      {/* 기관별 상품 바로보기 — 상품 안내 페이지/자료 통합 링크 */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
-        <p className="break-keep text-base font-bold text-brand-dark">
-          🏛️ 기관별 상품 한눈에 보기
-        </p>
-        <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-          각 기관의 상품 안내 자료·페이지로 바로 이동합니다.
-        </p>
-        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-          {INSTITUTION_PRODUCT_LINKS.map((p) => (
-            <a
-              key={p.label}
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-xl bg-brand-dark px-3 py-3 text-center transition hover:opacity-90"
-            >
-              <span className="break-keep text-xs font-bold text-white">{p.label}</span>
-            </a>
-          ))}
+        {/* 기관별 상품 바로보기 — 같은 박스 안에 통합 */}
+        <div className="mt-4 border-t border-gray-200 pt-4">
+          <p className="break-keep text-base font-bold text-brand-dark">
+            🏛️ 기관별 상품 한눈에 보기
+          </p>
+          <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+            각 기관의 상품 안내 자료·페이지로 바로 이동합니다.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            {INSTITUTION_PRODUCT_LINKS.map((p) => (
+              <a
+                key={p.label}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center rounded-xl bg-brand-dark px-3 py-3 text-center transition hover:opacity-90"
+              >
+                <span className="break-keep text-xs font-bold text-white">{p.label}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 

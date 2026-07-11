@@ -171,16 +171,7 @@ export default function DashboardPage() {
             })}
           </nav>
 
-          {/* 기관·정부지원사업 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
-          <AdvancedScreeningPanel autoRun />
-
-          {/* 면책조항 + 재검증 안내 — 결과 목록(주황 박스) 바로 위 */}
-          <div className="mt-7 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
-            <p className="break-keep text-xs leading-relaxed text-brand-dark/60">⚠️ {ADVISORY_DISCLAIMER}</p>
-            <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">🗓️ {REVALIDATION_NOTICE}</p>
-          </div>
-
-          {/* 결과 리스트 — 정부지원사업 + 정책자금 대출 통합 목록 */}
+          {/* 결과 리스트 — 정부지원사업 + 정책자금 대출 통합 목록 (최상단 배치) */}
           <section id="match-results" className="mt-7 space-y-4">
             {filtered.length > 0 && (
               <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 px-5 py-4">
@@ -291,6 +282,15 @@ export default function DashboardPage() {
               </p>
             )}
           </section>
+
+          {/* 기관·상품 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
+          <AdvancedScreeningPanel autoRun />
+
+          {/* 면책조항 + 재검증 안내 — 최하단 */}
+          <div className="mt-7 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
+            <p className="break-keep text-xs leading-relaxed text-brand-dark/60">⚠️ {ADVISORY_DISCLAIMER}</p>
+            <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">🗓️ {REVALIDATION_NOTICE}</p>
+          </div>
 
           {/* 상담 채널 안내 */}
           <section
