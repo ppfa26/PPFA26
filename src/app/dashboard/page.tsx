@@ -60,20 +60,6 @@ export default function DashboardPage() {
     return () => window.removeEventListener("mpp-advanced-applied", recompute);
   }, []);
 
-  // 카테고리별 개수
-  const countByCat = useMemo(() => {
-    const map: Record<string, number> = {};
-    results.forEach((r) => {
-      map[r.program.category] = (map[r.program.category] || 0) + 1;
-    });
-    return map;
-  }, [results]);
-
-  const filtered = useMemo(() => {
-    if (activeCat === "전체") return results;
-    return results.filter((r) => r.program.category === activeCat);
-  }, [results, activeCat]);
-
   // 승인 가능성 "높음" 판정 기준
   //  - 매칭 점수 7점 이상이면 높음 (실무상 조건이 뚜렷하게 맞는 구간)
   //  - 결과가 적을 때를 대비해, 최고점의 70% 이상도 높음으로 인정
@@ -82,10 +68,32 @@ export default function DashboardPage() {
     return Math.max(7, Math.round(max * 0.7));
   }, [results]);
   const isHighChance = (score: number) => score >= highBar && score > 0;
-  const highCount = useMemo(
-    () => results.filter((r) => isHighChance(r.score)).length,
-    [results, highBar]
-  );
+
+  // 결과창에는 "승인 가능성 높은" 사업만 노출한다(대표님 방침).
+  //  적합도가 낮은 사업은 결과창에 아예 표시하지 않는다.
+  //  단, 높음이 하나도 없을 때는 점수 상위 항목이라도 보여주어 빈 화면을 막는다.
+  const highResults = useMemo(() => {
+    const highs = results.filter((r) => isHighChance(r.score));
+    if (highs.length > 0) return highs;
+    // 방어: 높음이 없으면 점수순 상위 3개라도(0점 제외) 노출
+    return [...results].filter((r) => r.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
+  }, [results, highBar]);
+
+  const highCount = highResults.length;
+
+  const filtered = useMemo(() => {
+    if (activeCat === "전체") return highResults;
+    return highResults.filter((r) => r.program.category === activeCat);
+  }, [highResults, activeCat]);
+
+  // 카테고리별 개수 — 실제 노출되는(승인 가능성 높은) 결과 기준으로 집계
+  const countByCat = useMemo(() => {
+    const map: Record<string, number> = {};
+    highResults.forEach((r) => {
+      map[r.program.category] = (map[r.program.category] || 0) + 1;
+    });
+    return map;
+  }, [highResults]);
 
   return (
     <PageShell pageKey="dashboard">
@@ -101,8 +109,8 @@ export default function DashboardPage() {
               {name ? `${name} 대표님, ` : ""}맞춤 매칭 대시보드
             </h1>
             <p className="mt-2 text-sm text-brand-gray sm:text-base">
-              총 <b className="text-brand-orange">{results.length}개</b> 지원사업을
-              <b> 6개 카테고리</b>로 통합 검토했습니다.
+              총 <b className="text-brand-orange">{results.length}개</b> 지원사업을 검토해,
+              <b className="text-brand-green"> 승인 가능성 높은 {highCount}개</b>만 추려 드렸습니다.
               <br className="hidden sm:block" />
               각 사업을 눌러 신청 방법·필요 서류·승인 전략을 확인하세요.
             </p>
@@ -149,7 +157,7 @@ export default function DashboardPage() {
                   : "bg-white text-brand-gray shadow-sm hover:bg-gray-100"
               }`}
             >
-              전체 {results.length}
+              전체 {highResults.length}
             </button>
             {CATEGORY_ORDER.map((cat) => {
               const meta = CATEGORY_META[cat];
