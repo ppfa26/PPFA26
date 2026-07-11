@@ -229,7 +229,6 @@ export default function DashboardPage() {
                       </p>
                     )}
                   </div>
-                  <span className="self-center text-lg text-brand-gray">›</span>
                 </article>
               );
 

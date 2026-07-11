@@ -1084,7 +1084,7 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
               rel="noopener noreferrer"
               className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
             >
-              <span className="text-sm font-bold text-brand-dark">{p.label} →</span>
+              <span className="text-sm font-bold text-brand-dark">{p.label}</span>
               {p.docLabel && (
                 <span className="break-keep text-[11px] font-semibold text-brand-orange">
                   📄 {p.docLabel}
@@ -1120,7 +1120,7 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                     )}
                     {p.applyUrl && (
                       <span className="whitespace-nowrap text-[11px] font-bold text-brand-orange">
-                        신청 →
+                        신청
                       </span>
                     )}
                   </span>

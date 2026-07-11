@@ -623,9 +623,9 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "신용보증기금",
     siteUrl: "https://www.kodit.or.kr/apps/index.do",
-    siteLabel: "신용보증기금 사이트 →",
+    siteLabel: "신용보증기금 사이트",
     pdfUrl: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2806&bbsId=1002&ps=417",
-    pdfLabel: "보증상품 안내자료 확인하기 →",
+    pdfLabel: "보증상품 안내자료 확인하기",
     manualUrl: "/manuals/kodit-guide.pdf",
     tel: "1588-6565",
     telNote: "신용·매출 기반 보증은 신보로 문의하면 상담이 빠릅니다.",
@@ -634,9 +634,9 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "기술보증기금",
     siteUrl: "https://www.kibo.or.kr",
-    siteLabel: "기술보증기금 사이트 →",
+    siteLabel: "기술보증기금 사이트",
     pdfUrl: "https://www.kibo.or.kr/main/board/boardType08.do",
-    pdfLabel: "보증상품 안내자료 확인하기 →",
+    pdfLabel: "보증상품 안내자료 확인하기",
     manualUrl: "/manuals/kibo-guide.pdf",
     tel: "1544-1120",
     telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다.",
@@ -645,7 +645,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "소상공인시장진흥공단",
     siteUrl: "https://ols.sbiz.or.kr",
-    siteLabel: "소상공인 정책자금 신청 →",
+    siteLabel: "소상공인 정책자금 신청",
     manualUrl: "/manuals/sbiz-guide.pdf",
     tel: "1533-0100",
     telNote: "중진공·소진공·중기부 통합상담은 1357로도 가능합니다.",
@@ -654,7 +654,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "중소벤처기업진흥공단",
     siteUrl: "https://www.kosmes.or.kr",
-    siteLabel: "중소벤처기업진흥공단 사이트 →",
+    siteLabel: "중소벤처기업진흥공단 사이트",
     manualUrl: "/manuals/kosmes-guide.pdf",
     tel: "1811-3655",
     telNote: "정책자금 전용번호(1811-3655)가 일반문의(1357)보다 대기가 짧습니다.",
@@ -663,7 +663,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "무역보험공사",
     siteUrl: "https://on.ksure.or.kr/ksureOn/websquare/websquare.jsp?w2xPath=/ws5/ui/ZZ/MN/ZZMN010B01.xml&custSctCd=E100#/ws5/ui/ZZ/MN/ZZMN010B02.xml",
-    siteLabel: "한국무역보험공사 사이트 →",
+    siteLabel: "한국무역보험공사 사이트",
     manualUrl: "/manuals/ksure-guide.pdf",
     tel: "1588-3884",
     telNote: "상담 가능 시간: 평일 09:00~18:00",
@@ -681,9 +681,9 @@ export function findInstitutionLink(institution: string): InstitutionLink | null
 //  재단 카드 밑에 신보·기보처럼 검정색 사이트 버튼으로 동일하게 노출.
 //  세부 지역은 아래 지역 드롭다운(REGION_SINBO)으로 안내.
 export const JAEDAN_SITE_LINKS: { label: string; url: string; manualUrl?: string }[] = [
-  { label: "서울신용보증재단 →", url: "https://www.seoulshinbo.co.kr", manualUrl: "/manuals/seoul-sinbo-guide.pdf" },
-  { label: "경기신용보증재단 →", url: "https://www.gcgf.or.kr/gcgf/intro.do", manualUrl: "/manuals/gyeonggi-sinbo-easyone-guide.pdf" },
-  { label: "지역신용보증재단(통합) →", url: "https://untact.koreg.or.kr/web/index.do", manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf" },
+  { label: "서울신용보증재단", url: "https://www.seoulshinbo.co.kr", manualUrl: "/manuals/seoul-sinbo-guide.pdf" },
+  { label: "경기신용보증재단", url: "https://www.gcgf.or.kr/gcgf/intro.do", manualUrl: "/manuals/gyeonggi-sinbo-easyone-guide.pdf" },
+  { label: "지역신용보증재단(통합)", url: "https://untact.koreg.or.kr/web/index.do", manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf" },
 ];
 
 // ── 신용보증재단중앙회 통합 콜센터(재단 카드에 노출) ────────────────
