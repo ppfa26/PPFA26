@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
-import { matchPrograms } from "@/lib/matching";
+import { countMatchedItems } from "@/lib/supportPrograms";
 
 type Payment = {
   order_id: string;
@@ -57,7 +57,8 @@ export default function MyPage() {
         if (raw) {
           const profile = JSON.parse(raw);
           setDiagName(profile.name || "");
-          setMatchCount(matchPrograms(profile).length);
+          // 대시보드에 실제 안내되는 항목 전부 합산(기관 + 기관별 상품 + 지원제도)
+          setMatchCount(countMatchedItems(profile).total);
         }
       } catch {
         /* noop */
@@ -147,8 +148,8 @@ export default function MyPage() {
                   </div>
                 ) : (
                   <div className="mt-4 rounded-2xl bg-brand-yellow/30 p-5 text-center">
-                    <p className="text-brand-dark">
-                      {diagName ? `${diagName} 대표님께 ` : ""}맞는 지원사업{" "}
+                    <p className="break-keep text-brand-dark">
+                      {diagName ? `${diagName} 대표님 ` : "대표님 "}사업장에 딱 맞는 지원사업{" "}
                       <b className="text-brand-orange">{matchCount}개</b>가
                       매칭되었습니다.
                     </p>
@@ -156,7 +157,7 @@ export default function MyPage() {
                       href="/dashboard"
                       className="btn-brand mt-4 inline-block rounded-full px-8 py-3"
                     >
-                      대시보드에서 전체 결과 보기
+                      대시보드에서 전체 결과 확인하기
                     </Link>
                   </div>
                 )}

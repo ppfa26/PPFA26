@@ -7,6 +7,11 @@
 //  - 상세(detail)는 신청부터 지원금 수령까지 실제 소요기간과 부처 연락처.
 
 import { DiagnosisProfile } from "./matching";
+import {
+  Company,
+  runAdvancedScreening,
+  INSTITUTION_PRODUCT_LINKS,
+} from "./advancedScreening";
 
 export type SupportContact = {
   label: string; // "고용노동부 고객상담센터"
@@ -255,4 +260,92 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
 
 export function findSupportProgram(id: string): SupportProgram | undefined {
   return SUPPORT_PROGRAMS.find((p) => p.id === id);
+}
+
+// ── 진단 프로필 → Company 스키마 변환 ────────────────────────────────
+//  AdvancedScreeningPanel(autoRun)의 변환 로직과 동일하게 맞춰,
+//  마이페이지 등 다른 화면에서도 대시보드와 "같은 개수"를 계산할 수 있게 한다.
+function profileToCompany(p: DiagnosisProfile): Company {
+  const indMap: Record<string, string> = {
+    제조업: "manufacturing", 수출업: "export", 서비스업: "service",
+    도소매업: "retail", 음식점업: "food", 기타: "etc",
+  };
+  const ind0 = (p.industries || [])[0];
+  const industryVal = ind0 ? indMap[ind0] || ind0 : "";
+
+  const revMapWon: Record<string, number> = {
+    "5억 이상": 500000000, "5억미만": 300000000, "5억 미만": 300000000,
+    "1억 미만": 50000000, "1억미만": 50000000, "매출 없음": 0, "매출없음": 0,
+  };
+  const revStr = (p.revenue as string | undefined)?.trim?.() || (p.revenue as string | undefined);
+  const revenueVal = revStr ? revMapWon[revStr] : undefined;
+
+  const yMapNum: Record<string, number> = {
+    "창업 예정": 0, "창업예정": 0, "1년 미만": 0.5, "1년미만": 0.5,
+    "3년 미만": 2, "3년미만": 2, "7년 미만": 5, "7년미만": 5, "7년 이상": 10, "7년이상": 10,
+  };
+  const yearsStr = (p.years as string | undefined)?.trim?.() || (p.years as string | undefined);
+  const yearsVal = yearsStr ? yMapNum[yearsStr] : undefined;
+
+  let empCount: number | undefined;
+  if (p.employees) {
+    if (p.employees.includes("0명")) empCount = 0;
+    else if (p.employees.includes("5명")) empCount = 2;
+    else if (p.employees.includes("10명")) empCount = 5;
+  }
+
+  let bizVal: "personal" | "corp" | undefined;
+  if (p.businessType?.includes("법인")) bizVal = "corp";
+  else if (p.businessType?.includes("개인")) bizVal = "personal";
+
+  let creditScore: number | undefined;
+  if (p.credit) {
+    if (p.credit.includes("839점 이상")) creditScore = 850;
+    else if (p.credit.includes("839")) creditScore = 820;
+    else if (p.credit.includes("700")) creditScore = 690;
+  }
+
+  return {
+    industry: industryVal,
+    annual_revenue: revenueVal,
+    biz_type: bizVal,
+    employee_count: empCount,
+    is_exporter: (p.industries || []).includes("수출업"),
+    ceo_age: p.age?.includes?.("39세 이하") ? 35 : undefined,
+    years_in_business: yearsVal,
+    kcb_score: creditScore,
+    nice_score: creditScore,
+    tax_delinquent: false,
+    is_pre_founder: Boolean(p.businessType?.includes("예비")),
+    is_re_founder: Boolean(p.bankruptcy && p.bankruptcy.includes("있")),
+    has_mainbiz: (p.certifications || []).includes("메인비즈"),
+  };
+}
+
+// ── 대표님 진단 결과로 "실제 대시보드에 안내되는 항목 수" 합산 ────────
+//  대시보드가 보여주는 것 = ① 신청 가능 기관 + ② 기관별 상품(한눈에 보기)
+//  + ③ 추가로 신청 가능한 지원제도. 마이페이지의 "N개 매칭"이 대시보드의
+//  실제 안내량과 일치하도록 이 세 가지를 모두 합산한다.
+export function countMatchedItems(p: DiagnosisProfile): {
+  total: number;
+  institutions: number;
+  products: number;
+  supports: number;
+} {
+  let institutions = 0;
+  try {
+    const report = runAdvancedScreening(profileToCompany(p));
+    institutions = report.creditMatches?.length || 0;
+  } catch {
+    institutions = 0;
+  }
+  const products = INSTITUTION_PRODUCT_LINKS.length;
+  const elig = computeSupportEligibility(p);
+  const supports = SUPPORT_PROGRAMS.filter((prog) => elig[prog.id]).length;
+  return {
+    total: institutions + products + supports,
+    institutions,
+    products,
+    supports,
+  };
 }
