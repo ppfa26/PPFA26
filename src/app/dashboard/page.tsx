@@ -282,26 +282,50 @@ export default function DashboardPage() {
 
           </section>
 
-          {/* 고용 관련 정부지원 안내 — 고용24 링크 */}
-          <a
-            href="https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-brand-orange bg-white px-5 py-4 shadow-card transition hover:bg-brand-orange/5"
-          >
-            <span className="min-w-0">
-              <span className="block break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-                👥 직원을 채용·유지 중이라면 고용 관련 정부지원사업도 꼭 챙기세요.
-              </span>
-              <span className="mt-1 block break-keep text-xs leading-relaxed text-brand-dark/60 sm:text-sm">
-                청년·고령자 채용 장려금, 고용유지지원금, 4대보험료 지원 등 지원제도는
-                고용24에서 한 번에 확인할 수 있습니다. 정책자금과 별개로 함께 추가적으로 신청할 수 있습니다.
-              </span>
-            </span>
-            <span className="shrink-0 rounded-full bg-brand-orange px-4 py-2 text-sm font-extrabold text-white">
-              고용24 지원제도 보기
-            </span>
-          </a>
+          {/* 추가로 챙기면 좋은 지원제도 — 고용지원금·수출바우처·혁신바우처 (정책자금과 별개 신청) */}
+          <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {[
+              {
+                icon: "💼",
+                title: "고용지원금 — 고용24",
+                site: "www.work24.go.kr",
+                url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
+                desc: "기업 로그인 → 기업 지원금 메뉴에서 신청. 청년일자리도약장려금·고용창출/안정장려금·두루누리·워라밸일자리장려금·고용촉진장려금 등",
+              },
+              {
+                icon: "🌍",
+                title: "수출바우처",
+                site: "www.exportvoucher.com",
+                url: "https://www.exportvoucher.com",
+                desc: "중기부·산업부·지자체 수출바우처 통합 신청 포털. 사업공고 → 참여기업 모집공고 확인 후 신청",
+              },
+              {
+                icon: "🚀",
+                title: "혁신바우처",
+                site: "www.mssmiv.com",
+                url: "https://www.mssmiv.com",
+                desc: "중소기업 혁신바우처(컨설팅·기술지원·마케팅) 신청 포털",
+              },
+            ].map((b) => (
+              <a
+                key={b.title}
+                href={b.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col rounded-2xl border-2 border-brand-orange bg-white p-4 shadow-card transition hover:bg-brand-orange/5"
+              >
+                <span className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
+                  {b.icon} {b.title}
+                </span>
+                <span className="mt-0.5 break-all text-xs font-semibold text-brand-orange">
+                  🔗 {b.site}
+                </span>
+                <span className="mt-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+                  {b.desc}
+                </span>
+              </a>
+            ))}
+          </div>
 
           {/* 기관·상품 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
           <AdvancedScreeningPanel autoRun />
