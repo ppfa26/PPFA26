@@ -99,13 +99,20 @@ export default function DashboardPage() {
     const inds = p.industries || [];
     const purps = p.purposes || [];
     const ints = p.interests || [];
-    const hasEmployees = Boolean(p.employees) && !String(p.employees).includes("0명");
+    const emp = String(p.employees || "");
+    const rev = String(p.revenue || "");
+    const hasEmployees = Boolean(p.employees) && !emp.includes("0명");
     const isManufacturing = inds.some((s) => s.includes("제조"));
-    // 소기업(혁신바우처 일반) — 매출 5억 이상만 소기업 상한(140억) 초과 우려, 그 외는 대상
     const isExport =
       inds.some((s) => s.includes("수출")) ||
       purps.some((s) => s.includes("수출")) ||
       ints.some((s) => s.includes("바우처"));
+    // 두루누리 — 근로자 10명 미만 사업장(0명 제외, 5명이하·10명이하 구간)
+    const isDuruEligible = hasEmployees && (emp.includes("5명") || emp.includes("10명이하"));
+    // 소상공인 경영안정 바우처 — 영세 소상공인(매출 5억 미만, 매출없음 제외)
+    const isSmallBiz = Boolean(p.revenue) && !rev.includes("5억이상") && !rev.includes("매출없음");
+    // 청년(만 39세 이하) — 청년일자리도약 채용 대상 관련
+    const isYouth = String(p.age || "").includes("39세이하") || String(p.age || "").includes("39세 이하");
 
     return [
       {
@@ -143,6 +150,42 @@ export default function DashboardPage() {
         note: isManufacturing
           ? "제조업 소기업으로 혁신바우처 신청 대상입니다."
           : "제조업을 주 업종으로 하는 소기업이 신청 대상입니다.",
+      },
+      {
+        icon: "🤝",
+        title: "두루누리 사회보험료 지원",
+        site: "insurancesupport.or.kr",
+        url: "http://insurancesupport.or.kr",
+        desc: "근로자 10명 미만 사업장에서 월평균 보수 270만원 미만 직원 신규 고용 시, 고용보험·국민연금 보험료의 80%를 최대 36개월 지원",
+        eligible: isDuruEligible,
+        badge: isDuruEligible ? "✅ 신청 대상" : "직원 10명 미만 대상",
+        note: isDuruEligible
+          ? "근로자 10명 미만 사업장으로 보험료 80% 지원 대상입니다."
+          : "근로자 10명 미만이면서 저임금 직원을 고용하면 대상이 됩니다.",
+      },
+      {
+        icon: "🏪",
+        title: "소상공인 경영안정 바우처",
+        site: "www.sbiz24.kr",
+        url: "https://www.sbiz24.kr",
+        desc: "영세 소상공인의 고정비(4대 보험료·전기·가스요금 등)를 줄여주는 바우처. 연 매출 등 조건 충족 시 지급, 소상공인24에서 신청",
+        eligible: isSmallBiz,
+        badge: isSmallBiz ? "✅ 신청 대상" : "영세 소상공인 대상",
+        note: isSmallBiz
+          ? "영세 소상공인으로 경영안정 바우처 신청 대상입니다."
+          : "연 매출 등 조건을 충족하는 영세 소상공인이 대상입니다.",
+      },
+      {
+        icon: "⭐",
+        title: "청년일자리도약장려금",
+        site: "www.work24.go.kr",
+        url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
+        desc: "5인 이상 중소기업(청년 창업기업 등은 1인 이상)이 취업애로청년을 정규직 채용·고용유지 시 1인당 최대 720만원 지원",
+        eligible: hasEmployees,
+        badge: hasEmployees ? "✅ 신청 대상" : "청년 채용 시 대상",
+        note: hasEmployees
+          ? "취업애로청년을 정규직으로 채용하면 1인당 최대 720만원 지원 대상입니다."
+          : "취업애로청년을 정규직으로 채용하면 대상이 됩니다.",
       },
     ];
   }, [profileData]);
@@ -348,7 +391,7 @@ export default function DashboardPage() {
               🎁 대표님이 <b className="text-brand-orange">추가로 신청 가능한 지원제도</b>
               <span className="ml-1 text-xs font-normal text-brand-dark/50">— 정책자금과 별개로 병행 신청 가능</span>
             </p>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {extraPrograms.map((b) => (
                 <a
                   key={b.title}
