@@ -536,6 +536,8 @@ export const GOV_SUPPORT_2026: GovProgram[] = [
   { name: "강한소상공인_온라인셀러", amount_max: 50000000, segment: "small", requiresOperating: true, fitTags: ["retail", "food"], applyUrl: "https://www.sbiz.or.kr" },
   { name: "강한소상공인_글로벌", amount_max: 100000000, segment: "small", requiresExport: true, requiresOperating: true, fitTags: ["export"], applyUrl: "https://www.sbiz.or.kr" },
   { name: "스마트제조_소상공인", amount_max: 42000000, self_burden: 0.3, cash_ratio: 0.5, segment: "small", industryOnly: "manufacturing", requiresOperating: true, fitTags: ["manufacturing"], applyUrl: "https://www.sbiz.or.kr" },
+  // 스마트상점 기술보급 — 운영 중인 오프라인 소상공인 매장(음식·도소매·서비스)에 키오스크·서빙로봇·스마트기기 도입 지원
+  { name: "스마트상점_기술보급", amount_max: 5000000, self_burden: 0.3, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz.or.kr/smst/index.do" },
   { name: "판로개척_소상공인", amount_max: 20000000, self_burden: 0.2, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz.or.kr" },
   // IP나래 — 창업 7년 이내 + 기술(특허 등) 보유 중소기업만
   { name: "IP나래", amount_max: 17500000, support_ratio: 0.5, years_max: 7, segment: "sme", requiresTech: true, fitTags: ["manufacturing", "export"], applyUrl: "https://pms.ripc.org" },
