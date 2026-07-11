@@ -19,6 +19,7 @@ import {
   runAdvancedScreening,
   AdvancedScreeningReport,
   REGION_SINBO,
+  findInstitutionLink,
 } from "@/lib/advancedScreening";
 
 // 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
@@ -652,33 +653,73 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
           업종·직원수 등 대표님 조건 기준으로 실제 신청 자격이 열리는 정책금융 기관입니다.
         </p>
         <div className="mt-4 space-y-2">
-          {creditMatches.map((m, i) => (
-            <div
-              key={i}
-              className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
-            >
-              <div className="flex flex-wrap items-center gap-1.5">
-                {m.step && m.step <= 3 && (
-                  <span className="shrink-0 rounded-full bg-brand-dark px-2 py-0.5 text-[10px] font-bold text-white">
-                    {m.step === 1 ? "1순위" : m.step === 2 ? "2순위" : "병행"}
-                  </span>
+          {creditMatches.map((m, i) => {
+            const link = findInstitutionLink(m.institution);
+            const isJaedan = m.institution.includes("재단");
+            return (
+              <div
+                key={i}
+                className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
+              >
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {m.step && m.step <= 3 && (
+                    <span className="shrink-0 rounded-full bg-brand-dark px-2 py-0.5 text-[10px] font-bold text-white">
+                      {m.step === 1 ? "1순위" : m.step === 2 ? "2순위" : "병행"}
+                    </span>
+                  )}
+                  <span className="text-sm font-extrabold text-brand-dark">{m.institution}</span>
+                  {m.loan_type && (
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                        m.loan_type === "직접대출"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-purple-100 text-purple-700"
+                      }`}
+                    >
+                      {m.loan_type}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 break-keep text-xs text-brand-gray">{m.criteria}</p>
+
+                {/* 신보·기보·소진공·중진공 → 사이트/PDF 바로가기 (재단은 아래 지역 드롭다운으로 안내) */}
+                {link && (
+                  <div className="mt-2.5 flex flex-col gap-1.5">
+                    <div className="flex flex-wrap gap-2">
+                      <a
+                        href={link.siteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90"
+                      >
+                        {link.siteLabel}
+                      </a>
+                      {link.pdfUrl && (
+                        <a
+                          href={link.pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100"
+                        >
+                          📄 {link.pdfLabel}
+                        </a>
+                      )}
+                    </div>
+                    {link.note && (
+                      <p className="break-keep text-[11px] leading-relaxed text-brand-dark/50">
+                        {link.note}
+                      </p>
+                    )}
+                  </div>
                 )}
-                <span className="text-sm font-extrabold text-brand-dark">{m.institution}</span>
-                {m.loan_type && (
-                  <span
-                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                      m.loan_type === "직접대출"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-purple-100 text-purple-700"
-                    }`}
-                  >
-                    {m.loan_type}
-                  </span>
+                {isJaedan && (
+                  <p className="mt-2 break-keep text-[11px] font-semibold text-brand-orange">
+                    👇 아래에서 사업장 지역을 고르면 해당 재단 상품 페이지·신청 앱으로 이동합니다.
+                  </p>
                 )}
               </div>
-              <p className="mt-1 break-keep text-xs text-brand-gray">{m.criteria}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <div className="mt-3 space-y-2">
           <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
@@ -789,11 +830,11 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
       {govPrograms.length > 0 && (
         <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 p-5 shadow-card">
           <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-            🎯 지금 신청 자격이 열리는 정부지원사업{" "}
+            🎯 지금 바로 노려볼 정부지원사업{" "}
             <span className="text-brand-orange">{govPrograms.length}종</span>
           </p>
           <p className="mt-1 break-keep text-xs text-brand-dark/60">
-            대표님 진단 정보 기준으로 신청 자격이 확인된 2026 정부지원사업입니다.
+            수많은 사업 중, 대표님 업종·상황에 <b className="text-brand-dark">실제로 신청 가능하고 승인 가능성이 높은 것만</b> 추려 드렸습니다.
           </p>
           <div className="mt-4 space-y-2">
             {govPrograms.map((p, i) => {

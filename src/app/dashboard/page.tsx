@@ -97,9 +97,6 @@ export default function DashboardPage() {
                   ✅ 이 중 <span className="text-brand-green">승인 가능성 높은 사업 {highCount}개</span>를
                   먼저 신청해 보세요!
                 </p>
-                <p className="mt-1 break-keep text-xs text-brand-dark/60">
-                  아래 <b>✅ 승인 가능성 높음</b> 표시가 붙은 사업부터 확인하시면 됩니다.
-                </p>
               </div>
             )}
           </section>

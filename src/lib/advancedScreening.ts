@@ -212,6 +212,23 @@ function normalizeIndustry(
   return "etc";
 }
 
+// 큐레이션용 업종 대분류(IndustryKind) 산정 — 수출 여부를 최우선으로 반영.
+//  대표님 기준: "수출업"은 별도 트랙이므로 수출 실적이 있으면 export로 본다.
+//  그 외엔 업종 문자열로 food/retail/manufacturing/service/etc 분류.
+function resolveIndustryKind(company: Company): IndustryKind {
+  const s = (company.industry || "").replace(/\s/g, "");
+  // 명시적으로 '수출'이 업종에 있거나 수출 실적이 있으면 export 우선
+  if (s.includes("수출") || s.includes("무역") || company.is_exporter === true) return "export";
+  if (s.includes("음식") || s.includes("외식") || s.includes("식당") || s.includes("카페") || s.includes("요식"))
+    return "food";
+  if (s.includes("도소매") || s.includes("도매") || s.includes("소매") || s.includes("유통") || s.includes("판매") || s.includes("커머스") || s.includes("쇼핑"))
+    return "retail";
+  if (s.includes("제조") || s.includes("생산") || s.includes("가공")) return "manufacturing";
+  if (s.includes("서비스") || s.includes("운수") || s.includes("물류") || s.includes("건설") || s.includes("농림") || s.includes("어업") || s.includes("숙박") || s.includes("교육"))
+    return "service";
+  return "etc";
+}
+
 // 신용점수 판정 (대표님 실무 기준)
 //  - 800점 이상: 양호 (대부분 승인 잘남)
 //  - 780~799: 사업성/기술력 있으면 가능 (기보·특례 위주)
@@ -482,7 +499,13 @@ export type GovProgram = {
   requiresOperating?: boolean; // 운영 중인 기존 사업자 전용(판로·강한소상공인·스마트제조 등) → 예비창업자 제외
   requiresReFounder?: boolean; // 폐업 후 재기·재창업 지원(희망리턴 등) → 재창업자만
   applyUrl?: string; // 신청·안내 사이트(클릭 시 바로 이동)
+  // ── 큐레이션용: 이 사업이 어떤 업종에서 "핵심(승인 잘 나고 실효성 큰)"인지 태그 ──
+  //   업종별 우선순위 점수 산정에 사용. 미지정이면 범용 사업으로 간주.
+  fitTags?: IndustryKind[]; // 이 사업이 특히 잘 맞는 업종들
 };
+
+// 업종 대분류 (큐레이션 기준용) — normalizeIndustry 결과와 1:1 매칭
+export type IndustryKind = "food" | "retail" | "export" | "manufacturing" | "service" | "etc";
 
 export const GOV_SUPPORT_2026: GovProgram[] = [
   // 창업(예비·초기) — 예비창업자/재창업자·나이·업력 조건이 붙어 해당자만 노출됨
@@ -491,16 +514,16 @@ export const GOV_SUPPORT_2026: GovProgram[] = [
   { name: "청년창업사관학교", amount_max: 100000000, age_max: 39, years_max: 3, segment: "both", isStartupProgram: true, applyUrl: "https://start.kosmes.or.kr" },
   { name: "청년창업사관학교_경험창업자", amount_max: 100000000, age_max: 39, years_max: 7, segment: "both", isStartupProgram: true, applyUrl: "https://start.kosmes.or.kr" },
   { name: "생애최초창업", amount_max: 70000000, age_max: 29, condition: "is_pre_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
-  { name: "공공기술창업", amount_max: 70000000, age_max: 39, condition: "is_pre_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
-  { name: "신사업창업사관학교", amount_max: 40000000, condition: "is_pre_founder", segment: "small", applyUrl: "https://edu.sbiz.or.kr" },
+  { name: "공공기술창업", amount_max: 70000000, age_max: 39, condition: "is_pre_founder", segment: "both", requiresTech: true, applyUrl: "https://www.k-startup.go.kr" },
+  { name: "신사업창업사관학교", amount_max: 40000000, condition: "is_pre_founder", segment: "small", fitTags: ["food", "retail", "service"], applyUrl: "https://edu.sbiz.or.kr" },
   { name: "재도전성공패키지", amount_max: 100000000, condition: "is_re_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
   // 중소기업(도약·글로벌·스마트공장 등) — segment: sme
-  { name: "글로벌창업사관학교", amount_max: 150000000, years_max: 7, segment: "sme", requiresTech: true, isStartupProgram: true, applyUrl: "https://start.kosmes.or.kr" },
+  { name: "글로벌창업사관학교", amount_max: 150000000, years_max: 7, segment: "sme", requiresTech: true, isStartupProgram: true, requiresExport: true, fitTags: ["export"], applyUrl: "https://start.kosmes.or.kr" },
   { name: "창업도약패키지_일반형", amount_max: 300000000, years_min: 3, years_max: 7, segment: "sme", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
   { name: "창업도약패키지_대기업협업형", amount_max: 200000000, years_min: 3, years_max: 7, segment: "sme", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
-  { name: "스마트공장", amount_per_task: 100000000, amount_max_total: 700000000, self_burden: 0.3, segment: "sme", industryOnly: "manufacturing", applyUrl: "https://www.smart-factory.kr" },
+  { name: "스마트공장", amount_per_task: 100000000, amount_max_total: 700000000, self_burden: 0.3, segment: "sme", industryOnly: "manufacturing", fitTags: ["manufacturing"], applyUrl: "https://www.smart-factory.kr" },
   // 수출바우처 — 수출기업만 (수출 체크 시에만 노출)
-  { name: "수출바우처_중기부", amount_min: 30000000, amount_max: 100000000, self_burden_min: 0.3, self_burden_max: 0.5, segment: "sme", requiresExport: true, applyUrl: "https://www.exportvoucher.com" },
+  { name: "수출바우처_중기부", amount_min: 30000000, amount_max: 100000000, self_burden_min: 0.3, self_burden_max: 0.5, segment: "sme", requiresExport: true, fitTags: ["export"], applyUrl: "https://www.exportvoucher.com" },
   // ── R&D 지원사업은 정책자금 매칭 대상에서 항상 제외 (대표님 기준) ──
   // (창업성장기술개발 디딤돌/전략형/시장확대/시장대응 등은 안내하지 않음)
   // ── 데이터바우처는 '데이터 활용 목적' 기업 한정 → 일반 매칭에서 제외 (대표님 기준) ──
@@ -509,16 +532,16 @@ export const GOV_SUPPORT_2026: GovProgram[] = [
   // 소상공인(강한소상공인·판로·희망리턴·스마트제조 등) — segment: small
   { name: "희망리턴패키지_경영개선", amount_max: 40000000, segment: "small", requiresReFounder: true, applyUrl: "https://www.sbiz.or.kr" },
   { name: "희망리턴패키지_재창업", amount_max: 44000000, segment: "small", requiresReFounder: true, applyUrl: "https://www.sbiz.or.kr" },
-  { name: "강한소상공인_로컬브랜드", amount_max: 100000000, segment: "small", requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
-  { name: "강한소상공인_온라인셀러", amount_max: 50000000, segment: "small", requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
-  { name: "강한소상공인_글로벌", amount_max: 100000000, segment: "small", requiresExport: true, requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
-  { name: "스마트제조_소상공인", amount_max: 42000000, self_burden: 0.3, cash_ratio: 0.5, segment: "small", industryOnly: "manufacturing", requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
-  { name: "판로개척_소상공인", amount_max: 20000000, self_burden: 0.2, segment: "small", requiresOperating: true, applyUrl: "https://www.sbiz.or.kr" },
+  { name: "강한소상공인_로컬브랜드", amount_max: 100000000, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz.or.kr" },
+  { name: "강한소상공인_온라인셀러", amount_max: 50000000, segment: "small", requiresOperating: true, fitTags: ["retail", "food"], applyUrl: "https://www.sbiz.or.kr" },
+  { name: "강한소상공인_글로벌", amount_max: 100000000, segment: "small", requiresExport: true, requiresOperating: true, fitTags: ["export"], applyUrl: "https://www.sbiz.or.kr" },
+  { name: "스마트제조_소상공인", amount_max: 42000000, self_burden: 0.3, cash_ratio: 0.5, segment: "small", industryOnly: "manufacturing", requiresOperating: true, fitTags: ["manufacturing"], applyUrl: "https://www.sbiz.or.kr" },
+  { name: "판로개척_소상공인", amount_max: 20000000, self_burden: 0.2, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz.or.kr" },
   // IP나래 — 창업 7년 이내 + 기술(특허 등) 보유 중소기업만
-  { name: "IP나래", amount_max: 17500000, support_ratio: 0.5, years_max: 7, segment: "sme", requiresTech: true, applyUrl: "https://pms.ripc.org" },
+  { name: "IP나래", amount_max: 17500000, support_ratio: 0.5, years_max: 7, segment: "sme", requiresTech: true, fitTags: ["manufacturing", "export"], applyUrl: "https://pms.ripc.org" },
   // 관광기업혁신바우처 — 관광사업체만
   { name: "관광기업혁신바우처", amount_min: 20000000, amount_max: 100000000, segment: "both", requiresTourism: true, applyUrl: "https://www.tourbiz.or.kr" },
-  { name: "로컬크리에이터", self_burden: 0.2, segment: "small", requiresOperating: true, applyUrl: "https://www.k-startup.go.kr" },
+  { name: "로컬크리에이터", self_burden: 0.2, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.k-startup.go.kr" },
 ];
 
 // ── 17개 시·도 지역신용보증재단 상품 안내 ──────────────────────
@@ -551,16 +574,82 @@ export const REGION_SINBO: RegionSinbo[] = [
   { region: "제주", name: "제주신용보증재단", url: "https://www.jcgf.or.kr/pages.php?p=2_2_5_1#Sub2Link", app: "보증드림 앱" },
 ];
 
+// ── 정책금융 기관별 신청 채널(앱/사이트/PDF) 안내 ─────────────────
+//  기관명(부분일치)으로 매칭. 재단은 지역별로 다르므로 여기서 제외(REGION_SINBO 사용).
+export type InstitutionLink = {
+  match: string; // 기관명 부분일치 키
+  siteUrl: string; // 공식 신청·안내 사이트
+  siteLabel: string; // 버튼 라벨
+  pdfUrl?: string; // 상품·보증 안내 자료(PDF/안내 페이지)
+  pdfLabel?: string;
+  note?: string; // 신청 채널 한 줄 안내
+};
+
+export const INSTITUTION_LINKS: InstitutionLink[] = [
+  {
+    match: "신용보증기금",
+    siteUrl: "https://www.kodit.or.kr",
+    siteLabel: "신용보증기금 사이트 →",
+    pdfUrl: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=1364&bbsId=148",
+    pdfLabel: "보증상품 안내자료 (PDF) →",
+    note: "신용보증기금 디지털지점(모바일)·영업점 방문으로 보증 신청이 가능합니다.",
+  },
+  {
+    match: "기술보증기금",
+    siteUrl: "https://www.kibo.or.kr",
+    siteLabel: "기술보증기금 사이트 →",
+    pdfUrl: "https://www.kibo.or.kr/dbranch/index.do",
+    pdfLabel: "기술보증 디지털지점 (안내) →",
+    note: "기술보증기금 디지털지점(kibo.or.kr)에서 온라인 신청 후 기술평가를 받습니다.",
+  },
+  {
+    match: "소상공인시장진흥공단",
+    siteUrl: "https://ols.sbiz.or.kr",
+    siteLabel: "소상공인 정책자금 신청 →",
+    note: "소상공인정책자금 누리집(ols.sbiz.or.kr)에서 직접대출을 온라인 신청합니다.",
+  },
+  {
+    match: "중소벤처기업진흥공단",
+    siteUrl: "https://www.kosmes.or.kr",
+    siteLabel: "중소벤처기업진흥공단 사이트 →",
+    note: "중진공 정책자금 누리집에서 온라인 신청 후 상담·평가를 받습니다.",
+  },
+];
+
+// 기관명으로 신청 채널 정보 찾기(부분일치). 재단은 지역별이므로 여기선 null.
+export function findInstitutionLink(institution: string): InstitutionLink | null {
+  if (institution.includes("재단")) return null;
+  return INSTITUTION_LINKS.find((x) => institution.includes(x.match)) ?? null;
+}
+
 // 소상공인/중소기업 세그먼트 판정 (대표님 기준: 소상공인은 소상공인용만, 중소기업은 중소기업용만)
 //  - is_small_business 명시값 우선
-//  - 없으면: 법인이거나 매출 5억 이상이면 중소기업(sme), 그 외 소상공인(small)
+//  - 상시근로자 기준(소상공인기본법): 제조·건설·운수 10명 미만 / 그 외 5명 미만이면 소상공인.
+//    직원수를 입력했으면 이걸 최우선으로 본다(대표님 실무 기준: 정책자금은 직원수가 핵심).
+//  - 직원수 미입력 시: 법인이면 중기, 개인사업자는 업종별 매출기준으로 추정.
+//    (음식·도소매·서비스는 매출이 커도 소상공인인 경우가 많으므로 매출 임계값을 높게 둔다)
 export function resolveSegment(company: Company): "small" | "sme" {
   if (company.is_small_business === true) return "small";
   if (company.is_small_business === false) return "sme";
-  const rev = company.annual_revenue ?? 0;
+
+  const cat = normalizeIndustry(company.industry);
+
+  // 직원수 입력 시: 상시근로자 기준으로 판정 (가장 정확)
+  if (company.employee_count !== undefined) {
+    const limit = cat === "manufacturing" || company.industry?.includes("건설") || company.industry?.includes("운수") ? 10 : 5;
+    return company.employee_count < limit ? "small" : "sme";
+  }
+
+  // 직원수 미입력 시: 법인은 중기로, 개인사업자는 업종별 매출기준으로 추정
   if (company.biz_type === "corp") return "sme";
-  if (rev >= 500000000) return "sme";
-  return "small";
+  const rev = company.annual_revenue ?? 0;
+  // 업종별 소상공인 매출 상한(추정): 음식·도소매·서비스는 넉넉히, 제조는 낮게.
+  const revLimit =
+    cat === "retail_food" ? 3000000000 : // 도소매·음식: 30억까지 소상공인으로 추정
+    cat === "service" ? 1000000000 : // 서비스: 10억
+    cat === "manufacturing" ? 1000000000 : // 제조: 10억
+    500000000; // 기타: 5억
+  return rev >= revLimit ? "sme" : "small";
 }
 
 export function matchGovPrograms(company: Company): GovProgram[] {
@@ -625,7 +714,43 @@ export function matchGovPrograms(company: Company): GovProgram[] {
     if (eligible) matched.push(p);
   });
 
-  return matched;
+  // ─────────────────────────────────────────────────────────────────────
+  //  【큐레이션】업종별 "진짜 신청할 것만" 추림 (대표님 기준)
+  //   - 자격 통과한 사업들 중에서도, 업종에 딱 맞고 승인 실효성 높은 것을
+  //     우선순위로 정렬 → 상위 N개만 노출.
+  //   - "너무 많으면 겁먹는다" → 최대 5개(예비창업자는 창업사업이 많아 6개).
+  //   - 비슷한 프로필이면 같은 사업이 같은 순서로 나오도록 결정론적 정렬.
+  // ─────────────────────────────────────────────────────────────────────
+  const kind = resolveIndustryKind(company);
+
+  const scoreProgram = (p: GovProgram): number => {
+    let score = 0;
+    // (1) 업종 적합 태그: 이 업종에 딱 맞는 사업이면 최우선 (+100)
+    if (p.fitTags && p.fitTags.includes(kind)) score += 100;
+    // (2) 수출 트랙 가점: 수출기업엔 수출사업을 최상단으로 (+40)
+    if (kind === "export" && p.requiresExport) score += 40;
+    // (3) 제조 트랙 가점: 제조업엔 제조 전용사업 최상단 (+40)
+    if (kind === "manufacturing" && p.industryOnly === "manufacturing") score += 40;
+    // (4) 예비/재창업자엔 해당 조건 사업 가점 (창업이 본 목적이므로)
+    if (p.condition === "is_pre_founder" && is_pre_founder) score += 60;
+    if (p.condition === "is_re_founder" && is_re_founder) score += 60;
+    if (p.requiresReFounder && is_re_founder) score += 60;
+    // (5) 운영 중 기존 사업자에겐 운영형 사업 가점 (+30)
+    if (p.requiresOperating && is_pre_founder !== true) score += 30;
+    // (6) 지원금액이 클수록 소폭 가점 (동점 tie-break, 최대 +10)
+    const amt = p.amount_max ?? p.amount_max_total ?? p.amount_min ?? 0;
+    score += Math.min(10, Math.floor(amt / 100000000) * 2);
+    return score;
+  };
+
+  const ranked = matched
+    .map((p) => ({ p, s: scoreProgram(p) }))
+    // 결정론적 정렬: 점수 내림차순, 동점이면 이름 사전순(항상 같은 순서 보장)
+    .sort((a, b) => (b.s - a.s) || a.p.name.localeCompare(b.p.name, "ko"));
+
+  // 노출 개수 상한: 예비창업자는 창업사업 위주라 6개, 그 외 5개.
+  const LIMIT = is_pre_founder === true ? 6 : 5;
+  return ranked.slice(0, LIMIT).map((x) => x.p);
 }
 
 // ═════════════════════════════════════════════════════════════════════════

@@ -171,6 +171,17 @@ export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
       score += 5;
       reasons.push("회생·파산 이력에 맞는 재기 지원");
     }
+    // ── 재기·재도전 하드필터 (대표님 기준: 진짜 대상자만) ────────────
+    //  새출발기금·재도전특별자금·희망리턴은 폐업·회생·파산·재창업 이력이 있는
+    //  사업자 전용. 정상 운영 중인 일반 사업자에게는 노출하지 않는다.
+    if (program.category === "재기재도전") {
+      const isReStart =
+        tags.has("회생파산") ||
+        tags.has("재기자금") ||
+        p.purposes?.some((x) => x.includes("재기") || x.includes("재창업")) ||
+        p.businessType?.includes("재창업");
+      if (!isReStart) score = 0;
+    }
     // 청년 우선
     if (tags.has("청년") && program.category === "창업지원") {
       score += 3;
@@ -365,7 +376,11 @@ export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
 
     return { program, score, reasons };
   })
-    .filter((r) => r.score >= 2)
+    // ── 큐레이션 컷오프 (대표님 기준: "진짜 신청 가능한 대상자만") ──────────
+    //  score 2점(관심분야 1점 + 태그 1개 스침)은 '겨우 걸친' 수준이라 제외.
+    //  실무 추천 규칙에서 +3 이상 가점을 받았거나(뚜렷한 자격 부합),
+    //  태그가 다수 일치(4점 이상)한 것만 노출해 "겁먹을 만큼 많은" 목록을 방지한다.
+    .filter((r) => r.score >= 4)
     .sort((a, b) => b.score - a.score);
 
   return results;
