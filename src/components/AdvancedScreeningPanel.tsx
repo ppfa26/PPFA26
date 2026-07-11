@@ -998,29 +998,6 @@ function AdvancedResult({
         </div>
         )}
 
-        {/* 기관별 상품 바로보기 — 같은 박스 안에 통합 */}
-        <div className="mt-4 border-t border-gray-200 pt-4">
-          <p className="break-keep text-base font-bold text-brand-dark">
-            🏛️ 기관별 상품 한눈에 보기
-          </p>
-          <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-            각 기관의 상품 안내 자료·페이지로 바로 이동합니다.
-          </p>
-          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-            {INSTITUTION_PRODUCT_LINKS.map((p) => (
-              <a
-                key={p.label}
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center rounded-xl bg-brand-dark px-3 py-3 text-center transition hover:opacity-90"
-              >
-                <span className="break-keep text-xs font-bold text-white">{p.label}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-
       </div>
 
       {/* 추가로 신청 가능한 지원제도 — 기관 박스 '밖' 하단에 별도 박스로 배치 (틀은 기관 박스와 동일) */}
@@ -1066,6 +1043,29 @@ function AdvancedResult({
           </div>
         </div>
       )}
+
+      {/* 기관별 상품 한눈에 보기 — 지원제도 박스 '아래' 별도 박스로 배치 (대표님 요청) */}
+      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
+        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
+          🏛️ 기관별 상품 한눈에 보기
+        </p>
+        <p className="mt-1 break-keep text-xs text-brand-dark/60">
+          각 기관의 상품 안내 자료·페이지로 바로 이동합니다.
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+          {INSTITUTION_PRODUCT_LINKS.map((p) => (
+            <a
+              key={p.label}
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-xl bg-brand-dark px-3 py-3 text-center transition hover:opacity-90"
+            >
+              <span className="break-keep text-xs font-bold text-white">{p.label}</span>
+            </a>
+          ))}
+        </div>
+      </div>
 
       {/* 소상공인·중소기업이 알아두면 좋은 정부 사이트 모음으로 이동 */}
       <a
