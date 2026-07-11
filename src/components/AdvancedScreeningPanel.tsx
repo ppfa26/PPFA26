@@ -899,6 +899,16 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                         >
                           {j.label}
                         </a>
+                        {j.productUrl && (
+                          <a
+                            href={j.productUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100"
+                          >
+                            📑 {j.productLabel}
+                          </a>
+                        )}
                       </div>
                     ))}
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
