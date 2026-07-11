@@ -947,47 +947,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
         </div>
       </div>
 
-      {/* 기관 블록 바로 아래: 사전 자가진단 + 재무비율 검증 (대표님 요청 위치) */}
-      <div className={cardCls}>
-        <span className="mb-2 block text-sm font-bold text-brand-dark">정부지원사업 사전 자가진단</span>
-        {koditHardReject.result === "PASS" ? (
-          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(true).cls}`}>
-            {verdictStyle(true).icon} 승인에 걸림돌이 되는 항목이 없습니다. (13개 항목 통과)
-          </div>
-        ) : (
-          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(false).cls}`}>
-            {verdictStyle(false).icon} 아래 항목은 미리 준비·정리하시면 승인에 유리합니다:
-            <ul className="mt-1 list-inside list-disc">
-              {koditHardReject.rejectReasons.map((r, i) => (
-                <li key={i}>{r}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      <div className={cardCls}>
-        <span className="mb-2 block text-sm font-bold text-brand-dark">재무비율 검증</span>
-        <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(financials.kodit_result === "PASS").cls}`}>
-          {verdictStyle(financials.kodit_result === "PASS").icon}{" "}
-          {financials.kodit_result === "PASS" ? "재무 관점 걸림돌 없음" : "재무 관점 점검 필요"}
-        </div>
-        {financials.issues.length > 0 && (
-          <ul className="mt-2 space-y-1 text-xs">
-            {financials.issues.map((it, i) => (
-              <li key={i} className={it.level === "REJECT" ? "text-brand-red" : "text-brand-orange"}>
-                {it.level === "REJECT" ? "🚫" : "⚠️"} {it.reason}
-              </li>
-            ))}
-          </ul>
-        )}
-        {financials.bank_credit_eligible && (
-          <p className="mt-2 break-keep text-xs font-semibold text-brand-green">
-            💡 매출 30억 이상 요건 충족 → 은행 법인신용대출 검토 가능
-          </p>
-        )}
-      </div>
-
       {/* 신청 → 실행 진행 절차·소요기간 안내 */}
       {(hasDae || hasDirect) && (
         <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 shadow-card">
@@ -1022,58 +981,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
         </div>
       )}
 
-      {/* 내 지역 신용보증재단 상품 바로 보기 — 재단이 추천기관에 포함될 때만 */}
-      {hasJaedan && (
-        <div className="rounded-2xl border border-brand-orange/30 bg-brand-orange/5 p-5 shadow-card">
-          <p className="break-keep text-base font-bold text-brand-dark">
-            📍 내 지역 신용보증재단 상품 바로 보기
-          </p>
-          <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-            재단 상품·보증한도·신청시기는 지역마다 다릅니다. 대표님 사업장 지역을 고르면 해당 재단 상품 페이지로 바로 이동합니다.
-          </p>
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-            <select
-              value={sinboRegion}
-              onChange={(e) => setSinboRegion(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-brand-dark focus:border-brand-orange focus:outline-none sm:flex-1"
-            >
-              <option value="">지역 선택 (시·도)</option>
-              {REGION_SINBO.map((r) => (
-                <option key={r.region} value={r.region}>
-                  {r.region} · {r.name}
-                </option>
-              ))}
-            </select>
-            {selectedSinbo ? (
-              <a
-                href={selectedSinbo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 rounded-lg bg-brand-orange px-5 py-2.5 text-center text-sm font-bold text-white hover:opacity-90"
-              >
-                {selectedSinbo.name} 상품 보기 →
-              </a>
-            ) : (
-              <span className="shrink-0 cursor-not-allowed rounded-lg bg-gray-200 px-5 py-2.5 text-center text-sm font-bold text-gray-400">
-                상품 보기 →
-              </span>
-            )}
-          </div>
-          {selectedSinbo && (
-            <p className="mt-2.5 break-keep rounded-lg bg-white px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
-              📱 <b>신청 방법:</b>{" "}
-              {selectedSinbo.region === "서울"
-                ? "「서울신용보증재단」 앱"
-                : selectedSinbo.region === "경기"
-                ? "「이지원」 앱"
-                : "「보증드림」 앱"}
-              에서 비대면 신청하거나 대면 예약이 가능합니다. 신청이 어려우면{" "}
-              <b>재단·소진공·중진공 방문상담(전화예약)</b>도 이용할 수 있습니다.
-            </p>
-          )}
-        </div>
-      )}
-
       {/* 기관별 상품 바로보기 — 상품 안내 페이지/자료 통합 링크 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
         <p className="break-keep text-base font-bold text-brand-dark">
@@ -1102,132 +1009,23 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
         </div>
       </div>
 
-      {/* ④ 신청 가능한 정부지원사업 (핵심 결과) */}
-      {govPrograms.length > 0 && (
-        <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 p-5 shadow-card">
-          <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-            🎯 지금 바로 노려볼 정부지원사업{" "}
-            <span className="text-brand-orange">{govPrograms.length}종</span>
-          </p>
-          <p className="mt-1 break-keep text-xs text-brand-dark/60">
-            수많은 사업 중, 대표님 업종·상황에 <b className="text-brand-dark">실제로 신청 가능하고 승인 가능성이 높은 것만</b> 추려 드렸습니다.
-          </p>
-          <div className="mt-4 space-y-2">
-            {govPrograms.map((p, i) => {
-              const inner = (
-                <>
-                  <span className="min-w-0 break-keep text-sm font-bold text-brand-dark">
-                    {p.name.replace(/_/g, " ")}
-                  </span>
-                  <span className="flex shrink-0 items-center gap-2">
-                    {p.amount_max && (
-                      <span className="rounded-full bg-brand-green px-2.5 py-1 text-[11px] font-bold text-white">
-                        최대 {won억(p.amount_max)}
-                      </span>
-                    )}
-                    {p.applyUrl && (
-                      <span className="whitespace-nowrap text-[11px] font-bold text-brand-orange">
-                        신청
-                      </span>
-                    )}
-                  </span>
-                </>
-              );
-              return p.applyUrl ? (
-                <a
-                  key={i}
-                  href={p.applyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
-                >
-                  {inner}
-                </a>
-              ) : (
-                <div
-                  key={i}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
-                >
-                  {inner}
-                </div>
-              );
-            })}
-          </div>
-          <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
-            ※ 위 목록은 신청 자격이 확인된 사업이며, 최종 선정은 각 기관 심사 결과에 따릅니다.
-            사업명을 누르면 해당 신청·안내 사이트로 이동합니다.
-          </p>
-        </div>
-      )}
-
-      {/* 누구나 알아두면 좋은 제도 — 업종·조건 무관 공통 안내 */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
-        <p className="break-keep text-base font-bold text-brand-dark">
-          💡 누구나 알아두면 좋은 제도
-        </p>
-        <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-          업종·조건과 무관하게, 대표님이라면 미리 알아두시면 유리한 기본 제도입니다.
-        </p>
-        <div className="mt-4 space-y-3">
-          {/* 기업마당 */}
-          <a
-            href="https://www.bizinfo.go.kr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
-          >
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-sm font-extrabold text-brand-dark">🏛️ 기업마당</span>
-              <span className="whitespace-nowrap text-[11px] font-bold text-brand-orange">바로가기 →</span>
-            </div>
-            <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-              중앙부처·지자체의 <b className="text-brand-dark">모든 지원사업 공고가 모이는 사이트</b>입니다. 수시로 들어가 새 공고를 확인해 두세요.
-            </p>
-          </a>
-          {/* 벤처·이노비즈·메인비즈 인증 */}
-          <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
-            <p className="text-sm font-extrabold text-brand-dark">🏅 알아두면 좋은 인증 제도</p>
-            <ul className="mt-2 space-y-1.5">
-              <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                <a
-                  href="https://www.venturein.or.kr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="whitespace-nowrap text-[12px] font-bold text-brand-orange hover:underline"
-                >
-                  벤처기업 인증 →
-                </a>
-                <span className="break-keep text-[11px] text-brand-dark/60">세제·정책자금·판로 우대. 기술·투자·보증 기반으로 취득</span>
-              </li>
-              <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                <a
-                  href="https://www.innobiz.net"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="whitespace-nowrap text-[12px] font-bold text-brand-orange hover:underline"
-                >
-                  이노비즈(기술혁신) →
-                </a>
-                <span className="break-keep text-[11px] text-brand-dark/60">기술혁신형 중소기업 인증. 기술평가·정책자금 가점</span>
-              </li>
-              <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                <a
-                  href="https://www.mainbiz.go.kr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="whitespace-nowrap text-[12px] font-bold text-brand-orange hover:underline"
-                >
-                  메인비즈(경영혁신) →
-                </a>
-                <span className="break-keep text-[11px] text-brand-dark/60">경영혁신형 중소기업 인증. 보증·정책자금 우대</span>
-              </li>
-            </ul>
-            <p className="mt-2 break-keep text-[11px] leading-relaxed text-brand-dark/50">
-              💬 인증을 받아 두면 정책자금·보증 심사에서 <b className="text-brand-dark">가점</b>이 되고, 우대 상품 신청이 열립니다.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* 소상공인·중소기업이 알아두면 좋은 정부 사이트 모음으로 이동 */}
+      <a
+        href="/sites"
+        className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-brand-dark bg-brand-dark px-5 py-4 shadow-card transition hover:opacity-90"
+      >
+        <span className="min-w-0">
+          <span className="block break-keep text-base font-extrabold text-white">
+            🔖 소상공인·중소기업들이 알아두면 좋은 정부 사이트
+          </span>
+          <span className="mt-0.5 block break-keep text-[11px] leading-relaxed text-white/70">
+            정책자금·보증·창업·인증 업무에 자주 쓰이는 공식 사이트를 분야별로 모았습니다.
+          </span>
+        </span>
+        <span className="shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark">
+          공식 사이트 모음 보기
+        </span>
+      </a>
 
       {/* 면책조항 + 재검증 안내 */}
       <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">

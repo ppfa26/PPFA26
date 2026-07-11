@@ -174,8 +174,19 @@ export default function DashboardPage() {
           {/* 기관·정부지원사업 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
           <AdvancedScreeningPanel autoRun />
 
-          {/* 결과 리스트 */}
+          {/* 결과 리스트 — 정부지원사업 + 정책자금 대출 통합 목록 */}
           <section id="match-results" className="mt-7 space-y-4">
+            {filtered.length > 0 && (
+              <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 px-5 py-4">
+                <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
+                  🎯 지금 바로 노려볼 지원사업·정책자금{" "}
+                  <span className="text-brand-orange">{filtered.length}건</span>
+                </p>
+                <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
+                  정부지원사업(바우처·보조금)과 정책자금 대출을 한 목록에 모아, 적합도 높은 순으로 정렬했습니다.
+                </p>
+              </div>
+            )}
             {loaded && filtered.length === 0 && (
               <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-10 text-center text-brand-gray">
                 해당 카테고리에 매칭된 지원사업이 없습니다.
@@ -188,7 +199,6 @@ export default function DashboardPage() {
             )}
             {filtered.map((r, idx) => {
               const meta = CATEGORY_META[r.program.category];
-              const high = isHighChance(r.score);
               // 미결제이면 맨 위 1개만 공개, 나머지는 블러 처리(클릭 불가).
               const locked = !paid && idx >= 1;
 
@@ -197,11 +207,6 @@ export default function DashboardPage() {
                   <span className="text-2xl">{meta.icon}</span>
                   <div className="flex-1">
                     <div className="mb-1 flex flex-wrap items-center gap-2">
-                      {high && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-brand-green px-2.5 py-0.5 text-[11px] font-bold text-white">
-                          ✅ 승인 가능성 높음
-                        </span>
-                      )}
                       <span className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-brand-gray">
                         {meta.label}
                       </span>
@@ -223,11 +228,6 @@ export default function DashboardPage() {
                     <p className="mt-1 text-sm font-semibold text-brand-green">
                       💰 {r.program.amount}
                     </p>
-                    {r.reasons.length > 0 && (
-                      <p className="mt-2 text-xs text-brand-orange">
-                        👉 {r.reasons.join(" · ")}
-                      </p>
-                    )}
                   </div>
                 </article>
               );
@@ -249,9 +249,7 @@ export default function DashboardPage() {
                 <Link
                   key={r.program.id}
                   href={`/fund/${r.program.id}`}
-                  className={`block rounded-2xl border bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg ${
-                    high ? "border-2 border-brand-green" : "border-gray-200"
-                  }`}
+                  className="block rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg"
                 >
                   {cardInner}
                 </Link>
