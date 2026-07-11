@@ -151,38 +151,25 @@ function SignupInner() {
   return (
     <PageShell pageKey="signup">
       <Header />
-      <div className="grid min-h-[calc(100vh-64px)] grid-cols-1 lg:grid-cols-2">
-        {/* 좌측 브랜드 패널 — 데스크톱 전용(모바일 숨김, 잘림 방지) */}
-        <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-between lg:p-12">
-          <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-brand-yellow/20 blur-3xl" />
-          <div className="absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-brand-orange/20 blur-3xl" />
-          <span className="relative text-lg font-extrabold text-brand-yellow">모두의공공조달</span>
-          <div className="relative">
-            <h2 className="break-keep text-3xl font-extrabold leading-snug text-white">
-              내게 맞는 정책자금,<br />
-              <span className="text-brand-yellow">신청 순서까지</span> 알려드립니다.
-            </h2>
-            <p className="mt-5 break-keep text-sm leading-relaxed text-white/70">
-              89개 정부 사이트를 분석해, 신보·기보·재단·중진공·소진공까지<br />
-              대표님 조건에 맞는 기관과 신청 로드맵을 한 번에 안내합니다.
-            </p>
-          </div>
-          <ul className="relative space-y-2.5">
-            {[
-              "업종·규모 맞춤 기관 매칭",
-              "대출·보증 신청 순서·콜센터 안내",
-              "지금 신청할 지원사업만 큐레이션",
-            ].map((t) => (
-              <li key={t} className="flex items-center gap-2 text-sm font-semibold text-white/90">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-yellow text-[11px] text-brand-dark">✓</span>
-                {t}
-              </li>
-            ))}
-          </ul>
-        </aside>
+      {/* 중앙 정렬 단일 컬럼 — 첫페이지/결과창과 동일한 적당한 폭 (좌우 2분할·흰 공백 제거) */}
+      <main className="mx-auto flex w-full max-w-md flex-col px-4 py-10 sm:py-14">
+        {/* 상단 브랜드 요약 배너 — 검은 좌측 패널을 컴팩트하게 대체 (로고 중복 없음) */}
+        <section
+          id="signup-brand"
+          className="relative mb-6 overflow-hidden rounded-2xl bg-brand-dark p-6 text-center"
+        >
+          <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-brand-yellow/20 blur-3xl" />
+          <div className="absolute -bottom-14 -left-8 h-44 w-44 rounded-full bg-brand-orange/20 blur-3xl" />
+          <h2 className="relative break-keep text-xl font-extrabold leading-snug text-white sm:text-2xl">
+            내게 맞는 정책자금,<br />
+            <span className="text-brand-yellow">신청 순서까지</span> 알려드립니다.
+          </h2>
+          <p className="relative mt-3 break-keep text-xs leading-relaxed text-white/70 sm:text-sm">
+            89개 정부 사이트를 분석해, 신보·기보·재단·중진공·소진공까지<br className="hidden sm:block" />
+            대표님 조건에 맞는 기관과 신청 로드맵을 한 번에 안내합니다.
+          </p>
+        </section>
 
-        {/* 우측 로그인 폼 */}
-        <main className="mx-auto flex w-full max-w-md flex-col justify-center px-4 py-10">
         {/* 선택한 상품 요약 */}
         {selected && (
           <section
@@ -351,8 +338,7 @@ function SignupInner() {
           ⚠️ 본 서비스는 신청 가능 상품 안내 및 자문 서비스이며 정부지원사업 승인을
           보장하지 않습니다.
         </p>
-        </main>
-      </div>
+      </main>
       <Footer />
     </PageShell>
   );
