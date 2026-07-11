@@ -105,32 +105,25 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-4xl">
           {/* 헤더 */}
           <section id="dashboard-hero" className="text-center">
-            <div className="mb-3 inline-block rounded-full bg-brand-yellow px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
+            <div className="inline-block break-keep rounded-full bg-brand-yellow px-6 py-3 text-lg font-extrabold text-brand-dark sm:text-2xl">
               🎯 나에게 맞는 지원사업 통합 매칭 결과
             </div>
-            <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">
-              {name ? `${name} 대표님, ` : ""}맞춤 매칭 대시보드
-            </h1>
-            <p className="mt-2 text-sm text-brand-gray sm:text-base">
+            <p className="mt-3 text-sm text-brand-gray sm:text-base">
               대표님 조건에 맞는 <b className="text-brand-orange">{displayResults.length}개</b> 지원사업을 추려 드렸습니다.
               {highCount > 0 && (
                 <> 이 중 <b className="text-brand-green">승인 가능성 높은 사업은 {highCount}개</b>입니다.</>
               )}
             </p>
 
-            {/* 안내 요약 — 정밀진단 반영 + 승인 가능성 요약을 한 박스로 통합 */}
+            {/* 안내 요약 — 정밀진단 반영 + 대출 중복 안내를 한 박스로 통합 */}
             {(advancedApplied || highCount > 0) && (
-              <div className="mx-auto mt-5 max-w-2xl space-y-1.5 rounded-xl border-2 border-brand-green bg-green-50 px-4 py-3">
-                {advancedApplied && (
-                  <p className="break-keep text-xs font-semibold text-brand-dark sm:text-sm">
-                    🎯 <b>정밀 추가진단</b> 결과가 반영되었습니다. 처음 진단과 다른 항목은 <b>정밀진단 값을 기준</b>으로 안내됩니다.
-                  </p>
-                )}
-                {highCount > 0 && (
-                  <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                    ✅ 이 중 <span className="text-brand-green">승인 가능성 높은 사업 {highCount}개</span>를 먼저 신청해 보세요!
-                  </p>
-                )}
+              <div className="mx-auto mt-5 max-w-2xl space-y-1.5 rounded-xl border-2 border-brand-green bg-green-50 px-4 py-3 text-left">
+                <p className="break-keep text-sm font-bold text-brand-dark sm:text-base">
+                  🎯 정밀추가진단 결과를 반영하였으며, 이 중 승인 가능성 높은 사업을 먼저 신청하는 것이 유리합니다.
+                </p>
+                <p className="break-keep text-xs font-semibold leading-relaxed text-brand-dark/70 sm:text-sm">
+                  💡 대리대출 기관은 중복될 수 없으나, 대리대출 기관과 직접대출 기관은 중복 신청할 수 있습니다.
+                </p>
               </div>
             )}
           </section>
@@ -280,6 +273,27 @@ export default function DashboardPage() {
               </p>
             )}
           </section>
+
+          {/* 고용 관련 정부지원 안내 — 고용24 링크 */}
+          <a
+            href="https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-7 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-brand-orange bg-white px-5 py-4 shadow-card transition hover:bg-brand-orange/5"
+          >
+            <span className="min-w-0">
+              <span className="block break-keep text-base font-extrabold text-brand-dark sm:text-lg">
+                👥 직원을 채용·유지 중이라면 &ldquo;고용 관련 정부지원&rdquo;도 챙기세요
+              </span>
+              <span className="mt-1 block break-keep text-xs leading-relaxed text-brand-dark/60 sm:text-sm">
+                청년·고령자 채용 장려금, 고용유지지원금, 4대보험료 지원 등 고용노동부 지원제도를
+                고용24에서 한 번에 확인할 수 있습니다. 정책자금과 별개로 함께 신청 가능합니다.
+              </span>
+            </span>
+            <span className="shrink-0 rounded-full bg-brand-orange px-4 py-2 text-sm font-extrabold text-white">
+              고용24 지원제도 보기
+            </span>
+          </a>
 
           {/* 기관·상품 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
           <AdvancedScreeningPanel autoRun />
