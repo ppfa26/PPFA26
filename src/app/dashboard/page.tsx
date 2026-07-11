@@ -185,7 +185,7 @@ export default function DashboardPage() {
             {filtered.length > 0 && (
               <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 px-5 py-4">
                 <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-                  🎯 지금 바로 신청해볼만한 지원사업{" "}
+                  🎯 지금 바로 신청해볼만한 정부지원사업{" "}
                   <span className="text-brand-orange">{filtered.length}건</span>
                 </p>
                 <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">

@@ -772,14 +772,14 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
         <p className="mt-1 break-keep text-xs text-brand-dark/60">
           업종·직원수 등 대표님 조건 기준으로 실제 신청 자격이 열리는 정책금융 기관입니다.
         </p>
-        <div className="mt-4 space-y-2">
+        <div className="mt-4 divide-y divide-gray-200">
           {creditMatches.map((m, i) => {
             const link = findInstitutionLink(m.institution);
             const isJaedan = m.institution.includes("재단");
             return (
               <div
                 key={i}
-                className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
+                className="py-3 first:pt-0"
               >
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-sm font-extrabold text-brand-dark">{m.institution}</span>
@@ -932,11 +932,10 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
             📊 {creditAdvice.message}
           </p>
         </div>
-      </div>
 
-      {/* 신청 → 실행 진행 절차·소요기간 안내 */}
-      {(hasDae || hasDirect) && (
-        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 shadow-card">
+        {/* 신청 → 실행 진행 절차·소요기간 안내 (같은 박스 안에 통합) */}
+        {(hasDae || hasDirect) && (
+        <div className="mt-4 border-t border-gray-200 pt-4">
           <p className="break-keep text-base font-bold text-brand-dark">
             🗓️ 신청부터 대출 실행까지 (예상 소요기간)
           </p>
@@ -966,7 +965,8 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
             ※ 모바일 실사는 재단·소진공의 소상공인 건에서 주로 진행되며, 기술보증기금·신용보증기금 및 금액이 큰 건은 방문 실사로 진행됩니다.
           </p>
         </div>
-      )}
+        )}
+      </div>
 
       {/* 기관별 상품 바로보기 — 상품 안내 페이지/자료 통합 링크 */}
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
@@ -976,21 +976,16 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
         <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
           각 기관의 상품 안내 자료·페이지로 바로 이동합니다.
         </p>
-        <div className="mt-3 flex flex-col gap-2">
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
           {INSTITUTION_PRODUCT_LINKS.map((p) => (
             <a
               key={p.label}
               href={p.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
+              className="flex items-center justify-center rounded-xl bg-brand-dark px-3 py-3 text-center transition hover:opacity-90"
             >
-              <span className="text-sm font-bold text-brand-dark">{p.label}</span>
-              {p.docLabel && (
-                <span className="break-keep text-[11px] font-semibold text-brand-orange">
-                  📄 {p.docLabel}
-                </span>
-              )}
+              <span className="break-keep text-xs font-bold text-white">{p.label}</span>
             </a>
           ))}
         </div>
