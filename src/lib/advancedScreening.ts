@@ -612,8 +612,8 @@ export type ProductLink = {
 };
 
 export const INSTITUTION_PRODUCT_LINKS: ProductLink[] = [
-  { label: "신용보증기금 상품 바로보기", url: "/manuals/kodit-product-2026.pdf", docLabel: "2026년 신용보증기금 상품안내" },
-  { label: "기술보증기금 상품 바로보기", url: "/manuals/kibo-product-2026.pdf", docLabel: "2026년 기술보증기금 상품안내" },
+  { label: "신용보증기금 상품 바로보기", url: "/manuals/kodit-product-2026.pdf" },
+  { label: "기술보증기금 상품 바로보기", url: "/manuals/kibo-product-2026.pdf" },
   { label: "무역보험공사 상품 바로보기", url: "https://www.ksure.or.kr/rh-kr/cntnts/i-104/web.do" },
   { label: "중소벤처기업 상품 바로보기", url: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI001M0.do" },
   { label: "소상공인시장진흥공단 상품 바로보기", url: "https://ols.semas.or.kr/ols/man/SMAN018M/page.do" },
