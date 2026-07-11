@@ -5,7 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
-import { matchPrograms, MatchResult } from "@/lib/matching";
+import { matchPrograms, MatchResult, DiagnosisProfile } from "@/lib/matching";
 import {
   CATEGORY_META,
   PROGRAMS,
@@ -20,6 +20,8 @@ import { ADVISORY_DISCLAIMER, REVALIDATION_NOTICE } from "@/lib/advancedScreenin
 export default function DashboardPage() {
   const [results, setResults] = useState<MatchResult[]>([]);
   const [name, setName] = useState("");
+  // 진단 프로필 원본 — 추가 지원제도(고용지원금·수출·혁신바우처) 신청 대상 판정용
+  const [profileData, setProfileData] = useState<DiagnosisProfile>({});
   const [activeCat, setActiveCat] = useState<CategoryGroup | "전체">("전체");
   const [loaded, setLoaded] = useState(false);
   const [advancedApplied, setAdvancedApplied] = useState(false);
@@ -39,6 +41,7 @@ export default function DashboardPage() {
         const raw = sessionStorage.getItem("mpp_diagnosis");
         const profile = raw ? JSON.parse(raw) : {};
         setName(profile.name || "");
+        setProfileData(profile);
         setAdvancedApplied(Boolean(profile._advancedApplied));
         const matched = matchPrograms(profile);
         setResults(
@@ -87,6 +90,62 @@ export default function DashboardPage() {
     if (activeCat === "전체") return displayResults;
     return displayResults.filter((r) => toCategoryGroup(r.program.category) === activeCat);
   }, [displayResults, activeCat]);
+
+  // 추가 지원제도(고용지원금·수출바우처·혁신바우처) 신청 대상 판정
+  //  진단 프로필 기준으로 "대표님이 지금 신청 대상인지"를 자동 안내한다.
+  //  eligible=true → ✅ 신청 대상 배지 / false → 조건부(회색) 안내 배지
+  const extraPrograms = useMemo(() => {
+    const p = profileData || {};
+    const inds = p.industries || [];
+    const purps = p.purposes || [];
+    const ints = p.interests || [];
+    const hasEmployees = Boolean(p.employees) && !String(p.employees).includes("0명");
+    const isManufacturing = inds.some((s) => s.includes("제조"));
+    // 소기업(혁신바우처 일반) — 매출 5억 이상만 소기업 상한(140억) 초과 우려, 그 외는 대상
+    const isExport =
+      inds.some((s) => s.includes("수출")) ||
+      purps.some((s) => s.includes("수출")) ||
+      ints.some((s) => s.includes("바우처"));
+
+    return [
+      {
+        icon: "💼",
+        title: "고용지원금 — 고용24",
+        site: "www.work24.go.kr",
+        url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
+        desc: "기업 로그인 → 기업 지원금 메뉴에서 신청. 청년일자리도약장려금·고용창출/안정장려금·두루누리·워라밸일자리장려금·고용촉진장려금 등",
+        eligible: hasEmployees,
+        badge: hasEmployees ? "✅ 신청 대상" : "채용 시 대상",
+        note: hasEmployees
+          ? "직원을 고용 중이시라 고용장려금 신청 대상입니다."
+          : "직원 채용(4대보험 가입) 시점부터 신청 대상이 됩니다.",
+      },
+      {
+        icon: "🌍",
+        title: "수출바우처",
+        site: "www.exportvoucher.com",
+        url: "https://www.exportvoucher.com",
+        desc: "중기부·산업부·지자체 수출바우처 통합 신청 포털. 사업공고 → 참여기업 모집공고 확인 후 신청",
+        eligible: isExport,
+        badge: isExport ? "✅ 신청 대상" : "수출 계획 시 대상",
+        note: isExport
+          ? "수출(예정) 기업으로 수출바우처 신청 대상입니다."
+          : "수출 실적·계획이 있으면 신청 대상이 됩니다.",
+      },
+      {
+        icon: "🚀",
+        title: "혁신바우처",
+        site: "www.mssmiv.com",
+        url: "https://www.mssmiv.com",
+        desc: "중소기업 혁신바우처(컨설팅·기술지원·마케팅) 신청 포털. 제조업 소기업(3년 평균 매출 140억 이하) 대상, 기업당 최대 5,000만원",
+        eligible: isManufacturing,
+        badge: isManufacturing ? "✅ 신청 대상" : "제조업 대상",
+        note: isManufacturing
+          ? "제조업 소기업으로 혁신바우처 신청 대상입니다."
+          : "제조업을 주 업종으로 하는 소기업이 신청 대상입니다.",
+      },
+    ];
+  }, [profileData]);
 
   // 카테고리 그룹별 개수 — 실제 노출되는 결과 기준으로 집계(안내 상품 수와 일치)
   const countByCat = useMemo(() => {
@@ -283,48 +342,53 @@ export default function DashboardPage() {
           </section>
 
           {/* 추가로 챙기면 좋은 지원제도 — 고용지원금·수출바우처·혁신바우처 (정책자금과 별개 신청) */}
-          <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {[
-              {
-                icon: "💼",
-                title: "고용지원금 — 고용24",
-                site: "www.work24.go.kr",
-                url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
-                desc: "기업 로그인 → 기업 지원금 메뉴에서 신청. 청년일자리도약장려금·고용창출/안정장려금·두루누리·워라밸일자리장려금·고용촉진장려금 등",
-              },
-              {
-                icon: "🌍",
-                title: "수출바우처",
-                site: "www.exportvoucher.com",
-                url: "https://www.exportvoucher.com",
-                desc: "중기부·산업부·지자체 수출바우처 통합 신청 포털. 사업공고 → 참여기업 모집공고 확인 후 신청",
-              },
-              {
-                icon: "🚀",
-                title: "혁신바우처",
-                site: "www.mssmiv.com",
-                url: "https://www.mssmiv.com",
-                desc: "중소기업 혁신바우처(컨설팅·기술지원·마케팅) 신청 포털",
-              },
-            ].map((b) => (
-              <a
-                key={b.title}
-                href={b.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col rounded-2xl border-2 border-brand-orange bg-white p-4 shadow-card transition hover:bg-brand-orange/5"
-              >
-                <span className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                  {b.icon} {b.title}
-                </span>
-                <span className="mt-0.5 break-all text-xs font-semibold text-brand-orange">
-                  🔗 {b.site}
-                </span>
-                <span className="mt-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-                  {b.desc}
-                </span>
-              </a>
-            ))}
+          {/*  진단 프로필 기준으로 "대표님이 지금 신청 대상인지"를 자동 판정해 배지로 안내한다. */}
+          <div className="mt-7">
+            <p className="mb-2 break-keep text-sm font-bold text-brand-dark sm:text-base">
+              🎁 대표님이 <b className="text-brand-orange">추가로 신청 가능한 지원제도</b>
+              <span className="ml-1 text-xs font-normal text-brand-dark/50">— 정책자금과 별개로 병행 신청 가능</span>
+            </p>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {extraPrograms.map((b) => (
+                <a
+                  key={b.title}
+                  href={b.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex flex-col rounded-2xl border-2 p-4 shadow-card transition ${
+                    b.eligible
+                      ? "border-brand-green bg-green-50 hover:bg-green-100"
+                      : "border-brand-orange bg-white hover:bg-brand-orange/5"
+                  }`}
+                >
+                  <span
+                    className={`mb-1.5 inline-block w-fit break-keep rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                      b.eligible
+                        ? "bg-brand-green text-white"
+                        : "bg-gray-200 text-brand-dark/60"
+                    }`}
+                  >
+                    {b.badge}
+                  </span>
+                  <span className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
+                    {b.icon} {b.title}
+                  </span>
+                  <span
+                    className={`mt-1 break-keep text-[11px] font-semibold leading-relaxed ${
+                      b.eligible ? "text-brand-green" : "text-brand-dark/50"
+                    }`}
+                  >
+                    {b.note}
+                  </span>
+                  <span className="mt-1 break-all text-xs font-semibold text-brand-orange">
+                    🔗 {b.site}
+                  </span>
+                  <span className="mt-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+                    {b.desc}
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* 기관·상품 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
