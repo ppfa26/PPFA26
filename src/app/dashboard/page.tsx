@@ -105,24 +105,23 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-4xl">
           {/* 헤더 */}
           <section id="dashboard-hero" className="text-center">
-            <div className="inline-block break-keep rounded-full bg-brand-yellow px-6 py-3 text-lg font-extrabold text-brand-dark sm:text-2xl">
+            <div className="inline-block break-keep rounded-full bg-brand-yellow px-5 py-2.5 text-base font-extrabold text-brand-dark sm:text-xl">
               🎯 나에게 맞는 지원사업 통합 매칭 결과
             </div>
             <p className="mt-3 text-sm text-brand-gray sm:text-base">
-              대표님 조건에 맞는 <b className="text-brand-orange">{displayResults.length}개</b> 지원사업을 추려 드렸습니다.
+              대표님 사업장에 알맞은 지원사업을 <b className="text-brand-orange">{displayResults.length}개</b>로 추려 드렸습니다.
               {highCount > 0 && (
                 <> 이 중 <b className="text-brand-green">승인 가능성 높은 사업은 {highCount}개</b>입니다.</>
               )}
             </p>
 
-            {/* 안내 요약 — 정밀진단 반영 + 대출 중복 안내를 한 박스로 통합 */}
+            {/* 안내 요약 — 정밀진단 반영 + 대출/지원사업 중복 안내를 한 박스로 통합 */}
             {(advancedApplied || highCount > 0) && (
-              <div className="mx-auto mt-5 max-w-2xl space-y-1.5 rounded-xl border-2 border-brand-green bg-green-50 px-4 py-3 text-left">
-                <p className="break-keep text-sm font-bold text-brand-dark sm:text-base">
-                  🎯 정밀추가진단 결과를 반영하였으며, 이 중 승인 가능성 높은 사업을 먼저 신청하는 것이 유리합니다.
-                </p>
-                <p className="break-keep text-xs font-semibold leading-relaxed text-brand-dark/70 sm:text-sm">
-                  💡 대리대출 기관은 중복될 수 없으나, 대리대출 기관과 직접대출 기관은 중복 신청할 수 있습니다.
+              <div className="mx-auto mt-5 max-w-2xl rounded-xl border-2 border-brand-green bg-green-50 px-4 py-3 text-left">
+                <p className="break-keep text-sm font-semibold leading-relaxed text-brand-dark sm:text-base">
+                  🎯 정밀추가진단 결과를 반영하였으며, 이 중 승인 가능성이 가장 높은 사업을 먼저 신청하는 것이 유리하며,
+                  대리대출 기관은 중복 신청할 수 없으나, 대리대출 기관과 직접대출 기관은 중복 신청할 수 있습니다.
+                  지원사업은 정책자금과 별도로 추가 신청할 수 있으며, 바우처 또한 별개로 신청 가능합니다.
                 </p>
               </div>
             )}
