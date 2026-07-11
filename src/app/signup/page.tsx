@@ -161,20 +161,23 @@ function SignupInner() {
           {/* 상단 여백용 (로고 자리 — 헤더에 이미 있어 중복 표기하지 않음) */}
           <div className="relative h-4" />
           <div className="relative">
-            <h2 className="break-keep text-2xl font-extrabold leading-snug text-white xl:text-3xl">
-              내게 맞는 정책자금,<br />
-              <span className="text-brand-yellow">신청 순서까지</span> 알려드립니다.
+            <span className="inline-block rounded-full bg-brand-yellow/15 px-3 py-1 text-[11px] font-bold text-brand-yellow">
+              AI 정부지원사업 매칭
+            </span>
+            <h2 className="mt-4 break-keep text-2xl font-extrabold leading-snug text-white xl:text-3xl">
+              AI로 내 사업장에 맞는<br />
+              <span className="text-brand-yellow">정부지원사업</span>을 찾아드립니다.
             </h2>
             <p className="mt-5 break-keep text-sm leading-relaxed text-white/70">
-              89개 정부 사이트를 분석해, 신보·기보·재단·중진공·소진공까지<br />
-              대표님 조건에 맞는 기관과 신청 로드맵을 한 번에 안내합니다.
+              전국 정부기관 사이트를 AI가 모두 분석해,<br />
+              대표님 사업장에 딱 맞는 지원사업과 신청 순서까지 매칭해 드립니다.
             </p>
           </div>
           <ul className="relative space-y-2.5">
             {[
-              "업종·규모 맞춤 기관 매칭",
-              "대출·보증 신청 순서·콜센터 안내",
-              "지금 신청할 지원사업만 큐레이션",
+              "AI가 업종·규모를 분석해 맞춤 기관 매칭",
+              "신청 순서·필요 서류·콜센터까지 한 번에 안내",
+              "지금 바로 신청 가능한 지원사업만 큐레이션",
             ].map((t) => (
               <li key={t} className="flex items-center gap-2 text-sm font-semibold text-white/90">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-yellow text-[11px] text-brand-dark">✓</span>
