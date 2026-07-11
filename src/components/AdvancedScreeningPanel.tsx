@@ -47,7 +47,7 @@ function toWon(억: string): number | undefined {
 // 예/아니오/모름 3지선다 값
 type Tri = "yes" | "no" | "unknown" | "";
 
-export default function AdvancedScreeningPanel() {
+export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: boolean }) {
   const [report, setReport] = useState<AdvancedScreeningReport | null>(null);
 
   // 단계(토스식) — 0부터 시작, 마지막 단계에서 판정 실행
@@ -154,6 +154,76 @@ export default function AdvancedScreeningPanel() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ── 자동 판독 모드(autoRun) ──────────────────────────────────
+  //  대표님 방침: 결제 전 진단(기본 질문지)에서 이미 정보를 받았으므로,
+  //  결과창(대시보드)에서는 추가 질문 없이 그 값으로 바로 기관·정부지원사업을 판독한다.
+  //  (고객이 두 번 진단하는 피로 제거)
+  useEffect(() => {
+    if (!autoRun) return;
+    try {
+      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const p = raw ? JSON.parse(raw) : {};
+
+      // 기본 질문지(mpp_diagnosis) → Company 스키마로 변환
+      const indMap: Record<string, string> = {
+        제조업: "manufacturing", 수출업: "export", 서비스업: "service",
+        도소매업: "retail", 음식점업: "food", 기타: "etc",
+      };
+      const ind0 = (p.industries || [])[0];
+      const industryVal = ind0 ? indMap[ind0] || ind0 : "";
+
+      const revMapWon: Record<string, number> = {
+        "5억 이상": 500000000, "5억미만": 300000000, "5억 미만": 300000000,
+        "1억 미만": 50000000, "1억미만": 50000000, "매출 없음": 0, "매출없음": 0,
+      };
+      const revenueVal = p.revenue ? revMapWon[(p.revenue.trim?.() || p.revenue)] : undefined;
+
+      const yMapNum: Record<string, number> = {
+        "창업 예정": 0, "창업예정": 0, "1년 미만": 0.5, "1년미만": 0.5,
+        "3년 미만": 2, "3년미만": 2, "7년 미만": 5, "7년미만": 5, "7년 이상": 10, "7년이상": 10,
+      };
+      const yearsVal = p.years ? yMapNum[(p.years.trim?.() || p.years)] : undefined;
+
+      let empCount: number | undefined;
+      if (p.employees) {
+        if (p.employees.includes("0명")) empCount = 0;
+        else if (p.employees.includes("5명")) empCount = 2;
+        else if (p.employees.includes("10명")) empCount = 5;
+      }
+
+      let bizVal: "personal" | "corp" | undefined;
+      if (p.businessType?.includes("법인")) bizVal = "corp";
+      else if (p.businessType?.includes("개인")) bizVal = "personal";
+
+      let creditScore: number | undefined;
+      if (p.credit) {
+        if (p.credit.includes("839점 이상")) creditScore = 850;
+        else if (p.credit.includes("839")) creditScore = 820;
+        else if (p.credit.includes("700")) creditScore = 690;
+      }
+
+      const company: Company = {
+        industry: industryVal,
+        annual_revenue: revenueVal,
+        biz_type: bizVal,
+        employee_count: empCount,
+        is_exporter: (p.industries || []).includes("수출업"),
+        ceo_age: p.age?.includes?.("39세 이하") ? 35 : undefined,
+        years_in_business: yearsVal,
+        kcb_score: creditScore,
+        nice_score: creditScore,
+        tax_delinquent: false,
+        is_pre_founder: Boolean(p.businessType?.includes("예비")),
+        is_re_founder: Boolean(p.bankruptcy && p.bankruptcy.includes("있")),
+        has_mainbiz: (p.certifications || []).includes("메인비즈"),
+      };
+      setReport(runAdvancedScreening(company));
+    } catch {
+      /* 실패 시 결과 없음 — 대시보드 매칭리스트는 별도로 표시됨 */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRun]);
 
   // ── 판정 실행 ──────────────────────────────────────────────
   const handleRun = () => {
@@ -319,8 +389,8 @@ export default function AdvancedScreeningPanel() {
 
   return (
     <section id="advanced-screening" className="mb-2 scroll-mt-4">
-      {/* 필수 작성 안내 배너 (판정 전에만 노출) */}
-      {!report && (
+      {/* 필수 작성 안내 배너 (판정 전에만 노출 · 자동판독 모드에선 숨김) */}
+      {!report && !autoRun && (
         <div className="mb-3 overflow-hidden rounded-2xl border-2 border-brand-orange bg-brand-yellow/20 p-4 sm:p-5">
           <p className="flex items-center gap-2 text-sm font-extrabold text-brand-dark sm:text-base">
             <span className="text-lg">📋</span>
@@ -332,8 +402,8 @@ export default function AdvancedScreeningPanel() {
         </div>
       )}
 
-      {/* 입력 카드 (판정 전에만 노출) */}
-      {!report && (
+      {/* 입력 카드 (판정 전에만 노출 · 자동판독 모드에선 숨김) */}
+      {!report && !autoRun && (
         <div className="rounded-2xl border-2 border-brand-orange bg-white p-5 shadow-card sm:p-6">
           {/* 헤더 + 진행률 */}
           <div className="mb-4 flex items-center justify-between">
@@ -637,14 +707,16 @@ export default function AdvancedScreeningPanel() {
       {/* 판정 결과 */}
       {report && (
         <>
-          <AdvancedResult report={report} />
-          <button
-            type="button"
-            onClick={handleReset}
-            className="mt-4 w-full rounded-xl border-2 border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50"
-          >
-            ↺ 정밀진단 다시 하기
-          </button>
+          <AdvancedResult report={report} autoRun={autoRun} />
+          {!autoRun && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="mt-4 w-full rounded-xl border-2 border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50"
+            >
+              ↺ 정밀진단 다시 하기
+            </button>
+          )}
         </>
       )}
     </section>
@@ -659,7 +731,7 @@ function verdictStyle(ok: boolean): { cls: string; icon: string } {
     : { cls: "bg-red-50 border-brand-red text-brand-red", icon: "⚠️" };
 }
 
-function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
+function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreeningReport; autoRun?: boolean }) {
   const {
     koditHardReject,
     financials,
@@ -689,7 +761,9 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
 
   return (
     <div id="advanced-result" className="mt-6 space-y-4">
-      <h2 className="text-lg font-extrabold text-brand-dark">🔬 정밀 추가진단 결과</h2>
+      <h2 className="text-lg font-extrabold text-brand-dark">
+        {autoRun ? "🏦 대표님 맞춤 신청 기관·지원사업 안내" : "🔬 정밀 추가진단 결과"}
+      </h2>
 
       {/* ⏰ 지금 시기 안내 (월별 승인 유불리) */}
       <div

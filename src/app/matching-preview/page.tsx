@@ -34,8 +34,10 @@ export default function MatchingPreview() {
             <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">
               {name ? `${name} 대표님, ` : ""}매칭 결과 미리보기
             </h1>
-            <p className="mt-2 text-brand-gray">
-              총 <b className="text-brand-orange">{results.length}개</b>의 지원사업이 매칭되었습니다. (6개 카테고리 통합 검토)
+            <p className="mt-3 text-lg font-bold text-brand-dark sm:text-xl">
+              총 <b className="text-brand-orange">{results.length}개</b>의 지원사업이 매칭되었습니다.
+              <br className="sm:hidden" />
+              <span className="text-base font-semibold text-brand-gray"> (6개 카테고리 통합 검토)</span>
             </p>
           </div>
 
@@ -83,7 +85,7 @@ export default function MatchingPreview() {
                         href="/pricing"
                         className="mt-4 block rounded-full bg-brand-dark py-3 text-center font-bold text-white transition hover:opacity-90"
                       >
-                        지금 전체 결과 잠금 해제하기
+                        지금 결제하고 전체 결과 잠금 해제하기
                       </Editable>
                     </div>
                   )}

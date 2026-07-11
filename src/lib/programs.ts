@@ -26,6 +26,40 @@ export const CATEGORY_META: Record<
   재기재도전: { icon: "🔄", label: "재기·재도전", desc: "새출발기금, 재도전특별자금, 희망리턴패키지" },
 };
 
+// ── 결과창 표시용 카테고리 그룹 (6개 → 5개로 묶어 한 줄 표시) ──────
+//  바우처·인증 + 교육·컨설팅을 하나로 묶어 탭이 한 줄에 들어가게 한다.
+export type CategoryGroup =
+  | "정책자금"
+  | "정부지원금"
+  | "창업지원"
+  | "바우처인증교육"
+  | "재기재도전";
+
+export const CATEGORY_GROUP_ORDER: CategoryGroup[] = [
+  "정책자금",
+  "정부지원금",
+  "창업지원",
+  "바우처인증교육",
+  "재기재도전",
+];
+
+export const CATEGORY_GROUP_META: Record<
+  CategoryGroup,
+  { icon: string; label: string }
+> = {
+  정책자금: { icon: "🏦", label: "정책자금" },
+  정부지원금: { icon: "💰", label: "지원금·보조금" },
+  창업지원: { icon: "🎓", label: "창업지원" },
+  바우처인증교육: { icon: "🎯", label: "바우처·인증·교육" },
+  재기재도전: { icon: "🔄", label: "재기·재도전" },
+};
+
+// 세부 카테고리 → 표시용 그룹으로 변환
+export function toCategoryGroup(cat: MatchCategory): CategoryGroup {
+  if (cat === "바우처인증" || cat === "교육컨설팅") return "바우처인증교육";
+  return cat as CategoryGroup;
+}
+
 // 기관 특성(대출/보증 구조) — 결과 상세 및 매칭 근거에 활용
 export type LoanType = "직접대출" | "대리대출" | "직접·대리대출" | "보증서(대리)" | "이차보전" | "비융자";
 

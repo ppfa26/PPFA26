@@ -6,22 +6,20 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { matchPrograms, MatchResult } from "@/lib/matching";
-import { CATEGORY_META, MatchCategory, PROGRAMS } from "@/lib/programs";
+import {
+  CATEGORY_META,
+  PROGRAMS,
+  CategoryGroup,
+  CATEGORY_GROUP_ORDER,
+  CATEGORY_GROUP_META,
+  toCategoryGroup,
+} from "@/lib/programs";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
-
-const CATEGORY_ORDER: MatchCategory[] = [
-  "정책자금",
-  "정부지원금",
-  "창업지원",
-  "바우처인증",
-  "교육컨설팅",
-  "재기재도전",
-];
 
 export default function DashboardPage() {
   const [results, setResults] = useState<MatchResult[]>([]);
   const [name, setName] = useState("");
-  const [activeCat, setActiveCat] = useState<MatchCategory | "전체">("전체");
+  const [activeCat, setActiveCat] = useState<CategoryGroup | "전체">("전체");
   const [loaded, setLoaded] = useState(false);
   const [advancedApplied, setAdvancedApplied] = useState(false);
   // 결제 여부 — 결제 완료 시 localStorage("mpp_paid")에 표시됨.
@@ -74,23 +72,26 @@ export default function DashboardPage() {
   //  단, 높음이 하나도 없을 때는 점수 상위 항목이라도 보여주어 빈 화면을 막는다.
   const highResults = useMemo(() => {
     const highs = results.filter((r) => isHighChance(r.score));
-    if (highs.length > 0) return highs;
+    // 적합도(점수)가 높은 순으로 위에서부터 노출한다(대표님 방침).
+    const sortByScore = (arr: MatchResult[]) => [...arr].sort((a, b) => b.score - a.score);
+    if (highs.length > 0) return sortByScore(highs);
     // 방어: 높음이 없으면 점수순 상위 3개라도(0점 제외) 노출
-    return [...results].filter((r) => r.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
+    return sortByScore(results.filter((r) => r.score > 0)).slice(0, 3);
   }, [results, highBar]);
 
   const highCount = highResults.length;
 
   const filtered = useMemo(() => {
     if (activeCat === "전체") return highResults;
-    return highResults.filter((r) => r.program.category === activeCat);
+    return highResults.filter((r) => toCategoryGroup(r.program.category) === activeCat);
   }, [highResults, activeCat]);
 
-  // 카테고리별 개수 — 실제 노출되는(승인 가능성 높은) 결과 기준으로 집계
+  // 카테고리 그룹별 개수 — 실제 노출되는(승인 가능성 높은) 결과 기준으로 집계
   const countByCat = useMemo(() => {
     const map: Record<string, number> = {};
     highResults.forEach((r) => {
-      map[r.program.category] = (map[r.program.category] || 0) + 1;
+      const g = toCategoryGroup(r.program.category);
+      map[g] = (map[g] || 0) + 1;
     });
     return map;
   }, [highResults]);
@@ -114,15 +115,6 @@ export default function DashboardPage() {
               <br className="hidden sm:block" />
               각 사업을 눌러 신청 방법·필요 서류·승인 전략을 확인하세요.
             </p>
-
-            {/* 결제 완료 안내 — 전체 결과가 열렸음을 알림 */}
-            {paid && (
-              <div className="mx-auto mt-4 max-w-2xl rounded-xl border border-brand-green/50 bg-green-50 px-4 py-2.5">
-                <p className="break-keep text-xs font-semibold text-brand-dark sm:text-sm">
-                  ✅ 결제가 완료되어 <b>전체 매칭 결과</b>가 모두 열렸습니다. 각 사업을 눌러 자세히 확인하세요.
-                </p>
-              </div>
-            )}
 
             {/* 정밀진단 반영 안내 — 정밀진단을 완료하면 그 값이 우선 반영됨 */}
             {advancedApplied && (
@@ -159,8 +151,8 @@ export default function DashboardPage() {
             >
               전체 {highResults.length}
             </button>
-            {CATEGORY_ORDER.map((cat) => {
-              const meta = CATEGORY_META[cat];
+            {CATEGORY_GROUP_ORDER.map((cat) => {
+              const meta = CATEGORY_GROUP_META[cat];
               const cnt = countByCat[cat] || 0;
               return (
                 <button
@@ -178,8 +170,8 @@ export default function DashboardPage() {
             })}
           </nav>
 
-          {/* 정밀 추가진단 — 결과창 최상단 (정확한 판독을 위해 필수 안내) */}
-          <AdvancedScreeningPanel />
+          {/* 기관·정부지원사업 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
+          <AdvancedScreeningPanel autoRun />
 
           {/* 결과 리스트 */}
           <section id="match-results" className="mt-7 space-y-4">
