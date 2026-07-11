@@ -115,14 +115,26 @@ export default function DashboardPage() {
               )}
             </p>
 
-            {/* 안내 요약 — 정밀진단 반영 + 대출/지원사업 중복 안내를 한 박스로 통합 */}
+            {/* 안내 요약 — 정밀진단 반영 + 대출/지원사업 중복 안내를 항목화 */}
             {(advancedApplied || highCount > 0) && (
               <div className="mx-auto mt-5 max-w-2xl rounded-xl border-2 border-brand-green bg-green-50 px-4 py-3 text-left">
-                <p className="break-keep text-sm font-semibold leading-relaxed text-brand-dark sm:text-base">
-                  🎯 정밀추가진단 결과를 반영하였으며, 이 중 승인 가능성이 가장 높은 사업을 먼저 신청하는 것이 유리하며,
-                  대리대출 기관은 중복 신청할 수 없으나, 대리대출 기관과 직접대출 기관은 중복 신청할 수 있습니다.
-                  지원사업은 정책자금과 별도로 추가 신청할 수 있으며, 바우처 또한 별개로 신청 가능합니다.
+                <p className="break-keep text-sm font-bold text-brand-dark sm:text-base">
+                  🎯 정밀추가진단 결과를 반영했습니다.
                 </p>
+                <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-brand-dark/80 sm:text-sm">
+                  <li className="flex gap-1.5 break-keep">
+                    <span className="shrink-0">✅</span>
+                    <span>승인 가능성이 <b>가장 높은 사업부터</b> 먼저 신청하는 것이 유리합니다.</span>
+                  </li>
+                  <li className="flex gap-1.5 break-keep">
+                    <span className="shrink-0">🏦</span>
+                    <span><b>대리대출</b>은 한 곳만 가능하지만, <b>대리대출 + 직접대출</b>은 함께 신청할 수 있습니다.</span>
+                  </li>
+                  <li className="flex gap-1.5 break-keep">
+                    <span className="shrink-0">🎁</span>
+                    <span><b>지원사업·바우처</b>는 정책자금과 <b>별개로</b> 추가 신청할 수 있습니다.</span>
+                  </li>
+                </ul>
               </div>
             )}
           </section>
