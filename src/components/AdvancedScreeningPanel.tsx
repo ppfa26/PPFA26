@@ -801,11 +801,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                 className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
               >
                 <div className="flex flex-wrap items-center gap-1.5">
-                  {m.step && m.step <= 3 && (
-                    <span className="shrink-0 rounded-full bg-brand-dark px-2 py-0.5 text-[10px] font-bold text-white">
-                      {m.step === 1 ? "1순위" : m.step === 2 ? "2순위" : "병행"}
-                    </span>
-                  )}
                   <span className="text-sm font-extrabold text-brand-dark">{m.institution}</span>
                   {m.loan_type && (
                     <span
@@ -1091,12 +1086,9 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
             >
               <span className="text-sm font-bold text-brand-dark">{p.label} →</span>
               {p.docLabel && (
-                <>
-                  <span className="text-[11px] font-bold text-brand-dark/40">-</span>
-                  <span className="break-keep text-[11px] font-semibold text-brand-orange">
-                    📄 {p.docLabel}
-                  </span>
-                </>
+                <span className="break-keep text-[11px] font-semibold text-brand-orange">
+                  📄 {p.docLabel}
+                </span>
               )}
             </a>
           ))}
@@ -1160,6 +1152,75 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
           </p>
         </div>
       )}
+
+      {/* 누구나 알아두면 좋은 제도 — 업종·조건 무관 공통 안내 */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
+        <p className="break-keep text-base font-bold text-brand-dark">
+          💡 누구나 알아두면 좋은 제도
+        </p>
+        <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+          업종·조건과 무관하게, 대표님이라면 미리 알아두시면 유리한 기본 제도입니다.
+        </p>
+        <div className="mt-4 space-y-3">
+          {/* 기업마당 */}
+          <a
+            href="https://www.bizinfo.go.kr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
+          >
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="text-sm font-extrabold text-brand-dark">🏛️ 기업마당</span>
+              <span className="whitespace-nowrap text-[11px] font-bold text-brand-orange">바로가기 →</span>
+            </div>
+            <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+              중앙부처·지자체의 <b className="text-brand-dark">모든 지원사업 공고가 모이는 사이트</b>입니다. 수시로 들어가 새 공고를 확인해 두세요.
+            </p>
+          </a>
+          {/* 벤처·이노비즈·메인비즈 인증 */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+            <p className="text-sm font-extrabold text-brand-dark">🏅 알아두면 좋은 인증 제도</p>
+            <ul className="mt-2 space-y-1.5">
+              <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <a
+                  href="https://www.venturein.or.kr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="whitespace-nowrap text-[12px] font-bold text-brand-orange hover:underline"
+                >
+                  벤처기업 인증 →
+                </a>
+                <span className="break-keep text-[11px] text-brand-dark/60">세제·정책자금·판로 우대. 기술·투자·보증 기반으로 취득</span>
+              </li>
+              <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <a
+                  href="https://www.innobiz.net"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="whitespace-nowrap text-[12px] font-bold text-brand-orange hover:underline"
+                >
+                  이노비즈(기술혁신) →
+                </a>
+                <span className="break-keep text-[11px] text-brand-dark/60">기술혁신형 중소기업 인증. 기술평가·정책자금 가점</span>
+              </li>
+              <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <a
+                  href="https://www.mainbiz.go.kr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="whitespace-nowrap text-[12px] font-bold text-brand-orange hover:underline"
+                >
+                  메인비즈(경영혁신) →
+                </a>
+                <span className="break-keep text-[11px] text-brand-dark/60">경영혁신형 중소기업 인증. 보증·정책자금 우대</span>
+              </li>
+            </ul>
+            <p className="mt-2 break-keep text-[11px] leading-relaxed text-brand-dark/50">
+              💬 인증을 받아 두면 정책자금·보증 심사에서 <b className="text-brand-dark">가점</b>이 되고, 우대 상품 신청이 열립니다.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* 면책조항 + 재검증 안내 */}
       <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">

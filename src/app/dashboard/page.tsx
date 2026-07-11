@@ -115,8 +115,6 @@ export default function DashboardPage() {
               {highCount > 0 && (
                 <> 이 중 <b className="text-brand-green">승인 가능성 높은 사업은 {highCount}개</b>입니다.</>
               )}
-              <br className="hidden sm:block" />
-              각 사업을 눌러 신청 방법·필요 서류·승인 전략을 확인하세요.
             </p>
 
             {/* 정밀진단 반영 안내 — 정밀진단을 완료하면 그 값이 우선 반영됨 */}

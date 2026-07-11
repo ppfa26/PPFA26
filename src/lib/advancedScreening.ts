@@ -363,8 +363,21 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
   }
 
-  // step 순서대로 정렬
-  matches.sort((a, b) => (a.step ?? 5) - (b.step ?? 5));
+  // 기관 규모(큰 기관 → 작은 기관) 순서로 항상 고정 정렬
+  //  신용보증기금 → 기술보증기금 → 신용보증재단 → 중소벤처기업진흥공단 → 소상공인시장진흥공단 → 무역보험공사
+  const INSTITUTION_ORDER = [
+    "신용보증기금",
+    "기술보증기금",
+    "재단", // 지역신용보증재단
+    "중소벤처기업진흥공단",
+    "소상공인시장진흥공단",
+    "무역보험공사",
+  ];
+  const orderIdx = (name: string) => {
+    const idx = INSTITUTION_ORDER.findIndex((k) => name.includes(k));
+    return idx === -1 ? 99 : idx;
+  };
+  matches.sort((a, b) => orderIdx(a.institution) - orderIdx(b.institution));
   return matches;
 }
 
@@ -609,7 +622,7 @@ export const INSTITUTION_PRODUCT_LINKS: ProductLink[] = [
 export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "신용보증기금",
-    siteUrl: "https://www.kodit.or.kr",
+    siteUrl: "https://www.kodit.or.kr/apps/index.do",
     siteLabel: "신용보증기금 사이트 →",
     pdfUrl: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2806&bbsId=1002&ps=417",
     pdfLabel: "보증상품 안내자료 확인하기 →",
