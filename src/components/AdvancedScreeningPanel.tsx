@@ -787,10 +787,23 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
                 </div>
                 <p className="mt-1 break-keep text-xs text-brand-gray">{m.criteria}</p>
 
-                {/* 신보·기보·소진공·중진공 → 사이트/PDF 바로가기 (재단은 아래 지역 드롭다운으로 안내) */}
+                {/* 신보·기보·소진공·중진공 → 신청 매뉴얼 + 사이트 바로가기 (재단은 아래 지역 드롭다운으로 안내) */}
                 {link && (
                   <div className="mt-2.5 flex flex-col gap-1.5">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {link.manualUrl && (
+                        <a
+                          href={link.manualUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20"
+                        >
+                          📄 신청 매뉴얼
+                        </a>
+                      )}
+                      {link.manualUrl && (
+                        <span className="text-[11px] font-bold text-brand-dark/40">-</span>
+                      )}
                       <a
                         href={link.siteUrl}
                         target="_blank"
@@ -806,7 +819,7 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
                           rel="noopener noreferrer"
                           className="inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100"
                         >
-                          📄 {link.pdfLabel}
+                          📑 {link.pdfLabel}
                         </a>
                       )}
                     </div>
@@ -818,11 +831,23 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
                   </div>
                 )}
                 {isJaedan && (
-                  <div className="mt-2.5 flex flex-col gap-1.5">
-                    <div className="flex flex-wrap gap-2">
-                      {JAEDAN_SITE_LINKS.map((j) => (
+                  <div className="mt-2.5 flex flex-col gap-2">
+                    {JAEDAN_SITE_LINKS.map((j) => (
+                      <div key={j.url} className="flex flex-wrap items-center gap-2">
+                        {j.manualUrl && (
+                          <a
+                            href={j.manualUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20"
+                          >
+                            📄 신청 매뉴얼
+                          </a>
+                        )}
+                        {j.manualUrl && (
+                          <span className="text-[11px] font-bold text-brand-dark/40">-</span>
+                        )}
                         <a
-                          key={j.url}
                           href={j.url}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -830,8 +855,8 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
                         >
                           {j.label}
                         </a>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                     <p className="break-keep text-[11px] font-semibold text-brand-orange">
                       👇 아래에서 사업장 지역을 고르면 해당 재단 상품 페이지·신청 앱으로 이동합니다.
                     </p>

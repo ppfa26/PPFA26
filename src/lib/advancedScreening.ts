@@ -584,6 +584,7 @@ export type InstitutionLink = {
   siteLabel: string; // 버튼 라벨
   pdfUrl?: string; // 상품·보증 안내 자료(PDF/안내 페이지)
   pdfLabel?: string;
+  manualUrl?: string; // 신청 매뉴얼(PDF) - 우리가 준비한 단계별 신청 가이드
   note?: string; // 신청 채널 한 줄 안내
 };
 
@@ -594,6 +595,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     siteLabel: "신용보증기금 사이트 →",
     pdfUrl: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2806&bbsId=1002&ps=417",
     pdfLabel: "보증상품 안내자료 확인하기 →",
+    manualUrl: "/manuals/kodit-guide.pdf",
     note: "신용보증기금 디지털지점(모바일)·영업점 방문으로 보증 신청이 가능합니다.",
   },
   {
@@ -602,24 +604,28 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     siteLabel: "기술보증기금 사이트 →",
     pdfUrl: "https://www.kibo.or.kr/main/board/boardType08.do",
     pdfLabel: "보증상품 안내자료 확인하기 →",
+    manualUrl: "/manuals/kibo-guide.pdf",
     note: "기술보증기금 디지털지점(kibo.or.kr)에서 온라인 신청 후 기술평가를 받습니다.",
   },
   {
     match: "소상공인시장진흥공단",
     siteUrl: "https://ols.sbiz.or.kr",
     siteLabel: "소상공인 정책자금 신청 →",
+    manualUrl: "/manuals/sbiz-guide.pdf",
     note: "소상공인정책자금 누리집(ols.sbiz.or.kr)에서 직접대출을 온라인 신청합니다.",
   },
   {
     match: "중소벤처기업진흥공단",
     siteUrl: "https://www.kosmes.or.kr",
     siteLabel: "중소벤처기업진흥공단 사이트 →",
+    manualUrl: "/manuals/kosmes-guide.pdf",
     note: "중진공 정책자금 누리집에서 온라인 신청 후 상담·평가를 받습니다.",
   },
   {
     match: "무역보험공사",
     siteUrl: "https://on.ksure.or.kr/ksureOn/websquare/websquare.jsp?w2xPath=/ws5/ui/ZZ/MN/ZZMN010B01.xml&custSctCd=E100#/ws5/ui/ZZ/MN/ZZMN010B02.xml",
     siteLabel: "한국무역보험공사 사이트 →",
+    manualUrl: "/manuals/ksure-guide.pdf",
     note: "한국무역보험공사(K-SURE On)에서 수출신용보증을 온라인 신청합니다. 신보·기보·중진공 한도와 별개로 병행 활용이 가능합니다.",
   },
 ];
@@ -633,10 +639,10 @@ export function findInstitutionLink(institution: string): InstitutionLink | null
 // ── 지역신용보증재단 대표 사이트(검정 버튼용) ──────────────────────
 //  재단 카드 밑에 신보·기보처럼 검정색 사이트 버튼으로 동일하게 노출.
 //  세부 지역은 아래 지역 드롭다운(REGION_SINBO)으로 안내.
-export const JAEDAN_SITE_LINKS: { label: string; url: string }[] = [
-  { label: "서울신용보증재단 →", url: "https://www.seoulshinbo.co.kr" },
-  { label: "경기신용보증재단 →", url: "https://www.gcgf.or.kr/gcgf/intro.do" },
-  { label: "지역신용보증재단(통합) →", url: "https://untact.koreg.or.kr/web/index.do" },
+export const JAEDAN_SITE_LINKS: { label: string; url: string; manualUrl?: string }[] = [
+  { label: "서울신용보증재단 →", url: "https://www.seoulshinbo.co.kr", manualUrl: "/manuals/seoul-sinbo-guide.pdf" },
+  { label: "경기신용보증재단 →", url: "https://www.gcgf.or.kr/gcgf/intro.do", manualUrl: "/manuals/gyeonggi-sinbo-easyone-guide.pdf" },
+  { label: "지역신용보증재단(통합) →", url: "https://untact.koreg.or.kr/web/index.do", manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf" },
 ];
 
 // 소상공인/중소기업 세그먼트 판정 (대표님 기준: 소상공인은 소상공인용만, 중소기업은 중소기업용만)
