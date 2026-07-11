@@ -27,9 +27,14 @@ import {
 } from "@/lib/advancedScreening";
 import {
   SUPPORT_PROGRAMS,
-  computeSupportEligibility,
+  computeSupportStatus,
+  profileToCompany,
   type SupportProgram,
+  type SupportStatus,
 } from "@/lib/supportPrograms";
+
+// 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
+type SupportItem = { prog: SupportProgram; status: SupportStatus };
 
 // 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
 const INDUSTRY_OPTIONS: { value: string; label: string; emoji: string }[] = [
@@ -60,14 +65,19 @@ export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: 
 
   // 진단 프로필 기준 '신청 대상'인 추가 지원제도 (기관 박스 안에 함께 안내)
   //  autoRun 모드에서 mpp_diagnosis를 읽어 계산 · 정밀진단 반영 이벤트 시 재계산
-  const [eligibleSupport, setEligibleSupport] = useState<SupportProgram[]>([]);
+  const [eligibleSupport, setEligibleSupport] = useState<SupportItem[]>([]);
   useEffect(() => {
     const recompute = () => {
       try {
         const raw = sessionStorage.getItem("mpp_diagnosis");
         const p = raw ? JSON.parse(raw) : {};
-        const elig = computeSupportEligibility(p);
-        setEligibleSupport(SUPPORT_PROGRAMS.filter((prog) => elig[prog.id]));
+        const status = computeSupportStatus(p);
+        // 대상(eligible)을 먼저, 예정대상(potential)을 뒤로 정렬해 노출
+        const items: SupportItem[] = SUPPORT_PROGRAMS
+          .map((prog) => ({ prog, status: status[prog.id] }))
+          .filter((x) => x.status === "eligible" || x.status === "potential")
+          .sort((a, b) => (a.status === b.status ? 0 : a.status === "eligible" ? -1 : 1));
+        setEligibleSupport(items);
       } catch {
         setEligibleSupport([]);
       }
@@ -192,59 +202,9 @@ export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: 
       const raw = sessionStorage.getItem("mpp_diagnosis");
       const p = raw ? JSON.parse(raw) : {};
 
-      // 기본 질문지(mpp_diagnosis) → Company 스키마로 변환
-      const indMap: Record<string, string> = {
-        제조업: "manufacturing", 수출업: "export", 서비스업: "service",
-        도소매업: "retail", 음식점업: "food", 기타: "etc",
-      };
-      const ind0 = (p.industries || [])[0];
-      const industryVal = ind0 ? indMap[ind0] || ind0 : "";
-
-      const revMapWon: Record<string, number> = {
-        "5억 이상": 500000000, "5억미만": 300000000, "5억 미만": 300000000,
-        "1억 미만": 50000000, "1억미만": 50000000, "매출 없음": 0, "매출없음": 0,
-      };
-      const revenueVal = p.revenue ? revMapWon[(p.revenue.trim?.() || p.revenue)] : undefined;
-
-      const yMapNum: Record<string, number> = {
-        "창업 예정": 0, "창업예정": 0, "1년 미만": 0.5, "1년미만": 0.5,
-        "3년 미만": 2, "3년미만": 2, "7년 미만": 5, "7년미만": 5, "7년 이상": 10, "7년이상": 10,
-      };
-      const yearsVal = p.years ? yMapNum[(p.years.trim?.() || p.years)] : undefined;
-
-      let empCount: number | undefined;
-      if (p.employees) {
-        if (p.employees.includes("0명")) empCount = 0;
-        else if (p.employees.includes("5명")) empCount = 2;
-        else if (p.employees.includes("10명")) empCount = 5;
-      }
-
-      let bizVal: "personal" | "corp" | undefined;
-      if (p.businessType?.includes("법인")) bizVal = "corp";
-      else if (p.businessType?.includes("개인")) bizVal = "personal";
-
-      let creditScore: number | undefined;
-      if (p.credit) {
-        if (p.credit.includes("839점 이상")) creditScore = 850;
-        else if (p.credit.includes("839")) creditScore = 820;
-        else if (p.credit.includes("700")) creditScore = 690;
-      }
-
-      const company: Company = {
-        industry: industryVal,
-        annual_revenue: revenueVal,
-        biz_type: bizVal,
-        employee_count: empCount,
-        is_exporter: (p.industries || []).includes("수출업"),
-        ceo_age: p.age?.includes?.("39세 이하") ? 35 : undefined,
-        years_in_business: yearsVal,
-        kcb_score: creditScore,
-        nice_score: creditScore,
-        tax_delinquent: false,
-        is_pre_founder: Boolean(p.businessType?.includes("예비")),
-        is_re_founder: Boolean(p.bankruptcy && p.bankruptcy.includes("있")),
-        has_mainbiz: (p.certifications || []).includes("메인비즈"),
-      };
+      // 기본 질문지(mpp_diagnosis) → Company 스키마 변환은 공용 함수로 통일한다.
+      //  (마이페이지 개수 계산과 100% 동일한 변환을 쓰도록 하여 불일치·버그 재발 방지)
+      const company: Company = profileToCompany(p);
       setReport(runAdvancedScreening(company));
     } catch {
       /* 실패 시 결과 없음 — 대시보드 매칭리스트는 별도로 표시됨 */
@@ -765,7 +725,7 @@ function AdvancedResult({
 }: {
   report: AdvancedScreeningReport;
   autoRun?: boolean;
-  eligibleSupport?: SupportProgram[];
+  eligibleSupport?: SupportItem[];
 }) {
   const {
     koditHardReject,
@@ -1005,41 +965,56 @@ function AdvancedResult({
       {eligibleSupport.length > 0 && (
         <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
           <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-            🎁 대표님이 추가로 신청 가능한 지원제도
+            🎁 대표님이 챙길 수 있는 정부 지원제도
           </p>
           <p className="mt-1 break-keep text-xs text-brand-dark/60">
-            정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다. 진단 정보 기준 신청 대상인 제도만 모았습니다.
+            정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
+            <b className="text-brand-green"> ✅ 지금 신청 대상</b>과
+            <b className="text-brand-dark/70"> 🔜 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
             카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
           </p>
           <div className="mt-4 divide-y divide-gray-200">
-            {eligibleSupport.map((prog) => (
-              <Link
-                key={prog.id}
-                href={`/support/${prog.id}`}
-                className="group flex items-start gap-3 py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50"
-              >
-                <span className="text-2xl">{prog.icon}</span>
-                <div className="min-w-0 flex-1">
-                  <div className="mb-1 flex flex-wrap items-center gap-2">
-                    <span className="break-keep text-sm font-extrabold text-brand-dark">
-                      {prog.title}
-                    </span>
-                    <span className="inline-block break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-extrabold text-white">
-                      ✅ 신청 대상
+            {eligibleSupport.map(({ prog, status }) => {
+              const isEligible = status === "eligible";
+              return (
+                <Link
+                  key={prog.id}
+                  href={`/support/${prog.id}`}
+                  className="group flex items-start gap-3 py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50"
+                >
+                  <span className={`text-2xl ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-2">
+                      <span className="break-keep text-sm font-extrabold text-brand-dark">
+                        {prog.title}
+                      </span>
+                      {isEligible ? (
+                        <span className="inline-block break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-extrabold text-white">
+                          ✅ 신청 대상
+                        </span>
+                      ) : (
+                        <span className="inline-block break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-extrabold text-brand-dark/60">
+                          🔜 요건 충족 시 대상
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className={`break-keep text-[11px] font-semibold leading-relaxed ${
+                        isEligible ? "text-brand-green" : "text-brand-dark/50"
+                      }`}
+                    >
+                      {isEligible ? prog.eligibleNote : prog.ineligibleNote}
+                    </p>
+                    <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+                      {prog.desc}
+                    </p>
+                    <span className="mt-1 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
+                      상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
                     </span>
                   </div>
-                  <p className="break-keep text-[11px] font-semibold leading-relaxed text-brand-green">
-                    {prog.eligibleNote}
-                  </p>
-                  <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-                    {prog.desc}
-                  </p>
-                  <span className="mt-1 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
-                    상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
-                  </span>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}

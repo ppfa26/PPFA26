@@ -41,20 +41,64 @@ export type SupportProgram = {
   contacts: SupportContact[]; // 담당 부처 연락처
 };
 
+export type SupportStatus = "eligible" | "potential" | "none";
+
+// 진단 프로필 → 각 제도별 3단계 상태 판정
+//  - eligible : 지금 바로 신청 대상 (초록 ✅)
+//  - potential: 지금은 아니지만 채용·수출 등 하면 대상 (회색 🔜)
+//  - none     : 노출하지 않음
+//  대표님 방침: 바우처·지원금은 해당 사업장이 많으므로 "예정 대상"까지 폭넓게 안내한다.
+export function computeSupportStatus(p: DiagnosisProfile): Record<string, SupportStatus> {
+  const elig = computeSupportEligibility(p);
+  // 예정 대상(potential): 지금 조건은 아니지만 채용/수출/사업 확장 시 대상이 되는 제도.
+  //  대부분의 사업장이 채용·수출 가능성이 있으므로, eligible이 아니면 potential로 넓게 안내.
+  //  (혁신바우처만 제조업 전용이라 제조 아닌 곳은 굳이 예정 대상으로 띄우지 않음)
+  const inds = p.industries || [];
+  const isManufacturing = inds.some((s) => s.includes("제조"));
+  const isExportInd = inds.some((s) => s.includes("수출"));
+  const rev = String(p.revenue || "").replace(/\s/g, "");
+  const isSmallBizPotential = !rev.includes("5억이상"); // 5억 이상만 소상공인 예정대상 제외
+  const emp = String(p.employees || "").replace(/\s/g, "");
+  const hasEmployees = Boolean(p.employees) && emp !== "0명";
+
+  // 예정대상(potential) 규칙 — 억지 매칭 금지(대표님 지적).
+  //  · 고용지원금/청년도약: 직원이 없을 때만 '채용 시 대상'으로 안내 (있으면 이미 eligible)
+  //  · 두루누리: 10명 미만 채용 여지 → 직원 없거나 소규모일 때만
+  //  · 수출바우처: '수출업' 업종을 선택했을 때만 (음식점 등에 수출바우처 노출 금지)
+  //  · 혁신바우처: 제조업일 때만
+  //  · 소상공인 경영안정 바우처: 매출 5억 미만일 때만
+  const potentialRule: Record<string, boolean> = {
+    employment: !hasEmployees, // 아직 직원 없음 → 채용 시 대상
+    "youth-leap": !hasEmployees, // 청년 채용 시 대상
+    duru: !hasEmployees || emp.includes("5명") || emp.includes("10명이하"),
+    "export-voucher": isExportInd, // 수출업 업종일 때만 (억지 매칭 금지)
+    "innovation-voucher": isManufacturing, // 제조업일 때만
+    "sbiz-voucher": isSmallBizPotential, // 5억 이상 아니면 예정대상
+  };
+
+  const out: Record<string, SupportStatus> = {};
+  for (const prog of SUPPORT_PROGRAMS) {
+    if (elig[prog.id]) out[prog.id] = "eligible";
+    else if (potentialRule[prog.id]) out[prog.id] = "potential";
+    else out[prog.id] = "none";
+  }
+  return out;
+}
+
 // 진단 프로필 → 각 제도별 자격(eligible) 판정
 export function computeSupportEligibility(p: DiagnosisProfile): Record<string, boolean> {
   const inds = p.industries || [];
-  const purps = p.purposes || [];
-  const ints = p.interests || [];
-  const emp = String(p.employees || "");
-  const rev = String(p.revenue || "");
-  const hasEmployees = Boolean(p.employees) && !emp.includes("0명");
+  const emp = String(p.employees || "").replace(/\s/g, "");
+  const rev = String(p.revenue || "").replace(/\s/g, "");
+  // ⚠️ "10명이상".includes("0명")==true 버그 방지: '0명'은 정확히 '0명'일 때만 직원 없음.
+  const hasEmployees = Boolean(p.employees) && emp !== "0명";
   const isManufacturing = inds.some((s) => s.includes("제조"));
-  const isExport =
-    inds.some((s) => s.includes("수출")) ||
-    purps.some((s) => s.includes("수출")) ||
-    ints.some((s) => s.includes("바우처"));
+  // 수출바우처는 '업종=수출업'인 경우에만 신청 대상으로 본다.
+  //  (음식점 등 비수출 업종에 수출바우처가 뜨던 오매칭 수정)
+  const isExport = inds.some((s) => s.includes("수출"));
+  // 두루누리: 직원 10명 미만(0명 제외) — "5명 이하" 또는 "10명 이하"
   const isDuruEligible = hasEmployees && (emp.includes("5명") || emp.includes("10명이하"));
+  // 소상공인 경영안정 바우처: 매출 5억 미만(매출 없음/1억 미만/5억 미만)
   const isSmallBiz = Boolean(p.revenue) && !rev.includes("5억이상") && !rev.includes("매출없음");
   return {
     employment: hasEmployees,
@@ -265,13 +309,13 @@ export function findSupportProgram(id: string): SupportProgram | undefined {
 // ── 진단 프로필 → Company 스키마 변환 ────────────────────────────────
 //  AdvancedScreeningPanel(autoRun)의 변환 로직과 동일하게 맞춰,
 //  마이페이지 등 다른 화면에서도 대시보드와 "같은 개수"를 계산할 수 있게 한다.
-function profileToCompany(p: DiagnosisProfile): Company {
-  const indMap: Record<string, string> = {
-    제조업: "manufacturing", 수출업: "export", 서비스업: "service",
-    도소매업: "retail", 음식점업: "food", 기타: "etc",
-  };
+export function profileToCompany(p: DiagnosisProfile): Company {
+  // ⚠️ 업종은 판독부(advancedScreening의 normalizeIndustry/resolveIndustryKind)가
+  //    '한글'을 기준으로 분류하므로, 여기서 영어코드로 바꾸면 안 된다.
+  //    (과거 버그: "food"로 넘겨서 normalizeIndustry가 "etc"로 오분류 → 업종 로직 전부 무효)
+  //    → 진단 원문 한글 업종(예: "음식점업")을 그대로 넘긴다.
   const ind0 = (p.industries || [])[0];
-  const industryVal = ind0 ? indMap[ind0] || ind0 : "";
+  const industryVal = ind0 || "";
 
   const revMapWon: Record<string, number> = {
     "5억 이상": 500000000, "5억미만": 300000000, "5억 미만": 300000000,
@@ -287,11 +331,17 @@ function profileToCompany(p: DiagnosisProfile): Company {
   const yearsStr = (p.years as string | undefined)?.trim?.() || (p.years as string | undefined);
   const yearsVal = yearsStr ? yMapNum[yearsStr] : undefined;
 
+  // ⚠️ 직원수 판정 버그 수정:
+  //    옵션이 ["0명","5명 이하","10명 이하","10명 이상"]인데
+  //    "10명 이상".includes("0명")도 true라서 과거엔 empCount=0으로 오판 →
+  //    중진공·고용지원금 누락. 구체적인 값부터(긴 문자열) 순서대로 검사한다.
   let empCount: number | undefined;
   if (p.employees) {
-    if (p.employees.includes("0명")) empCount = 0;
-    else if (p.employees.includes("5명")) empCount = 2;
-    else if (p.employees.includes("10명")) empCount = 5;
+    const e = p.employees;
+    if (e.includes("10명 이상") || e.includes("10명이상")) empCount = 10;
+    else if (e.includes("10명")) empCount = 5;      // "10명 이하"
+    else if (e.includes("5명")) empCount = 2;        // "5명 이하"
+    else if (e.includes("0명")) empCount = 0;        // "0명"
   }
 
   let bizVal: "personal" | "corp" | undefined;
@@ -310,6 +360,7 @@ function profileToCompany(p: DiagnosisProfile): Company {
     annual_revenue: revenueVal,
     biz_type: bizVal,
     employee_count: empCount,
+    // 수출 여부는 '업종=수출업'일 때만 true (상담목적/관심분야로는 판정하지 않음)
     is_exporter: (p.industries || []).includes("수출업"),
     ceo_age: p.age?.includes?.("39세 이하") ? 35 : undefined,
     years_in_business: yearsVal,
@@ -340,8 +391,11 @@ export function countMatchedItems(p: DiagnosisProfile): {
     institutions = 0;
   }
   const products = INSTITUTION_PRODUCT_LINKS.length;
-  const elig = computeSupportEligibility(p);
-  const supports = SUPPORT_PROGRAMS.filter((prog) => elig[prog.id]).length;
+  // 지원제도는 '지금 대상' + '요건 충족 시 대상'을 모두 포함해 폭넓게 집계(대표님 방침)
+  const status = computeSupportStatus(p);
+  const supports = SUPPORT_PROGRAMS.filter(
+    (prog) => status[prog.id] === "eligible" || status[prog.id] === "potential"
+  ).length;
   return {
     total: institutions + products + supports,
     institutions,
