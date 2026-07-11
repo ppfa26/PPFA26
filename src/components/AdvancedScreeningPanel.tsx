@@ -21,6 +21,7 @@ import {
   REGION_SINBO,
   findInstitutionLink,
   JAEDAN_SITE_LINKS,
+  INSTITUTION_PRODUCT_LINKS,
 } from "@/lib/advancedScreening";
 
 // 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
@@ -781,49 +782,7 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
         </p>
       </div>
 
-      {/* ① 사전 자가진단 (부결 요인 사전 점검) — 최상단 */}
-      <div className={cardCls}>
-        <span className="mb-2 block text-sm font-bold text-brand-dark">정부지원사업 사전 자가진단</span>
-        {koditHardReject.result === "PASS" ? (
-          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(true).cls}`}>
-            {verdictStyle(true).icon} 승인에 걸림돌이 되는 항목이 없습니다. (13개 항목 통과)
-          </div>
-        ) : (
-          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(false).cls}`}>
-            {verdictStyle(false).icon} 아래 항목은 미리 준비·정리하시면 승인에 유리합니다:
-            <ul className="mt-1 list-inside list-disc">
-              {koditHardReject.rejectReasons.map((r, i) => (
-                <li key={i}>{r}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {/* ② 재무비율 검증 */}
-      <div className={cardCls}>
-        <span className="mb-2 block text-sm font-bold text-brand-dark">재무비율 검증</span>
-        <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(financials.kodit_result === "PASS").cls}`}>
-          {verdictStyle(financials.kodit_result === "PASS").icon}{" "}
-          {financials.kodit_result === "PASS" ? "재무 관점 걸림돌 없음" : "재무 관점 점검 필요"}
-        </div>
-        {financials.issues.length > 0 && (
-          <ul className="mt-2 space-y-1 text-xs">
-            {financials.issues.map((it, i) => (
-              <li key={i} className={it.level === "REJECT" ? "text-brand-red" : "text-brand-orange"}>
-                {it.level === "REJECT" ? "🚫" : "⚠️"} {it.reason}
-              </li>
-            ))}
-          </ul>
-        )}
-        {financials.bank_credit_eligible && (
-          <p className="mt-2 break-keep text-xs font-semibold text-brand-green">
-            💡 매출 30억 이상 요건 충족 → 은행 법인신용대출 검토 가능
-          </p>
-        )}
-      </div>
-
-      {/* ③ 신청 가능 기관 — 크고 핵심적으로 */}
+      {/* ③ 신청 가능 기관 — 크고 핵심적으로 (대표님 요청: 최상단 배치) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
         <p className="text-base font-extrabold text-brand-dark sm:text-lg">
           🏦 대표님이 이용할 수 있는 기관
@@ -957,92 +916,164 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
             📊 {creditAdvice.message}
           </p>
         </div>
+      </div>
 
-        {/* 지역신용보증재단 상품 안내 — 재단이 추천기관에 포함될 때만 */}
-        {hasJaedan && (
-          <div className="mt-4 rounded-xl border border-brand-orange/30 bg-brand-orange/5 p-4">
-            <p className="break-keep text-sm font-bold text-brand-dark">
-              📍 내 지역 신용보증재단 상품 바로 보기
-            </p>
-            <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-              재단 상품·보증한도·신청시기는 지역마다 다릅니다. 대표님 사업장 지역을 고르면 해당 재단 상품 페이지로 바로 이동합니다.
-            </p>
-            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-              <select
-                value={sinboRegion}
-                onChange={(e) => setSinboRegion(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-brand-dark focus:border-brand-orange focus:outline-none sm:flex-1"
-              >
-                <option value="">지역 선택 (시·도)</option>
-                {REGION_SINBO.map((r) => (
-                  <option key={r.region} value={r.region}>
-                    {r.region} · {r.name}
-                  </option>
-                ))}
-              </select>
-              {selectedSinbo ? (
-                <a
-                  href={selectedSinbo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0 rounded-lg bg-brand-orange px-5 py-2.5 text-center text-sm font-bold text-white hover:opacity-90"
-                >
-                  {selectedSinbo.name} 상품 보기 →
-                </a>
-              ) : (
-                <span className="shrink-0 cursor-not-allowed rounded-lg bg-gray-200 px-5 py-2.5 text-center text-sm font-bold text-gray-400">
-                  상품 보기 →
-                </span>
-              )}
-            </div>
-            {selectedSinbo && (
-              <p className="mt-2.5 break-keep rounded-lg bg-white px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
-                📱 <b>신청 방법:</b>{" "}
-                {selectedSinbo.region === "서울"
-                  ? "「서울신용보증재단」 앱"
-                  : selectedSinbo.region === "경기"
-                  ? "「이지원」 앱"
-                  : "「보증드림」 앱"}
-                에서 비대면 신청하거나 대면 예약이 가능합니다. 신청이 어려우면{" "}
-                <b>재단·소진공·중진공 방문상담(전화예약)</b>도 이용할 수 있습니다.
+      {/* 기관 블록 바로 아래: 사전 자가진단 + 재무비율 검증 (대표님 요청 위치) */}
+      <div className={cardCls}>
+        <span className="mb-2 block text-sm font-bold text-brand-dark">정부지원사업 사전 자가진단</span>
+        {koditHardReject.result === "PASS" ? (
+          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(true).cls}`}>
+            {verdictStyle(true).icon} 승인에 걸림돌이 되는 항목이 없습니다. (13개 항목 통과)
+          </div>
+        ) : (
+          <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(false).cls}`}>
+            {verdictStyle(false).icon} 아래 항목은 미리 준비·정리하시면 승인에 유리합니다:
+            <ul className="mt-1 list-inside list-disc">
+              {koditHardReject.rejectReasons.map((r, i) => (
+                <li key={i}>{r}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <div className={cardCls}>
+        <span className="mb-2 block text-sm font-bold text-brand-dark">재무비율 검증</span>
+        <div className={`rounded-xl border px-3 py-2 text-sm ${verdictStyle(financials.kodit_result === "PASS").cls}`}>
+          {verdictStyle(financials.kodit_result === "PASS").icon}{" "}
+          {financials.kodit_result === "PASS" ? "재무 관점 걸림돌 없음" : "재무 관점 점검 필요"}
+        </div>
+        {financials.issues.length > 0 && (
+          <ul className="mt-2 space-y-1 text-xs">
+            {financials.issues.map((it, i) => (
+              <li key={i} className={it.level === "REJECT" ? "text-brand-red" : "text-brand-orange"}>
+                {it.level === "REJECT" ? "🚫" : "⚠️"} {it.reason}
+              </li>
+            ))}
+          </ul>
+        )}
+        {financials.bank_credit_eligible && (
+          <p className="mt-2 break-keep text-xs font-semibold text-brand-green">
+            💡 매출 30억 이상 요건 충족 → 은행 법인신용대출 검토 가능
+          </p>
+        )}
+      </div>
+
+      {/* 신청 → 실행 진행 절차·소요기간 안내 */}
+      {(hasDae || hasDirect) && (
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 shadow-card">
+          <p className="break-keep text-base font-bold text-brand-dark">
+            🗓️ 신청부터 대출 실행까지 (예상 소요기간)
+          </p>
+          {hasDae && (
+            <div className="mt-2.5">
+              <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
+                대리대출 (보증서→은행)
+              </span>
+              <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark">
+                신청 → 심사 → <b>모바일 실사</b> → 승인 → 약정 → 대출 실행 ·{" "}
+                <b className="text-brand-orange">빠르면 3주, 늦으면 6주</b>
               </p>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+          {hasDirect && (
+            <div className="mt-2.5">
+              <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                직접대출 (공단 직접)
+              </span>
+              <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark">
+                신청 → 심사 → <b>방문 실사</b> → 약정 → 대출 실행 ·{" "}
+                <b className="text-brand-orange">약 8주</b> · 필요 서류가 더 많은 편입니다.
+              </p>
+            </div>
+          )}
+          <p className="mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+            ※ 모바일 실사는 재단·소진공의 소상공인 건에서 주로 진행되며, 기술보증기금·신용보증기금 및 금액이 큰 건은 방문 실사로 진행됩니다.
+          </p>
+        </div>
+      )}
 
-        {/* 신청 → 실행 진행 절차·소요기간 안내 */}
-        {(hasDae || hasDirect) && (
-          <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
-            <p className="break-keep text-sm font-bold text-brand-dark">
-              🗓️ 신청부터 대출 실행까지 (예상 소요기간)
-            </p>
-            {hasDae && (
-              <div className="mt-2.5">
-                <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
-                  대리대출 (보증서→은행)
-                </span>
-                <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark">
-                  신청 → 심사 → <b>모바일 실사</b> → 승인 → 약정 → 대출 실행 ·{" "}
-                  <b className="text-brand-orange">빠르면 3주, 늦으면 6주</b>
-                </p>
-              </div>
+      {/* 내 지역 신용보증재단 상품 바로 보기 — 재단이 추천기관에 포함될 때만 */}
+      {hasJaedan && (
+        <div className="rounded-2xl border border-brand-orange/30 bg-brand-orange/5 p-5 shadow-card">
+          <p className="break-keep text-base font-bold text-brand-dark">
+            📍 내 지역 신용보증재단 상품 바로 보기
+          </p>
+          <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+            재단 상품·보증한도·신청시기는 지역마다 다릅니다. 대표님 사업장 지역을 고르면 해당 재단 상품 페이지로 바로 이동합니다.
+          </p>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <select
+              value={sinboRegion}
+              onChange={(e) => setSinboRegion(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-brand-dark focus:border-brand-orange focus:outline-none sm:flex-1"
+            >
+              <option value="">지역 선택 (시·도)</option>
+              {REGION_SINBO.map((r) => (
+                <option key={r.region} value={r.region}>
+                  {r.region} · {r.name}
+                </option>
+              ))}
+            </select>
+            {selectedSinbo ? (
+              <a
+                href={selectedSinbo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 rounded-lg bg-brand-orange px-5 py-2.5 text-center text-sm font-bold text-white hover:opacity-90"
+              >
+                {selectedSinbo.name} 상품 보기 →
+              </a>
+            ) : (
+              <span className="shrink-0 cursor-not-allowed rounded-lg bg-gray-200 px-5 py-2.5 text-center text-sm font-bold text-gray-400">
+                상품 보기 →
+              </span>
             )}
-            {hasDirect && (
-              <div className="mt-2.5">
-                <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                  직접대출 (공단 직접)
-                </span>
-                <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark">
-                  신청 → 심사 → <b>방문 실사</b> → 약정 → 대출 실행 ·{" "}
-                  <b className="text-brand-orange">약 8주</b> · 필요 서류가 더 많은 편입니다.
-                </p>
-              </div>
-            )}
-            <p className="mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-              ※ 모바일 실사는 재단·소진공의 소상공인 건에서 주로 진행되며, 기술보증기금·신용보증기금 및 금액이 큰 건은 방문 실사로 진행됩니다.
-            </p>
           </div>
-        )}
+          {selectedSinbo && (
+            <p className="mt-2.5 break-keep rounded-lg bg-white px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
+              📱 <b>신청 방법:</b>{" "}
+              {selectedSinbo.region === "서울"
+                ? "「서울신용보증재단」 앱"
+                : selectedSinbo.region === "경기"
+                ? "「이지원」 앱"
+                : "「보증드림」 앱"}
+              에서 비대면 신청하거나 대면 예약이 가능합니다. 신청이 어려우면{" "}
+              <b>재단·소진공·중진공 방문상담(전화예약)</b>도 이용할 수 있습니다.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* 기관별 상품 바로보기 — 상품 안내 페이지/자료 통합 링크 */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card">
+        <p className="break-keep text-base font-bold text-brand-dark">
+          🏛️ 기관별 상품 한눈에 보기
+        </p>
+        <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+          각 기관의 상품 안내 자료·페이지로 바로 이동합니다.
+        </p>
+        <div className="mt-3 flex flex-col gap-2">
+          {INSTITUTION_PRODUCT_LINKS.map((p) => (
+            <a
+              key={p.label}
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
+            >
+              <span className="text-sm font-bold text-brand-dark">{p.label} →</span>
+              {p.docLabel && (
+                <>
+                  <span className="text-[11px] font-bold text-brand-dark/40">-</span>
+                  <span className="break-keep text-[11px] font-semibold text-brand-orange">
+                    📄 {p.docLabel}
+                  </span>
+                </>
+              )}
+            </a>
+          ))}
+        </div>
       </div>
 
       {/* ④ 신청 가능한 정부지원사업 (핵심 결과) */}

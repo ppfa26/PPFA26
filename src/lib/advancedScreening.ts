@@ -588,6 +588,22 @@ export type InstitutionLink = {
   note?: string; // 신청 채널 한 줄 안내
 };
 
+// ── 기관별 '상품 바로보기' 링크 (기관 안내 하단 통합 목록) ──────────
+//  대표님 요청: 기관별 상품 안내 페이지/자료를 한곳에 모아 바로 볼 수 있게.
+export type ProductLink = {
+  label: string; // "○○ 상품 바로보기"
+  url: string; // 상품 안내 페이지 또는 우리가 준비한 상품안내 PDF
+  docLabel?: string; // 오른쪽 자료명(있으면 "라벨 - 자료명" 형태로 표시)
+};
+
+export const INSTITUTION_PRODUCT_LINKS: ProductLink[] = [
+  { label: "신용보증기금 상품 바로보기", url: "/manuals/kodit-product-2026.pdf", docLabel: "2026년 신용보증기금 상품안내" },
+  { label: "기술보증기금 상품 바로보기", url: "/manuals/kibo-product-2026.pdf", docLabel: "2026년 기술보증기금 상품안내" },
+  { label: "무역보험공사 상품 바로보기", url: "https://www.ksure.or.kr/rh-kr/cntnts/i-104/web.do" },
+  { label: "중소벤처기업 상품 바로보기", url: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI001M0.do" },
+  { label: "소상공인시장진흥공단 상품 바로보기", url: "https://ols.semas.or.kr/ols/man/SMAN018M/page.do" },
+];
+
 export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "신용보증기금",

@@ -67,34 +67,35 @@ export default function DashboardPage() {
   }, [results]);
   const isHighChance = (score: number) => score >= highBar && score > 0;
 
-  // 결과창에는 "승인 가능성 높은" 사업만 노출한다(대표님 방침).
-  //  적합도가 낮은 사업은 결과창에 아예 표시하지 않는다.
-  //  단, 높음이 하나도 없을 때는 점수 상위 항목이라도 보여주어 빈 화면을 막는다.
-  const highResults = useMemo(() => {
-    const highs = results.filter((r) => isHighChance(r.score));
-    // 적합도(점수)가 높은 순으로 위에서부터 노출한다(대표님 방침).
+  // 결과창에는 매칭된 지원사업을 모두(적합도순) 노출한다.
+  //  - 적합도(점수) 높은 순으로 위에서부터 정렬 (대표님 방침: 높은 것 위로)
+  //  - "승인 가능성 높음" 배지는 highBar(7점) 이상에만 붙는다(아래 isHighChance)
+  //  → 이렇게 하면 카테고리별 개수 표기가 실제 안내한 상품 수와 정확히 일치한다.
+  const displayResults = useMemo(() => {
     const sortByScore = (arr: MatchResult[]) => [...arr].sort((a, b) => b.score - a.score);
-    if (highs.length > 0) return sortByScore(highs);
-    // 방어: 높음이 없으면 점수순 상위 3개라도(0점 제외) 노출
-    return sortByScore(results.filter((r) => r.score > 0)).slice(0, 3);
-  }, [results, highBar]);
+    return sortByScore(results.filter((r) => r.score > 0));
+  }, [results]);
 
-  const highCount = highResults.length;
+  // 승인 가능성 높은 사업 수 (요약 문구용)
+  const highCount = useMemo(
+    () => displayResults.filter((r) => isHighChance(r.score)).length,
+    [displayResults, highBar]
+  );
 
   const filtered = useMemo(() => {
-    if (activeCat === "전체") return highResults;
-    return highResults.filter((r) => toCategoryGroup(r.program.category) === activeCat);
-  }, [highResults, activeCat]);
+    if (activeCat === "전체") return displayResults;
+    return displayResults.filter((r) => toCategoryGroup(r.program.category) === activeCat);
+  }, [displayResults, activeCat]);
 
-  // 카테고리 그룹별 개수 — 실제 노출되는(승인 가능성 높은) 결과 기준으로 집계
+  // 카테고리 그룹별 개수 — 실제 노출되는 결과 기준으로 집계(안내 상품 수와 일치)
   const countByCat = useMemo(() => {
     const map: Record<string, number> = {};
-    highResults.forEach((r) => {
+    displayResults.forEach((r) => {
       const g = toCategoryGroup(r.program.category);
       map[g] = (map[g] || 0) + 1;
     });
     return map;
-  }, [highResults]);
+  }, [displayResults]);
 
   return (
     <PageShell pageKey="dashboard">
@@ -110,8 +111,10 @@ export default function DashboardPage() {
               {name ? `${name} 대표님, ` : ""}맞춤 매칭 대시보드
             </h1>
             <p className="mt-2 text-sm text-brand-gray sm:text-base">
-              총 <b className="text-brand-orange">{results.length}개</b> 지원사업을 검토해,
-              <b className="text-brand-green"> 승인 가능성 높은 {highCount}개</b>만 추려 드렸습니다.
+              대표님 조건에 맞는 <b className="text-brand-orange">{displayResults.length}개</b> 지원사업을 추려 드렸습니다.
+              {highCount > 0 && (
+                <> 이 중 <b className="text-brand-green">승인 가능성 높은 사업은 {highCount}개</b>입니다.</>
+              )}
               <br className="hidden sm:block" />
               각 사업을 눌러 신청 방법·필요 서류·승인 전략을 확인하세요.
             </p>
@@ -149,7 +152,7 @@ export default function DashboardPage() {
                   : "bg-white text-brand-gray shadow-sm hover:bg-gray-100"
               }`}
             >
-              전체 {highResults.length}
+              전체 {displayResults.length}
             </button>
             {CATEGORY_GROUP_ORDER.map((cat) => {
               const meta = CATEGORY_GROUP_META[cat];
