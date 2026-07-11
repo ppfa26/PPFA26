@@ -842,6 +842,9 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                         {link.siteLabel}
                       </a>
                       {link.pdfUrl && (
+                        <span className="text-[11px] font-bold text-brand-dark/40">-</span>
+                      )}
+                      {link.pdfUrl && (
                         <a
                           href={link.pdfUrl}
                           target="_blank"
@@ -899,6 +902,9 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                         >
                           {j.label}
                         </a>
+                        {j.productUrl && (
+                          <span className="text-[11px] font-bold text-brand-dark/40">-</span>
+                        )}
                         {j.productUrl && (
                           <a
                             href={j.productUrl}

@@ -697,6 +697,8 @@ export const JAEDAN_SITE_LINKS: {
     label: "서울신용보증재단",
     url: "https://www.seoulshinbo.co.kr",
     manualUrl: "/manuals/seoul-sinbo-guide.pdf",
+    productUrl: "https://www.seoulshinbo.co.kr/wbase/contents.do?mng_cd=BUSI2346",
+    productLabel: "보증상품 안내자료 확인하기",
   },
   {
     label: "경기신용보증재단",
@@ -709,7 +711,7 @@ export const JAEDAN_SITE_LINKS: {
     label: "지역신용보증재단(통합)",
     url: "https://untact.koreg.or.kr/web/index.do",
     manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf",
-    productUrl: "https://www.koreg.or.kr/",
+    productUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
     productLabel: "보증상품 안내자료 확인하기",
   },
 ];
