@@ -129,6 +129,18 @@ function SuccessInner() {
             >
               바로 대시보드로 가기
             </Link>
+            {/* 결제 완료 시 플랜(베이직/프리미어/프로) 무관하게 1:1 상담 버튼 공통 노출 */}
+            <a
+              href="http://pf.kakao.com/_VxfWxan/chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 w-full rounded-xl border-2 border-brand-dark bg-white py-3.5 text-base font-extrabold text-brand-dark transition hover:bg-gray-50"
+            >
+              💬 1:1 채팅 상담 열기
+            </a>
+            <p className="mt-3 break-keep text-xs leading-relaxed text-brand-gray">
+              궁금한 점은 카카오톡으로 실시간 문의하세요. (자문 전용 · 대행 없음)
+            </p>
           </>
         )}
 
