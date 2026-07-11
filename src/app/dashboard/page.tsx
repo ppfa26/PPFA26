@@ -5,54 +5,25 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
-import { matchPrograms, MatchResult, DiagnosisProfile } from "@/lib/matching";
-import {
-  CATEGORY_META,
-  PROGRAMS,
-  CategoryGroup,
-  CATEGORY_GROUP_ORDER,
-  CATEGORY_GROUP_META,
-  toCategoryGroup,
-} from "@/lib/programs";
+import { DiagnosisProfile } from "@/lib/matching";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
 import { ADVISORY_DISCLAIMER, REVALIDATION_NOTICE } from "@/lib/advancedScreening";
+import { SUPPORT_PROGRAMS, computeSupportEligibility } from "@/lib/supportPrograms";
 
 export default function DashboardPage() {
-  const [results, setResults] = useState<MatchResult[]>([]);
-  const [name, setName] = useState("");
-  // 진단 프로필 원본 — 추가 지원제도(고용지원금·수출·혁신바우처) 신청 대상 판정용
+  // 진단 프로필 원본 — 기관·상품 안내(AdvancedScreeningPanel)와
+  //  추가 지원제도(고용지원금·바우처 등) 신청 대상 판정에 사용.
   const [profileData, setProfileData] = useState<DiagnosisProfile>({});
-  const [activeCat, setActiveCat] = useState<CategoryGroup | "전체">("전체");
-  const [loaded, setLoaded] = useState(false);
-  const [advancedApplied, setAdvancedApplied] = useState(false);
-  // 결제 여부 — 결제 완료 시 localStorage("mpp_paid")에 표시됨.
-  //  미결제: 맨 위 1개만 공개 + 나머지 블러 / 결제: 전체 공개.
-  const [paid, setPaid] = useState(false);
 
   useEffect(() => {
-    // 처음 질문지 + (정밀진단 반영분)을 읽어 매칭리스트를 계산.
+    // 진단 답 + (정밀진단 반영분)을 읽어 프로필을 확보.
     //  정밀진단이 완료되면 mpp_diagnosis가 병합 갱신되므로 그 값을 그대로 사용.
-    //  → 처음 답과 다르면 정밀진단 값이 우선 반영된다(대표님 기준).
     const recompute = () => {
       try {
-        setPaid(localStorage.getItem("mpp_paid") === "true");
-      } catch {}
-      try {
         const raw = sessionStorage.getItem("mpp_diagnosis");
-        const profile = raw ? JSON.parse(raw) : {};
-        setName(profile.name || "");
-        setProfileData(profile);
-        setAdvancedApplied(Boolean(profile._advancedApplied));
-        const matched = matchPrograms(profile);
-        setResults(
-          matched.length > 0
-            ? matched
-            : PROGRAMS.map((program) => ({ program, score: 0, reasons: [] }))
-        );
+        setProfileData(raw ? JSON.parse(raw) : {});
       } catch {
-        setResults(PROGRAMS.map((program) => ({ program, score: 0, reasons: [] })));
-      } finally {
-        setLoaded(true);
+        setProfileData({});
       }
     };
 
@@ -62,380 +33,79 @@ export default function DashboardPage() {
     return () => window.removeEventListener("mpp-advanced-applied", recompute);
   }, []);
 
-  // 승인 가능성 "높음" 판정 기준
-  //  - 매칭 점수 7점 이상이면 높음 (실무상 조건이 뚜렷하게 맞는 구간)
-  //  - 결과가 적을 때를 대비해, 최고점의 70% 이상도 높음으로 인정
-  const highBar = useMemo(() => {
-    const max = results.reduce((m, r) => Math.max(m, r.score), 0);
-    return Math.max(7, Math.round(max * 0.7));
-  }, [results]);
-  const isHighChance = (score: number) => score >= highBar && score > 0;
-
-  // 결과창에는 매칭된 지원사업을 모두(적합도순) 노출한다.
-  //  - 적합도(점수) 높은 순으로 위에서부터 정렬 (대표님 방침: 높은 것 위로)
-  //  - "승인 가능성 높음" 배지는 highBar(7점) 이상에만 붙는다(아래 isHighChance)
-  //  → 이렇게 하면 카테고리별 개수 표기가 실제 안내한 상품 수와 정확히 일치한다.
-  const displayResults = useMemo(() => {
-    const sortByScore = (arr: MatchResult[]) => [...arr].sort((a, b) => b.score - a.score);
-    return sortByScore(results.filter((r) => r.score > 0));
-  }, [results]);
-
-  // 승인 가능성 높은 사업 수 (요약 문구용)
-  const highCount = useMemo(
-    () => displayResults.filter((r) => isHighChance(r.score)).length,
-    [displayResults, highBar]
-  );
-
-  const filtered = useMemo(() => {
-    if (activeCat === "전체") return displayResults;
-    return displayResults.filter((r) => toCategoryGroup(r.program.category) === activeCat);
-  }, [displayResults, activeCat]);
-
-  // 추가 지원제도(고용지원금·수출바우처·혁신바우처) 신청 대상 판정
-  //  진단 프로필 기준으로 "대표님이 지금 신청 대상인지"를 자동 안내한다.
-  //  eligible=true → ✅ 신청 대상 배지 / false → 조건부(회색) 안내 배지
-  const extraPrograms = useMemo(() => {
-    const p = profileData || {};
-    const inds = p.industries || [];
-    const purps = p.purposes || [];
-    const ints = p.interests || [];
-    const emp = String(p.employees || "");
-    const rev = String(p.revenue || "");
-    const hasEmployees = Boolean(p.employees) && !emp.includes("0명");
-    const isManufacturing = inds.some((s) => s.includes("제조"));
-    const isExport =
-      inds.some((s) => s.includes("수출")) ||
-      purps.some((s) => s.includes("수출")) ||
-      ints.some((s) => s.includes("바우처"));
-    // 두루누리 — 근로자 10명 미만 사업장(0명 제외, 5명이하·10명이하 구간)
-    const isDuruEligible = hasEmployees && (emp.includes("5명") || emp.includes("10명이하"));
-    // 소상공인 경영안정 바우처 — 영세 소상공인(매출 5억 미만, 매출없음 제외)
-    const isSmallBiz = Boolean(p.revenue) && !rev.includes("5억이상") && !rev.includes("매출없음");
-    // 청년(만 39세 이하) — 청년일자리도약 채용 대상 관련
-    const isYouth = String(p.age || "").includes("39세이하") || String(p.age || "").includes("39세 이하");
-
-    return [
-      {
-        icon: "💼",
-        title: "고용지원금 — 고용24",
-        site: "www.work24.go.kr",
-        url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
-        desc: "기업 로그인 → 기업 지원금 메뉴에서 신청. 청년일자리도약장려금·고용창출/안정장려금·두루누리·워라밸일자리장려금·고용촉진장려금 등",
-        eligible: hasEmployees,
-        badge: hasEmployees ? "✅ 신청 대상" : "채용 시 대상",
-        note: hasEmployees
-          ? "직원을 고용 중이시라 고용장려금 신청 대상입니다."
-          : "직원 채용(4대보험 가입) 시점부터 신청 대상이 됩니다.",
-      },
-      {
-        icon: "🌍",
-        title: "수출바우처",
-        site: "www.exportvoucher.com",
-        url: "https://www.exportvoucher.com",
-        desc: "중기부·산업부·지자체 수출바우처 통합 신청 포털. 사업공고 → 참여기업 모집공고 확인 후 신청",
-        eligible: isExport,
-        badge: isExport ? "✅ 신청 대상" : "수출 계획 시 대상",
-        note: isExport
-          ? "수출(예정) 기업으로 수출바우처 신청 대상입니다."
-          : "수출 실적·계획이 있으면 신청 대상이 됩니다.",
-      },
-      {
-        icon: "🚀",
-        title: "혁신바우처",
-        site: "www.mssmiv.com",
-        url: "https://www.mssmiv.com",
-        desc: "중소기업 혁신바우처(컨설팅·기술지원·마케팅) 신청 포털. 제조업 소기업(3년 평균 매출 140억 이하) 대상, 기업당 최대 5,000만원",
-        eligible: isManufacturing,
-        badge: isManufacturing ? "✅ 신청 대상" : "제조업 대상",
-        note: isManufacturing
-          ? "제조업 소기업으로 혁신바우처 신청 대상입니다."
-          : "제조업을 주 업종으로 하는 소기업이 신청 대상입니다.",
-      },
-      {
-        icon: "🤝",
-        title: "두루누리 사회보험료 지원",
-        site: "insurancesupport.or.kr",
-        url: "http://insurancesupport.or.kr",
-        desc: "근로자 10명 미만 사업장에서 월평균 보수 270만원 미만 직원 신규 고용 시, 고용보험·국민연금 보험료의 80%를 최대 36개월 지원",
-        eligible: isDuruEligible,
-        badge: isDuruEligible ? "✅ 신청 대상" : "직원 10명 미만 대상",
-        note: isDuruEligible
-          ? "근로자 10명 미만 사업장으로 보험료 80% 지원 대상입니다."
-          : "근로자 10명 미만이면서 저임금 직원을 고용하면 대상이 됩니다.",
-      },
-      {
-        icon: "🏪",
-        title: "소상공인 경영안정 바우처",
-        site: "www.sbiz24.kr",
-        url: "https://www.sbiz24.kr",
-        desc: "영세 소상공인의 고정비(4대 보험료·전기·가스요금 등)를 줄여주는 바우처. 연 매출 등 조건 충족 시 지급, 소상공인24에서 신청",
-        eligible: isSmallBiz,
-        badge: isSmallBiz ? "✅ 신청 대상" : "영세 소상공인 대상",
-        note: isSmallBiz
-          ? "영세 소상공인으로 경영안정 바우처 신청 대상입니다."
-          : "연 매출 등 조건을 충족하는 영세 소상공인이 대상입니다.",
-      },
-      {
-        icon: "⭐",
-        title: "청년일자리도약장려금",
-        site: "www.work24.go.kr",
-        url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
-        desc: "5인 이상 중소기업(청년 창업기업 등은 1인 이상)이 취업애로청년을 정규직 채용·고용유지 시 1인당 최대 720만원 지원",
-        eligible: hasEmployees,
-        badge: hasEmployees ? "✅ 신청 대상" : "청년 채용 시 대상",
-        note: hasEmployees
-          ? "취업애로청년을 정규직으로 채용하면 1인당 최대 720만원 지원 대상입니다."
-          : "취업애로청년을 정규직으로 채용하면 대상이 됩니다.",
-      },
-    ];
+  // 진단 프로필 기준 '신청 대상'인 추가 지원제도만 골라 리스트로 안내
+  //  (정책자금과 별개 병행 가능 · 클릭 시 상세 화면으로 이동)
+  const eligibleSupport = useMemo(() => {
+    const elig = computeSupportEligibility(profileData || {});
+    return SUPPORT_PROGRAMS.filter((prog) => elig[prog.id]);
   }, [profileData]);
-
-  // 카테고리 그룹별 개수 — 실제 노출되는 결과 기준으로 집계(안내 상품 수와 일치)
-  const countByCat = useMemo(() => {
-    const map: Record<string, number> = {};
-    displayResults.forEach((r) => {
-      const g = toCategoryGroup(r.program.category);
-      map[g] = (map[g] || 0) + 1;
-    });
-    return map;
-  }, [displayResults]);
 
   return (
     <PageShell pageKey="dashboard">
       <Header />
       <main className="bg-gray-50 px-4 py-8">
         <div className="mx-auto max-w-4xl">
-          {/* 헤더 */}
+          {/* 헤더 — 기관·상품 안내 중심 */}
           <section id="dashboard-hero" className="text-center">
             <div className="inline-block break-keep rounded-full bg-brand-yellow px-5 py-2.5 text-base font-extrabold text-brand-dark sm:text-xl">
-              🎯 나에게 맞는 지원사업 통합 매칭 결과
+              🏦 대표님 맞춤 신청 가능 기관 및 상품 안내
             </div>
-            <p className="mt-3 text-sm text-brand-gray sm:text-base">
-              대표님 사업장에 알맞은 지원사업을 <b className="text-brand-orange">{displayResults.length}개</b>로 추려 드렸습니다.
-              {highCount > 0 && (
-                <> 이 중 <b className="text-brand-green">승인 가능성 높은 사업은 {highCount}개</b>입니다.</>
-              )}
+            <p className="mt-3 break-keep text-sm text-brand-gray sm:text-base">
+              대표님 진단 정보를 기준으로 실제 신청 자격이 열리는 <b className="text-brand-orange">정책금융 기관·상품</b>과{" "}
+              <b className="text-brand-green">추가로 신청 가능한 지원제도</b>를 정리해 드렸습니다.
             </p>
-
-            {/* 안내 요약 — 정밀진단 반영 + 대출/지원사업 중복 안내를 항목화 */}
-            {(advancedApplied || highCount > 0) && (
-              <div className="mx-auto mt-5 max-w-2xl rounded-xl border-2 border-brand-green bg-green-50 px-4 py-3 text-left">
-                <p className="break-keep text-sm font-bold text-brand-dark sm:text-base">
-                  🎯 정밀추가진단 결과를 반영했습니다.
-                </p>
-                <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-brand-dark/80 sm:text-sm">
-                  <li className="flex gap-1.5 break-keep">
-                    <span className="shrink-0">✅</span>
-                    <span>승인 가능성이 <b>가장 높은 사업부터</b> 먼저 신청하는 것이 유리합니다.</span>
-                  </li>
-                  <li className="flex gap-1.5 break-keep">
-                    <span className="shrink-0">🏦</span>
-                    <span><b>대리대출</b>은 한 곳만 가능하지만, <b>대리대출 + 직접대출</b>은 함께 신청할 수 있습니다.</span>
-                  </li>
-                  <li className="flex gap-1.5 break-keep">
-                    <span className="shrink-0">🎁</span>
-                    <span><b>지원사업·바우처</b>는 정책자금과 <b>별개로</b> 추가 신청할 수 있습니다.</span>
-                  </li>
-                </ul>
-              </div>
-            )}
           </section>
-
-          {/* 카테고리 필터 탭 — 한 줄 유지(넘치면 좌우 스크롤, 모바일 안전) */}
-          <nav
-            id="category-filter"
-            className="mt-7 -mx-4 flex flex-nowrap gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:justify-center sm:px-0"
-          >
-            <button
-              onClick={() => setActiveCat("전체")}
-              className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition ${
-                activeCat === "전체"
-                  ? "bg-brand-dark text-white"
-                  : "bg-white text-brand-gray shadow-sm hover:bg-gray-100"
-              }`}
-            >
-              전체 {displayResults.length}
-            </button>
-            {CATEGORY_GROUP_ORDER.map((cat) => {
-              const meta = CATEGORY_GROUP_META[cat];
-              const cnt = countByCat[cat] || 0;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCat(cat)}
-                  className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition ${
-                    activeCat === cat
-                      ? "bg-brand-dark text-white"
-                      : "bg-white text-brand-gray shadow-sm hover:bg-gray-100"
-                  }`}
-                >
-                  {meta.icon} {meta.label} {cnt}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* 결과 리스트 — 정부지원사업 + 정책자금 대출 통합 목록 (최상단 배치) */}
-          <section id="match-results" className="mt-7 space-y-4">
-            {filtered.length > 0 && (
-              <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/10 px-5 py-4">
-                <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-                  🎯 지금 바로 신청해볼만한 정부지원사업{" "}
-                  <span className="text-brand-orange">{filtered.length}건</span>
-                </p>
-                <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
-                  정부지원사업(바우처·보조금)과 정책자금 대출을 한 목록에 모아, 적합도 높은 순으로 정렬했습니다.
-                </p>
-                <p className="mt-2 break-keep text-xs leading-relaxed text-brand-dark/60">
-                  ✅ 표시는 대표님 진단 정보 기준 승인 가능성이 높다는 표시입니다. 승인을 보장하지는 않으며,
-                  심사는 각 기관의 기준표를 기준으로 합니다.
-                </p>
-              </div>
-            )}
-            {loaded && filtered.length === 0 && (
-              <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-10 text-center text-brand-gray">
-                해당 카테고리에 매칭된 지원사업이 없습니다.
-                <br />
-                다른 카테고리를 선택하거나{" "}
-                <Link href="/diagnosis" className="font-bold text-brand-orange underline">
-                  진단을 다시 받아보세요.
-                </Link>
-              </div>
-            )}
-            {filtered.map((r, idx) => {
-              const meta = CATEGORY_META[r.program.category];
-              // 미결제이면 맨 위 1개만 공개, 나머지는 블러 처리(클릭 불가).
-              const locked = !paid && idx >= 1;
-
-              const cardInner = (
-                <article className="flex items-start gap-3">
-                  <span className="text-2xl">{meta.icon}</span>
-                  <div className="flex-1">
-                    <div className="mb-1 flex flex-wrap items-center gap-2">
-                      <span className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-brand-gray">
-                        {meta.label}
-                      </span>
-                      {r.score > 0 && (
-                        <span className="inline-block rounded-full bg-brand-yellow px-2 py-0.5 text-[11px] font-bold text-brand-dark">
-                          매칭 적합도 {r.score}점
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-extrabold text-brand-dark">
-                      {r.program.name}
-                    </h3>
-                    <p className="text-sm text-brand-gray">
-                      {r.program.organization}
-                    </p>
-                    <p className="mt-1 text-sm text-brand-dark">
-                      {r.program.summary}
-                    </p>
-                    <p className="mt-1 text-sm font-semibold text-brand-green">
-                      💰 {r.program.amount}
-                    </p>
-                  </div>
-                </article>
-              );
-
-              // 잠긴 카드: 링크 대신 블러 처리된 div (클릭 불가)
-              if (locked) {
-                return (
-                  <div
-                    key={r.program.id}
-                    className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card"
-                    aria-hidden="true"
-                  >
-                    <div className="blur-locked">{cardInner}</div>
-                  </div>
-                );
-              }
-
-              return (
-                <Link
-                  key={r.program.id}
-                  href={`/fund/${r.program.id}`}
-                  className="block rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg"
-                >
-                  {cardInner}
-                </Link>
-              );
-            })}
-
-            {/* 미결제 결제 유도 배너 — 첫 결과 아래(잠긴 목록 사이)에 노출 */}
-            {!paid && filtered.length > 1 && (
-              <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/20 p-6 text-center">
-                <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-                  🔒 나머지 <b className="text-brand-orange">{filtered.length - 1}개</b> 매칭 결과와 신청 방법이 잠겨 있어요
-                </p>
-                <p className="mt-2 break-keep text-sm text-brand-dark/70">
-                  결제하면 전체 매칭 결과 · 신청 사이트 · 필요 서류 · 승인 전략까지 모두 확인할 수 있습니다.
-                </p>
-                <Link
-                  href="/pricing"
-                  className="mt-5 inline-block rounded-full bg-brand-dark px-8 py-3 font-bold text-white transition hover:opacity-90"
-                >
-                  전체 결과 잠금 해제하기
-                </Link>
-                <p className="mt-3 break-keep text-xs text-brand-dark/60">
-                  ⚠️ 자문 서비스 · 승인 보장 없음 · 대행 없음
-                </p>
-              </div>
-            )}
-
-          </section>
-
-          {/* 추가로 챙기면 좋은 지원제도 — 고용지원금·수출바우처·혁신바우처 (정책자금과 별개 신청) */}
-          {/*  진단 프로필 기준으로 "대표님이 지금 신청 대상인지"를 자동 판정해 배지로 안내한다. */}
-          <div className="mt-7">
-            <p className="mb-2 break-keep text-sm font-bold text-brand-dark sm:text-base">
-              🎁 대표님이 <b className="text-brand-orange">추가로 신청 가능한 지원제도</b>
-              <span className="ml-1 text-xs font-normal text-brand-dark/50">— 정책자금과 별개로 병행 신청 가능</span>
-            </p>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {extraPrograms.map((b) => (
-                <a
-                  key={b.title}
-                  href={b.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`flex flex-col rounded-2xl border-2 p-4 shadow-card transition ${
-                    b.eligible
-                      ? "border-brand-green bg-green-50 hover:bg-green-100"
-                      : "border-brand-orange bg-white hover:bg-brand-orange/5"
-                  }`}
-                >
-                  <span
-                    className={`mb-1.5 inline-block w-fit break-keep rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
-                      b.eligible
-                        ? "bg-brand-green text-white"
-                        : "bg-gray-200 text-brand-dark/60"
-                    }`}
-                  >
-                    {b.badge}
-                  </span>
-                  <span className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                    {b.icon} {b.title}
-                  </span>
-                  <span
-                    className={`mt-1 break-keep text-[11px] font-semibold leading-relaxed ${
-                      b.eligible ? "text-brand-green" : "text-brand-dark/50"
-                    }`}
-                  >
-                    {b.note}
-                  </span>
-                  <span className="mt-1 break-all text-xs font-semibold text-brand-orange">
-                    🔗 {b.site}
-                  </span>
-                  <span className="mt-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-                    {b.desc}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
 
           {/* 기관·상품 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
-          <AdvancedScreeningPanel autoRun />
+          <div className="mt-6">
+            <AdvancedScreeningPanel autoRun />
+          </div>
+
+          {/* 추가로 신청 가능한 지원제도 — 진단 기준 '해당되는 것만' 리스트로 안내 */}
+          {/*  기관 안내와 동일한 divide-y 카드 스타일 · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
+          {eligibleSupport.length > 0 && (
+            <section id="support-programs" className="mt-6 rounded-3xl border border-gray-200 bg-white p-5 shadow-card sm:p-6">
+              <h2 className="break-keep text-lg font-extrabold text-brand-dark sm:text-xl">
+                🎁 대표님이 추가로 신청 가능한 지원제도
+              </h2>
+              <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray sm:text-sm">
+                정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다. 진단 정보 기준 신청 대상인 제도만 모았습니다.
+                <br className="hidden sm:block" />
+                카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
+              </p>
+
+              <div className="mt-4 divide-y divide-gray-200">
+                {eligibleSupport.map((prog) => (
+                  <Link
+                    key={prog.id}
+                    href={`/support/${prog.id}`}
+                    className="group flex items-start gap-3 py-3.5 first:pt-0 last:pb-0 transition hover:bg-gray-50"
+                  >
+                    <span className="text-2xl">{prog.icon}</span>
+                    <div className="flex-1">
+                      <div className="mb-1 flex flex-wrap items-center gap-2">
+                        <span className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
+                          {prog.title}
+                        </span>
+                        <span className="inline-block break-keep rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-extrabold text-white">
+                          ✅ 신청 대상
+                        </span>
+                      </div>
+                      <p className="break-keep text-[11px] font-semibold leading-relaxed text-brand-green sm:text-xs">
+                        {prog.eligibleNote}
+                      </p>
+                      <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60 sm:text-xs">
+                        {prog.desc}
+                      </p>
+                      <span className="mt-1 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange sm:text-xs">
+                        상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* 면책조항 + 재검증 안내 — 최하단 */}
           <div className="mt-7 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
