@@ -282,7 +282,7 @@ export const PROGRAMS: Program[] = [
       "수출을 원하는 중소기업(소상공인도 신청 가능)에 마케팅·전시회·통번역 등 서비스를 바우처로 지원합니다.",
     target: ["중소기업", "소상공인", "수출기업", "수출자금"],
     amount: "매출 100억 미만 보조율 70%(자부담 30%) · 내수기업 최대 3,000만원",
-    applyUrl: "https://www.exportvoucher.com/",
+    applyUrl: "https://www.exportvoucher.com/portal/sample/main",
     applySite: "수출바우처",
     loanType: "비융자",
     docs: [],

@@ -116,7 +116,7 @@ export const USEFUL_SITE_CATEGORIES: SiteCategory[] = [
       { name: "정부24 (개인/법인 등록)", url: "https://www.gov.kr/" },
       { name: "중소벤처24 통합로그인", url: "https://www.smes.go.kr/" },
       { name: "중소기업 전략기술 로드맵", url: "https://smroadmap.smtech.go.kr/" },
-      { name: "수출바우처 (수출지원기반활용)", url: "https://www.exportvoucher.com/" },
+      { name: "수출바우처 (수출지원기반활용)", url: "https://www.exportvoucher.com/portal/sample/main" },
       { name: "중소기업확인서", url: "https://sminfo.mss.go.kr/" },
       { name: "한국무역협회 수출실적증명", url: "https://membership.kita.net/cert/oncert/expImpCertGuide.do" },
       { name: "무역통계 정보포털 TRASS", url: "https://www.bandtrass.or.kr/", note: "수출실적증명서" },

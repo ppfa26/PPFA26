@@ -84,7 +84,7 @@ export const CRAWL_SITES: CrawlSite[] = [
   { no: 68, name: "KOfind 기보 자료제출", url: "https://www.kofind.co.kr/", group: "인증확인서" },
   { no: 69, name: "중소벤처24 통합로그인", url: "https://www.smes.go.kr/", group: "인증확인서" },
   { no: 70, name: "중소기업 전략기술 로드맵", url: "https://smroadmap.smtech.go.kr/", group: "인증확인서" },
-  { no: 71, name: "수출바우처", url: "https://www.exportvoucher.com/", group: "인증확인서" },
+  { no: 71, name: "수출바우처", url: "https://www.exportvoucher.com/portal/sample/main", group: "인증확인서" },
   { no: 72, name: "중소기업확인서", url: "https://sminfo.mss.go.kr/", group: "인증확인서" },
   { no: 73, name: "한국무역협회 수출실적증명서", url: "https://membership.kita.net/cert/oncert/expImpCertGuide.do", group: "인증확인서" },
   { no: 74, name: "TRASS 수출실적증명서", url: "https://www.bandtrass.or.kr/", group: "인증확인서" },

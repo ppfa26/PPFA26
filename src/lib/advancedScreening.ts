@@ -523,7 +523,7 @@ export const GOV_SUPPORT_2026: GovProgram[] = [
   { name: "창업도약패키지_대기업협업형", amount_max: 200000000, years_min: 3, years_max: 7, segment: "sme", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
   { name: "스마트공장", amount_per_task: 100000000, amount_max_total: 700000000, self_burden: 0.3, segment: "sme", industryOnly: "manufacturing", fitTags: ["manufacturing"], applyUrl: "https://www.smart-factory.kr" },
   // 수출바우처 — 수출기업만 (수출 체크 시에만 노출)
-  { name: "수출바우처_중기부", amount_min: 30000000, amount_max: 100000000, self_burden_min: 0.3, self_burden_max: 0.5, segment: "sme", requiresExport: true, fitTags: ["export"], applyUrl: "https://www.exportvoucher.com" },
+  { name: "수출바우처_중기부", amount_min: 30000000, amount_max: 100000000, self_burden_min: 0.3, self_burden_max: 0.5, segment: "sme", requiresExport: true, fitTags: ["export"], applyUrl: "https://www.exportvoucher.com/portal/sample/main" },
   // ── R&D 지원사업은 정책자금 매칭 대상에서 항상 제외 (대표님 기준) ──
   // (창업성장기술개발 디딤돌/전략형/시장확대/시장대응 등은 안내하지 않음)
   // ── 데이터바우처는 '데이터 활용 목적' 기업 한정 → 일반 매칭에서 제외 (대표님 기준) ──
