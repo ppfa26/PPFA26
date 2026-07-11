@@ -82,6 +82,14 @@ function SuccessInner() {
           sessionStorage.removeItem("mpp_pending_payment");
         } catch {}
 
+        // 결제 완료 표시 저장 → 대시보드에서 전체 결과 잠금 해제 판단에 사용
+        //  localStorage 사용(탭을 닫아도 유지). tier(결제 플랜)도 함께 저장.
+        try {
+          localStorage.setItem("mpp_paid", "true");
+          localStorage.setItem("mpp_paid_tier", tier);
+          localStorage.setItem("mpp_paid_at", new Date().toISOString());
+        } catch {}
+
         setStatus("success");
         setMessage("결제가 완료되었습니다!");
 

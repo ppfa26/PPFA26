@@ -24,12 +24,18 @@ export default function DashboardPage() {
   const [activeCat, setActiveCat] = useState<MatchCategory | "전체">("전체");
   const [loaded, setLoaded] = useState(false);
   const [advancedApplied, setAdvancedApplied] = useState(false);
+  // 결제 여부 — 결제 완료 시 localStorage("mpp_paid")에 표시됨.
+  //  미결제: 맨 위 1개만 공개 + 나머지 블러 / 결제: 전체 공개.
+  const [paid, setPaid] = useState(false);
 
   useEffect(() => {
     // 처음 질문지 + (정밀진단 반영분)을 읽어 매칭리스트를 계산.
     //  정밀진단이 완료되면 mpp_diagnosis가 병합 갱신되므로 그 값을 그대로 사용.
     //  → 처음 답과 다르면 정밀진단 값이 우선 반영된다(대표님 기준).
     const recompute = () => {
+      try {
+        setPaid(localStorage.getItem("mpp_paid") === "true");
+      } catch {}
       try {
         const raw = sessionStorage.getItem("mpp_diagnosis");
         const profile = raw ? JSON.parse(raw) : {};
@@ -101,6 +107,15 @@ export default function DashboardPage() {
               각 사업을 눌러 신청 방법·필요 서류·승인 전략을 확인하세요.
             </p>
 
+            {/* 결제 완료 안내 — 전체 결과가 열렸음을 알림 */}
+            {paid && (
+              <div className="mx-auto mt-4 max-w-2xl rounded-xl border border-brand-green/50 bg-green-50 px-4 py-2.5">
+                <p className="break-keep text-xs font-semibold text-brand-dark sm:text-sm">
+                  ✅ 결제가 완료되어 <b>전체 매칭 결과</b>가 모두 열렸습니다. 각 사업을 눌러 자세히 확인하세요.
+                </p>
+              </div>
+            )}
+
             {/* 정밀진단 반영 안내 — 정밀진단을 완료하면 그 값이 우선 반영됨 */}
             {advancedApplied && (
               <div className="mx-auto mt-4 max-w-2xl rounded-xl border border-brand-orange/40 bg-brand-yellow/10 px-4 py-2.5">
@@ -170,9 +185,66 @@ export default function DashboardPage() {
                 </Link>
               </div>
             )}
-            {filtered.map((r) => {
+            {filtered.map((r, idx) => {
               const meta = CATEGORY_META[r.program.category];
               const high = isHighChance(r.score);
+              // 미결제이면 맨 위 1개만 공개, 나머지는 블러 처리(클릭 불가).
+              const locked = !paid && idx >= 1;
+
+              const cardInner = (
+                <article className="flex items-start gap-3">
+                  <span className="text-2xl">{meta.icon}</span>
+                  <div className="flex-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-2">
+                      {high && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-brand-green px-2.5 py-0.5 text-[11px] font-bold text-white">
+                          ✅ 승인 가능성 높음
+                        </span>
+                      )}
+                      <span className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-brand-gray">
+                        {meta.label}
+                      </span>
+                      {r.score > 0 && (
+                        <span className="inline-block rounded-full bg-brand-yellow px-2 py-0.5 text-[11px] font-bold text-brand-dark">
+                          매칭 적합도 {r.score}점
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-extrabold text-brand-dark">
+                      {r.program.name}
+                    </h3>
+                    <p className="text-sm text-brand-gray">
+                      {r.program.organization}
+                    </p>
+                    <p className="mt-1 text-sm text-brand-dark">
+                      {r.program.summary}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-brand-green">
+                      💰 {r.program.amount}
+                    </p>
+                    {r.reasons.length > 0 && (
+                      <p className="mt-2 text-xs text-brand-orange">
+                        👉 {r.reasons.join(" · ")}
+                      </p>
+                    )}
+                  </div>
+                  <span className="self-center text-lg text-brand-gray">›</span>
+                </article>
+              );
+
+              // 잠긴 카드: 링크 대신 블러 처리된 div (클릭 불가)
+              if (locked) {
+                return (
+                  <div
+                    key={r.program.id}
+                    className="rounded-2xl border border-gray-200 bg-white p-5 shadow-card"
+                    aria-hidden="true"
+                  >
+                    <div className="blur-locked">{cardInner}</div>
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={r.program.id}
@@ -181,47 +253,31 @@ export default function DashboardPage() {
                     high ? "border-2 border-brand-green" : "border-gray-200"
                   }`}
                 >
-                  <article className="flex items-start gap-3">
-                    <span className="text-2xl">{meta.icon}</span>
-                    <div className="flex-1">
-                      <div className="mb-1 flex flex-wrap items-center gap-2">
-                        {high && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-brand-green px-2.5 py-0.5 text-[11px] font-bold text-white">
-                            ✅ 승인 가능성 높음
-                          </span>
-                        )}
-                        <span className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-brand-gray">
-                          {meta.label}
-                        </span>
-                        {r.score > 0 && (
-                          <span className="inline-block rounded-full bg-brand-yellow px-2 py-0.5 text-[11px] font-bold text-brand-dark">
-                            매칭 적합도 {r.score}점
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="font-extrabold text-brand-dark">
-                        {r.program.name}
-                      </h3>
-                      <p className="text-sm text-brand-gray">
-                        {r.program.organization}
-                      </p>
-                      <p className="mt-1 text-sm text-brand-dark">
-                        {r.program.summary}
-                      </p>
-                      <p className="mt-1 text-sm font-semibold text-brand-green">
-                        💰 {r.program.amount}
-                      </p>
-                      {r.reasons.length > 0 && (
-                        <p className="mt-2 text-xs text-brand-orange">
-                          👉 {r.reasons.join(" · ")}
-                        </p>
-                      )}
-                    </div>
-                    <span className="self-center text-lg text-brand-gray">›</span>
-                  </article>
+                  {cardInner}
                 </Link>
               );
             })}
+
+            {/* 미결제 결제 유도 배너 — 첫 결과 아래(잠긴 목록 사이)에 노출 */}
+            {!paid && filtered.length > 1 && (
+              <div className="rounded-2xl border-2 border-brand-orange bg-brand-yellow/20 p-6 text-center">
+                <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
+                  🔒 나머지 <b className="text-brand-orange">{filtered.length - 1}개</b> 매칭 결과와 신청 방법이 잠겨 있어요
+                </p>
+                <p className="mt-2 break-keep text-sm text-brand-dark/70">
+                  결제하면 전체 매칭 결과 · 신청 사이트 · 필요 서류 · 승인 전략까지 모두 확인할 수 있습니다.
+                </p>
+                <Link
+                  href="/pricing"
+                  className="mt-5 inline-block rounded-full bg-brand-dark px-8 py-3 font-bold text-white transition hover:opacity-90"
+                >
+                  전체 결과 잠금 해제하기
+                </Link>
+                <p className="mt-3 break-keep text-xs text-brand-dark/60">
+                  ⚠️ 자문 서비스 · 승인 보장 없음 · 대행 없음
+                </p>
+              </div>
+            )}
 
             {/* 승인 가능성 안내 문구 */}
             {filtered.length > 0 && (
