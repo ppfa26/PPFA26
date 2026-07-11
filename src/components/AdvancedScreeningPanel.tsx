@@ -21,6 +21,7 @@ import {
   REGION_SINBO,
   findInstitutionLink,
   JAEDAN_SITE_LINKS,
+  JAEDAN_CALL_CENTER,
   INSTITUTION_PRODUCT_LINKS,
 } from "@/lib/advancedScreening";
 
@@ -856,6 +857,21 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                         </a>
                       )}
                     </div>
+                    {link.tel && (
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <a
+                          href={`tel:${link.tel.replace(/-/g, "")}`}
+                          className="inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20"
+                        >
+                          📞 {link.tel}
+                        </a>
+                        {link.telNote && (
+                          <span className="break-keep text-[10px] leading-relaxed text-brand-dark/45">
+                            {link.telNote}
+                          </span>
+                        )}
+                      </div>
+                    )}
                     {link.note && (
                       <p className="break-keep text-[11px] leading-relaxed text-brand-dark/50">
                         {link.note}
@@ -890,6 +906,17 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                         </a>
                       </div>
                     ))}
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <a
+                        href={`tel:${JAEDAN_CALL_CENTER.tel.replace(/-/g, "")}`}
+                        className="inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20"
+                      >
+                        📞 {JAEDAN_CALL_CENTER.tel}
+                      </a>
+                      <span className="break-keep text-[10px] leading-relaxed text-brand-dark/45">
+                        {JAEDAN_CALL_CENTER.telNote}
+                      </span>
+                    </div>
                     <p className="break-keep text-[11px] font-semibold text-brand-orange">
                       👇 아래에서 사업장 지역을 고르면 해당 재단 상품 페이지·신청 앱으로 이동합니다.
                     </p>

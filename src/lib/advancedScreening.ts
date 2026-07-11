@@ -585,6 +585,8 @@ export type InstitutionLink = {
   pdfUrl?: string; // 상품·보증 안내 자료(PDF/안내 페이지)
   pdfLabel?: string;
   manualUrl?: string; // 신청 매뉴얼(PDF) - 우리가 준비한 단계별 신청 가이드
+  tel?: string; // 통합 콜센터 번호(표시용)
+  telNote?: string; // 콜센터 부가 안내(대기시간·전용번호 등)
   note?: string; // 신청 채널 한 줄 안내
 };
 
@@ -612,6 +614,8 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     pdfUrl: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2806&bbsId=1002&ps=417",
     pdfLabel: "보증상품 안내자료 확인하기 →",
     manualUrl: "/manuals/kodit-guide.pdf",
+    tel: "1588-6565",
+    telNote: "신용·매출 기반 보증은 신보로 문의하면 상담이 빠릅니다.",
     note: "신용보증기금 디지털지점(모바일)·영업점 방문으로 보증 신청이 가능합니다.",
   },
   {
@@ -621,6 +625,8 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     pdfUrl: "https://www.kibo.or.kr/main/board/boardType08.do",
     pdfLabel: "보증상품 안내자료 확인하기 →",
     manualUrl: "/manuals/kibo-guide.pdf",
+    tel: "1544-1120",
+    telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다.",
     note: "기술보증기금 디지털지점(kibo.or.kr)에서 온라인 신청 후 기술평가를 받습니다.",
   },
   {
@@ -628,6 +634,8 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     siteUrl: "https://ols.sbiz.or.kr",
     siteLabel: "소상공인 정책자금 신청 →",
     manualUrl: "/manuals/sbiz-guide.pdf",
+    tel: "1533-0100",
+    telNote: "중진공·소진공·중기부 통합상담은 1357로도 가능합니다.",
     note: "소상공인정책자금 누리집(ols.sbiz.or.kr)에서 직접대출을 온라인 신청합니다.",
   },
   {
@@ -635,6 +643,8 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     siteUrl: "https://www.kosmes.or.kr",
     siteLabel: "중소벤처기업진흥공단 사이트 →",
     manualUrl: "/manuals/kosmes-guide.pdf",
+    tel: "1811-3655",
+    telNote: "정책자금 전용번호(1811-3655)가 일반문의(1357)보다 대기가 짧습니다.",
     note: "중진공 정책자금 누리집에서 온라인 신청 후 상담·평가를 받습니다.",
   },
   {
@@ -642,6 +652,8 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     siteUrl: "https://on.ksure.or.kr/ksureOn/websquare/websquare.jsp?w2xPath=/ws5/ui/ZZ/MN/ZZMN010B01.xml&custSctCd=E100#/ws5/ui/ZZ/MN/ZZMN010B02.xml",
     siteLabel: "한국무역보험공사 사이트 →",
     manualUrl: "/manuals/ksure-guide.pdf",
+    tel: "1588-3884",
+    telNote: "상담 가능 시간: 평일 09:00~18:00",
     note: "한국무역보험공사(K-SURE On)에서 수출신용보증을 온라인 신청합니다. 신보·기보·중진공 한도와 별개로 병행 활용이 가능합니다.",
   },
 ];
@@ -660,6 +672,14 @@ export const JAEDAN_SITE_LINKS: { label: string; url: string; manualUrl?: string
   { label: "경기신용보증재단 →", url: "https://www.gcgf.or.kr/gcgf/intro.do", manualUrl: "/manuals/gyeonggi-sinbo-easyone-guide.pdf" },
   { label: "지역신용보증재단(통합) →", url: "https://untact.koreg.or.kr/web/index.do", manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf" },
 ];
+
+// ── 신용보증재단중앙회 통합 콜센터(재단 카드에 노출) ────────────────
+//  1588-7365로 걸면 사업장 소재지 기준 관할 지역신보로 자동 연결됩니다.
+export const JAEDAN_CALL_CENTER = {
+  tel: "1588-7365",
+  telAi: "1588-7679",
+  telNote: "1588-7365로 걸면 사업장 소재지(예: 인천) 기준 관할 지역신보로 자동 연결됩니다. (AI콜센터 1588-7679 병행)",
+};
 
 // 소상공인/중소기업 세그먼트 판정 (대표님 기준: 소상공인은 소상공인용만, 중소기업은 중소기업용만)
 //  - is_small_business 명시값 우선
