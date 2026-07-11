@@ -14,6 +14,7 @@
 // ─────────────────────────────────────────────────────────────────────────
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Company,
   runAdvancedScreening,
@@ -24,6 +25,11 @@ import {
   JAEDAN_CALL_CENTER,
   INSTITUTION_PRODUCT_LINKS,
 } from "@/lib/advancedScreening";
+import {
+  SUPPORT_PROGRAMS,
+  computeSupportEligibility,
+  type SupportProgram,
+} from "@/lib/supportPrograms";
 
 // 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
 const INDUSTRY_OPTIONS: { value: string; label: string; emoji: string }[] = [
@@ -51,6 +57,25 @@ type Tri = "yes" | "no" | "unknown" | "";
 
 export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: boolean }) {
   const [report, setReport] = useState<AdvancedScreeningReport | null>(null);
+
+  // 진단 프로필 기준 '신청 대상'인 추가 지원제도 (기관 박스 안에 함께 안내)
+  //  autoRun 모드에서 mpp_diagnosis를 읽어 계산 · 정밀진단 반영 이벤트 시 재계산
+  const [eligibleSupport, setEligibleSupport] = useState<SupportProgram[]>([]);
+  useEffect(() => {
+    const recompute = () => {
+      try {
+        const raw = sessionStorage.getItem("mpp_diagnosis");
+        const p = raw ? JSON.parse(raw) : {};
+        const elig = computeSupportEligibility(p);
+        setEligibleSupport(SUPPORT_PROGRAMS.filter((prog) => elig[prog.id]));
+      } catch {
+        setEligibleSupport([]);
+      }
+    };
+    recompute();
+    window.addEventListener("mpp-advanced-applied", recompute);
+    return () => window.removeEventListener("mpp-advanced-applied", recompute);
+  }, []);
 
   // 단계(토스식) — 0부터 시작, 마지막 단계에서 판정 실행
   const [step, setStep] = useState(0);
@@ -709,7 +734,7 @@ export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: 
       {/* 판정 결과 */}
       {report && (
         <>
-          <AdvancedResult report={report} autoRun={autoRun} />
+          <AdvancedResult report={report} autoRun={autoRun} eligibleSupport={eligibleSupport} />
           {!autoRun && (
             <button
               type="button"
@@ -733,7 +758,15 @@ function verdictStyle(ok: boolean): { cls: string; icon: string } {
     : { cls: "bg-red-50 border-brand-red text-brand-red", icon: "⚠️" };
 }
 
-function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreeningReport; autoRun?: boolean }) {
+function AdvancedResult({
+  report,
+  autoRun = false,
+  eligibleSupport = [],
+}: {
+  report: AdvancedScreeningReport;
+  autoRun?: boolean;
+  eligibleSupport?: SupportProgram[];
+}) {
   const {
     koditHardReject,
     financials,
@@ -987,6 +1020,50 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
             ))}
           </div>
         </div>
+
+        {/* 추가로 신청 가능한 지원제도 — 같은 박스 안에 통합 (대표님 요청: 하단 분리 X) */}
+        {/*  정책자금(대출·보증)과 별개로 병행 신청 가능 · 진단 기준 '해당되는 것만' · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
+        {eligibleSupport.length > 0 && (
+          <div className="mt-4 border-t border-gray-200 pt-4">
+            <p className="break-keep text-base font-bold text-brand-dark">
+              🎁 대표님이 추가로 신청 가능한 지원제도
+            </p>
+            <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+              정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다. 진단 정보 기준 신청 대상인 제도만 모았습니다.
+              카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
+            </p>
+            <div className="mt-3 divide-y divide-gray-200">
+              {eligibleSupport.map((prog) => (
+                <Link
+                  key={prog.id}
+                  href={`/support/${prog.id}`}
+                  className="group flex items-start gap-3 py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50"
+                >
+                  <span className="text-2xl">{prog.icon}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-2">
+                      <span className="break-keep text-sm font-extrabold text-brand-dark">
+                        {prog.title}
+                      </span>
+                      <span className="inline-block break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-extrabold text-white">
+                        ✅ 신청 대상
+                      </span>
+                    </div>
+                    <p className="break-keep text-[11px] font-semibold leading-relaxed text-brand-green">
+                      {prog.eligibleNote}
+                    </p>
+                    <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+                      {prog.desc}
+                    </p>
+                    <span className="mt-1 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
+                      상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 소상공인·중소기업이 알아두면 좋은 정부 사이트 모음으로 이동 */}

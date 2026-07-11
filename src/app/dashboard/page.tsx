@@ -1,23 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { DiagnosisProfile } from "@/lib/matching";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
 import { ADVISORY_DISCLAIMER, REVALIDATION_NOTICE } from "@/lib/advancedScreening";
-import { SUPPORT_PROGRAMS, computeSupportEligibility } from "@/lib/supportPrograms";
 
 export default function DashboardPage() {
-  // 진단 프로필 원본 — 기관·상품 안내(AdvancedScreeningPanel)와
-  //  추가 지원제도(고용지원금·바우처 등) 신청 대상 판정에 사용.
-  const [profileData, setProfileData] = useState<DiagnosisProfile>({});
+  // 진단 프로필 원본 — 헤더 안내 문구 등에 사용.
+  //  (기관·상품 + 추가 지원제도 판정은 AdvancedScreeningPanel이 자체적으로 수행)
+  const [, setProfileData] = useState<DiagnosisProfile>({});
 
   useEffect(() => {
-    // 진단 답 + (정밀진단 반영분)을 읽어 프로필을 확보.
-    //  정밀진단이 완료되면 mpp_diagnosis가 병합 갱신되므로 그 값을 그대로 사용.
     const recompute = () => {
       try {
         const raw = sessionStorage.getItem("mpp_diagnosis");
@@ -32,13 +28,6 @@ export default function DashboardPage() {
     window.addEventListener("mpp-advanced-applied", recompute);
     return () => window.removeEventListener("mpp-advanced-applied", recompute);
   }, []);
-
-  // 진단 프로필 기준 '신청 대상'인 추가 지원제도만 골라 리스트로 안내
-  //  (정책자금과 별개 병행 가능 · 클릭 시 상세 화면으로 이동)
-  const eligibleSupport = useMemo(() => {
-    const elig = computeSupportEligibility(profileData || {});
-    return SUPPORT_PROGRAMS.filter((prog) => elig[prog.id]);
-  }, [profileData]);
 
   return (
     <PageShell pageKey="dashboard">
@@ -57,55 +46,10 @@ export default function DashboardPage() {
           </section>
 
           {/* 기관·상품 안내 — 결제 전 진단값으로 자동 판독(추가 질문 없음) */}
+          {/*  추가 지원제도(🎁)는 이 패널 박스 안에 함께 노출됩니다. (하단 분리 X) */}
           <div className="mt-6">
             <AdvancedScreeningPanel autoRun />
           </div>
-
-          {/* 추가로 신청 가능한 지원제도 — 진단 기준 '해당되는 것만' 리스트로 안내 */}
-          {/*  기관 안내와 동일한 divide-y 카드 스타일 · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
-          {eligibleSupport.length > 0 && (
-            <section id="support-programs" className="mt-6 rounded-3xl border border-gray-200 bg-white p-5 shadow-card sm:p-6">
-              <h2 className="break-keep text-lg font-extrabold text-brand-dark sm:text-xl">
-                🎁 대표님이 추가로 신청 가능한 지원제도
-              </h2>
-              <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray sm:text-sm">
-                정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다. 진단 정보 기준 신청 대상인 제도만 모았습니다.
-                <br className="hidden sm:block" />
-                카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
-              </p>
-
-              <div className="mt-4 divide-y divide-gray-200">
-                {eligibleSupport.map((prog) => (
-                  <Link
-                    key={prog.id}
-                    href={`/support/${prog.id}`}
-                    className="group flex items-start gap-3 py-3.5 first:pt-0 last:pb-0 transition hover:bg-gray-50"
-                  >
-                    <span className="text-2xl">{prog.icon}</span>
-                    <div className="flex-1">
-                      <div className="mb-1 flex flex-wrap items-center gap-2">
-                        <span className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                          {prog.title}
-                        </span>
-                        <span className="inline-block break-keep rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-extrabold text-white">
-                          ✅ 신청 대상
-                        </span>
-                      </div>
-                      <p className="break-keep text-[11px] font-semibold leading-relaxed text-brand-green sm:text-xs">
-                        {prog.eligibleNote}
-                      </p>
-                      <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60 sm:text-xs">
-                        {prog.desc}
-                      </p>
-                      <span className="mt-1 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange sm:text-xs">
-                        상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
 
           {/* 면책조항 + 재검증 안내 — 최하단 */}
           <div className="mt-7 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
