@@ -811,9 +811,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                           📄 신청 매뉴얼
                         </a>
                       )}
-                      {link.manualUrl && (
-                        <span className="text-[11px] font-bold text-brand-dark/40">-</span>
-                      )}
                       <a
                         href={link.siteUrl}
                         target="_blank"
@@ -823,9 +820,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                         {link.siteLabel}
                       </a>
                       {link.pdfUrl && (
-                        <span className="text-[11px] font-bold text-brand-dark/40">-</span>
-                      )}
-                      {link.pdfUrl && (
                         <a
                           href={link.pdfUrl}
                           target="_blank"
@@ -833,6 +827,16 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                           className="inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100"
                         >
                           📑 {link.pdfLabel}
+                        </a>
+                      )}
+                      {link.productName && link.productUrl && (
+                        <a
+                          href={link.productUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block rounded-lg border-2 border-brand-green bg-brand-green/10 px-3 py-1.5 text-[11px] font-bold text-brand-green hover:bg-brand-green/20"
+                        >
+                          💳 {link.productName}
                         </a>
                       )}
                     </div>
@@ -872,9 +876,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                             📄 신청 매뉴얼
                           </a>
                         )}
-                        {j.manualUrl && (
-                          <span className="text-[11px] font-bold text-brand-dark/40">-</span>
-                        )}
                         <a
                           href={j.url}
                           target="_blank"
@@ -883,9 +884,6 @@ function AdvancedResult({ report, autoRun = false }: { report: AdvancedScreening
                         >
                           {j.label}
                         </a>
-                        {j.productUrl && (
-                          <span className="text-[11px] font-bold text-brand-dark/40">-</span>
-                        )}
                         {j.productUrl && (
                           <a
                             href={j.productUrl}
