@@ -118,21 +118,19 @@ export default function DashboardPage() {
               )}
             </p>
 
-            {/* 정밀진단 반영 안내 — 정밀진단을 완료하면 그 값이 우선 반영됨 */}
-            {advancedApplied && (
-              <div className="mx-auto mt-4 max-w-2xl rounded-xl border border-brand-orange/40 bg-brand-yellow/10 px-4 py-2.5">
-                <p className="break-keep text-xs font-semibold text-brand-dark sm:text-sm">
-                  🎯 <b>정밀 추가진단</b> 결과가 반영되었습니다. 처음 진단과 다른 항목은 <b>정밀진단 값을 기준</b>으로 안내됩니다.
-                </p>
-              </div>
-            )}
-
-            {/* 한눈에 보는 핵심 요약 — 승인 가능성 높은 사업 개수 */}
-            {highCount > 0 && (
-              <div className="mx-auto mt-5 max-w-2xl rounded-xl border-2 border-brand-green bg-green-50 px-4 py-2">
-                <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                  ✅ 이 중 <span className="text-brand-green">승인 가능성 높은 사업 {highCount}개</span>를 먼저 신청해 보세요!
-                </p>
+            {/* 안내 요약 — 정밀진단 반영 + 승인 가능성 요약을 한 박스로 통합 */}
+            {(advancedApplied || highCount > 0) && (
+              <div className="mx-auto mt-5 max-w-2xl space-y-1.5 rounded-xl border-2 border-brand-green bg-green-50 px-4 py-3">
+                {advancedApplied && (
+                  <p className="break-keep text-xs font-semibold text-brand-dark sm:text-sm">
+                    🎯 <b>정밀 추가진단</b> 결과가 반영되었습니다. 처음 진단과 다른 항목은 <b>정밀진단 값을 기준</b>으로 안내됩니다.
+                  </p>
+                )}
+                {highCount > 0 && (
+                  <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
+                    ✅ 이 중 <span className="text-brand-green">승인 가능성 높은 사업 {highCount}개</span>를 먼저 신청해 보세요!
+                  </p>
+                )}
               </div>
             )}
           </section>
