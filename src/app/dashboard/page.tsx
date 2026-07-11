@@ -23,24 +23,35 @@ export default function DashboardPage() {
   const [name, setName] = useState("");
   const [activeCat, setActiveCat] = useState<MatchCategory | "전체">("전체");
   const [loaded, setLoaded] = useState(false);
+  const [advancedApplied, setAdvancedApplied] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem("mpp_diagnosis");
-      const profile = raw ? JSON.parse(raw) : {};
-      setName(profile.name || "");
-      const matched = matchPrograms(profile);
-      // 매칭 결과가 없으면 전체 프로그램을 기본 노출 (구독자는 전체 열람 가능)
-      setResults(
-        matched.length > 0
-          ? matched
-          : PROGRAMS.map((program) => ({ program, score: 0, reasons: [] }))
-      );
-    } catch {
-      setResults(PROGRAMS.map((program) => ({ program, score: 0, reasons: [] })));
-    } finally {
-      setLoaded(true);
-    }
+    // 처음 질문지 + (정밀진단 반영분)을 읽어 매칭리스트를 계산.
+    //  정밀진단이 완료되면 mpp_diagnosis가 병합 갱신되므로 그 값을 그대로 사용.
+    //  → 처음 답과 다르면 정밀진단 값이 우선 반영된다(대표님 기준).
+    const recompute = () => {
+      try {
+        const raw = sessionStorage.getItem("mpp_diagnosis");
+        const profile = raw ? JSON.parse(raw) : {};
+        setName(profile.name || "");
+        setAdvancedApplied(Boolean(profile._advancedApplied));
+        const matched = matchPrograms(profile);
+        setResults(
+          matched.length > 0
+            ? matched
+            : PROGRAMS.map((program) => ({ program, score: 0, reasons: [] }))
+        );
+      } catch {
+        setResults(PROGRAMS.map((program) => ({ program, score: 0, reasons: [] })));
+      } finally {
+        setLoaded(true);
+      }
+    };
+
+    recompute();
+    // 정밀진단 완료 시 발신되는 이벤트를 받아 즉시 재계산
+    window.addEventListener("mpp-advanced-applied", recompute);
+    return () => window.removeEventListener("mpp-advanced-applied", recompute);
   }, []);
 
   // 카테고리별 개수
@@ -89,6 +100,15 @@ export default function DashboardPage() {
               <br className="hidden sm:block" />
               각 사업을 눌러 신청 방법·필요 서류·승인 전략을 확인하세요.
             </p>
+
+            {/* 정밀진단 반영 안내 — 정밀진단을 완료하면 그 값이 우선 반영됨 */}
+            {advancedApplied && (
+              <div className="mx-auto mt-4 max-w-2xl rounded-xl border border-brand-orange/40 bg-brand-yellow/10 px-4 py-2.5">
+                <p className="break-keep text-xs font-semibold text-brand-dark sm:text-sm">
+                  🎯 <b>정밀 추가진단</b> 결과가 반영되었습니다. 처음 진단과 다른 항목은 <b>정밀진단 값을 기준</b>으로 안내됩니다.
+                </p>
+              </div>
+            )}
 
             {/* 한눈에 보는 핵심 요약 — 승인 가능성 높은 사업 개수 */}
             {highCount > 0 && (

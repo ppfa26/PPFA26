@@ -6,14 +6,14 @@
 //     여기서는 입력 UX만 쉽게 바꾸고, 기존 Company 스키마로 변환해서 넘깁니다.
 //
 //  [정확한 AI 판독을 위한 입력 설계 원칙]
-//   - 어려운 재무용어(자기자본/총차입금)를 대표님 언어로 바꾼다.
-//   - 개인사업자는 '자기자본' 개념이 없으므로 사업자 유형으로 분기해 숨긴다.
+//   - 어려운 재무용어(자기자본/자본총계/총차입금)는 질문에서 빼거나 쉬운 말로 바꾼다.
+//     (재무제표를 모르는 대표님도 답할 수 있게 함)
 //   - 담보대출(부동산 등)은 매출 대비 부채 판정을 왜곡하므로 신용대출과 분리하고
 //     판독(total_debt)에는 '신용대출/정책자금'만 넣는다. (담보대출은 참고용으로만 수집)
 //   - 신용점수는 몰라도 되게 '모름'을 허용하고 확인처를 안내한다.
 // ─────────────────────────────────────────────────────────────────────────
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Company,
   runAdvancedScreening,
@@ -59,7 +59,6 @@ export default function AdvancedScreeningPanel() {
   const [revenue억, setRevenue억] = useState("");
   const [creditLoan억, setCreditLoan억] = useState(""); // 신용대출·정책자금(담보 없는 대출) → 판독 반영
   const [securedLoan억, setSecuredLoan억] = useState(""); // 부동산 담보대출 → 판독 제외(참고용)
-  const [equity억, setEquity억] = useState(""); // 자기자본(법인만)
   const [ceoAge, setCeoAge] = useState("");
   const [years, setYears] = useState("");
   const [employees, setEmployees] = useState<"0" | "under5" | "5plus" | "">(""); // 4대보험 상시직원 수
@@ -80,6 +79,82 @@ export default function AdvancedScreeningPanel() {
   const [isReFounder, setIsReFounder] = useState(false);
   const [hasMainbiz, setHasMainbiz] = useState(false);
 
+  // 처음 질문지에서 값을 가져왔는지 표시 (안내 문구용)
+  const [prefilled, setPrefilled] = useState(false);
+
+  // ── 처음 질문지(mpp_diagnosis) 값을 정밀진단 초깃값으로 불러오기 ──────
+  //  대표님 기준: 처음 답한 내용을 이어받고, 정밀진단에서 고치면 그게 우선.
+  //  (둘 다 포괄적으로 보되, 정밀진단 값을 최종 판독에 사용)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("mpp_diagnosis");
+      if (!raw) return;
+      const p = JSON.parse(raw);
+      let touched = false;
+
+      // 사업자 유형
+      if (p.businessType?.includes("법인")) { setBizType("corp"); touched = true; }
+      else if (p.businessType?.includes("개인")) { setBizType("personal"); touched = true; }
+      if (p.businessType?.includes("예비")) { setIsPreFounder(true); touched = true; }
+
+      // 업종 (여러 개면 첫 번째 대표 업종)
+      const ind = (p.industries || [])[0];
+      if (ind) {
+        const map: Record<string, string> = {
+          제조업: "manufacturing", 수출업: "export", 서비스업: "service",
+          도소매업: "retail", 음식점업: "food", 기타: "etc",
+        };
+        setIndustry(map[ind] || ind);
+        touched = true;
+      }
+      if (p.industries?.includes("수출업")) { setIsExporter("yes"); touched = true; }
+
+      // 매출 (구간 → 대략 억 값)
+      const revMap: Record<string, string> = {
+        "5억 이상": "5", "5억미만": "3", "5억 미만": "3",
+        "1억 미만": "0.5", "1억미만": "0.5", "매출 없음": "0", "매출없음": "0",
+      };
+      if (p.revenue && revMap[p.revenue.trim?.() || p.revenue]) {
+        setRevenue억(revMap[p.revenue.trim?.() || p.revenue]);
+        touched = true;
+      }
+
+      // 업력 (구간 → 대략 연수)
+      const yMap: Record<string, string> = {
+        "창업 예정": "0", "창업예정": "0", "1년 미만": "0.5", "1년미만": "0.5",
+        "3년 미만": "2", "3년미만": "2", "7년 미만": "5", "7년미만": "5", "7년 이상": "10", "7년이상": "10",
+      };
+      const yv = yMap[(p.years || "").trim?.() || p.years];
+      if (yv) { setYears(yv); touched = true; }
+
+      // 직원수
+      if (p.employees) {
+        if (p.employees.includes("0명")) setEmployees("0");
+        else if (p.employees.includes("5명")) setEmployees("under5");
+        else if (p.employees.includes("10명")) setEmployees("5plus");
+        touched = true;
+      }
+
+      // 신용점수 구간 → 대략 점수 (모름 아님으로)
+      if (p.credit) {
+        if (p.credit.includes("839점 이상")) { setCreditKnown("yes"); setKcb("850"); setNice("850"); touched = true; }
+        else if (p.credit.includes("839")) { setCreditKnown("yes"); setKcb("820"); setNice("820"); touched = true; }
+        else if (p.credit.includes("700")) { setCreditKnown("yes"); setKcb("690"); setNice("690"); touched = true; }
+      }
+
+      // 회생·파산 → 재창업자로 간주(정밀진단에서 다시 확인 가능)
+      if (p.bankruptcy && (p.bankruptcy.includes("있"))) { setIsReFounder(true); touched = true; }
+
+      // 인증(메인비즈)
+      if ((p.certifications || []).includes("메인비즈")) { setHasMainbiz(true); touched = true; }
+
+      if (touched) setPrefilled(true);
+    } catch {
+      /* 무시 — 처음 질문지 없거나 파싱 실패 시 빈 상태로 시작 */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ── 판정 실행 ──────────────────────────────────────────────
   const handleRun = () => {
     const empCount = employees === "5plus" ? 5 : employees === "under5" ? 2 : employees === "0" ? 0 : undefined;
@@ -92,8 +167,6 @@ export default function AdvancedScreeningPanel() {
       is_exporter: isExporter === "yes",
       // ⭐ 판독에는 '신용대출/정책자금'만 반영 (담보대출 제외 → 매출 대비 부채 판정 왜곡 방지)
       total_debt: toWon(creditLoan억),
-      // 자기자본은 법인만 (개인사업자는 개념이 없어 미입력 → 판독 영향 없음)
-      total_equity: bizType === "corp" ? toWon(equity억) : undefined,
       ceo_age: ceoAge ? parseInt(ceoAge, 10) : undefined,
       years_in_business: years ? parseFloat(years) : undefined,
       kcb_score: creditKnown === "yes" && kcb ? parseInt(kcb, 10) : undefined,
@@ -109,6 +182,51 @@ export default function AdvancedScreeningPanel() {
       has_mainbiz: hasMainbiz,
     };
     setReport(runAdvancedScreening(company));
+
+    // ── 정밀진단 값을 처음 질문지(mpp_diagnosis)에 병합 저장 (정밀진단 우선) ──
+    //  대표님 기준: 처음 답한 것과 정밀진단이 다르면 '정밀진단'을 기준으로 안내.
+    //  대시보드 하단 매칭리스트도 이 병합값으로 다시 계산되도록 저장한다.
+    try {
+      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const base = raw ? JSON.parse(raw) : {};
+
+      // 정밀진단 업종키 → 처음 질문지 업종 라벨로 역변환
+      const indLabel: Record<string, string> = {
+        manufacturing: "제조업", export: "수출업", service: "서비스업",
+        retail: "도소매업", food: "음식점업", etc: "기타",
+      };
+      // 정밀진단에서 값이 실제로 입력된 항목만 덮어쓴다(빈 값은 처음 질문지 유지 → 포괄적).
+      const merged = { ...base };
+      if (bizType === "corp") merged.businessType = "법인사업자";
+      else if (bizType === "personal") merged.businessType = "개인사업자";
+      if (isPreFounder) merged.businessType = "예비창업자";
+      if (industry) merged.industries = [indLabel[industry] || industry];
+      if (isExporter === "yes" && !merged.industries?.includes("수출업"))
+        merged.industries = [...(merged.industries || []), "수출업"];
+      if (revenue억) {
+        const r = parseFloat(revenue억);
+        merged.revenue = r >= 5 ? "5억 이상" : r >= 1 ? "5억 미만" : r > 0 ? "1억 미만" : "매출 없음";
+      }
+      if (years) {
+        const y = parseFloat(years);
+        merged.years = y <= 0 ? "창업 예정" : y < 1 ? "1년 미만" : y < 3 ? "3년 미만" : y < 7 ? "7년 미만" : "7년 이상";
+      }
+      if (ceoAge) merged.age = parseInt(ceoAge, 10) <= 39 ? "39세 이하" : "39세 이상";
+      if (employees) merged.employees = employees === "0" ? "0명" : employees === "under5" ? "5명 이하" : "10명 이상";
+      if (creditKnown === "yes" && (kcb || nice)) {
+        const sc = Math.max(parseInt(kcb || "0", 10), parseInt(nice || "0", 10));
+        merged.credit = sc >= 839 ? "839점 이상" : sc >= 700 ? "839점 이하" : "700점 이하";
+      }
+      if (isReFounder) merged.bankruptcy = "있음";
+      merged._advancedApplied = true; // 정밀진단 반영 표시
+
+      sessionStorage.setItem("mpp_diagnosis", JSON.stringify(merged));
+      // 대시보드가 즉시 재계산하도록 커스텀 이벤트 발신
+      window.dispatchEvent(new CustomEvent("mpp-advanced-applied"));
+    } catch {
+      /* 저장 실패해도 정밀진단 결과 표시는 정상 진행 */
+    }
+
     setTimeout(() => {
       document.getElementById("advanced-result")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
@@ -124,7 +242,6 @@ export default function AdvancedScreeningPanel() {
   };
 
   // ── 단계 정의 (토스식: 한 화면에 질문 하나) ──────────────────
-  // 개인사업자면 '자기자본' 단계는 건너뛴다.
   const STEPS: { key: string; skip?: boolean }[] = [
     { key: "bizType" },
     { key: "industry" },
@@ -133,7 +250,6 @@ export default function AdvancedScreeningPanel() {
     { key: "export" },
     { key: "creditLoan" },
     { key: "securedLoan" },
-    { key: "equity", skip: bizType !== "corp" }, // 법인만
     { key: "ceoAge" },
     { key: "years" },
     { key: "credit" },
@@ -372,27 +488,15 @@ export default function AdvancedScreeningPanel() {
               />
             )}
 
-            {/* 5. 담보대출 (판독 제외, 참고용) */}
+            {/* 5. 담보대출 (참고용) */}
             {cur?.key === "securedLoan" && (
               <MoneyStep
                 title="부동산 등 담보로 받은 대출이 있나요?"
-                hint="집·상가·공장 등을 담보로 받은 대출입니다. (담보대출은 정책자금 한도 계산에서 빠지므로 따로 여쭤봅니다.)"
+                hint="집·상가·공장을 담보로 받은 대출입니다. 없으면 비워두고 넘어가세요."
                 value={securedLoan억}
                 setValue={setSecuredLoan억}
                 placeholder="예: 2"
-                example="💡 담보대출이 없으면 비워두시면 됩니다. 이 금액은 판독에서 제외되어 정확도를 높입니다."
-              />
-            )}
-
-            {/* 6. 자기자본 (법인만) */}
-            {cur?.key === "equity" && (
-              <MoneyStep
-                title="법인의 자기자본은 대략 얼마인가요?"
-                hint="재무제표상 자본총계입니다. 정확히 모르시면 비워두셔도 됩니다."
-                value={equity억}
-                setValue={setEquity억}
-                placeholder="예: 1"
-                example="💡 재무제표(재무상태표)의 '자본총계'를 보시면 됩니다."
+                example="💡 담보대출이 없으면 비워두시면 됩니다."
               />
             )}
 
