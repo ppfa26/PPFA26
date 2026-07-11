@@ -173,6 +173,10 @@ export default function DashboardPage() {
                 <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
                   정부지원사업(바우처·보조금)과 정책자금 대출을 한 목록에 모아, 적합도 높은 순으로 정렬했습니다.
                 </p>
+                <p className="mt-2 break-keep text-xs leading-relaxed text-brand-dark/60">
+                  ✅ 표시는 대표님 진단 정보 기준 승인 가능성이 높다는 표시입니다. 승인을 보장하지는 않으며,
+                  심사는 각 기관의 기준표를 기준으로 합니다.
+                </p>
               </div>
             )}
             {loaded && filtered.length === 0 && (
@@ -265,13 +269,6 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* 승인 가능성 안내 문구 */}
-            {filtered.length > 0 && (
-              <p className="break-keep px-1 pt-1 text-center text-[11px] leading-relaxed text-brand-gray">
-                ✅ 표시는 대표님 진단 정보 기준 승인 가능성이 높다는 표시입니다. 승인을 보장하지는 않으며,
-                심사는 각 기관의 기준표를 기준으로 합니다.
-              </p>
-            )}
           </section>
 
           {/* 고용 관련 정부지원 안내 — 고용24 링크 */}
@@ -283,11 +280,11 @@ export default function DashboardPage() {
           >
             <span className="min-w-0">
               <span className="block break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-                👥 직원을 채용·유지 중이라면 &ldquo;고용 관련 정부지원&rdquo;도 챙기세요
+                👥 직원을 채용·유지 중이라면 고용 관련 정부지원사업도 꼭 챙기세요.
               </span>
               <span className="mt-1 block break-keep text-xs leading-relaxed text-brand-dark/60 sm:text-sm">
-                청년·고령자 채용 장려금, 고용유지지원금, 4대보험료 지원 등 고용노동부 지원제도를
-                고용24에서 한 번에 확인할 수 있습니다. 정책자금과 별개로 함께 신청 가능합니다.
+                청년·고령자 채용 장려금, 고용유지지원금, 4대보험료 지원 등 지원제도는
+                고용24에서 한 번에 확인할 수 있습니다. 정책자금과 별개로 함께 추가적으로 신청할 수 있습니다.
               </span>
             </span>
             <span className="shrink-0 rounded-full bg-brand-orange px-4 py-2 text-sm font-extrabold text-white">
