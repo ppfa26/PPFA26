@@ -335,12 +335,17 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   //    옵션이 ["0명","5명 이하","10명 이하","10명 이상"]인데
   //    "10명 이상".includes("0명")도 true라서 과거엔 empCount=0으로 오판 →
   //    중진공·고용지원금 누락. 구체적인 값부터(긴 문자열) 순서대로 검사한다.
+  //    ["0명","5명 이하","10명 이하","10명 이상"] → 대표 인원수로 환산.
+  //    소상공인 경계(비제조 5명·제조 10명)에서 오판이 없도록 구간 중앙값을 쓴다.
+  //    · "5명 이하" → 3명(비제조 소상공인 유지: 5명 미만)
+  //    · "10명 이하" → 7명(비제조는 sme로, 제조는 소상공인 유지: 10명 미만)
+  //    · "10명 이상" → 12명(양쪽 다 sme)
   let empCount: number | undefined;
   if (p.employees) {
     const e = p.employees;
-    if (e.includes("10명 이상") || e.includes("10명이상")) empCount = 10;
-    else if (e.includes("10명")) empCount = 5;      // "10명 이하"
-    else if (e.includes("5명")) empCount = 2;        // "5명 이하"
+    if (e.includes("10명 이상") || e.includes("10명이상")) empCount = 12;
+    else if (e.includes("10명")) empCount = 7;       // "10명 이하"
+    else if (e.includes("5명")) empCount = 3;        // "5명 이하"
     else if (e.includes("0명")) empCount = 0;        // "0명"
   }
 
@@ -354,6 +359,19 @@ export function profileToCompany(p: DiagnosisProfile): Company {
     else if (p.credit.includes("839")) creditScore = 820;
     else if (p.credit.includes("700")) creditScore = 690;
   }
+
+  // ── 인증·기술 신호 전달 (기보 트랙 자격의 핵심) ──
+  //   과거 버그: has_mainbiz만 넘기고 특허·연구소·벤처·이노비즈를 전부 버려서
+  //   기술기업인데도 기보가 안 뜨던 문제. → 인증 전부 개별 플래그로 전달한다.
+  const certs = p.certifications || [];
+  const hasPatent = certs.includes("특허");
+  const hasRnd = certs.includes("연구소");
+  const hasVenture = certs.includes("벤처인증");
+  const hasInnobiz = certs.includes("이노비즈");
+  const hasMainbiz = certs.includes("메인비즈");
+
+  // ── 혁신성장 분야 해당 여부 (직원수·업종 무관하게 중진공·기보 자격이 열리는 핵심) ──
+  const isInnovationArea = (p.innovation || []).length > 0;
 
   return {
     industry: industryVal,
@@ -369,7 +387,18 @@ export function profileToCompany(p: DiagnosisProfile): Company {
     tax_delinquent: false,
     is_pre_founder: Boolean(p.businessType?.includes("예비")),
     is_re_founder: Boolean(p.bankruptcy && p.bankruptcy.includes("있")),
-    has_mainbiz: (p.certifications || []).includes("메인비즈"),
+    // ── 인증·기술 신호 (전부 전달) ──
+    has_patent: hasPatent,
+    has_rnd_center: hasRnd,
+    has_venture_cert: hasVenture,
+    has_innobiz: hasInnobiz,
+    has_mainbiz: hasMainbiz,
+    // ── 혁신성장·지역·담보·이용기관·목적 (버려지던 신호 전부 전달) ──
+    is_innovation_area: isInnovationArea,
+    region: p.region,
+    has_collateral: Boolean(p.collateral && p.collateral.includes("있")),
+    current_institutions: p.currentInstitutions || [],
+    purposes: p.purposes || [],
   };
 }
 

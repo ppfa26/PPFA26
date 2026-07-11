@@ -35,9 +35,15 @@ export type Company = {
   ceo_cb_grade?: string; // 대표자 CB등급(기업 CB, 예: "B+","CCC")
   has_tech_career?: boolean; // 동종업계 기술경력 보유
   has_patent?: boolean; // 특허 보유
+  has_rnd_center?: boolean; // 기업부설연구소·연구개발전담부서 보유
   has_venture_cert?: boolean; // 벤처기업 인증
   has_innobiz?: boolean; // 이노비즈 인증
   has_mainbiz?: boolean; // 메인비즈 인증
+  is_innovation_area?: boolean; // 혁신성장 공동기준 9개 테마 해당(→ 직원수 무관 중진공·기보 자격 확대)
+  region?: string; // 사업장 소재 지역(재단 지역 안내용)
+  has_collateral?: boolean; // 부동산·기계장비 담보 보유
+  current_institutions?: string[]; // 현재 이용 중인 보증·정책기관(중복배제 판단용)
+  purposes?: string[]; // 상담 목적(운전/시설/수출/창업 등) — 매칭 힌트
   tax_delinquent?: boolean; // 국세/지방세 체납
   insurance_4_delinquent?: boolean; // 4대보험 체납
   full_capital_impairment?: boolean; // 완전자본잠식
@@ -187,6 +193,8 @@ export type CreditMatch = {
   priority: "HIGH" | "MEDIUM" | "TECH_BASED";
   loan_type?: "직접대출" | "대리대출"; // 직접대출(공단) / 대리대출(보증서→은행)
   step?: number; // 신청 권장 순서 (1이 가장 먼저)
+  exclusiveNote?: string; // 중복 신청 불가 안내(신보·기보 둘다 자격일 때 등)
+  alreadyUsing?: boolean; // 현재 이용 중인 기관(중복배제 판단 참고용)
 };
 
 // 업종 정규화: 다양한 표기를 대분류 키로 변환
@@ -242,76 +250,153 @@ export function scoreTier(company: Company): CreditTier {
   return "hard";
 }
 
-// 이용 가능 기관 판정 — 업종·직원수·수출·신용점수 기준 + 신청 권장 순서
+// ── 기술기업 판정 (하이브리드) ─────────────────────────────────────
+//  대표님 기준: 기보(기술보증기금)는 "제조·기술" 업종에만 안내한다.
+//  다만 업종 문자열이 '서비스/기타'로 잡혀도, 아래 기술 신호가 하나라도 있으면
+//  기술평가 기반 보증(기보) 자격이 실제로 열리므로 기술트랙으로 본다.
+//   - 업종 자체가 제조/혁신기술(로봇·AI·바이오·반도체 등)
+//   - 특허·기업부설연구소 보유
+//   - 벤처인증·이노비즈 보유
+//   - 혁신성장 공동기준 9개 테마 해당
+//   - 동종업계 기술경력 보유
+export function isTechCompany(company: Company): boolean {
+  const cat = normalizeIndustry(company.industry);
+  if (cat === "manufacturing" || cat === "tech_innov") return true;
+  return Boolean(
+    company.has_patent ||
+      company.has_rnd_center ||
+      company.has_venture_cert ||
+      company.has_innobiz ||
+      company.is_innovation_area ||
+      company.has_tech_career
+  );
+}
+
+// 이용 가능 기관 판정 — 업종·직원수·수출·기술·규모 기준 + 신청 권장 순서 + 중복배제
 export function matchInstitutions(company: Company): CreditMatch[] {
   const matches: CreditMatch[] = [];
   const cat = normalizeIndustry(company.industry);
   const employees = company.employee_count ?? 0;
   const isExport = (company.industry || "").includes("수출") || company.is_exporter === true;
   const segment = resolveSegment(company);
-  const isTechTrack = cat === "manufacturing" || cat === "tech_innov";
+  const revenue = company.annual_revenue ?? 0;
+  const isBigRevenue = revenue >= 500000000 || segment === "sme"; // 매출 5억↑ 또는 중소기업 규모
+  const isTech = isTechCompany(company);
+  const isManufacturingCore = cat === "manufacturing" || cat === "tech_innov"; // 업종 자체가 제조·기술
 
-  if (isTechTrack) {
-    // ⚠️ 제조·로봇·AI·혁신 → 반드시 기술보증기금부터!
-    //    (재단 먼저 받으면 기보 신청이 막힘)
+  // 현재 이용 중인 기관(중복배제 참고): 사용자가 진단에서 선택한 기관
+  const using = (company.current_institutions || []).map((s) => s.replace(/\s/g, ""));
+  const usingKodit = using.some((s) => s.includes("신용보증기금"));
+  const usingKibo = using.some((s) => s.includes("기술보증기금"));
+  const usingJaedan = using.some((s) => s.includes("신용보증재단") || s.includes("재단"));
+
+  // ─────────────────────────────────────────────────────────────────
+  //  【중복배제 핵심 규칙】 (대표님 기준)
+  //   신보·기보·재단은 같은 신용보증이라 원칙적으로 "하나만" 신청.
+  //    - 기술기업 → 기보 우선 (재단·신보 X)
+  //    - 비기술 + 매출 5억↑ → 신보 우선 (기보·재단 X)
+  //    - 비기술 + 매출 5억↓ → 재단 우선 (신보·기보 X)
+  //   ★ 예외: 기술기업 + 매출 규모(5억↑ 또는 sme)까지 있으면
+  //           신보·기보 "둘 다" 자격 → 둘 다 안내하되 '중복 신청 불가' 명시.
+  //   ★ 소진공·중진공은 보증기관이 아니라 정책자금(직접대출)이라 병행 가능.
+  //   ★ 무역보험공사는 수출 전용 + 한도 별도라 항상 병행 가능.
+  // ─────────────────────────────────────────────────────────────────
+
+  // 신보·기보 둘 다 자격? (기술기업이면서 매출·규모도 갖춘 경우)
+  const qualifiesBothGuarantee = isTech && isBigRevenue;
+  const DUP_NOTE =
+    "⚠️ 신용보증기금·기술보증기금은 중복 신청이 불가합니다. 두 곳 모두 자격이 되므로 둘 중 유리한 1곳을 선택해 신청하세요 (기술력 강점 → 기보 / 매출·규모 강점 → 신보).";
+
+  if (qualifiesBothGuarantee) {
+    // 신보·기보 둘 다 자격 → 둘 다 안내 + 중복 불가 명시
     matches.push({
       institution: "기술보증기금",
-      criteria: "⚠️ 기술기업은 여기부터! (재단 먼저 받으면 기보 신청 불가) · 기술평가 보증",
+      criteria: "기술력(특허·연구소·벤처·혁신성장 등) 기반 보증 · 기술 강점이면 기보가 유리",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
+      exclusiveNote: DUP_NOTE,
     });
     matches.push({
-      institution: "중소벤처기업진흥공단",
-      criteria: "제조·혁신 → 직원수 무관 정책자금 (직접대출, 아이템+동종경력 시 승인 잘남)",
+      institution: "신용보증기금",
+      criteria: "매출·사업규모 기반 보증(한도 큼) · 규모 강점이면 신보가 유리",
       priority: "HIGH",
-      loan_type: "직접대출",
-      step: 2,
+      loan_type: "대리대출",
+      step: 1,
+      exclusiveNote: DUP_NOTE,
     });
-    // 소상공인 규모의 제조·혁신이면 재단·소진공도 병행 가능
+    // 중진공(정책자금) 병행 — 제조·혁신은 직원수 무관, 그 외는 직원 5명 이상
+    if (isManufacturingCore || company.is_innovation_area || employees >= 5) {
+      matches.push({
+        institution: "중소벤처기업진흥공단",
+        criteria: isManufacturingCore || company.is_innovation_area
+          ? "제조·혁신성장 → 직원수 무관 정책자금 (직접대출, 보증기관과 별개로 병행 가능)"
+          : "상시직원 5명 이상 → 중진공 정책자금 병행 가능 (직접대출, 보증과 별개)",
+        priority: "HIGH",
+        loan_type: "직접대출",
+        step: 2,
+      });
+    }
+    // 소진공(정책자금) — 소상공인 규모면 병행
     if (segment === "small") {
       matches.push({
-        institution: "지역신용보증재단",
-        criteria: "소상공인 규모 → 기보 신청 후 병행 가능 (특례→협약→일반 순 승인율)",
-        priority: "MEDIUM",
-        loan_type: "대리대출",
-        step: 3,
-      });
-      matches.push({
         institution: "소상공인시장진흥공단",
-        criteria: "혁신성장촉진(스마트)자금 등 병행 가능 (직접대출)",
+        criteria: "소상공인 규모 → 직접대출 정책자금 병행 가능 (보증과 별개)",
         priority: "MEDIUM",
         loan_type: "직접대출",
         step: 3,
       });
     }
-  } else if (cat === "retail_food" || cat === "service" || cat === "etc") {
-    // 도소매·음식점·서비스·기타 (비기술 트랙)
-    const revenue = company.annual_revenue ?? 0;
-    const isBigRevenue = revenue >= 500000000 || segment === "sme"; // 매출 5억↑ 또는 중소기업 규모
-
-    if (isBigRevenue) {
-      // ── 매출 5억 이상 → 신용보증기금(신보)이 1순위, 재단 2순위, 소진공은 보너스 (대표님 기준) ──
+  } else if (isTech) {
+    // ── 기술기업(제조·기술·특허·혁신성장 등) → 기보 단독 우선 (재단·신보 X) ──
+    matches.push({
+      institution: "기술보증기금",
+      criteria: "⚠️ 기술기업은 기보부터! (신보·재단과 중복 불가 · 기술평가로 매출 낮아도 보증)",
+      priority: "TECH_BASED",
+      loan_type: "대리대출",
+      step: 1,
+      alreadyUsing: usingKibo,
+    });
+    // 중진공(정책자금) 병행 — 제조·혁신은 직원수 무관, 그 외는 직원 5명 이상
+    if (isManufacturingCore || company.is_innovation_area || employees >= 5) {
       matches.push({
-        institution: "신용보증기금",
-        criteria: "매출 5억 이상 규모 기업 → 신보 1순위 (사업 규모·매출 기반 보증, 한도 큼)",
+        institution: "중소벤처기업진흥공단",
+        criteria: isManufacturingCore || company.is_innovation_area
+          ? "제조·혁신성장 → 직원수 무관 정책자금 (직접대출, 아이템+동종경력 시 승인 잘남)"
+          : "상시직원 5명 이상 → 중진공 정책자금 병행 가능 (직접대출)",
         priority: "HIGH",
-        loan_type: "대리대출",
-        step: 1,
-      });
-      matches.push({
-        institution: "지역신용보증재단",
-        criteria: "신보 다음 2순위 · 특례→협약→일반 순으로 승인율 높음",
-        priority: "MEDIUM",
-        loan_type: "대리대출",
+        loan_type: "직접대출",
         step: 2,
       });
+    }
+    // 소상공인 규모의 기술기업이면 소진공(정책자금) 병행
+    if (segment === "small") {
       matches.push({
         institution: "소상공인시장진흥공단",
-        criteria: "직접대출로 항상 병행 신청 가능 (보너스) · 재단·신보와 별개",
+        criteria: "소상공인 규모 → 혁신성장촉진(스마트)자금 등 직접대출 병행 가능",
         priority: "MEDIUM",
         loan_type: "직접대출",
         step: 3,
+      });
+    }
+  } else {
+    // ── 비기술 트랙 (도소매·음식점·서비스·기타) ──
+    if (isBigRevenue) {
+      // 매출 5억↑ 또는 중소기업 규모 → 신보 단독 (기보·재단 X)
+      matches.push({
+        institution: "신용보증기금",
+        criteria: "매출 5억 이상·사업 규모 기업 → 신보 우선 (재단과 중복 불가 · 매출 기반 보증, 한도 큼)",
+        priority: "HIGH",
+        loan_type: "대리대출",
+        step: 1,
+        alreadyUsing: usingKodit,
+      });
+      matches.push({
+        institution: "소상공인시장진흥공단",
+        criteria: "직접대출 정책자금으로 병행 신청 가능 (보증과 별개)",
+        priority: "MEDIUM",
+        loan_type: "직접대출",
+        step: 2,
       });
       // 직원 5명 이상이면 중진공까지 확장
       if (employees >= 5) {
@@ -320,21 +405,22 @@ export function matchInstitutions(company: Company): CreditMatch[] {
           criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 확장 가능 (직접대출)",
           priority: "MEDIUM",
           loan_type: "직접대출",
-          step: 4,
+          step: 3,
         });
       }
     } else {
-      // ── 매출 5억 미만 소상공인 → 재단 1순위, 소진공은 보너스, 신보 비권장 ──
+      // 매출 5억 미만 소상공인 → 재단 단독 (신보·기보 X)
       matches.push({
         institution: "지역신용보증재단",
-        criteria: "소상공인 1순위 · 특례→협약→일반 순으로 승인율 높음",
+        criteria: "소상공인(매출 5억 미만) → 재단 우선 (신보·기보와 중복 불가 · 특례→협약→일반 순 승인율)",
         priority: "HIGH",
         loan_type: "대리대출",
         step: 1,
+        alreadyUsing: usingJaedan,
       });
       matches.push({
         institution: "소상공인시장진흥공단",
-        criteria: "직접대출로 항상 병행 신청 가능 (보너스) · 재단과 별개",
+        criteria: "직접대출 정책자금으로 병행 신청 가능 (재단과 별개)",
         priority: "MEDIUM",
         loan_type: "직접대출",
         step: 2,
@@ -356,7 +442,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   if (isExport) {
     matches.push({
       institution: "한국무역보험공사",
-      criteria: "🌏 수출은 최강! 선적전/선적후/문화산업보증 중 1개 · 다른 기관과 한도 별도",
+      criteria: "🌏 수출은 최강! 선적전/선적후/문화산업보증 중 1개 · 다른 기관과 한도 별도로 병행",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 9,
@@ -557,6 +643,17 @@ export const GOV_SUPPORT_2026: GovProgram[] = [
   // 관광기업혁신바우처 — 관광사업체만
   { name: "관광기업혁신바우처", amount_min: 20000000, amount_max: 100000000, segment: "both", requiresTourism: true, applyUrl: "https://www.tourbiz.or.kr" },
   { name: "로컬크리에이터", self_burden: 0.2, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
+  // ── 업종·기술·수출 조건 없이 폭넓게 신청 가능한 범용 사업 (대표님 "최대한 많이 알맞게" 방침) ──
+  //   ★ 운영 중인 기존 사업자(예비창업 제외)라면 업종 무관하게 실질 신청 가능한 검증 사업.
+  //   일반 중소기업(서비스·도소매 등 비수출·비기술)이 매칭 결과가 비지 않도록 커버리지 확보.
+  // 중소기업 컨설팅·경영지원(비즈니스지원단 등) — 운영 중 중소기업 공통
+  { name: "중소기업_경영컨설팅지원", amount_max: 30000000, segment: "sme", requiresOperating: true, applyUrl: "https://www.mss.go.kr" },
+  // 정규직 전환·일자리 창출 연계(고용부·중기부 공통) — 운영 중 사업자 공통
+  { name: "일자리창출_고용지원", amount_max: 10000000, segment: "both", requiresOperating: true, applyUrl: "https://www.work24.go.kr" },
+  // 스마트서비스 바우처(비대면 서비스 도입) — 운영 중 중소·소상공인 공통
+  { name: "스마트서비스_바우처", amount_max: 4000000, self_burden: 0.3, segment: "both", requiresOperating: true, applyUrl: "https://www.smart-factory.kr" },
+  // 중소기업 정책자금(운전·시설) 연계 안내 — 운영 중 중소기업 공통(직접대출 정책자금)
+  { name: "중소기업_정책자금(운전·시설)", amount_max: 1000000000, segment: "sme", requiresOperating: true, applyUrl: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI001M0.do" },
 ];
 
 // ── 17개 시·도 지역신용보증재단 상품 안내 ──────────────────────
@@ -748,22 +845,34 @@ export function resolveSegment(company: Company): "small" | "sme" {
   if (company.is_small_business === false) return "sme";
 
   const cat = normalizeIndustry(company.industry);
-
-  // 직원수 입력 시: 상시근로자 기준으로 판정 (가장 정확)
-  if (company.employee_count !== undefined) {
-    const limit = cat === "manufacturing" || company.industry?.includes("건설") || company.industry?.includes("운수") ? 10 : 5;
-    return company.employee_count < limit ? "small" : "sme";
-  }
-
-  // 직원수 미입력 시: 법인은 중기로, 개인사업자는 업종별 매출기준으로 추정
-  if (company.biz_type === "corp") return "sme";
   const rev = company.annual_revenue ?? 0;
+
   // 업종별 소상공인 매출 상한(추정): 음식·도소매·서비스는 넉넉히, 제조는 낮게.
   const revLimit =
     cat === "retail_food" ? 3000000000 : // 도소매·음식: 30억까지 소상공인으로 추정
     cat === "service" ? 1000000000 : // 서비스: 10억
     cat === "manufacturing" ? 1000000000 : // 제조: 10억
     500000000; // 기타: 5억
+
+  // ★ 법인 + 매출 5억 이상이면 규모 있는 중소기업으로 본다 (소상공인 오판 방지).
+  if (company.biz_type === "corp" && rev >= 500000000) return "sme";
+
+  // 직원수 입력 시: 상시근로자 기준으로 판정 (소상공인기본법)
+  //  ★ 단, 직원이 적어도 매출이 업종 상한을 넘으면 소상공인이 아니므로 sme로 본다.
+  //    (예: 제조 5억↑ 법인이 직원 7명이어도 소상공인 아님 → 소진공 오매칭 방지)
+  if (company.employee_count !== undefined) {
+    const empLimit =
+      cat === "manufacturing" || company.industry?.includes("건설") || company.industry?.includes("운수")
+        ? 10
+        : 5;
+    const smallByEmp = company.employee_count < empLimit;
+    const smallByRev = rev < revLimit;
+    // 직원수·매출 둘 다 소상공인 기준을 만족해야 소상공인. 하나라도 초과하면 sme.
+    return smallByEmp && smallByRev ? "small" : "sme";
+  }
+
+  // 직원수 미입력 시: 법인은 중기로, 개인사업자는 업종별 매출기준으로 추정
+  if (company.biz_type === "corp") return "sme";
   return rev >= revLimit ? "sme" : "small";
 }
 
@@ -773,12 +882,14 @@ export function matchGovPrograms(company: Company): GovProgram[] {
   const { is_pre_founder, is_re_founder, has_mainbiz, is_exporter, is_tourism } = company;
   const segment = resolveSegment(company);
   const cat = normalizeIndustry(company.industry);
-  // 기술 보유 판정: 특허·벤처·이노비즈·기술경력 중 하나라도 있으면 true
+  // 기술 보유 판정: 특허·연구소·벤처·이노비즈·기술경력·혁신성장 중 하나라도 있으면 true
   const hasTech = Boolean(
     company.has_patent ||
+      company.has_rnd_center ||
       company.has_venture_cert ||
       company.has_innobiz ||
-      company.has_tech_career
+      company.has_tech_career ||
+      company.is_innovation_area
   );
   const matched: GovProgram[] = [];
 

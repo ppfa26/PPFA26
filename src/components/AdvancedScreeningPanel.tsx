@@ -214,35 +214,13 @@ export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: 
 
   // ── 판정 실행 ──────────────────────────────────────────────
   const handleRun = () => {
-    const empCount = employees === "5plus" ? 5 : employees === "under5" ? 2 : employees === "0" ? 0 : undefined;
-    const company: Company = {
-      industry,
-      annual_revenue: toWon(revenue억),
-      // ── 업종·규모 기반 추천 필터 (대표님 실무 기준) ──
-      biz_type: bizType || undefined,
-      employee_count: empCount,
-      is_exporter: isExporter === "yes",
-      // ⭐ 판독에는 '신용대출/정책자금'만 반영 (담보대출 제외 → 매출 대비 부채 판정 왜곡 방지)
-      total_debt: toWon(creditLoan억),
-      ceo_age: ceoAge ? parseInt(ceoAge, 10) : undefined,
-      years_in_business: years ? parseFloat(years) : undefined,
-      kcb_score: creditKnown === "yes" && kcb ? parseInt(kcb, 10) : undefined,
-      nice_score: creditKnown === "yes" && nice ? parseInt(nice, 10) : undefined,
-      tax_delinquent: taxDelinquent,
-      insurance_4_delinquent: insuranceDelinquent,
-      full_capital_impairment: capitalImpairment,
-      revenue_drop_30pct_yoy: revenueDrop30,
-      revenue_drop_yoy_pct: revenueDrop30 ? 30 : 0,
-      ceo_changed_1y: ceoChanged,
-      is_pre_founder: isPreFounder,
-      is_re_founder: isReFounder,
-      has_mainbiz: hasMainbiz,
-    };
-    setReport(runAdvancedScreening(company));
-
-    // ── 정밀진단 값을 처음 질문지(mpp_diagnosis)에 병합 저장 (정밀진단 우선) ──
+    // ── 정밀진단 값을 처음 질문지(mpp_diagnosis)에 병합 (정밀진단 우선) ──
     //  대표님 기준: 처음 답한 것과 정밀진단이 다르면 '정밀진단'을 기준으로 안내.
-    //  대시보드 하단 매칭리스트도 이 병합값으로 다시 계산되도록 저장한다.
+    //  ⭐ 매칭 정확도 개선: 판독(setReport)과 대시보드 재계산이 '완전히 동일한'
+    //     공용 변환기(profileToCompany)를 쓰도록 통일한다. 이렇게 하면 처음 질문지에
+    //     담긴 인증(특허/연구소/벤처/이노비즈)·혁신분야·이용기관·지역 정보가
+    //     정밀진단 경로에서도 그대로 반영되어(기보/중진공 판정 등) 정확해진다.
+    let merged: any = {};
     try {
       const raw = sessionStorage.getItem("mpp_diagnosis");
       const base = raw ? JSON.parse(raw) : {};
@@ -253,7 +231,7 @@ export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: 
         retail: "도소매업", food: "음식점업", etc: "기타",
       };
       // 정밀진단에서 값이 실제로 입력된 항목만 덮어쓴다(빈 값은 처음 질문지 유지 → 포괄적).
-      const merged = { ...base };
+      merged = { ...base };
       if (bizType === "corp") merged.businessType = "법인사업자";
       else if (bizType === "personal") merged.businessType = "개인사업자";
       if (isPreFounder) merged.businessType = "예비창업자";
@@ -274,6 +252,9 @@ export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: 
         const sc = Math.max(parseInt(kcb || "0", 10), parseInt(nice || "0", 10));
         merged.credit = sc >= 839 ? "839점 이상" : sc >= 700 ? "839점 이하" : "700점 이하";
       }
+      // 정밀진단에서 체크한 메인비즈 인증 → 처음 질문지 인증목록에 병합
+      if (hasMainbiz && !(merged.certifications || []).includes("메인비즈"))
+        merged.certifications = [...(merged.certifications || []), "메인비즈"];
       if (isReFounder) merged.bankruptcy = "있음";
       merged._advancedApplied = true; // 정밀진단 반영 표시
 
@@ -282,6 +263,36 @@ export default function AdvancedScreeningPanel({ autoRun = false }: { autoRun?: 
       window.dispatchEvent(new CustomEvent("mpp-advanced-applied"));
     } catch {
       /* 저장 실패해도 정밀진단 결과 표시는 정상 진행 */
+    }
+
+    // ── 판독 실행 (공용 변환기로 통일 → 매칭 정확도 최상) ──
+    //  정밀진단 전용 재무 신호(담보 제외 부채·연체·자본잠식 등)는 profileToCompany가
+    //  다루지 않으므로, 병합 프로필로 만든 Company에 정밀진단 재무 신호를 덧씌운다.
+    const empCount = employees === "5plus" ? 5 : employees === "under5" ? 2 : employees === "0" ? 0 : undefined;
+    try {
+      const baseCompany = profileToCompany(merged);
+      const company: Company = {
+        ...baseCompany,
+        // 정밀진단 재무 신호(공용 변환기에 없는 값) 덧씌우기
+        biz_type: bizType || baseCompany.biz_type,
+        employee_count: empCount ?? baseCompany.employee_count,
+        // ⭐ 판독에는 '신용대출/정책자금'만 반영 (담보대출 제외 → 매출 대비 부채 판정 왜곡 방지)
+        total_debt: creditLoan억 ? toWon(creditLoan억) : baseCompany.total_debt,
+        kcb_score: creditKnown === "yes" && kcb ? parseInt(kcb, 10) : baseCompany.kcb_score,
+        nice_score: creditKnown === "yes" && nice ? parseInt(nice, 10) : baseCompany.nice_score,
+        tax_delinquent: taxDelinquent,
+        insurance_4_delinquent: insuranceDelinquent,
+        full_capital_impairment: capitalImpairment,
+        revenue_drop_30pct_yoy: revenueDrop30,
+        revenue_drop_yoy_pct: revenueDrop30 ? 30 : 0,
+        ceo_changed_1y: ceoChanged,
+        is_pre_founder: isPreFounder || baseCompany.is_pre_founder,
+        is_re_founder: isReFounder,
+        has_mainbiz: hasMainbiz || baseCompany.has_mainbiz,
+      };
+      setReport(runAdvancedScreening(company));
+    } catch {
+      /* 변환 실패 시 결과 없음 — 대시보드 매칭리스트는 별도로 표시됨 */
     }
 
     setTimeout(() => {
@@ -787,8 +798,21 @@ function AdvancedResult({
                       {m.loan_type}
                     </span>
                   )}
+                  {/* 이미 이용 중인 기관 표시 (중복배제 참고 — 대표님 요청) */}
+                  {m.alreadyUsing && (
+                    <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                      현재 이용 중
+                    </span>
+                  )}
                 </div>
                 <p className="mt-1 break-keep text-xs text-brand-gray">{m.criteria}</p>
+
+                {/* 신보·기보 둘 다 자격일 때 → 중복 신청 불가 안내 (대표님 요청) */}
+                {m.exclusiveNote && (
+                  <p className="mt-2 break-keep rounded-lg border border-brand-red/30 bg-brand-red/5 px-2.5 py-1.5 text-[11px] font-bold text-brand-red">
+                    {m.exclusiveNote}
+                  </p>
+                )}
 
                 {/* 신보·기보·소진공·중진공 → 신청 매뉴얼 + 사이트 바로가기 (재단은 아래 지역 드롭다운으로 안내) */}
                 {link && (
