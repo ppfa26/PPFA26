@@ -614,6 +614,12 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     siteLabel: "중소벤처기업진흥공단 사이트 →",
     note: "중진공 정책자금 누리집에서 온라인 신청 후 상담·평가를 받습니다.",
   },
+  {
+    match: "무역보험공사",
+    siteUrl: "https://on.ksure.or.kr/ksureOn/websquare/websquare.jsp?w2xPath=/ws5/ui/ZZ/MN/ZZMN010B01.xml&custSctCd=E100#/ws5/ui/ZZ/MN/ZZMN010B02.xml",
+    siteLabel: "한국무역보험공사 사이트 →",
+    note: "한국무역보험공사(K-SURE On)에서 수출신용보증을 온라인 신청합니다. 신보·기보·중진공 한도와 별개로 병행 활용이 가능합니다.",
+  },
 ];
 
 // 기관명으로 신청 채널 정보 찾기(부분일치). 재단은 지역별이므로 여기선 null.
