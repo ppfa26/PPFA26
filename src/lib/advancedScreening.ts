@@ -622,6 +622,15 @@ export function findInstitutionLink(institution: string): InstitutionLink | null
   return INSTITUTION_LINKS.find((x) => institution.includes(x.match)) ?? null;
 }
 
+// ── 지역신용보증재단 대표 사이트(검정 버튼용) ──────────────────────
+//  재단 카드 밑에 신보·기보처럼 검정색 사이트 버튼으로 동일하게 노출.
+//  세부 지역은 아래 지역 드롭다운(REGION_SINBO)으로 안내.
+export const JAEDAN_SITE_LINKS: { label: string; url: string }[] = [
+  { label: "서울신용보증재단 →", url: "https://www.seoulshinbo.co.kr" },
+  { label: "경기신용보증재단 →", url: "https://www.gcgf.or.kr/gcgf/intro.do" },
+  { label: "지역신용보증재단(통합) →", url: "https://untact.koreg.or.kr/web/index.do" },
+];
+
 // 소상공인/중소기업 세그먼트 판정 (대표님 기준: 소상공인은 소상공인용만, 중소기업은 중소기업용만)
 //  - is_small_business 명시값 우선
 //  - 상시근로자 기준(소상공인기본법): 제조·건설·운수 10명 미만 / 그 외 5명 미만이면 소상공인.

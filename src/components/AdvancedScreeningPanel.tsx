@@ -20,6 +20,7 @@ import {
   AdvancedScreeningReport,
   REGION_SINBO,
   findInstitutionLink,
+  JAEDAN_SITE_LINKS,
 } from "@/lib/advancedScreening";
 
 // 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
@@ -713,9 +714,24 @@ function AdvancedResult({ report }: { report: AdvancedScreeningReport }) {
                   </div>
                 )}
                 {isJaedan && (
-                  <p className="mt-2 break-keep text-[11px] font-semibold text-brand-orange">
-                    👇 아래에서 사업장 지역을 고르면 해당 재단 상품 페이지·신청 앱으로 이동합니다.
-                  </p>
+                  <div className="mt-2.5 flex flex-col gap-1.5">
+                    <div className="flex flex-wrap gap-2">
+                      {JAEDAN_SITE_LINKS.map((j) => (
+                        <a
+                          key={j.url}
+                          href={j.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90"
+                        >
+                          {j.label}
+                        </a>
+                      ))}
+                    </div>
+                    <p className="break-keep text-[11px] font-semibold text-brand-orange">
+                      👇 아래에서 사업장 지역을 고르면 해당 재단 상품 페이지·신청 앱으로 이동합니다.
+                    </p>
+                  </div>
                 )}
               </div>
             );
