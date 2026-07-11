@@ -964,14 +964,16 @@ function AdvancedResult({
           </p>
         </div>
 
-        {/* 신청 → 실행 진행 절차·소요기간 안내 (같은 박스 안에 통합) */}
-        {(hasDae || hasDirect) && (
-        <div className="mt-4 border-t border-gray-200 pt-4">
-          <p className="break-keep text-base font-bold text-brand-dark">
+      </div>
+
+      {/* 신청 → 실행 진행 절차·소요기간 안내 — 기관 박스 '밖' 별도 박스로 분리 (틀 동일) */}
+      {(hasDae || hasDirect) && (
+        <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
+          <p className="text-base font-extrabold text-brand-dark sm:text-lg">
             🗓️ 신청부터 대출 실행까지 (예상 소요기간)
           </p>
           {hasDae && (
-            <div className="mt-2.5">
+            <div className="mt-3">
               <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
                 대리대출 (보증서→은행)
               </span>
@@ -996,9 +998,7 @@ function AdvancedResult({
             ※ 모바일 실사는 재단·소진공의 소상공인 건에서 주로 진행되며, 기술보증기금·신용보증기금 및 금액이 큰 건은 방문 실사로 진행됩니다.
           </p>
         </div>
-        )}
-
-      </div>
+      )}
 
       {/* 추가로 신청 가능한 지원제도 — 기관 박스 '밖' 하단에 별도 박스로 배치 (틀은 기관 박스와 동일) */}
       {/*  정책자금(대출·보증)과 별개로 병행 신청 가능 · 진단 기준 '해당되는 것만' · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
