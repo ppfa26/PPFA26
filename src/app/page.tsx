@@ -126,11 +126,9 @@ export default function Home() {
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-6 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray xs:text-base sm:text-lg"
+              className="mx-auto mt-6 max-w-2xl break-keep text-xs leading-relaxed text-brand-gray xs:text-sm sm:text-base"
             >
-              고민은 이제 그만. AI가 내 사업장에
-              <br className="hidden sm:inline" />{" "}
-              딱 맞는 정부지원사업을 찾아드립니다.
+              고민은 이제 그만. AI가 내 사업장에 딱 맞는 정부지원사업을 찾아드립니다.
             </Editable>
 
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
