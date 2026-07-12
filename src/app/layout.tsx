@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   verification: {
     // 구글 서치콘솔 사이트 소유확인
-    google: "qXMshODwpxOXqi9tFBHIfHwknWk3lxebsnb_rIfq9OQ",
+    google: "WfXpXS_N-fRjTPx_hn7HUuh9smkrJf_F8GtW2rR9dl4",
     // 네이버 서치어드바이저 사이트 소유확인
     // (모두의사업친구.kr + www.모두의사업친구.kr 둘 다 확인용 2개 등록)
     other: {
