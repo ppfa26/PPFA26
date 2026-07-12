@@ -264,6 +264,138 @@ export default function Home() {
           </div>
         </section>
 
+        {/* AI 매칭 결과 예시본 */}
+        <section id="result-sample-section" className="px-4 py-7 sm:py-12">
+          <div className="mx-auto max-w-3xl text-center">
+            <Editable
+              id="home-sample-badge"
+              as="div"
+              className="mb-4 inline-block rounded-full bg-brand-yellow/20 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm"
+            >
+              AI 매칭 결과 예시
+            </Editable>
+            <Editable
+              id="home-sample-title"
+              as="h2"
+              className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+            >
+              정보 입력 시 AI가 내 사업장에 알맞는
+              <br className="hidden sm:inline" /> 모든 정부지원사업을 한 번에
+              안내해드립니다.
+            </Editable>
+            <Editable
+              id="home-sample-sub"
+              as="p"
+              className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+            >
+              아래는 실제 매칭 결과 화면의 예시입니다. 진단을 마치면 내 사업장에
+              딱 맞는 지원사업 목록과 신청 방법을 확인할 수 있습니다.
+            </Editable>
+
+            {/* 결과 카드 목업 */}
+            <div className="relative mt-8 overflow-hidden rounded-3xl border border-gray-200 bg-white p-5 text-left shadow-card sm:p-7">
+              {/* 상단 요약 바 */}
+              <div className="flex items-center justify-between rounded-2xl bg-brand-dark px-5 py-4 text-white">
+                <div>
+                  <p className="text-xs text-white/70">내 사업장 매칭 결과</p>
+                  <p className="mt-0.5 text-lg font-extrabold">
+                    총 <span className="text-brand-yellow">12개</span>{" "}
+                    지원사업이 매칭되었습니다
+                  </p>
+                </div>
+                <span className="hidden shrink-0 rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold text-brand-dark sm:inline-block">
+                  AI 분석 완료
+                </span>
+              </div>
+
+              {/* 매칭 항목 리스트 */}
+              <ul className="mt-4 space-y-3">
+                {[
+                  {
+                    tag: "정책자금",
+                    tagColor: "bg-brand-red/10 text-brand-red",
+                    name: "중소벤처기업진흥공단 신성장기반자금",
+                    desc: "운전·시설자금 최대 60억원 · 저리 융자",
+                  },
+                  {
+                    tag: "지원금",
+                    tagColor: "bg-brand-green/10 text-brand-green",
+                    name: "소상공인 스마트상점 기술보급 지원사업",
+                    desc: "스마트기기 도입비 최대 500만원 지원",
+                  },
+                  {
+                    tag: "바우처",
+                    tagColor: "bg-brand-orange/10 text-brand-orange",
+                    name: "수출바우처 지원사업",
+                    desc: "해외마케팅·인증 비용 최대 1억원 바우처",
+                  },
+                ].map((item, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3.5"
+                  >
+                    <span
+                      className={`mt-0.5 shrink-0 rounded-md px-2 py-0.5 text-[11px] font-bold ${item.tagColor}`}
+                    >
+                      {item.tag}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="break-keep text-sm font-bold text-brand-dark">
+                        {item.name}
+                      </p>
+                      <p className="mt-0.5 break-keep text-xs text-brand-gray">
+                        {item.desc}
+                      </p>
+                    </div>
+                    <span className="ml-auto hidden shrink-0 self-center text-xs font-bold text-brand-green sm:inline">
+                      신청 가능 ✓
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* 블러 처리된 잠긴 항목 + 오버레이 */}
+              <div className="relative mt-3">
+                <ul className="space-y-3 blur-[5px]">
+                  {[
+                    "예비창업패키지 · 창업사업화 자금 최대 1억원",
+                    "지자체 소상공인 경영개선 지원사업 · 최대 2,000만원",
+                  ].map((t, i) => (
+                    <li
+                      key={i}
+                      className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3.5"
+                    >
+                      <span className="shrink-0 rounded-md bg-gray-200 px-2 py-0.5 text-[11px] font-bold text-gray-500">
+                        지원사업
+                      </span>
+                      <p className="text-sm font-bold text-brand-dark">{t}</p>
+                    </li>
+                  ))}
+                </ul>
+                <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-white/40">
+                  <span className="text-2xl">🔒</span>
+                  <p className="mt-1 text-sm font-bold text-brand-dark">
+                    +9개 지원사업 더 보기
+                  </p>
+                </div>
+              </div>
+
+              <Editable
+                id="home-sample-cta"
+                as="a"
+                href="/diagnosis"
+                className="btn-brand mt-6 block w-full rounded-full py-4 text-center text-base font-bold sm:text-lg"
+              >
+                내 사업장 무료 진단하고 결과 확인하기
+              </Editable>
+            </div>
+            <p className="mt-3 text-xs text-brand-gray/70">
+              * 위 화면은 이해를 돕기 위한 예시이며, 실제 결과는 사업장 정보에
+              따라 달라집니다.
+            </p>
+          </div>
+        </section>
+
         {/* 가격표 */}
         <section
           id="pricing-section"
