@@ -818,10 +818,10 @@ function AdvancedResult({
       {/* ③ 신청 가능 기관 — 크고 핵심적으로 (대표님 요청: 최상단 배치) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
         <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-          🏦 대표님이 이용할 수 있는 기관
+          🏦 대표님이 이용할 수 있는 정책금융기관
         </p>
         <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          업종·직원수 등 대표님 조건 기준으로 실제 신청 자격이 열리는 정책금융 기관입니다.
+          업종·직원수 등 대표님 조건을 기준으로 실제 신청 자격이 열리는 정책금융기관입니다.
         </p>
         <div className="mt-4 divide-y divide-gray-200">
           {creditMatches.map((m, i) => {
@@ -1077,16 +1077,16 @@ function AdvancedResult({
       {(hasDae || hasDirect) && (
         <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
           <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-            🗓️ 신청부터 대출 실행까지 (예상 소요기간)
+            🗓️ 신청부터 정부지원사업 실행까지 (예상 소요기간)
           </p>
           {hasDae && (
             <div className="mt-3">
               <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
-                대리대출 (보증서→은행)
+                대리대출 (보증서 → 은행)
               </span>
               <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark">
-                신청 → 심사 → <b>모바일 실사</b> → 승인 → 약정 → 대출 실행 ·{" "}
-                <b className="text-brand-orange">빠르면 3주, 늦으면 6주</b>
+                신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행 ·{" "}
+                <b className="text-brand-orange">통상 3~6주 소요</b>
               </p>
             </div>
           )}
@@ -1096,13 +1096,13 @@ function AdvancedResult({
                 직접대출 (공단 직접)
               </span>
               <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark">
-                신청 → 심사 → <b>방문 실사</b> → 약정 → 대출 실행 ·{" "}
-                <b className="text-brand-orange">약 8주</b> · 필요 서류가 더 많은 편입니다.
+                신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
+                <b className="text-brand-orange">통상 약 8주 소요</b> · 제출 서류가 상대적으로 많은 편입니다.
               </p>
             </div>
           )}
           <p className="mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-            ※ 모바일 실사는 재단·소진공의 소상공인 건에서 주로 진행되며, 기술보증기금·신용보증기금 및 금액이 큰 건은 방문 실사로 진행됩니다.
+            ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 및 규모가 큰 건은 방문 실사로 진행됩니다.
           </p>
         </div>
       )}
@@ -1112,7 +1112,7 @@ function AdvancedResult({
       {eligibleSupport.length > 0 && (
         <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
           <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-            🎁 대표님이 챙길 수 있는 정부 지원제도
+            🎁 대표님이 신청할 수 있는 정부지원제도
           </p>
           <p className="mt-1 break-keep text-xs text-brand-dark/60">
             정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
@@ -1173,7 +1173,23 @@ function AdvancedResult({
                   <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
                     {prog.desc}
                   </p>
-                  <span className="mt-1.5 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
+                  {/* 간단 신청방법 + 모르면 전화 — 모든 카드 통일 (대표님 요청) */}
+                  {(prog.applyHow || prog.applyTel) && (
+                    <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
+                      {prog.applyHow && (
+                        <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                          <span className="font-bold text-brand-dark">신청방법 </span>
+                          {prog.applyHow}
+                        </p>
+                      )}
+                      {prog.applyTel && (
+                        <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+                          잘 모르시면 <span className="font-bold text-brand-orange">☎ {prog.applyTel}</span> 로 전화해 물어보시면 됩니다.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  <span className="mt-2 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
                     상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
                   </span>
                 </Link>

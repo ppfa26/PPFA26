@@ -31,6 +31,8 @@ export type SupportProgram = {
   site: string; // 표시용 도메인
   url: string; // 신청/안내 사이트
   desc: string; // 카드 요약 설명
+  applyHow?: string; // 결과창 카드용 '간단 신청방법' 한 줄 요약
+  applyTel?: string; // 결과창 카드용 대표 문의 전화(모르면 전화)
   eligibleBadge: string; // 대상일 때 배지 문구
   ineligibleBadge: string; // 비대상일 때 배지 문구
   eligibleNote: string; // 대상일 때 한 줄 안내
@@ -117,7 +119,9 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "고용지원금 — 고용24",
     site: "www.work24.go.kr",
     url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
-    desc: "기업 로그인 → 기업 지원금 메뉴에서 신청. 청년일자리도약장려금·고용창출/안정장려금·두루누리·워라밸일자리장려금·고용촉진장려금 등",
+    desc: "직원을 고용 중인 기업이 받을 수 있는 정부 고용장려금입니다. 청년 채용·고용 유지 시 인건비 일부를 지원받습니다.",
+    applyHow: "고용24(work24.go.kr)에 기업 회원으로 로그인 → '기업 지원금' 메뉴에서 온라인 신청",
+    applyTel: "1350",
     eligibleBadge: "✅ 신청 대상",
     ineligibleBadge: "채용 시 대상",
     eligibleNote: "직원을 고용 중이시라 고용장려금 신청 대상입니다.",
@@ -161,7 +165,9 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "두루누리 사회보험료 지원",
     site: "insurancesupport.or.kr",
     url: "http://insurancesupport.or.kr",
-    desc: "근로자 10명 미만 사업장에서 월평균 보수 270만원 미만 직원 신규 고용 시, 고용보험·국민연금 보험료의 80%를 최대 36개월 지원",
+    desc: "근로자 10명 미만 사업장의 사회보험료 부담을 덜어주는 제도입니다. 월평균 보수 270만원 미만 직원의 고용보험·국민연금 보험료 80%를 최대 36개월간 지원합니다.",
+    applyHow: "4대사회보험 정보연계센터(insurance4.or.kr) 또는 관할 국민연금공단·근로복지공단에 지원 신청서 제출",
+    applyTel: "1588-0075",
     eligibleBadge: "✅ 신청 대상",
     ineligibleBadge: "직원 10명 미만 대상",
     eligibleNote: "근로자 10명 미만 사업장으로 보험료 80% 지원 대상입니다.",
@@ -190,7 +196,9 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "수출바우처",
     site: "www.exportvoucher.com",
     url: "https://www.exportvoucher.com",
-    desc: "중기부·산업부·지자체 수출바우처 통합 신청 포털. 사업공고 → 참여기업 모집공고 확인 후 신청",
+    desc: "수출을 준비하거나 진행 중인 기업이 해외 마케팅·통번역·인증 등 서비스를 바우처로 지원받는 제도입니다.",
+    applyHow: "수출바우처 포털(exportvoucher.com)에서 연도별 참여기업 모집공고 확인 후 온라인 신청",
+    applyTel: "1600-7119",
     eligibleBadge: "✅ 신청 대상",
     ineligibleBadge: "수출 계획 시 대상",
     eligibleNote: "수출(예정) 기업으로 수출바우처 신청 대상입니다.",
@@ -219,7 +227,9 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "혁신바우처",
     site: "www.mssmiv.com",
     url: "https://www.mssmiv.com",
-    desc: "중소기업 혁신바우처(컨설팅·기술지원·마케팅) 신청 포털. 제조업 소기업(3년 평균 매출 140억 이하) 대상, 기업당 최대 5,000만원",
+    desc: "제조 소기업이 컨설팅·기술지원·마케팅 서비스를 바우처로 지원받는 제도입니다. 기업당 최대 5,000만원 규모입니다.",
+    applyHow: "중소기업 혁신바우처 포털(mssmiv.com)에서 모집공고 확인 후 온라인 신청",
+    applyTel: "1357",
     eligibleBadge: "✅ 신청 대상",
     ineligibleBadge: "제조업 대상",
     eligibleNote: "제조업 소기업으로 혁신바우처 신청 대상입니다.",
@@ -250,7 +260,9 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "소상공인 경영안정 바우처",
     site: "www.sbiz24.kr",
     url: "https://www.sbiz24.kr",
-    desc: "영세 소상공인의 고정비(4대 보험료·전기·가스요금 등)를 줄여주는 바우처. 연 매출 등 조건 충족 시 지급, 소상공인24에서 신청",
+    desc: "영세 소상공인의 고정비(4대 보험료·전기·가스요금 등) 부담을 덜어주는 바우처입니다. 연 매출 등 요건 충족 시 지급됩니다.",
+    applyHow: "소상공인24(sbiz24.kr)에 로그인 → 경영안정 바우처 사업공고 확인 후 온라인 신청",
+    applyTel: "1533-0600",
     eligibleBadge: "✅ 신청 대상",
     ineligibleBadge: "영세 소상공인 대상",
     eligibleNote: "영세 소상공인으로 경영안정 바우처 신청 대상입니다.",
@@ -278,7 +290,9 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "청년일자리도약장려금",
     site: "www.work24.go.kr",
     url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
-    desc: "5인 이상 중소기업(청년 창업기업 등은 1인 이상)이 취업애로청년을 정규직 채용·고용유지 시 1인당 최대 720만원 지원",
+    desc: "취업애로청년을 정규직으로 채용·유지하는 중소기업에 1인당 최대 720만원을 지원하는 제도입니다.",
+    applyHow: "고용24(work24.go.kr)에 기업 회원으로 로그인 → 청년일자리도약장려금 참여 신청 후 채용",
+    applyTel: "1350",
     eligibleBadge: "✅ 신청 대상",
     ineligibleBadge: "청년 채용 시 대상",
     eligibleNote: "취업애로청년을 정규직으로 채용하면 1인당 최대 720만원 지원 대상입니다.",
