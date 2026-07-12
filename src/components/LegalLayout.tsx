@@ -10,12 +10,11 @@ import Editable from "./Editable";
 export default function LegalLayout({
   pageKey,
   title,
-  updatedAt,
   children,
 }: {
   pageKey: string;
   title: string;
-  updatedAt: string;
+  updatedAt?: string; // 시행일 표기는 노출하지 않음(호환용 · 선택)
   children: ReactNode;
 }) {
   return (
@@ -29,13 +28,6 @@ export default function LegalLayout({
             className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
           >
             {title}
-          </Editable>
-          <Editable
-            id={`${pageKey}-updated`}
-            as="p"
-            className="mt-2 text-sm text-brand-gray"
-          >
-            {`시행일: ${updatedAt}`}
           </Editable>
           <div className="legal-body mt-8 space-y-7 text-[15px] leading-relaxed text-brand-dark">
             {children}

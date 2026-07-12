@@ -117,10 +117,10 @@ export default function Home() {
               as="h1"
               className="break-keep text-[22px] font-black leading-tight text-brand-dark xs:text-[26px] sm:text-5xl"
             >
-              AI를 활용해 내 사업장에 알맞는
+              복잡한 정부지원사업,
               <br />
-              <span className="text-brand-red">정부지원사업</span>을
-              찾아드립니다.
+              나에게 맞는 건{" "}
+              <span className="text-brand-red">뭘까?</span>
             </Editable>
 
             <Editable
@@ -128,10 +128,10 @@ export default function Home() {
               as="p"
               className="mx-auto mt-6 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray xs:text-base sm:text-lg"
             >
-              모든 정부기관 사이트를 AI가 정밀 분석해,
+              고민은 이제 그만. AI가 내 사업장에 딱 맞는 정부지원사업을
               <br className="hidden sm:inline" />{" "}
-              대표님 사업장에 딱 맞는 정부지원사업과 신청 방법까지
-              안내해드립니다.
+              한 번에 찾아드리는{" "}
+              <strong className="text-brand-dark">사업 친구</strong>입니다.
             </Editable>
 
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
