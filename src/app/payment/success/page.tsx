@@ -93,8 +93,10 @@ function SuccessInner() {
         setStatus("success");
         setMessage("결제가 완료되었습니다!");
 
-        // 3) 잠시 후 대시보드로 이동
-        setTimeout(() => router.replace("/dashboard"), 2200);
+        // 3) 잠시 후 마이페이지로 이동
+        //    ★ 대표님 요청 ★ 결제 직후 곧바로 대시보드로 튕기면 "설문을 다시 해야 하나?"
+        //    오해가 생김. → 마이페이지에서 결과를 '클릭해서' 확인하도록 유도한다.
+        setTimeout(() => router.replace("/mypage"), 2200);
       } catch {
         setStatus("fail");
         setMessage("결제 확인 중 오류가 발생했습니다.");
@@ -128,14 +130,14 @@ function SuccessInner() {
                 {product.icon} {product.name} 플랜 · {product.priceLabel}
               </p>
             )}
-            <p className="mt-4 text-sm text-brand-gray">
-              잠시 후 대시보드로 이동합니다.
+            <p className="mt-4 break-keep text-sm text-brand-gray">
+              잠시 후 마이페이지로 이동합니다. 마이페이지에서 &lsquo;전체 결과 확인하기&rsquo;를 눌러 매칭 결과를 보실 수 있습니다.
             </p>
             <Link
-              href="/dashboard"
+              href="/mypage"
               className="mt-6 w-full rounded-xl bg-brand-dark py-3.5 text-base font-extrabold text-white transition hover:opacity-90"
             >
-              바로 대시보드로 가기
+              마이페이지로 가기
             </Link>
             {/* 결제 완료 시 플랜(베이직/프리미어/프로) 무관하게 1:1 상담 버튼 공통 노출 */}
             <a

@@ -26,17 +26,20 @@ function SignupInner() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
-  // 이미 로그인된 경우 바로 결제/대시보드로 이동
+  // 이미 로그인된 경우 이동:
+  //  · 결제 진행 중(tier 있음) → 결제 페이지
+  //  · 그 외(순수 로그인) → 마이페이지(결과를 클릭해서 확인하도록 유도 · 대표님 요청)
+  //  ※ 진단 데이터(mpp_diagnosis)는 sessionStorage에 그대로 두어 유실 방지
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        router.replace(tier ? `/payment?tier=${tier}` : "/dashboard");
+        router.replace(tier ? `/payment?tier=${tier}` : "/mypage");
       }
     });
   }, [router, tier]);
 
   const goNext = () => {
-    router.push(tier ? `/payment?tier=${tier}` : "/dashboard");
+    router.push(tier ? `/payment?tier=${tier}` : "/mypage");
   };
 
   // 소셜 로그인 (카카오 / 구글) — Supabase OAuth

@@ -106,81 +106,82 @@ export default function MatchingPreview() {
       {/* 하단 여백(pb-28)으로 sticky 바에 콘텐츠가 가려지지 않게 */}
       <main className="px-4 pb-28 pt-8">
         <div className="mx-auto max-w-3xl">
-          {/* 상단 — 진짜 매칭 개수로 궁금증 유발 */}
+          {/* 상단 — 진짜 매칭 개수로 궁금증 유발 (세로 컴팩트) */}
           <div className="text-center">
-            <h1 className="break-keep text-2xl font-extrabold text-brand-dark sm:text-3xl">
+            <h1 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
               {name ? `${name} 대표님, ` : ""}매칭 결과 미리보기
             </h1>
-            <p className="mt-3 break-keep text-lg font-bold text-brand-dark sm:text-xl">
+            <p className="mt-2 break-keep text-base font-bold text-brand-dark sm:text-lg">
               대표님 사업장에 딱 맞는 지원사업{" "}
               <b className="text-brand-orange">{total}개</b>가 매칭되었습니다.
             </p>
             {counts && total > 0 && (
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-                <span className="rounded-full bg-brand-dark/5 px-3 py-1 text-xs font-bold text-brand-dark">
-                  🏦 신청 가능 기관 {counts.institutions}곳
+              <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5">
+                <span className="rounded-full bg-brand-dark/5 px-2.5 py-1 text-[11px] font-bold text-brand-dark">
+                  🏦 기관 {counts.institutions}곳
                 </span>
-                <span className="rounded-full bg-brand-dark/5 px-3 py-1 text-xs font-bold text-brand-dark">
-                  📑 기관별 상품 {counts.products}종
+                <span className="rounded-full bg-brand-dark/5 px-2.5 py-1 text-[11px] font-bold text-brand-dark">
+                  📑 상품 {counts.products}종
                 </span>
-                <span className="rounded-full bg-brand-dark/5 px-3 py-1 text-xs font-bold text-brand-dark">
-                  🎁 정부 지원제도 {counts.supports}건
+                <span className="rounded-full bg-brand-dark/5 px-2.5 py-1 text-[11px] font-bold text-brand-dark">
+                  🎁 지원제도 {counts.supports}건
                 </span>
               </div>
             )}
-            <p className="mt-3 break-keep text-sm text-brand-gray">
-              아래는 대표님만을 위해 분석된 <b>실제 결과 화면</b>입니다.
-              결제하시면 아래 내용이 <b className="text-brand-orange">모두 선명하게 공개</b>됩니다.
-            </p>
           </div>
 
-          {/* 실제 결과창 전체를 블러 처리 + 결제 유도 오버레이 (A안) */}
-          <div className="relative mt-8">
-            {/* 실제 대시보드 결과창(블러) — 개발자도구 노출 방지를 위해 하단 절반은 페이드로 가림 */}
+          {/* ★ 대표님 요청 ★ "미리보기" 바로 밑에 결제 안내 네모칸 배치 */}
+          <div className="mt-4 rounded-2xl border-2 border-brand-orange bg-white p-4 text-center shadow-[0_8px_28px_rgba(0,0,0,0.12)] sm:p-5">
+            <Editable
+              id="preview-lock-title"
+              as="p"
+              className="break-keep text-base font-extrabold text-brand-dark sm:text-lg"
+            >
+              🔒 결제하면 모든 정보가 공개됩니다
+            </Editable>
+            <Editable
+              id="preview-lock-sub"
+              as="p"
+              className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm"
+            >
+              신청 가능한 기관·상품·정부지원제도와 신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다. (VAT 포함)
+            </Editable>
+            <Editable
+              id="preview-lock-cta"
+              as="a"
+              href="/pricing"
+              className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
+            >
+              지금 결제하고 전체 결과 확인하기
+            </Editable>
+            <Editable
+              id="preview-lock-note"
+              as="p"
+              className="mt-2.5 break-keep text-[11px] text-brand-dark/50"
+            >
+              ⚠️ 자문 서비스 · 승인 보장 없음 · 대행 없음
+            </Editable>
+          </div>
+
+          {/* 실제 결과창을 살짝만 보여주는 블러 미리보기 — 세로 짧게 잘라서 '뒤에 뭔가 많구나' 느낌만 */}
+          <p className="mt-6 break-keep text-center text-xs text-brand-gray">
+            👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면</b>의 일부입니다.
+          </p>
+          <div className="relative mt-3 max-h-[340px] overflow-hidden rounded-2xl border border-gray-200 sm:max-h-[420px]">
+            {/* 실제 대시보드 결과창(블러) */}
             <div className="pointer-events-none select-none blur-locked" aria-hidden="true">
               <AdvancedScreeningPanel autoRun />
             </div>
-
-            {/* 아래로 갈수록 화면을 흰색으로 서서히 가려, 잠긴 느낌 + 정보 완전 노출 방지 */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-white via-white/90 to-transparent" />
-
-            {/* 결제 유도 오버레이 — 블러 위 중앙 */}
-            <div className="absolute inset-x-0 top-1/3 flex justify-center px-2">
-              <div className="w-full max-w-md rounded-3xl border-2 border-brand-orange bg-white p-6 text-center shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-yellow/30 text-3xl">
-                  🔒
-                </div>
-                <Editable
-                  id="preview-lock-title"
-                  as="p"
-                  className="mt-4 break-keep text-lg font-extrabold text-brand-dark"
-                >
-                  결제하면 모든 정보가 공개됩니다
-                </Editable>
-                <Editable
-                  id="preview-lock-sub"
-                  as="p"
-                  className="mt-2 break-keep text-sm leading-relaxed text-brand-dark/70"
-                >
-                  대표님이 신청할 수 있는 기관·상품·정부지원제도와
-                  신청 사이트·필요 서류·승인 전략까지 전부 확인하세요. (VAT 포함)
-                </Editable>
-                <Editable
-                  id="preview-lock-cta"
-                  as="a"
-                  href="/pricing"
-                  className="btn-brand mt-5 block rounded-full py-3.5 text-center text-base font-bold"
-                >
-                  지금 결제하고 전체 결과 확인하기
-                </Editable>
-                <Editable
-                  id="preview-lock-note"
-                  as="p"
-                  className="mt-3 break-keep text-xs text-brand-dark/50"
-                >
-                  ⚠️ 자문 서비스 · 승인 보장 없음 · 대행 없음
-                </Editable>
-              </div>
+            {/* 아래쪽을 흰색으로 페이드 → 잠긴 느낌 + 정보 완전 노출 방지 */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white via-white/85 to-transparent" />
+            {/* 페이드 위에 얇은 잠금 안내 */}
+            <div className="absolute inset-x-0 bottom-3 flex justify-center px-4">
+              <a
+                href="/pricing"
+                className="rounded-full border border-brand-orange bg-white/95 px-5 py-2 text-xs font-extrabold text-brand-orange shadow-sm backdrop-blur hover:bg-brand-orange/10"
+              >
+                🔒 나머지 전체 결과 보기 →
+              </a>
             </div>
           </div>
         </div>

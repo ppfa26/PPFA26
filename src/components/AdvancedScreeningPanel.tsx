@@ -21,10 +21,11 @@ import {
   AdvancedScreeningReport,
   REGION_SINBO,
   findInstitutionLink,
-  JAEDAN_SITE_LINKS,
   JAEDAN_CALL_CENTER,
   JAEDAN_PRODUCTS,
   INSTITUTION_PRODUCT_LINKS,
+  filterProducts,
+  resolveJaedanLinks,
 } from "@/lib/advancedScreening";
 import {
   SUPPORT_PROGRAMS,
@@ -740,12 +741,16 @@ function AdvancedResult({
   eligibleSupport?: SupportItem[];
 }) {
   const {
+    company,
     koditHardReject,
     financials,
     creditMatches,
     govPrograms,
     creditAdvice,
   } = report;
+
+  // 대표님 지역 기준으로 안내할 지역신용보증재단 목록 (인천→인천만, 서울→서울만, 지방→통합)
+  const jaedanLinks = resolveJaedanLinks(company?.region);
 
   const cardCls = "rounded-2xl border border-gray-200 bg-white p-5 shadow-card";
 
@@ -790,9 +795,10 @@ function AdvancedResult({
             <div className="rounded-xl bg-white/70 px-2 py-2 text-center">
               <p className="text-xl font-extrabold text-brand-dark">
                 {creditMatches.reduce((s, m) => {
-                  if (m.institution.includes("재단")) return s + JAEDAN_PRODUCTS.length;
+                  if (m.institution.includes("재단"))
+                    return s + Math.max(1, filterProducts(JAEDAN_PRODUCTS, company).length);
                   const l = findInstitutionLink(m.institution);
-                  return s + (l?.products?.length ?? 1);
+                  return s + Math.max(1, filterProducts(l?.products, company).length || 1);
                 }, 0)}
               </p>
               <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
@@ -828,7 +834,8 @@ function AdvancedResult({
             const link = findInstitutionLink(m.institution);
             const isJaedan = m.institution.includes("재단");
             // 재단은 link가 없으므로 JAEDAN_PRODUCTS를 아코디언 상품으로 사용
-            const products = isJaedan ? JAEDAN_PRODUCTS : link?.products;
+            // ★ 대표님 조건(스마트공장·재도전·대환 등)에 해당하는 상품만 남기고 나머지는 숨김 ★
+            const products = filterProducts(isJaedan ? JAEDAN_PRODUCTS : link?.products, company);
             return (
               <div
                 key={i}
@@ -1004,7 +1011,7 @@ function AdvancedResult({
                 )}
                 {isJaedan && (
                   <div className="mt-2.5 flex flex-col gap-2">
-                    {JAEDAN_SITE_LINKS.map((j) => (
+                    {jaedanLinks.map((j) => (
                       <div key={j.url} className="flex flex-wrap items-center gap-2">
                         {j.manualUrl && (
                           <a
@@ -1136,7 +1143,7 @@ function AdvancedResult({
               </li>
               <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
                 <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
-                <span><b>공식 신청 사이트/연락처</b>로 접수하세요. 헷갈리면 담당 부처에 전화 문의하면 됩니다.</span>
+                <span><b>공식 신청 사이트/연락처</b>로 접수하시면 됩니다. 헷갈리시면 담당 부처에 문의하시면 쉽게 진행 가능합니다.</span>
               </li>
             </ol>
           </div>
@@ -1184,7 +1191,7 @@ function AdvancedResult({
                       )}
                       {prog.applyTel && (
                         <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-                          잘 모르시면 <span className="font-bold text-brand-orange">☎ {prog.applyTel}</span> 로 전화해 물어보시면 됩니다.
+                          잘 모르시겠으면 <span className="font-bold text-brand-orange">☎ {prog.applyTel}</span> 로 문의하시면 쉽게 진행 가능합니다.
                         </p>
                       )}
                     </div>

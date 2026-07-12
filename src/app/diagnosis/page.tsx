@@ -14,6 +14,7 @@ import {
   STEP2_FIELDS,
   STEP3_TITLE,
   STEP3_FIELDS,
+  STEP3_CONDITIONAL_FIELDS,
 } from "@/lib/diagnosisConfig";
 
 export default function Diagnosis() {
@@ -108,12 +109,12 @@ export default function Diagnosis() {
   // 혁신성장 테마처럼 항목이 많은 다중선택 → 반응형 그리드
   //  모바일: 2열 (글자 안 잘리게) / 작은태블릿: 3열 / 큰화면: 5열(2줄)
   const MultiGrid = ({ k, opts }: { k: string; opts: string[] }) => (
-    <div className="grid grid-cols-2 gap-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-5">
+    <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-3 md:grid-cols-5">
       {opts.map((o) => (
         <button
           key={o}
           onClick={() => toggle(k, o)}
-          className={`min-h-[44px] break-keep rounded-xl border px-2 py-2.5 text-center text-xs font-semibold leading-tight transition sm:text-sm ${
+          className={`min-h-[40px] break-keep rounded-lg border px-1.5 py-2 text-center text-[11px] font-semibold leading-tight transition sm:text-xs ${
             (form[k] || []).includes(o)
               ? "border-brand-orange bg-brand-grad text-brand-dark"
               : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
@@ -128,6 +129,14 @@ export default function Diagnosis() {
     <div className="mb-6">
       <p className="mb-2 font-bold text-brand-dark">{label}</p>
       {children}
+    </div>
+  );
+  // 조건부 질문(라벨+설명힌트+단일선택) — 소진공 혁신형 상품 정밀 매칭용
+  const CondQ = ({ k, field }: { k: string; field: { label: string; hint: string; opts: string[] } }) => (
+    <div className="mb-6">
+      <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{field.label}</p>
+      <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">{field.hint}</p>
+      <Radio k={k} opts={field.opts} />
     </div>
   );
 
@@ -249,6 +258,26 @@ export default function Diagnosis() {
                   {STEP3_FIELDS.employees.hint}
                 </p>
                 <Radio k="employees" opts={STEP3_FIELDS.employees.opts} />
+              </div>
+
+              {/* ── 정밀 매칭 질문 (소진공 혁신형 상품 정확히 골라내기) ── */}
+              <div className="mb-2 mt-8 rounded-xl border border-brand-yellow/50 bg-brand-yellow/10 p-4">
+                <p className="mb-1 break-keep text-sm font-extrabold text-brand-dark">
+                  🎯 맞춤 매칭을 위한 추가 질문
+                </p>
+                <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
+                  아래 질문은 해당되는 지원상품만 정확히 골라 안내해 드리기 위한 것입니다. 해당 없으면 &lsquo;아니요&rsquo;를 선택하시면 됩니다.
+                </p>
+                <CondQ k="revenueGrowth2y" field={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y} />
+                {/* 스마트공장은 제조업일 때만 노출 */}
+                {(form.industries || []).includes("제조업") && (
+                  <CondQ k="smartFactory" field={STEP3_CONDITIONAL_FIELDS.smartFactory} />
+                )}
+                <CondQ k="govSelected" field={STEP3_CONDITIONAL_FIELDS.govSelected} />
+                <CondQ k="policyFundGood" field={STEP3_CONDITIONAL_FIELDS.policyFundGood} />
+                <CondQ k="reFounder" field={STEP3_CONDITIONAL_FIELDS.reFounder} />
+                <CondQ k="wantsRefinance" field={STEP3_CONDITIONAL_FIELDS.wantsRefinance} />
+                <CondQ k="privateInvestment" field={STEP3_CONDITIONAL_FIELDS.privateInvestment} />
               </div>
 
               {/* ── 신청 결격사유 (결제 차단 판정) — 한 블록으로 묶어 안내 ── */}

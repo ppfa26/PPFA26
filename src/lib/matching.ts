@@ -25,6 +25,14 @@ export type DiagnosisProfile = {
   capitalImpairment?: string; // 아니오 / 예(자본잠식) — 법인만
   insurance?: string;
   employees?: string; // 0명/5명이하/10명이하/10명이상
+  // 소진공 혁신형/특별 상품 정밀 매칭용 조건부 응답 (3단계 추가질문 · "예..."면 해당)
+  revenueGrowth2y?: string; // 최근 2년 매출·고용 성장 → 성장가속화자금
+  smartFactory?: string; // 스마트공장 구축·도입(제조업) → 스마트공장자금
+  govSelected?: string; // 정부 선정 프로그램(강한소상공인 등) → 강한소상공인자금
+  policyFundGood?: string; // 정책자금 성실상환·졸업후보 → 졸업후보기업자금
+  reFounder?: string; // 폐업 후 재창업(재도전) → 재도전특별자금
+  wantsRefinance?: string; // 고금리→저금리 대환 희망 → 대환대출자금
+  privateInvestment?: string; // 민간투자 유치 이력 → 민간투자연계매칭융자
   // 연락처(이름·휴대폰은 회원가입 단계에서 수집 — 진단에서는 미수집)
   name?: string;
   phone?: string;

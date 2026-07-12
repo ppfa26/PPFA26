@@ -387,6 +387,19 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   // ── 혁신성장 분야 해당 여부 (직원수·업종 무관하게 중진공·기보 자격이 열리는 핵심) ──
   const isInnovationArea = (p.innovation || []).length > 0;
 
+  // ── 소진공 혁신형/특별 상품 정밀 매칭용 조건부 응답 (3단계 추가질문) ──
+  //   각 값은 "예..."로 시작하면 true. eligibleWhen 조건이 이 플래그를 읽어
+  //   해당 상품만 노출하고 나머지는 숨긴다.
+  const yes = (v?: string) => Boolean(v && v.startsWith("예"));
+  const revenueGrowth2y = yes(p.revenueGrowth2y);
+  const hasSmartFactory = yes(p.smartFactory);
+  const govSelectedProgram = yes(p.govSelected);
+  const policyFundGoodStanding = yes(p.policyFundGood);
+  const wantsRefinance = yes(p.wantsRefinance);
+  const hasPrivateInvestment = yes(p.privateInvestment);
+  // 재도전: 명시 질문(reFounder) 또는 파산·회생 면책/인가 완료
+  const explicitReFounder = yes(p.reFounder);
+
   return {
     industry: industryVal,
     annual_revenue: revenueVal,
@@ -405,11 +418,12 @@ export function profileToCompany(p: DiagnosisProfile): Company {
     //  · "면책·인가 완료" → 재창업자(is_re_founder), 재기 전용 프로그램만 안내
     //  · "파산·회생 진행 중" → 결제 차단 대상(여기 도달 시 안전차원 재도전 취급)
     is_re_founder: Boolean(
-      p.bankruptcy &&
+      explicitReFounder ||
+      (p.bankruptcy &&
         (p.bankruptcy.includes("면책") ||
           p.bankruptcy.includes("인가") ||
           p.bankruptcy.includes("진행") ||
-          p.bankruptcy === "있음")
+          p.bankruptcy === "있음"))
     ),
     bankruptcy_status: p.bankruptcy?.includes("진행")
       ? "ongoing"
@@ -431,6 +445,13 @@ export function profileToCompany(p: DiagnosisProfile): Company {
     has_collateral: Boolean(p.collateral && p.collateral.includes("있")),
     current_institutions: p.currentInstitutions || [],
     purposes: p.purposes || [],
+    // ── 소진공 혁신형/특별 상품 정밀 매칭 플래그 (3단계 추가질문) ──
+    revenue_growth_2y: revenueGrowth2y,
+    has_smart_factory: hasSmartFactory,
+    gov_selected_program: govSelectedProgram,
+    policy_fund_good_standing: policyFundGoodStanding,
+    wants_refinance: wantsRefinance,
+    has_private_investment: hasPrivateInvestment,
   };
 }
 

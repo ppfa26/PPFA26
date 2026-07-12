@@ -65,6 +65,15 @@ export type Company = {
   is_tourism?: boolean; // 관광사업체 등록 여부 (관광기업 바우처 자격)
   uses_smart_tech?: boolean; // 스마트기기(키오스크·무인판매기·서빙로봇·POS 등) 사용 → 혁신성장촉진자금(일반형) 대상
 
+  // ── 소진공/기관 상품 정밀 필터용 (3단계 조건부 질문에서 수집) ──
+  //   대표님 요청: 이 신호들로 소진공 10개 상품 중 '해당되는 것만' 골라 노출.
+  revenue_growth_2y?: boolean; // 최근 2년 연속 매출 각 10% 이상 성장 → 혁신형(성장)
+  has_smart_factory?: boolean; // 스마트공장 구축·운영 → 혁신형(스마트공장)
+  gov_selected_program?: boolean; // 강한소상공인·로컬크리에이터·TIPS 등 정부사업 선정 이력 → 혁신형(선정)/민간투자
+  policy_fund_good_standing?: boolean; // 기존 정책자금 성실상환 중 또는 졸업후보 → 혁신형(졸업후보)
+  wants_refinance?: boolean; // 고금리 대출을 저금리로 전환 희망 → 대환대출
+  has_private_investment?: boolean; // 민간투자(VC/엔젤) 유치 → 민간투자연계형 매칭융자
+
   // ── BLOCK 1: 신보 즉시부결 판정용 필드 (신용보증기금 간이심사 사전조회) ──
   delinquent_loan?: boolean; // 연체대출금 보유
   dishonored_check_1y?: boolean; // 1년 이내 당좌부도
@@ -691,7 +700,21 @@ export type InstitutionProduct = {
   approvalNote?: string; // 승인율 관련 솔직한 안내
   applyUrl?: string; // 이 상품 신청·안내 페이지
   hookNote?: string; // 후킹/주의 안내 (예: 대상 많지만 승인율 낮음)
+  // ★ 상품별 노출 조건 (대표님 요청: 해당 안 되는 상품은 아예 숨김) ★
+  //   함수가 있으면 true를 반환하는 상품만 결과창에 노출.
+  //   없으면(=조건 미지정) 그 기관에 해당되는 모든 고객에게 항상 노출(기본 상품).
+  eligibleWhen?: (c: Company) => boolean;
 };
+
+// 상품 목록을 고객 조건으로 필터링 (eligibleWhen 없으면 항상 포함)
+//  ★ 대표님 요청: 해당되지 않는 상품은 아예 숨겨서 "내 것만" 보이게 ★
+export function filterProducts(
+  products: InstitutionProduct[] | undefined,
+  company: Company
+): InstitutionProduct[] {
+  if (!products) return [];
+  return products.filter((p) => (p.eligibleWhen ? p.eligibleWhen(company) : true));
+}
 
 export type InstitutionLink = {
   match: string; // 기관명 부분일치 키
@@ -830,6 +853,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         hookNote:
           "스마트기술 도입만으로 '대상'은 되지만, 실제 승인은 '기업현황 및 사업계획서'를 통해 스마트기술 활용→매출 시현이 증명되어야 이루어집니다. 사업계획서 완성도가 승인의 핵심입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        eligibleWhen: (c) => Boolean(c.uses_smart_tech),
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 2년 연속 매출 10% 성장 소상공인",
@@ -838,6 +862,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "성장 요건을 충족하면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        eligibleWhen: (c) => Boolean(c.revenue_growth_2y),
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 수출 소상공인",
@@ -846,6 +871,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "수출 실적이 확인되면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        eligibleWhen: (c) => Boolean(c.is_exporter),
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 스마트공장 도입 소상공인",
@@ -854,6 +880,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "스마트공장 확인 시 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        eligibleWhen: (c) => Boolean(c.has_smart_factory),
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 강한소상공인·로컬크리에이터",
@@ -862,6 +889,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "선정 이력이 있으면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        eligibleWhen: (c) => Boolean(c.gov_selected_program),
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 졸업후보기업·성실상환자",
@@ -870,6 +898,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "요건을 충족하면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        eligibleWhen: (c) => Boolean(c.policy_fund_good_standing),
       },
       {
         name: "재도전특별자금",
@@ -878,6 +907,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "재도전자 요건을 갖추면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        eligibleWhen: (c) => Boolean(c.is_re_founder),
       },
       {
         name: "대환대출 (저금리 전환)",
@@ -885,6 +915,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         desc: "고금리 대출을 저금리 정책자금으로 전환하는 상품",
         approval: "high",
         approvalNote: "승인율이 높은 편입니다.",
+        eligibleWhen: (c) => Boolean(c.wants_refinance),
         applyUrl: "https://ols.sbiz.or.kr",
       },
       {
@@ -894,6 +925,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "low",
         approvalNote: "민간투자 유치가 전제라 승인율은 낮은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        eligibleWhen: (c) => Boolean(c.has_private_investment || c.gov_selected_program),
       },
     ],
     tel: "1533-0100",
@@ -1001,6 +1033,7 @@ export const JAEDAN_SITE_LINKS: {
   manualUrl?: string;
   productUrl?: string; // 보증상품 안내 페이지
   productLabel?: string;
+  regionKey?: string; // ★ 이 링크가 담당하는 지역(부분일치). 미지정 시 "통합"(그 외 전 지역)
 }[] = [
   {
     label: "서울신용보증재단",
@@ -1008,6 +1041,7 @@ export const JAEDAN_SITE_LINKS: {
     manualUrl: "/manuals/seoul-sinbo-guide.pdf",
     productUrl: "https://www.seoulshinbo.co.kr/wbase/contents.do?mng_cd=BUSI2346",
     productLabel: "보증상품 안내자료 확인하기",
+    regionKey: "서울",
   },
   {
     label: "경기신용보증재단",
@@ -1015,6 +1049,15 @@ export const JAEDAN_SITE_LINKS: {
     manualUrl: "/manuals/gyeonggi-sinbo-easyone-guide.pdf",
     productUrl: "https://www.gcgf.or.kr/gcgf/cm/conts/contsView.do?mi=1052&contsId=1023",
     productLabel: "보증상품 안내자료 확인하기",
+    regionKey: "경기",
+  },
+  {
+    label: "인천신용보증재단",
+    url: "https://www.icsinbo.or.kr",
+    manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf",
+    productUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+    productLabel: "보증상품 안내자료 확인하기",
+    regionKey: "인천",
   },
   {
     label: "지역신용보증재단(통합)",
@@ -1022,8 +1065,24 @@ export const JAEDAN_SITE_LINKS: {
     manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf",
     productUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
     productLabel: "보증상품 안내자료 확인하기",
+    // regionKey 없음 = 서울·경기·인천 외 전 지역의 기본(통합) 안내
   },
 ];
+
+// 사용자 지역에 맞는 재단 링크만 골라준다.
+//  ★ 대표님 요청: 인천이면 인천재단만, 서울이면 서울, 경기면 경기,
+//    그 외 지방이면 지역신용보증재단(통합)만 안내(3개 다 노출 X). ★
+export function resolveJaedanLinks(region?: string): typeof JAEDAN_SITE_LINKS {
+  const r = (region || "").trim();
+  if (r) {
+    const matched = JAEDAN_SITE_LINKS.filter(
+      (l) => l.regionKey && r.includes(l.regionKey)
+    );
+    if (matched.length > 0) return matched; // 서울/경기/인천 → 해당 재단만
+  }
+  // 그 외 지역(충청·강원·전라·경상·세종·제주 등) 또는 미선택 → 통합만
+  return JAEDAN_SITE_LINKS.filter((l) => !l.regionKey);
+}
 
 // ── 지역신용보증재단 신청 가능 상품(아코디언용) ────────────────────
 //  대표님 요청: 소진공처럼 재단도 '신청 가능 상품 N개 보기'로 펼쳐서 안내.
@@ -1429,6 +1488,7 @@ export function checkRDDeptEligibility(company: Company): RDDeptResult {
 //   9) 최종 결과 UI 출력 (dashboard 컴포넌트에서 렌더)
 // ═════════════════════════════════════════════════════════════════════════
 export type AdvancedScreeningReport = {
+  company: Company; // 원본 입력(상품 필터·재단 지역매칭 등 렌더 단계에서 사용)
   koditHardReject: KoditHardRejectResult; // BLOCK 1
   financials: FinancialValidationResult; // BLOCK 5
   responsibleMgmt: ResponsibleMgmtResult; // BLOCK 6
@@ -1474,6 +1534,7 @@ export function runAdvancedScreening(company: Company): AdvancedScreeningReport 
   const creditAdvice = creditScoreAdvice(company);
 
   return {
+    company,
     koditHardReject,
     financials,
     responsibleMgmt,
