@@ -194,7 +194,7 @@ export default function Home() {
                   as="p"
                   className="break-keep text-[13px] font-bold leading-snug text-brand-dark sm:text-sm"
                 >
-                  정책자금 브로커 대행 수수료 : 최소 500만원
+                  정부지원사업 브로커 대행 수수료 : 최소 500만원
                 </Editable>
               </div>
               <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-green bg-white p-6">
