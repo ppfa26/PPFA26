@@ -990,6 +990,44 @@ export const JAEDAN_SITE_LINKS: {
   },
 ];
 
+// ── 지역신용보증재단 신청 가능 상품(아코디언용) ────────────────────
+//  대표님 요청: 소진공처럼 재단도 '신청 가능 상품 N개 보기'로 펼쳐서 안내.
+//  지역별 명칭 차이는 있으나 실무상 아래 4개 유형으로 신청 가능.
+export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
+  {
+    name: "소상공인 일반보증",
+    amount: "보증 최대 1억원(지역별 상이)",
+    desc: "사업자등록 후 정상 영업 중인 소상공인이면 신청 가능한 기본 보증. 신보·기보 이용 중이 아니면 대부분 대상.",
+    approval: "high",
+    approvalNote: "사업장만 있으면 승인이 잘 나는 편입니다.",
+    applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+  },
+  {
+    name: "창업 초기 특례보증",
+    amount: "보증 3천만~5천만원",
+    desc: "창업 3개월 이상·월매출 100만원 이상이면 신청 가능한 창업자 특례 상품.",
+    approval: "high",
+    approvalNote: "창업 초기·소액이라 심사 문턱이 낮은 편입니다.",
+    applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+  },
+  {
+    name: "협약(이차보전) 보증",
+    amount: "지자체·은행 협약 한도",
+    desc: "지자체·은행과 재단이 맺은 협약 상품. 이자 일부를 지자체가 지원(이차보전)해 실부담 금리가 낮습니다.",
+    approval: "mid",
+    approvalNote: "협약 예산·자격요건이 있어 시기·지역에 따라 달라집니다.",
+    applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+  },
+  {
+    name: "저신용·특별 지원 특례보증",
+    amount: "보증 최대 2천만원(지역별 상이)",
+    desc: "신용점수가 낮거나 코로나·재해 등 특별 사유가 있는 소상공인 대상 특례.",
+    approval: "mid",
+    approvalNote: "700점대 저신용도 특례로 승인 가능하나, 지역 예산·요건 확인이 필요합니다.",
+    applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+  },
+];
+
 // ── 신용보증재단중앙회 통합 콜센터(재단 카드에 노출) ────────────────
 //  1588-7365로 걸면 사업장 소재지 기준 관할 지역신보로 자동 연결됩니다.
 export const JAEDAN_CALL_CENTER = {

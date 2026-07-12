@@ -23,6 +23,7 @@ import {
   findInstitutionLink,
   JAEDAN_SITE_LINKS,
   JAEDAN_CALL_CENTER,
+  JAEDAN_PRODUCTS,
   INSTITUTION_PRODUCT_LINKS,
 } from "@/lib/advancedScreening";
 import {
@@ -775,20 +776,21 @@ function AdvancedResult({
 
       {/* ★ 진단 요약 배너 — "이 진단 덕분에 이런 걸 알게 됐다"는 성취감 (대표님 요청: 와 대박 느낌) ★ */}
       {autoRun && (
-        <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-5 shadow-card">
-          <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
+        <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
+          <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
             🎉 진단 완료! 대표님이 지금 신청해볼 수 있는 것들이 정리됐어요
           </p>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-white/70 px-2 py-3 text-center">
-              <p className="text-2xl font-extrabold text-brand-dark">{creditMatches.length}</p>
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            <div className="rounded-xl bg-white/70 px-2 py-2 text-center">
+              <p className="text-xl font-extrabold text-brand-dark">{creditMatches.length}</p>
               <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
                 신청 가능 기관
               </p>
             </div>
-            <div className="rounded-xl bg-white/70 px-2 py-3 text-center">
-              <p className="text-2xl font-extrabold text-brand-dark">
+            <div className="rounded-xl bg-white/70 px-2 py-2 text-center">
+              <p className="text-xl font-extrabold text-brand-dark">
                 {creditMatches.reduce((s, m) => {
+                  if (m.institution.includes("재단")) return s + JAEDAN_PRODUCTS.length;
                   const l = findInstitutionLink(m.institution);
                   return s + (l?.products?.length ?? 1);
                 }, 0)}
@@ -797,8 +799,8 @@ function AdvancedResult({
                 신청 가능 상품
               </p>
             </div>
-            <div className="rounded-xl bg-white/70 px-2 py-3 text-center">
-              <p className="text-2xl font-extrabold text-brand-dark">
+            <div className="rounded-xl bg-white/70 px-2 py-2 text-center">
+              <p className="text-xl font-extrabold text-brand-dark">
                 {eligibleSupport.filter((e) => e.status === "eligible").length}
               </p>
               <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
@@ -806,7 +808,7 @@ function AdvancedResult({
               </p>
             </div>
           </div>
-          <p className="mt-3 break-keep text-[12px] font-semibold leading-relaxed text-brand-dark/80">
+          <p className="mt-2 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/80">
             👇 아래 <b>✅ 표시</b>된 곳이 대표님이 <b>지금 바로 신청 가능한 곳</b>입니다. 각 항목의
             <b> "상품 보기"</b>를 누르면 신청할 상품이 펼쳐지고, <b>신청 방법</b>까지 순서대로 안내드려요.
           </p>
@@ -825,6 +827,8 @@ function AdvancedResult({
           {creditMatches.map((m, i) => {
             const link = findInstitutionLink(m.institution);
             const isJaedan = m.institution.includes("재단");
+            // 재단은 link가 없으므로 JAEDAN_PRODUCTS를 아코디언 상품으로 사용
+            const products = isJaedan ? JAEDAN_PRODUCTS : link?.products;
             return (
               <div
                 key={i}
@@ -860,14 +864,14 @@ function AdvancedResult({
                 )}
 
                 {/* ★ 기관 내 여러 상품 아코디언 — 클릭 시 펼쳐서 상품별로 신청 (대표님 요청) ★ */}
-                {link?.products && link.products.length > 0 && (
+                {products && products.length > 0 && (
                   <div className="mt-2.5">
                     <button
                       onClick={() => toggleProducts(i)}
-                      className="flex w-full items-center justify-between gap-2 rounded-xl border-2 border-brand-orange bg-brand-orange/10 px-3 py-2.5 text-left transition hover:bg-brand-orange/20"
+                      className="inline-flex max-w-full items-center gap-2 rounded-xl border-2 border-brand-orange bg-brand-orange/10 px-3 py-2 text-left transition hover:bg-brand-orange/20"
                     >
-                      <span className="break-keep text-xs font-extrabold text-brand-orange sm:text-sm">
-                        💳 {m.institution} 신청 가능 상품 {link.products.length}개 보기
+                      <span className="break-keep text-xs font-extrabold text-brand-orange">
+                        💳 {m.institution} 신청 가능 상품 {products.length}개 보기
                       </span>
                       <span
                         className={`shrink-0 text-brand-orange transition-transform ${
@@ -879,7 +883,7 @@ function AdvancedResult({
                     </button>
                     {openProducts[i] && (
                       <div className="mt-2 space-y-2">
-                        {link.products.map((prod, pi) => (
+                        {products.map((prod, pi) => (
                           <div
                             key={pi}
                             className="rounded-xl border border-gray-200 bg-gray-50 p-3"
@@ -973,16 +977,6 @@ function AdvancedResult({
                           className="inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100"
                         >
                           📑 {link.pdfLabel}
-                        </a>
-                      )}
-                      {link.productName && link.productUrl && (
-                        <a
-                          href={link.productUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block rounded-lg border-2 border-brand-green bg-brand-green/10 px-3 py-1.5 text-[11px] font-bold text-brand-green hover:bg-brand-green/20"
-                        >
-                          💳 {link.productName}
                         </a>
                       )}
                     </div>
@@ -1153,38 +1147,35 @@ function AdvancedResult({
                 <Link
                   key={prog.id}
                   href={`/support/${prog.id}`}
-                  className="group flex items-start gap-3 py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50"
+                  className="group block py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50"
                 >
-                  <span className={`text-2xl ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1 flex flex-wrap items-center gap-2">
-                      <span className="break-keep text-sm font-extrabold text-brand-dark">
-                        {prog.title}
+                  {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
+                    <span className="text-sm font-extrabold text-brand-dark">{prog.title}</span>
+                    {isEligible ? (
+                      <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                        ✅ 신청 대상
                       </span>
-                      {isEligible ? (
-                        <span className="inline-block break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-extrabold text-white">
-                          ✅ 신청 대상
-                        </span>
-                      ) : (
-                        <span className="inline-block break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-extrabold text-brand-dark/60">
-                          🔜 요건 충족 시 대상
-                        </span>
-                      )}
-                    </div>
-                    <p
-                      className={`break-keep text-[11px] font-semibold leading-relaxed ${
-                        isEligible ? "text-brand-green" : "text-brand-dark/50"
-                      }`}
-                    >
-                      {isEligible ? prog.eligibleNote : prog.ineligibleNote}
-                    </p>
-                    <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-                      {prog.desc}
-                    </p>
-                    <span className="mt-1 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
-                      상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
-                    </span>
+                    ) : (
+                      <span className="shrink-0 break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
+                        🔜 요건 충족 시 대상
+                      </span>
+                    )}
                   </div>
+                  <p
+                    className={`mt-1 break-keep text-[11px] font-semibold leading-relaxed ${
+                      isEligible ? "text-brand-green" : "text-brand-dark/50"
+                    }`}
+                  >
+                    {isEligible ? prog.eligibleNote : prog.ineligibleNote}
+                  </p>
+                  <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
+                    {prog.desc}
+                  </p>
+                  <span className="mt-1.5 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
+                    상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
+                  </span>
                 </Link>
               );
             })}
