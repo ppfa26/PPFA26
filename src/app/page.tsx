@@ -8,8 +8,8 @@ import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
 
 const TRUST_BADGES = [
-  { icon: "🏛️", text: "89개 정부 사이트 크롤링" },
-  { icon: "📚", text: "40여개 부처 최신 공문 자문" },
+  { icon: "🏛️", text: "정부 사이트 크롤링" },
+  { icon: "📚", text: "관련 부처 최신 공문 자문" },
   { icon: "🔒", text: "승인 보장 X · 자문 플랫폼" },
   { icon: "🚫", text: "대행 없음 · 승인 수수료 없음" },
 ];
@@ -117,10 +117,10 @@ export default function Home() {
               as="h1"
               className="break-keep text-[22px] font-black leading-tight text-brand-dark xs:text-[26px] sm:text-5xl"
             >
-              정부지원사업 브로커{" "}
-              <span className="text-brand-red">수수료 5%</span>
+              AI를 활용해 내 사업장에 알맞는
               <br />
-              아직도 비싸게 쓰고 계신가요?
+              <span className="text-brand-red">정부지원사업</span>을
+              찾아드립니다.
             </Editable>
 
             <Editable
@@ -128,11 +128,10 @@ export default function Home() {
               as="p"
               className="mx-auto mt-6 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray xs:text-base sm:text-lg"
             >
-              정부지원사업 브로커 대행 수수료는 1억원 승인 시 최소 500만원입니다.
+              모든 정부기관 사이트를 AI가 정밀 분석해,
               <br className="hidden sm:inline" />{" "}
-              모두의사업친구에서{" "}
-              <strong className="text-brand-dark">297,000원부터</strong> 직접
-              신청하는 방법을 배워 무료로 신청하세요.
+              대표님 사업장에 딱 맞는 정부지원사업과 신청 방법까지
+              안내해드립니다.
             </Editable>
 
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">

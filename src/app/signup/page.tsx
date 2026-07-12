@@ -165,7 +165,7 @@ function SignupInner() {
           <div className="relative h-4" />
           <div className="relative">
             <span className="inline-block rounded-full bg-brand-yellow/15 px-3 py-1 text-[11px] font-bold text-brand-yellow">
-              AI 정부지원사업 통합 매칭 플랫폼
+              정부지원사업 AI 통합 매칭 플랫폼
             </span>
             <h2 className="mt-4 break-keep text-2xl font-extrabold leading-snug text-white xl:text-3xl">
               AI를 활용해 내 사업장에 알맞는<br />
