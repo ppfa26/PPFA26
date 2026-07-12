@@ -134,25 +134,21 @@ export default function Home() {
               안내해드립니다.
             </Editable>
 
-            {/* 핵심 혜택 체크리스트 (로그인 화면과 통일) */}
-            <ul className="mx-auto mt-7 max-w-xl space-y-2.5 text-left">
-              {[
-                "AI가 업종·규모를 분석해 맞춤으로 정부지원사업 매칭",
-                "지금 바로 신청 가능한 정부지원사업만 큐레이션",
-                "정부지원사업 신청 순서·필요 서류·콜센터까지 한 번에 안내",
-              ].map((t, i) => (
-                <li
-                  key={t}
-                  className="flex items-center gap-2.5 break-keep text-sm font-semibold text-brand-dark"
-                >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-green text-[11px] text-white">
-                    ✓
-                  </span>
-                  <Editable id={`hero-check-${i}`} as="span">
-                    {t}
-                  </Editable>
-                </li>
-              ))}
+            {/* 핵심 혜택 — 가로 컴팩트 배지 */}
+            <ul className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:gap-x-3">
+              {["맞춤 AI 매칭", "신청 가능 사업만", "서류·신청까지 안내"].map(
+                (t, i) => (
+                  <li
+                    key={t}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-brand-green/30 bg-brand-green/5 px-3 py-1.5 text-xs font-semibold text-brand-dark sm:text-sm"
+                  >
+                    <span className="text-brand-green">✓</span>
+                    <Editable id={`hero-check-${i}`} as="span">
+                      {t}
+                    </Editable>
+                  </li>
+                )
+              )}
             </ul>
 
             <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -200,13 +196,19 @@ export default function Home() {
         {/* 비교 섹션 */}
         <section className="px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-3xl">
-            <Editable
-              id="home-compare-title"
-              as="h2"
-              className="text-center text-2xl font-extrabold text-brand-dark sm:text-3xl"
-            >
-              혁신적인 서비스 이용료
-            </Editable>
+            <div className="flex flex-col items-center text-center">
+              <span className="mb-3 inline-block rounded-full bg-brand-red/10 px-4 py-1.5 text-xs font-bold text-brand-red sm:text-sm">
+                💰 가격 비교
+              </span>
+              <Editable
+                id="home-compare-title"
+                as="h2"
+                className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
+              >
+                혁신적인 서비스 이용료
+              </Editable>
+              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
+            </div>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-red/30 bg-white p-6">
                 <div className="shrink-0 text-2xl">❌</div>
@@ -235,13 +237,19 @@ export default function Home() {
         {/* 가치 제안 4단계 */}
         <section className="bg-gray-50 px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-4xl text-center">
-            <Editable
-              id="home-value-title-v2"
-              as="h2"
-              className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
-            >
-              297,000원부터 이 모든 걸 알려드립니다.
-            </Editable>
+            <div className="flex flex-col items-center text-center">
+              <span className="mb-3 inline-block rounded-full bg-brand-green/10 px-4 py-1.5 text-xs font-bold text-brand-green sm:text-sm">
+                🎯 서비스 안내
+              </span>
+              <Editable
+                id="home-value-title-v2"
+                as="h2"
+                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+              >
+                297,000원부터 이 모든 걸 알려드립니다.
+              </Editable>
+              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
+            </div>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {VALUES.map((v, i) => (
                 <div
@@ -402,20 +410,26 @@ export default function Home() {
           className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-12"
         >
           <div className="mx-auto max-w-5xl">
-            <Editable
-              id="home-pricing-title"
-              as="h2"
-              className="text-center text-2xl font-extrabold text-brand-dark sm:text-3xl"
-            >
-              합리적인 가격, 3가지 플랜
-            </Editable>
-            <Editable
-              id="home-pricing-sub"
-              as="p"
-              className="mx-auto mt-2 max-w-xl text-center text-sm text-brand-gray"
-            >
-              모든 플랜은 1회성 결제이며 월 구독 결제가 아닙니다.
-            </Editable>
+            <div className="flex flex-col items-center text-center">
+              <span className="mb-3 inline-block rounded-full bg-brand-yellow/20 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+                💳 요금제
+              </span>
+              <Editable
+                id="home-pricing-title"
+                as="h2"
+                className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
+              >
+                합리적인 가격, 3가지 플랜
+              </Editable>
+              <Editable
+                id="home-pricing-sub"
+                as="p"
+                className="mx-auto mt-2 max-w-xl text-sm text-brand-gray"
+              >
+                모든 플랜은 1회성 결제이며 월 구독 결제가 아닙니다.
+              </Editable>
+              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
+            </div>
             <div className="mt-10">
               <PricingCards prefix="home" />
             </div>
@@ -425,13 +439,19 @@ export default function Home() {
         {/* FAQ */}
         <section className="bg-gray-50 px-4 py-7 sm:py-12">
           <div className="mx-auto max-w-3xl">
-            <Editable
-              id="home-faq-title"
-              as="h2"
-              className="text-center text-2xl font-extrabold text-brand-dark sm:text-3xl"
-            >
-              자주 묻는 질문
-            </Editable>
+            <div className="flex flex-col items-center text-center">
+              <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
+                💬 자주 묻는 질문
+              </span>
+              <Editable
+                id="home-faq-title"
+                as="h2"
+                className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
+              >
+                궁금한 점, 미리 확인하세요
+              </Editable>
+              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
+            </div>
             <div className="mt-8 space-y-3">
               {FAQS.map((f, i) => (
                 <details
