@@ -7,9 +7,15 @@ import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
 import { countMatchedItems } from "@/lib/supportPrograms";
+import {
+  getPaymentBlockReasons,
+  PAYMENT_BLOCK_TEXT,
+  type PaymentBlockReason,
+} from "@/lib/diagnosisConfig";
 
 export default function MatchingPreview() {
   const [name, setName] = useState("");
+  const [blockReasons, setBlockReasons] = useState<PaymentBlockReason[]>([]);
   const [counts, setCounts] = useState<{
     total: number;
     institutions: number;
@@ -22,6 +28,7 @@ export default function MatchingPreview() {
       const raw = sessionStorage.getItem("mpp_diagnosis");
       const profile = raw ? JSON.parse(raw) : {};
       setName(profile.name || "");
+      setBlockReasons(getPaymentBlockReasons(profile));
       setCounts(countMatchedItems(profile));
     } catch {
       setCounts(null);
@@ -29,6 +36,69 @@ export default function MatchingPreview() {
   }, []);
 
   const total = counts?.total ?? 0;
+  const isBlocked = blockReasons.length > 0;
+
+  // ── 결제 차단 화면 (파산·회생 진행 중 / 세금 체납 / 자본잠식) ──
+  //  안 되는데 결제받으면 환불 요청이 뻔하므로, 결제 유도 대신 정직하게 안내한다.
+  if (isBlocked) {
+    return (
+      <PageShell pageKey="matching-preview">
+        <Header />
+        <main className="px-4 py-10">
+          <div className="mx-auto max-w-xl">
+            <div className="rounded-3xl border-2 border-brand-red/40 bg-white p-7 text-center shadow-card">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/10 text-3xl">
+                ⚠️
+              </div>
+              <h1 className="mt-4 break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
+                {name ? `${name} 대표님, ` : ""}지금은 신청이 어려운 상태입니다
+              </h1>
+              <p className="mt-3 break-keep text-sm leading-relaxed text-brand-dark/70">
+                아래 사유로 현재는 정책자금·정부지원사업 승인이 어려워{" "}
+                <b className="text-brand-red">결제를 진행하지 않습니다.</b> 솔직하게 먼저 안내드리는 것이
+                대표님께 도움이 된다고 판단했습니다.
+              </p>
+
+              <div className="mt-5 space-y-3 text-left">
+                {blockReasons.map((r) => (
+                  <div
+                    key={r}
+                    className="break-keep rounded-2xl border border-brand-red/30 bg-brand-red/5 px-4 py-3"
+                  >
+                    <p className="text-sm font-extrabold text-brand-red">
+                      🚫 {PAYMENT_BLOCK_TEXT[r].title}
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-brand-dark/70">
+                      {PAYMENT_BLOCK_TEXT[r].detail}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-left text-xs leading-relaxed text-brand-dark/80">
+                💡 위 사유가 <b>해소된 후 다시 진단</b>하시면 정상적으로 매칭 결과를
+                확인하실 수 있습니다. 궁금한 점은 언제든 상담으로 도와드리겠습니다.
+              </div>
+
+              <a
+                href="/diagnosis"
+                className="btn-brand mt-6 block rounded-full py-3.5 text-center text-base font-bold"
+              >
+                진단 다시 하기
+              </a>
+              <a
+                href="/"
+                className="mt-3 block text-center text-sm text-brand-gray underline"
+              >
+                홈으로 돌아가기
+              </a>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell pageKey="matching-preview">

@@ -9,6 +9,7 @@ import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP, COMMON_NOTES } from "@/lib/products";
+import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
 import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
 const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
@@ -40,6 +41,17 @@ function PaymentInner() {
   // 로그인 확인 + 위젯 렌더
   useEffect(() => {
     let mounted = true;
+
+    // ── 이중 안전장치: 신청 불가 상태(파산·회생 진행중/세금체납/자본잠식)면 결제 차단 ──
+    //  matching-preview에서 이미 막지만, URL 직접 접근 등을 대비해 결제 페이지에서도 재확인.
+    try {
+      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const profile = raw ? JSON.parse(raw) : {};
+      if (getPaymentBlockReasons(profile).length > 0) {
+        router.replace("/matching-preview");
+        return;
+      }
+    } catch {}
 
     (async () => {
       const { data } = await supabase.auth.getSession();

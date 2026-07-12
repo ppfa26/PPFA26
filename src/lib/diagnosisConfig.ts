@@ -114,9 +114,24 @@ export const STEP3_FIELDS = {
     label: "부동산 및 기계장비 담보 유무",
     opts: ["있음", "없음"],
   },
+  // ★ 대표자 회생·파산 상태 (3단계) — 결제 차단·정책자금 제한 판정의 핵심 ★
+  //   · 진행 중 → 정책자금·정부지원 모두 신청 불가 → 결제 차단
+  //   · 면책/인가 완료 → 3년 경과 시 정책자금 가능, 정부지원금·인증은 바로 가능
   bankruptcy: {
-    label: "대표자 회생·파산 이력",
-    opts: ["있음", "없음"],
+    label: "대표자 회생·파산 상태",
+    opts: ["해당 없음", "파산·회생 진행 중", "면책·인가 완료"],
+  },
+  // ★ 세금 체납 여부 — 체납 중이면 정책자금·정부지원 전체 신청 불가 → 결제 차단 ★
+  taxDelinquent: {
+    label: "세금(국세·지방세) 체납 여부",
+    opts: ["없음", "체납 있음"],
+  },
+  // ★ 자본잠식 여부 (법인만 해당) — 자본잠식이면 정책자금·정부지원 신청 불가 → 결제 차단 ★
+  //   개인사업자는 자본잠식 개념이 없어 이 질문은 표시하지 않습니다(파산·회생으로 판정).
+  capitalImpairment: {
+    label: "자본잠식 상태입니까? (법인만 해당)",
+    hint: "자본잠식이란: 회사가 그동안 쌓인 손실로 인해 '남은 자본(자본총계)'이 처음 넣은 '자본금'보다 적어진 상태를 말합니다.",
+    opts: ["아니오", "예(자본잠식)"],
   },
   insurance: {
     label: "4대보험 가입 여부",
@@ -125,5 +140,40 @@ export const STEP3_FIELDS = {
   employees: {
     label: "가입 직원수 (대표자 제외)",
     opts: ["0명", "5명 이하", "10명 이하", "10명 이상"],
+  },
+};
+
+// ── 결제 차단(신청 불가) 판정 ─────────────────────────────────────
+//  대표님 실무 기준:
+//   ① 파산·회생 '진행 중'  → 아무것도 안 됨 (완료 후 3년 뒤 신청 가능)
+//   ② 세금 체납 '있음'      → 모든 세금 완납 후 신청 가능 (분납도 승인율 낮음)
+//   ③ 자본잠식 '예'(법인)   → 자본잠식 해소 후 신청 가능
+//  → 위 조건이면 안 되는데 결제받으면 환불 요청이 뻔하므로 결제 자체를 막는다.
+export type PaymentBlockReason = "bankruptcy" | "tax" | "capital";
+
+export function getPaymentBlockReasons(p: any): PaymentBlockReason[] {
+  const reasons: PaymentBlockReason[] = [];
+  if (p?.bankruptcy === "파산·회생 진행 중") reasons.push("bankruptcy");
+  if (p?.taxDelinquent === "체납 있음") reasons.push("tax");
+  // 자본잠식은 법인만 판정 (개인사업자·예비창업자는 해당 없음)
+  if (p?.businessType === "법인사업자" && p?.capitalImpairment === "예(자본잠식)") reasons.push("capital");
+  return reasons;
+}
+
+export const PAYMENT_BLOCK_TEXT: Record<PaymentBlockReason, { title: string; detail: string }> = {
+  bankruptcy: {
+    title: "파산·회생 진행 중",
+    detail:
+      "파산·회생 절차가 진행 중인 동안에는 정책자금·정부지원사업 신청이 불가합니다. 면책·인가 완료 후 3년이 지나면 신청이 가능합니다. (정부지원금·인증은 완료 즉시 신청 가능)",
+  },
+  tax: {
+    title: "세금 체납 중",
+    detail:
+      "국세·지방세 체납이 있으면 정책자금은 물론 정부지원금·바우처·인증까지 승인이 사실상 어렵습니다. 모든 세금을 완납하신 후 다시 진단해 주세요. (분납 중에도 승인율이 매우 낮습니다)",
+  },
+  capital: {
+    title: "자본잠식 상태",
+    detail:
+      "자본잠식 상태의 법인은 정책자금·정부지원사업 승인이 어렵습니다. 자본잠식을 해소(증자·이익 실현 등)하신 후 다시 진단해 주세요.",
   },
 };

@@ -50,7 +50,12 @@ export type Company = {
   revenue_drop_yoy_pct?: number; // 전년比 매출 감소율(%)
   ceo_changed_1y?: boolean; // 최근 1년 내 대표자·실제경영자 변경
   is_pre_founder?: boolean; // 예비창업자
-  is_re_founder?: boolean; // 재창업자
+  is_re_founder?: boolean; // 재창업자(파산·회생 면책/인가 완료자)
+  // 파산·회생 상태: "none"(해당없음) | "ongoing"(진행중·결제차단) | "discharged"(면책·인가 완료)
+  //  대표님 실무 기준:
+  //   · discharged → 정책자금은 면책/인가 후 3년 경과해야 가능(기관이 채권자면 사실상 평생 제한),
+  //     정부지원금·인증은 즉시 가능. 실익 낮은 일반 정책자금은 빼고 재기 전용 프로그램만 안내.
+  bankruptcy_status?: "none" | "ongoing" | "discharged";
 
   // ── 업종·규모 기반 추천 필터용 (대표님 실무 기준) ──
   biz_type?: "personal" | "corp"; // 사업자 유형 (개인/법인)
@@ -280,9 +285,29 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   const isExport = (company.industry || "").includes("수출") || company.is_exporter === true;
   const segment = resolveSegment(company);
   const revenue = company.annual_revenue ?? 0;
-  const isBigRevenue = revenue >= 500000000 || segment === "sme"; // 매출 5억↑ 또는 중소기업 규모
-  const isTech = isTechCompany(company);
+  const isBizCorp = company.biz_type === "corp";
   const isManufacturingCore = cat === "manufacturing" || cat === "tech_innov"; // 업종 자체가 제조·기술
+  const isTech = isTechCompany(company);
+  // 신보 자격(비기술): 연매출 5억↑ (대표님: 직원 5명은 선호일 뿐 필수 아님, 1명도 승인)
+  const qualifiesSinbo = revenue >= 500000000 || segment === "sme";
+  // 청년(만39세 이하) — 중진공 청년창업자금 자격
+  const isYoung = typeof company.ceo_age === "number" && company.ceo_age <= 39;
+
+  // ── 재도전자(파산·회생 면책·인가 완료) → 일반 정책자금(보증·직접대출) 제외 ──
+  //   대표님: 면책/인가 후 3년 경과해야 정책자금 가능(기관이 채권자였으면 사실상 평생 제한).
+  //   재도전특별자금 등 재기 전용·정부지원금·인증만 안내(govPrograms 별도).
+  if (company.bankruptcy_status === "discharged") {
+    return [
+      {
+        institution: "소상공인시장진흥공단",
+        criteria:
+          "🔄 재도전 전용 — 재도전특별자금(재창업·채무조정 성실상환자) 안내. 일반 정책자금·보증은 면책·인가 후 3년 경과 시 가능하며 기관이 채권자였던 경우 제한될 수 있습니다.",
+        priority: "MEDIUM",
+        loan_type: "직접대출",
+        step: 1,
+      },
+    ];
+  }
 
   // 현재 이용 중인 기관(중복배제 참고): 사용자가 진단에서 선택한 기관
   const using = (company.current_institutions || []).map((s) => s.replace(/\s/g, ""));
@@ -302,147 +327,105 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   //   ★ 무역보험공사는 수출 전용 + 한도 별도라 항상 병행 가능.
   // ─────────────────────────────────────────────────────────────────
 
-  // 신보·기보 둘 다 자격? (기술기업이면서 매출·규모도 갖춘 경우)
-  const qualifiesBothGuarantee = isTech && isBigRevenue;
   const DUP_NOTE =
-    "⚠️ 신용보증기금·기술보증기금은 중복 신청이 불가합니다. 두 곳 모두 자격이 되므로 둘 중 유리한 1곳을 선택해 신청하세요 (기술력 강점 → 기보 / 매출·규모 강점 → 신보).";
+    "⚠️ 신용보증기금·기술보증기금은 중복 신청이 불가합니다(실제 두 곳 동시 이용은 매우 드뭅니다). 두 곳 모두 자격이 되면 유리한 1곳만 선택해 신청하세요 (기술력 강점 → 기보 / 매출·규모 강점 → 신보).";
 
-  if (qualifiesBothGuarantee) {
-    // 신보·기보 둘 다 자격 → 둘 다 안내 + 중복 불가 명시
+  // 매출 매우 큰 제조업(10억↑) → 예외적으로 신보·기보 둘 다 안내(둘 중 1곳만 실제 신청)
+  const bigManufacturer = isManufacturingCore && revenue >= 1000000000;
+
+  if (bigManufacturer) {
     matches.push({
       institution: "기술보증기금",
-      criteria: "기술력(특허·연구소·벤처·혁신성장 등) 기반 보증 · 기술 강점이면 기보가 유리",
+      criteria: "제조업은 기보 우선! 기술평가 기반 보증 (첫거래 1억·최대 2억, 인증 없어도 시도 후 부결 시 인증 보완 재신청)",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
       exclusiveNote: DUP_NOTE,
+      alreadyUsing: usingKibo,
     });
     matches.push({
       institution: "신용보증기금",
-      criteria: "매출·사업규모 기반 보증(한도 큼) · 규모 강점이면 신보가 유리",
+      criteria: "매출 10억 이상 대형 제조업 → 신보도 자격(한도 큼). 단 기보와 둘 중 1곳만 신청",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
       exclusiveNote: DUP_NOTE,
+      alreadyUsing: usingKodit,
     });
-    // 중진공(정책자금) 병행 — 제조·혁신은 직원수 무관, 그 외는 직원 5명 이상
-    if (isManufacturingCore || company.is_innovation_area || employees >= 5) {
-      matches.push({
-        institution: "중소벤처기업진흥공단",
-        criteria: isManufacturingCore || company.is_innovation_area
-          ? "제조·혁신성장 → 직원수 무관 정책자금 (직접대출, 보증기관과 별개로 병행 가능)"
-          : "상시직원 5명 이상 → 중진공 정책자금 병행 가능 (직접대출, 보증과 별개)",
-        priority: "HIGH",
-        loan_type: "직접대출",
-        step: 2,
-      });
-    }
-    // 소진공(정책자금) — 소상공인 규모면 병행
-    if (segment === "small") {
-      matches.push({
-        institution: "소상공인시장진흥공단",
-        criteria: "소상공인 규모 → 직접대출 정책자금 병행 가능 (보증과 별개)",
-        priority: "MEDIUM",
-        loan_type: "직접대출",
-        step: 3,
-      });
-    }
   } else if (isTech) {
-    // ── 기술기업(제조·기술·특허·혁신성장 등) → 기보 단독 우선 (재단·신보 X) ──
+    // ── 제조업 포함 기술기업 → 기보 단독 우선 (신보·재단 X) ──
     matches.push({
       institution: "기술보증기금",
-      criteria: "⚠️ 기술기업은 기보부터! (신보·재단과 중복 불가 · 기술평가로 매출 낮아도 보증)",
+      criteria: isManufacturingCore
+        ? "제조업은 기보부터! 기술평가로 매출 낮아도 보증 (첫거래 1억·최대 2억, 인증 없어도 시도 후 부결 시 특허·벤처·이노비즈 보완 재신청)"
+        : "기술력(특허·상표·연구소·벤처·이노비즈·혁신성장·대표경력) 기반 보증 — 매출 낮아도 승인 (신보·재단과 중복 불가)",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
       alreadyUsing: usingKibo,
     });
-    // 중진공(정책자금) 병행 — 제조·혁신은 직원수 무관, 그 외는 직원 5명 이상
-    if (isManufacturingCore || company.is_innovation_area || employees >= 5) {
-      matches.push({
-        institution: "중소벤처기업진흥공단",
-        criteria: isManufacturingCore || company.is_innovation_area
-          ? "제조·혁신성장 → 직원수 무관 정책자금 (직접대출, 아이템+동종경력 시 승인 잘남)"
-          : "상시직원 5명 이상 → 중진공 정책자금 병행 가능 (직접대출)",
-        priority: "HIGH",
-        loan_type: "직접대출",
-        step: 2,
-      });
-    }
-    // 소상공인 규모의 기술기업이면 소진공(정책자금) 병행
-    if (segment === "small") {
-      matches.push({
-        institution: "소상공인시장진흥공단",
-        criteria: "소상공인 규모 → 혁신성장촉진(스마트)자금 등 직접대출 병행 가능",
-        priority: "MEDIUM",
-        loan_type: "직접대출",
-        step: 3,
-      });
-    }
+  } else if (qualifiesSinbo) {
+    // ── 비기술 + 매출 5억↑ → 신보 우선 (기보·재단 X) ──
+    matches.push({
+      institution: "신용보증기금",
+      criteria: "매출 5억 이상·신용점수 양호 → 신보 우선 (재단과 중복 불가 · 매출 기반 보증, 한도 큼 · 직원 많을수록 유리하나 필수 아님)",
+      priority: "HIGH",
+      loan_type: "대리대출",
+      step: 1,
+      alreadyUsing: usingKodit,
+    });
   } else {
-    // ── 비기술 트랙 (도소매·음식점·서비스·기타) ──
-    if (isBigRevenue) {
-      // 매출 5억↑ 또는 중소기업 규모 → 신보 단독 (기보·재단 X)
-      matches.push({
-        institution: "신용보증기금",
-        criteria: "매출 5억 이상·사업 규모 기업 → 신보 우선 (재단과 중복 불가 · 매출 기반 보증, 한도 큼)",
-        priority: "HIGH",
-        loan_type: "대리대출",
-        step: 1,
-        alreadyUsing: usingKodit,
-      });
-      matches.push({
-        institution: "소상공인시장진흥공단",
-        criteria: "직접대출 정책자금으로 병행 신청 가능 (보증과 별개)",
-        priority: "MEDIUM",
-        loan_type: "직접대출",
-        step: 2,
-      });
-      // 직원 5명 이상이면 중진공까지 확장
-      if (employees >= 5) {
-        matches.push({
-          institution: "중소벤처기업진흥공단",
-          criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 확장 가능 (직접대출)",
-          priority: "MEDIUM",
-          loan_type: "직접대출",
-          step: 3,
-        });
-      }
-    } else {
-      // 매출 5억 미만 소상공인 → 재단 단독 (신보·기보 X)
-      matches.push({
-        institution: "지역신용보증재단",
-        criteria: "소상공인(매출 5억 미만) → 재단 우선 (신보·기보와 중복 불가 · 특례→협약→일반 순 승인율)",
-        priority: "HIGH",
-        loan_type: "대리대출",
-        step: 1,
-        alreadyUsing: usingJaedan,
-      });
-      matches.push({
-        institution: "소상공인시장진흥공단",
-        criteria: "직접대출 정책자금으로 병행 신청 가능 (재단과 별개)",
-        priority: "MEDIUM",
-        loan_type: "직접대출",
-        step: 2,
-      });
-      // 직원 5명 이상이면 중진공까지 확장
-      if (employees >= 5) {
-        matches.push({
-          institution: "중소벤처기업진흥공단",
-          criteria: "4대보험 상시직원 5명 이상 → 중진공 정책자금까지 확장 가능 (직접대출)",
-          priority: "MEDIUM",
-          loan_type: "직접대출",
-          step: 3,
-        });
-      }
-    }
+    // ── 소상공인·소액 → 재단 우선 (신보·기보 X) ──
+    matches.push({
+      institution: "지역신용보증재단",
+      criteria: "소상공인·소액(3천~5천) → 재단 우선 (신보·기보와 중복 불가 · 사업장만 있으면 승인 잘남 · 창업 3개월·월매출 100만원~ 특례보증 가능)",
+      priority: "HIGH",
+      loan_type: "대리대출",
+      step: 1,
+      alreadyUsing: usingJaedan,
+    });
   }
 
-  // 수출기업 → 무역보험공사는 항상 마지막에 병행 (재단·기보·신보와 한도 미합산)
+  // ── 중진공(직접대출) 병행 — 제조·혁신성장·수출·청년(39세↓)이면 직원 0명·개인도 OK ──
+  //   대표님: 매출 하한 없음. 성장 방향성·자금 사용계획·대표 의지 종합 판단.
+  const qualifiesJungjin =
+    isManufacturingCore || company.is_innovation_area || isExport || isYoung || employees >= 5;
+  if (qualifiesJungjin) {
+    const reasons: string[] = [];
+    if (isYoung) reasons.push("만 39세 이하 청년창업자금(매출 낮아도 1억 승인 사례)");
+    if (isManufacturingCore) reasons.push("제조업");
+    if (company.is_innovation_area) reasons.push("혁신성장 유형");
+    if (isExport) reasons.push("수출기업");
+    if (!reasons.length && employees >= 5) reasons.push("상시직원 5명 이상");
+    matches.push({
+      institution: "중소벤처기업진흥공단",
+      criteria: `${reasons.join(" · ")} → 중진공 정책자금(직접대출) 병행 가능. 성장 계획·자금 사용처·대표 의지를 종합 심사 (보증과 별개)`,
+      priority: "HIGH",
+      loan_type: "직접대출",
+      step: 2,
+    });
+  }
+
+  // ── 소진공(직접대출) 병행 — 소상공인 규모 or 제조업 추가자금 ──
+  //   대표님: 소상공인 대부분 + 중진공 받은 제조업 추가자금. 상품별 승인율은 아래 안내에 명시.
+  if (segment === "small" || isManufacturingCore) {
+    matches.push({
+      institution: "소상공인시장진흥공단",
+      criteria:
+        "소상공인·추가자금 → 직접대출 정책자금 병행 (승인 잘남: 혁신성장촉진(2년연속 10%성장·수출·졸업후보)·재도전특별·대환·청년고용연계·일반경영안정 / 승인율 낮음: 민간투자매칭·TIPS·스마트기기·일시적경영애로·신용취약)",
+      priority: "MEDIUM",
+      loan_type: "직접대출",
+      step: 3,
+    });
+  }
+
+  // ── 무역보험공사 — 수출실적증명원 발급 기업(법인 선호, BB+↑ 승인 잘남) ──
   if (isExport) {
     matches.push({
       institution: "한국무역보험공사",
-      criteria: "🌏 수출은 최강! 선적전/선적후/문화산업보증 중 1개 · 다른 기관과 한도 별도로 병행",
+      criteria: isBizCorp
+        ? "🌏 수출실적증명원 발급 법인 → 선적전/선적후 보증 (기업등급 BB+ 이상 승인 잘남, 그 이하도 가능 · 다른 기관과 한도 별도)"
+        : "🌏 수출실적증명원 발급 시 신청 가능(법인 선호) · 다른 기관과 한도 별도로 병행",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 9,

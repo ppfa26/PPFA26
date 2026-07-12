@@ -234,6 +234,17 @@ export default function Diagnosis() {
               <Field label={STEP3_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP3_FIELDS.currentInstitutions.opts} /></Field>
               <Field label={STEP3_FIELDS.collateral.label}><Radio k="collateral" opts={STEP3_FIELDS.collateral.opts} /></Field>
               <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
+              <Field label={STEP3_FIELDS.taxDelinquent.label}><Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} /></Field>
+              {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
+              {form.businessType === "법인사업자" && (
+                <div className="mb-6">
+                  <p className="mb-1 font-bold text-brand-dark">{STEP3_FIELDS.capitalImpairment.label}</p>
+                  <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                    {STEP3_FIELDS.capitalImpairment.hint}
+                  </p>
+                  <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
+                </div>
+              )}
               <Field label={STEP3_FIELDS.insurance.label}><Radio k="insurance" opts={STEP3_FIELDS.insurance.opts} /></Field>
               <Field label={STEP3_FIELDS.employees.label}><Radio k="employees" opts={STEP3_FIELDS.employees.opts} /></Field>
             </div>

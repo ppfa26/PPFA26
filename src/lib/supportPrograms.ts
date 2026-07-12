@@ -384,9 +384,25 @@ export function profileToCompany(p: DiagnosisProfile): Company {
     years_in_business: yearsVal,
     kcb_score: creditScore,
     nice_score: creditScore,
-    tax_delinquent: false,
     is_pre_founder: Boolean(p.businessType?.includes("예비")),
-    is_re_founder: Boolean(p.bankruptcy && p.bankruptcy.includes("있")),
+    // 파산·회생 상태 3단계 매핑 (구 "있음/없음" 값도 하위호환 처리)
+    //  · "면책·인가 완료" → 재창업자(is_re_founder), 재기 전용 프로그램만 안내
+    //  · "파산·회생 진행 중" → 결제 차단 대상(여기 도달 시 안전차원 재도전 취급)
+    is_re_founder: Boolean(
+      p.bankruptcy &&
+        (p.bankruptcy.includes("면책") ||
+          p.bankruptcy.includes("인가") ||
+          p.bankruptcy.includes("진행") ||
+          p.bankruptcy === "있음")
+    ),
+    bankruptcy_status: p.bankruptcy?.includes("진행")
+      ? "ongoing"
+      : p.bankruptcy?.includes("면책") || p.bankruptcy?.includes("인가") || p.bankruptcy === "있음"
+        ? "discharged"
+        : "none",
+    tax_delinquent: p.taxDelinquent === "체납 있음",
+    full_capital_impairment:
+      p.businessType === "법인사업자" && p.capitalImpairment === "예(자본잠식)",
     // ── 인증·기술 신호 (전부 전달) ──
     has_patent: hasPatent,
     has_rnd_center: hasRnd,

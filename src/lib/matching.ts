@@ -19,7 +19,9 @@ export type DiagnosisProfile = {
   innovation?: string[]; // 혁신성장 테마(9개) 중 선택 — 있으면 혁신성장분야 기업
   currentInstitutions?: string[]; // 현재 이용 중인 기관(소진공/중진공/재단/신보/기보/무역보험/기타)
   collateral?: string;
-  bankruptcy?: string;
+  bankruptcy?: string; // 해당 없음 / 파산·회생 진행 중 / 면책·인가 완료
+  taxDelinquent?: string; // 없음 / 체납 있음
+  capitalImpairment?: string; // 아니오 / 예(자본잠식) — 법인만
   insurance?: string;
   employees?: string; // 0명/5명이하/10명이하/10명이상
   // 연락처(이름·휴대폰은 회원가입 단계에서 수집 — 진단에서는 미수집)
