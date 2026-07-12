@@ -456,7 +456,7 @@ export default function Home() {
           <div className="reveal mx-auto max-w-5xl">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-yellow/20 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
-                💳 요금제
+                💳 서비스 이용료
               </span>
               <Editable
                 id="home-pricing-title"

@@ -4,7 +4,7 @@ import LegalLayout from "@/components/LegalLayout";
 import Editable from "@/components/Editable";
 
 const ROWS: { label: string; id: string; value: string }[] = [
-  { label: "상호", id: "biz-name", value: "모두의사업친구 (Modu Business Friend)" },
+  { label: "상호", id: "biz-name", value: "모두의사업친구" },
   { label: "대표자명", id: "biz-ceo", value: "신주엽" },
   { label: "사업자등록번호", id: "biz-regno", value: "597-12-02897" },
   { label: "통신판매업 신고번호", id: "biz-mailorder", value: "[신고번호 준비 중]" },

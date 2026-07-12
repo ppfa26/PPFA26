@@ -98,7 +98,7 @@ export default function PrivacyPage() {
           6. 개인정보 보호책임자
         </h2>
         <Editable id="privacy-6-body" as="p" className="mt-2">
-          상호: 모두의사업친구 (Modu Business Friend)
+          상호: 모두의사업친구
           <br />
           이메일: biospartners@naver.com
         </Editable>
