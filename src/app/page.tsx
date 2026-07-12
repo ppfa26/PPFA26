@@ -115,23 +115,47 @@ export default function Home() {
             <Editable
               id="hero-headline-v2"
               as="h1"
-              className="break-keep text-[19px] font-black leading-tight text-brand-dark xs:text-[22px] sm:text-4xl"
+              className="break-keep text-[22px] font-black leading-tight text-brand-dark xs:text-[26px] sm:text-4xl"
             >
-              너무나도 복잡한 정부지원사업,
+              AI를 활용해 내 사업장에 알맞는
               <br />
-              내 사업장은 어떤 걸{" "}
-              <span className="text-brand-red">신청할 수 있을까?</span>
+              <span className="text-brand-red">정부지원사업</span>을
+              찾아드립니다.
             </Editable>
 
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-6 max-w-2xl break-keep text-xs leading-relaxed text-brand-gray xs:text-sm sm:text-base"
+              className="mx-auto mt-6 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray xs:text-base"
             >
-              고민은 이제 그만. AI가 내 사업장에 딱 맞는 정부지원사업을 찾아드립니다.
+              모든 정부기관 사이트를 AI가 정밀 분석해,
+              <br className="hidden sm:inline" />{" "}
+              대표님 사업장에 딱 맞는 정부지원사업과 신청 방법까지
+              안내해드립니다.
             </Editable>
 
-            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            {/* 핵심 혜택 체크리스트 (로그인 화면과 통일) */}
+            <ul className="mx-auto mt-7 max-w-xl space-y-2.5 text-left">
+              {[
+                "AI가 업종·규모를 분석해 맞춤으로 정부지원사업 매칭",
+                "지금 바로 신청 가능한 정부지원사업만 큐레이션",
+                "정부지원사업 신청 순서·필요 서류·콜센터까지 한 번에 안내",
+              ].map((t, i) => (
+                <li
+                  key={t}
+                  className="flex items-center gap-2.5 break-keep text-sm font-semibold text-brand-dark"
+                >
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-green text-[11px] text-white">
+                    ✓
+                  </span>
+                  <Editable id={`hero-check-${i}`} as="span">
+                    {t}
+                  </Editable>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Editable
                 id="hero-cta-primary"
                 as="a"
