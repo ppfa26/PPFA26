@@ -244,7 +244,7 @@ function resolveIndustryKind(company: Company): IndustryKind {
 }
 
 // 신용점수 판정 (대표님 실무 기준)
-//  - 800점 이상: 양호 (대부분 승인 잘남)
+//  - 800점 이상: 양호 (대부분 승인율 높음)
 //  - 780~799: 사업성/기술력 있으면 가능 (기보·특례 위주)
 //  - 780 미만: 일반적으론 어려움 (단 기보·재단특례는 700점대도 가능)
 export type CreditTier = "good" | "caution" | "hard";
@@ -302,7 +302,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       {
         institution: "소상공인시장진흥공단",
         criteria:
-          "🔄 재도전 전용 — 재도전특별자금(재창업·채무조정 성실상환자) 안내. 일반 정책자금·보증은 면책·인가 후 3년 경과 시 가능하며 기관이 채권자였던 경우 제한될 수 있습니다.",
+          "재도전 전용 안내 — 재도전특별자금(재창업·채무조정 성실상환자)이 대상입니다. 일반 정책자금·보증은 면책·인가 후 3년이 경과해야 가능하며, 해당 기관이 채권자였던 경우에는 제한될 수 있습니다.",
         priority: "MEDIUM",
         loan_type: "직접대출",
         step: 1,
@@ -337,7 +337,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   if (bigManufacturer) {
     matches.push({
       institution: "기술보증기금",
-      criteria: "제조업은 기보 우선! 기술평가 기반 보증 (첫거래 1억·최대 2억, 인증 없어도 시도 후 부결 시 인증 보완 재신청)",
+      criteria: "제조업은 기술보증기금이 우선입니다. 기술평가 기반 보증(첫거래 1억·최대 2억)이며, 인증이 없어도 우선 신청 후 부결 시 인증을 보완해 재신청하는 방식을 권합니다.",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
@@ -346,7 +346,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
     matches.push({
       institution: "신용보증기금",
-      criteria: "매출 10억 이상 대형 제조업 → 신보도 자격(한도 큼). 단 기보와 둘 중 1곳만 신청",
+      criteria: "매출 10억원 이상 제조업은 신용보증기금도 자격이 됩니다(한도가 큰 편). 단, 기술보증기금과 둘 중 1곳만 신청 가능합니다.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -358,8 +358,8 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "기술보증기금",
       criteria: isManufacturingCore
-        ? "제조업은 기보부터! 기술평가로 매출 낮아도 보증 (첫거래 1억·최대 2억, 인증 없어도 시도 후 부결 시 특허·벤처·이노비즈 보완 재신청)"
-        : "기술력(특허·상표·연구소·벤처·이노비즈·혁신성장·대표경력) 기반 보증 — 매출 낮아도 승인 (신보·재단과 중복 불가)",
+        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다(첫거래 1억·최대 2억). 인증이 없어도 우선 신청 후, 부결 시 특허·벤처·이노비즈를 보완해 재신청하세요."
+        : "기술력(특허·상표·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증입니다. 매출이 낮아도 승인 가능성이 있습니다(신용보증기금·재단과 중복 불가).",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
@@ -369,7 +369,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     // ── 비기술 + 매출 5억↑ → 신보 우선 (기보·재단 X) ──
     matches.push({
       institution: "신용보증기금",
-      criteria: "매출 5억 이상·신용점수 양호 → 신보 우선 (재단과 중복 불가 · 매출 기반 보증, 한도 큼 · 직원 많을수록 유리하나 필수 아님)",
+      criteria: "연매출 5억원 이상·신용점수 양호한 경우 신용보증기금이 우선입니다(재단과 중복 불가). 매출 기반 보증이라 한도가 큰 편이며, 직원 수가 많을수록 유리하지만 필수 요건은 아닙니다.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -379,7 +379,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     // ── 소상공인·소액 → 재단 우선 (신보·기보 X) ──
     matches.push({
       institution: "지역신용보증재단",
-      criteria: "소상공인·소액(3천~5천) → 재단 우선 (신보·기보와 중복 불가 · 사업장만 있으면 승인 잘남 · 창업 3개월·월매출 100만원~ 특례보증 가능)",
+      criteria: "소상공인·소액(3천~5천만원)은 지역신용보증재단이 우선입니다(신용보증기금·기술보증기금과 중복 불가). 사업장이 있으면 승인율이 높은 편이며, 창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -393,14 +393,14 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     isManufacturingCore || company.is_innovation_area || isExport || isYoung || employees >= 5;
   if (qualifiesJungjin) {
     const reasons: string[] = [];
-    if (isYoung) reasons.push("만 39세 이하 청년창업자금(매출 낮아도 1억 승인 사례)");
+    if (isYoung) reasons.push("만 39세 이하 청년창업자금(매출 2천만원대로도 1억원 승인 사례 있음)");
     if (isManufacturingCore) reasons.push("제조업");
     if (company.is_innovation_area) reasons.push("혁신성장 유형");
     if (isExport) reasons.push("수출기업");
     if (!reasons.length && employees >= 5) reasons.push("상시직원 5명 이상");
     matches.push({
       institution: "중소벤처기업진흥공단",
-      criteria: `${reasons.join(" · ")} → 중진공 정책자금(직접대출) 병행 가능. 성장 계획·자금 사용처·대표 의지를 종합 심사 (보증과 별개)`,
+      criteria: `${reasons.join(" · ")} 조건으로 중소벤처기업진흥공단 정책자금(직접대출) 병행이 가능합니다. 성장 계획·자금 사용처·대표 의지를 종합 심사하며, 보증기관과는 별개로 진행됩니다.`,
       priority: "HIGH",
       loan_type: "직접대출",
       step: 2,
@@ -412,12 +412,12 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   //   상품별 승인율은 결과창 상품 아코디언에 정직하게 명시.
   if (segment === "small" || isManufacturingCore || company.uses_smart_tech) {
     const smartNote = company.uses_smart_tech
-      ? " 🖥️ 스마트기기 도입 소상공인 → 혁신성장촉진자금(일반형) 대상(대상은 많지만 승인율은 낮은 편, 사업계획서가 관건)."
+      ? " 스마트기기 도입 소상공인은 혁신성장촉진자금(일반형) 대상이 됩니다. 대상 범위는 넓지만 승인율은 낮은 편이며, 사업계획서 완성도가 승인의 관건입니다."
       : "";
     matches.push({
       institution: "소상공인시장진흥공단",
       criteria:
-        "소상공인·추가자금 → 직접대출 정책자금 병행 (승인 잘남: 혁신성장촉진(2년연속 10%성장·수출·졸업후보)·재도전특별·대환·청년고용연계·일반경영안정 / 승인율 낮음: 민간투자매칭·TIPS·스마트기기·일시적경영애로·신용취약)." +
+        "소상공인·추가자금은 소상공인시장진흥공단 직접대출 정책자금을 병행할 수 있습니다. 승인율이 높은 편: 혁신성장촉진(2년 연속 10% 성장·수출·졸업후보)·재도전특별·대환·청년고용연계·일반경영안정 / 승인율이 낮은 편: 민간투자매칭·TIPS·스마트기기·일시적경영애로·신용취약." +
         smartNote,
       priority: "MEDIUM",
       loan_type: "직접대출",
@@ -425,28 +425,31 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
   }
 
-  // ── 무역보험공사 — 수출실적증명원 발급 기업(법인 선호, BB+↑ 승인 잘남) ──
+  // ── 무역보험공사 — 수출실적증명원 발급 기업(법인 선호, BB+ 이상 승인율 높음) ──
   if (isExport) {
     matches.push({
       institution: "한국무역보험공사",
       criteria: isBizCorp
-        ? "🌏 수출실적증명원 발급 법인 → 선적전/선적후 보증 (기업등급 BB+ 이상 승인 잘남, 그 이하도 가능 · 다른 기관과 한도 별도)"
-        : "🌏 수출실적증명원 발급 시 신청 가능(법인 선호) · 다른 기관과 한도 별도로 병행",
+        ? "수출실적증명원 발급 법인은 선적전/선적후 수출신용보증이 가능합니다. 기업등급 BB+ 이상이면 승인율이 높은 편이며, 그 이하도 신청 가능합니다(다른 기관과 한도 별도)."
+        : "수출실적증명원 발급 시 신청 가능합니다(법인을 선호). 다른 기관 한도와 별개로 병행 활용할 수 있습니다.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 9,
     });
   }
 
-  // 기관 규모(큰 기관 → 작은 기관) 순서로 항상 고정 정렬
-  //  신용보증기금 → 기술보증기금 → 신용보증재단 → 중소벤처기업진흥공단 → 소상공인시장진흥공단 → 무역보험공사
+  // 대표님 지정 안내 순서로 항상 고정 정렬
+  //  [대리대출] 지역신용보증재단 → 신용보증기금 → 기술보증기금
+  //  [직접/대리] 중소벤처기업진흥공단 → 소상공인시장진흥공단
+  //  [대리대출/기타] 무역보험공사 → 농신보 → 기타 공공기관
   const INSTITUTION_ORDER = [
-    "신용보증기금",
-    "기술보증기금",
-    "재단", // 지역신용보증재단
-    "중소벤처기업진흥공단",
-    "소상공인시장진흥공단",
-    "무역보험공사",
+    "재단", // 지역신용보증재단 (대리)
+    "신용보증기금", // (대리)
+    "기술보증기금", // (대리)
+    "중소벤처기업진흥공단", // (직접/대리)
+    "소상공인시장진흥공단", // (직접/대리)
+    "무역보험공사", // (대리/기타)
+    "농신보", // (대리/기타)
   ];
   const orderIdx = (name: string) => {
     const idx = INSTITUTION_ORDER.findIndex((k) => name.includes(k));
@@ -457,7 +460,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
 }
 
 // ── 승인 시기(월별) 안내 (대표님 실무 기준) ──
-//  1~6월: 승인 잘남 / 7~9월: 추경, 일부 / 10~12월: 어려움
+//  1~6월: 승인율 높음 / 7~9월: 추경, 일부 / 10~12월: 어려움
 export type TimingAdvice = { level: "good" | "mid" | "low"; message: string };
 export function timingAdvice(month?: number): TimingAdvice {
   const m = month ?? new Date().getMonth() + 1;
@@ -738,7 +741,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "매출·신용 기반 산정",
         desc: "연매출 5억↑ 기업의 운전자금 보증서 (은행 대출 연계)",
         approval: "mid",
-        approvalNote: "🟡 매출·신용점수 좋을수록 유리",
+        approvalNote: "매출·신용점수가 높을수록 승인에 유리합니다.",
         applyUrl: "https://www.kodit.or.kr/apps/index.do",
       },
       {
@@ -775,9 +778,9 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "첫거래 1억 · 최대 2억",
         desc: "제조업·기술기업 첫 거래 보증 (매출 낮아도 기술력으로 심사)",
         approval: "mid",
-        approvalNote: "🟡 제조업이면 신보보다 먼저! 인증 없어도 일단 시도",
+        approvalNote: "제조업은 신용보증기금보다 먼저 접근하는 것이 유리하며, 인증이 없어도 우선 신청해 볼 만합니다.",
         hookNote:
-          "특허·벤처·이노비즈·연구소 인증이 없어도 일단 신청하세요. 부결되면 인증을 하나씩 보완해 재신청하면 승인 확률이 올라갑니다.",
+          "특허·벤처·이노비즈·연구소 인증이 없어도 우선 신청해 보시기를 권합니다. 부결 시 인증을 하나씩 보완해 재신청하면 승인 가능성이 높아집니다.",
         applyUrl: "https://www.kibo.or.kr",
       },
       {
@@ -815,7 +818,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "최대 7,000만원",
         desc: "소상공인 운전자금 (확인서 발급 상품이라 대부분 승인)",
         approval: "high",
-        approvalNote: "✅ 승인 잘 나는 편 — 확인서 기반 상품",
+        approvalNote: "확인서 발급 기반 상품이라 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
       },
       {
@@ -823,7 +826,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "운전 1억 · 시설 5억",
         desc: "키오스크·무인판매기·서빙로봇·스마트POS·재고관리 S/W 등 스마트기기를 도입한 소상공인",
         approval: "low",
-        approvalNote: "⚠️ 대상자는 많지만 승인율은 낮은 편",
+        approvalNote: "대상 범위는 넓지만 승인율은 낮은 편입니다.",
         hookNote:
           "스마트기기만 쓰면 '대상'은 되지만, 실제 승인은 '기업현황 및 사업계획서'로 스마트기술 활용→매출 시현이 증명돼야 납니다. 사업계획서 완성도가 승인의 핵심입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
@@ -833,7 +836,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "운전 2억 · 시설 10억",
         desc: "2년 연속 매출 10%↑·수출·스마트공장·강한소상공인·로컬크리에이터·졸업후보·성실상환자",
         approval: "mid",
-        approvalNote: "🟡 요건 충족 시 승인 잘 나는 편",
+        approvalNote: "요건을 충족하면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
       },
       {
@@ -841,7 +844,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "최대 1억원",
         desc: "폐업 후 재창업·채무조정 성실상환 소상공인 (재도전자 전용)",
         approval: "mid",
-        approvalNote: "🟡 재도전자면 승인 잘 나는 편",
+        approvalNote: "재도전자 요건을 갖추면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
       },
       {
@@ -849,7 +852,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "최대 7,000만원",
         desc: "고금리 대출을 저금리 정책자금으로 전환",
         approval: "high",
-        approvalNote: "✅ 승인 잘 나는 편",
+        approvalNote: "승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
       },
       {
@@ -857,7 +860,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "상품별 상이",
         desc: "민간 투자 유치 기업 대상 (투자 매칭 필요)",
         approval: "low",
-        approvalNote: "⚠️ 승인율 낮은 편 — 민간투자 전제",
+        approvalNote: "민간투자 유치가 전제라 승인율은 낮은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
       },
     ],
@@ -880,7 +883,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "매출 2천만원도 1억 가능",
         desc: "만 39세 이하 청년 창업자 (직원 0명·개인도 OK, 매출 하한 없음)",
         approval: "mid",
-        approvalNote: "🟡 만 39세 이하만! (초과 시 신청 불가)",
+        approvalNote: "만 39세 이하만 신청할 수 있습니다(초과 시 신청 불가).",
         hookNote: "청년창업자금은 만 39세 이하만 신청 가능합니다. 성장방향·자금계획·대표 의지를 종합 심사합니다.",
         applyUrl: "https://www.kosmes.or.kr",
       },
@@ -889,7 +892,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "운전·시설",
         desc: "제조업·혁신성장분야·기술창업 기업",
         approval: "mid",
-        approvalNote: "🟡 제조·혁신성장분야면 직원 0명·개인도 OK",
+        approvalNote: "제조·혁신성장 분야라면 직원 0명·개인사업자도 신청이 가능합니다.",
         applyUrl: "https://www.kosmes.or.kr",
       },
       {
@@ -926,7 +929,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "수출실적 기준",
         desc: "수출 계약 후 생산·조달 자금 보증 (수출실적증명원 발급 기업)",
         approval: "mid",
-        approvalNote: "🟡 기업등급 BB+ 이상이면 승인 잘 나는 편 (그 이하도 가능)",
+        approvalNote: "기업등급 BB+ 이상이면 승인율이 높은 편이며, 그 이하도 신청 가능합니다.",
         hookNote: "법인을 선호하지만 개인사업자도 가능합니다. 심사~실행까지 약 1.5개월 소요됩니다.",
         applyUrl: "https://www.ksure.or.kr",
       },
@@ -999,7 +1002,7 @@ export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
     amount: "보증 최대 1억원(지역별 상이)",
     desc: "사업자등록 후 정상 영업 중인 소상공인이면 신청 가능한 기본 보증. 신보·기보 이용 중이 아니면 대부분 대상.",
     approval: "high",
-    approvalNote: "사업장만 있으면 승인이 잘 나는 편입니다.",
+    approvalNote: "사업장이 있으면 승인율이 높은 편입니다.",
     applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
   },
   {

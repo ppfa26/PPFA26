@@ -893,13 +893,13 @@ function AdvancedResult({
                                 {prod.name}
                               </span>
                               {prod.amount && (
-                                <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                                <span className="break-keep rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                                   {prod.amount}
                                 </span>
                               )}
                               {prod.approval && (
                                 <span
-                                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                  className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${
                                     prod.approval === "high"
                                       ? "bg-green-100 text-brand-green"
                                       : prod.approval === "mid"
@@ -908,10 +908,10 @@ function AdvancedResult({
                                   }`}
                                 >
                                   {prod.approval === "high"
-                                    ? "승인 잘남"
+                                    ? "승인율 높은 편"
                                     : prod.approval === "mid"
-                                    ? "조건 충족 시"
-                                    : "승인율 낮음"}
+                                    ? "조건 충족 시 가능"
+                                    : "승인율 낮은 편"}
                                 </span>
                               )}
                             </div>
