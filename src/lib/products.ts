@@ -1,4 +1,4 @@
-// 상품 구성 (확정 가격: 297,000 / 497,000 / 897,000, 모두 부가세 포함가)
+// 상품 구성 (확정 가격: 297,000 / 397,000 / 697,000, 모두 부가세 포함가)
 // originalPrice = 정가(앵커링용 취소선), monthly = 12개월 환산 참고 표기
 export type Tier = {
   id: "basic" | "premier" | "pro";
@@ -43,12 +43,12 @@ export const TIERS: Tier[] = [
     icon: "🎯",
     name: "프리미어",
     subtitle: "1:1 코칭 패키지",
-    price: 497000,
-    priceLabel: "497,000원",
-    originalPrice: 890000,
-    originalPriceLabel: "890,000원",
-    discountLabel: "44% 할인",
-    monthlyLabel: "월 41,420원",
+    price: 397000,
+    priceLabel: "397,000원",
+    originalPrice: 690000,
+    originalPriceLabel: "690,000원",
+    discountLabel: "42% 할인",
+    monthlyLabel: "월 33,080원",
     period: "1개월",
     popular: true,
     features: [
@@ -63,12 +63,12 @@ export const TIERS: Tier[] = [
     icon: "🏆",
     name: "프로",
     subtitle: "전문가 멘토링",
-    price: 897000,
-    priceLabel: "897,000원",
-    originalPrice: 1690000,
-    originalPriceLabel: "1,690,000원",
-    discountLabel: "47% 할인",
-    monthlyLabel: "월 74,750원",
+    price: 697000,
+    priceLabel: "697,000원",
+    originalPrice: 1290000,
+    originalPriceLabel: "1,290,000원",
+    discountLabel: "46% 할인",
+    monthlyLabel: "월 58,080원",
     period: "1개월",
     popular: false,
     features: [

@@ -115,7 +115,7 @@ export default function Home() {
             <Editable
               id="hero-headline-v2"
               as="h1"
-              className="break-keep text-[22px] font-black leading-tight text-brand-dark xs:text-[26px] sm:text-5xl"
+              className="break-keep text-[19px] font-black leading-tight text-brand-dark xs:text-[22px] sm:text-4xl"
             >
               너무나도 복잡한 정부지원사업,
               <br />
