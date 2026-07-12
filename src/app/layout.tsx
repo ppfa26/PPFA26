@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     google: "qXMshODwpxOXqi9tFBHIfHwknWk3lxebsnb_rIfq9OQ",
     // 네이버 서치어드바이저 사이트 소유확인
     other: {
-      "naver-site-verification": "6da4d9d9a2932bffc7d999048d44370be407d3a9",
+      "naver-site-verification": "66c4c240bdd1a1611d4ed4e2d34a96c8d0d11ba8",
     },
   },
   openGraph: {
