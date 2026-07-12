@@ -122,7 +122,7 @@ function PaymentInner() {
     try {
       await widgets.requestPayment({
         orderId,
-        orderName: `모두의공공조달 ${product.name} 플랜`,
+        orderName: `모두의사업친구 ${product.name} 플랜`,
         customerName: userName || "고객",
         customerEmail: email || undefined,
         successUrl: `${origin}/payment/success`,

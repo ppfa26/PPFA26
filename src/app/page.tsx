@@ -58,7 +58,7 @@ const FAQS = [
     a: (
       <>
         없습니다. 저희는 사업장에 알맞는 정부지원사업을 AI로 찾아서 추천 및
-        신청방법을 자문해드리는 플랫폼이며 모두의공공조달 서비스 이용료 외
+        신청방법을 자문해드리는 플랫폼이며 모두의사업친구 서비스 이용료 외
         추가적인 수수료는 없습니다.
       </>
     ),
@@ -130,7 +130,7 @@ export default function Home() {
             >
               정부지원사업 브로커 대행 수수료는 1억원 승인 시 최소 500만원입니다.
               <br className="hidden sm:inline" />{" "}
-              모두의공공조달에서{" "}
+              모두의사업친구에서{" "}
               <strong className="text-brand-dark">297,000원부터</strong> 직접
               신청하는 방법을 배워 무료로 신청하세요.
             </Editable>
@@ -205,7 +205,7 @@ export default function Home() {
                   as="p"
                   className="break-keep text-[13px] font-bold leading-snug text-brand-dark sm:text-sm"
                 >
-                  모두의공공조달 : 297,000원부터 ~
+                  모두의사업친구 : 297,000원부터 ~
                 </Editable>
               </div>
             </div>

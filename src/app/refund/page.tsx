@@ -8,7 +8,7 @@ export default function RefundPage() {
     <LegalLayout pageKey="refund" title="환불정책" updatedAt="2026년 7월 8일">
       <section id="refund-intro">
         <Editable id="refund-intro-body" as="p">
-          모두의공공조달(이하 &ldquo;회사&rdquo;)의 환불정책은 「전자상거래 등에서의
+          모두의사업친구(이하 &ldquo;회사&rdquo;)의 환불정책은 「전자상거래 등에서의
           소비자보호에 관한 법률」을 기준으로 합니다. 본 서비스는 정보·자문 제공
           형태의 <b>디지털 콘텐츠</b>이므로, 콘텐츠 열람 여부에 따라 환불 기준이
           달라집니다.

@@ -12,7 +12,7 @@ export default function PrivacyPage() {
     >
       <section id="privacy-intro">
         <Editable id="privacy-intro-body" as="p">
-          모두의공공조달(이하 &ldquo;회사&rdquo;)은 「개인정보 보호법」 등 관련 법령을
+          모두의사업친구(이하 &ldquo;회사&rdquo;)은 「개인정보 보호법」 등 관련 법령을
           준수하며, 이용자의 개인정보를 안전하게 보호하기 위해 다음과 같은
           처리방침을 두고 있습니다.
         </Editable>
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
           6. 개인정보 보호책임자
         </h2>
         <Editable id="privacy-6-body" as="p" className="mt-2">
-          상호: 모두의공공조달 (Public Procurement For All)
+          상호: 모두의사업친구 (Modu Business Friend)
           <br />
           이메일: biospartners@naver.com
         </Editable>

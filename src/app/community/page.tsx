@@ -226,7 +226,7 @@ export default function Page() {
             <br className="sm:hidden" /> 증명합니다
           </h1>
           <p className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base">
-            <span className="font-semibold text-brand-dark">모두의공공조달</span>
+            <span className="font-semibold text-brand-dark">모두의사업친구</span>
             은 2년간 약 300여 기업의 자금 고민을 함께 풀어왔습니다.
             <br className="hidden sm:block" />
             당근마켓·네이버 블로그·카카오 채널에서 만난 대표님들의 실제 이야기입니다.
@@ -465,7 +465,7 @@ function LiveReviews() {
           실제 이용 고객 후기
         </h2>
         <p className="mt-3 break-keep text-sm text-brand-gray">
-          모두의공공조달을 직접 이용하신 대표님들이 남겨주신 후기입니다.
+          모두의사업친구을 직접 이용하신 대표님들이 남겨주신 후기입니다.
         </p>
       </div>
 
@@ -609,7 +609,7 @@ function ReviewWriteSection() {
           이용 후기를 남겨주세요
         </h2>
         <p className="mx-auto mt-2 max-w-xl break-keep text-sm leading-relaxed text-brand-gray">
-          모두의공공조달을 이용하신 대표님의 소중한 경험을 들려주세요.
+          모두의사업친구을 이용하신 대표님의 소중한 경험을 들려주세요.
           <br className="hidden sm:block" />
           작성해 주신 후기는 검수 후 이 페이지에 소개됩니다.
         </p>

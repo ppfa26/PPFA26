@@ -42,7 +42,7 @@ export default function Header() {
         <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Image
             src="/logo/brand-header.png"
-            alt="모두의공공조달 로고"
+            alt="모두의사업친구 로고"
             width={40}
             height={40}
             className="h-9 w-9 shrink-0 rounded-[9px] sm:h-10 sm:w-10"
@@ -50,7 +50,7 @@ export default function Header() {
           />
           <span className="flex flex-col justify-center pr-1 sm:pr-0">
             <span className="block whitespace-nowrap text-[17px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
-              모두의공공조달
+              모두의사업친구
             </span>
             {/* 모바일: 자연스러운 폭 */}
             <span className="mt-[2px] block whitespace-nowrap text-[9px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray xs:text-[10px] sm:hidden">

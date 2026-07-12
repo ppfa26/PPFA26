@@ -14,13 +14,13 @@ export default function Footer() {
             <div className="flex items-center gap-2">
               <Image
                 src="/logo/brand-footer-dark.png"
-                alt="모두의공공조달"
+                alt="모두의사업친구"
                 width={28}
                 height={28}
                 className="h-7 w-7 shrink-0 rounded-lg"
               />
               <span className="text-base font-extrabold leading-none text-white">
-                모두의공공조달
+                모두의사업친구
               </span>
             </div>
             <Editable
@@ -75,7 +75,7 @@ export default function Footer() {
           {/* 모바일: 항목별 줄바꿈 */}
           <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1 sm:hidden">
             <dt className="shrink-0 text-gray-400">상호</dt>
-            <dd className="text-gray-500">모두의공공조달</dd>
+            <dd className="text-gray-500">모두의사업친구</dd>
             <dt className="shrink-0 text-gray-400">대표자</dt>
             <dd className="text-gray-500">신주엽</dd>
             <dt className="shrink-0 text-gray-400">주소</dt>
@@ -93,7 +93,7 @@ export default function Footer() {
           {/* PC: 기존 한 줄(가운뎃점) 형태 유지 */}
           <div className="hidden sm:block">
             <p>
-              상호 : 모두의공공조달 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로288번길 26 (청라동) 285호
+              상호 : 모두의사업친구 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로288번길 26 (청라동) 285호
             </p>
             <p className="mt-1">
               사업자등록번호 : 597-12-02897 · 통신판매업신고 : [신고번호]
@@ -102,7 +102,7 @@ export default function Footer() {
           </div>
 
           <p className="mt-3 text-gray-600">
-            © 모두의공공조달. All rights reserved.
+            © 모두의사업친구. All rights reserved.
           </p>
         </div>
       </div>

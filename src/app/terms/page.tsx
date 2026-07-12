@@ -9,7 +9,7 @@ export default function TermsPage() {
       <section id="terms-1">
         <h2 className="text-lg font-extrabold text-brand-dark">제1조 (목적)</h2>
         <Editable id="terms-1-body" as="p" className="mt-2">
-          본 약관은 모두의공공조달(Public Procurement For All, 이하 &ldquo;회사&rdquo;)이
+          본 약관은 모두의사업친구(Modu Business Friend, 이하 &ldquo;회사&rdquo;)이
           제공하는 정부지원사업·정책자금 통합 매칭 자문 서비스(이하 &ldquo;서비스&rdquo;)의
           이용과 관련하여 회사와 이용자 간의 권리·의무 및 책임 사항을 규정하는 것을
           목적으로 합니다.
@@ -115,7 +115,7 @@ export default function TermsPage() {
         <Editable id="terms-9-body" as="p" className="mt-2">
           본 약관과 관련한 문의는 아래 연락처로 해주시기 바랍니다.
           <br />
-          상호: 모두의공공조달 · 이메일: biospartners@naver.com
+          상호: 모두의사업친구 · 이메일: biospartners@naver.com
         </Editable>
       </section>
     </LegalLayout>
