@@ -32,8 +32,12 @@ export const metadata: Metadata = {
     // 구글 서치콘솔 사이트 소유확인
     google: "qXMshODwpxOXqi9tFBHIfHwknWk3lxebsnb_rIfq9OQ",
     // 네이버 서치어드바이저 사이트 소유확인
+    // (모두의사업친구.kr + www.모두의사업친구.kr 둘 다 확인용 2개 등록)
     other: {
-      "naver-site-verification": "66c4c240bdd1a1611d4ed4e2d34a96c8d0d11ba8",
+      "naver-site-verification": [
+        "66c4c240bdd1a1611d4ed4e2d34a96c8d0d11ba8",
+        "71235ff2f43163f95db43a9c88126b768f7a4997",
+      ],
     },
   },
   openGraph: {
