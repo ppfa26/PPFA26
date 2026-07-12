@@ -213,40 +213,62 @@ export default function Diagnosis() {
               <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} /></Field>
               <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} /></Field>
               <Field label={STEP1_FIELDS.region.label}><Radio k="region" opts={STEP1_FIELDS.region.opts} /></Field>
+              {/* 스마트기기 사용 여부 (혁신성장촉진자금 매칭용) — 설명 힌트 포함 */}
+              <div className="mb-6">
+                <p className="mb-1 font-bold text-brand-dark">{STEP1_FIELDS.smartTech.label}</p>
+                <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                  {STEP1_FIELDS.smartTech.hint}
+                </p>
+                <Radio k="smartTech" opts={STEP1_FIELDS.smartTech.opts} />
+              </div>
             </div>
           )}
 
           {step === 2 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
               <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP2_TITLE}</h1>
+              {/* 상담목적+관심분야 통합 (중복 제거) */}
               <Field label={STEP2_FIELDS.purposes.label}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} /></Field>
               <Field label={STEP2_FIELDS.desiredAmount.label}><Radio k="desiredAmount" opts={STEP2_FIELDS.desiredAmount.opts} /></Field>
-              <Field label={STEP2_FIELDS.interests.label}><Multi k="interests" opts={STEP2_FIELDS.interests.opts} /></Field>
+              {/* 자금 성격 질문(신용점수·인증·혁신성장)을 2단계로 재배치 → 3단계 부담 완화 */}
+              <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
+              <Field label={STEP3_FIELDS.certifications.label}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
+              <Field label={STEP3_FIELDS.innovation.label}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
             </div>
           )}
 
           {step === 3 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
               <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP3_TITLE}</h1>
-              <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
-              <Field label={STEP3_FIELDS.certifications.label}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
-              <Field label={STEP3_FIELDS.innovation.label}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
               <Field label={STEP3_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP3_FIELDS.currentInstitutions.opts} /></Field>
               <Field label={STEP3_FIELDS.collateral.label}><Radio k="collateral" opts={STEP3_FIELDS.collateral.opts} /></Field>
-              <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
-              <Field label={STEP3_FIELDS.taxDelinquent.label}><Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} /></Field>
-              {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
-              {form.businessType === "법인사업자" && (
-                <div className="mb-6">
-                  <p className="mb-1 font-bold text-brand-dark">{STEP3_FIELDS.capitalImpairment.label}</p>
-                  <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
-                    {STEP3_FIELDS.capitalImpairment.hint}
-                  </p>
-                  <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
-                </div>
-              )}
-              <Field label={STEP3_FIELDS.insurance.label}><Radio k="insurance" opts={STEP3_FIELDS.insurance.opts} /></Field>
-              <Field label={STEP3_FIELDS.employees.label}><Radio k="employees" opts={STEP3_FIELDS.employees.opts} /></Field>
+              {/* 직원수(4대보험 통합) — 힌트 포함 */}
+              <div className="mb-6">
+                <p className="mb-1 font-bold text-brand-dark">{STEP3_FIELDS.employees.label}</p>
+                <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                  {STEP3_FIELDS.employees.hint}
+                </p>
+                <Radio k="employees" opts={STEP3_FIELDS.employees.opts} />
+              </div>
+
+              {/* ── 신청 결격사유 (결제 차단 판정) — 한 블록으로 묶어 안내 ── */}
+              <div className="mb-2 mt-8 rounded-xl border border-brand-red/20 bg-brand-red/5 p-4">
+                <p className="mb-3 break-keep text-sm font-extrabold text-brand-red">
+                  ⚠️ 신청 결격사유 확인 (해당 시 승인이 어려워 정확히 안내드립니다)
+                </p>
+                <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
+                <Field label={STEP3_FIELDS.taxDelinquent.label}><Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} /></Field>
+                {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
+                {form.businessType === "법인사업자" && (
+                  <div className="mb-1">
+                    <p className="mb-1 font-bold text-brand-dark">{STEP3_FIELDS.capitalImpairment.label}</p>
+                    <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                      {STEP3_FIELDS.capitalImpairment.hint}
+                    </p>
+                    <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

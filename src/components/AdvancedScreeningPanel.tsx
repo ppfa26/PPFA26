@@ -752,6 +752,11 @@ function AdvancedResult({
   const [sinboRegion, setSinboRegion] = useState("");
   const selectedSinbo = REGION_SINBO.find((r) => r.region === sinboRegion);
 
+  // ★ 기관별 상품 아코디언 — 클릭 시 해당 기관의 여러 상품이 쭈르륵 펼쳐짐 ★
+  const [openProducts, setOpenProducts] = useState<Record<number, boolean>>({});
+  const toggleProducts = (i: number) =>
+    setOpenProducts((prev) => ({ ...prev, [i]: !prev[i] }));
+
   // 추천 기관 중 지역신용보증재단 포함 여부 → 지역 재단 안내 노출 조건
   const hasJaedan = creditMatches.some((m) => m.institution.includes("재단"));
   // 대리대출/직접대출 추천 여부 → 진행절차 안내 노출 조건
@@ -767,6 +772,46 @@ function AdvancedResult({
       <h2 className="text-lg font-extrabold text-brand-dark">
         {autoRun ? "🏦 대표님 맞춤으로 신청가능 기관 및 상품 안내" : "🔬 정밀 추가진단 결과"}
       </h2>
+
+      {/* ★ 진단 요약 배너 — "이 진단 덕분에 이런 걸 알게 됐다"는 성취감 (대표님 요청: 와 대박 느낌) ★ */}
+      {autoRun && (
+        <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-5 shadow-card">
+          <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
+            🎉 진단 완료! 대표님이 지금 신청해볼 수 있는 것들이 정리됐어요
+          </p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="rounded-xl bg-white/70 px-2 py-3 text-center">
+              <p className="text-2xl font-extrabold text-brand-dark">{creditMatches.length}</p>
+              <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
+                신청 가능 기관
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/70 px-2 py-3 text-center">
+              <p className="text-2xl font-extrabold text-brand-dark">
+                {creditMatches.reduce((s, m) => {
+                  const l = findInstitutionLink(m.institution);
+                  return s + (l?.products?.length ?? 1);
+                }, 0)}
+              </p>
+              <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
+                신청 가능 상품
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/70 px-2 py-3 text-center">
+              <p className="text-2xl font-extrabold text-brand-dark">
+                {eligibleSupport.filter((e) => e.status === "eligible").length}
+              </p>
+              <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
+                지금 신청 대상
+              </p>
+            </div>
+          </div>
+          <p className="mt-3 break-keep text-[12px] font-semibold leading-relaxed text-brand-dark/80">
+            👇 아래 <b>✅ 표시</b>된 곳이 대표님이 <b>지금 바로 신청 가능한 곳</b>입니다. 각 항목의
+            <b> "상품 보기"</b>를 누르면 신청할 상품이 펼쳐지고, <b>신청 방법</b>까지 순서대로 안내드려요.
+          </p>
+        </div>
+      )}
 
       {/* ③ 신청 가능 기관 — 크고 핵심적으로 (대표님 요청: 최상단 배치) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
@@ -812,6 +857,90 @@ function AdvancedResult({
                   <p className="mt-2 break-keep rounded-lg border border-brand-red/30 bg-brand-red/5 px-2.5 py-1.5 text-[11px] font-bold text-brand-red">
                     {m.exclusiveNote}
                   </p>
+                )}
+
+                {/* ★ 기관 내 여러 상품 아코디언 — 클릭 시 펼쳐서 상품별로 신청 (대표님 요청) ★ */}
+                {link?.products && link.products.length > 0 && (
+                  <div className="mt-2.5">
+                    <button
+                      onClick={() => toggleProducts(i)}
+                      className="flex w-full items-center justify-between gap-2 rounded-xl border-2 border-brand-orange bg-brand-orange/10 px-3 py-2.5 text-left transition hover:bg-brand-orange/20"
+                    >
+                      <span className="break-keep text-xs font-extrabold text-brand-orange sm:text-sm">
+                        💳 {m.institution} 신청 가능 상품 {link.products.length}개 보기
+                      </span>
+                      <span
+                        className={`shrink-0 text-brand-orange transition-transform ${
+                          openProducts[i] ? "rotate-180" : ""
+                        }`}
+                      >
+                        ▼
+                      </span>
+                    </button>
+                    {openProducts[i] && (
+                      <div className="mt-2 space-y-2">
+                        {link.products.map((prod, pi) => (
+                          <div
+                            key={pi}
+                            className="rounded-xl border border-gray-200 bg-gray-50 p-3"
+                          >
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="break-keep text-sm font-extrabold text-brand-dark">
+                                {prod.name}
+                              </span>
+                              {prod.amount && (
+                                <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                                  {prod.amount}
+                                </span>
+                              )}
+                              {prod.approval && (
+                                <span
+                                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                    prod.approval === "high"
+                                      ? "bg-green-100 text-brand-green"
+                                      : prod.approval === "mid"
+                                      ? "bg-brand-yellow/30 text-brand-dark"
+                                      : "bg-red-100 text-brand-red"
+                                  }`}
+                                >
+                                  {prod.approval === "high"
+                                    ? "승인 잘남"
+                                    : prod.approval === "mid"
+                                    ? "조건 충족 시"
+                                    : "승인율 낮음"}
+                                </span>
+                              )}
+                            </div>
+                            {prod.desc && (
+                              <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-gray">
+                                {prod.desc}
+                              </p>
+                            )}
+                            {prod.approvalNote && (
+                              <p className="mt-1 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
+                                {prod.approvalNote}
+                              </p>
+                            )}
+                            {prod.hookNote && (
+                              <p className="mt-1.5 break-keep rounded-lg bg-brand-yellow/10 px-2 py-1.5 text-[10px] leading-relaxed text-brand-dark/70">
+                                💡 {prod.hookNote}
+                              </p>
+                            )}
+                            {prod.applyUrl && (
+                              <a
+                                href={prod.applyUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-2 inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90"
+                              >
+                                이 상품 신청하러 가기 →
+                              </a>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 {/* 신보·기보·소진공·중진공 → 신청 매뉴얼 + 사이트 바로가기 (재단은 아래 지역 드롭다운으로 안내) */}
@@ -997,6 +1126,26 @@ function AdvancedResult({
             <b className="text-brand-dark/70"> 🔜 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
             카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
           </p>
+          {/* ★ V표시(✅) 보고 이렇게 신청하면 된다 — 3스텝 미니 가이드 (대표님 요청) ★ */}
+          <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">
+            <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
+              ✅ 표시된 곳, 이렇게 신청하시면 됩니다
+            </p>
+            <ol className="space-y-1">
+              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">1</span>
+                <span><b>✅ 신청 대상</b>인 제도의 카드를 눌러 상세 페이지로 들어가세요.</span>
+              </li>
+              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">2</span>
+                <span>상세 페이지의 <b>필요서류·소요기간</b>을 확인하고 서류를 준비하세요.</span>
+              </li>
+              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
+                <span><b>공식 신청 사이트/연락처</b>로 접수하세요. 헷갈리면 담당 부처에 전화 문의하면 됩니다.</span>
+              </li>
+            </ol>
+          </div>
           <div className="mt-4 divide-y divide-gray-200">
             {eligibleSupport.map(({ prog, status }) => {
               const isEligible = status === "eligible";

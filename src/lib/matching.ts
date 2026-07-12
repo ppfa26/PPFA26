@@ -9,6 +9,7 @@ export type DiagnosisProfile = {
   years?: string; // 창업예정/1년미만/3년미만/7년미만/7년이상
   age?: string; // 39세이하/39세이상
   region?: string;
+  smartTech?: string; // 스마트기기 사용 여부 (혁신성장촉진자금 매칭용)
   // 2단계 (상담 목적)
   purposes?: string[]; // 창업자금/운전자금/시설자금/수출자금/정부지원금/인증및특허
   desiredAmount?: string;
