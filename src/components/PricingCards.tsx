@@ -7,11 +7,11 @@ import Editable from "./Editable";
 export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
   return (
     <div>
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-3">
         {TIERS.map((tier) => (
           <div
             key={tier.id}
-            className={`relative flex flex-col overflow-hidden rounded-2xl border p-6 shadow-card transition hover:shadow-cardHover ${
+            className={`relative flex flex-col overflow-hidden rounded-2xl border p-5 shadow-card transition hover:shadow-cardHover ${
               tier.popular
                 ? "border-brand-orange bg-brand-grad"
                 : "border-gray-200 bg-white"
@@ -21,25 +21,25 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               <div className="ribbon">🔥 가장 인기</div>
             )}
 
-            <div className="text-3xl">{tier.icon}</div>
+            <div className="text-2xl">{tier.icon}</div>
             <Editable
               id={`${prefix}-tier-${tier.id}-name`}
               as="h3"
-              className="mt-2 text-xl font-extrabold text-brand-dark"
+              className="mt-1.5 text-lg font-extrabold text-brand-dark"
             >
               {tier.name}
             </Editable>
             <Editable
               id={`${prefix}-tier-${tier.id}-subtitle`}
               as="p"
-              className={`text-sm font-semibold ${
+              className={`text-[13px] font-semibold ${
                 tier.popular ? "text-brand-dark/70" : "text-brand-gray"
               }`}
             >
               {tier.subtitle}
             </Editable>
 
-            <div className="mt-4">
+            <div className="mt-3">
               {/* 정가(앵커) + 할인율 */}
               <div className="flex items-center gap-2">
                 <span
@@ -55,7 +55,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               </div>
               {/* 판매가 */}
               <div className="mt-0.5 flex items-end gap-1">
-                <span className="text-3xl font-black text-brand-dark">
+                <span className="text-[26px] font-black leading-none text-brand-dark">
                   {tier.priceLabel}
                 </span>
                 <span className="mb-1 text-sm text-brand-gray">
@@ -68,9 +68,9 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               </p>
             </div>
 
-            <ul className="mt-5 flex-1 space-y-2.5">
+            <ul className="mt-4 flex-1 space-y-2">
               {tier.features.map((f, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
+                <li key={i} className="flex items-start gap-2 text-[13px]">
                   <span className="mt-0.5 text-brand-green">✓</span>
                   <Editable
                     id={`${prefix}-tier-${tier.id}-feat-${i}`}
@@ -85,7 +85,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
 
             <Link
               href={`/signup?tier=${tier.id}`}
-              className={`mt-6 block rounded-full py-3 text-center font-bold ${
+              className={`mt-5 block rounded-full py-2.5 text-center text-sm font-bold ${
                 tier.popular
                   ? "bg-brand-dark text-white hover:opacity-90"
                   : "btn-brand"

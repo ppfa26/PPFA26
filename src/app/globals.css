@@ -141,3 +141,40 @@ h4 {
 .animate-pulseGlow {
   animation: pulseGlow 2s infinite;
 }
+
+/* 스크롤 등장 모션 (reveal-on-scroll) — 거슬리지 않게 살짝만 */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 카드 hover 살짝 떠오르는 인터랙션 */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* 모션 최소화를 선호하는 사용자는 애니메이션 비활성화 (접근성) */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-fadeUp,
+  .animate-pulseGlow {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

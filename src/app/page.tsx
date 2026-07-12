@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const TRUST_BADGES = [
   { icon: "🏛️", text: "정부 사이트 크롤링" },
@@ -97,6 +98,7 @@ const FAQS = [
 export default function Home() {
   return (
     <PageShell pageKey="home">
+      <ScrollReveal />
       <Header />
       <main>
         {/* 히어로 */}
@@ -108,14 +110,14 @@ export default function Home() {
             <Editable
               id="hero-badge"
               as="div"
-              className="mb-5 inline-block rounded-full bg-brand-yellow px-6 py-2.5 text-base font-bold text-brand-dark sm:text-lg"
+              className="mb-5 inline-block rounded-full bg-brand-yellow px-5 py-2 text-sm font-bold text-brand-dark sm:text-base"
             >
               정부지원사업 AI 통합 매칭 플랫폼
             </Editable>
             <Editable
               id="hero-headline-v2"
               as="h1"
-              className="break-keep text-[22px] font-black leading-tight text-brand-dark xs:text-[26px] sm:text-4xl"
+              className="break-keep text-[24px] font-black leading-[1.3] text-brand-dark xs:text-[28px] sm:text-[40px] sm:leading-tight"
             >
               AI를 활용해 내 사업장에 알맞는
               <br />
@@ -126,7 +128,7 @@ export default function Home() {
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-6 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray xs:text-base"
+              className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base"
             >
               모든 정부기관 사이트를 AI가 정밀 분석해,
               <br className="hidden sm:inline" />{" "}
@@ -151,12 +153,12 @@ export default function Home() {
               )}
             </ul>
 
-            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-7 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
               <Editable
                 id="hero-cta-primary"
                 as="a"
                 href="/diagnosis"
-                className="btn-brand w-full rounded-full px-8 py-4 text-lg animate-pulseGlow sm:w-auto"
+                className="btn-brand w-full rounded-full px-8 py-3.5 text-base animate-pulseGlow sm:w-auto sm:py-4 sm:text-lg"
               >
                 무료 진단 시작하기
               </Editable>
@@ -164,7 +166,7 @@ export default function Home() {
                 id="hero-cta-secondary"
                 as="a"
                 href="/pricing"
-                className="btn-outline w-full rounded-full px-8 py-4 text-lg sm:w-auto"
+                className="btn-outline w-full rounded-full px-8 py-3.5 text-base sm:w-auto sm:py-4 sm:text-lg"
               >
                 상품 자세히 보기
               </Editable>
@@ -174,17 +176,17 @@ export default function Home() {
 
         {/* 신뢰 배지 */}
         <section className="border-y border-gray-100 bg-gray-50 px-4 py-6">
-          <div className="mx-auto grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="reveal mx-auto grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
             {TRUST_BADGES.map((b, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center gap-1 rounded-xl bg-white px-3 py-4 text-center shadow-sm"
+                className="hover-lift flex flex-col items-center gap-1.5 rounded-xl bg-white px-3 py-4 text-center shadow-sm"
               >
                 <span className="text-2xl">{b.icon}</span>
                 <Editable
                   id={`home-trust-${i}`}
                   as="span"
-                  className="text-xs font-semibold leading-tight text-brand-dark"
+                  className="break-keep text-[13px] font-semibold leading-tight text-brand-dark"
                 >
                   {b.text}
                 </Editable>
@@ -194,8 +196,8 @@ export default function Home() {
         </section>
 
         {/* 비교 섹션 */}
-        <section className="px-4 py-7 sm:py-12">
-          <div className="mx-auto max-w-3xl">
+        <section className="px-4 py-9 sm:py-14">
+          <div className="reveal mx-auto max-w-3xl">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-red/10 px-4 py-1.5 text-xs font-bold text-brand-red sm:text-sm">
                 💰 가격 비교
@@ -203,14 +205,20 @@ export default function Home() {
               <Editable
                 id="home-compare-title"
                 as="h2"
-                className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
+                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
                 혁신적인 서비스 이용료
               </Editable>
-              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
+              <Editable
+                id="home-compare-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+              >
+                브로커 대행 수수료의 부담 없이, 합리적인 이용료로 시작하세요.
+              </Editable>
             </div>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-red/30 bg-white p-6">
+              <div className="hover-lift flex items-center gap-3 rounded-2xl border-2 border-brand-red/30 bg-white p-5 shadow-card sm:p-6">
                 <div className="shrink-0 text-2xl">❌</div>
                 <Editable
                   id="home-compare-broker"
@@ -220,7 +228,7 @@ export default function Home() {
                   정부지원사업 브로커 대행 수수료 : 최소 500만원
                 </Editable>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-brand-green bg-white p-6">
+              <div className="hover-lift flex items-center gap-3 rounded-2xl border-2 border-brand-green bg-white p-5 shadow-card sm:p-6">
                 <div className="shrink-0 text-2xl">✅</div>
                 <Editable
                   id="home-compare-us"
@@ -235,8 +243,8 @@ export default function Home() {
         </section>
 
         {/* 가치 제안 4단계 */}
-        <section className="bg-gray-50 px-4 py-7 sm:py-12">
-          <div className="mx-auto max-w-4xl text-center">
+        <section className="bg-gray-50 px-4 py-9 sm:py-14">
+          <div className="reveal mx-auto max-w-4xl text-center">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-green/10 px-4 py-1.5 text-xs font-bold text-brand-green sm:text-sm">
                 🎯 서비스 안내
@@ -248,13 +256,19 @@ export default function Home() {
               >
                 297,000원부터 이 모든 걸 알려드립니다.
               </Editable>
-              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
+              <Editable
+                id="home-value-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+              >
+                복잡한 정부지원사업, 무엇을·어디서·어떻게까지 한 번에 정리해드립니다.
+              </Editable>
             </div>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {VALUES.map((v, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-5 text-left shadow-sm"
+                  className="hover-lift flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-card"
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-green text-sm font-bold text-white">
                     ✓
@@ -262,7 +276,7 @@ export default function Home() {
                   <Editable
                     id={`home-value-${i}`}
                     as="span"
-                    className="font-semibold text-brand-dark"
+                    className="break-keep text-sm font-semibold text-brand-dark sm:text-base"
                   >
                     {v}
                   </Editable>
@@ -273,8 +287,8 @@ export default function Home() {
         </section>
 
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
-        <section id="result-sample-section" className="border-y border-gray-100 bg-white px-4 py-7 sm:py-12">
-          <div className="mx-auto max-w-3xl">
+        <section id="result-sample-section" className="border-y border-gray-100 bg-white px-4 py-9 sm:py-14">
+          <div className="reveal mx-auto max-w-3xl">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 🔍 실제 결과 화면 예시
@@ -296,7 +310,6 @@ export default function Home() {
                 진단을 마치면 아래와 같이 신청 가능한 기관·상품과 신청 방법까지
                 실제로 이렇게 안내됩니다.
               </Editable>
-              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
             </div>
 
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
@@ -322,8 +335,8 @@ export default function Home() {
                     </p>
                     <div className="mt-3 grid grid-cols-3 gap-2">
                       {[
-                        { n: "6", l: "신청 가능 기관" },
-                        { n: "14", l: "신청 가능 상품" },
+                        { n: "6", l: "정책자금" },
+                        { n: "8", l: "지원금·바우처" },
                         { n: "5", l: "지금 신청 대상" },
                       ].map((s) => (
                         <div
@@ -341,34 +354,34 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* 신청 가능 정책금융기관 (실제 카드 구조 재현) */}
+                  {/* 신청 가능 정부지원사업 (정책자금·지원금·바우처 다양화) */}
                   <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-4 shadow-card sm:p-5">
                     <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-                      🏦 대표님이 이용할 수 있는 정책금융기관
+                      🏦 대표님이 신청할 수 있는 정부지원사업
                     </p>
                     <p className="mt-1 break-keep text-xs text-brand-dark/60">
                       업종·직원수 등 대표님 조건을 기준으로 실제 신청 자격이
-                      열리는 정책금융기관입니다.
+                      열리는 정책자금·지원금·바우처를 한 번에 안내합니다.
                     </p>
                     <div className="mt-3 divide-y divide-gray-200">
                       {[
                         {
                           inst: "중소벤처기업진흥공단",
-                          type: "직접대출",
-                          typeCls: "bg-blue-100 text-blue-700",
+                          cat: "정책자금",
+                          catCls: "bg-blue-100 text-blue-700",
                           prod: "신성장기반자금 · 신시장진출지원자금",
                         },
                         {
                           inst: "소상공인시장진흥공단",
-                          type: "직접대출",
-                          typeCls: "bg-blue-100 text-blue-700",
-                          prod: "일반경영안정자금 · 성장기반자금",
+                          cat: "지원금",
+                          catCls: "bg-green-100 text-green-700",
+                          prod: "스마트상점 기술보급 · 경영개선 지원금",
                         },
                         {
-                          inst: "지역신용보증재단",
-                          type: "보증서대출",
-                          typeCls: "bg-purple-100 text-purple-700",
-                          prod: "소상공인 특례보증 · 협약보증",
+                          inst: "중소벤처기업부(수출지원)",
+                          cat: "바우처",
+                          catCls: "bg-purple-100 text-purple-700",
+                          prod: "수출바우처 · 데이터바우처 지원",
                         },
                       ].map((m, i) => (
                         <div key={i} className="py-3 first:pt-0">
@@ -377,9 +390,9 @@ export default function Home() {
                               {m.inst}
                             </span>
                             <span
-                              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${m.typeCls}`}
+                              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${m.catCls}`}
                             >
-                              {m.type}
+                              {m.cat}
                             </span>
                             <span className="shrink-0 text-xs font-bold text-brand-green">
                               ✅ 신청 가능
@@ -438,9 +451,9 @@ export default function Home() {
         {/* 가격표 */}
         <section
           id="pricing-section"
-          className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-12"
+          className="scroll-mt-20 px-4 py-9 sm:scroll-mt-24 sm:py-14"
         >
-          <div className="mx-auto max-w-5xl">
+          <div className="reveal mx-auto max-w-5xl">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-yellow/20 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 💳 요금제
@@ -448,28 +461,27 @@ export default function Home() {
               <Editable
                 id="home-pricing-title"
                 as="h2"
-                className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
+                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
                 합리적인 가격, 3가지 플랜
               </Editable>
               <Editable
                 id="home-pricing-sub"
                 as="p"
-                className="mx-auto mt-2 max-w-xl text-sm text-brand-gray"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
                 모든 플랜은 1회성 결제이며 월 구독 결제가 아닙니다.
               </Editable>
-              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
             </div>
-            <div className="mt-10">
+            <div className="mt-8">
               <PricingCards prefix="home" />
             </div>
           </div>
         </section>
 
         {/* FAQ */}
-        <section className="bg-gray-50 px-4 py-7 sm:py-12">
-          <div className="mx-auto max-w-3xl">
+        <section className="bg-gray-50 px-4 py-9 sm:py-14">
+          <div className="reveal mx-auto max-w-3xl">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
                 💬 자주 묻는 질문
@@ -477,26 +489,35 @@ export default function Home() {
               <Editable
                 id="home-faq-title"
                 as="h2"
-                className="text-2xl font-extrabold text-brand-dark sm:text-3xl"
+                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
                 궁금한 점, 미리 확인하세요
               </Editable>
-              <span className="mt-3 h-1 w-12 rounded-full bg-brand-yellow" />
+              <Editable
+                id="home-faq-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+              >
+                결제 전 가장 많이 묻는 질문들을 모았습니다.
+              </Editable>
             </div>
             <div className="mt-8 space-y-3">
               {FAQS.map((f, i) => (
                 <details
                   key={i}
-                  className="group rounded-xl border border-gray-200 bg-white p-5"
+                  className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition open:border-brand-orange/40"
                 >
-                  <summary className="cursor-pointer list-none">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
                     <Editable
                       id={`home-faq-q-${i}`}
                       as="span"
-                      className="font-bold text-brand-dark"
+                      className="break-keep text-sm font-bold text-brand-dark sm:text-base"
                     >
                       {f.q}
                     </Editable>
+                    <span className="shrink-0 text-brand-orange transition group-open:rotate-180">
+                      ▾
+                    </span>
                   </summary>
                   <Editable
                     id={`home-faq-a-${i}`}
@@ -512,8 +533,8 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA */}
-        <section className="px-4 pb-4 pt-7 sm:pb-6 sm:pt-12">
-          <div className="mx-auto max-w-2xl rounded-3xl bg-brand-grad p-10 text-center">
+        <section className="px-4 pb-6 pt-9 sm:pb-8 sm:pt-14">
+          <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-grad p-8 text-center shadow-card sm:p-10">
             <Editable
               id="home-cta-title"
               as="h2"
@@ -524,7 +545,7 @@ export default function Home() {
             <Editable
               id="home-cta-sub"
               as="p"
-              className="mt-3 break-keep text-sm text-brand-dark/70"
+              className="mx-auto mt-3 max-w-md break-keep text-sm text-brand-dark/70"
             >
               1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.
             </Editable>
@@ -532,7 +553,7 @@ export default function Home() {
               id="home-cta-button"
               as="a"
               href="/diagnosis"
-              className="mt-6 inline-block rounded-full bg-brand-dark px-10 py-4 text-lg font-bold text-white hover:opacity-90"
+              className="mt-6 inline-block w-full rounded-full bg-brand-dark px-10 py-3.5 text-base font-bold text-white hover:opacity-90 sm:w-auto sm:py-4 sm:text-lg"
             >
               무료 진단 시작하기
             </Editable>
