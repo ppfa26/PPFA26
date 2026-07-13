@@ -355,10 +355,11 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* 결과 본문 — 사생활 방지 필름(블러)로 처리하여 '내용은 꽉 찼지만 자세히는 안 보이는' 상태 */}
-                <div className="preview-film space-y-4 p-4 text-left sm:p-6" aria-hidden="true">
+                {/* 결과 본문 — 섹션 제목(목차)은 선명하게 열고, 내부 항목만 블러 처리 */}
+                <div className="space-y-4 p-4 text-left sm:p-6">
                   {/* 정책금융기관 섹션 */}
                   <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-4 shadow-card sm:p-5">
+                    {/* 제목·설명은 선명하게 공개 → '무엇을 알려주는지' 파악 가능 */}
                     <p className="text-base font-extrabold text-brand-dark sm:text-lg">
                       🏦 대표님이 이용할 수 있는 정책금융기관
                     </p>
@@ -366,7 +367,8 @@ export default function Home() {
                       업종·직원수·매출 등 대표님 조건을 기준으로 실제 신청 자격이
                       열리는 정책자금을 한 번에 안내합니다.
                     </p>
-                    <div className="mt-3 divide-y divide-gray-200">
+                    {/* 개별 상품·기관명은 블러 처리 */}
+                    <div className="preview-film mt-3 divide-y divide-gray-200" aria-hidden="true">
                       {[
                         {
                           inst: "중소벤처기업진흥공단",
@@ -428,6 +430,7 @@ export default function Home() {
 
                   {/* 정부지원제도 섹션 */}
                   <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-4 shadow-card sm:p-5">
+                    {/* 제목·설명은 선명하게 공개 */}
                     <p className="text-base font-extrabold text-brand-dark sm:text-lg">
                       🎁 대표님이 신청할 수 있는 정부지원제도
                     </p>
@@ -435,7 +438,8 @@ export default function Home() {
                       대출이 아닌 지원금·바우처·인증·교육까지, 받을 수 있는 제도를
                       모두 찾아 신청 방법과 함께 안내합니다.
                     </p>
-                    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {/* 개별 제도명은 블러 처리 */}
+                    <div className="preview-film mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2" aria-hidden="true">
                       {[
                         { t: "스마트상점 기술보급 지원", c: "지원금", cls: "bg-green-100 text-green-700" },
                         { t: "수출바우처 지원", c: "바우처", cls: "bg-purple-100 text-purple-700" },

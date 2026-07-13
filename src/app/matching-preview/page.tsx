@@ -160,6 +160,52 @@ export default function MatchingPreview() {
             </div>
           </div>
 
+          {/* ── 무엇을 알려주는지(목차) 선명 공개 — '이런 걸 알려주는구나' 궁금증 유발 ── */}
+          <div className="mt-6 rounded-2xl border border-brand-dark/10 bg-white p-5 shadow-card">
+            <p className="break-keep text-sm font-extrabold text-brand-dark">
+              📋 결제하시면 이런 내용을 알려드립니다
+            </p>
+            <div className="mt-3 space-y-2.5">
+              {[
+                {
+                  icon: "🏦",
+                  t: "이용할 수 있는 정책금융기관",
+                  d: "중진공·소진공·신용보증재단 등, 대표님 조건에 맞는 기관과 신청 가능한 정책자금 상품",
+                },
+                {
+                  icon: "🎁",
+                  t: "신청할 수 있는 정부지원제도",
+                  d: "지원금·바우처·인증·교육까지, 대출이 아닌 받을 수 있는 제도 전부",
+                },
+                {
+                  icon: "🔗",
+                  t: "각 항목의 신청 방법",
+                  d: "공식 신청 사이트·담당 콜센터·접수 순서까지 하나하나 안내",
+                },
+                {
+                  icon: "📄",
+                  t: "필요 서류 & 승인 전략",
+                  d: "무엇을 준비하고 어떻게 신청하면 승인 확률이 높아지는지 실전 팁",
+                },
+              ].map((it, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-3"
+                >
+                  <span className="mt-0.5 text-lg">{it.icon}</span>
+                  <div className="min-w-0">
+                    <p className="break-keep text-sm font-bold text-brand-dark">
+                      {it.t}
+                    </p>
+                    <p className="mt-0.5 break-keep text-xs leading-relaxed text-brand-gray">
+                      {it.d}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* ── 실제 결과 전체를 그대로 렌더링 + 사생활 보호 필름 블러 ──
                높이 제한 없이 전부 보여줘 '내용이 이렇게 많구나' 체감시키되,
                필름 블러로 글자는 못 읽게 하고 자물쇠 오버레이로 잠금 표시 */}
