@@ -43,7 +43,34 @@ type AdminPayment = {
   expires_at: string | null;
 };
 
+type AdminDiagnosis = {
+  id: string;
+  email: string | null;
+  name: string | null;
+  phone: string | null;
+  profile: Record<string, unknown>;
+  matched_programs: unknown;
+  created_at: string;
+};
+type DailyRow = { day: string; revenue: number; cnt: number };
+type MonthlyRow = { month: string; revenue: number; cnt: number };
+type AccessRow = {
+  email: string | null;
+  ip: string | null;
+  device_kind: string | null;
+  path: string | null;
+  created_at: string;
+};
+type IpRow = { ip: string; hits: number; users: number; last_seen: string };
+type BlockRow = {
+  kind: string;
+  value: string;
+  reason: string | null;
+  created_at: string;
+};
+
 type Phase = "loading" | "denied" | "ready";
+type Tab = "users" | "payments" | "diagnoses" | "revenue" | "access";
 
 /* ------------------------------------------------------------------ */
 /*  유틸                                                               */
@@ -118,26 +145,76 @@ function StatCard({
 export default function AdminPage() {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("loading");
-  const [tab, setTab] = useState<"users" | "payments">("users");
+  const [tab, setTab] = useState<Tab>("users");
 
   const [stats, setStats] = useState<Stats | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [payments, setPayments] = useState<AdminPayment[]>([]);
+  const [diagnoses, setDiagnoses] = useState<AdminDiagnosis[]>([]);
+  const [daily, setDaily] = useState<DailyRow[]>([]);
+  const [monthly, setMonthly] = useState<MonthlyRow[]>([]);
+  const [access, setAccess] = useState<AccessRow[]>([]);
+  const [ipSummary, setIpSummary] = useState<IpRow[]>([]);
+  const [blocks, setBlocks] = useState<BlockRow[]>([]);
+  const [openDiag, setOpenDiag] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadAll = useCallback(async () => {
     setRefreshing(true);
-    const [s, u, p] = await Promise.all([
+    const [s, u, p, d, dr, mr, ac, ip, bl] = await Promise.all([
       supabase.rpc("admin_stats"),
       supabase.rpc("admin_list_users"),
       supabase.rpc("admin_list_payments"),
+      supabase.rpc("admin_list_diagnoses"),
+      supabase.rpc("admin_daily_revenue"),
+      supabase.rpc("admin_monthly_revenue"),
+      supabase.rpc("admin_list_access", { p_limit: 200 }),
+      supabase.rpc("admin_ip_summary"),
+      supabase.rpc("admin_list_blocks"),
     ]);
     if (!s.error && s.data?.[0]) setStats(s.data[0] as Stats);
     if (!u.error && u.data) setUsers(u.data as AdminUser[]);
     if (!p.error && p.data) setPayments(p.data as AdminPayment[]);
+    if (!d.error && d.data) setDiagnoses(d.data as AdminDiagnosis[]);
+    if (!dr.error && dr.data) setDaily(dr.data as DailyRow[]);
+    if (!mr.error && mr.data) setMonthly(mr.data as MonthlyRow[]);
+    if (!ac.error && ac.data) setAccess(ac.data as AccessRow[]);
+    if (!ip.error && ip.data) setIpSummary(ip.data as IpRow[]);
+    if (!bl.error && bl.data) setBlocks(bl.data as BlockRow[]);
     setRefreshing(false);
   }, []);
+
+  /* ------- IP/계정 차단 · 해제 · 기기 초기화 ------- */
+  const doBlock = async (kind: "ip" | "email", value: string) => {
+    const reason = window.prompt(`[${value}] 차단 사유를 입력하세요 (선택)`, "어뷰징 의심");
+    const { data, error } = await supabase.rpc("admin_block", {
+      p_kind: kind,
+      p_value: value,
+      p_reason: reason ?? "",
+    });
+    setMsg(error ? `오류: ${error.message}` : String(data));
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
+  const doUnblock = async (kind: string, value: string) => {
+    const { data, error } = await supabase.rpc("admin_unblock", {
+      p_kind: kind,
+      p_value: value,
+    });
+    setMsg(error ? `오류: ${error.message}` : String(data));
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
+  const resetDevice = async (email: string) => {
+    if (!window.confirm(`${email} 님의 기기 등록을 초기화할까요?\n(다음 접속 기기로 재등록됩니다)`))
+      return;
+    const { data, error } = await supabase.rpc("admin_reset_device", {
+      p_email: email,
+    });
+    setMsg(error ? `오류: ${error.message}` : String(data));
+    setTimeout(() => setMsg(null), 4000);
+  };
 
   useEffect(() => {
     (async () => {
@@ -298,27 +375,28 @@ export default function AdminPage() {
           </section>
 
           {/* 탭 */}
-          <div className="mb-4 flex gap-2">
-            <button
-              onClick={() => setTab("users")}
-              className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
-                tab === "users"
-                  ? "bg-brand-dark text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              👥 회원 목록 ({users.length})
-            </button>
-            <button
-              onClick={() => setTab("payments")}
-              className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
-                tab === "payments"
-                  ? "bg-brand-dark text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              💳 결제·조회권 관리 ({payments.length})
-            </button>
+          <div className="mb-4 flex flex-wrap gap-2">
+            {(
+              [
+                ["users", `👥 회원 목록 (${users.length})`],
+                ["payments", `💳 결제·조회권 (${payments.length})`],
+                ["diagnoses", `📋 고객 진단서 (${diagnoses.length})`],
+                ["revenue", "📈 매출 통계"],
+                ["access", `🛡️ 접속·기기·차단`],
+              ] as [Tab, string][]
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+                  tab === key
+                    ? "bg-brand-dark text-white"
+                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
           {/* ------- 회원 목록 ------- */}
@@ -334,12 +412,13 @@ export default function AdminPage() {
                     <th className="px-4 py-3 font-semibold text-right">누적금액</th>
                     <th className="px-4 py-3 font-semibold text-center">조회권</th>
                     <th className="px-4 py-3 font-semibold">열람기한</th>
+                    <th className="px-4 py-3 font-semibold text-center">관리</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {users.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-10 text-center text-gray-400">
+                      <td colSpan={8} className="px-4 py-10 text-center text-gray-400">
                         회원이 없습니다.
                       </td>
                     </tr>
@@ -373,6 +452,22 @@ export default function AdminPage() {
                           ) : (
                             <span className="text-gray-300">-</span>
                           )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col gap-1.5 sm:flex-row">
+                            <button
+                              onClick={() => u.email && resetDevice(u.email)}
+                              className="rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100"
+                            >
+                              기기초기화
+                            </button>
+                            <button
+                              onClick={() => u.email && doBlock("email", u.email)}
+                              className="rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                            >
+                              계정차단
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -461,6 +556,273 @@ export default function AdminPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* ------- 고객 진단서 (질문지 + 결과) ------- */}
+          {tab === "diagnoses" && (
+            <div className="space-y-3">
+              {diagnoses.length === 0 && (
+                <div className="rounded-2xl border border-gray-100 bg-white px-4 py-10 text-center text-gray-400 shadow-sm">
+                  아직 접수된 진단서가 없습니다.
+                </div>
+              )}
+              {diagnoses.map((d) => {
+                const isOpen = openDiag === d.id;
+                const p = d.profile || {};
+                return (
+                  <div
+                    key={d.id}
+                    className="rounded-2xl border border-gray-100 bg-white shadow-sm"
+                  >
+                    <button
+                      onClick={() => setOpenDiag(isOpen ? null : d.id)}
+                      className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+                    >
+                      <div className="min-w-0">
+                        <span className="font-bold text-gray-800">
+                          {(p as any)?.name || d.name || "이름 미입력"}
+                        </span>
+                        <span className="ml-2 text-sm text-gray-500">
+                          {(p as any)?.businessType || ""}
+                        </span>
+                        <span className="ml-2 text-xs text-gray-400">
+                          {d.email || (p as any)?.email || "-"}
+                          {(p as any)?.bno ? ` · ${(p as any).bno}` : ""}
+                        </span>
+                      </div>
+                      <span className="shrink-0 text-xs text-gray-400">
+                        {fmtDateTime(d.created_at)} {isOpen ? "▲" : "▼"}
+                      </span>
+                    </button>
+                    {isOpen && (
+                      <div className="border-t border-gray-100 bg-gray-50/60 px-4 py-4">
+                        <p className="mb-2 text-xs font-bold text-gray-500">
+                          📝 작성한 질문지 전체
+                        </p>
+                        <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
+                          {Object.entries(p).map(([k, v]) => (
+                            <div
+                              key={k}
+                              className="flex gap-2 border-b border-gray-100 py-1 text-sm"
+                            >
+                              <span className="shrink-0 font-semibold text-gray-500">
+                                {k}
+                              </span>
+                              <span className="break-all text-gray-800">
+                                {Array.isArray(v)
+                                  ? v.join(", ")
+                                  : typeof v === "object"
+                                  ? JSON.stringify(v)
+                                  : String(v ?? "-")}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        {d.phone && (
+                          <p className="mt-3 text-sm text-gray-600">
+                            📞 연락처: <b>{d.phone}</b>
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ------- 매출 통계 (일별 / 월별) ------- */}
+          {tab === "revenue" && (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                <h3 className="mb-3 font-bold text-gray-800">📅 일별 매출 (최근 30일)</h3>
+                <div className="max-h-[420px] overflow-y-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="sticky top-0 bg-gray-50 text-xs text-gray-500">
+                      <tr>
+                        <th className="px-3 py-2">날짜</th>
+                        <th className="px-3 py-2 text-center">건수</th>
+                        <th className="px-3 py-2 text-right">매출</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {daily.length === 0 && (
+                        <tr>
+                          <td colSpan={3} className="px-3 py-8 text-center text-gray-400">
+                            결제 데이터가 없습니다.
+                          </td>
+                        </tr>
+                      )}
+                      {daily.map((r) => (
+                        <tr key={r.day}>
+                          <td className="px-3 py-2 text-gray-700">{fmtDate(r.day)}</td>
+                          <td className="px-3 py-2 text-center text-gray-500">{r.cnt}건</td>
+                          <td className="px-3 py-2 text-right font-semibold text-gray-800">
+                            {won(r.revenue)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                <h3 className="mb-3 font-bold text-gray-800">🗓️ 월별 매출 (최근 12개월)</h3>
+                <div className="max-h-[420px] overflow-y-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="sticky top-0 bg-gray-50 text-xs text-gray-500">
+                      <tr>
+                        <th className="px-3 py-2">월</th>
+                        <th className="px-3 py-2 text-center">건수</th>
+                        <th className="px-3 py-2 text-right">매출</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {monthly.length === 0 && (
+                        <tr>
+                          <td colSpan={3} className="px-3 py-8 text-center text-gray-400">
+                            결제 데이터가 없습니다.
+                          </td>
+                        </tr>
+                      )}
+                      {monthly.map((r) => (
+                        <tr key={r.month}>
+                          <td className="px-3 py-2 text-gray-700">{r.month}</td>
+                          <td className="px-3 py-2 text-center text-gray-500">{r.cnt}건</td>
+                          <td className="px-3 py-2 text-right font-semibold text-brand-primary">
+                            {won(r.revenue)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ------- 접속 · 기기 · 차단 ------- */}
+          {tab === "access" && (
+            <div className="space-y-4">
+              {/* 차단 목록 */}
+              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                <h3 className="mb-3 font-bold text-gray-800">
+                  ⛔ 차단 목록 ({blocks.length})
+                </h3>
+                {blocks.length === 0 ? (
+                  <p className="text-sm text-gray-400">차단된 IP·계정이 없습니다.</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {blocks.map((b) => (
+                      <span
+                        key={`${b.kind}:${b.value}`}
+                        className="inline-flex items-center gap-2 rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700"
+                      >
+                        [{b.kind}] {b.value}
+                        <button
+                          onClick={() => doUnblock(b.kind, b.value)}
+                          className="text-rose-400 hover:text-rose-700"
+                          title="차단 해제"
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* IP 집계 */}
+              <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+                <div className="border-b border-gray-100 px-4 py-3">
+                  <h3 className="font-bold text-gray-800">
+                    🌐 IP별 접속 집계 (어뷰징 의심 파악)
+                  </h3>
+                  <p className="mt-0.5 text-xs text-gray-400">
+                    접속수가 유난히 많거나, 한 IP에 여러 계정이 붙으면 의심해 보세요.
+                  </p>
+                </div>
+                <table className="w-full min-w-[560px] text-left text-sm">
+                  <thead className="bg-gray-50 text-xs text-gray-500">
+                    <tr>
+                      <th className="px-4 py-2">IP</th>
+                      <th className="px-4 py-2 text-center">접속수</th>
+                      <th className="px-4 py-2 text-center">계정수</th>
+                      <th className="px-4 py-2">마지막</th>
+                      <th className="px-4 py-2 text-center">관리</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {ipSummary.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
+                          접속 기록이 없습니다.
+                        </td>
+                      </tr>
+                    )}
+                    {ipSummary.map((r) => (
+                      <tr
+                        key={r.ip}
+                        className={r.users > 3 || r.hits > 30 ? "bg-amber-50/60" : ""}
+                      >
+                        <td className="px-4 py-2 font-mono text-xs text-gray-700">{r.ip}</td>
+                        <td className="px-4 py-2 text-center text-gray-600">{r.hits}</td>
+                        <td className="px-4 py-2 text-center font-semibold text-gray-800">
+                          {r.users}
+                        </td>
+                        <td className="px-4 py-2 text-gray-500">{fmtDateTime(r.last_seen)}</td>
+                        <td className="px-4 py-2 text-center">
+                          <button
+                            onClick={() => doBlock("ip", r.ip)}
+                            className="rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                          >
+                            IP차단
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* 최근 접속 로그 */}
+              <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+                <div className="border-b border-gray-100 px-4 py-3">
+                  <h3 className="font-bold text-gray-800">🕑 최근 접속 로그</h3>
+                </div>
+                <table className="w-full min-w-[600px] text-left text-sm">
+                  <thead className="bg-gray-50 text-xs text-gray-500">
+                    <tr>
+                      <th className="px-4 py-2">시각</th>
+                      <th className="px-4 py-2">이메일</th>
+                      <th className="px-4 py-2">IP</th>
+                      <th className="px-4 py-2 text-center">기기</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {access.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="px-4 py-8 text-center text-gray-400">
+                          접속 기록이 없습니다.
+                        </td>
+                      </tr>
+                    )}
+                    {access.map((a, i) => (
+                      <tr key={i}>
+                        <td className="px-4 py-2 text-gray-500">{fmtDateTime(a.created_at)}</td>
+                        <td className="px-4 py-2 text-gray-800">{a.email || "-"}</td>
+                        <td className="px-4 py-2 font-mono text-xs text-gray-600">
+                          {a.ip || "-"}
+                        </td>
+                        <td className="px-4 py-2 text-center">
+                          {a.device_kind === "mobile" ? "📱 모바일" : "💻 PC"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 

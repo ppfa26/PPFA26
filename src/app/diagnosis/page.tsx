@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
+import { supabase } from "@/lib/supabaseClient";
 import {
   DIAGNOSIS_TEXT,
   BNO_TEXT,
@@ -67,6 +68,25 @@ export default function Diagnosis() {
     try {
       sessionStorage.setItem("mpp_diagnosis", JSON.stringify(form));
     } catch {}
+
+    // 진단 응답을 DB(diagnoses)에도 저장 → 어드민에서 전체 고객 진단서 열람 가능
+    // (로그인 안 한 상태여도 저장. 실패해도 흐름은 계속 진행)
+    (async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const user = sessionData.session?.user ?? null;
+        await supabase.from("diagnoses").insert({
+          user_id: user?.id ?? null,
+          profile: form,
+          name: (form as any)?.name ?? null,
+          phone: (form as any)?.phone ?? null,
+          email: user?.email ?? (form as any)?.email ?? null,
+        });
+      } catch {
+        /* 저장 실패해도 사용자 흐름은 막지 않음 */
+      }
+    })();
+
     router.push("/matching-preview");
   };
 

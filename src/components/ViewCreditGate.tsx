@@ -9,6 +9,7 @@ import {
   daysUntil,
   type ViewStatus,
 } from "@/lib/viewCredits";
+import { registerViewDevice, logAccess, deviceKind } from "@/lib/deviceGuard";
 
 // ============================================================
 // 조회권 게이트
@@ -27,6 +28,8 @@ type Phase =
   | "need-pay"
   | "expired"
   | "no-credit"
+  | "device-locked"
+  | "blocked"
   | "granted";
 
 // 진단 데이터로 사업장 지문 생성 (같은 사업장 = 같은 지문)
@@ -69,6 +72,7 @@ export default function ViewCreditGate({
   const [phase, setPhase] = useState<Phase>("loading");
   const [status, setStatus] = useState<ViewStatus | null>(null);
   const [businessName, setBusinessName] = useState("");
+  const [guardMsg, setGuardMsg] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -79,6 +83,24 @@ export default function ViewCreditGate({
       if (!mounted) return;
       if (!sessionData.session?.user) {
         setPhase("need-login");
+        return;
+      }
+
+      // 1-2) 접속 기록 + 차단(IP/계정) 확인
+      const access = await logAccess("/dashboard");
+      if (!mounted) return;
+      if (access.blocked) {
+        setGuardMsg(access.reason || "접근이 제한되었습니다.");
+        setPhase("blocked");
+        return;
+      }
+
+      // 1-3) 기기 고정 검증 (핸드폰 1대 / PC 1대)
+      const dev = await registerViewDevice();
+      if (!mounted) return;
+      if (!dev.ok) {
+        setGuardMsg(dev.message);
+        setPhase("device-locked");
         return;
       }
 
@@ -194,6 +216,43 @@ export default function ViewCreditGate({
         <Link href="/pricing" className="btn-brand mt-6 inline-block rounded-full px-8 py-3">
           다시 결제하기
         </Link>
+      </GateCard>
+    );
+  }
+
+  if (phase === "blocked") {
+    return (
+      <GateCard icon="⛔" title="접근이 제한되었습니다" desc={guardMsg}>
+        <a
+          href="http://pf.kakao.com/_VxfWxan/chat"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-brand mt-6 inline-block rounded-full px-8 py-3"
+        >
+          💬 문의하기
+        </a>
+      </GateCard>
+    );
+  }
+
+  if (phase === "device-locked") {
+    return (
+      <GateCard
+        icon={deviceKind() === "mobile" ? "📱" : "💻"}
+        title="등록된 기기에서만 열람할 수 있습니다"
+        desc={
+          guardMsg +
+          " 결과는 보안을 위해 최초 열람한 휴대폰 1대 · PC 1대에서만 볼 수 있습니다. 기기 변경이 필요하시면 문의해 주세요."
+        }
+      >
+        <a
+          href="http://pf.kakao.com/_VxfWxan/chat"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-brand mt-6 inline-block rounded-full px-8 py-3"
+        >
+          💬 기기 변경 문의
+        </a>
       </GateCard>
     );
   }
