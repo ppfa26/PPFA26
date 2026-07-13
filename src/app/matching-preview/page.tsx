@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
-import { countMatchedItems, getMatchedTitles, type MatchedTitle } from "@/lib/supportPrograms";
+import { countMatchedItems } from "@/lib/supportPrograms";
 import {
   getPaymentBlockReasons,
   PAYMENT_BLOCK_TEXT,
@@ -22,7 +22,6 @@ export default function MatchingPreview() {
     products: number;
     supports: number;
   } | null>(null);
-  const [titles, setTitles] = useState<MatchedTitle[]>([]);
 
   useEffect(() => {
     try {
@@ -31,10 +30,8 @@ export default function MatchingPreview() {
       setName(profile.name || "");
       setBlockReasons(getPaymentBlockReasons(profile));
       setCounts(countMatchedItems(profile));
-      setTitles(getMatchedTitles(profile));
     } catch {
       setCounts(null);
-      setTitles([]);
     }
   }, []);
 
@@ -109,108 +106,64 @@ export default function MatchingPreview() {
       {/* 하단 여백(pb-28)으로 sticky 바에 콘텐츠가 가려지지 않게 */}
       <main className="px-4 pb-28 pt-8">
         <div className="mx-auto max-w-3xl">
-          {/* ── 상단 히어로: 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ── */}
+          {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ── */}
           <div className="text-center">
             <p className="break-keep text-sm font-bold text-brand-gray">
-              {name ? `${name} 대표님, ` : ""}분석이 완료되었습니다
+              {name ? `${name} 대표님 사업장의 ` : "대표님 사업장의 "}분석이 완료되었습니다.
             </p>
-            <div className="mt-3 inline-flex flex-col items-center rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-b from-brand-orange/10 to-white px-8 py-6 shadow-[0_10px_30px_rgba(255,140,0,0.15)]">
-              <span className="break-keep text-sm font-bold text-brand-dark/80">
-                대표님이 받을 수 있는 지원사업
-              </span>
-              <span className="mt-1 flex items-end gap-1">
-                <b className="text-6xl font-black leading-none text-brand-orange sm:text-7xl">
-                  {total}
-                </b>
-                <b className="pb-1.5 text-2xl font-extrabold text-brand-orange sm:text-3xl">
-                  개
-                </b>
-              </span>
-              <span className="mt-2 break-keep text-xs font-bold text-brand-dark/70">
-                가 매칭되었습니다 🎉
-              </span>
-            </div>
-            {counts && total > 0 && (
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5">
-                <span className="rounded-full bg-brand-dark/5 px-3 py-1 text-xs font-bold text-brand-dark">
-                  🏦 기관 {counts.institutions}곳
+
+            {/* 가로형 카드: 왼쪽=큰 숫자, 오른쪽=매칭 요약 배지 (모바일에서도 한 줄 유지) */}
+            <div className="mt-3 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-4 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:gap-5 sm:p-6">
+              {/* 왼쪽: 큰 숫자 */}
+              <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-3 sm:pr-5">
+                <span className="break-keep text-[11px] font-bold leading-tight text-brand-dark/80 sm:text-sm">
+                  받을 수 있는
+                  <br />
+                  지원사업
                 </span>
-                <span className="rounded-full bg-brand-dark/5 px-3 py-1 text-xs font-bold text-brand-dark">
-                  💰 정책자금 상품 {counts.products}종
+                <span className="mt-0.5 flex items-end gap-0.5">
+                  <b className="text-5xl font-black leading-none text-brand-orange sm:text-6xl">
+                    {total}
+                  </b>
+                  <b className="pb-1 text-xl font-extrabold text-brand-orange sm:text-2xl">
+                    개
+                  </b>
                 </span>
-                <span className="rounded-full bg-brand-dark/5 px-3 py-1 text-xs font-bold text-brand-dark">
-                  🎁 정부지원제도 {counts.supports}건
+                <span className="mt-1 break-keep text-[10px] font-bold text-brand-dark/60 sm:text-xs">
+                  매칭 완료 🎉
                 </span>
               </div>
-            )}
-          </div>
 
-          {/* ── 목차(제목) 선명 공개 — '이만큼 나온다'를 실제 이름으로 증명 ── */}
-          {titles.length > 0 && (
-            <div className="mt-6 rounded-2xl border border-brand-dark/10 bg-white p-5 shadow-card">
-              <p className="mb-1 break-keep text-sm font-extrabold text-brand-dark">
-                📋 대표님께 매칭된 항목 목록
-              </p>
-              <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
-                아래 <b className="text-brand-orange">{titles.length}개 항목</b>이 실제로 매칭되었습니다.
-                각 항목의 <b>신청 방법·필요 서류·승인 전략</b>은 결제 후 전부 공개됩니다.
-              </p>
-              <ul className="space-y-1.5">
-                {titles.map((t, i) => (
-                  <li
-                    key={`${t.kind}-${t.title}-${i}`}
-                    className="flex items-center gap-2.5 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-2.5"
-                  >
-                    <span className="text-base">{t.icon}</span>
-                    <span className="min-w-0 flex-1 break-keep text-sm font-bold text-brand-dark">
-                      {t.title}
+              {/* 오른쪽: 매칭 요약 (세로로 쌓아 가로 공간 절약 → 모바일에서도 안 짤림) */}
+              <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 text-left">
+                {counts && total > 0 ? (
+                  <>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-sm">
+                      🏦 <span className="text-brand-dark/70">기관</span>
+                      <b className="ml-auto text-brand-orange">{counts.institutions}곳</b>
                     </span>
-                    <span className="shrink-0 rounded-full bg-brand-dark/5 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
-                      {t.kind}
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-sm">
+                      💰 <span className="text-brand-dark/70">정책자금 상품</span>
+                      <b className="ml-auto text-brand-orange">{counts.products}종</b>
                     </span>
-                  </li>
-                ))}
-              </ul>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-sm">
+                      🎁 <span className="text-brand-dark/70">정부지원제도</span>
+                      <b className="ml-auto text-brand-orange">{counts.supports}건</b>
+                    </span>
+                  </>
+                ) : (
+                  <span className="break-keep text-sm font-bold text-brand-dark/70">
+                    대표님 조건으로 매칭된 지원사업을 정리했어요.
+                  </span>
+                )}
+              </div>
             </div>
-          )}
-
-          {/* ── 결제 유도 박스 ── */}
-          <div className="mt-6 rounded-2xl border-2 border-brand-orange bg-white p-4 text-center shadow-[0_8px_28px_rgba(0,0,0,0.12)] sm:p-5">
-            <Editable
-              id="preview-lock-title"
-              as="p"
-              className="break-keep text-base font-extrabold text-brand-dark sm:text-lg"
-            >
-              🔒 결제하면 위 모든 항목의 상세 내용이 공개됩니다
-            </Editable>
-            <Editable
-              id="preview-lock-sub"
-              as="p"
-              className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm"
-            >
-              신청 가능한 기관·상품·정부지원제도와 신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다. (VAT 포함)
-            </Editable>
-            <Editable
-              id="preview-lock-cta"
-              as="a"
-              href="/pricing"
-              className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
-            >
-              지금 결제하고 전체 결과 확인하기
-            </Editable>
-            <Editable
-              id="preview-lock-note"
-              as="p"
-              className="mt-2.5 break-keep text-[11px] text-brand-dark/50"
-            >
-              ⚠️ 자문 서비스 · 승인 보장 없음 · 대행 없음
-            </Editable>
           </div>
 
           {/* ── 실제 결과 전체를 그대로 렌더링 + 사생활 보호 필름 블러 ──
                높이 제한 없이 전부 보여줘 '내용이 이렇게 많구나' 체감시키되,
                필름 블러로 글자는 못 읽게 하고 자물쇠 오버레이로 잠금 표시 */}
-          <p className="mt-8 break-keep text-center text-xs text-brand-gray">
+          <p className="mt-6 break-keep text-center text-xs text-brand-gray">
             👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면 전체</b>입니다. (결제 후 선명하게 공개)
           </p>
           <div className="relative mt-3 overflow-hidden rounded-2xl border border-gray-200 bg-white">
@@ -243,6 +196,39 @@ export default function MatchingPreview() {
                 </a>
               </div>
             </div>
+          </div>
+
+          {/* ── 결제 유도 박스 (최하단) ── */}
+          <div className="mt-8 rounded-2xl border-2 border-brand-orange bg-white p-4 text-center shadow-[0_8px_28px_rgba(0,0,0,0.12)] sm:p-5">
+            <Editable
+              id="preview-lock-title"
+              as="p"
+              className="break-keep text-base font-extrabold text-brand-dark sm:text-lg"
+            >
+              🔒 결제하면 위 모든 항목의 상세 내용이 공개됩니다
+            </Editable>
+            <Editable
+              id="preview-lock-sub"
+              as="p"
+              className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm"
+            >
+              신청 가능한 기관·상품·정부지원제도와 신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다. (VAT 포함)
+            </Editable>
+            <Editable
+              id="preview-lock-cta"
+              as="a"
+              href="/pricing"
+              className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
+            >
+              지금 결제하고 전체 결과 확인하기
+            </Editable>
+            <Editable
+              id="preview-lock-note"
+              as="p"
+              className="mt-2.5 break-keep text-[11px] text-brand-dark/50"
+            >
+              ⚠️ 자문 서비스 · 승인 보장 없음 · 대행 없음
+            </Editable>
           </div>
         </div>
       </main>
