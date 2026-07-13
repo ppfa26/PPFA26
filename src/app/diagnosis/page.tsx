@@ -301,6 +301,21 @@ export default function Diagnosis() {
             </div>
           )}
 
+          {/* 조회 2회 제한 안내 (마지막 단계에서만 노출) */}
+          {step === 3 && (
+            <div className="mt-6 rounded-2xl border border-brand-orange/40 bg-brand-orange/5 p-4">
+              <p className="break-keep text-sm font-bold text-brand-dark">
+                ⚠️ 정확한 정보를 입력해 주세요
+              </p>
+              <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-gray">
+                결제 1회당 <b className="text-brand-orange">새 사업자 조회는 2회</b>까지만 가능합니다.
+                (실수를 대비한 횟수입니다.) 입력값이 정확할수록 대표님 사업장에 딱 맞는 결과를
+                받아보실 수 있으니, 제출 전에 한 번 더 확인해 주세요. 조회하신 결과는{" "}
+                <b className="text-brand-dark">결제 후 1개월간</b> 언제든 다시 열람하실 수 있습니다.
+              </p>
+            </div>
+          )}
+
           {/* 네비 버튼 */}
           <div className="mt-6 flex gap-3">
             {step > 1 && (

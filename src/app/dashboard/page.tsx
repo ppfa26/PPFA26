@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { DiagnosisProfile } from "@/lib/matching";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
+import ViewCreditGate from "@/components/ViewCreditGate";
 import { ADVISORY_DISCLAIMER, REVALIDATION_NOTICE } from "@/lib/advancedScreening";
 
 export default function DashboardPage() {
@@ -33,6 +34,7 @@ export default function DashboardPage() {
     <PageShell pageKey="dashboard">
       <Header />
       <main className="bg-gray-50 px-4 py-8">
+        <ViewCreditGate>
         <div className="mx-auto max-w-4xl">
           {/* 헤더 — 기관·상품 안내 중심 */}
           <section id="dashboard-hero" className="text-center">
@@ -95,6 +97,7 @@ export default function DashboardPage() {
             </p>
           </section>
         </div>
+        </ViewCreditGate>
       </main>
       <Footer />
     </PageShell>

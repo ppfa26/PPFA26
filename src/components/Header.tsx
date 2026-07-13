@@ -13,19 +13,30 @@ export default function Header() {
 
   // 로그인 상태 추적
   const [loggedIn, setLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const ADMIN_EMAILS = ["biospartners@naver.com"];
 
   useEffect(() => {
     // 최초 세션 확인
     supabase.auth.getSession().then(({ data }) => {
       setLoggedIn(!!data.session);
+      setIsAdmin(
+        !!data.session?.user?.email &&
+          ADMIN_EMAILS.includes(data.session.user.email)
+      );
     });
     // 로그인/로그아웃 등 상태 변화 실시간 반영
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setLoggedIn(!!session);
+      setIsAdmin(
+        !!session?.user?.email && ADMIN_EMAILS.includes(session.user.email)
+      );
     });
     return () => {
       sub.subscription.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = async () => {
@@ -76,6 +87,14 @@ export default function Header() {
           </Link>
           {loggedIn ? (
             <>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className="whitespace-nowrap rounded-md bg-brand-dark px-2 py-1 text-[12.5px] font-bold text-white transition-colors hover:bg-brand-orange sm:text-sm"
+                >
+                  관리자
+                </Link>
+              )}
               <Link
                 href="/mypage"
                 className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
