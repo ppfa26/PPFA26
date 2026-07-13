@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import MobilePcNotice from "@/components/MobilePcNotice";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의사업친구.kr";
@@ -157,7 +158,10 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <MobilePcNotice />
+        {children}
+      </body>
     </html>
   );
 }

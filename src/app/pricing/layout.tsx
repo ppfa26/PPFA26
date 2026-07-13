@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "요금 안내 | 모두의사업친구",
   description:
-    "정책자금 브로커 수수료 5% 대신, 297,000원부터 직접 신청 방법을 배우세요. 모두의사업친구 요금 안내.",
+    "하루 커피 한 잔 값, 297,000원부터. 내 사업장이 받을 수 있는 정부지원사업을 AI로 한 번에 찾고 신청 방법까지 안내받으세요. 모두의사업친구 요금 안내.",
   alternates: { canonical: "/pricing" },
 };
 

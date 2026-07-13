@@ -36,10 +36,9 @@ const FAQS = [
     q: "Q2. 행정대행 신청해주시나요?",
     a: (
       <>
-        아닙니다. 저희는 방법을 알려드리는 경영 자문 플랫폼입니다. 서류발급부터
-        신청까지 대표님이 직접 하셔야 합니다. 정부지원사업 브로커 대행 시 승인
-        수수료는 1억 승인 시 약 500만원이며 너무 큰 돈입니다. 신청하는 방법만
-        안다면 직접 신청은 그렇게 어렵지 않습니다.
+        아닙니다. 저희는 방법을 알려드리는 경영 자문 플랫폼입니다. 서류 발급부터
+        신청까지는 대표님이 직접 진행하시게 됩니다. 신청 방법만 정확히 아신다면
+        직접 신청도 충분히 가능합니다.
       </>
     ),
   },
@@ -199,43 +198,45 @@ export default function Home() {
         <section className="px-4 py-9 sm:py-14">
           <div className="reveal mx-auto max-w-3xl">
             <div className="flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-red/10 px-4 py-1.5 text-xs font-bold text-brand-red sm:text-sm">
-                💰 가격 비교
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+                ☕ 하루 커피 한 잔 값
               </span>
               <Editable
                 id="home-compare-title"
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                혁신적인 서비스 이용료
+                아직 몰라서 못 받고 있는 정부지원사업
               </Editable>
               <Editable
                 id="home-compare-sub"
                 as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
               >
-                브로커 대행 수수료의 부담 없이, 합리적인 이용료로 시작하세요.
+                하루 커피 한 잔 값으로, 내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
               </Editable>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="hover-lift flex items-center gap-3 rounded-2xl border-2 border-brand-red/30 bg-white p-5 shadow-card sm:p-6">
-                <div className="shrink-0 text-2xl">❌</div>
-                <Editable
-                  id="home-compare-broker"
-                  as="p"
-                  className="break-keep text-[13px] font-bold leading-snug text-brand-dark sm:text-sm"
-                >
-                  정부지원사업 브로커 대행 수수료 : 최소 500만원
-                </Editable>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <div className="hover-lift flex flex-col items-center gap-1.5 rounded-2xl border border-brand-dark/10 bg-white p-5 text-center shadow-card">
+                <div className="text-2xl">🔍</div>
+                <p className="break-keep text-sm font-bold leading-snug text-brand-dark">
+                  내 사업장 맞춤<br />지원사업 자동 매칭
+                </p>
               </div>
-              <div className="hover-lift flex items-center gap-3 rounded-2xl border-2 border-brand-green bg-white p-5 shadow-card sm:p-6">
-                <div className="shrink-0 text-2xl">✅</div>
+              <div className="hover-lift flex flex-col items-center gap-1.5 rounded-2xl border border-brand-dark/10 bg-white p-5 text-center shadow-card">
+                <div className="text-2xl">🤖</div>
+                <p className="break-keep text-sm font-bold leading-snug text-brand-dark">
+                  AI가 한 번에<br />전부 찾아 정리
+                </p>
+              </div>
+              <div className="hover-lift flex flex-col items-center gap-1.5 rounded-2xl border-2 border-brand-green bg-white p-5 text-center shadow-card">
+                <div className="text-2xl">💳</div>
                 <Editable
                   id="home-compare-us"
                   as="p"
-                  className="break-keep text-[13px] font-bold leading-snug text-brand-dark sm:text-sm"
+                  className="break-keep text-sm font-bold leading-snug text-brand-dark"
                 >
-                  모두의사업친구 : 297,000원부터 ~
+                  <b className="text-brand-green">297,000원</b>부터<br />부담 없이 시작
                 </Editable>
               </div>
             </div>

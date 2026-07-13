@@ -486,3 +486,48 @@ export function countMatchedItems(p: DiagnosisProfile): {
     supports,
   };
 }
+
+// ── 미리보기 '목차'용: 매칭된 실제 항목 제목 리스트 ──────────────────
+//  대표님 요청: 미리보기에서 "제목(목차)은 선명하게 오픈"해 내용이 풍부함을 보여준다.
+//  실제 결과에 등장하는 기관·정책자금 상품·정부지원제도의 '이름'만 뽑아 반환한다.
+//  (구체적 신청방법·서류·전략 등 본문은 결제 후 공개 — 여기선 제목만)
+export type MatchedTitle = {
+  kind: "기관" | "정책자금" | "정부지원제도";
+  icon: string;
+  title: string;
+};
+
+export function getMatchedTitles(p: DiagnosisProfile): MatchedTitle[] {
+  const titles: MatchedTitle[] = [];
+
+  // 1) 이용 가능 기관 (BLOCK 2)
+  try {
+    const report = runAdvancedScreening(profileToCompany(p));
+    (report.creditMatches || []).forEach((m) => {
+      titles.push({ kind: "기관", icon: "🏦", title: m.institution });
+    });
+    // 2) 소진공 등 정부(정책) 프로그램 (BLOCK 4)
+    (report.govPrograms || []).forEach((g) => {
+      if (g?.name) titles.push({ kind: "정책자금", icon: "💰", title: g.name });
+    });
+  } catch {
+    /* noop */
+  }
+
+  // 3) 정부지원제도 (지금 대상 + 요건 충족 시 대상)
+  const status = computeSupportStatus(p);
+  SUPPORT_PROGRAMS.forEach((prog) => {
+    if (status[prog.id] === "eligible" || status[prog.id] === "potential") {
+      titles.push({ kind: "정부지원제도", icon: prog.icon || "🎁", title: prog.title });
+    }
+  });
+
+  // 중복 제거(같은 제목이 여러 번 나올 수 있음)
+  const seen = new Set<string>();
+  return titles.filter((t) => {
+    const key = `${t.kind}|${t.title}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}

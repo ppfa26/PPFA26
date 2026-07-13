@@ -114,6 +114,18 @@ h4 {
   pointer-events: none;
 }
 
+/* 사생활 보호 필름 느낌의 미리보기 블러 — 실제 결과 전체를 덮되,
+   '내용이 빼곡히 많다'는 느낌은 살리고 글자는 못 읽게 한다. */
+.preview-film {
+  filter: blur(5px) saturate(0.92);
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-select: none;
+}
+.preview-film * {
+  cursor: default !important;
+}
+
 /* 애니메이션 */
 @keyframes fadeUp {
   from {
