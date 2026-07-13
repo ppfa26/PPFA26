@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import MobilePcNotice from "@/components/MobilePcNotice";
+import CopyGuard from "@/components/CopyGuard";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의사업친구.kr";
@@ -139,6 +140,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* eslint-disable-next-line react/no-danger */}
+        <meta name="copyright" content="© 모두의사업친구 (biospartners). All rights reserved. 무단 복제·도용 금지" />
+        <meta name="author" content="모두의사업친구" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -159,6 +163,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <CopyGuard />
         <MobilePcNotice />
         {children}
       </body>

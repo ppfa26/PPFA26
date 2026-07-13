@@ -213,6 +213,29 @@ export default function MatchingPreview() {
             👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면 전체</b>입니다. (결제 후 선명하게 공개)
           </p>
           <div className="relative mt-3 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+            {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
+            <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-3">
+              <p className="mb-2 break-keep text-[11px] font-bold text-brand-dark/50">
+                📑 아래 결과에는 이런 항목들이 담겨 있어요
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  "🏦 이용 가능 정책금융기관",
+                  "💰 신청 가능 정책자금 상품",
+                  "🎁 받을 수 있는 정부지원제도",
+                  "🔗 신청 사이트 · 콜센터",
+                  "📄 필요 서류 · 승인 전략",
+                ].map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border border-brand-orange/30 bg-white px-2.5 py-1 text-[11px] font-bold text-brand-dark"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             {/* 실제 대시보드 결과창 — 전체 렌더링 + 필름 블러 */}
             <div className="preview-film" aria-hidden="true">
               <AdvancedScreeningPanel autoRun />
