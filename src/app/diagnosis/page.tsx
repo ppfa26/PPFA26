@@ -293,6 +293,7 @@ export default function Diagnosis() {
                 {(form.industries || []).includes("제조업") && (
                   <CondQ k="smartFactory" field={STEP3_CONDITIONAL_FIELDS.smartFactory} />
                 )}
+                <CondQ k="smartDevice" field={STEP3_CONDITIONAL_FIELDS.smartDevice} />
                 <CondQ k="govSelected" field={STEP3_CONDITIONAL_FIELDS.govSelected} />
                 <CondQ k="policyFundGood" field={STEP3_CONDITIONAL_FIELDS.policyFundGood} />
                 <CondQ k="reFounder" field={STEP3_CONDITIONAL_FIELDS.reFounder} />

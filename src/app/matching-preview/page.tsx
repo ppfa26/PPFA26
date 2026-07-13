@@ -206,11 +206,12 @@ export default function MatchingPreview() {
             </div>
           </div>
 
-          {/* ── 실제 결과 전체를 그대로 렌더링 + 사생활 보호 필름 블러 ──
-               높이 제한 없이 전부 보여줘 '내용이 이렇게 많구나' 체감시키되,
-               필름 블러로 글자는 못 읽게 하고 자물쇠 오버레이로 잠금 표시 */}
+          {/* ── 실제 결과 전체를 그대로 렌더링 (내용 대부분 공개) ──
+               제목·설명·안내는 선명하게 열어 '무엇을 알려주는지' 충분히 이해시키고,
+               기관명·상품명·신청 방법(버튼/링크)만 흐리게 + 클릭 차단으로 잠금 표시 */}
           <p className="mt-6 break-keep text-center text-xs text-brand-gray">
-            👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면 전체</b>입니다. (결제 후 선명하게 공개)
+            👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면</b>입니다. 어떤 내용을 알려드리는지 대부분 열어뒀고,
+            <b className="text-brand-orange"> 기관명·상품명·신청 방법</b>만 결제 후 공개됩니다.
           </p>
           <div className="relative mt-3 overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
@@ -236,30 +237,21 @@ export default function MatchingPreview() {
               </div>
             </div>
 
-            {/* 실제 대시보드 결과창 — 전체 렌더링 + 필름 블러 */}
-            <div className="preview-film" aria-hidden="true">
-              <AdvancedScreeningPanel autoRun />
-            </div>
+            {/* 실제 대시보드 결과창 — 내용은 열고 이름/버튼만 부분 잠금(previewLock) */}
+            <AdvancedScreeningPanel autoRun previewLock />
 
-            {/* 살짝 어둡게 덮는 반투명 레이어 (잠김 강조) */}
-            <div className="pointer-events-none absolute inset-0 bg-white/10" />
-
-            {/* 중앙 자물쇠 오버레이 — 스크롤해도 화면 중앙에 고정 */}
-            <div className="pointer-events-none absolute inset-0 flex items-start justify-center">
-              <div className="sticky top-1/3 mx-4 max-w-sm rounded-3xl border border-brand-orange/40 bg-white/95 px-6 py-7 text-center shadow-[0_12px_40px_rgba(0,0,0,0.18)] backdrop-blur-sm">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-orange/15 text-3xl">
-                  🔒
-                </div>
-                <p className="mt-3 break-keep text-base font-extrabold text-brand-dark">
-                  결제 후 결과 공개
+            {/* 상단 안내 배너 — 스크롤하면서 '이 부분만 결제하면 열린다' 인지시키기 */}
+            <div className="pointer-events-none absolute inset-x-0 top-[52px] flex justify-center px-4">
+              <div className="pointer-events-auto mt-3 max-w-md rounded-2xl border border-brand-orange/40 bg-white/95 px-5 py-4 text-center shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm">
+                <p className="break-keep text-sm font-extrabold text-brand-dark">
+                  🔒 기관명·상품명·신청 방법만 가려져 있어요
                 </p>
-                <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70">
-                  아래 화면 전체가 대표님 진단 기준으로 이미 분석되어 있습니다.
-                  결제하시면 <b className="text-brand-orange">필름이 걷히고</b> 모든 내용을 선명하게 보실 수 있습니다.
+                <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/70">
+                  결제하시면 흐린 부분이 <b className="text-brand-orange">선명하게 공개</b>되고 신청 링크도 바로 눌러 이용하실 수 있습니다.
                 </p>
                 <a
                   href="/pricing"
-                  className="btn-brand pointer-events-auto mt-4 inline-block rounded-full px-6 py-2.5 text-sm font-bold"
+                  className="btn-brand mt-2.5 inline-block rounded-full px-5 py-2 text-xs font-bold"
                 >
                   전체 결과 잠금 해제하기 →
                 </a>

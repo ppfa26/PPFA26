@@ -83,7 +83,7 @@ export default function Footer() {
             <dt className="shrink-0 text-gray-400">사업자등록번호</dt>
             <dd className="text-gray-500">597-12-02897</dd>
             <dt className="shrink-0 text-gray-400">통신판매업신고</dt>
-            <dd className="text-gray-500">제2026-인천서구-0109호</dd>
+            <dd className="text-gray-500">제2026-인천서해-0109호</dd>
             <dt className="shrink-0 text-gray-400">전화</dt>
             <dd className="text-gray-500">1551-7886</dd>
             <dt className="shrink-0 text-gray-400">문의</dt>
@@ -96,7 +96,7 @@ export default function Footer() {
               상호 : 모두의사업친구 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로288번길 26 (청라동) 285호
             </p>
             <p className="mt-1">
-              사업자등록번호 : 597-12-02897 · 통신판매업신고 : 제2026-인천서구-0109호
+              사업자등록번호 : 597-12-02897 · 통신판매업신고 : 제2026-인천서해-0109호
             </p>
             <p className="mt-1">전화 : 1551-7886 · 문의 : biospartners@naver.com</p>
           </div>

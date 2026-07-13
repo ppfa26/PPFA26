@@ -126,6 +126,20 @@ h4 {
   cursor: default !important;
 }
 
+/* 미리보기 잠금: 민감한 알맹이(기관명·상품명·신청버튼)만 골라 흐리게 */
+.preview-lock-text {
+  filter: blur(4.5px);
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* 미리보기 잠금: 신청 링크/버튼은 클릭 못 하게 + 살짝 흐리게 */
+.preview-lock-click {
+  filter: blur(2.5px);
+  pointer-events: none !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* 애니메이션 */
 @keyframes fadeUp {
   from {
