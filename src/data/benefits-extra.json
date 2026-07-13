@@ -1,0 +1,109 @@
+{
+  "extraBenefits": [
+    {
+      "id": "cardFee",
+      "order": 1,
+      "phase": "즉시",
+      "urgency": "critical",
+      "title": "카드 수수료 우대율",
+      "icon": "💳",
+      "description": "연매출 30억 이하 사업자 대부분 해당",
+      "applyUrl": "https://www.cardsales.or.kr/",
+      "applyName": "여신금융협회",
+      "requiredDocs": ["사업자등록증"],
+      "processingTime": "5분 (즉시)",
+      "deadline": "카드가맹 즉시 (소급 반환 불가)",
+      "warning": "신청 前 발생 수수료는 반환되지 않습니다"
+    },
+    {
+      "id": "startupTaxCut",
+      "order": 2,
+      "phase": "이번 주",
+      "urgency": "high",
+      "title": "창업 세액감면",
+      "icon": "🏢",
+      "description": "창업 5년 이내 사업자 대부분 해당",
+      "excludedIndustries": ["부동산업", "사행성", "유흥주점"],
+      "applyUrl": "https://www.hometax.go.kr/",
+      "applyName": "홈택스",
+      "requiredDocs": ["사업자등록증", "주민등록증", "창업기업확인서"],
+      "processingTime": "15분 (온라인)",
+      "deadline": "첫 종합소득세/부가세 신고 前",
+      "warning": "감면 신청 없이 신고하면 그 해 감면은 영구 손실"
+    },
+    {
+      "id": "noransanggong",
+      "order": 3,
+      "phase": "이번 달",
+      "urgency": "medium",
+      "title": "노란우산공제",
+      "icon": "🛡️",
+      "description": "개인사업자 대표 대부분 해당",
+      "estimatedTaxSaving": "연 100~150만원 (소득에 따라)",
+      "applyUrl": "https://www.8899.or.kr/",
+      "applyName": "중기중앙회 노란우산공제",
+      "requiredDocs": ["사업자등록증", "통장 사본"],
+      "processingTime": "30분",
+      "deadline": "개업 후 1개월 이내 권장",
+      "warning": "가입 前 소득은 공제 대상 아님"
+    },
+    {
+      "id": "duruNuri",
+      "order": 4,
+      "phase": "직원 채용 시",
+      "urgency": "conditional",
+      "title": "두루누리 사회보험 지원",
+      "icon": "🏥",
+      "description": "직원 10명 미만 사업장 해당",
+      "estimatedSaving": "근로자 1인당 월 20만원",
+      "applyUrl": "https://www.4insure.or.kr/",
+      "applyName": "국민연금공단",
+      "requiredDocs": ["사업자등록증", "근로자 명단", "근로계약서"],
+      "processingTime": "20분",
+      "deadline": "직원 채용 후 6개월 이내 (필수)",
+      "warning": "6개월 지나면 해당 근로자 신청 불가 (영구)"
+    },
+    {
+      "id": "policyFund",
+      "order": 5,
+      "phase": "6개월 이후",
+      "urgency": "low",
+      "title": "소상공인 정책자금",
+      "icon": "💰",
+      "description": "업력 확보 후 신청 유리",
+      "products": [
+        {"name": "일반경영안정자금", "maxAmount": 70000000},
+        {"name": "성장기반자금", "maxAmount": 200000000},
+        {"name": "재도전특별자금", "maxAmount": 50000000}
+      ],
+      "applyUrl": "https://ols.sbiz.or.kr/",
+      "applyName": "소상공인정책자금",
+      "requiredDocs": ["사업자등록증", "부가세 신고서", "재무제표"],
+      "processingTime": "1~2개월",
+      "deadline": "필요 시 (업력 6개월+ 유리)",
+      "warning": "급할 때 준비하면 늦음. 미리 서류 준비 권장"
+    }
+  ],
+  "timeline": {
+    "phase1": {
+      "title": "⚡ 지금 당장 (D-Day ~ D+7)",
+      "color": "red",
+      "items": ["cardFee", "startupTaxCut"]
+    },
+    "phase2": {
+      "title": "📅 이번 달 (D+30)",
+      "color": "orange",
+      "items": ["noransanggong"]
+    },
+    "phase3": {
+      "title": "📌 직원 채용 시",
+      "color": "blue",
+      "items": ["duruNuri"]
+    },
+    "phase4": {
+      "title": "📌 D+180일 이후",
+      "color": "green",
+      "items": ["policyFund"]
+    }
+  }
+}

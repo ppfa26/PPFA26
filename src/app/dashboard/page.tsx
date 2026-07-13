@@ -8,6 +8,7 @@ import { DiagnosisProfile } from "@/lib/matching";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
 import ViewCreditGate from "@/components/ViewCreditGate";
 import { ADVISORY_DISCLAIMER, REVALIDATION_NOTICE } from "@/lib/advancedScreening";
+import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
 
 export default function DashboardPage() {
   // 진단 프로필 원본 — 헤더 안내 문구 등에 사용.
@@ -58,6 +59,8 @@ export default function DashboardPage() {
             <p className="break-keep text-xs leading-relaxed text-brand-dark/60">⚠️ {ADVISORY_DISCLAIMER}</p>
             <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">🗓️ {REVALIDATION_NOTICE}</p>
           </div>
+
+          <ExtraBenefitsSection />
 
           {/* 상담 채널 안내 */}
           <section
