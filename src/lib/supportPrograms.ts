@@ -430,7 +430,8 @@ export function profileToCompany(p: DiagnosisProfile): Company {
       : p.bankruptcy?.includes("면책") || p.bankruptcy?.includes("인가") || p.bankruptcy === "있음"
         ? "discharged"
         : "none",
-    tax_delinquent: p.taxDelinquent === "체납 있음",
+    tax_delinquent:
+      typeof p.taxDelinquent === "string" && p.taxDelinquent.startsWith("체납 있음"),
     full_capital_impairment:
       p.businessType === "법인사업자" && p.capitalImpairment === "예(자본잠식)",
     // ── 인증·기술 신호 (전부 전달) ──

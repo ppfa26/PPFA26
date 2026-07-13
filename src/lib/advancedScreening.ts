@@ -426,7 +426,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "소상공인시장진흥공단",
       criteria:
-        "소상공인·추가자금은 소상공인시장진흥공단 직접대출 정책자금을 병행할 수 있습니다. 승인율이 높은 편: 혁신성장촉진(2년 연속 10% 성장·수출·졸업후보)·재도전특별·대환·청년고용연계·일반경영안정 / 승인율이 낮은 편: 민간투자매칭·TIPS·스마트기기·일시적경영애로·신용취약." +
+        "소상공인·추가자금은 소상공인시장진흥공단 직접대출 정책자금을 병행할 수 있습니다. 승인율이 높은 편: 혁신성장촉진(2년 연속 10% 성장·수출·성실상환자)·재도전특별·대환·청년고용연계·일반경영안정 / 승인율이 낮은 편: 민간투자매칭·TIPS·스마트기기·일시적경영애로·신용취약." +
         smartNote,
       priority: "MEDIUM",
       loan_type: "직접대출",
@@ -892,9 +892,9 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         eligibleWhen: (c) => Boolean(c.gov_selected_program),
       },
       {
-        name: "혁신성장촉진자금 (혁신형) — 졸업후보기업·성실상환자",
+        name: "혁신성장촉진자금 (혁신형) — 성실상환자",
         amount: "운전 2억원 · 시설 10억원",
-        desc: "정책자금 졸업후보기업 또는 직접대출 성실상환 이력 보유 소상공인",
+        desc: "소진공·중진공 등 정책자금 직접대출을 연체 없이 성실히 상환 중인 소상공인",
         approval: "mid",
         approvalNote: "요건을 충족하면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
