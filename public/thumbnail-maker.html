@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모두의사업친구 · 블로그 썸네일 메이커</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #0f1115; color: #e8eaed;
+    min-height: 100vh; padding: 24px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 24px; }
+  header h1 { font-size: 24px; font-weight: 900; }
+  header h1 .m { color: #fee500; }
+  header p { color: #9aa0a6; font-size: 14px; margin-top: 6px; }
+  .layout { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 860px){ .layout{ grid-template-columns:1fr; } }
+
+  .panel { background:#1a1d23; border:1px solid #2a2e37; border-radius:16px; padding:22px; }
+  .panel h2 { font-size:15px; font-weight:800; margin-bottom:16px; color:#fff; }
+  .field { margin-bottom:18px; }
+  .field label { display:block; font-size:13px; font-weight:700; color:#c4c9d0; margin-bottom:7px; }
+  .field input[type=text], .field textarea, .field select {
+    width:100%; background:#0f1115; border:1px solid #333844; border-radius:10px;
+    color:#fff; padding:11px 13px; font-size:14px; font-family:inherit; resize:none;
+  }
+  .field textarea { min-height:70px; line-height:1.4; }
+  .field input:focus, .field textarea:focus, .field select:focus { outline:none; border-color:#4c8bf5; }
+  .hint { font-size:11px; color:#7c828b; margin-top:5px; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { border:1px solid #333844; background:#0f1115; color:#c4c9d0; border-radius:20px;
+    padding:7px 13px; font-size:12.5px; font-weight:700; cursor:pointer; transition:.15s; }
+  .chip:hover { border-color:#4c8bf5; }
+  .chip.active { background:#4c8bf5; border-color:#4c8bf5; color:#fff; }
+
+  .bgs { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .bg-opt { aspect-ratio:1; border-radius:10px; border:2px solid transparent; cursor:pointer;
+    background-size:cover; background-position:center; position:relative; overflow:hidden; }
+  .bg-opt span{ position:absolute; bottom:0; left:0; right:0; font-size:10px; font-weight:700;
+    text-align:center; background:rgba(0,0,0,.55); padding:3px 0; }
+  .bg-opt.active { border-color:#fee500; }
+
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .preview-wrap { position:sticky; top:24px; }
+  .canvas-box { background:#1a1d23; border:1px solid #2a2e37; border-radius:16px; padding:22px; text-align:center; }
+  canvas { width:100%; max-width:520px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,.4); }
+  .btns { margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .btn { border:none; border-radius:10px; padding:13px 22px; font-size:14px; font-weight:800;
+    cursor:pointer; font-family:inherit; }
+  .btn-primary { background:#fee500; color:#191919; }
+  .btn-primary:hover { background:#ffd900; }
+  .btn-ghost { background:#2a2e37; color:#e8eaed; }
+  .btn-ghost:hover { background:#333844; }
+  .size-note{ color:#7c828b; font-size:12px; margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="m">m</span> 모두의사업친구 · 블로그 썸네일 메이커</h1>
+    <p>제목만 바꾸면 네이버 블로그 썸네일이 3초 만에 완성됩니다. 계속 수정해서 무한정 쓰세요!</p>
+  </header>
+
+  <div class="layout">
+    <!-- 좌측 입력 패널 -->
+    <div class="panel">
+      <h2>✏️ 썸네일 내용 입력</h2>
+
+      <div class="field">
+        <label>카테고리 배지</label>
+        <div class="chips" id="catChips"></div>
+        <input type="text" id="catCustom" placeholder="직접 입력도 가능 (예: 정책자금)" style="margin-top:10px;">
+      </div>
+
+      <div class="field">
+        <label>제목 (줄바꿈 = Enter)</label>
+        <textarea id="title" placeholder="전자상거래&#10;수출시장진출">전자상거래
+수출시장진출</textarea>
+        <div class="hint">Enter로 줄을 나누세요. 2~3줄이 가장 예쁩니다.</div>
+      </div>
+
+      <div class="field">
+        <label>하단 소제목 (선택)</label>
+        <input type="text" id="subtitle" placeholder="예: 중소기업 온라인 수출 완벽 가이드" value="중소기업 온라인 수출시장 개척 지원">
+      </div>
+
+      <div class="field">
+        <label>배경 스타일</label>
+        <div class="bgs" id="bgOpts"></div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>배지 색상</label>
+          <select id="badgeColor">
+            <option value="#1a6dff">파랑 (기본)</option>
+            <option value="#e53935">빨강</option>
+            <option value="#00997a">초록</option>
+            <option value="#7b1fa2">보라</option>
+            <option value="#f57c00">주황</option>
+            <option value="#191919">검정</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>제목 글자 크기</label>
+          <select id="titleSize">
+            <option value="0.9">작게</option>
+            <option value="1" selected>보통</option>
+            <option value="1.12">크게</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 우측 미리보기 -->
+    <div class="preview-wrap">
+      <div class="canvas-box">
+        <canvas id="cv" width="1000" height="1000"></canvas>
+        <div class="btns">
+          <button class="btn btn-primary" id="download">⬇️ PNG 다운로드</button>
+          <button class="btn btn-ghost" id="reset">🔄 예시로 되돌리기</button>
+        </div>
+        <div class="size-note">출력 크기: 1000 × 1000px (네이버 블로그 최적)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="thumbnail-maker.js"></script>
+</body>
+</html>
