@@ -308,8 +308,8 @@ export default function Home() {
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
-                진단을 마치면 아래와 같이 신청 가능한 기관·상품과 신청 방법까지
-                실제로 이렇게 안내됩니다.
+                진단을 마치면 아래와 똑같은 결과 화면으로, 신청 가능한 기관·상품과
+                신청 방법까지 실제로 이렇게 안내됩니다.
               </Editable>
             </div>
 
@@ -326,9 +326,8 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* 대시보드 본문 */}
-                <div className="space-y-4 p-4 text-left sm:p-6">
-                  {/* 진단 완료 배너 + 3칸 통계 (실제 화면 재현) */}
+                {/* 진단 완료 배너 + 3칸 통계 (선명하게 노출 — '이만큼 매칭됐다'를 확실히 보여줌) */}
+                <div className="p-4 pb-0 sm:p-6 sm:pb-0">
                   <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
                     <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
                       🎉 진단 완료! 대표님이 지금 신청해볼 수 있는 것들이
@@ -344,7 +343,7 @@ export default function Home() {
                           key={s.l}
                           className="rounded-xl bg-white/70 px-2 py-2.5 text-center"
                         >
-                          <p className="text-xl font-extrabold text-brand-dark">
+                          <p className="text-xl font-extrabold text-brand-dark sm:text-2xl">
                             {s.n}
                           </p>
                           <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
@@ -354,15 +353,18 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
+                </div>
 
-                  {/* 신청 가능 정부지원사업 (정책자금·지원금·바우처 다양화) */}
+                {/* 결과 본문 — 사생활 방지 필름(블러)로 처리하여 '내용은 꽉 찼지만 자세히는 안 보이는' 상태 */}
+                <div className="preview-film space-y-4 p-4 text-left sm:p-6" aria-hidden="true">
+                  {/* 정책금융기관 섹션 */}
                   <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-4 shadow-card sm:p-5">
                     <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-                      🏦 대표님이 신청할 수 있는 정부지원사업
+                      🏦 대표님이 이용할 수 있는 정책금융기관
                     </p>
                     <p className="mt-1 break-keep text-xs text-brand-dark/60">
-                      업종·직원수 등 대표님 조건을 기준으로 실제 신청 자격이
-                      열리는 정책자금·지원금·바우처를 한 번에 안내합니다.
+                      업종·직원수·매출 등 대표님 조건을 기준으로 실제 신청 자격이
+                      열리는 정책자금을 한 번에 안내합니다.
                     </p>
                     <div className="mt-3 divide-y divide-gray-200">
                       {[
@@ -371,18 +373,21 @@ export default function Home() {
                           cat: "정책자금",
                           catCls: "bg-blue-100 text-blue-700",
                           prod: "신성장기반자금 · 신시장진출지원자금",
+                          hook: "직접대출 최대 60억, 금리 2%대 · 시설/운전자금 모두 가능",
                         },
                         {
                           inst: "소상공인시장진흥공단",
-                          cat: "지원금",
-                          catCls: "bg-green-100 text-green-700",
-                          prod: "스마트상점 기술보급 · 경영개선 지원금",
+                          cat: "정책자금",
+                          catCls: "bg-blue-100 text-blue-700",
+                          prod: "성장가속화자금 · 강한소상공인자금 · 대환대출자금",
+                          hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상",
                         },
                         {
-                          inst: "중소벤처기업부(수출지원)",
-                          cat: "바우처",
-                          catCls: "bg-purple-100 text-purple-700",
-                          prod: "수출바우처 · 데이터바우처 지원",
+                          inst: "신용보증기금 / 지역신용보증재단",
+                          cat: "보증서",
+                          catCls: "bg-indigo-100 text-indigo-700",
+                          prod: "보증서 발급 → 은행 대리대출 연계",
+                          hook: "담보 없이 보증서로 은행 대출 실행 가능",
                         },
                       ].map((m, i) => (
                         <div key={i} className="py-3 first:pt-0">
@@ -413,6 +418,46 @@ export default function Home() {
                           <p className="mt-1.5 break-keep text-[11px] text-brand-gray">
                             {m.prod}
                           </p>
+                          <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
+                            💡 {m.hook}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 정부지원제도 섹션 */}
+                  <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-4 shadow-card sm:p-5">
+                    <p className="text-base font-extrabold text-brand-dark sm:text-lg">
+                      🎁 대표님이 신청할 수 있는 정부지원제도
+                    </p>
+                    <p className="mt-1 break-keep text-xs text-brand-dark/60">
+                      대출이 아닌 지원금·바우처·인증·교육까지, 받을 수 있는 제도를
+                      모두 찾아 신청 방법과 함께 안내합니다.
+                    </p>
+                    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      {[
+                        { t: "스마트상점 기술보급 지원", c: "지원금", cls: "bg-green-100 text-green-700" },
+                        { t: "수출바우처 지원", c: "바우처", cls: "bg-purple-100 text-purple-700" },
+                        { t: "데이터바우처 지원", c: "바우처", cls: "bg-purple-100 text-purple-700" },
+                        { t: "소상공인 경영개선 지원", c: "지원금", cls: "bg-green-100 text-green-700" },
+                        { t: "일자리 안정·고용 지원금", c: "지원금", cls: "bg-green-100 text-green-700" },
+                        { t: "이노비즈·메인비즈 인증", c: "인증", cls: "bg-amber-100 text-amber-700" },
+                        { t: "소상공인 역량강화 교육", c: "교육", cls: "bg-sky-100 text-sky-700" },
+                        { t: "정책자금 연계 컨설팅", c: "제도", cls: "bg-gray-100 text-gray-700" },
+                      ].map((g, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5"
+                        >
+                          <span className="break-keep text-[12px] font-bold text-brand-dark">
+                            {g.t}
+                          </span>
+                          <span
+                            className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${g.cls}`}
+                          >
+                            {g.c}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -420,16 +465,20 @@ export default function Home() {
                 </div>
 
                 {/* 하단 페이드 + 잠금 (뒤에 더 많다는 느낌) */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white via-white/90 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-white via-white/95 to-transparent" />
               </div>
 
-              {/* 잠금 오버레이 안내 */}
-              <div className="relative -mt-14 flex flex-col items-center pb-2">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-dark text-lg text-white shadow-lg">
+              {/* 잠금 오버레이 안내 — '이만큼 준다, 결제하면 전부 공개' */}
+              <div className="relative -mt-24 flex flex-col items-center pb-2">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-dark text-2xl text-white shadow-xl">
                   🔒
                 </span>
-                <p className="mt-2 break-keep text-center text-sm font-bold text-brand-dark">
-                  신청 사이트 · 필요 서류 · 승인 전략까지 전체 공개
+                <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
+                  이 모든 결과가 대표님을 기다리고 있어요
+                </p>
+                <p className="mt-1 break-keep text-center text-[13px] font-semibold text-brand-gray">
+                  각 항목의 <b className="text-brand-orange">신청 사이트 · 필요 서류 · 승인 전략</b>까지
+                  <br className="hidden sm:inline" /> 결제 후 전부 공개됩니다.
                 </p>
               </div>
             </div>
