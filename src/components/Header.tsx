@@ -15,7 +15,7 @@ export default function Header() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const ADMIN_EMAILS = ["biospartners@naver.com"];
+  const ADMIN_EMAILS = ["biospartners@naver.com", "meolhae1993@gmail.com"];
 
   useEffect(() => {
     // 최초 세션 확인

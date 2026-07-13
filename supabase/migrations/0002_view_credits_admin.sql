@@ -171,7 +171,8 @@ set search_path = public
 as $$
   select coalesce(
     (select email from auth.users where id = auth.uid()) in (
-      'biospartners@naver.com'
+      'biospartners@naver.com',
+      'meolhae1993@gmail.com'
     ),
     false
   );
