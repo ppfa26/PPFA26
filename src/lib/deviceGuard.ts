@@ -69,14 +69,23 @@ export async function registerViewDevice(): Promise<{
 }> {
   const kind = deviceKind();
   const fp = getDeviceFingerprint();
-  const { data, error } = await supabase.rpc("register_view_device", {
-    p_kind: kind,
-    p_fp: fp,
-  });
-  if (error || !data || !data[0]) {
-    return { ok: false, message: "기기 확인 중 오류가 발생했습니다." };
+  try {
+    const { data, error } = await supabase.rpc("register_view_device", {
+      p_kind: kind,
+      p_fp: fp,
+    });
+    // ★ 안전장치 ★ RPC 자체가 실패(함수 미배포·네트워크 장애 등)한 경우는
+    //   "다른 기기라서 거부"가 아니라 "확인 불가"이므로, 결제까지 마친 고객을
+    //   막아버리면 안 된다. → 시스템 오류일 땐 열람을 허용(통과)한다.
+    //   (진짜 다른 기기 거부는 error 없이 data[0].ok === false 로 내려옴)
+    if (error || !data || !data[0]) {
+      return { ok: true, message: "" };
+    }
+    return { ok: !!data[0].ok, message: data[0].message || "" };
+  } catch {
+    // 예기치 못한 예외도 정상 고객을 막지 않도록 통과 처리
+    return { ok: true, message: "" };
   }
-  return { ok: !!data[0].ok, message: data[0].message || "" };
 }
 
 // 접속 로그 기록 + 차단 여부 반환
