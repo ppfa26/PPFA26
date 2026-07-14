@@ -1182,41 +1182,40 @@ function AdvancedResult({
           </p>
         </div>
 
+        {/* 신청 → 실행 진행 절차·소요기간 안내 — 같은 맥락이라 정책금융기관 박스 '안'으로 통합 (대표님 요청, 구분선으로 구획) */}
+        {(hasDae || hasDirect) && (
+          <div className="mt-5 border-t border-dashed border-brand-dark/15 pt-5">
+            <p className="text-base font-extrabold text-brand-dark sm:text-lg">
+              🗓️ 신청부터 정부지원사업 실행까지 (예상 소요기간)
+            </p>
+            {hasDae && (
+              <div className="mt-3">
+                <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
+                  대리대출 (보증서 → 은행)
+                </span>
+                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
+                  신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행 ·{" "}
+                  <b className="text-brand-orange">통상 3~6주 소요</b>
+                </p>
+              </div>
+            )}
+            {hasDirect && (
+              <div className="mt-2.5">
+                <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                  직접대출 (공단 직접)
+                </span>
+                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
+                  신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
+                  <b className="text-brand-orange">통상 약 8주 소요</b> · 제출 서류가 상대적으로 많은 편입니다.
+                </p>
+              </div>
+            )}
+            <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 ${lockText}`}>
+              ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 및 규모가 큰 건은 방문 실사로 진행됩니다.
+            </p>
+          </div>
+        )}
       </div>
-
-      {/* 신청 → 실행 진행 절차·소요기간 안내 — 기관 박스 '밖' 별도 박스로 분리 (틀 동일) */}
-      {(hasDae || hasDirect) && (
-        <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
-          <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-            🗓️ 신청부터 정부지원사업 실행까지 (예상 소요기간)
-          </p>
-          {hasDae && (
-            <div className="mt-3">
-              <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
-                대리대출 (보증서 → 은행)
-              </span>
-              <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
-                신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행 ·{" "}
-                <b className="text-brand-orange">통상 3~6주 소요</b>
-              </p>
-            </div>
-          )}
-          {hasDirect && (
-            <div className="mt-2.5">
-              <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                직접대출 (공단 직접)
-              </span>
-              <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
-                신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
-                <b className="text-brand-orange">통상 약 8주 소요</b> · 제출 서류가 상대적으로 많은 편입니다.
-              </p>
-            </div>
-          )}
-          <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 ${lockText}`}>
-            ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 및 규모가 큰 건은 방문 실사로 진행됩니다.
-          </p>
-        </div>
-      )}
 
       {/* 🎁 5가지 추가 혜택 — '기관별 상품 한눈에 보기' 박스 '위'로 이동 (대표님 요청) */}
       {autoRun && <ExtraBenefitsSection />}
