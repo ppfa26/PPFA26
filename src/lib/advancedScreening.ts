@@ -1094,7 +1094,7 @@ export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
     desc: "사업자등록 후 정상 영업 중인 소상공인이면 신청 가능한 기본 보증. 신보·기보 이용 중이 아니면 대부분 대상.",
     approval: "high",
     approvalNote: "사업장이 있으면 승인율이 높은 편입니다.",
-    applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+    applyUrl: "https://untact.koreg.or.kr/",
   },
   {
     name: "창업 초기 특례보증",
@@ -1102,7 +1102,7 @@ export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
     desc: "창업 3개월 이상·월매출 100만원 이상이면 신청 가능한 창업자 특례 상품.",
     approval: "high",
     approvalNote: "창업 초기·소액이라 심사 문턱이 낮은 편입니다.",
-    applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+    applyUrl: "https://untact.koreg.or.kr/",
   },
   {
     name: "협약(이차보전) 보증",
@@ -1110,7 +1110,7 @@ export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
     desc: "지자체·은행과 재단이 맺은 협약 상품. 이자 일부를 지자체가 지원(이차보전)해 실부담 금리가 낮습니다.",
     approval: "mid",
     approvalNote: "협약 예산·자격요건이 있어 시기·지역에 따라 달라집니다.",
-    applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+    applyUrl: "https://untact.koreg.or.kr/",
   },
   {
     name: "저신용·특별 지원 특례보증",
@@ -1118,7 +1118,7 @@ export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
     desc: "신용점수가 낮거나 코로나·재해 등 특별 사유가 있는 소상공인 대상 특례.",
     approval: "mid",
     approvalNote: "700점대 저신용도 특례로 승인 가능하나, 지역 예산·요건 확인이 필요합니다.",
-    applyUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
+    applyUrl: "https://untact.koreg.or.kr/",
   },
 ];
 

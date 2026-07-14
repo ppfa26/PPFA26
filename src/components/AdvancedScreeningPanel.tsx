@@ -832,7 +832,99 @@ function AdvancedResult({
         </div>
       )}
 
-      {/* ③ 신청 가능 기관 — 크고 핵심적으로 (대표님 요청: 최상단 배치) */}
+      {/* ① 정부지원제도 — 최상단 배치 (대표님 요청) · 기관 박스와 동일한 틀 */}
+      {/*  정책자금(대출·보증)과 별개로 병행 신청 가능 · 진단 기준 '해당되는 것만' · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
+      {eligibleSupport.length > 0 && (
+        <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
+          <p className="text-base font-extrabold text-brand-dark sm:text-lg">
+            🎁 대표님이 신청할 수 있는 정부지원제도
+          </p>
+          <p className="mt-1 break-keep text-xs text-brand-dark/60">
+            정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
+            <b className="text-brand-green"> ✅ 지금 신청 대상</b>과
+            <b className="text-brand-dark/70"> 🔜 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
+            카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
+          </p>
+          {/* ★ V표시(✅) 보고 이렇게 신청하면 된다 — 3스텝 미니 가이드 (대표님 요청) ★ */}
+          <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">
+            <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
+              ✅ 표시된 곳, 이렇게 신청하시면 됩니다
+            </p>
+            <ol className="space-y-1">
+              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">1</span>
+                <span><b>✅ 신청 대상</b>인 제도의 카드를 눌러 상세 페이지로 들어가세요.</span>
+              </li>
+              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">2</span>
+                <span>상세 페이지의 <b>필요서류·소요기간</b>을 확인하고 서류를 준비하세요.</span>
+              </li>
+              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
+                <span><b>공식 신청 사이트/연락처</b>로 접수하시면 됩니다. 헷갈리시면 담당 부처에 문의하시면 쉽게 진행 가능합니다.</span>
+              </li>
+            </ol>
+          </div>
+          <div className="mt-4 divide-y divide-gray-200">
+            {eligibleSupport.map(({ prog, status }) => {
+              const isEligible = status === "eligible";
+              return (
+                <Link
+                  key={prog.id}
+                  href={`/support/${prog.id}`}
+                  className={`group block py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50 ${lockClick}`}
+                >
+                  {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
+                    <span className={`text-sm font-extrabold text-brand-dark ${lockText}`}>{prog.title}</span>
+                    {isEligible ? (
+                      <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                        ✅ 신청 대상
+                      </span>
+                    ) : (
+                      <span className="shrink-0 break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
+                        🔜 요건 충족 시 대상
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    className={`mt-1 break-keep text-[11px] font-semibold leading-relaxed ${
+                      isEligible ? "text-brand-green" : "text-brand-dark/50"
+                    }`}
+                  >
+                    {isEligible ? prog.eligibleNote : prog.ineligibleNote}
+                  </p>
+                  <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
+                    {prog.desc}
+                  </p>
+                  {/* 간단 신청방법 + 모르면 전화 — 모든 카드 통일 (대표님 요청) */}
+                  {(prog.applyHow || prog.applyTel) && (
+                    <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
+                      {prog.applyHow && (
+                        <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                          <span className="font-bold text-brand-dark">신청방법 </span>
+                          <span className={lockText}>{prog.applyHow}</span>
+                        </p>
+                      )}
+                      {prog.applyTel && (
+                        <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+                          잘 모르시겠으면 <span className={`font-bold text-brand-orange ${lockText}`}>☎ {prog.applyTel}</span> 로 문의하시면 쉽게 진행 가능합니다.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  <span className="mt-2 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
+                    상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ② 신청 가능 기관 — 정부지원제도 아래 배치 (대표님 요청) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
         <p className="text-base font-extrabold text-brand-dark sm:text-lg">
           🏦 대표님이 이용할 수 있는 정책금융기관
@@ -1122,98 +1214,6 @@ function AdvancedResult({
           <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 ${lockText}`}>
             ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 및 규모가 큰 건은 방문 실사로 진행됩니다.
           </p>
-        </div>
-      )}
-
-      {/* 추가로 신청 가능한 지원제도 — 기관 박스 '밖' 하단에 별도 박스로 배치 (틀은 기관 박스와 동일) */}
-      {/*  정책자금(대출·보증)과 별개로 병행 신청 가능 · 진단 기준 '해당되는 것만' · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
-      {eligibleSupport.length > 0 && (
-        <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
-          <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-            🎁 대표님이 신청할 수 있는 정부지원제도
-          </p>
-          <p className="mt-1 break-keep text-xs text-brand-dark/60">
-            정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
-            <b className="text-brand-green"> ✅ 지금 신청 대상</b>과
-            <b className="text-brand-dark/70"> 🔜 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
-            카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
-          </p>
-          {/* ★ V표시(✅) 보고 이렇게 신청하면 된다 — 3스텝 미니 가이드 (대표님 요청) ★ */}
-          <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">
-            <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
-              ✅ 표시된 곳, 이렇게 신청하시면 됩니다
-            </p>
-            <ol className="space-y-1">
-              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
-                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">1</span>
-                <span><b>✅ 신청 대상</b>인 제도의 카드를 눌러 상세 페이지로 들어가세요.</span>
-              </li>
-              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
-                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">2</span>
-                <span>상세 페이지의 <b>필요서류·소요기간</b>을 확인하고 서류를 준비하세요.</span>
-              </li>
-              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
-                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
-                <span><b>공식 신청 사이트/연락처</b>로 접수하시면 됩니다. 헷갈리시면 담당 부처에 문의하시면 쉽게 진행 가능합니다.</span>
-              </li>
-            </ol>
-          </div>
-          <div className="mt-4 divide-y divide-gray-200">
-            {eligibleSupport.map(({ prog, status }) => {
-              const isEligible = status === "eligible";
-              return (
-                <Link
-                  key={prog.id}
-                  href={`/support/${prog.id}`}
-                  className={`group block py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50 ${lockClick}`}
-                >
-                  {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
-                    <span className={`text-sm font-extrabold text-brand-dark ${lockText}`}>{prog.title}</span>
-                    {isEligible ? (
-                      <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                        ✅ 신청 대상
-                      </span>
-                    ) : (
-                      <span className="shrink-0 break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
-                        🔜 요건 충족 시 대상
-                      </span>
-                    )}
-                  </div>
-                  <p
-                    className={`mt-1 break-keep text-[11px] font-semibold leading-relaxed ${
-                      isEligible ? "text-brand-green" : "text-brand-dark/50"
-                    }`}
-                  >
-                    {isEligible ? prog.eligibleNote : prog.ineligibleNote}
-                  </p>
-                  <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
-                    {prog.desc}
-                  </p>
-                  {/* 간단 신청방법 + 모르면 전화 — 모든 카드 통일 (대표님 요청) */}
-                  {(prog.applyHow || prog.applyTel) && (
-                    <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
-                      {prog.applyHow && (
-                        <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
-                          <span className="font-bold text-brand-dark">신청방법 </span>
-                          <span className={lockText}>{prog.applyHow}</span>
-                        </p>
-                      )}
-                      {prog.applyTel && (
-                        <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-                          잘 모르시겠으면 <span className={`font-bold text-brand-orange ${lockText}`}>☎ {prog.applyTel}</span> 로 문의하시면 쉽게 진행 가능합니다.
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  <span className="mt-2 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange">
-                    상세 · 승인 소요기간 · 연락처 보기 <span className="transition group-hover:translate-x-0.5">→</span>
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
         </div>
       )}
 
