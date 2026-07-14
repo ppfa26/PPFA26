@@ -19,6 +19,8 @@ type Props = {
   // userInput 을 직접 넘길 수도 있고(명세), 안 넘기면 컴포넌트가
   // sessionStorage("mpp_diagnosis")에서 스스로 읽어 매핑한다.
   userInput?: ExtraBenefitsUserInput;
+  // ★ 미리보기 잠금 (대표님 요청) — 제목·목차는 보이고, 알맹이(신청방법·서류·소요기간·링크)만 흐리게 ★
+  previewLock?: boolean;
 };
 
 // ── 데이터 타입 ─────────────────────────────────────────────────
@@ -33,6 +35,8 @@ type ExtraBenefit = {
   processingTime: string;
   deadline: string;
   warning?: string;
+  applyHow?: string; // 신청 방법 (대표님 요청)
+  duration?: string; // 승인·반영 소요기간 (대표님 요청)
   excludedIndustries?: string[];
   products?: { name: string; maxAmount: number }[];
 };
@@ -230,10 +234,13 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
   }
 }
 
-export default function ExtraBenefitsSection({ userInput }: Props) {
+export default function ExtraBenefitsSection({ userInput, previewLock = false }: Props) {
   const [input, setInput] = useState<ExtraBenefitsUserInput | null>(
     userInput ?? null
   );
+  // 미리보기 잠금 클래스 — 제목은 그대로, 알맹이만 흐리게+클릭차단
+  const lockText = previewLock ? "preview-lock-text" : "";
+  const lockClick = previewLock ? "preview-lock-click" : "";
 
   // userInput props 가 없을 때만 세션에서 읽어 매핑
   useEffect(() => {
@@ -301,13 +308,13 @@ export default function ExtraBenefitsSection({ userInput }: Props) {
                   <p
                     className={`mt-1 break-keep text-sm font-extrabold ${
                       isYes ? "text-brand-orange" : "text-brand-dark/50"
-                    }`}
+                    } ${lockText}`}
                   >
                     {v.savingText}
                   </p>
                 )}
 
-                {/* 설명 */}
+                {/* 설명 (제목 아래 목차성 문구라 노출 유지) */}
                 <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
                   {b.description}
                 </p>
@@ -336,9 +343,16 @@ export default function ExtraBenefitsSection({ userInput }: Props) {
                   </div>
                 )}
 
-                {/* 필요 서류 + 처리 시간 — 회색 박스로 묶어 정부지원제도 '신청방법' 자리와 통일 */}
-                <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
-                  <div className="flex flex-wrap items-center gap-1.5">
+                {/* 신청 방법 + 필요 서류 + 처리시간 + 소요기간 — 회색 박스로 묶음 (알맹이라 잠금) */}
+                <div className={`mt-2 rounded-lg bg-gray-50 px-3 py-2 ${lockText}`}>
+                  {/* 신청 방법 (대표님 요청 — 간단하게라도) */}
+                  {b.applyHow && (
+                    <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                      <span className="font-bold text-brand-dark">📝 신청 방법 </span>
+                      {b.applyHow}
+                    </p>
+                  )}
+                  <div className={`flex flex-wrap items-center gap-1.5 ${b.applyHow ? "mt-1.5" : ""}`}>
                     <span className="break-keep text-[11px] font-bold text-brand-dark/70">
                       📄 필요 서류
                     </span>
@@ -352,11 +366,17 @@ export default function ExtraBenefitsSection({ userInput }: Props) {
                     ))}
                   </div>
                   <p className="mt-1 break-keep text-[11px] text-brand-dark/60">
-                    ⏱️ 처리 시간 · <b className="text-brand-dark/80">{b.processingTime}</b>
+                    ⏱️ 서류 작성 · <b className="text-brand-dark/80">{b.processingTime}</b>
                   </p>
+                  {/* 승인·반영 소요기간 (대표님 요청 — 대략적으로) */}
+                  {b.duration && (
+                    <p className="mt-1 break-keep text-[11px] text-brand-dark/60">
+                      🗓️ 소요 기간 · <b className="text-brand-orange">{b.duration}</b>
+                    </p>
+                  )}
                 </div>
 
-                {/* 데드라인 경고 (빨강) */}
+                {/* 데드라인 경고 (빨강) — 목차성 경고라 노출 유지 */}
                 {b.warning && (
                   <p
                     className="mt-2 break-keep rounded-lg px-3 py-2 text-[11px] font-semibold leading-relaxed"
@@ -366,12 +386,12 @@ export default function ExtraBenefitsSection({ userInput }: Props) {
                   </p>
                 )}
 
-                {/* 신청하러 가기 링크 — 정부지원제도의 주황 링크와 통일 */}
+                {/* 신청하러 가기 링크 — 결제 전에는 클릭 차단(잠금) */}
                 <a
-                  href={b.applyUrl}
+                  href={previewLock ? undefined : b.applyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange"
+                  className={`mt-2 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange ${lockClick}`}
                 >
                   {b.applyName}에서 신청하러 가기 →
                 </a>

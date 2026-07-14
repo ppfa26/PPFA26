@@ -273,7 +273,7 @@ export default function MatchingPreview() {
               as="p"
               className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm"
             >
-              신청 가능한 기관·상품·정부지원제도와 신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다. (VAT 포함)
+              ☕ 커피 한 잔 값으로 AI를 활용해 내 사업장에 해당되는 모든 정부지원사업을 찾아보세요. 신청 가능한 기관·상품·정부지원제도와 신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다. (VAT 포함)
             </Editable>
             <Editable
               id="preview-lock-cta"
@@ -310,9 +310,7 @@ export default function MatchingPreview() {
               as="p"
               className="truncate text-xs text-brand-gray"
             >
-              {total > 0
-                ? `매칭된 ${total}개 항목의 신청 방법·서류·전략 전부 공개`
-                : "결제하면 기관·상품·지원제도·신청 방법 전부 공개"}
+              ☕ 커피 한 잔 값으로 내 사업장 정부지원사업 전부 확인
             </Editable>
           </div>
           <Editable

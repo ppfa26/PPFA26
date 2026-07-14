@@ -1100,14 +1100,14 @@ function AdvancedResult({
                           📞 {link.tel}
                         </a>
                         {link.telNote && (
-                          <span className="break-keep text-[10px] leading-relaxed text-brand-dark/45">
+                          <span className={`break-keep text-[10px] leading-relaxed text-brand-dark/45 ${lockText}`}>
                             {link.telNote}
                           </span>
                         )}
                       </div>
                     )}
                     {link.note && (
-                      <p className="break-keep text-[11px] leading-relaxed text-brand-dark/50">
+                      <p className={`break-keep text-[11px] leading-relaxed text-brand-dark/50 ${lockText}`}>
                         {link.note}
                       </p>
                     )}
@@ -1165,10 +1165,10 @@ function AdvancedResult({
           })}
         </div>
         <div className="mt-3 space-y-2">
-          <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
+          <p className={`break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
             💡 대출은 보통 <b>직접대출 1곳(공단 직접) + 대리대출 1곳(보증서→은행), 총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>
-          {/* 신용점수 안내 */}
+          {/* 신용점수 안내 — 알맹이라 결제 전 잠금 */}
           <p
             className={`break-keep rounded-lg px-3 py-2 text-[11px] leading-relaxed ${
               creditAdvice.tier === "good"
@@ -1176,7 +1176,7 @@ function AdvancedResult({
                 : creditAdvice.tier === "caution"
                 ? "bg-brand-yellow/20 text-brand-dark"
                 : "bg-red-50 text-brand-red"
-            }`}
+            } ${lockText}`}
           >
             📊 {creditAdvice.message}
           </p>
@@ -1218,7 +1218,7 @@ function AdvancedResult({
       </div>
 
       {/* 🎁 5가지 추가 혜택 — '기관별 상품 한눈에 보기' 박스 '위'로 이동 (대표님 요청) */}
-      {autoRun && <ExtraBenefitsSection />}
+      {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
 
       {/* 기관별 상품 한눈에 보기 — 지원제도 박스 '아래' 별도 박스로 배치 (대표님 요청) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
@@ -1256,7 +1256,7 @@ function AdvancedResult({
             정책자금·보증·창업·인증 업무에 자주 쓰이는 공식 사이트를 분야별로 모았습니다.
           </span>
         </span>
-        <span className="shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark">
+        <span className={`shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark ${lockClick}`}>
           공식 사이트 모음 보기
         </span>
       </a>
