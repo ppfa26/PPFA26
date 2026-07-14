@@ -127,6 +127,37 @@ export default function MyPage() {
                 )}
               </section>
 
+              {/* 결제완료 회원 전용 — 오픈채팅 커뮤니티 (결제한 사람만 노출) */}
+              {payments.some((p) => p.status === "paid") && (
+                <section
+                  id="mypage-openchat"
+                  className="mt-5 overflow-hidden rounded-3xl border-2 border-[#FEE500] bg-[#FEE500]/10 p-6 shadow-card"
+                >
+                  <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
+                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#FEE500] text-3xl shadow-sm">
+                      💬
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <h2 className="break-keep text-lg font-extrabold text-brand-dark">
+                        🎉 결제 회원 전용 카카오톡 커뮤니티
+                      </h2>
+                      <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
+                        결제해주신 대표님만 입장하실 수 있는 <b className="text-brand-dark">비공개 오픈채팅방</b>입니다.
+                        정책자금·정부지원사업 최신 정보와 실전 노하우, 대표님들끼리의 정보 교류가 이곳에서 이뤄집니다.
+                      </p>
+                    </div>
+                    <a
+                      href="https://open.kakao.com/o/psa7SwDi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full shrink-0 whitespace-nowrap rounded-full bg-[#FEE500] px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:brightness-95 sm:w-auto"
+                    >
+                      💬 오픈채팅방 입장하기
+                    </a>
+                  </div>
+                </section>
+              )}
+
               {/* 진단 결과 요약 (위로) */}
               <section
                 id="mypage-diagnosis"
