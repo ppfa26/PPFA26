@@ -193,20 +193,36 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
       return { eligible: true, savingText: `연 약 ${formatKRW(support)} 지원` };
     }
 
-    // ── 소상공인 정책자금 ──
-    case "policyFund": {
-      const wc = u.workerCount;
-      const industry = u.industry ?? "";
-      const isMfg = industry.includes("제조");
-      if (wc === undefined)
+    // ── 청년창업중소기업 세액감면 ──
+    case "youngStartupTaxCut": {
+      const age = u.representativeAge;
+      const years = u.yearsInBusiness;
+      const rev = u.annualRevenue;
+      if (age === undefined || years === undefined)
+        return { eligible: null, note: "대표자 연령·업력 정보 부족으로 판정 불가" };
+      // 청년 요건: 만 34세 이하
+      if (age > 34) return { eligible: false, note: "만 34세 이하 청년 대상" };
+      if (years > 5) return { eligible: false, note: "창업 5년 초과" };
+      // 업종 제외 판정
+      const excluded = (b.excludedIndustries ?? []).some((ex) =>
+        (u.industry ?? "").includes(ex)
+      );
+      if (excluded) return { eligible: false, note: "감면 제외 업종" };
+
+      // 수도권과밀억제권역 외 100% / 수도권 50%
+      const metro = isMetro(u.region);
+      const rate = metro ? 50 : 100;
+      if (rev === undefined || rev === 0)
         return {
-          eligible: null,
-          note: "직원 수 정보가 없어 정확한 판정 불가 (아래 상품은 참고용)",
+          eligible: true,
+          savingText: `소득세·법인세 ${rate}% 감면 대상`,
+          note: `${metro ? "수도권" : "수도권 외"} 창업 · 창업 후 5년간 적용`,
         };
-      const ok = isMfg ? wc < 10 : wc < 5;
+      const saving = rev * 0.1 * (rate / 100);
       return {
-        eligible: ok,
-        note: ok ? undefined : "소상공인 상시근로자 요건 초과",
+        eligible: true,
+        savingText: `연 약 ${formatKRW(saving)} 절감 (${rate}% 감면)`,
+        note: `${metro ? "수도권" : "수도권 외"} 창업 · 창업 후 5년간 적용`,
       };
     }
 

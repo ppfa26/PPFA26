@@ -64,24 +64,20 @@
       "warning": "6개월 지나면 해당 근로자 신청 불가 (영구)"
     },
     {
-      "id": "policyFund",
+      "id": "youngStartupTaxCut",
       "order": 5,
-      "phase": "6개월 이후",
-      "urgency": "low",
-      "title": "소상공인 정책자금",
-      "icon": "💰",
-      "description": "업력 확보 후 신청 유리",
-      "products": [
-        {"name": "일반경영안정자금", "maxAmount": 70000000},
-        {"name": "성장기반자금", "maxAmount": 200000000},
-        {"name": "재도전특별자금", "maxAmount": 50000000}
-      ],
-      "applyUrl": "https://ols.sbiz.or.kr/",
-      "applyName": "소상공인정책자금",
-      "requiredDocs": ["사업자등록증", "부가세 신고서", "재무제표"],
-      "processingTime": "1~2개월",
-      "deadline": "필요 시 (업력 6개월+ 유리)",
-      "warning": "급할 때 준비하면 늦음. 미리 서류 준비 권장"
+      "phase": "이번 주",
+      "urgency": "high",
+      "title": "청년창업중소기업 세액감면",
+      "icon": "🧑\u200d💼",
+      "description": "만 15~34세 청년이 창업한 중소기업 대부분 해당 (조세특례제한법 제6조)",
+      "excludedIndustries": ["부동산업", "사행성", "유흥주점"],
+      "applyUrl": "https://www.hometax.go.kr/",
+      "applyName": "홈택스",
+      "requiredDocs": ["사업자등록증", "주민등록증"],
+      "processingTime": "15분 (온라인)",
+      "deadline": "창업 후 5년간 · 신고 前 신청 필수",
+      "warning": "종합소득세/법인세 신고 시 감면 신청을 빠뜨리면 그 해분은 영구 손실"
     }
   ],
   "timeline": {
@@ -101,9 +97,9 @@
       "items": ["duruNuri"]
     },
     "phase4": {
-      "title": "📌 D+180일 이후",
+      "title": "📅 청년(만 34세 이하)이라면 이번 주 (신고 前)",
       "color": "green",
-      "items": ["policyFund"]
+      "items": ["youngStartupTaxCut"]
     }
   }
 }
