@@ -28,7 +28,7 @@ const REVIEWS: Review[] = [
   {
     name: "정O아 대표",
     business: "도소매 (수출업)",
-    region: "인천 서해구",
+    region: "인천 서구",
     channel: "카카오상담",
     rating: 5,
     title: "생각했던 것보다 훨씬 큰 자금을 확보했습니다",
@@ -38,7 +38,7 @@ const REVIEWS: Review[] = [
   {
     name: "김O호 대표",
     business: "육류 포장처리업",
-    region: "인천 서해구",
+    region: "인천 서구",
     channel: "당근마켓",
     rating: 5,
     title: "얼마전에 부결되서 반포기 상태였는데,, 여기서 자문 받고 승인받았습니다",
@@ -78,7 +78,7 @@ const REVIEWS: Review[] = [
   {
     name: "한O경 대표",
     business: "뿌리기업 (부품)",
-    region: "인천 서해구",
+    region: "인천 서구",
     channel: "카카오상담",
     rating: 5,
     title: "부담 없이 상담받았는데 그대로 승인됐어요",
@@ -115,7 +115,7 @@ const APPROVALS: Approval[] = [
   {
     kind: "정책자금",
     business: "문화콘텐츠 제조",
-    region: "인천 서해구",
+    region: "인천 서구",
     program: "문화산업보증 · 신용보증한도",
     agency: "한국무역보험공사(K-SURE)",
     amount: "5억원",
@@ -149,7 +149,7 @@ const APPROVALS: Approval[] = [
   {
     kind: "인증",
     business: "부품 제조 (뿌리기업)",
-    region: "인천 서해구",
+    region: "인천 서구",
     program: "이노비즈(INNO-BIZ) 인증",
     agency: "중소벤처기업부",
     note: "기술혁신형 중소기업 확인",
@@ -708,7 +708,7 @@ function ReviewWriteSection() {
               <input
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                placeholder="예: 인천 서해구"
+                placeholder="예: 인천 서구"
                 className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-brand-orange"
               />
             </div>

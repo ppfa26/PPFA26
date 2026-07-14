@@ -68,7 +68,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  // 화면 확대(핀치 줌)를 막지 않습니다.
+  //  → 시력이 약하신 대표님·중장년 고객도 글자를 크게 키워 볼 수 있도록 접근성 보장.
+  maximumScale: 5,
+  userScalable: true,
 };
 
 // ─────────────────────────────────────────────────────────────
