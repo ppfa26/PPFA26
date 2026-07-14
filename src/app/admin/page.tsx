@@ -222,13 +222,17 @@ export default function AdminPage() {
     downloadCsv(`고객진단서_${applicant}_${stamp}`, diagnosesToCsv(toRecords([d])));
   };
 
-  // 진단서 삭제 (관리자) — 직접 삭제 시도, RLS로 막히면 사유 안내
+  // 진단서 삭제 (관리자) — 관리자 전용 RPC 사용
+  //  ※ diagnoses 테이블은 RLS(행 보안)로 직접 DELETE가 막혀 있어,
+  //    is_admin() 검사를 통과한 관리자만 실행되는 서버 함수로 삭제한다.
   const deleteDiag = async (d: AdminDiagnosis) => {
     const applicant = d.name || (d.profile as any)?.name || "이 고객";
     if (!window.confirm(`${applicant} 님의 진단서를 삭제할까요?\n(되돌릴 수 없습니다)`)) return;
-    const { error } = await supabase.from("diagnoses").delete().eq("id", d.id);
+    const { data, error } = await supabase.rpc("admin_delete_diagnosis", { p_id: d.id });
     if (error) {
-      setMsg(`삭제 실패: ${error.message} (권한 설정이 필요할 수 있어요)`);
+      setMsg(`삭제 실패: ${error.message}`);
+    } else if (!data || Number(data) < 1) {
+      setMsg("삭제할 진단서를 찾지 못했습니다. 새로고침 후 다시 시도해 주세요.");
     } else {
       setDiagnoses((prev) => prev.filter((x) => x.id !== d.id));
       setSelectedDiag((prev) => {
@@ -237,6 +241,26 @@ export default function AdminPage() {
         return next;
       });
       setMsg("진단서를 삭제했습니다.");
+    }
+    setTimeout(() => setMsg(null), 4000);
+  };
+
+  // 진단서 선택 삭제 (여러 건 한 번에) — 관리자 전용 RPC 사용
+  const deleteSelectedDiag = async () => {
+    const ids = Array.from(selectedDiag);
+    if (ids.length === 0) {
+      setMsg("먼저 삭제할 진단서를 체크해 주세요.");
+      setTimeout(() => setMsg(null), 4000);
+      return;
+    }
+    if (!window.confirm(`선택한 ${ids.length}건의 진단서를 삭제할까요?\n(되돌릴 수 없습니다)`)) return;
+    const { data, error } = await supabase.rpc("admin_delete_diagnoses", { p_ids: ids });
+    if (error) {
+      setMsg(`삭제 실패: ${error.message}`);
+    } else {
+      setDiagnoses((prev) => prev.filter((x) => !selectedDiag.has(x.id)));
+      setSelectedDiag(new Set());
+      setMsg(`진단서 ${Number(data) || ids.length}건을 삭제했습니다.`);
     }
     setTimeout(() => setMsg(null), 4000);
   };
@@ -702,6 +726,13 @@ export default function AdminPage() {
                       className="rounded-lg bg-brand-primary/10 px-3 py-1.5 text-xs font-bold text-brand-primary hover:bg-brand-primary/20"
                     >
                       ⬇️ 전체 진단서 엑셀 다운
+                    </button>
+                    <button
+                      onClick={deleteSelectedDiag}
+                      disabled={selectedDiag.size === 0}
+                      className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      🗑️ 선택 삭제
                     </button>
                   </div>
                 </div>
