@@ -68,7 +68,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                   {tier.priceLabel}
                 </span>
                 <span className="mb-1 text-sm text-brand-gray">
-                  / {tier.period}
+                  / {tier.period} <span className="text-[11px] text-brand-gray/80">[이용기간]</span>
                 </span>
               </div>
               {/* 부가세 포함 표기 */}
