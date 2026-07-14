@@ -9,13 +9,13 @@ import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
 
 const TRUST_BADGES = [
-  { icon: "🏛️", text: "정부 사이트 크롤링" },
-  { icon: "📚", text: "관련 부처 최신 공문 자문" },
-  { icon: "🔒", text: "승인 보장 X · 자문 플랫폼" },
-  { icon: "🚫", text: "대행 없음 · 승인 수수료 없음" },
-  { icon: "🔍", text: "내 사업장 맞춤 지원사업 자동 매칭" },
-  { icon: "🤖", text: "AI가 한 번에 전부 찾아 정리" },
-  { icon: "💳", text: "19,900원으로 부담 없이 시작" },
+  { icon: "🏛️", text: "공식 정부 사이트 매일 자동 크롤링" },
+  { icon: "📚", text: "정부 부처 공문 팩트체크" },
+  { icon: "🎯", text: "내 사업장에 진짜 되는 것만 매칭" },
+  { icon: "🗂️", text: "정책자금·지원금·바우처·인증 전부 한 번에" },
+  { icon: "📝", text: "신청 방법·필요 서류·순서까지 자문" },
+  { icon: "🚫", text: "행정 대행 없음 · 승인 수수료 0원" },
+  { icon: "☕", text: "커피 한 잔 값 · 1회성 결제" },
 ];
 
 const VALUES = [
@@ -144,9 +144,9 @@ export default function Home() {
                 (t, i) => (
                   <li
                     key={t}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-brand-green/30 bg-brand-green/5 px-3 py-1.5 text-xs font-semibold text-brand-dark sm:text-sm"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand-dark shadow-sm sm:text-sm"
                   >
-                    <span className="text-brand-green">✓</span>
+                    <span className="text-brand-orange">✓</span>
                     <Editable id={`hero-check-${i}`} as="span">
                       {t}
                     </Editable>
@@ -199,9 +199,13 @@ export default function Home() {
               {TRUST_BADGES.map((b, i) => (
                 <div
                   key={i}
-                  className="hover-lift flex flex-col items-center gap-1.5 rounded-xl border border-brand-dark/10 bg-white px-3 py-4 text-center shadow-sm"
+                  className={`hover-lift flex flex-col items-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-3 py-5 text-center shadow-card ${
+                    i === 6 ? "col-span-2 sm:col-span-1" : ""
+                  }`}
                 >
-                  <span className="text-2xl">{b.icon}</span>
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-orange/10 text-xl">
+                    {b.icon}
+                  </span>
                   <Editable
                     id={`home-trust-${i}`}
                     as="span"
@@ -219,7 +223,7 @@ export default function Home() {
         <section className="bg-gray-50 px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-4xl text-center">
             <div className="flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-green/10 px-4 py-1.5 text-xs font-bold text-brand-green sm:text-sm">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 🎯 서비스 안내
               </span>
               <Editable
@@ -243,7 +247,7 @@ export default function Home() {
                   key={i}
                   className="hover-lift flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-card"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-green text-sm font-bold text-white">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange text-sm font-bold text-white">
                     ✓
                   </span>
                   <Editable
@@ -481,7 +485,7 @@ export default function Home() {
         >
           <div className="reveal mx-auto max-w-5xl">
             <div className="flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-yellow/20 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 💳 서비스 이용료
               </span>
               <Editable
@@ -509,7 +513,7 @@ export default function Home() {
         <section className="bg-gray-50 px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
             <div className="flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 💬 자주 묻는 질문
               </span>
               <Editable
@@ -575,39 +579,33 @@ export default function Home() {
             >
               1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.
             </Editable>
-            <div className="mt-7 flex items-start justify-center gap-6 sm:gap-10">
-              {/* 왼쪽 — 카카오톡 1:1 채팅 문의 */}
+            <div className="mt-7 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+              {/* 왼쪽 — 카카오톡 1:1 채팅 문의 (가로 알약형) */}
               <a
                 id="home-cta-kakao"
                 href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col items-center gap-2.5"
+                className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-[#FEE500] px-7 py-4 shadow-card transition hover:brightness-95"
               >
-                <span className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-[#FEE500] text-brand-dark shadow-card transition group-hover:scale-105 sm:h-28 sm:w-28">
-                  <span className="text-3xl sm:text-4xl">💬</span>
-                  <span className="mt-1 text-[11px] font-extrabold leading-tight sm:text-xs">
-                    1:1 채팅
-                  </span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-dark/10 text-lg">
+                  💬
                 </span>
-                <span className="break-keep text-[13px] font-bold text-brand-dark sm:text-sm">
-                  카톡 문의하기
+                <span className="break-keep text-base font-extrabold text-brand-dark">
+                  카톡 1:1 문의하기
                 </span>
               </a>
-              {/* 오른쪽 — 무료 진단 시작하기 */}
+              {/* 오른쪽 — 무료 진단 시작하기 (가로 알약형, 재생 버튼) */}
               <a
                 id="home-cta-button"
                 href="/diagnosis"
-                className="group flex flex-col items-center gap-2.5"
+                className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-brand-dark px-7 py-4 text-white shadow-card transition animate-pulseGlow hover:opacity-90"
               >
-                <span className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-brand-dark text-white shadow-card transition group-hover:scale-105 animate-pulseGlow sm:h-28 sm:w-28">
-                  <span className="text-3xl sm:text-4xl">🚀</span>
-                  <span className="mt-1 text-[11px] font-extrabold leading-tight sm:text-xs">
-                    무료 진단
-                  </span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-sm">
+                  ▶
                 </span>
-                <span className="break-keep text-[13px] font-bold text-brand-dark sm:text-sm">
-                  진단 시작하기
+                <span className="break-keep text-base font-extrabold">
+                  무료 진단 시작하기
                 </span>
               </a>
             </div>
