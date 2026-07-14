@@ -103,8 +103,8 @@ export default function MatchingPreview() {
   return (
     <PageShell pageKey="matching-preview">
       <Header />
-      {/* 하단 여백(pb-28)으로 sticky 바에 콘텐츠가 가려지지 않게 */}
-      <main className="px-4 pb-28 pt-8">
+      {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게 */}
+      <main className="px-4 pb-40 pt-8">
         <div className="mx-auto max-w-3xl">
           {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ── */}
           <div className="text-center">
@@ -294,32 +294,31 @@ export default function MatchingPreview() {
         </div>
       </main>
 
-      {/* 스크롤을 따라다니는 하단 고정(sticky) 결제 유도 바 */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-brand-orange/40 bg-white/95 px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
-          <div className="min-w-0">
-            <Editable
-              id="preview-sticky-title"
-              as="p"
-              className="truncate text-sm font-extrabold text-brand-dark"
-            >
-              🔒 전체 결과 잠금 해제
-            </Editable>
-            <Editable
-              id="preview-sticky-sub"
-              as="p"
-              className="truncate text-xs text-brand-gray"
-            >
-              ☕ 커피 한 잔 값으로 내 사업장 정부지원사업 전부 확인
-            </Editable>
-          </div>
+      {/* ── 스크롤을 따라다니는 하단 고정(sticky) 결제 유도 박스 ──
+           스크린샷의 오렌지 결제 유도 박스를 그대로 하단에 고정 → 스크롤 내내 결제 유도 */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-brand-orange bg-white/97 px-4 py-3 shadow-[0_-6px_24px_rgba(255,140,0,0.22)] backdrop-blur">
+        <div className="mx-auto max-w-3xl">
+          <Editable
+            id="preview-sticky-title"
+            as="p"
+            className="break-keep text-center text-sm font-extrabold text-brand-dark sm:text-base"
+          >
+            🔒 결제하면 위 모든 항목의 상세 내용이 공개됩니다
+          </Editable>
+          <Editable
+            id="preview-sticky-sub"
+            as="p"
+            className="mt-1 hidden break-keep text-center text-[11px] leading-relaxed text-brand-dark/60 sm:block sm:text-xs"
+          >
+            ☕ 커피 한 잔 값으로 내 사업장에 해당되는 모든 정부지원사업을 확인하세요. (VAT 포함)
+          </Editable>
           <Editable
             id="preview-sticky-cta"
             as="a"
             href="/pricing"
-            className="shrink-0 whitespace-nowrap rounded-full bg-brand-dark px-6 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
+            className="btn-brand mt-2 block w-full rounded-full py-3 text-center text-sm font-bold sm:text-base"
           >
-            지금 확인하기
+            💳 지금 결제하고 전체 결과 확인하기
           </Editable>
         </div>
       </div>
