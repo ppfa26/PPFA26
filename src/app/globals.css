@@ -139,6 +139,19 @@ h4 {
   user-select: none;
   -webkit-user-select: none;
 }
+/* 미리보기 잠금(약하게): 텍스트가 밀집된 카테고리 전용 — 모자이크가 과하게
+   보이지 않도록 블러를 낮춤. (정부지원제도·정책금융기관·추가혜택 카드) */
+.preview-lock-text-soft {
+  filter: blur(3px);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.preview-lock-click-soft {
+  filter: blur(1.5px);
+  pointer-events: none !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
 
 /* 애니메이션 */
 @keyframes fadeUp {

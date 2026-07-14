@@ -752,6 +752,10 @@ function AdvancedResult({
   // 미리보기 잠금용 클래스 헬퍼 (기관명·상품명 텍스트 / 클릭요소)
   const lockText = previewLock ? "preview-lock-text" : "";
   const lockClick = previewLock ? "preview-lock-click" : "";
+  // 텍스트가 밀집돼 모자이크가 과해 보이는 카테고리 전용(약한 블러):
+  //  🎁 정부지원제도 · 🏦 정책금융기관 (대표님 요청 — 그 카테고리만 완화)
+  const lockTextSoft = previewLock ? "preview-lock-text-soft" : "";
+  const lockClickSoft = previewLock ? "preview-lock-click-soft" : "";
   const {
     company,
     koditHardReject,
@@ -884,12 +888,12 @@ function AdvancedResult({
                 <Link
                   key={prog.id}
                   href={`/support/${prog.id}`}
-                  className={`group block py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50 ${lockClick}`}
+                  className={`group block py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50 ${lockClickSoft}`}
                 >
                   {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
-                    <span className={`text-sm font-extrabold text-brand-dark ${lockText}`}>{prog.title}</span>
+                    <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
                     {isEligible ? (
                       <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
                         ✅ 신청 대상
@@ -916,12 +920,12 @@ function AdvancedResult({
                       {prog.applyHow && (
                         <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
                           <span className="font-bold text-brand-dark">신청방법 </span>
-                          <span className={lockText}>{prog.applyHow}</span>
+                          <span className={lockTextSoft}>{prog.applyHow}</span>
                         </p>
                       )}
                       {prog.applyTel && (
                         <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
-                          잘 모르시겠으면 <span className={`font-bold text-brand-orange ${lockText}`}>☎ {prog.applyTel}</span> 로 문의하시면 쉽게 진행 가능합니다.
+                          잘 모르시겠으면 <span className={`font-bold text-brand-orange ${lockTextSoft}`}>☎ {prog.applyTel}</span> 로 문의하시면 쉽게 진행 가능합니다.
                         </p>
                       )}
                     </div>
@@ -957,7 +961,7 @@ function AdvancedResult({
                 className="py-3 first:pt-0"
               >
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className={`text-sm font-extrabold text-brand-dark ${lockText}`}>{m.institution}</span>
+                  <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
                   {m.loan_type && (
                     <span
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
@@ -976,7 +980,7 @@ function AdvancedResult({
                     </span>
                   )}
                 </div>
-                <p className={`mt-1 break-keep text-xs text-brand-gray ${lockText}`}>{m.criteria}</p>
+                <p className={`mt-1 break-keep text-xs text-brand-gray ${lockTextSoft}`}>{m.criteria}</p>
 
                 {/* 신보·기보 둘 다 자격일 때 → 중복 신청 불가 안내 (대표님 요청) */}
                 {m.exclusiveNote && (
@@ -990,7 +994,7 @@ function AdvancedResult({
                   <div className="mt-2.5">
                     <button
                       onClick={() => toggleProducts(i)}
-                      className={`inline-flex max-w-full items-center gap-2 rounded-xl border-2 border-brand-orange bg-brand-orange/10 px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockClick}`}
+                      className={`inline-flex max-w-full items-center gap-2 rounded-xl border-2 border-brand-orange bg-brand-orange/10 px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockClickSoft}`}
                     >
                       <span className="break-keep text-xs font-extrabold text-brand-orange">
                         💳 {previewLock ? "신청 가능 상품" : `${m.institution} 신청 가능 상품 ${products.length}개`} 보기
@@ -1011,7 +1015,7 @@ function AdvancedResult({
                             className="rounded-xl border border-gray-200 bg-gray-50 p-3"
                           >
                             <div className="flex flex-wrap items-center gap-1.5">
-                              <span className={`break-keep text-sm font-extrabold text-brand-dark ${lockText}`}>
+                              <span className={`break-keep text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>
                                 {prod.name}
                               </span>
                               {prod.amount && (
@@ -1057,7 +1061,7 @@ function AdvancedResult({
                                 href={previewLock ? undefined : prod.applyUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`mt-2 inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClick}`}
+                                className={`mt-2 inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClickSoft}`}
                               >
                                 이 상품 신청하러 가기 →
                               </a>
@@ -1078,7 +1082,7 @@ function AdvancedResult({
                           href={previewLock ? undefined : link.manualUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClick}`}
+                          className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClickSoft}`}
                         >
                           📄 신청 매뉴얼
                         </a>
@@ -1087,7 +1091,7 @@ function AdvancedResult({
                         href={previewLock ? undefined : link.siteUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClick}`}
+                        className={`inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClickSoft}`}
                       >
                         {link.siteLabel}
                       </a>
@@ -1096,7 +1100,7 @@ function AdvancedResult({
                           href={previewLock ? undefined : link.pdfUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100 ${lockClick}`}
+                          className={`inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100 ${lockClickSoft}`}
                         >
                           📑 {link.pdfLabel}
                         </a>
@@ -1106,19 +1110,19 @@ function AdvancedResult({
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <a
                           href={previewLock ? undefined : `tel:${link.tel.replace(/-/g, "")}`}
-                          className={`inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20 ${lockClick}`}
+                          className={`inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20 ${lockClickSoft}`}
                         >
                           📞 {link.tel}
                         </a>
                         {link.telNote && (
-                          <span className={`break-keep text-[10px] leading-relaxed text-brand-dark/45 ${lockText}`}>
+                          <span className={`break-keep text-[10px] leading-relaxed text-brand-dark/45 ${lockTextSoft}`}>
                             {link.telNote}
                           </span>
                         )}
                       </div>
                     )}
                     {link.note && (
-                      <p className={`break-keep text-[11px] leading-relaxed text-brand-dark/50 ${lockText}`}>
+                      <p className={`break-keep text-[11px] leading-relaxed text-brand-dark/50 ${lockTextSoft}`}>
                         {link.note}
                       </p>
                     )}
@@ -1133,7 +1137,7 @@ function AdvancedResult({
                             href={previewLock ? undefined : j.manualUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClick}`}
+                            className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClickSoft}`}
                           >
                             📄 신청 매뉴얼
                           </a>
@@ -1142,7 +1146,7 @@ function AdvancedResult({
                           href={previewLock ? undefined : j.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClick}`}
+                          className={`inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClickSoft}`}
                         >
                           {j.label}
                         </a>
@@ -1151,7 +1155,7 @@ function AdvancedResult({
                             href={previewLock ? undefined : j.productUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100 ${lockClick}`}
+                            className={`inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100 ${lockClickSoft}`}
                           >
                             📑 {j.productLabel}
                           </a>
@@ -1161,7 +1165,7 @@ function AdvancedResult({
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <a
                         href={previewLock ? undefined : `tel:${JAEDAN_CALL_CENTER.tel.replace(/-/g, "")}`}
-                        className={`inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20 ${lockClick}`}
+                        className={`inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20 ${lockClickSoft}`}
                       >
                         📞 {JAEDAN_CALL_CENTER.tel}
                       </a>
@@ -1176,7 +1180,7 @@ function AdvancedResult({
           })}
         </div>
         <div className="mt-3 space-y-2">
-          <p className={`break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
+          <p className={`break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark ${lockTextSoft}`}>
             💡 대출은 보통 <b>직접대출 1곳(공단 직접) + 대리대출 1곳(보증서→은행), 총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>
           {/* 신용점수 안내 — 알맹이라 결제 전 잠금 */}
@@ -1187,7 +1191,7 @@ function AdvancedResult({
                 : creditAdvice.tier === "caution"
                 ? "bg-brand-yellow/20 text-brand-dark"
                 : "bg-red-50 text-brand-red"
-            } ${lockText}`}
+            } ${lockTextSoft}`}
           >
             📊 {creditAdvice.message}
           </p>
@@ -1204,7 +1208,7 @@ function AdvancedResult({
                 <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
                   대리대출 (보증서 → 은행)
                 </span>
-                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
+                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockTextSoft}`}>
                   신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행 ·{" "}
                   <b className="text-brand-orange">통상 3~6주 소요</b>
                 </p>
@@ -1215,13 +1219,13 @@ function AdvancedResult({
                 <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
                   직접대출 (공단 직접)
                 </span>
-                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
+                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockTextSoft}`}>
                   신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
                   <b className="text-brand-orange">통상 약 8주 소요</b> · 제출 서류가 상대적으로 많은 편입니다.
                 </p>
               </div>
             )}
-            <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 ${lockText}`}>
+            <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 ${lockTextSoft}`}>
               ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 및 규모가 큰 건은 방문 실사로 진행됩니다.
             </p>
           </div>

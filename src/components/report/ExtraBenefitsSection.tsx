@@ -239,8 +239,9 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
     userInput ?? null
   );
   // 미리보기 잠금 클래스 — 제목은 그대로, 알맹이만 흐리게+클릭차단
-  const lockText = previewLock ? "preview-lock-text" : "";
-  const lockClick = previewLock ? "preview-lock-click" : "";
+  // 이 카드(🎁 추가 혜택)는 텍스트가 밀집돼 모자이크가 과해 보여 약한 블러 적용 (대표님 요청)
+  const lockText = previewLock ? "preview-lock-text-soft" : "";
+  const lockClick = previewLock ? "preview-lock-click-soft" : "";
 
   // userInput props 가 없을 때만 세션에서 읽어 매핑
   useEffect(() => {
