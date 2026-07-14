@@ -242,14 +242,7 @@ export default function Diagnosis() {
               <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} /></Field>
               <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} /></Field>
               <Field label={STEP1_FIELDS.region.label}><Radio k="region" opts={STEP1_FIELDS.region.opts} /></Field>
-              {/* 스마트기기 사용 여부 (혁신성장촉진자금 매칭용) — 설명 힌트 포함 */}
-              <div className="mb-6">
-                <p className="mb-1 font-bold text-brand-dark">{STEP1_FIELDS.smartTech.label}</p>
-                <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
-                  {STEP1_FIELDS.smartTech.hint}
-                </p>
-                <Radio k="smartTech" opts={STEP1_FIELDS.smartTech.opts} />
-              </div>
+              {/* ※ 1단계 스마트기기 질문 제거(대표님 요청) — 동일 취지 질문이 3단계 'smartDevice'에 있어 매칭은 그대로 유지됨 */}
             </div>
           )}
 

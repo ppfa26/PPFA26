@@ -408,7 +408,11 @@ export function profileToCompany(p: DiagnosisProfile): Company {
     // 수출 여부는 '업종=수출업'일 때만 true (상담목적/관심분야로는 판정하지 않음)
     is_exporter: (p.industries || []).includes("수출업"),
     // 스마트기기 사용 여부 → 혁신성장촉진자금(일반형·스마트기술) 대상 판정
-    uses_smart_tech: Boolean(p.smartTech && p.smartTech.includes("예")),
+    //  1단계 질문은 제거됨 → 3단계 smartDevice 값을 우선 사용(구 smartTech도 하위호환 인정)
+    uses_smart_tech: Boolean(
+      (p.smartDevice && p.smartDevice.includes("예")) ||
+        (p.smartTech && p.smartTech.includes("예"))
+    ),
     ceo_age: p.age?.includes?.("39세 이하") ? 35 : undefined,
     years_in_business: yearsVal,
     kcb_score: creditScore,
