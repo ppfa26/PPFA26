@@ -333,10 +333,10 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                         key={p.name}
                         className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2"
                       >
-                        <span className="break-keep text-xs font-bold text-brand-dark">
+                        <span className={`break-keep text-xs font-bold text-brand-dark ${lockText}`}>
                           {p.name}
                         </span>
-                        <span className="shrink-0 break-keep text-xs font-extrabold text-brand-orange">
+                        <span className={`shrink-0 break-keep text-xs font-extrabold text-brand-orange ${lockText}`}>
                           최대 {formatKRW(p.maxAmount)}
                         </span>
                       </div>

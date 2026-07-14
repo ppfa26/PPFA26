@@ -756,6 +756,8 @@ function AdvancedResult({
   //  🎁 정부지원제도 · 🏦 정책금융기관 (대표님 요청 — 그 카테고리만 완화)
   const lockTextSoft = previewLock ? "preview-lock-text-soft" : "";
   const lockClickSoft = previewLock ? "preview-lock-click-soft" : "";
+  // 흐림 없이 클릭만 막기 (제목·설명은 그대로 보여주되 결제 전 페이지 이동만 차단)
+  const lockNoClick = previewLock ? "preview-lock-noclick" : "";
   const {
     company,
     koditHardReject,
@@ -888,12 +890,12 @@ function AdvancedResult({
                 <Link
                   key={prog.id}
                   href={`/support/${prog.id}`}
-                  className={`group block py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50 ${lockClickSoft}`}
+                  className={`group block py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50 ${lockNoClick}`}
                 >
                   {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
-                    <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
+                    <span className="text-sm font-extrabold text-brand-dark">{prog.title}</span>
                     {isEligible ? (
                       <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
                         ✅ 신청 대상
@@ -961,7 +963,7 @@ function AdvancedResult({
                 className="py-3 first:pt-0"
               >
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
+                  <span className="text-sm font-extrabold text-brand-dark">{m.institution}</span>
                   {m.loan_type && (
                     <span
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
@@ -980,7 +982,7 @@ function AdvancedResult({
                     </span>
                   )}
                 </div>
-                <p className={`mt-1 break-keep text-xs text-brand-gray ${lockTextSoft}`}>{m.criteria}</p>
+                <p className="mt-1 break-keep text-xs text-brand-gray">{m.criteria}</p>
 
                 {/* 신보·기보 둘 다 자격일 때 → 중복 신청 불가 안내 (대표님 요청) */}
                 {m.exclusiveNote && (
@@ -994,7 +996,7 @@ function AdvancedResult({
                   <div className="mt-2.5">
                     <button
                       onClick={() => toggleProducts(i)}
-                      className={`inline-flex max-w-full items-center gap-2 rounded-xl border-2 border-brand-orange bg-brand-orange/10 px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockClickSoft}`}
+                      className={`inline-flex max-w-full items-center gap-2 rounded-xl border-2 border-brand-orange bg-brand-orange/10 px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockNoClick}`}
                     >
                       <span className="break-keep text-xs font-extrabold text-brand-orange">
                         💳 {previewLock ? "신청 가능 상품" : `${m.institution} 신청 가능 상품 ${products.length}개`} 보기
@@ -1180,7 +1182,7 @@ function AdvancedResult({
           })}
         </div>
         <div className="mt-3 space-y-2">
-          <p className={`break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark ${lockTextSoft}`}>
+          <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
             💡 대출은 보통 <b>직접대출 1곳(공단 직접) + 대리대출 1곳(보증서→은행), 총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>
           {/* 신용점수 안내 — 알맹이라 결제 전 잠금 */}
@@ -1208,7 +1210,7 @@ function AdvancedResult({
                 <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
                   대리대출 (보증서 → 은행)
                 </span>
-                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockTextSoft}`}>
+                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark`}>
                   신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행 ·{" "}
                   <b className="text-brand-orange">통상 3~6주 소요</b>
                 </p>
@@ -1219,13 +1221,13 @@ function AdvancedResult({
                 <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
                   직접대출 (공단 직접)
                 </span>
-                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockTextSoft}`}>
+                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark`}>
                   신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
                   <b className="text-brand-orange">통상 약 8주 소요</b> · 제출 서류가 상대적으로 많은 편입니다.
                 </p>
               </div>
             )}
-            <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 ${lockTextSoft}`}>
+            <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60`}>
               ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 및 규모가 큰 건은 방문 실사로 진행됩니다.
             </p>
           </div>

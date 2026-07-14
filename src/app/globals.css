@@ -152,6 +152,10 @@ h4 {
   user-select: none;
   -webkit-user-select: none;
 }
+/* 미리보기 잠금: 흐림 없이 클릭만 막음 (제목·설명은 보여주되 결제 전 이동만 차단) */
+.preview-lock-noclick {
+  pointer-events: none !important;
+}
 
 /* 애니메이션 */
 @keyframes fadeUp {
