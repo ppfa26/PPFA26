@@ -195,13 +195,11 @@ export default function Home() {
                 하루 커피 한 잔 값으로, 내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
               </Editable>
             </div>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
               {TRUST_BADGES.map((b, i) => (
                 <div
                   key={i}
-                  className={`hover-lift flex flex-col items-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-3 py-5 text-center shadow-card ${
-                    i === 6 ? "col-span-2 sm:col-span-1" : ""
-                  }`}
+                  className="hover-lift flex w-[calc(50%-0.375rem)] flex-col items-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-3 py-5 text-center shadow-card sm:w-[calc(25%-0.6rem)]"
                 >
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-orange/10 text-xl">
                     {b.icon}
