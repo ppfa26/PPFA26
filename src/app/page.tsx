@@ -106,7 +106,7 @@ export default function Home() {
         {/* 히어로 */}
         <section
           id="hero-section"
-          className="relative overflow-hidden px-4 pb-7 pt-7 sm:pb-12 sm:pt-16"
+          className="relative overflow-hidden px-4 pb-5 pt-6 sm:pb-9 sm:pt-12"
         >
           <div className="mx-auto max-w-3xl text-center animate-fadeUp">
             <Editable
@@ -177,7 +177,7 @@ export default function Home() {
         </section>
 
         {/* 신뢰 배지 + 핵심 강점 (7칸 통합) */}
-        <section className="border-y border-gray-100 bg-gray-50 px-4 py-9 sm:py-12">
+        <section className="border-y border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
           <div className="reveal mx-auto max-w-4xl">
             <div className="flex flex-col items-center text-center">
               <Editable
@@ -195,7 +195,7 @@ export default function Home() {
                 하루 커피 한 잔 값으로, 내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
               </Editable>
             </div>
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {TRUST_BADGES.map((b, i) => (
                 <div
                   key={i}
@@ -216,7 +216,7 @@ export default function Home() {
         </section>
 
         {/* 가치 제안 4단계 */}
-        <section className="bg-gray-50 px-4 py-9 sm:py-14">
+        <section className="bg-gray-50 px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-4xl text-center">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-green/10 px-4 py-1.5 text-xs font-bold text-brand-green sm:text-sm">
@@ -237,7 +237,7 @@ export default function Home() {
                 복잡한 정부지원사업, 무엇을·어디서·어떻게까지 한 번에 정리해드립니다.
               </Editable>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {VALUES.map((v, i) => (
                 <div
                   key={i}
@@ -260,7 +260,7 @@ export default function Home() {
         </section>
 
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
-        <section id="result-sample-section" className="border-y border-gray-100 bg-white px-4 py-9 sm:py-14">
+        <section id="result-sample-section" className="border-y border-gray-100 bg-white px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
@@ -286,7 +286,7 @@ export default function Home() {
             </div>
 
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
-            <div className="relative mt-8">
+            <div className="relative mt-7">
               <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-[0_16px_40px_rgba(0,0,0,0.10)]">
                 {/* 브라우저 상단 바 */}
                 <div className="flex items-center gap-1.5 border-b border-gray-100 bg-gray-50 px-4 py-2.5">
@@ -477,7 +477,7 @@ export default function Home() {
         {/* 가격표 */}
         <section
           id="pricing-section"
-          className="scroll-mt-20 px-4 py-9 sm:scroll-mt-24 sm:py-14"
+          className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-11"
         >
           <div className="reveal mx-auto max-w-5xl">
             <div className="flex flex-col items-center text-center">
@@ -499,14 +499,14 @@ export default function Home() {
                 1회성 결제이며 월 구독 결제가 아닙니다.
               </Editable>
             </div>
-            <div className="mt-8">
+            <div className="mt-6">
               <PricingCards prefix="home" />
             </div>
           </div>
         </section>
 
         {/* FAQ */}
-        <section className="bg-gray-50 px-4 py-9 sm:py-14">
+        <section className="bg-gray-50 px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
             <div className="flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
@@ -527,7 +527,7 @@ export default function Home() {
                 결제 전 가장 많이 묻는 질문들을 모았습니다.
               </Editable>
             </div>
-            <div className="mt-8 space-y-3">
+            <div className="mt-6 space-y-3">
               {FAQS.map((f, i) => (
                 <details
                   key={i}
@@ -559,7 +559,7 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA */}
-        <section className="px-4 pb-6 pt-9 sm:pb-8 sm:pt-14">
+        <section className="px-4 pb-6 pt-7 sm:pb-8 sm:pt-11">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-grad p-8 text-center shadow-card sm:p-10">
             <Editable
               id="home-cta-title"
