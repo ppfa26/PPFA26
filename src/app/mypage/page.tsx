@@ -143,7 +143,7 @@ export default function MyPage() {
                       </h2>
                       <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
                         결제해주신 대표님만 입장하실 수 있는 <b className="text-brand-dark">비공개 오픈채팅방</b>입니다.
-                        정책자금·정부지원사업 최신 정보와 실전 노하우, 대표님들끼리의 정보 교류가 이곳에서 이뤄집니다.
+                        정부지원사업 최신 정보 및 승인 후기 등과 실전 노하우, 대표님들끼리의 정보 교류하는 곳입니다.
                       </p>
                     </div>
                     <a
