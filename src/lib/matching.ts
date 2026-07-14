@@ -62,7 +62,7 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   }
 
   if (p.revenue) tags.add(p.revenue.replace(/\s/g, ""));
-  if (p.age?.includes("39세 이하") || p.age?.includes("39세이하")) tags.add("청년");
+  if (p.age?.includes("39세 이하") || p.age?.includes("39세이하") || p.age?.includes("청년")) tags.add("청년");
   if (p.years?.includes("1년")) tags.add("1년미만");
 
   // 업력 태그 (창업지원사업 자격 필터용) — 3년 이내 / 7년 이내 여부
@@ -132,10 +132,11 @@ function profileTags(p: DiagnosisProfile): Set<string> {
     tags.add("회생파산");
 
   // 신용점수 판정 (공문 기준: 신용취약소상공인자금 = NCB 839점 이하)
-  // "700점 이하" / "839점 이하" → 신용취약 / "839점 이상" → 신용양호
-  if (p.credit?.includes("839점 이상") || p.credit?.includes("839 이상")) {
+  // "700점 미만" / "700~839점" → 신용취약 / "840점 이상" → 신용양호
+  //  ※ 옛 옵션("839점 이상"/"~이하")도 하위호환 인정
+  if (p.credit?.includes("840") || p.credit?.includes("839점 이상") || p.credit?.includes("839 이상")) {
     tags.add("신용양호");
-  } else if (p.credit && (p.credit.includes("이하") || p.credit.includes("취약"))) {
+  } else if (p.credit && (p.credit.includes("미만") || p.credit.includes("839") || p.credit.includes("이하") || p.credit.includes("취약"))) {
     tags.add("신용취약");
   }
   return tags;

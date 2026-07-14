@@ -369,9 +369,9 @@ export function profileToCompany(p: DiagnosisProfile): Company {
 
   let creditScore: number | undefined;
   if (p.credit) {
-    if (p.credit.includes("839점 이상")) creditScore = 850;
-    else if (p.credit.includes("839")) creditScore = 820;
-    else if (p.credit.includes("700")) creditScore = 690;
+    if (p.credit.includes("840")) creditScore = 850;
+    else if (p.credit.includes("700~839") || p.credit.includes("839")) creditScore = 820;
+    else if (p.credit.includes("700점 미만") || p.credit.includes("700")) creditScore = 690;
   }
 
   // ── 인증·기술 신호 전달 (기보 트랙 자격의 핵심) ──

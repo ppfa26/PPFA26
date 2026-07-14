@@ -11,10 +11,17 @@ import {
   DIAGNOSIS_TEXT,
   BNO_TEXT,
   STEP1_TITLE,
+  STEP1_SUBTITLE,
+  STEP1_GROUP,
   STEP1_FIELDS,
   STEP2_TITLE,
+  STEP2_SUBTITLE,
+  STEP2_GROUP_NEED,
+  STEP2_GROUP_FINANCE,
+  STEP2_GROUP_STRENGTH,
   STEP2_FIELDS,
   STEP3_TITLE,
+  STEP3_SUBTITLE,
   STEP3_FIELDS,
   STEP3_CONDITIONAL_FIELDS,
 } from "@/lib/diagnosisConfig";
@@ -156,12 +163,35 @@ export default function Diagnosis() {
   );
   // 조건부 질문(라벨+설명힌트+단일선택) — 소진공 혁신형 상품 정밀 매칭용
   const CondQ = ({ k, field }: { k: string; field: { label: string; hint: string; opts: string[] } }) => (
-    <div className="mb-6">
+    <div className="mb-6 last:mb-0">
       <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{field.label}</p>
       <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">{field.hint}</p>
       <Radio k={k} opts={field.opts} />
     </div>
   );
+  // 문맥별 질문을 하나의 박스로 묶는 그룹 컨테이너 (3단계처럼 깔끔한 UI)
+  const GroupBox = ({
+    title,
+    children,
+    tone = "gray",
+  }: {
+    title: string;
+    children: React.ReactNode;
+    tone?: "gray" | "orange" | "green";
+  }) => {
+    const toneCls =
+      tone === "orange"
+        ? "border-brand-orange/30 bg-brand-orange/5"
+        : tone === "green"
+        ? "border-brand-green/30 bg-brand-green/5"
+        : "border-gray-200 bg-gray-50/70";
+    return (
+      <div className={`mb-5 rounded-2xl border p-4 sm:p-5 ${toneCls}`}>
+        <p className="mb-4 break-keep text-sm font-extrabold text-brand-dark">{title}</p>
+        <div className="[&>*:last-child]:mb-0">{children}</div>
+      </div>
+    );
+  };
 
   return (
     <PageShell pageKey="diagnosis">
@@ -181,7 +211,8 @@ export default function Diagnosis() {
 
           {step === 1 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP1_TITLE}</h1>
+              <h1 className="mb-1.5 text-xl font-extrabold text-brand-dark">{STEP1_TITLE}</h1>
+              <p className="mb-5 break-keep text-sm leading-relaxed text-brand-gray">{STEP1_SUBTITLE}</p>
 
               {/* 사업자번호 자동 조회 (국세청 연동) */}
               <div className="mb-6 overflow-hidden rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4">
@@ -239,46 +270,60 @@ export default function Diagnosis() {
                 <p className="mt-2 text-xs text-brand-gray">{BNO_TEXT.note}</p>
               </div>
 
-              <Field label={STEP1_FIELDS.businessType.label}><Radio k="businessType" opts={STEP1_FIELDS.businessType.opts} /></Field>
-              <Field label={STEP1_FIELDS.industries.label}><Multi k="industries" opts={STEP1_FIELDS.industries.opts} /></Field>
-              <Field label={STEP1_FIELDS.revenue.label}><Radio k="revenue" opts={STEP1_FIELDS.revenue.opts} /></Field>
-              <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} /></Field>
-              <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} /></Field>
-              <Field label={STEP1_FIELDS.region.label}><Radio k="region" opts={STEP1_FIELDS.region.opts} /></Field>
+              {/* 사업장 정보 — 문맥별 한 박스로 묶어 깔끔하게 (유형→업종→업력→매출→연령→지역 자연스러운 순서) */}
+              <GroupBox title={STEP1_GROUP}>
+                <Field label={STEP1_FIELDS.businessType.label}><Radio k="businessType" opts={STEP1_FIELDS.businessType.opts} /></Field>
+                <Field label={STEP1_FIELDS.industries.label}><Multi k="industries" opts={STEP1_FIELDS.industries.opts} /></Field>
+                <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} /></Field>
+                <Field label={STEP1_FIELDS.revenue.label}><Radio k="revenue" opts={STEP1_FIELDS.revenue.opts} /></Field>
+                <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} /></Field>
+                <Field label={STEP1_FIELDS.region.label}><Radio k="region" opts={STEP1_FIELDS.region.opts} /></Field>
+              </GroupBox>
               {/* ※ 1단계 스마트기기 질문 제거(대표님 요청) — 동일 취지 질문이 3단계 'smartDevice'에 있어 매칭은 그대로 유지됨 */}
             </div>
           )}
 
           {step === 2 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP2_TITLE}</h1>
-              {/* 상담목적+관심분야 통합 (중복 제거) */}
-              <Field label={STEP2_FIELDS.purposes.label}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} /></Field>
-              <Field label={STEP2_FIELDS.desiredAmount.label}><Radio k="desiredAmount" opts={STEP2_FIELDS.desiredAmount.opts} /></Field>
-              {/* 자금 성격 질문(신용점수·인증·혁신성장)을 2단계로 재배치 → 3단계 부담 완화 */}
-              <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
-              <Field label={STEP3_FIELDS.certifications.label}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
-              <Field label={STEP3_FIELDS.innovation.label}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
-              {/* ── 3단계에서 2단계 하단으로 이동 (3단계 질문지가 너무 길어서) ── */}
-              <Field label={STEP2_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
-              <Field label={STEP2_FIELDS.collateral.label}><Radio k="collateral" opts={STEP2_FIELDS.collateral.opts} /></Field>
-              {/* 직원수(4대보험 통합) — 힌트 포함 */}
-              <div className="mb-6">
-                <p className="mb-1 font-bold text-brand-dark">{STEP2_FIELDS.employees.label}</p>
-                <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
-                  {STEP2_FIELDS.employees.hint}
-                </p>
-                <Radio k="employees" opts={STEP2_FIELDS.employees.opts} />
-              </div>
+              <h1 className="mb-1.5 text-xl font-extrabold text-brand-dark">{STEP2_TITLE}</h1>
+              <p className="mb-5 break-keep text-sm leading-relaxed text-brand-gray">{STEP2_SUBTITLE}</p>
+
+              {/* ① 어떤 지원이 필요한가 (상담목적+관심분야 통합, 희망 금액) */}
+              <GroupBox title={STEP2_GROUP_NEED} tone="orange">
+                <Field label={STEP2_FIELDS.purposes.label}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} /></Field>
+                <Field label={STEP2_FIELDS.desiredAmount.label}><Radio k="desiredAmount" opts={STEP2_FIELDS.desiredAmount.opts} /></Field>
+              </GroupBox>
+
+              {/* ② 자금 여건·현재 이용 현황 (신용점수·담보·이용기관·직원수) — 대출 자격 판정 문맥으로 묶음 */}
+              <GroupBox title={STEP2_GROUP_FINANCE}>
+                <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
+                <Field label={STEP2_FIELDS.collateral.label}><Radio k="collateral" opts={STEP2_FIELDS.collateral.opts} /></Field>
+                <Field label={STEP2_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
+                {/* 직원수(4대보험 통합) — 힌트 포함 */}
+                <div className="mb-6 last:mb-0">
+                  <p className="mb-1 font-bold text-brand-dark">{STEP2_FIELDS.employees.label}</p>
+                  <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                    {STEP2_FIELDS.employees.hint}
+                  </p>
+                  <Radio k="employees" opts={STEP2_FIELDS.employees.opts} />
+                </div>
+              </GroupBox>
+
+              {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) — 있으면 자격이 열려 더 유리한 문맥으로 묶음 */}
+              <GroupBox title={STEP2_GROUP_STRENGTH} tone="green">
+                <Field label={STEP3_FIELDS.certifications.label}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
+                <Field label={STEP3_FIELDS.innovation.label}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
+              </GroupBox>
             </div>
           )}
 
           {step === 3 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP3_TITLE}</h1>
+              <h1 className="mb-1.5 text-xl font-extrabold text-brand-dark">{STEP3_TITLE}</h1>
+              <p className="mb-5 break-keep text-sm leading-relaxed text-brand-gray">{STEP3_SUBTITLE}</p>
 
               {/* ── 정밀 매칭 질문 (소진공 혁신형 상품 정확히 골라내기) ── */}
-              <div className="mb-2 mt-8 rounded-xl border border-brand-yellow/50 bg-brand-yellow/10 p-4">
+              <div className="mb-5 rounded-2xl border border-brand-yellow/50 bg-brand-yellow/10 p-4 sm:p-5">
                 <p className="mb-1 break-keep text-sm font-extrabold text-brand-dark">
                   🎯 맞춤 매칭을 위한 추가 질문
                 </p>
@@ -299,7 +344,7 @@ export default function Diagnosis() {
               </div>
 
               {/* ── 신청 결격사유 (결제 차단 판정) — 한 블록으로 묶어 안내 ── */}
-              <div className="mb-2 mt-8 rounded-xl border border-brand-red/20 bg-brand-red/5 p-4">
+              <div className="mb-2 rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4 sm:p-5">
                 <p className="mb-3 break-keep text-sm font-extrabold text-brand-red">
                   ⚠️ 신청 결격사유 확인 (해당 시 승인이 어려워 정확히 안내드립니다)
                 </p>

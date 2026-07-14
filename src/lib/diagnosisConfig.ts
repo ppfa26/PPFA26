@@ -41,7 +41,10 @@ export const BNO_TEXT = {
 };
 
 // ── 1단계 · 기본 정보 ─────────────────────────────────────────
-export const STEP1_TITLE = "1단계 · 기본 정보";
+export const STEP1_TITLE = "1단계 · 사업장 기본 정보";
+export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본 정보예요. 아는 대로 편하게 선택해 주세요.";
+// 1단계 안내 박스 소제목
+export const STEP1_GROUP = "🏢 사업장 정보";
 export const STEP1_FIELDS = {
   businessType: {
     label: "사업자 유형",
@@ -61,26 +64,23 @@ export const STEP1_FIELDS = {
   },
   age: {
     label: "대표자 연령",
-    opts: ["39세 이하", "39세 이상"],
+    opts: ["만 39세 이하 (청년)", "만 40세 이상"],
   },
   region: {
     label: "지역",
     opts: ["서울", "경기", "인천", "세종", "충청", "강원", "전라", "경상", "제주"],
-  },
-  // ★ 스마트기기 사용 여부 — 혁신성장촉진자금(일반형·스마트기술) 매칭용 ★
-  //   키오스크·무인판매기·서빙로봇·스마트POS·재고관리S/W 등 도입 소상공인이 대상.
-  //   대상자는 많고(후킹) 승인율은 낮은 편 → 결과창에서 정직하게 안내.
-  smartTech: {
-    label: "매장에 스마트기기(키오스크·무인판매기·POS 등)를 쓰고 계신가요?",
-    hint: "예: 키오스크, 테이블오더, 무인판매기, 서빙로봇, 스마트미러, 재고·예약관리 S/W, 디지털메뉴보드 등 (배달앱 단독 이용은 제외)",
-    opts: ["예, 쓰고 있어요", "아니요·해당 없음"],
   },
 };
 
 // ── 2단계 · 무엇을 도와드릴까요 (상담목적+관심분야 통합) ──────────
 //  ★ 간소화 ★ 예전 '상담 목적'과 '관심 분야'가 거의 중복이라 하나로 합쳤습니다.
 //    (정부지원금·인증이 양쪽에 겹쳤음) → 문항 수는 줄고 정보량은 그대로.
-export const STEP2_TITLE = "2단계 · 무엇을 도와드릴까요?";
+export const STEP2_TITLE = "2단계 · 필요한 지원과 기업 역량";
+export const STEP2_SUBTITLE = "어떤 자금·지원이 필요하신지와, 대표님 사업장의 강점을 확인하는 단계예요.";
+// 2단계 문맥별 그룹 소제목
+export const STEP2_GROUP_NEED = "💰 어떤 지원이 필요하세요?";
+export const STEP2_GROUP_FINANCE = "🏦 자금 여건 · 현재 이용 현황";
+export const STEP2_GROUP_STRENGTH = "🏅 우리 기업의 강점 (있으면 더 유리해요)";
 export const STEP2_FIELDS = {
   purposes: {
     label: "문의하고 싶은 정부지원사업을 선택해주세요 (중복 선택)",
@@ -182,11 +182,12 @@ export const STEP3_CONDITIONAL_FIELDS = {
 };
 
 // ── 3단계 · 현재 이용 현황 및 특이사항 ──────────────────────────
-export const STEP3_TITLE = "3단계 · 현재 이용 현황 및 특이사항";
+export const STEP3_TITLE = "3단계 · 맞춤 매칭 · 결격사유 확인";
+export const STEP3_SUBTITLE = "딱 맞는 상품만 골라 안내드리고, 승인이 어려운 사유가 있는지 마지막으로 확인해요.";
 export const STEP3_FIELDS = {
   credit: {
-    label: "대표자 신용점수",
-    opts: ["700점 이하", "839점 이하", "839점 이상"],
+    label: "대표자 개인 신용점수 (KCB·NICE 기준)",
+    opts: ["700점 미만", "700~839점", "840점 이상"],
   },
   // ★ 특허 및 인증 유무 (다중 선택) ★
   certifications: {
@@ -205,7 +206,7 @@ export const STEP3_FIELDS = {
   //   · 면책/인가 완료 → 3년 경과 시 정책자금 가능, 정부지원금·인증은 바로 가능
   bankruptcy: {
     label: "대표자 회생·파산 상태",
-    opts: ["해당 없음", "파산·회생 진행 중 (6회차 경과)", "면책·인가 완료 (3년 경과)"],
+    opts: ["해당 없음", "파산·회생 진행 중", "면책·인가 완료 (3년 경과)"],
   },
   // ★ 세금 체납 여부 — 체납 중이면 정책자금·정부지원 전체 신청 불가 → 결제 차단 ★
   taxDelinquent: {

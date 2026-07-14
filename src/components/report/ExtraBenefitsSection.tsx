@@ -69,11 +69,11 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
   else if (yearsStr === "7년 미만") yearsInBusiness = 5;
   else if (yearsStr === "7년 이상") yearsInBusiness = 7;
 
-  // 대표자 연령(한글) → 대략 나이
+  // 대표자 연령(한글) → 대략 나이 (신·구 옵션 모두 인정: "만 39세 이하 (청년)" / "만 40세 이상")
   const ageStr = get("age");
   let representativeAge: number | undefined;
-  if (ageStr === "39세 이하") representativeAge = 30;
-  else if (ageStr === "39세 이상") representativeAge = 45;
+  if (ageStr?.includes("39세 이하") || ageStr?.includes("청년")) representativeAge = 30;
+  else if (ageStr?.includes("40세 이상") || ageStr?.includes("39세 이상")) representativeAge = 45;
 
   const industriesRaw = profile["industries"];
   const industry = Array.isArray(industriesRaw)

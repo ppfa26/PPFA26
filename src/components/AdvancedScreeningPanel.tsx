@@ -183,9 +183,9 @@ export default function AdvancedScreeningPanel({
 
       // 신용점수 구간 → 대략 점수 (모름 아님으로)
       if (p.credit) {
-        if (p.credit.includes("839점 이상")) { setCreditKnown("yes"); setKcb("850"); setNice("850"); touched = true; }
-        else if (p.credit.includes("839")) { setCreditKnown("yes"); setKcb("820"); setNice("820"); touched = true; }
-        else if (p.credit.includes("700")) { setCreditKnown("yes"); setKcb("690"); setNice("690"); touched = true; }
+        if (p.credit.includes("840")) { setCreditKnown("yes"); setKcb("850"); setNice("850"); touched = true; }
+        else if (p.credit.includes("700~839") || p.credit.includes("839")) { setCreditKnown("yes"); setKcb("820"); setNice("820"); touched = true; }
+        else if (p.credit.includes("700점 미만") || p.credit.includes("700")) { setCreditKnown("yes"); setKcb("690"); setNice("690"); touched = true; }
       }
 
       // 회생·파산 → 재창업자로 간주(정밀진단에서 다시 확인 가능)
@@ -255,11 +255,11 @@ export default function AdvancedScreeningPanel({
         const y = parseFloat(years);
         merged.years = y <= 0 ? "창업 예정" : y < 1 ? "1년 미만" : y < 3 ? "3년 미만" : y < 7 ? "7년 미만" : "7년 이상";
       }
-      if (ceoAge) merged.age = parseInt(ceoAge, 10) <= 39 ? "39세 이하" : "39세 이상";
+      if (ceoAge) merged.age = parseInt(ceoAge, 10) <= 39 ? "만 39세 이하 (청년)" : "만 40세 이상";
       if (employees) merged.employees = employees === "0" ? "0명" : employees === "under5" ? "5명 이하" : "10명 이상";
       if (creditKnown === "yes" && (kcb || nice)) {
         const sc = Math.max(parseInt(kcb || "0", 10), parseInt(nice || "0", 10));
-        merged.credit = sc >= 839 ? "839점 이상" : sc >= 700 ? "839점 이하" : "700점 이하";
+        merged.credit = sc >= 840 ? "840점 이상" : sc >= 700 ? "700~839점" : "700점 미만";
       }
       // 정밀진단에서 체크한 메인비즈 인증 → 처음 질문지 인증목록에 병합
       if (hasMainbiz && !(merged.certifications || []).includes("메인비즈"))
