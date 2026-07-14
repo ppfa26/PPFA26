@@ -7,16 +7,16 @@ const ROWS: { label: string; id: string; value: string }[] = [
   { label: "상호", id: "biz-name", value: "모두의사업친구" },
   { label: "대표자명", id: "biz-ceo", value: "신주엽" },
   { label: "사업자등록번호", id: "biz-regno", value: "597-12-02897" },
-  { label: "통신판매업 신고번호", id: "biz-mailorder", value: "[신고번호 준비 중]" },
+  { label: "통신판매업 신고번호", id: "biz-mailorder", value: "제2026-인천서해-0109호" },
   {
     label: "사업장 주소",
     id: "biz-address",
-    value: "인천광역시 서해구 청라커낼로288번길 26 (청라동) 285호",
+    value: "인천광역시 서해구 청라커낼로288번길 26, 285호",
   },
   { label: "전화번호", id: "biz-tel", value: "1551-7886" },
   { label: "이메일", id: "biz-email", value: "biospartners@naver.com" },
-  { label: "업종", id: "biz-type", value: "경영 컨설팅업 · 정보 제공(자문) 서비스" },
-  { label: "서비스 제공기간", id: "biz-period", value: "결제일로부터 1개월 (플랜별 이용기간)" },
+  { label: "업종", id: "biz-type", value: "응용 소프트웨어 개발 및 공급업" },
+  { label: "서비스 제공기간", id: "biz-period", value: "결제일로부터 1개월" },
 ];
 
 export default function BusinessInfoPage() {
@@ -52,10 +52,9 @@ export default function BusinessInfoPage() {
           서비스 성격 고지
         </h2>
         <Editable id="business-notice-body" as="p" className="mt-2">
-          본 서비스는 정부지원사업·정책자금에 대한 <b>정보 제공 및 신청 방법·전략
-          자문 서비스</b>입니다. 회사는 승인·선정을 <b>보장하지 않으며</b>, 대행
-          신청을 <b>수행하지 않고</b>, 승인에 따른 성공보수(수수료)를 <b>받지
-          않습니다.</b>
+          본 서비스는 정부지원사업에 대한 <b>정보 제공 서비스</b>입니다. 회사는
+          승인·선정을 <b>보장하지 않으며</b>, 관련 안내 이용약관,
+          개인정보처리방침, 환불정책은 사이트 하단 링크에서 확인하실 수 있습니다.
         </Editable>
       </section>
 

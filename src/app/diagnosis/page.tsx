@@ -78,12 +78,12 @@ export default function Diagnosis() {
         const user = sessionData.session?.user ?? null;
         // ★ 관리자(운영자) 계정은 DB에 기록하지 않음 (대표님 요청 — 테스트가 통계에 안 섞이게) ★
         if (isAdminEmail(user?.email)) return;
+        // 진단 단계에서는 이름·연락처를 수집하지 않습니다(개인정보처리방침과 정합).
+        // 로그인 사용자의 email만 식별용으로 함께 저장합니다.
         await supabase.from("diagnoses").insert({
           user_id: user?.id ?? null,
           profile: form,
-          name: (form as any)?.name ?? null,
-          phone: (form as any)?.phone ?? null,
-          email: user?.email ?? (form as any)?.email ?? null,
+          email: user?.email ?? null,
         });
       } catch {
         /* 저장 실패해도 사용자 흐름은 막지 않음 */

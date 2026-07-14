@@ -24,8 +24,8 @@ export default function PrivacyPage() {
         </h2>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
           <li>
-            <b>무료 진단 시</b>: 이름, 연락처(휴대전화번호), 사업 형태·업종·매출
-            규모 등 진단 응답 정보
+            <b>무료 진단 시</b>: 사업 형태·업종·매출 규모·소재지 등 진단 응답
+            정보 (이름·연락처 등 개인 식별 정보는 수집하지 않습니다)
           </li>
           <li>
             <b>회원가입·로그인 시</b>: 이메일 주소, 소셜 로그인 식별 정보
@@ -99,6 +99,8 @@ export default function PrivacyPage() {
         </h2>
         <Editable id="privacy-6-body" as="p" className="mt-2">
           상호: 모두의사업친구
+          <br />
+          개인정보 보호책임자: 신주엽 (대표)
           <br />
           이메일: biospartners@naver.com
         </Editable>
