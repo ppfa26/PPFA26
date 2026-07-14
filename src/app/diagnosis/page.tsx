@@ -256,22 +256,23 @@ export default function Diagnosis() {
               <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
               <Field label={STEP3_FIELDS.certifications.label}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
               <Field label={STEP3_FIELDS.innovation.label}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
+              {/* ── 3단계에서 2단계 하단으로 이동 (3단계 질문지가 너무 길어서) ── */}
+              <Field label={STEP2_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
+              <Field label={STEP2_FIELDS.collateral.label}><Radio k="collateral" opts={STEP2_FIELDS.collateral.opts} /></Field>
+              {/* 직원수(4대보험 통합) — 힌트 포함 */}
+              <div className="mb-6">
+                <p className="mb-1 font-bold text-brand-dark">{STEP2_FIELDS.employees.label}</p>
+                <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                  {STEP2_FIELDS.employees.hint}
+                </p>
+                <Radio k="employees" opts={STEP2_FIELDS.employees.opts} />
+              </div>
             </div>
           )}
 
           {step === 3 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
               <h1 className="mb-5 text-xl font-extrabold text-brand-dark">{STEP3_TITLE}</h1>
-              <Field label={STEP3_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP3_FIELDS.currentInstitutions.opts} /></Field>
-              <Field label={STEP3_FIELDS.collateral.label}><Radio k="collateral" opts={STEP3_FIELDS.collateral.opts} /></Field>
-              {/* 직원수(4대보험 통합) — 힌트 포함 */}
-              <div className="mb-6">
-                <p className="mb-1 font-bold text-brand-dark">{STEP3_FIELDS.employees.label}</p>
-                <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
-                  {STEP3_FIELDS.employees.hint}
-                </p>
-                <Radio k="employees" opts={STEP3_FIELDS.employees.opts} />
-              </div>
 
               {/* ── 정밀 매칭 질문 (소진공 혁신형 상품 정확히 골라내기) ── */}
               <div className="mb-2 mt-8 rounded-xl border border-brand-yellow/50 bg-brand-yellow/10 p-4">
