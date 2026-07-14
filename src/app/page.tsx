@@ -274,17 +274,14 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                정보 입력 시, AI가 내 사업장에 알맞는
-                <br className="hidden sm:inline" /> 모든 정부지원사업을 한 번에
-                안내해드립니다.
+                AI가 내 사업장 맞춤 정부지원사업을 한 번에
               </Editable>
               <Editable
                 id="home-sample-sub"
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
-                진단을 마치면 아래와 똑같은 결과 화면으로, 신청 가능한 기관·상품과
-                신청 방법까지 실제로 이렇게 안내됩니다.
+                신청 가능한 기관·상품과 신청 방법까지 이렇게 안내됩니다.
               </Editable>
             </div>
 
