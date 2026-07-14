@@ -13,6 +13,9 @@ const TRUST_BADGES = [
   { icon: "📚", text: "관련 부처 최신 공문 자문" },
   { icon: "🔒", text: "승인 보장 X · 자문 플랫폼" },
   { icon: "🚫", text: "대행 없음 · 승인 수수료 없음" },
+  { icon: "🔍", text: "내 사업장 맞춤 지원사업 자동 매칭" },
+  { icon: "🤖", text: "AI가 한 번에 전부 찾아 정리" },
+  { icon: "💳", text: "19,900원으로 부담 없이 시작" },
 ];
 
 const VALUES = [
@@ -173,34 +176,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 신뢰 배지 */}
-        <section className="border-y border-gray-100 bg-gray-50 px-4 py-6">
-          <div className="reveal mx-auto grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
-            {TRUST_BADGES.map((b, i) => (
-              <div
-                key={i}
-                className="hover-lift flex flex-col items-center gap-1.5 rounded-xl bg-white px-3 py-4 text-center shadow-sm"
-              >
-                <span className="text-2xl">{b.icon}</span>
-                <Editable
-                  id={`home-trust-${i}`}
-                  as="span"
-                  className="break-keep text-[13px] font-semibold leading-tight text-brand-dark"
-                >
-                  {b.text}
-                </Editable>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 비교 섹션 */}
-        <section className="px-4 py-9 sm:py-14">
-          <div className="reveal mx-auto max-w-3xl">
+        {/* 신뢰 배지 + 핵심 강점 (7칸 통합) */}
+        <section className="border-y border-gray-100 bg-gray-50 px-4 py-9 sm:py-12">
+          <div className="reveal mx-auto max-w-4xl">
             <div className="flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
-                ☕ 하루 커피 한 잔 값
-              </span>
               <Editable
                 id="home-compare-title"
                 as="h2"
@@ -216,29 +195,22 @@ export default function Home() {
                 하루 커피 한 잔 값으로, 내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
               </Editable>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <div className="hover-lift flex flex-col items-center gap-1.5 rounded-2xl border border-brand-dark/10 bg-white p-5 text-center shadow-card">
-                <div className="text-2xl">🔍</div>
-                <p className="break-keep text-sm font-bold leading-snug text-brand-dark">
-                  내 사업장 맞춤<br />지원사업 자동 매칭
-                </p>
-              </div>
-              <div className="hover-lift flex flex-col items-center gap-1.5 rounded-2xl border border-brand-dark/10 bg-white p-5 text-center shadow-card">
-                <div className="text-2xl">🤖</div>
-                <p className="break-keep text-sm font-bold leading-snug text-brand-dark">
-                  AI가 한 번에<br />전부 찾아 정리
-                </p>
-              </div>
-              <div className="hover-lift flex flex-col items-center gap-1.5 rounded-2xl border border-brand-dark/10 bg-white p-5 text-center shadow-card">
-                <div className="text-2xl">💳</div>
-                <Editable
-                  id="home-compare-us"
-                  as="p"
-                  className="break-keep text-sm font-bold leading-snug text-brand-dark"
+            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {TRUST_BADGES.map((b, i) => (
+                <div
+                  key={i}
+                  className="hover-lift flex flex-col items-center gap-1.5 rounded-xl border border-brand-dark/10 bg-white px-3 py-4 text-center shadow-sm"
                 >
-                  <b className="text-brand-green">19,900원</b>으로<br />부담 없이 시작
-                </Editable>
-              </div>
+                  <span className="text-2xl">{b.icon}</span>
+                  <Editable
+                    id={`home-trust-${i}`}
+                    as="span"
+                    className="break-keep text-[13px] font-semibold leading-tight text-brand-dark"
+                  >
+                    {b.text}
+                  </Editable>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -603,14 +575,42 @@ export default function Home() {
             >
               1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.
             </Editable>
-            <Editable
-              id="home-cta-button"
-              as="a"
-              href="/diagnosis"
-              className="mt-6 inline-block w-full rounded-full bg-brand-dark px-10 py-3.5 text-base font-bold text-white hover:opacity-90 sm:w-auto sm:py-4 sm:text-lg"
-            >
-              무료 진단 시작하기
-            </Editable>
+            <div className="mt-7 flex items-start justify-center gap-6 sm:gap-10">
+              {/* 왼쪽 — 카카오톡 1:1 채팅 문의 */}
+              <a
+                id="home-cta-kakao"
+                href="http://pf.kakao.com/_VxfWxan/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col items-center gap-2.5"
+              >
+                <span className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-[#FEE500] text-brand-dark shadow-card transition group-hover:scale-105 sm:h-28 sm:w-28">
+                  <span className="text-3xl sm:text-4xl">💬</span>
+                  <span className="mt-1 text-[11px] font-extrabold leading-tight sm:text-xs">
+                    1:1 채팅
+                  </span>
+                </span>
+                <span className="break-keep text-[13px] font-bold text-brand-dark sm:text-sm">
+                  카톡 문의하기
+                </span>
+              </a>
+              {/* 오른쪽 — 무료 진단 시작하기 */}
+              <a
+                id="home-cta-button"
+                href="/diagnosis"
+                className="group flex flex-col items-center gap-2.5"
+              >
+                <span className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-brand-dark text-white shadow-card transition group-hover:scale-105 animate-pulseGlow sm:h-28 sm:w-28">
+                  <span className="text-3xl sm:text-4xl">🚀</span>
+                  <span className="mt-1 text-[11px] font-extrabold leading-tight sm:text-xs">
+                    무료 진단
+                  </span>
+                </span>
+                <span className="break-keep text-[13px] font-bold text-brand-dark sm:text-sm">
+                  진단 시작하기
+                </span>
+              </a>
+            </div>
           </div>
         </section>
       </main>

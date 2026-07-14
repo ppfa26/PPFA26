@@ -26,9 +26,8 @@ export default function MobilePcNotice() {
     <div className="sm:hidden bg-brand-dark/95 text-white">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-2 px-3 py-1.5">
         <p className="text-[11px] leading-snug text-white/85">
-          💻 PC 화면에 최적화된 서비스예요. 모바일은 브라우저의{" "}
-          <b className="font-semibold text-white">‘데스크톱 버전’</b>으로 보시면 더
-          편합니다.
+          💻 PC 데스크톱 버전 화면에 최적화된 서비스입니다. 가급적{" "}
+          <b className="font-semibold text-white">PC 데스크톱 버전</b>으로 확인 부탁드립니다.
         </p>
         <button
           type="button"
