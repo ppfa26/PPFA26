@@ -9,6 +9,7 @@ import PageShell from "@/components/PageShell";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
 import { countMatchedItems } from "@/lib/supportPrograms";
+import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
 
 type Payment = {
   order_id: string;
@@ -23,6 +24,7 @@ export default function MyPage() {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [viewStatus, setViewStatus] = useState<ViewStatus | null>(null);
   const [matchCount, setMatchCount] = useState<number | null>(null);
   const [diagName, setDiagName] = useState("");
 
@@ -48,6 +50,15 @@ export default function MyPage() {
           if (mounted && data) setPayments(data as Payment[]);
         } catch {
           /* RLS/네트워크 실패 시 무시 */
+        }
+
+        // 2-1) 유효 이용기간(결제 후 1개월 이내) 여부 확인 — 서버(RPC) 기준
+        //      커뮤니티 노출은 "현재 유효한 결제자"에게만 하기 위함.
+        try {
+          const st = await fetchViewStatus();
+          if (mounted) setViewStatus(st);
+        } catch {
+          /* 실패 시 미노출(안전) */
         }
       }
 
@@ -127,8 +138,10 @@ export default function MyPage() {
                 )}
               </section>
 
-              {/* 결제완료 회원 전용 — 오픈채팅 커뮤니티 (결제한 사람만 노출) */}
-              {payments.some((p) => p.status === "paid") && (
+              {/* 결제완료 회원 전용 — 오픈채팅 커뮤니티
+                  (현재 유효한 이용기간(결제 후 1개월 이내)인 회원에게만 노출.
+                   결제했더라도 1개월이 지나 만료된 회원에게는 보이지 않음) */}
+              {viewStatus?.isActive && (
                 <section
                   id="mypage-openchat"
                   className="mt-5 overflow-hidden rounded-3xl border-2 border-[#FEE500] bg-[#FEE500]/10 p-6 shadow-card"
