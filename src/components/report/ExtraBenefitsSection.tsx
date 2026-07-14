@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import benefitsData from "@/data/benefits-extra.json";
-import BenefitTimeline from "@/components/report/BenefitTimeline";
 
 // ── Props 구조 (지시사항 명세 그대로) ─────────────────────────────
 //  값이 없으면 undefined 또는 0으로 전달 → 내부에서 "정보 부족" 처리
@@ -391,19 +390,7 @@ export default function ExtraBenefitsSection({ userInput }: Props) {
           </p>
         </div>
       </div>
-
-      {/* ========== 🗓️ 이 순서대로만 챙기세요 — 동일한 흰 카드 틀 ========== */}
-      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
-        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-          🗓️ 이 순서대로만 챙기세요
-        </p>
-        <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          언제 무엇을 신청해야 하는지 순서대로 정리했습니다. 위에서부터 하나씩 체크하세요.
-        </p>
-        <div className="mt-3">
-          <BenefitTimeline />
-        </div>
-      </div>
+      {/* ※ 🗓️ '이 순서대로만 챙기세요' 타임라인 블록 제거(대표님 요청) — 위 5가지 혜택 카드로 충분 */}
     </>
   );
 }

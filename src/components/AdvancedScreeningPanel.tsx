@@ -1218,6 +1218,9 @@ function AdvancedResult({
         </div>
       )}
 
+      {/* 🎁 5가지 추가 혜택 — '기관별 상품 한눈에 보기' 박스 '위'로 이동 (대표님 요청) */}
+      {autoRun && <ExtraBenefitsSection />}
+
       {/* 기관별 상품 한눈에 보기 — 지원제도 박스 '아래' 별도 박스로 배치 (대표님 요청) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
         <p className="text-base font-extrabold text-brand-dark sm:text-lg">
@@ -1258,9 +1261,6 @@ function AdvancedResult({
           공식 사이트 모음 보기
         </span>
       </a>
-
-      {/* 🎁 5가지 추가 혜택 + 🗓️ 챙기는 순서 — 최하단 배치 (대표님 요청, 동일 카드 디자인) */}
-      {autoRun && <ExtraBenefitsSection />}
     </div>
   );
 }

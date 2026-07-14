@@ -236,7 +236,7 @@ export default function Home() {
                   as="p"
                   className="break-keep text-sm font-bold leading-snug text-brand-dark"
                 >
-                  <b className="text-brand-green">297,000원</b>부터<br />부담 없이 시작
+                  <b className="text-brand-green">19,900원</b>으로<br />부담 없이 시작
                 </Editable>
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                297,000원부터 이 모든 걸 알려드립니다.
+                19,900원으로 이 모든 걸 알려드립니다.
               </Editable>
               <Editable
                 id="home-value-sub"
