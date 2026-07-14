@@ -48,7 +48,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-2 pl-2.5 pr-2.5 xs:pl-4 xs:pr-3.5 sm:h-16 sm:gap-4 sm:px-6">
+      <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-1.5 pl-2 pr-2 xs:gap-2 xs:pl-4 xs:pr-3.5 sm:h-16 sm:gap-4 sm:px-6">
         {/* 로고 + 상호명 */}
         <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Image
@@ -59,7 +59,7 @@ export default function Header() {
             className="h-9 w-9 shrink-0 rounded-[9px] sm:h-10 sm:w-10"
             priority
           />
-          <span className="flex flex-col justify-center pr-1 sm:pr-0">
+          <span className="flex flex-col justify-center pr-0.5 xs:pr-1 sm:pr-0">
             <span className="block whitespace-nowrap text-[17px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
               모두의사업친구
             </span>
@@ -78,10 +78,13 @@ export default function Header() {
         </Link>
 
         {/* 네비 + CTA */}
-        <nav className="flex shrink-0 items-center gap-2.5 xs:gap-3.5 sm:gap-5">
+        <nav className="flex shrink-0 items-center gap-2 xs:gap-3.5 sm:gap-5">
+          {/* '후기'는 관리자 로그인 시 모바일에서 숨김(메뉴 과밀 방지) · PC에선 항상 노출 */}
           <Link
             href="/community"
-            className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
+            className={`whitespace-nowrap text-[12px] font-semibold text-brand-dark transition-colors hover:text-brand-orange xs:text-[12.5px] sm:text-sm ${
+              isAdmin ? "hidden sm:inline" : ""
+            }`}
           >
             후기
           </Link>
@@ -90,14 +93,14 @@ export default function Header() {
               {isAdmin && (
                 <Link
                   href="/admin"
-                  className="whitespace-nowrap rounded-md bg-brand-dark px-2 py-1 text-[12.5px] font-bold text-white transition-colors hover:bg-brand-orange sm:text-sm"
+                  className="whitespace-nowrap rounded-md bg-brand-dark px-1.5 py-1 text-[11px] font-bold text-white transition-colors hover:bg-brand-orange xs:px-2 xs:text-[12.5px] sm:text-sm"
                 >
                   관리자
                 </Link>
               )}
               <Link
                 href="/mypage"
-                className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
+                className="whitespace-nowrap text-[12px] font-semibold text-brand-dark transition-colors hover:text-brand-orange xs:text-[12.5px] sm:text-sm"
               >
                 마이페이지
               </Link>
@@ -113,14 +116,14 @@ export default function Header() {
           ) : (
             <Link
               href="/signup"
-              className="whitespace-nowrap text-[12.5px] font-semibold text-brand-dark transition-colors hover:text-brand-orange sm:text-sm"
+              className="whitespace-nowrap text-[12px] font-semibold text-brand-dark transition-colors hover:text-brand-orange xs:text-[12.5px] sm:text-sm"
             >
               로그인
             </Link>
           )}
           <Link
             href="/diagnosis"
-            className="btn-brand whitespace-nowrap rounded-full px-3.5 py-2 text-[12.5px] font-bold sm:px-5 sm:py-2 sm:text-sm"
+            className="btn-brand whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-bold xs:px-3.5 xs:text-[12.5px] sm:px-5 sm:py-2 sm:text-sm"
           >
             무료 진단
           </Link>

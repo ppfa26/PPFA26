@@ -229,14 +229,14 @@ export default function Home() {
                   AI가 한 번에<br />전부 찾아 정리
                 </p>
               </div>
-              <div className="hover-lift flex flex-col items-center gap-1.5 rounded-2xl border-2 border-brand-green bg-white p-5 text-center shadow-card">
+              <div className="hover-lift flex flex-col items-center gap-1.5 rounded-2xl border border-brand-dark/10 bg-white p-5 text-center shadow-card">
                 <div className="text-2xl">💳</div>
                 <Editable
                   id="home-compare-us"
                   as="p"
                   className="break-keep text-sm font-bold leading-snug text-brand-dark"
                 >
-                  <b className="text-brand-green">19,000원</b>으로<br />부담 없이 시작
+                  <b className="text-brand-green">19,900원</b>으로<br />부담 없이 시작
                 </Editable>
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                19,000원으로 이 모든 걸 알려드립니다.
+                19,900원으로 이 모든 걸 알려드립니다.
               </Editable>
               <Editable
                 id="home-value-sub"
