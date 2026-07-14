@@ -7,13 +7,14 @@ export default function SitesPage() {
   return (
     <LegalLayout
       pageKey="sites"
-      title="자주 쓰는 공식 사이트 모음"
+      title="정부지원사업 관련 공식 사이트 모음"
       updatedAt="2026년 7월 8일"
     >
       <p className="text-sm leading-relaxed text-brand-gray">
-        정책자금·보증·창업·인증 업무에 자주 쓰이는 공식 사이트를 분야별로 모았습니다.
-        모든 링크는 새 창에서 열리며, 정확한 신청 방법과 전략은{" "}
-        <strong className="text-brand-dark">1:1 상담</strong>으로 안내해 드립니다.
+        창업·지원금·정책자금·인증·감면제도 등 실제 업무에 자주 쓰이는 공식
+        사이트를 분야별로 모았습니다. 모든 링크는 새 창에서 열리며, 사용이
+        어려우시다면 <strong className="text-brand-dark">카카오톡</strong>으로
+        문의주시기 바랍니다.
       </p>
 
       {USEFUL_SITE_CATEGORIES.map((cat) => (
@@ -57,9 +58,9 @@ export default function SitesPage() {
 
       <section id="sites-notice" className="mt-2">
         <p className="rounded-2xl bg-gray-50 px-4 py-4 text-xs leading-relaxed text-brand-gray">
-          ※ 각 기관 사정에 따라 URL이 변경될 수 있습니다. 링크가 열리지 않는 경우
-          해당 기관명을 포털에서 검색해 주세요. 링크는 주기적으로 점검하여
-          최신 상태를 유지합니다.
+          ※ 각 기관 사정에 따라 URL이 변경될 수 있습니다.
+          <br />
+          링크가 열리지 않는 경우 문의해주시기 바랍니다.
         </p>
       </section>
     </LegalLayout>
