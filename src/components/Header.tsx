@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { isAdminEmail } from "@/lib/admin";
 
 export default function Header() {
   const pathname = usePathname();
@@ -15,23 +16,16 @@ export default function Header() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const ADMIN_EMAILS = ["biospartners@naver.com", "meolhae1993@gmail.com"];
-
   useEffect(() => {
     // 최초 세션 확인
     supabase.auth.getSession().then(({ data }) => {
       setLoggedIn(!!data.session);
-      setIsAdmin(
-        !!data.session?.user?.email &&
-          ADMIN_EMAILS.includes(data.session.user.email)
-      );
+      setIsAdmin(isAdminEmail(data.session?.user?.email));
     });
     // 로그인/로그아웃 등 상태 변화 실시간 반영
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setLoggedIn(!!session);
-      setIsAdmin(
-        !!session?.user?.email && ADMIN_EMAILS.includes(session.user.email)
-      );
+      setIsAdmin(isAdminEmail(session?.user?.email));
     });
     return () => {
       sub.subscription.unsubscribe();

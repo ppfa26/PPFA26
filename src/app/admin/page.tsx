@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
+import { isAdminEmail } from "@/lib/admin";
 
 /* ------------------------------------------------------------------ */
 /*  타입                                                               */
@@ -173,15 +174,47 @@ export default function AdminPage() {
       supabase.rpc("admin_ip_summary"),
       supabase.rpc("admin_list_blocks"),
     ]);
-    if (!s.error && s.data?.[0]) setStats(s.data[0] as Stats);
-    if (!u.error && u.data) setUsers(u.data as AdminUser[]);
-    if (!p.error && p.data) setPayments(p.data as AdminPayment[]);
-    if (!d.error && d.data) setDiagnoses(d.data as AdminDiagnosis[]);
+    // ★ 관리자(운영자) 계정 데이터는 화면·통계에서 제외 (대표님 요청) ★
+    //   기존에 쌓인 관리자 테스트 데이터도 여기서 걸러내고, 매출·건수를 다시 계산합니다.
+    const payList = (!p.error && p.data ? (p.data as AdminPayment[]) : []).filter(
+      (row) => !isAdminEmail(row.email)
+    );
+    const userList = (!u.error && u.data ? (u.data as AdminUser[]) : []).filter(
+      (row) => !isAdminEmail(row.email)
+    );
+    const diagList = (!d.error && d.data ? (d.data as AdminDiagnosis[]) : []).filter(
+      (row) => !isAdminEmail(row.email)
+    );
+
+    if (!u.error && u.data) setUsers(userList);
+    if (!p.error && p.data) setPayments(payList);
+    if (!d.error && d.data) setDiagnoses(diagList);
     if (!dr.error && dr.data) setDaily(dr.data as DailyRow[]);
     if (!mr.error && mr.data) setMonthly(mr.data as MonthlyRow[]);
     if (!ac.error && ac.data) setAccess(ac.data as AccessRow[]);
     if (!ip.error && ip.data) setIpSummary(ip.data as IpRow[]);
     if (!bl.error && bl.data) setBlocks(bl.data as BlockRow[]);
+
+    // 통계: 관리자 결제를 뺀 값으로 재계산 (매출·결제건수·회원수)
+    if (!s.error && s.data?.[0]) {
+      const base = s.data[0] as Stats;
+      const paid = payList.filter((r) => r.status === "paid");
+      const now = new Date();
+      const monthRevenue = paid
+        .filter((r) => {
+          if (!r.paid_at) return false;
+          const d = new Date(r.paid_at);
+          return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+        })
+        .reduce((sum, r) => sum + (r.amount || 0), 0);
+      setStats({
+        ...base,
+        total_users: userList.length || base.total_users,
+        total_paid: paid.length,
+        total_revenue: paid.reduce((sum, r) => sum + (r.amount || 0), 0),
+        month_revenue: monthRevenue,
+      });
+    }
     setRefreshing(false);
   }, []);
 

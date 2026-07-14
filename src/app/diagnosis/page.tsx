@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { supabase } from "@/lib/supabaseClient";
+import { isAdminEmail } from "@/lib/admin";
 import {
   DIAGNOSIS_TEXT,
   BNO_TEXT,
@@ -75,6 +76,8 @@ export default function Diagnosis() {
       try {
         const { data: sessionData } = await supabase.auth.getSession();
         const user = sessionData.session?.user ?? null;
+        // ★ 관리자(운영자) 계정은 DB에 기록하지 않음 (대표님 요청 — 테스트가 통계에 안 섞이게) ★
+        if (isAdminEmail(user?.email)) return;
         await supabase.from("diagnoses").insert({
           user_id: user?.id ?? null,
           profile: form,
