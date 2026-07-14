@@ -106,8 +106,8 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
         ))}
       </div>
 
-      {/* 공통 안내 */}
-      <div className="mx-auto mt-8 max-w-2xl rounded-2xl bg-gray-50 p-5">
+      {/* 공통 안내 — (대표님 요청) 위 가격 카드와 비슷한 가로폭으로 축소 + 가운데 배치 */}
+      <div className="mx-auto mt-5 max-w-lg rounded-2xl bg-gray-50 p-4">
         <ul className="space-y-1.5 text-[11px] text-brand-dark sm:text-xs">
           {COMMON_NOTES.map((n, i) => (
             <li key={i} className="break-keep leading-relaxed">
