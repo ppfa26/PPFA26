@@ -328,7 +328,9 @@ export default function Diagnosis() {
                   🎯 맞춤 매칭을 위한 추가 질문
                 </p>
                 <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
-                  아래 질문은 해당되는 지원상품만 정확히 골라 안내해 드리기 위한 것입니다. 해당 없으면 &lsquo;아니요&rsquo;를 선택하시면 됩니다.
+                  아래 질문은 맞는 상품만 골라 드리기 위한 것입니다.
+                  <br />
+                  해당 없으면 &lsquo;아니요&rsquo;를 선택하시면 됩니다.
                 </p>
                 <CondQ k="revenueGrowth2y" field={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y} />
                 {/* 스마트공장은 제조업일 때만 노출 */}

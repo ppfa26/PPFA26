@@ -226,8 +226,10 @@ export default function MyPage() {
                   🤝 전문가 도움이 더 필요하신가요?
                 </h2>
                 <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
-                  직접 하기 어려운 부분은 저희 전문가가 도와드립니다. 아래 항목은{" "}
-                  <b className="text-brand-dark">신청하신 분에 한해</b> 별도로 진행됩니다.
+                  직접 하기 어려운 부분은 저희 전문가가 도와드립니다.
+                  <br />
+                  아래 항목은 <b className="text-brand-dark">신청하신 분에 한해</b> 별도로 진행됩니다.
+                  <br />
                   필요하신 항목을 눌러 편하게 문의해 주세요.
                 </p>
 
@@ -273,7 +275,10 @@ export default function MyPage() {
 
                 <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-gray">
                   ※ 위 서비스는 AI 올인원 패키지에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
-                  버튼을 누르면 공식 카카오톡 채널톡으로 연결되며, 담당자가 세부 내용과 금액을 안내해 드립니다.
+                  <br />
+                  버튼을 누르면 공식 카카오톡 채널톡으로 연결됩니다.
+                  <br />
+                  담당자가 세부 내용과 금액을 안내해 드립니다.
                 </p>
               </section>
 

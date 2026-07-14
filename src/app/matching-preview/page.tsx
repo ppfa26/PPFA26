@@ -76,8 +76,11 @@ export default function MatchingPreview() {
               </div>
 
               <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-left text-xs leading-relaxed text-brand-dark/80">
-                💡 위 사유가 <b>해소된 후 다시 진단</b>하시면 정상적으로 매칭 결과를
-                확인하실 수 있습니다. 궁금한 점은 언제든 상담으로 도와드리겠습니다.
+                💡 위 사유가 <b>해소된 후 다시 진단</b>해 주세요.
+                <br />
+                그러면 정상적으로 매칭 결과를 확인하실 수 있습니다.
+                <br />
+                궁금한 점은 언제든 상담으로 도와드립니다.
               </div>
 
               <a
@@ -247,7 +250,9 @@ export default function MatchingPreview() {
                   🔒 기관명·상품명·신청 방법만 가려져 있어요
                 </p>
                 <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/70">
-                  결제하시면 흐린 부분이 <b className="text-brand-orange">선명하게 공개</b>되고 신청 링크도 바로 눌러 이용하실 수 있습니다.
+                  결제하시면 흐린 부분이 <b className="text-brand-orange">선명하게 공개</b>됩니다.
+                  <br />
+                  신청 링크도 바로 눌러 이용하실 수 있습니다.
                 </p>
                 <a
                   href="/pricing"
@@ -273,7 +278,11 @@ export default function MatchingPreview() {
               as="p"
               className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm"
             >
-              ☕ 커피 한 잔 값으로 AI를 활용해 내 사업장에 해당되는 모든 정부지원사업을 찾아보세요. 신청 가능한 기관·상품·정부지원제도와 신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다. (VAT 포함)
+              ☕ 커피 한 잔 값입니다.
+              <br />
+              내 사업장에 맞는 모든 정부지원사업을 찾아보세요.
+              <br />
+              기관·상품·신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다. (VAT 포함)
             </Editable>
             <Editable
               id="preview-lock-cta"

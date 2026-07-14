@@ -189,7 +189,11 @@ function SuccessInner() {
               </p>
             )}
             <p className="mt-4 break-keep text-sm text-brand-gray">
-              잠시 후 마이페이지로 이동합니다. 마이페이지에서 &lsquo;전체 결과 확인하기&rsquo;를 눌러 매칭 결과를 보실 수 있습니다.
+              잠시 후 마이페이지로 이동합니다.
+              <br />
+              마이페이지에서 &lsquo;전체 결과 확인하기&rsquo;를 눌러 주세요.
+              <br />
+              매칭 결과를 보실 수 있습니다.
             </p>
             <Link
               href="/mypage"
