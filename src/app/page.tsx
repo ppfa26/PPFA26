@@ -177,47 +177,7 @@ export default function Home() {
         </section>
 
         {/* 신뢰 배지 + 핵심 강점 (7칸 통합) */}
-        <section className="border-y border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
-          <div className="reveal mx-auto max-w-4xl">
-            <div className="flex flex-col items-center text-center">
-              <Editable
-                id="home-compare-title"
-                as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
-              >
-                아직 몰라서 못 받고 있는 정부지원사업
-              </Editable>
-              <Editable
-                id="home-compare-sub"
-                as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
-              >
-                하루 커피 한 잔 값으로, 내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
-              </Editable>
-            </div>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              {TRUST_BADGES.map((b, i) => (
-                <div
-                  key={i}
-                  className="hover-lift flex w-[calc(50%-0.375rem)] flex-col items-center justify-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-3 py-4 text-center shadow-card sm:w-[calc(25%-0.6rem)]"
-                >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-xl">
-                    {b.icon}
-                  </span>
-                  <Editable
-                    id={`home-trust-${i}`}
-                    as="span"
-                    className="flex min-h-[2.4rem] items-center break-keep text-[13px] font-semibold leading-tight text-brand-dark"
-                  >
-                    {b.text}
-                  </Editable>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 가치 제안 4단계 */}
+        {/* 가치 제안 4단계 — (대표님 요청) 7네모칸 섹션보다 위로 배치 */}
         <section className="bg-gray-50 px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-4xl text-center">
             <div className="flex flex-col items-center text-center">
@@ -254,6 +214,47 @@ export default function Home() {
                     className="break-keep text-sm font-semibold text-brand-dark sm:text-base"
                   >
                     {v}
+                  </Editable>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 신뢰 배지 7칸 — (대표님 요청) 서비스 안내 섹션보다 아래로 배치 */}
+        <section className="border-y border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
+          <div className="reveal mx-auto max-w-4xl">
+            <div className="flex flex-col items-center text-center">
+              <Editable
+                id="home-compare-title"
+                as="h2"
+                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+              >
+                아직 몰라서 못 받고 있는 정부지원사업
+              </Editable>
+              <Editable
+                id="home-compare-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
+              >
+                하루 커피 한 잔 값으로, 내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
+              </Editable>
+            </div>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              {TRUST_BADGES.map((b, i) => (
+                <div
+                  key={i}
+                  className="hover-lift flex w-[calc(50%-0.375rem)] flex-col items-center justify-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-3 py-4 text-center shadow-card sm:w-[calc(25%-0.6rem)]"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-xl">
+                    {b.icon}
+                  </span>
+                  <Editable
+                    id={`home-trust-${i}`}
+                    as="span"
+                    className="flex min-h-[2.4rem] items-center break-keep text-[13px] font-semibold leading-tight text-brand-dark"
+                  >
+                    {b.text}
                   </Editable>
                 </div>
               ))}
