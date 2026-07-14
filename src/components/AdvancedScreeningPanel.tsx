@@ -771,9 +771,20 @@ function AdvancedResult({
   const selectedSinbo = REGION_SINBO.find((r) => r.region === sinboRegion);
 
   // ★ 기관별 상품 아코디언 — 클릭 시 해당 기관의 여러 상품이 쭈르륵 펼쳐짐 ★
+  //  (대표님 요청) 모든 기관 카테고리를 처음부터 '펼쳐진' 상태로 통일 → 위아래 오픈 정도 차이 없음.
   const [openProducts, setOpenProducts] = useState<Record<number, boolean>>({});
   const toggleProducts = (i: number) =>
     setOpenProducts((prev) => ({ ...prev, [i]: !prev[i] }));
+
+  // report(=creditMatches)가 준비/갱신되면 모든 기관 아코디언을 기본 오픈으로 초기화
+  useEffect(() => {
+    const all: Record<number, boolean> = {};
+    creditMatches.forEach((_, i) => {
+      all[i] = true;
+    });
+    setOpenProducts(all);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [creditMatches.length]);
 
   // 추천 기관 중 지역신용보증재단 포함 여부 → 지역 재단 안내 노출 조건
   const hasJaedan = creditMatches.some((m) => m.institution.includes("재단"));
