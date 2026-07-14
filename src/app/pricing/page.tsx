@@ -49,7 +49,7 @@ export default function PricingPage() {
               as="h1"
               className="text-3xl font-black text-brand-dark sm:text-4xl"
             >
-              딱 하나면 충분합니다, 올인원 패키지
+              딱 하나면 충분합니다, AI 올인원 패키지
             </Editable>
             <Editable
               id="pricing-sub"

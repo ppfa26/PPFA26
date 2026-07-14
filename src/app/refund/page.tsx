@@ -25,7 +25,7 @@ export default function RefundPage() {
           가이드 사이트 열람·매칭 추천·상담이 개시되며, 별도 배송이 없는 상품입니다.
         </Editable>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
-          <li>올인원 패키지 : <b>결제일로부터 1개월</b> 이용</li>
+          <li>AI 올인원 패키지 : <b>결제일로부터 1개월</b> 이용</li>
           <li>이용기간 종료 시 1개월 단위로 자유롭게 추가 결제·연장 가능</li>
         </ul>
       </section>

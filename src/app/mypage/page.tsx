@@ -218,7 +218,7 @@ export default function MyPage() {
                 </div>
 
                 <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-gray">
-                  ※ 위 서비스는 올인원 패키지에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
+                  ※ 위 서비스는 AI 올인원 패키지에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
                   버튼을 누르면 공식 카카오톡 채널톡으로 연결되며, 담당자가 세부 내용과 금액을 안내해 드립니다.
                 </p>
               </section>

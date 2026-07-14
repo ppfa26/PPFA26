@@ -1,4 +1,4 @@
-// 상품 구성 — 올인원 패키지 단일 상품 (확정 가격: 19,900원, 부가세 포함가)
+// 상품 구성 — AI 올인원 패키지 단일 상품 (확정 가격: 19,000원, 부가세 포함가)
 // ※ id는 기존 "basic"을 그대로 재사용해 결제(?tier=basic) 흐름·기존 결제내역 표기를 유지한다.
 // originalPrice = 정가(앵커링용 취소선)
 export type Tier = {
@@ -22,10 +22,10 @@ export const TIERS: Tier[] = [
   {
     id: "basic",
     icon: "🎯",
-    name: "올인원 패키지",
-    subtitle: "내 사업장 정부지원 올인원",
-    price: 19900,
-    priceLabel: "19,900원",
+    name: "AI 올인원 패키지",
+    subtitle: "AI로 내 사업장에서 받을 수 있는 정부지원사업 찾기",
+    price: 19000,
+    priceLabel: "19,000원",
     originalPrice: 49000,
     originalPriceLabel: "49,000원",
     discountLabel: "59% 할인",
@@ -33,11 +33,11 @@ export const TIERS: Tier[] = [
     period: "1개월",
     popular: true,
     features: [
-      "내가 받을 수 있는 모든 정부지원사업 리스트",
-      "신청하는 방법 및 관련 사이트 링크",
-      "공식 카카오톡 채널톡 상담",
+      "AI로 찾은 내 사업장 기준 정부지원사업 리스트",
+      "정부지원사업 신청 방법 및 관련 사이트 링크",
+      "공식 카카오 채널 톡 상담",
     ],
-    cta: "올인원 패키지 시작하기",
+    cta: "AI 올인원 패키지 시작하기",
   },
 ];
 

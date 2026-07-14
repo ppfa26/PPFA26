@@ -11,14 +11,14 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
       <div
         className={
           single
-            ? "mx-auto flex max-w-sm justify-center"
+            ? "mx-auto flex max-w-lg justify-center"
             : "mx-auto grid max-w-3xl gap-4 sm:grid-cols-3"
         }
       >
         {TIERS.map((tier) => (
           <div
             key={tier.id}
-            className={`relative flex flex-col overflow-hidden rounded-2xl border p-5 shadow-card transition hover:shadow-cardHover ${
+            className={`relative flex flex-col overflow-hidden rounded-2xl border px-6 py-4 shadow-card transition hover:shadow-cardHover ${
               single ? "w-full" : ""
             } ${
               tier.popular
@@ -34,7 +34,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <Editable
               id={`${prefix}-tier-${tier.id}-name`}
               as="h3"
-              className="mt-1.5 text-lg font-extrabold text-brand-dark"
+              className="mt-1 text-lg font-extrabold text-brand-dark"
             >
               {tier.name}
             </Editable>
@@ -48,7 +48,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               {tier.subtitle}
             </Editable>
 
-            <div className="mt-3">
+            <div className="mt-2">
               {/* 정가(앵커) + 할인율 */}
               <div className="flex items-center gap-2">
                 <span
@@ -77,7 +77,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               </p>
             </div>
 
-            <ul className="mt-4 flex-1 space-y-2">
+            <ul className="mt-3 flex-1 space-y-1.5">
               {tier.features.map((f, i) => (
                 <li key={i} className="flex items-start gap-2 text-[13px]">
                   <span className="mt-0.5 text-brand-green">✓</span>
@@ -94,7 +94,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
 
             <Link
               href={`/signup?tier=${tier.id}`}
-              className={`mt-5 block rounded-full py-2.5 text-center text-sm font-bold ${
+              className={`mt-4 block rounded-full py-2.5 text-center text-sm font-bold ${
                 tier.popular
                   ? "bg-brand-dark text-white hover:opacity-90"
                   : "btn-brand"
