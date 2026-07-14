@@ -517,14 +517,14 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                합리적인 가격, 3가지 플랜
+                딱 하나면 충분, 올인원 패키지
               </Editable>
               <Editable
                 id="home-pricing-sub"
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
-                모든 플랜은 1회성 결제이며 월 구독 결제가 아닙니다.
+                1회성 결제이며 월 구독 결제가 아닙니다.
               </Editable>
             </div>
             <div className="mt-8">

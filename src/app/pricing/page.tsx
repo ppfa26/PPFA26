@@ -49,14 +49,14 @@ export default function PricingPage() {
               as="h1"
               className="text-3xl font-black text-brand-dark sm:text-4xl"
             >
-              합리적인 가격, 3가지 플랜
+              딱 하나면 충분합니다, 올인원 패키지
             </Editable>
             <Editable
               id="pricing-sub"
               as="p"
               className="mx-auto mt-3 max-w-xl text-brand-gray"
             >
-              모든 플랜은 1회성 결제이며 월 구독 결제가 아닙니다.
+              1회성 결제이며 월 구독 결제가 아닙니다. 사업하면서 이 정도는 알아야죠.
             </Editable>
             <p className="mx-auto mt-4 inline-block break-keep rounded-full bg-brand-yellow/40 px-4 py-2 text-sm font-semibold text-brand-dark">
               💡 모든 가격은 부가세가 포함된 금액입니다

@@ -5,20 +5,29 @@ import { TIERS, COMMON_NOTES } from "@/lib/products";
 import Editable from "./Editable";
 
 export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
+  const single = TIERS.length === 1;
   return (
     <div>
-      <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-3">
+      <div
+        className={
+          single
+            ? "mx-auto flex max-w-sm justify-center"
+            : "mx-auto grid max-w-3xl gap-4 sm:grid-cols-3"
+        }
+      >
         {TIERS.map((tier) => (
           <div
             key={tier.id}
             className={`relative flex flex-col overflow-hidden rounded-2xl border p-5 shadow-card transition hover:shadow-cardHover ${
+              single ? "w-full" : ""
+            } ${
               tier.popular
                 ? "border-brand-orange bg-brand-grad"
                 : "border-gray-200 bg-white"
             }`}
           >
             {tier.popular && (
-              <div className="ribbon">🔥 가장 인기</div>
+              <div className="ribbon">🔥 {single ? "런칭 특가" : "가장 인기"}</div>
             )}
 
             <div className="text-2xl">{tier.icon}</div>

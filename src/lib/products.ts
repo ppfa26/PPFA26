@@ -1,5 +1,6 @@
-// 상품 구성 (확정 가격: 297,000 / 397,000 / 697,000, 모두 부가세 포함가)
-// originalPrice = 정가(앵커링용 취소선), monthly = 12개월 환산 참고 표기
+// 상품 구성 — 올인원 패키지 단일 상품 (확정 가격: 19,900원, 부가세 포함가)
+// ※ id는 기존 "basic"을 그대로 재사용해 결제(?tier=basic) 흐름·기존 결제내역 표기를 유지한다.
+// originalPrice = 정가(앵커링용 취소선)
 export type Tier = {
   id: "basic" | "premier" | "pro";
   icon: string;
@@ -20,63 +21,23 @@ export type Tier = {
 export const TIERS: Tier[] = [
   {
     id: "basic",
-    icon: "📚",
-    name: "베이직",
-    subtitle: "셀프 신청 가이드",
-    price: 297000,
-    priceLabel: "297,000원",
-    originalPrice: 490000,
-    originalPriceLabel: "490,000원",
-    discountLabel: "39% 할인",
-    monthlyLabel: "월 24,750원",
-    period: "1개월",
-    popular: false,
-    features: [
-      "신청 방법 완벽 가이드 사이트 열람권",
-      "내 사업장에 알맞는 정부지원사업 추천",
-      "공식 채널톡 Q&A 상담",
-    ],
-    cta: "베이직 시작하기",
-  },
-  {
-    id: "premier",
     icon: "🎯",
-    name: "프리미어",
-    subtitle: "1:1 코칭 패키지",
-    price: 397000,
-    priceLabel: "397,000원",
-    originalPrice: 690000,
-    originalPriceLabel: "690,000원",
-    discountLabel: "42% 할인",
-    monthlyLabel: "월 33,080원",
+    name: "올인원 패키지",
+    subtitle: "내 사업장 정부지원 올인원",
+    price: 19900,
+    priceLabel: "19,900원",
+    originalPrice: 49000,
+    originalPriceLabel: "49,000원",
+    discountLabel: "59% 할인",
+    monthlyLabel: "",
     period: "1개월",
     popular: true,
     features: [
-      "베이직 모든 혜택 포함",
-      "사업장 정밀 진단 리포트 PDF",
-      "전용 카톡방 1:1 실시간 경영 자문",
+      "내가 받을 수 있는 모든 정부지원사업 리스트",
+      "신청하는 방법 및 관련 사이트 링크",
+      "공식 카카오톡 채널톡 상담",
     ],
-    cta: "프리미어 시작하기",
-  },
-  {
-    id: "pro",
-    icon: "🏆",
-    name: "프로",
-    subtitle: "전문가 멘토링",
-    price: 697000,
-    priceLabel: "697,000원",
-    originalPrice: 1290000,
-    originalPriceLabel: "1,290,000원",
-    discountLabel: "46% 할인",
-    monthlyLabel: "월 58,080원",
-    period: "1개월",
-    popular: false,
-    features: [
-      "프리미어 모든 혜택 포함",
-      "전화 또는 줌 미팅 1:1 경영 자문 컨설팅",
-      "승인율 극대화 커스텀 전략 설계 및 안내",
-    ],
-    cta: "프로 시작하기",
+    cta: "올인원 패키지 시작하기",
   },
 ];
 
