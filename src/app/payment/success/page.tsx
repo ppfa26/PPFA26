@@ -16,39 +16,127 @@ function SuccessInner() {
   const params = useSearchParams();
   const ran = useRef(false);
 
+  // ── 나이스페이먼츠(NICEPAY) 경로 파라미터 ──
+  //  서버 라우트(/api/payment/nicepay-return)에서 이미 결제 승인이 끝난 뒤
+  //  아래 쿼리를 붙여 이 페이지로 리다이렉트됩니다.
+  const isNicePay = params.get("nicepay") === "1";
+  const nicePayResult = params.get("result"); // "success" | "fail"
+  const nicePayTid = params.get("tid"); // 나이스 거래 고유번호 → payment_key로 사용
+  const nicePayReason = params.get("reason"); // 실패 사유
+
+  // ── 토스페이먼츠(레거시) 경로 파라미터 ──
   const paymentKey = params.get("paymentKey");
-  const orderId = params.get("orderId");
-  const amount = params.get("amount");
+  const orderIdParam = params.get("orderId");
+  const amountParam = params.get("amount");
 
   const [status, setStatus] = useState<Status>("processing");
   const [message, setMessage] = useState<string>("결제를 확인하고 있습니다...");
   const [tierId, setTierId] = useState<string>("basic");
+
+  // 결제 성공 확정 후 공통 저장 처리 (Supabase insert + localStorage + 마이페이지 이동)
+  const finishSuccess = async (opts: {
+    orderId: string;
+    amount: number;
+    paymentKey: string;
+    tier: string;
+  }) => {
+    // Supabase 결제 내역 저장 (인증된 사용자 세션 기준 → RLS 통과)
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData.session?.user;
+      if (user) {
+        await supabase.from("payments").insert({
+          user_id: user.id,
+          order_id: opts.orderId,
+          tier: opts.tier,
+          amount: opts.amount,
+          status: "paid",
+          payment_key: opts.paymentKey,
+          email: user.email,
+          paid_at: new Date().toISOString(),
+        });
+      }
+    } catch {
+      // 저장 실패해도 결제 자체는 성공 → 사용자 경험 우선
+    }
+
+    try {
+      sessionStorage.removeItem("mpp_pending_payment");
+    } catch {}
+
+    // 결제 완료 표시 저장 → 대시보드에서 전체 결과 잠금 해제 판단에 사용
+    //  localStorage 사용(탭을 닫아도 유지). tier(결제 플랜)도 함께 저장.
+    try {
+      localStorage.setItem("mpp_paid", "true");
+      localStorage.setItem("mpp_paid_tier", opts.tier);
+      localStorage.setItem("mpp_paid_at", new Date().toISOString());
+    } catch {}
+
+    setStatus("success");
+    setMessage("결제가 완료되었습니다!");
+
+    // 잠시 후 마이페이지로 이동
+    //    ★ 대표님 요청 ★ 결제 직후 곧바로 대시보드로 튕기면 "설문을 다시 해야 하나?"
+    //    오해가 생김. → 마이페이지에서 결과를 '클릭해서' 확인하도록 유도한다.
+    setTimeout(() => router.replace("/mypage"), 2200);
+  };
 
   useEffect(() => {
     if (ran.current) return;
     ran.current = true;
 
     (async () => {
-      if (!paymentKey || !orderId || !amount) {
+      // 임시 저장한 결제 메타 읽기 (tier 백업용)
+      let pending: { tier?: string; email?: string } = {};
+      try {
+        pending = JSON.parse(sessionStorage.getItem("mpp_pending_payment") || "{}");
+      } catch {}
+
+      // ─────────────────────────────────────────────
+      //  ① 나이스페이먼츠 경로 (현재 사용 중인 PG)
+      //     서버 라우트에서 이미 승인 완료됨 → confirm 호출 없이 저장만.
+      // ─────────────────────────────────────────────
+      if (isNicePay) {
+        const tier = params.get("tier") || pending.tier || "basic";
+        setTierId(tier);
+
+        if (nicePayResult !== "success" || !nicePayTid || !orderIdParam || !amountParam) {
+          setStatus("fail");
+          setMessage(
+            nicePayReason === "auth"
+              ? "카드 인증에 실패했습니다. 다시 시도해 주세요."
+              : "결제 승인에 실패했습니다. 결제가 완료되지 않았다면 다시 시도해 주세요."
+          );
+          return;
+        }
+
+        await finishSuccess({
+          orderId: orderIdParam,
+          amount: Number(amountParam),
+          paymentKey: nicePayTid, // 나이스 tid를 payment_key로 저장
+          tier,
+        });
+        return;
+      }
+
+      // ─────────────────────────────────────────────
+      //  ② 토스페이먼츠 경로 (레거시 · 하위호환)
+      // ─────────────────────────────────────────────
+      if (!paymentKey || !orderIdParam || !amountParam) {
         setStatus("fail");
         setMessage("결제 정보가 확인되지 않았습니다.");
         return;
       }
 
-      // 임시 저장한 결제 메타 읽기
-      let pending: { tier?: string; email?: string } = {};
-      try {
-        pending = JSON.parse(sessionStorage.getItem("mpp_pending_payment") || "{}");
-      } catch {}
       const tier = pending.tier || "basic";
       setTierId(tier);
 
-      // 1) 서버 승인
+      // 서버 승인
       try {
         const res = await fetch("/api/payment/confirm", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paymentKey, orderId, amount: Number(amount) }),
+          body: JSON.stringify({ paymentKey, orderId: orderIdParam, amount: Number(amountParam) }),
         });
         const data = await res.json();
 
@@ -58,45 +146,12 @@ function SuccessInner() {
           return;
         }
 
-        // 2) Supabase 결제 내역 저장 (인증된 사용자 세션 기준 → RLS 통과)
-        try {
-          const { data: sessionData } = await supabase.auth.getSession();
-          const user = sessionData.session?.user;
-          if (user) {
-            await supabase.from("payments").insert({
-              user_id: user.id,
-              order_id: orderId,
-              tier,
-              amount: Number(amount),
-              status: "paid",
-              payment_key: paymentKey,
-              email: user.email,
-              paid_at: new Date().toISOString(),
-            });
-          }
-        } catch {
-          // 저장 실패해도 결제 자체는 성공 → 사용자 경험 우선
-        }
-
-        try {
-          sessionStorage.removeItem("mpp_pending_payment");
-        } catch {}
-
-        // 결제 완료 표시 저장 → 대시보드에서 전체 결과 잠금 해제 판단에 사용
-        //  localStorage 사용(탭을 닫아도 유지). tier(결제 플랜)도 함께 저장.
-        try {
-          localStorage.setItem("mpp_paid", "true");
-          localStorage.setItem("mpp_paid_tier", tier);
-          localStorage.setItem("mpp_paid_at", new Date().toISOString());
-        } catch {}
-
-        setStatus("success");
-        setMessage("결제가 완료되었습니다!");
-
-        // 3) 잠시 후 마이페이지로 이동
-        //    ★ 대표님 요청 ★ 결제 직후 곧바로 대시보드로 튕기면 "설문을 다시 해야 하나?"
-        //    오해가 생김. → 마이페이지에서 결과를 '클릭해서' 확인하도록 유도한다.
-        setTimeout(() => router.replace("/mypage"), 2200);
+        await finishSuccess({
+          orderId: orderIdParam,
+          amount: Number(amountParam),
+          paymentKey,
+          tier,
+        });
       } catch {
         setStatus("fail");
         setMessage("결제 확인 중 오류가 발생했습니다.");

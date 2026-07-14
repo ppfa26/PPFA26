@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, Suspense } from "react";
+import { useEffect, useRef, useState, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -10,14 +10,33 @@ import Editable from "@/components/Editable";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP, COMMON_NOTES } from "@/lib/products";
 import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
-import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
-const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
+// 나이스페이먼츠(NICEPAY) 클라이언트 ID (공개 키). 브라우저에 노출되어도 안전한 값입니다.
+const NICEPAY_CLIENT_ID = process.env.NEXT_PUBLIC_NICEPAY_CLIENT_ID as string;
+// 나이스페이먼츠 결제창 JS SDK URL
+const NICEPAY_SDK_SRC = "https://pay.nicepay.co.kr/v1/js/";
 
-// 토스페이먼츠 v2 결제위젯 인스턴스 타입 (SDK가 반환하는 widgets 객체)
-type TossWidgets = Awaited<
-  ReturnType<Awaited<ReturnType<typeof loadTossPayments>>["widgets"]>
->;
+// 나이스페이먼츠 SDK가 window에 심는 전역 객체 타입
+type NicePayAuth = {
+  requestPay: (options: {
+    clientId: string;
+    method: string;
+    orderId: string;
+    amount: number;
+    goodsName: string;
+    returnUrl: string;
+    mallReserved?: string;
+    buyerName?: string;
+    buyerEmail?: string;
+    fnError?: (result: { errorMsg?: string; resultMsg?: string }) => void;
+  }) => void;
+};
+
+declare global {
+  interface Window {
+    AUTHNICE?: NicePayAuth;
+  }
+}
 
 function makeOrderId() {
   const rand = Math.random().toString(36).slice(2, 10);
@@ -30,7 +49,7 @@ function PaymentInner() {
   const tier = (params.get("tier") as "basic" | "premier" | "pro" | null) || "basic";
   const product = TIER_MAP[tier];
 
-  const widgetRef = useRef<TossWidgets | null>(null);
+  const sdkLoadedRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
@@ -38,7 +57,37 @@ function PaymentInner() {
   const [paying, setPaying] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
-  // 로그인 확인 + 위젯 렌더
+  // 나이스페이먼츠 결제창 SDK 로드 (한 번만)
+  const loadNicePaySdk = useCallback(() => {
+    return new Promise<void>((resolve, reject) => {
+      if (typeof window === "undefined") return reject(new Error("no window"));
+      if (window.AUTHNICE) {
+        sdkLoadedRef.current = true;
+        return resolve();
+      }
+      // 이미 script 태그가 있으면 로드 완료를 기다림
+      const existing = document.querySelector<HTMLScriptElement>(
+        `script[src="${NICEPAY_SDK_SRC}"]`
+      );
+      if (existing) {
+        existing.addEventListener("load", () => resolve());
+        existing.addEventListener("error", () => reject(new Error("sdk load error")));
+        if (window.AUTHNICE) resolve();
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = NICEPAY_SDK_SRC;
+      script.async = true;
+      script.onload = () => {
+        sdkLoadedRef.current = true;
+        resolve();
+      };
+      script.onerror = () => reject(new Error("sdk load error"));
+      document.head.appendChild(script);
+    });
+  }, []);
+
+  // 로그인 확인 + 결제 SDK 준비
   useEffect(() => {
     let mounted = true;
 
@@ -66,27 +115,8 @@ function PaymentInner() {
       }
 
       try {
-        // v2 결제위젯: 로그인 사용자는 user.id를 customerKey로, 없으면 익명(ANONYMOUS)
-        const customerKey = user.id || ANONYMOUS;
-        const tossPayments = await loadTossPayments(CLIENT_KEY);
-        const widgets = tossPayments.widgets({ customerKey });
+        await loadNicePaySdk();
         if (!mounted) return;
-
-        // 결제 금액 설정 (렌더 전에 반드시 호출)
-        await widgets.setAmount({ currency: "KRW", value: product.price });
-
-        await Promise.all([
-          widgets.renderPaymentMethods({
-            selector: "#payment-widget",
-            variantKey: "DEFAULT",
-          }),
-          widgets.renderAgreement({
-            selector: "#agreement",
-            variantKey: "AGREEMENT",
-          }),
-        ]);
-
-        widgetRef.current = widgets;
         setReady(true);
       } catch {
         setNotice("결제 화면을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
@@ -104,8 +134,10 @@ function PaymentInner() {
       setNotice("결제 진행을 위해 안내 사항에 동의해 주세요.");
       return;
     }
-    const widgets = widgetRef.current;
-    if (!widgets) return;
+    if (!window.AUTHNICE) {
+      setNotice("결제 모듈이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
 
     setPaying(true);
     const orderId = makeOrderId();
@@ -120,13 +152,24 @@ function PaymentInner() {
 
     const origin = window.location.origin;
     try {
-      await widgets.requestPayment({
+      window.AUTHNICE.requestPay({
+        clientId: NICEPAY_CLIENT_ID,
+        method: "card",
         orderId,
-        orderName: `모두의사업친구 ${product.name} 플랜`,
-        customerName: userName || "고객",
-        customerEmail: email || undefined,
-        successUrl: `${origin}/payment/success`,
-        failUrl: `${origin}/payment?tier=${tier}&fail=1`,
+        amount: product.price,
+        goodsName: `모두의사업친구 ${product.name} 플랜`,
+        returnUrl: `${origin}/api/payment/nicepay-return`,
+        mallReserved: JSON.stringify({ tier }),
+        buyerName: userName || "고객",
+        buyerEmail: email || undefined,
+        fnError: (result) => {
+          setPaying(false);
+          setNotice(
+            result?.errorMsg ||
+              result?.resultMsg ||
+              "결제가 취소되었거나 오류가 발생했습니다. 다시 시도해 주세요."
+          );
+        },
       });
     } catch {
       setPaying(false);
@@ -143,7 +186,7 @@ function PaymentInner() {
             결제하기
           </Editable>
           <Editable id="payment-desc" as="p" className="mt-2 text-sm text-brand-gray">
-            안전한 결제를 위해 토스페이먼츠를 사용합니다.
+            안전한 결제를 위해 나이스페이먼츠를 사용합니다.
           </Editable>
         </div>
 
@@ -183,9 +226,15 @@ function PaymentInner() {
           ))}
         </ul>
 
-        {/* Toss 위젯 */}
-        <div id="payment-widget" className="min-h-[120px]" />
-        <div id="agreement" />
+        {/* 결제 수단 안내 (나이스페이먼츠 결제창은 버튼 클릭 시 팝업으로 뜹니다) */}
+        <div className="mb-1 rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-sm">
+          <p className="text-sm font-bold text-brand-dark">💳 신용/체크카드 결제</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-brand-gray">
+            아래 버튼을 누르면 <strong>나이스페이먼츠(NICEPAY)</strong> 결제창이 열립니다.
+            <br />
+            카드사 정식 인증 절차를 거쳐 안전하게 결제됩니다.
+          </p>
+        </div>
 
         {/* 동의 체크 */}
         <label className="mt-4 flex items-start gap-2 text-sm text-brand-dark">
