@@ -12,7 +12,7 @@ const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 자동 크롤링" },
   { icon: "📚", text: "정부 부처 공문 팩트체크" },
   { icon: "🎯", text: "내 사업장에 진짜 되는 것만 매칭" },
-  { icon: "🗂️", text: "정책자금·지원금·바우처·인증 전부 한 번에" },
+  { icon: "🗂️", text: "정책자금·지원금·바우처·인증" },
   { icon: "📝", text: "신청 방법·필요 서류·순서까지 자문" },
   { icon: "🚫", text: "행정 대행 없음 · 승인 수수료 0원" },
   { icon: "☕", text: "커피 한 잔 값 · 1회성 결제" },
@@ -199,15 +199,15 @@ export default function Home() {
               {TRUST_BADGES.map((b, i) => (
                 <div
                   key={i}
-                  className="hover-lift flex w-[calc(50%-0.375rem)] flex-col items-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-3 py-5 text-center shadow-card sm:w-[calc(25%-0.6rem)]"
+                  className="hover-lift flex w-[calc(50%-0.375rem)] flex-col items-center justify-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-3 py-4 text-center shadow-card sm:w-[calc(25%-0.6rem)]"
                 >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-orange/10 text-xl">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-xl">
                     {b.icon}
                   </span>
                   <Editable
                     id={`home-trust-${i}`}
                     as="span"
-                    className="break-keep text-[13px] font-semibold leading-tight text-brand-dark"
+                    className="flex min-h-[2.4rem] items-center break-keep text-[13px] font-semibold leading-tight text-brand-dark"
                   >
                     {b.text}
                   </Editable>
@@ -561,7 +561,7 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA */}
-        <section className="px-4 pb-6 pt-7 sm:pb-8 sm:pt-11">
+        <section className="px-4 pb-3 pt-7 sm:pb-4 sm:pt-11">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-grad p-8 text-center shadow-card sm:p-10">
             <Editable
               id="home-cta-title"
