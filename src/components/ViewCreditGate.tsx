@@ -289,8 +289,11 @@ export default function ViewCreditGate({
     <>
       <div className="mx-auto mb-5 max-w-4xl px-4">
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-brand-yellow bg-brand-yellow/20 px-5 py-3 text-sm">
-          <span className="font-semibold text-brand-dark">
-            {businessName ? `${businessName} 대표님 ` : ""}조회 결과입니다.
+          <span className="break-keep font-semibold text-brand-dark">
+            {businessName ? `${businessName} ` : ""}대표님 사업장의 정밀 조회 결과입니다.{" "}
+            <span className="font-medium text-brand-dark/60">
+              PC버전으로 보시면 더욱 효과적으로 확인 가능합니다.
+            </span>
           </span>
           <span className="text-brand-dark/70">
             남은 새 조회 <b className="text-brand-orange">{remaining}회</b>
