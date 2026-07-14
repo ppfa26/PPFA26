@@ -68,10 +68,10 @@ export default function DashboardPage() {
             <h2 className="text-xl font-black text-brand-dark">
               신청 과정에서 막히셨나요?
             </h2>
-            <p className="mt-2 text-sm text-brand-dark/70">
-              1:1 상담과 대표님들끼리 정보를 나누는 오픈 단톡방을 함께 운영합니다.
+            <p className="mt-2 break-keep text-sm text-brand-dark/70">
+              1:1 채널톡 상담을 신청해주세요. 결제자용 단체 커뮤니티도 있습니다.
               <br />
-              막막할 때 바로 물어보세요. (자문 전용 · 대행 없음)
+              신청이 어렵거나 방법이 막막할 때 바로 물어보세요.
             </p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
               <a
@@ -80,7 +80,7 @@ export default function DashboardPage() {
                 rel="noopener noreferrer"
                 className="rounded-full bg-brand-dark px-7 py-3 font-bold text-white hover:opacity-90"
               >
-                💬 1:1 채팅 상담 열기
+                💬 1:1 채널톡 상담하기
               </a>
               <a
                 href="https://open.kakao.com/o/gvjec0Di"
@@ -88,13 +88,12 @@ export default function DashboardPage() {
                 rel="noopener noreferrer"
                 className="rounded-full border-2 border-brand-dark bg-white px-7 py-3 font-bold text-brand-dark hover:bg-gray-50"
               >
-                👥 대표님 오픈 단톡방 참여
+                👥 결제자 대표님 오픈 단톡방 참여하기
               </a>
             </div>
             <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/60">
-              ⚠️ 본 서비스는 신청 가능 상품 안내 및 자문 서비스이며 정부지원사업
-              승인을 보장하지 않습니다. 대행 신청을 하지 않으며 승인 수수료를 받지
-              않습니다.
+              ⚠️ 본 서비스는 정부지원사업 AI 통합 매칭 서비스이며 정부지원사업
+              승인을 보장하지 않습니다.
             </p>
           </section>
         </div>

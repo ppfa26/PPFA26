@@ -12,7 +12,12 @@ import { TIER_MAP, COMMON_NOTES } from "@/lib/products";
 import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
 
 // 나이스페이먼츠(NICEPAY) 클라이언트 ID (공개 키). 브라우저에 노출되어도 안전한 값입니다.
-const NICEPAY_CLIENT_ID = process.env.NEXT_PUBLIC_NICEPAY_CLIENT_ID as string;
+//  ★ 폴백 ★ 환경변수가 비어있으면(예: 배포 환경변수 미설정) 나이스 '공식 샌드박스 테스트키'로 자동 대체.
+//     → 실제 돈은 빠지지 않으며, "가맹점 식별코드(clientId) 잘못됨" 오류를 방지합니다.
+//     심사 통과 후 운영키를 배포 환경변수(NEXT_PUBLIC_NICEPAY_CLIENT_ID)에 넣으면 그 값이 우선 사용됩니다.
+const NICEPAY_SANDBOX_CLIENT_ID = "S2_af4543a0be4d49a98122e01ec2059a56";
+const NICEPAY_CLIENT_ID =
+  (process.env.NEXT_PUBLIC_NICEPAY_CLIENT_ID as string) || NICEPAY_SANDBOX_CLIENT_ID;
 // 나이스페이먼츠 결제창 JS SDK URL
 const NICEPAY_SDK_SRC = "https://pay.nicepay.co.kr/v1/js/";
 

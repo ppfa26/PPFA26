@@ -15,8 +15,14 @@ export const runtime = "nodejs";
 //     - 인증결과 검증:  hex(sha256(authToken + clientId + amount + secretKey))
 //     - 승인응답 검증:  hex(sha256(tid + amount + ediDate + secretKey))
 
-const CLIENT_ID = process.env.NEXT_PUBLIC_NICEPAY_CLIENT_ID as string;
-const SECRET_KEY = process.env.NICEPAY_SECRET_KEY as string;
+// ★ 폴백 ★ 배포 환경변수 미설정 시 나이스 '공식 샌드박스 테스트키'로 자동 대체 (테스트 전용, 실 결제 아님)
+//   운영 전환 시엔 배포 환경변수에 운영키를 넣고 NICEPAY_MODE=production 으로 바꾸면 그 값이 우선합니다.
+const NICEPAY_SANDBOX_CLIENT_ID = "S2_af4543a0be4d49a98122e01ec2059a56";
+const NICEPAY_SANDBOX_SECRET_KEY = "9eb85607103646da9f9c02b128f2e5ee";
+const CLIENT_ID =
+  (process.env.NEXT_PUBLIC_NICEPAY_CLIENT_ID as string) || NICEPAY_SANDBOX_CLIENT_ID;
+const SECRET_KEY =
+  (process.env.NICEPAY_SECRET_KEY as string) || NICEPAY_SANDBOX_SECRET_KEY;
 const MODE = (process.env.NICEPAY_MODE || "sandbox").toLowerCase();
 
 // sandbox(테스트) / production(운영) API 호스트 자동 분기
