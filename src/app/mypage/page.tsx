@@ -163,7 +163,67 @@ export default function MyPage() {
                 )}
               </section>
 
-              {/* 결제 내역 (아래로) */}
+              {/* 추가 신청 (전문가 도움 요청) — 결제 내역 '위'로 배치 (대표님 요청) */}
+              <section
+                id="mypage-extra-services"
+                className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
+              >
+                <h2 className="text-lg font-extrabold text-brand-dark">
+                  🤝 전문가 도움이 더 필요하신가요?
+                </h2>
+                <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
+                  직접 하기 어려운 부분은 저희 전문가가 도와드립니다. 아래 항목은{" "}
+                  <b className="text-brand-dark">신청하신 분에 한해</b> 별도로 진행됩니다.
+                  필요하신 항목을 눌러 편하게 문의해 주세요.
+                </p>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {[
+                    { icon: "📊", name: "회사 IR 자료 제작", price: "50만원", accent: true },
+                    { icon: "📝", name: "사업계획서 첨삭", price: "50만원", accent: true },
+                    { icon: "📑", name: "IR + 사업계획서 제작", price: "90만원", accent: true },
+                    { icon: "💰", name: "정책자금 상담 신청", price: "문의", accent: false },
+                    { icon: "🚀", name: "예비창업패키지 · 초기창업패키지", price: "문의", accent: false },
+                    { icon: "🧾", name: "세무조사 · 조정계산 · 기장", price: "문의", accent: false },
+                    { icon: "🌏", name: "수출 관련 관세사 상담", price: "문의", accent: false },
+                    { icon: "🖥️", name: "사업장 POS", price: "문의", accent: false },
+                  ].map((s) => (
+                    <a
+                      key={s.name}
+                      href="http://pf.kakao.com/_VxfWxan/chat"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center justify-between gap-2 rounded-2xl border border-gray-200 bg-gray-50/60 px-4 py-3.5 transition hover:border-brand-orange hover:bg-brand-orange/5"
+                    >
+                      <span className="flex min-w-0 items-center gap-2.5">
+                        <span className="text-lg">{s.icon}</span>
+                        <span className="break-keep text-sm font-bold text-brand-dark">
+                          {s.name}
+                        </span>
+                      </span>
+                      <span className="flex shrink-0 items-center gap-2">
+                        <span
+                          className={`whitespace-nowrap text-sm font-extrabold ${
+                            s.accent ? "text-brand-orange" : "text-brand-gray"
+                          }`}
+                        >
+                          {s.price}
+                        </span>
+                        <span className="whitespace-nowrap rounded-full bg-brand-dark px-3 py-1 text-[11px] font-bold text-white transition group-hover:opacity-90">
+                          신청 문의
+                        </span>
+                      </span>
+                    </a>
+                  ))}
+                </div>
+
+                <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-gray">
+                  ※ 위 서비스는 올인원 패키지에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
+                  버튼을 누르면 공식 카카오톡 채널톡으로 연결되며, 담당자가 세부 내용과 금액을 안내해 드립니다.
+                </p>
+              </section>
+
+              {/* 결제 내역 — 전문가 도움 '아래'로 배치 (대표님 요청) */}
               <section
                 id="mypage-payments"
                 className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
@@ -223,66 +283,6 @@ export default function MyPage() {
                 )}
                 <p className="mt-3 text-xs text-brand-gray">
                   ✅ 일시불 1회 결제 · 자동결제(정기결제) 없음
-                </p>
-              </section>
-
-              {/* 추가 신청 (전문가 도움 요청) — 마이페이지에서만 노출, 문의형 업셀 */}
-              <section
-                id="mypage-extra-services"
-                className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
-              >
-                <h2 className="text-lg font-extrabold text-brand-dark">
-                  🤝 전문가 도움이 더 필요하신가요?
-                </h2>
-                <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
-                  직접 하기 어려운 부분은 저희 전문가가 도와드립니다. 아래 항목은{" "}
-                  <b className="text-brand-dark">신청하신 분에 한해</b> 별도로 진행됩니다.
-                  필요하신 항목을 눌러 편하게 문의해 주세요.
-                </p>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {[
-                    { icon: "📊", name: "회사 IR 자료 제작", price: "50만원", accent: true },
-                    { icon: "📝", name: "사업계획서 첨삭", price: "50만원", accent: true },
-                    { icon: "📑", name: "IR + 사업계획서 제작", price: "90만원", accent: true },
-                    { icon: "💰", name: "정책자금 상담 신청", price: "문의", accent: false },
-                    { icon: "🚀", name: "예비창업패키지 · 초기창업패키지", price: "문의", accent: false },
-                    { icon: "🧾", name: "세무조사 · 조정계산 · 기장", price: "문의", accent: false },
-                    { icon: "🌏", name: "수출 관련 관세사 상담", price: "문의", accent: false },
-                    { icon: "🖥️", name: "사업장 POS", price: "문의", accent: false },
-                  ].map((s) => (
-                    <a
-                      key={s.name}
-                      href="http://pf.kakao.com/_VxfWxan/chat"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center justify-between gap-2 rounded-2xl border border-gray-200 bg-gray-50/60 px-4 py-3.5 transition hover:border-brand-orange hover:bg-brand-orange/5"
-                    >
-                      <span className="flex min-w-0 items-center gap-2.5">
-                        <span className="text-lg">{s.icon}</span>
-                        <span className="break-keep text-sm font-bold text-brand-dark">
-                          {s.name}
-                        </span>
-                      </span>
-                      <span className="flex shrink-0 items-center gap-2">
-                        <span
-                          className={`whitespace-nowrap text-sm font-extrabold ${
-                            s.accent ? "text-brand-orange" : "text-brand-gray"
-                          }`}
-                        >
-                          {s.price}
-                        </span>
-                        <span className="whitespace-nowrap rounded-full bg-brand-dark px-3 py-1 text-[11px] font-bold text-white transition group-hover:opacity-90">
-                          신청 문의
-                        </span>
-                      </span>
-                    </a>
-                  ))}
-                </div>
-
-                <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-gray">
-                  ※ 위 서비스는 올인원 패키지에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
-                  버튼을 누르면 공식 카카오톡 채널톡으로 연결되며, 담당자가 세부 내용과 금액을 안내해 드립니다.
                 </p>
               </section>
 
