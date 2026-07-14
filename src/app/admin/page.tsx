@@ -8,6 +8,14 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
 import { isAdminEmail } from "@/lib/admin";
+import {
+  labelForKey,
+  valueToText,
+  diagnosesToCsv,
+  downloadCsv,
+  computeDuplicateIndex,
+  type DiagnosisRecord,
+} from "@/lib/diagnosisExport";
 
 /* ------------------------------------------------------------------ */
 /*  타입                                                               */
@@ -158,8 +166,80 @@ export default function AdminPage() {
   const [ipSummary, setIpSummary] = useState<IpRow[]>([]);
   const [blocks, setBlocks] = useState<BlockRow[]>([]);
   const [openDiag, setOpenDiag] = useState<string | null>(null);
+  const [selectedDiag, setSelectedDiag] = useState<Set<string>>(new Set()); // 체크선택 다운로드용
   const [msg, setMsg] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  // 중복 신청 순번 (같은 연락처/이메일 기준 몇 번째 신청인지)
+  const dupIndexMap = computeDuplicateIndex(diagnoses as unknown as DiagnosisRecord[]);
+
+  // 체크박스 토글
+  const toggleSelectDiag = (id: string) => {
+    setSelectedDiag((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const toggleSelectAllDiag = () => {
+    setSelectedDiag((prev) =>
+      prev.size === diagnoses.length ? new Set() : new Set(diagnoses.map((d) => d.id))
+    );
+  };
+
+  // 진단서 → 다운로드용 레코드로 변환 (중복 순번 포함)
+  const toRecords = (list: AdminDiagnosis[]): DiagnosisRecord[] =>
+    list.map((d) => ({
+      id: d.id,
+      email: d.email,
+      name: d.name,
+      phone: d.phone,
+      profile: (d.profile || {}) as Record<string, unknown>,
+      created_at: d.created_at,
+      dupIndex: dupIndexMap.get(d.id),
+    }));
+
+  // 엑셀(CSV) 다운로드 — 전체 / 선택 / 개별
+  const downloadAllDiag = () => {
+    if (diagnoses.length === 0) return;
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`고객진단서_전체_${stamp}`, diagnosesToCsv(toRecords(diagnoses)));
+  };
+  const downloadSelectedDiag = () => {
+    const list = diagnoses.filter((d) => selectedDiag.has(d.id));
+    if (list.length === 0) {
+      setMsg("먼저 다운로드할 진단서를 체크해 주세요.");
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`고객진단서_선택${list.length}건_${stamp}`, diagnosesToCsv(toRecords(list)));
+  };
+  const downloadOneDiag = (d: AdminDiagnosis) => {
+    const applicant = d.name || (d.profile as any)?.name || "고객";
+    const stamp = new Date(d.created_at).toISOString().slice(0, 10);
+    downloadCsv(`고객진단서_${applicant}_${stamp}`, diagnosesToCsv(toRecords([d])));
+  };
+
+  // 진단서 삭제 (관리자) — 직접 삭제 시도, RLS로 막히면 사유 안내
+  const deleteDiag = async (d: AdminDiagnosis) => {
+    const applicant = d.name || (d.profile as any)?.name || "이 고객";
+    if (!window.confirm(`${applicant} 님의 진단서를 삭제할까요?\n(되돌릴 수 없습니다)`)) return;
+    const { error } = await supabase.from("diagnoses").delete().eq("id", d.id);
+    if (error) {
+      setMsg(`삭제 실패: ${error.message} (권한 설정이 필요할 수 있어요)`);
+    } else {
+      setDiagnoses((prev) => prev.filter((x) => x.id !== d.id));
+      setSelectedDiag((prev) => {
+        const next = new Set(prev);
+        next.delete(d.id);
+        return next;
+      });
+      setMsg("진단서를 삭제했습니다.");
+    }
+    setTimeout(() => setMsg(null), 4000);
+  };
 
   const loadAll = useCallback(async () => {
     setRefreshing(true);
@@ -595,6 +675,37 @@ export default function AdminPage() {
           {/* ------- 고객 진단서 (질문지 + 결과) ------- */}
           {tab === "diagnoses" && (
             <div className="space-y-3">
+              {/* 다운로드 툴바 — 전체 / 선택 다운로드 + 전체선택 체크 */}
+              {diagnoses.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
+                  <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-600">
+                    <input
+                      type="checkbox"
+                      checked={selectedDiag.size === diagnoses.length && diagnoses.length > 0}
+                      onChange={toggleSelectAllDiag}
+                      className="h-4 w-4 rounded border-gray-300"
+                    />
+                    전체 선택
+                  </label>
+                  <span className="text-xs text-gray-400">
+                    ({selectedDiag.size}건 선택 / 총 {diagnoses.length}건)
+                  </span>
+                  <div className="ml-auto flex flex-wrap gap-2">
+                    <button
+                      onClick={downloadSelectedDiag}
+                      className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
+                    >
+                      ⬇️ 선택 진단서 엑셀 다운
+                    </button>
+                    <button
+                      onClick={downloadAllDiag}
+                      className="rounded-lg bg-brand-primary/10 px-3 py-1.5 text-xs font-bold text-brand-primary hover:bg-brand-primary/20"
+                    >
+                      ⬇️ 전체 진단서 엑셀 다운
+                    </button>
+                  </div>
+                </div>
+              )}
               {diagnoses.length === 0 && (
                 <div className="rounded-2xl border border-gray-100 bg-white px-4 py-10 text-center text-gray-400 shadow-sm">
                   아직 접수된 진단서가 없습니다.
@@ -603,31 +714,50 @@ export default function AdminPage() {
               {diagnoses.map((d) => {
                 const isOpen = openDiag === d.id;
                 const p = d.profile || {};
+                const dupIdx = dupIndexMap.get(d.id) ?? 1;
+                const isDup = dupIdx > 1;
+                const checked = selectedDiag.has(d.id);
                 return (
                   <div
                     key={d.id}
                     className="rounded-2xl border border-gray-100 bg-white shadow-sm"
                   >
-                    <button
-                      onClick={() => setOpenDiag(isOpen ? null : d.id)}
-                      className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
-                    >
-                      <div className="min-w-0">
-                        <span className="font-bold text-gray-800">
-                          {(p as any)?.name || d.name || "이름 미입력"}
+                    <div className="flex items-center gap-2 px-4 py-3">
+                      {/* 체크박스 (다운로드 선택용) */}
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleSelectDiag(d.id)}
+                        className="h-4 w-4 shrink-0 rounded border-gray-300"
+                      />
+                      <button
+                        onClick={() => setOpenDiag(isOpen ? null : d.id)}
+                        className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left"
+                      >
+                        <div className="min-w-0">
+                          <span className="font-bold text-gray-800">
+                            {(p as any)?.name || d.name || "이름 미입력"}
+                          </span>
+                          <span className="ml-2 text-sm text-gray-500">
+                            {(p as any)?.businessType || ""}
+                          </span>
+                          {/* 중복 신청 뱃지 — 몇 번째 신청인지 (동일 연락처/이메일) */}
+                          {isDup && (
+                            <span className="ml-2 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700">
+                              🔁 {dupIdx}번째 신청
+                            </span>
+                          )}
+                          <span className="ml-2 block truncate text-xs text-gray-400 sm:ml-2 sm:inline">
+                            {d.email || (p as any)?.email || "-"}
+                            {d.phone || (p as any)?.phone ? ` · ${d.phone || (p as any)?.phone}` : ""}
+                            {(p as any)?.bno ? ` · ${(p as any).bno}` : ""}
+                          </span>
+                        </div>
+                        <span className="shrink-0 text-xs text-gray-400">
+                          {fmtDateTime(d.created_at)} {isOpen ? "▲" : "▼"}
                         </span>
-                        <span className="ml-2 text-sm text-gray-500">
-                          {(p as any)?.businessType || ""}
-                        </span>
-                        <span className="ml-2 text-xs text-gray-400">
-                          {d.email || (p as any)?.email || "-"}
-                          {(p as any)?.bno ? ` · ${(p as any).bno}` : ""}
-                        </span>
-                      </div>
-                      <span className="shrink-0 text-xs text-gray-400">
-                        {fmtDateTime(d.created_at)} {isOpen ? "▲" : "▼"}
-                      </span>
-                    </button>
+                      </button>
+                    </div>
                     {isOpen && (
                       <div className="border-t border-gray-100 bg-gray-50/60 px-4 py-4">
                         <p className="mb-2 text-xs font-bold text-gray-500">
@@ -640,14 +770,10 @@ export default function AdminPage() {
                               className="flex gap-2 border-b border-gray-100 py-1 text-sm"
                             >
                               <span className="shrink-0 font-semibold text-gray-500">
-                                {k}
+                                {labelForKey(k)}
                               </span>
                               <span className="break-all text-gray-800">
-                                {Array.isArray(v)
-                                  ? v.join(", ")
-                                  : typeof v === "object"
-                                  ? JSON.stringify(v)
-                                  : String(v ?? "-")}
+                                {valueToText(v)}
                               </span>
                             </div>
                           ))}
@@ -657,6 +783,21 @@ export default function AdminPage() {
                             📞 연락처: <b>{d.phone}</b>
                           </p>
                         )}
+                        {/* 개별 다운로드 + 삭제 버튼 */}
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            onClick={() => downloadOneDiag(d)}
+                            className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
+                          >
+                            ⬇️ 이 진단서 엑셀 다운
+                          </button>
+                          <button
+                            onClick={() => deleteDiag(d)}
+                            className="rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                          >
+                            🗑️ 진단서 삭제
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
