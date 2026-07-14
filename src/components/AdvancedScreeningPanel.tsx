@@ -34,6 +34,7 @@ import {
   type SupportProgram,
   type SupportStatus,
 } from "@/lib/supportPrograms";
+import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
 
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
 type SupportItem = { prog: SupportProgram; status: SupportStatus };
@@ -1257,6 +1258,9 @@ function AdvancedResult({
           공식 사이트 모음 보기
         </span>
       </a>
+
+      {/* 🎁 5가지 추가 혜택 + 🗓️ 챙기는 순서 — 최하단 배치 (대표님 요청, 동일 카드 디자인) */}
+      {autoRun && <ExtraBenefitsSection />}
     </div>
   );
 }

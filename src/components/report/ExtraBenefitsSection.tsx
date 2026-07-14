@@ -255,166 +255,155 @@ export default function ExtraBenefitsSection({ userInput }: Props) {
   const benefits = benefitsData.extraBenefits as ExtraBenefit[];
 
   return (
-    <section id="extra-benefits" className="mt-10">
-      {/* 섹션 헤더 */}
-      <div className="text-center">
-        <div
-          className="inline-block break-keep rounded-full px-5 py-2.5 text-base font-extrabold text-brand-dark sm:text-lg"
-          style={{ background: "linear-gradient(90deg,#FFD700,#FFA500)" }}
-        >
+    <>
+      {/* ========== 🎁 5가지 추가 혜택 — 정부지원제도 박스와 동일한 흰 카드 틀 ========== */}
+      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
+        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
           🎁 대표님이 챙기면 좋은 5가지 추가 혜택
-        </div>
-        <p className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray">
-          정책자금 외에도 <b className="text-brand-dark">지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는
-          혜택들입니다. 데드라인이 지나면 <b className="text-brand-red">영구히 못 받는</b> 항목도 있으니
-          꼭 확인하세요.
         </p>
-      </div>
+        <p className="mt-1 break-keep text-xs text-brand-dark/60">
+          정책자금 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 혜택입니다.
+          데드라인이 지나면 <b className="text-brand-red">영구히 못 받는</b> 항목도 있으니 꼭 확인하세요.
+        </p>
 
-      {/* 5개 혜택 카드 (세로 배열) */}
-      <div className="mt-6 flex flex-col gap-4">
-        {benefits.map((b) => {
-          const v = judge(b, u);
-          const isYes = v.eligible === true;
-          const isNo = v.eligible === false;
-          const isUnknown = v.eligible === null;
+        {/* 5개 혜택 항목 — 기관 박스처럼 구분선(divide)으로 정리 */}
+        <div className="mt-4 divide-y divide-gray-200">
+          {benefits.map((b) => {
+            const v = judge(b, u);
+            const isYes = v.eligible === true;
+            const isNo = v.eligible === false;
+            const isUnknown = v.eligible === null;
 
-          return (
-            <div
-              key={b.id}
-              className="rounded-2xl border border-brand-dark/10 bg-white p-5 shadow-card"
-            >
-              {/* 상단: 아이콘 + 제목 + 대상 뱃지 */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-2xl">{b.icon}</span>
-                <span className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-                  {b.title}
-                </span>
-                <span
-                  className="ml-auto shrink-0 rounded-full px-3 py-1 text-[11px] font-bold text-white"
-                  style={{
-                    backgroundColor: isYes
-                      ? "#10B981"
-                      : isNo
-                      ? "#9CA3AF"
-                      : "#D1D5DB",
-                    color: isUnknown ? "#4B5563" : "#fff",
-                  }}
-                >
-                  {isYes ? "✅ 대상" : isNo ? "대상 아님" : "판정 불가"}
-                </span>
-              </div>
-
-              {/* 예상 절감·수령액 (큰 글씨 강조) */}
-              {v.savingText && (
-                <p
-                  className="mt-3 break-keep text-xl font-black sm:text-2xl"
-                  style={{ color: isYes ? "#F97316" : "#9CA3AF" }}
-                >
-                  {v.savingText}
-                </p>
-              )}
-
-              {/* 설명 (2줄 이내) */}
-              <p className="mt-2 break-keep text-sm leading-relaxed text-brand-dark/75">
-                {b.description}
-              </p>
-
-              {/* 판정 불가/대상 아님 사유 */}
-              {v.note && (
-                <p className="mt-1 break-keep text-xs text-brand-gray">ℹ️ {v.note}</p>
-              )}
-
-              {/* 정책자금: 상품 3개 리스트 */}
-              {b.products && b.products.length > 0 && (
-                <div className="mt-3 flex flex-col gap-1.5">
-                  {b.products.map((p) => (
-                    <div
-                      key={p.name}
-                      className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2"
-                    >
-                      <span className="break-keep text-sm font-bold text-brand-dark">
-                        {p.name}
-                      </span>
-                      <span className="shrink-0 break-keep text-sm font-extrabold text-brand-orange">
-                        최대 {formatKRW(p.maxAmount)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* 필요 서류 */}
-              <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                <span className="break-keep text-[11px] font-bold text-brand-dark/60">
-                  📄 필요 서류
-                </span>
-                {b.requiredDocs.map((doc) => (
-                  <span
-                    key={doc}
-                    className="break-keep rounded-full bg-gray-100 px-2.5 py-0.5 text-[11px] font-semibold text-brand-dark/70"
-                  >
-                    {doc}
+            return (
+              <div key={b.id} className="py-4 first:pt-0 last:pb-0">
+                {/* 상단: 아이콘 + 제목 + 대상 뱃지 (정부지원제도 항목과 동일 구조) */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className={`text-base ${isYes ? "" : "opacity-60"}`}>{b.icon}</span>
+                  <span className="break-keep text-sm font-extrabold text-brand-dark">
+                    {b.title}
                   </span>
-                ))}
-              </div>
+                  {isYes ? (
+                    <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                      ✅ 신청 대상
+                    </span>
+                  ) : isNo ? (
+                    <span className="shrink-0 break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
+                      대상 아님
+                    </span>
+                  ) : (
+                    <span className="shrink-0 break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
+                      🔜 판정 불가
+                    </span>
+                  )}
+                </div>
 
-              {/* 처리 시간 */}
-              <p className="mt-2 break-keep text-xs text-brand-dark/60">
-                ⏱️ 처리 시간 · <b className="text-brand-dark/80">{b.processingTime}</b>
-              </p>
+                {/* 예상 절감·수령액 — 정부지원제도의 초록 안내 자리처럼 강조 */}
+                {v.savingText && (
+                  <p
+                    className={`mt-1 break-keep text-sm font-extrabold ${
+                      isYes ? "text-brand-orange" : "text-brand-dark/50"
+                    }`}
+                  >
+                    {v.savingText}
+                  </p>
+                )}
 
-              {/* 데드라인 경고 (빨강) */}
-              {b.warning && (
-                <p
-                  className="mt-2 break-keep rounded-lg px-3 py-2 text-[11px] font-semibold leading-relaxed"
-                  style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
-                >
-                  ⚠️ {b.deadline} · {b.warning}
+                {/* 설명 */}
+                <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
+                  {b.description}
                 </p>
-              )}
 
-              {/* 신청하러 가기 버튼 */}
-              <a
-                href={b.applyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-brand-dark px-4 py-3 text-sm font-bold text-white transition hover:opacity-90 sm:w-auto"
-              >
-                {b.applyName}에서 신청하러 가기 →
-              </a>
-            </div>
-          );
-        })}
-      </div>
+                {/* 판정 불가/대상 아님 사유 */}
+                {v.note && (
+                  <p className="mt-1 break-keep text-[11px] text-brand-dark/50">ℹ️ {v.note}</p>
+                )}
 
-      {/* 신청 타임라인 */}
-      <div className="mt-10">
-        <div className="text-center">
-          <div className="inline-block break-keep rounded-full bg-brand-dark px-5 py-2.5 text-base font-extrabold text-white sm:text-lg">
-            🗓️ 이 순서대로만 챙기세요
-          </div>
-          <p className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray">
-            언제 무엇을 신청해야 하는지 순서대로 정리했습니다. 위에서부터 하나씩 체크하세요.
+                {/* 정책자금: 상품 리스트 (있을 때만) */}
+                {b.products && b.products.length > 0 && (
+                  <div className="mt-2 flex flex-col gap-1.5">
+                    {b.products.map((p) => (
+                      <div
+                        key={p.name}
+                        className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2"
+                      >
+                        <span className="break-keep text-xs font-bold text-brand-dark">
+                          {p.name}
+                        </span>
+                        <span className="shrink-0 break-keep text-xs font-extrabold text-brand-orange">
+                          최대 {formatKRW(p.maxAmount)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 필요 서류 + 처리 시간 — 회색 박스로 묶어 정부지원제도 '신청방법' 자리와 통일 */}
+                <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="break-keep text-[11px] font-bold text-brand-dark/70">
+                      📄 필요 서류
+                    </span>
+                    {b.requiredDocs.map((doc) => (
+                      <span
+                        key={doc}
+                        className="break-keep rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-brand-dark/70 ring-1 ring-gray-200"
+                      >
+                        {doc}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="mt-1 break-keep text-[11px] text-brand-dark/60">
+                    ⏱️ 처리 시간 · <b className="text-brand-dark/80">{b.processingTime}</b>
+                  </p>
+                </div>
+
+                {/* 데드라인 경고 (빨강) */}
+                {b.warning && (
+                  <p
+                    className="mt-2 break-keep rounded-lg px-3 py-2 text-[11px] font-semibold leading-relaxed"
+                    style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
+                  >
+                    ⚠️ {b.deadline} · {b.warning}
+                  </p>
+                )}
+
+                {/* 신청하러 가기 링크 — 정부지원제도의 주황 링크와 통일 */}
+                <a
+                  href={b.applyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange"
+                >
+                  {b.applyName}에서 신청하러 가기 →
+                </a>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 하단 하이라이트 — 카드 안 소형 배너 */}
+        <div className="mt-4 rounded-xl bg-brand-yellow/30 px-4 py-3 text-center">
+          <p className="break-keep text-sm font-black leading-relaxed text-brand-dark">
+            💡 이 순서만 지키면 첫 해 평균 <span className="whitespace-nowrap">1,000만원+</span> 절감 가능
+          </p>
+          <p className="mt-1 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
+            놓친 항목 있으면 지금이라도 신청하세요. 소급 가능한 항목도 있습니다.
           </p>
         </div>
-        <BenefitTimeline />
       </div>
 
-      {/* 하이라이트 박스 */}
-      <div
-        className="mt-8 rounded-2xl px-6 py-7 text-center"
-        style={{ background: "linear-gradient(90deg,#FFD700,#FFA500)" }}
-      >
-        <p className="break-keep text-lg font-black leading-relaxed text-brand-dark sm:text-xl">
-          💡 이 순서만 지키면 첫 해 평균 <span className="whitespace-nowrap">1,000만원+</span> 절감 가능
+      {/* ========== 🗓️ 이 순서대로만 챙기세요 — 동일한 흰 카드 틀 ========== */}
+      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
+        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
+          🗓️ 이 순서대로만 챙기세요
         </p>
-        <p className="mt-2 break-keep text-sm font-semibold leading-relaxed text-brand-dark/80">
-          놓친 항목 있으면 지금이라도 신청하세요.
-          <br />
-          소급 가능한 항목도 있습니다.
+        <p className="mt-1 break-keep text-xs text-brand-dark/60">
+          언제 무엇을 신청해야 하는지 순서대로 정리했습니다. 위에서부터 하나씩 체크하세요.
         </p>
+        <div className="mt-3">
+          <BenefitTimeline />
+        </div>
       </div>
-    </section>
+    </>
   );
 }
