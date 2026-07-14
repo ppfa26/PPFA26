@@ -147,13 +147,23 @@ export default function MyPage() {
                       </p>
                     </div>
                     <a
-                      href="https://open.kakao.com/o/psa7SwDi"
+                      href="https://open.kakao.com/o/gvjec0Di"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full shrink-0 whitespace-nowrap rounded-full bg-[#FEE500] px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:brightness-95 sm:w-auto"
                     >
                       💬 오픈채팅방 입장하기
                     </a>
+                  </div>
+
+                  {/* 오픈채팅방 참여 비밀번호 — 결제 회원에게만 노출 */}
+                  <div className="mt-4 flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-[#FEE500] bg-white/70 px-4 py-3.5 text-center sm:flex-row sm:gap-2.5">
+                    <span className="break-keep text-sm font-semibold text-brand-gray">
+                      🔒 오픈채팅방 참여 비밀번호
+                    </span>
+                    <span className="select-all rounded-lg bg-brand-dark px-4 py-1.5 text-base font-extrabold tracking-widest text-white">
+                      ppfa25
+                    </span>
                   </div>
                 </section>
               )}

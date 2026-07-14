@@ -83,7 +83,7 @@ export default function DashboardPage() {
                 💬 1:1 채팅 상담 열기
               </a>
               <a
-                href="https://open.kakao.com/o/psa7SwDi"
+                href="https://open.kakao.com/o/gvjec0Di"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full border-2 border-brand-dark bg-white px-7 py-3 font-bold text-brand-dark hover:bg-gray-50"
