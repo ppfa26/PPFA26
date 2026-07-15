@@ -54,26 +54,8 @@
       "warning": "가입 前 소득은 공제 대상 아님"
     },
     {
-      "id": "duruNuri",
-      "order": 4,
-      "phase": "직원 채용 시",
-      "urgency": "conditional",
-      "title": "두루누리 사회보험 지원",
-      "icon": "🏥",
-      "description": "직원 10명 미만 사업장 해당",
-      "estimatedSaving": "근로자 1인당 월 20만원",
-      "applyUrl": "https://www.4insure.or.kr/",
-      "applyName": "국민연금공단",
-      "requiredDocs": ["사업자등록증", "근로자 명단", "근로계약서"],
-      "applyHow": "4대사회보험 정보연계센터에서 '두루누리 지원' 신청 → 국민연금·고용보험료 일부 감면 적용",
-      "processingTime": "20분",
-      "duration": "신청 후 다음 달 보험료부터 감면 적용 (통상 2~4주)",
-      "deadline": "직원 채용 후 6개월 이내 (필수)",
-      "warning": "6개월 지나면 해당 근로자 신청 불가 (영구)"
-    },
-    {
       "id": "youngStartupTaxCut",
-      "order": 5,
+      "order": 4,
       "phase": "이번 주",
       "urgency": "high",
       "title": "청년창업중소기업 세액감면",

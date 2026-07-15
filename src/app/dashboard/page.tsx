@@ -54,7 +54,7 @@ export default function DashboardPage() {
           </div>
 
           {/* 면책조항 + 재검증 안내 — 최하단 */}
-          {/*  ※ 🎁 5가지 추가 혜택·🗓️ 챙기는 순서는 AdvancedScreeningPanel 내부(소요기간 아래)로 이동함 */}
+          {/*  ※ 🎁 4가지 추가 혜택·🗓️ 챙기는 순서는 AdvancedScreeningPanel 내부(소요기간 아래)로 이동함 */}
           <div className="mt-7 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/60">⚠️ {ADVISORY_DISCLAIMER}</p>
             <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">🗓️ {REVALIDATION_NOTICE}</p>

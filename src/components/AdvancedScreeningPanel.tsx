@@ -890,7 +890,7 @@ function AdvancedResult({
                 <Link
                   key={prog.id}
                   href={`/support/${prog.id}`}
-                  className={`group block py-3 first:pt-0 last:pb-0 transition hover:bg-gray-50 ${lockNoClick}`}
+                  className={`group block py-3 first:pt-0 last:pb-0 origin-left transition-transform duration-150 hover:scale-[1.01] ${lockNoClick}`}
                 >
                   {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
                   <div className="flex flex-wrap items-center gap-1.5">
@@ -942,7 +942,10 @@ function AdvancedResult({
         </div>
       )}
 
-      {/* ② 신청 가능 기관 — 정부지원제도 아래 배치 (대표님 요청) */}
+      {/* 🎁 4가지 추가 혜택 — '받는 돈'을 먼저 몰아 보여주려 정책금융기관 '위'로 이동 (대표님 요청: 순서 개선) */}
+      {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
+
+      {/* ③ 신청 가능 기관 — '받는 돈(지원제도+추가혜택)' 뒤, '빌리는 돈' 자리로 배치 (대표님 요청: 순서 개선) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
         <p className="text-base font-extrabold text-brand-dark sm:text-lg">
           🏦 대표님이 이용할 수 있는 정책금융기관
@@ -1233,9 +1236,6 @@ function AdvancedResult({
           </div>
         )}
       </div>
-
-      {/* 🎁 5가지 추가 혜택 — '기관별 상품 한눈에 보기' 박스 '위'로 이동 (대표님 요청) */}
-      {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
 
       {/* 기관별 상품 한눈에 보기 — 지원제도 박스 '아래' 별도 박스로 배치 (대표님 요청) */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">

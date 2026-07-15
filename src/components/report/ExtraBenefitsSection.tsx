@@ -182,20 +182,6 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
       return { eligible: true, savingText: `연 약 ${formatKRW(1_200_000)} 절세` };
     }
 
-    // ── 두루누리 사회보험 지원 ──
-    case "duruNuri": {
-      const wc = u.workerCount;
-      if (wc === undefined)
-        return {
-          eligible: null,
-          note: "직원 수 정보가 없어 판정 불가 (직원 채용 시 상담으로 확인)",
-        };
-      if (wc <= 0) return { eligible: false, note: "직원 채용 시 대상" };
-      if (wc >= 10) return { eligible: false, note: "직원 10명 이상" };
-      const support = wc * 200_000 * 12;
-      return { eligible: true, savingText: `연 약 ${formatKRW(support)} 지원` };
-    }
-
     // ── 청년창업중소기업 세액감면 ──
     case "youngStartupTaxCut": {
       const age = u.representativeAge;
@@ -263,10 +249,10 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
 
   return (
     <>
-      {/* ========== 🎁 5가지 추가 혜택 — 정부지원제도 박스와 동일한 흰 카드 틀 ========== */}
+      {/* ========== 🎁 4가지 추가 혜택 — 정부지원제도 박스와 동일한 흰 카드 틀 ========== */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
         <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-          🎁 대표님이 챙기면 좋은 5가지 추가 혜택
+          🎁 대표님이 챙기면 좋은 4가지 추가 혜택
         </p>
         <p className="mt-1 break-keep text-xs text-brand-dark/60">
           정책자금 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 혜택입니다.
@@ -411,7 +397,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
           </p>
         </div>
       </div>
-      {/* ※ 🗓️ '이 순서대로만 챙기세요' 타임라인 블록 제거(대표님 요청) — 위 5가지 혜택 카드로 충분 */}
+      {/* ※ 🗓️ '이 순서대로만 챙기세요' 타임라인 블록 제거(대표님 요청) — 위 4가지 혜택 카드로 충분 */}
     </>
   );
 }

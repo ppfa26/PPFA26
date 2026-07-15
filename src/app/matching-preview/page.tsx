@@ -242,26 +242,6 @@ export default function MatchingPreview() {
 
             {/* 실제 대시보드 결과창 — 내용은 열고 이름/버튼만 부분 잠금(previewLock) */}
             <AdvancedScreeningPanel autoRun previewLock />
-
-            {/* 상단 안내 배너 — 스크롤하면서 '이 부분만 결제하면 열린다' 인지시키기 */}
-            <div className="pointer-events-none absolute inset-x-0 top-[52px] flex justify-center px-4">
-              <div className="pointer-events-auto mt-3 max-w-md rounded-2xl border border-brand-orange/40 bg-white/95 px-5 py-4 text-center shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm">
-                <p className="break-keep text-sm font-extrabold text-brand-dark">
-                  🔒 기관명·상품명·신청 방법만 가려져 있어요
-                </p>
-                <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/70">
-                  결제하시면 흐린 부분이 <b className="text-brand-orange">선명하게 공개</b>됩니다.
-                  <br />
-                  신청 링크도 바로 눌러 이용하실 수 있습니다.
-                </p>
-                <a
-                  href="/pricing"
-                  className="btn-brand mt-2.5 inline-block rounded-full px-5 py-2 text-xs font-bold"
-                >
-                  전체 결과 잠금 해제하기 →
-                </a>
-              </div>
-            </div>
           </div>
 
           {/* ── 결제 유도 박스 (최하단) ── */}
