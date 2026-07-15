@@ -208,23 +208,23 @@ export default function MyPage() {
                       href="http://pf.kakao.com/_VxfWxan/chat"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between gap-2 rounded-2xl border border-gray-200 bg-gray-50/60 px-4 py-3.5 transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3.5 transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
-                      <span className="flex min-w-0 items-center gap-2.5">
-                        <span className="text-lg">{s.icon}</span>
-                        <span className="break-keep text-sm font-bold text-brand-dark">
+                      <span className="flex min-w-0 flex-1 items-center gap-2">
+                        <span className="shrink-0 text-base">{s.icon}</span>
+                        <span className="break-keep text-[13px] font-bold leading-snug text-brand-dark">
                           {s.name}
                         </span>
                       </span>
-                      <span className="flex shrink-0 items-center gap-2">
+                      <span className="flex shrink-0 items-center gap-1.5">
                         <span
-                          className={`whitespace-nowrap text-sm font-extrabold ${
+                          className={`whitespace-nowrap text-[13px] font-extrabold ${
                             s.accent ? "text-brand-orange" : "text-brand-gray"
                           }`}
                         >
                           {s.price}
                         </span>
-                        <span className="whitespace-nowrap rounded-full bg-brand-dark px-3 py-1 text-[11px] font-bold text-white transition group-hover:opacity-90">
+                        <span className="whitespace-nowrap rounded-full bg-brand-dark px-2.5 py-1 text-[11px] font-bold text-white transition group-hover:opacity-90">
                           신청 문의
                         </span>
                       </span>
