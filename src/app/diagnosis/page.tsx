@@ -14,6 +14,7 @@ import {
   STEP1_SUBTITLE,
   STEP1_GROUP,
   STEP1_FIELDS,
+  CONTACT_TEXT,
   STEP2_TITLE,
   STEP2_SUBTITLE,
   STEP2_GROUP_NEED,
@@ -32,6 +33,8 @@ export default function Diagnosis() {
   const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [], certifications: [], innovation: [], currentInstitutions: [] });
   // 지역 '기타'(직접 입력) 모드 여부 — true면 아래에 직접 입력창을 띄웁니다.
   const [regionEtc, setRegionEtc] = useState(false);
+  // 대표자 연락 정보(성함·연락처) 필수 검증 에러 메시지
+  const [contactErr, setContactErr] = useState("");
 
   // 사업자번호 조회 상태
   const [bno, setBno] = useState("");
@@ -74,6 +77,24 @@ export default function Diagnosis() {
       return { ...f, [k]: arr.includes(v) ? arr.filter((x: string) => x !== v) : [...arr, v] };
     });
 
+  // 다음 단계로 이동 — 1단계에서는 대표자 성함·연락처를 필수로 검증한다.
+  const goNext = () => {
+    if (step === 1) {
+      const name = (form.name || "").trim();
+      const phoneDigits = (form.phone || "").replace(/[^0-9]/g, "");
+      if (!name) {
+        setContactErr(CONTACT_TEXT.errorName);
+        return;
+      }
+      if (phoneDigits.length < 10) {
+        setContactErr(CONTACT_TEXT.errorPhone);
+        return;
+      }
+      setContactErr("");
+    }
+    setStep(step + 1);
+  };
+
   const submit = () => {
     try {
       sessionStorage.setItem("mpp_diagnosis", JSON.stringify(form));
@@ -87,11 +108,13 @@ export default function Diagnosis() {
         const user = sessionData.session?.user ?? null;
         // ★ 관리자(운영자) 계정은 DB에 기록하지 않음 (대표님 요청 — 테스트가 통계에 안 섞이게) ★
         if (isAdminEmail(user?.email)) return;
-        // 진단 단계에서는 이름·연락처를 수집하지 않습니다(개인정보처리방침과 정합).
-        // 로그인 사용자의 email만 식별용으로 함께 저장합니다.
+        // 1단계에서 받은 대표자 성함·연락처를 전용 컬럼(name/phone)에도 저장
+        // → 관리자 목록·엑셀·상담 안내에서 정확히 식별됩니다. (profile 안에도 함께 보관)
         await supabase.from("diagnoses").insert({
           user_id: user?.id ?? null,
           profile: form,
+          name: (form.name || "").trim() || null,
+          phone: (form.phone || "").trim() || null,
           email: user?.email ?? null,
         });
       } catch {
@@ -318,6 +341,32 @@ export default function Diagnosis() {
                   )}
                 </Field>
               </GroupBox>
+
+              {/* 대표님 연락 정보 — 진단 안내·상담을 위해 수집 (성함·연락처 필수) */}
+              <GroupBox title={CONTACT_TEXT.groupTitle} tone="orange">
+                <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
+                  {CONTACT_TEXT.groupNote}
+                </p>
+                <Field label={CONTACT_TEXT.nameLabel}>
+                  <input
+                    type="text"
+                    value={form.name || ""}
+                    onChange={(e) => set("name", e.target.value)}
+                    placeholder={CONTACT_TEXT.namePlaceholder}
+                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                  />
+                </Field>
+                <Field label={CONTACT_TEXT.phoneLabel}>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={form.phone || ""}
+                    onChange={(e) => set("phone", e.target.value)}
+                    placeholder={CONTACT_TEXT.phonePlaceholder}
+                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                  />
+                </Field>
+              </GroupBox>
               {/* ※ 1단계 스마트기기 질문 제거(대표님 요청) — 동일 취지 질문이 3단계 'smartDevice'에 있어 매칭은 그대로 유지됨 */}
             </div>
           )}
@@ -427,6 +476,13 @@ export default function Diagnosis() {
             </div>
           )}
 
+          {/* 1단계 연락정보 미입력 시 안내 */}
+          {step === 1 && contactErr && (
+            <p className="mt-4 rounded-xl bg-brand-red/10 px-4 py-2.5 text-center text-sm font-semibold text-brand-red">
+              ⚠️ {contactErr}
+            </p>
+          )}
+
           {/* 네비 버튼 */}
           <div className="mt-6 flex gap-3">
             {step > 1 && (
@@ -435,7 +491,7 @@ export default function Diagnosis() {
               </button>
             )}
             {step < 3 ? (
-              <button onClick={() => setStep(step + 1)} className="btn-brand flex-1 rounded-full py-3">
+              <button onClick={goNext} className="btn-brand flex-1 rounded-full py-3">
                 {DIAGNOSIS_TEXT.nextButton}
               </button>
             ) : (

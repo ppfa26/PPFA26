@@ -29,7 +29,7 @@ export const DIAGNOSIS_TEXT = {
 export const BNO_TEXT = {
   title: "🔍 사업자등록번호로 자동 조회",
   badge: "(선택 · 국세청 실시간)",
-  placeholder: "예: 597-12-02897",
+  placeholder: "예: 123-45-67890",
   button: "조회",
   buttonLoading: "조회 중...",
   statusPrefix: "사업자 상태:",
@@ -45,6 +45,17 @@ export const STEP1_TITLE = "1단계 · 사업장 기본 정보";
 export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본 정보예요. 아는 대로 편하게 선택해 주세요.";
 // 1단계 안내 박스 소제목
 export const STEP1_GROUP = "🏢 사업장 정보";
+// ── 대표자 연락 정보 (진단 결과·상담 안내를 위해 수집) ──────────────
+export const CONTACT_TEXT = {
+  groupTitle: "📇 대표님 연락 정보",
+  groupNote: "정확한 진단 안내와 1:1 상담을 위해 필요합니다. (외부에 공개되지 않습니다)",
+  nameLabel: "대표자 성함",
+  namePlaceholder: "예: 홍길동",
+  phoneLabel: "연락처",
+  phonePlaceholder: "예: 010-1234-5678",
+  errorName: "대표자 성함을 입력해 주세요.",
+  errorPhone: "연락처를 정확히 입력해 주세요.",
+};
 export const STEP1_FIELDS = {
   businessType: {
     label: "사업자 유형",
