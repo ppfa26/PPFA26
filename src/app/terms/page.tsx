@@ -5,7 +5,7 @@ import Editable from "@/components/Editable";
 
 export default function TermsPage() {
   return (
-    <LegalLayout pageKey="terms" title="이용약관" updatedAt="2026년 7월 8일">
+    <LegalLayout pageKey="terms" title="이용약관" updatedAt="2026년 7월 15일">
       <section id="terms-1">
         <h2 className="text-lg font-extrabold text-brand-dark">제1조 (목적)</h2>
         <Editable id="terms-1-body" as="p" className="mt-2">
@@ -21,8 +21,8 @@ export default function TermsPage() {
           제2조 (서비스의 성격 — 중요)
         </h2>
         <Editable id="terms-2-body" as="p" className="mt-2">
-          본 서비스는 정부지원사업·정책자금의 <b>정보 제공 및 신청 방법·전략에 대한
-          자문(컨설팅) 서비스</b>입니다. 회사는 다음 사항을 명확히 고지합니다.
+          본 서비스는 정부지원사업의 <b>정보 제공 및 신청 방법에 대한 매칭 및 자문
+          서비스</b>입니다. 회사는 다음 사항을 명확히 고지합니다.
         </Editable>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
           <li>
@@ -30,12 +30,11 @@ export default function TermsPage() {
             각 정부 부처·기관·금융기관의 심사에 따라 결정됩니다.
           </li>
           <li>
-            회사는 <b>대행 신청(행정대행)을 수행하지 않습니다.</b> 실제 신청은
-            이용자 본인이 직접 진행합니다.
+            실제 신청은 <b>이용자 본인이 직접 진행</b>합니다.
           </li>
           <li>
-            회사는 <b>승인·성공에 따른 수수료(성공보수)를 일절 받지 않습니다.</b>
-            이용자가 지불하는 금액은 자문 서비스 이용료에 한합니다.
+            이용자가 지불하는 금액은 <b>자문 서비스 이용료</b>이며, 그 외에
+            추가적인 수수료(이용료)는 없습니다. <span className="text-brand-gray">(유료 추가 서비스는 제외)</span>
           </li>
         </ul>
       </section>
@@ -48,10 +47,10 @@ export default function TermsPage() {
           회사가 제공하는 서비스는 다음과 같습니다.
         </Editable>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
-          <li>진단 정보를 기반으로 한 맞춤형 지원사업 매칭 결과 제공</li>
-          <li>지원사업별 신청 사이트·필요 서류·신청 절차 안내</li>
-          <li>승인 확률을 높이기 위한 전략 및 서류 준비 자문</li>
-          <li>공식 공문·자료를 근거로 한 1:1 상담</li>
+          <li>진단 정보를 기반으로 한 맞춤형 정부지원사업 매칭 결과 제공</li>
+          <li>
+            정부지원사업별 신청 사이트·필요 서류·신청 절차 안내 및 서류 준비 자문
+          </li>
         </ul>
       </section>
 
@@ -60,7 +59,7 @@ export default function TermsPage() {
           제4조 (이용료 및 결제)
         </h2>
         <Editable id="terms-4-body" as="p" className="mt-2">
-          서비스는 상품별로 정해진 이용료를 <b>일시불 1회 결제</b>하는 방식으로
+          서비스는 상품별로 정해진 이용료를 <b>일시불 1회성 결제</b>하는 방식으로
           제공되며, <b>자동결제(정기결제)는 발생하지 않습니다.</b> 결제는 회사가
           지정한 결제대행사(PG)를 통해 이루어집니다.
         </Editable>
@@ -82,9 +81,9 @@ export default function TermsPage() {
           제6조 (이용자의 의무)
         </h2>
         <Editable id="terms-6-body" as="p" className="mt-2">
-          이용자는 진단·상담 과정에서 정확한 정보를 제공해야 하며, 회사가 제공한
-          자문 자료를 신청의 참고 자료로 활용합니다. 최종 신청 서류의 작성·제출
-          책임은 이용자 본인에게 있습니다.
+          이용자는 사업장 진단 과정에서 정확한 정보를 제공해야 하며, 회사가 제공한
+          매칭 및 안내 자료를 신청의 참고 자료로 활용합니다. 최종 신청 서류의
+          작성·제출 책임은 이용자 본인에게 있습니다.
         </Editable>
       </section>
 
