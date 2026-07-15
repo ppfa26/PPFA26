@@ -5,7 +5,7 @@ import Editable from "@/components/Editable";
 
 export default function RefundPage() {
   return (
-    <LegalLayout pageKey="refund" title="환불정책" updatedAt="2026년 7월 8일">
+    <LegalLayout pageKey="refund" title="환불정책" updatedAt="2026년 7월 15일">
       <section id="refund-intro">
         <Editable id="refund-intro-body" as="p">
           모두의사업친구(이하 &ldquo;회사&rdquo;)의 환불정책은 「전자상거래 등에서의
@@ -20,12 +20,14 @@ export default function RefundPage() {
           서비스 제공기간
         </h2>
         <Editable id="refund-period-body" as="p" className="mt-2">
-          본 서비스는 <b>무형(디지털) 자문 서비스</b>로, 서비스 제공기간은 결제
-          시점부터 각 플랜에 명시된 <b>이용기간(1개월)</b> 동안입니다. 결제 즉시
-          가이드 사이트 열람·매칭 추천·상담이 개시되며, 별도 배송이 없는 상품입니다.
+          본 서비스는 <b>무형(디지털) 정부지원사업 추천 매칭 서비스</b>로, 서비스
+          제공기간은 결제 시점부터 각 플랜에 명시된 <b>이용기간(1개월)</b> 동안이며
+          <b> 결제한 아이디당 1회 조회</b>를 기준으로 합니다. 결제 즉시 가이드 사이트
+          열람·매칭 추천이 개시되며, 별도 배송이 없는 상품입니다.
         </Editable>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
           <li>AI 올인원 패키지 : <b>결제일로부터 1개월</b> 이용</li>
+          <li>결제 아이디당 <b>1회 조회</b>를 기준으로 합니다</li>
           <li>이용기간 종료 시 1개월 단위로 자유롭게 추가 결제·연장 가능</li>
         </ul>
       </section>
@@ -93,10 +95,9 @@ export default function RefundPage() {
           5. 승인 결과 관련 안내
         </h2>
         <Editable id="refund-5-body" as="p" className="mt-2">
-          본 서비스는 <b>자문 서비스</b>로서 정부지원사업·정책자금의 <b>승인·선정을
-          보장하지 않습니다.</b> 따라서 <b>기관 심사에서 승인·선정되지 않았다는
-          사유만으로는 환불 대상이 되지 않습니다.</b> 회사는 대행 신청을 하지 않으며
-          승인에 따른 성공보수(수수료)를 받지 않습니다.
+          본 서비스는 <b>정부지원사업 추천 및 매칭 서비스</b>로서 정부지원사업의
+          <b> 승인·선정을 보장하지 않습니다.</b> 기관 심사에서 승인·선정되지 않았다는
+          <b> 사유만으로는 환불 대상이 되지 않습니다.</b>
         </Editable>
       </section>
     </LegalLayout>
