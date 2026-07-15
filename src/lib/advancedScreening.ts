@@ -561,8 +561,20 @@ export type LoanLimitResult = {
   boost_available: string[];
 };
 
+// 한글 업종명("제조업"·"음식점업" 등)을 대출한도 비율 키로 변환한다.
+//  ⚠️ 과거 버그: company.industry는 '한글 원문'인데 INDUSTRY_LOAN_RATIOS 키는 영문이라
+//     INDUSTRY_LOAN_RATIOS["제조업"] === undefined → 항상 0.1(1/10)로 폴백됨.
+//     제조업 고객의 한도가 1/4(0.25) 대신 1/10으로 잘못 계산되던 문제 → normalizeIndustry로 정규화.
+function loanRatioForIndustry(industry: string): number {
+  const cat = normalizeIndustry(industry); // manufacturing/tech_innov/retail_food/service/etc
+  if (cat === "manufacturing") return INDUSTRY_LOAN_RATIOS.manufacturing; // 제조 = 1/4
+  if (cat === "retail_food") return INDUSTRY_LOAN_RATIOS.wholesale; // 도소매·음식 = 1/6
+  // tech_innov·service·etc → 서비스/기타 기준 1/10
+  return INDUSTRY_LOAN_RATIOS.service;
+}
+
 export function calculateLoanLimit(industry: string, annual_revenue: number): LoanLimitResult {
-  const ratio = INDUSTRY_LOAN_RATIOS[industry as IndustryKey] || 0.1;
+  const ratio = loanRatioForIndustry(industry);
   const base_limit = Math.floor(annual_revenue * ratio);
 
   return {
@@ -634,7 +646,7 @@ export const GOV_SUPPORT_2026: GovProgram[] = [
   { name: "생애최초창업", amount_max: 70000000, age_max: 29, condition: "is_pre_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
   { name: "공공기술창업", amount_max: 70000000, age_max: 39, condition: "is_pre_founder", segment: "both", requiresTech: true, applyUrl: "https://www.k-startup.go.kr" },
   { name: "신사업창업사관학교", amount_max: 40000000, condition: "is_pre_founder", segment: "small", fitTags: ["food", "retail", "service"], applyUrl: "https://edu.sbiz.or.kr" },
-  { name: "재도전성공패키지", amount_max: 100000000, condition: "is_re_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
+  { name: "재도전성공패키지", amount_max: 100000000, years_max: 7, condition: "is_re_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
   // 중소기업(도약·글로벌·스마트공장 등) — segment: sme
   { name: "글로벌창업사관학교", amount_max: 150000000, years_max: 7, segment: "sme", requiresTech: true, isStartupProgram: true, requiresExport: true, fitTags: ["export"], applyUrl: "https://start.kosmes.or.kr" },
   { name: "창업도약패키지_일반형", amount_max: 300000000, years_min: 3, years_max: 7, segment: "sme", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
@@ -1300,10 +1312,12 @@ export function matchGovPrograms(company: Company): GovProgram[] {
     if (kind === "export" && p.requiresExport) score += 40;
     // (3) 제조 트랙 가점: 제조업엔 제조 전용사업 최상단 (+40)
     if (kind === "manufacturing" && p.industryOnly === "manufacturing") score += 40;
-    // (4) 예비/재창업자엔 해당 조건 사업 가점 (창업이 본 목적이므로)
-    if (p.condition === "is_pre_founder" && is_pre_founder) score += 60;
-    if (p.condition === "is_re_founder" && is_re_founder) score += 60;
-    if (p.requiresReFounder && is_re_founder) score += 60;
+    // (4) 예비/재창업자엔 '그 신분 전용' 사업이 가장 핵심이므로 최우선(+150).
+    //     (fitTag +100보다 높게 둬서, 재창업자 결과에서 재도전성공패키지·재기 전용
+    //      사업이 업종 태그 사업에 밀려 상한(5개)에서 잘리지 않도록 보장)
+    if (p.condition === "is_pre_founder" && is_pre_founder) score += 150;
+    if (p.condition === "is_re_founder" && is_re_founder) score += 150;
+    if (p.requiresReFounder && is_re_founder) score += 150;
     // (5) 운영 중 기존 사업자에겐 운영형 사업 가점 (+30)
     if (p.requiresOperating && is_pre_founder !== true) score += 30;
     // (6) 지원금액이 클수록 소폭 가점 (동점 tie-break, 최대 +10)

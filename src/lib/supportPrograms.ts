@@ -102,8 +102,14 @@ export function computeSupportEligibility(p: DiagnosisProfile): Record<string, b
   const isExport = inds.some((s) => s.includes("수출"));
   // 두루누리: 직원 10명 미만(0명 제외) — "5명 이하" 또는 "10명 이하"
   const isDuruEligible = hasEmployees && (emp.includes("5명") || emp.includes("10명이하"));
-  // 소상공인 경영안정 바우처: 매출 5억 미만(매출 없음/1억 미만/5억 미만)
-  const isSmallBiz = Boolean(p.revenue) && !rev.includes("5억이상") && !rev.includes("매출없음");
+  // 소상공인 경영안정 바우처(팩트체크 반영):
+  //   공식 요건(소상공인24 2026 공고): 직전년도 연 매출액 "1억 400만원 미만"(0원 초과).
+  //   진단 매출 옵션은 [매출 없음 / 1억 미만 / 5억 미만 / 5억 이상] 4구간이므로,
+  //    · "1억 미만"만 1억 400만원 미만에 '확실히' 들어감 → eligible(✅)
+  //    · "5억 미만"(1억 400만~5억일 수 있음)은 불확실 → eligible로 단정하지 않고
+  //      potentialRule에서 '매출 요건 충족 시 대상'으로만 안내 (과대추천 방지)
+  //    · "매출 없음"은 0원 초과 요건 미달 → 대상 아님
+  const isSmallBiz = rev.includes("1억미만");
   // ── 청년일자리도약장려금(팩트체크 반영) ──
   //   공식 요건(고용노동부 2025 지침): 피보험자수 "5인 이상" 우선지원대상기업이
   //   만 15~34세 취업애로청년을 정규직으로 채용해야 신청 가능.
@@ -271,13 +277,13 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "소상공인 경영안정 바우처",
     site: "www.sbiz24.kr",
     url: "https://www.sbiz24.kr",
-    desc: "영세 소상공인의 고정비(4대 보험료·전기·가스요금 등) 부담을 덜어주는 바우처입니다. 연 매출 등 요건 충족 시 지급됩니다.",
+    desc: "영세 소상공인의 고정비(4대 보험료·전기·가스·수도요금 등) 부담을 덜어주는 카드 포인트 바우처입니다(최대 25만원). 직전년도 연 매출액이 1억 400만원 미만(0원 초과)이고, 전년도 이전 개업해 현재 영업 중인 소상공인이 대상입니다.",
     applyHow: "소상공인24(sbiz24.kr)에 로그인 → 경영안정 바우처 사업공고 확인 후 온라인 신청",
     applyTel: "1533-0600",
     eligibleBadge: "✅ 신청 대상",
-    ineligibleBadge: "영세 소상공인 대상",
-    eligibleNote: "영세 소상공인으로 경영안정 바우처 신청 대상입니다.",
-    ineligibleNote: "연 매출 등 조건을 충족하는 영세 소상공인이 대상입니다.",
+    ineligibleBadge: "매출 요건 확인 대상",
+    eligibleNote: "연 매출 1억 원 미만 소상공인으로 경영안정 바우처(최대 25만원) 신청 대상입니다. (직전년도 연 매출 1억 400만원 미만·현재 영업 중 조건)",
+    ineligibleNote: "직전년도 연 매출액이 1억 400만원 미만(0원 초과)이고 현재 영업 중인 소상공인이 대상입니다. 매출 규모를 확인해 보세요.",
     detailIntro: "소상공인 경영안정 바우처의 접수·승인·지급 일정과 담당 부처 연락처입니다.",
     sections: [
       {
