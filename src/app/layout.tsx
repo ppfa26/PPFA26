@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import MobilePcNotice from "@/components/MobilePcNotice";
 import CopyGuard from "@/components/CopyGuard";
+import UtmCapture from "@/components/UtmCapture";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의사업친구.kr";
@@ -165,6 +166,7 @@ export default function RootLayout({
       </head>
       <body className="theme-dark">
         <CopyGuard />
+        <UtmCapture />
         <MobilePcNotice />
         {children}
       </body>

@@ -9,6 +9,7 @@ import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
+import { getCapturedUtmSource } from "@/components/UtmCapture";
 
 type Mode = "signup" | "login";
 
@@ -84,11 +85,13 @@ function SignupInner() {
     setLoading(true);
     try {
       if (mode === "signup") {
+        // 유입경로(광고 채널) — 방문 시 UtmCapture 가 저장해 둔 값을 가입 정보에 함께 기록
+        const utm_source = getCapturedUtmSource();
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            data: { name, phone, tier: tier || "" },
+            data: { name, phone, tier: tier || "", utm_source },
           },
         });
         if (error) {

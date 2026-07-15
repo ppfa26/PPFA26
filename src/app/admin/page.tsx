@@ -38,6 +38,7 @@ type AdminUser = {
   credits_total: number;
   credits_used: number;
   latest_expiry: string | null;
+  utm_source: string | null;
 };
 
 type AdminPayment = {
@@ -110,6 +111,25 @@ const daysLeft = (s: string | null) => {
 
 const tierName = (t: string) => TIER_MAP?.[t as keyof typeof TIER_MAP]?.name ?? t;
 
+// 유입경로(광고 채널) 코드 → 화면 배지(이모지+이름+색)
+const utmBadge = (src: string | null) => {
+  const key = (src || "direct").toLowerCase();
+  const map: Record<string, { label: string; cls: string }> = {
+    daangn: { label: "🥕 당근", cls: "bg-orange-100 text-orange-700" },
+    meta: { label: "📘 메타", cls: "bg-blue-100 text-blue-700" },
+    instagram: { label: "📷 인스타", cls: "bg-pink-100 text-pink-700" },
+    naver: { label: "🟢 네이버", cls: "bg-green-100 text-green-700" },
+    google: { label: "🔍 구글", cls: "bg-sky-100 text-sky-700" },
+    kakao: { label: "💬 카카오", cls: "bg-yellow-100 text-yellow-800" },
+    youtube: { label: "▶️ 유튜브", cls: "bg-red-100 text-red-700" },
+    tiktok: { label: "🎵 틱톡", cls: "bg-gray-800 text-white" },
+    band: { label: "🟩 밴드", cls: "bg-lime-100 text-lime-700" },
+    direct: { label: "🔗 직접유입", cls: "bg-gray-100 text-gray-500" },
+    etc: { label: "🌐 기타", cls: "bg-gray-100 text-gray-500" },
+  };
+  return map[key] ?? { label: `🌐 ${src}`, cls: "bg-gray-100 text-gray-600" };
+};
+
 const statusBadge = (status: string) => {
   const map: Record<string, { label: string; cls: string }> = {
     paid: { label: "결제완료", cls: "bg-emerald-100 text-emerald-700" },
@@ -171,6 +191,7 @@ export default function AdminPage() {
   const [openMonth, setOpenMonth] = useState<string | null>(null); // 매출-월별 펼침 (YYYY-MM)
   const [msg, setMsg] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [userSearch, setUserSearch] = useState(""); // 회원 검색어(이름·이메일·연락처)
 
   // 중복 신청 순번 (같은 연락처/이메일 기준 몇 번째 신청인지)
   const dupIndexMap = computeDuplicateIndex(diagnoses as unknown as DiagnosisRecord[]);
@@ -440,6 +461,35 @@ export default function AdminPage() {
     await loadAll();
     setTimeout(() => setMsg(null), 4000);
   };
+  // 회원 이메일 → 그 회원이 작성한 진단서의 이름/연락처를 찾아온다 (가장 최근 것 우선)
+  const userInfoByEmail = (email: string | null): { name: string | null; phone: string | null } => {
+    if (!email) return { name: null, phone: null };
+    const matched = diagnoses
+      .filter((d) => (d.email || (d.profile as any)?.email) === email)
+      .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+    const t = matched[0];
+    if (!t) return { name: null, phone: null };
+    return {
+      name: t.name || (t.profile as any)?.name || null,
+      phone: t.phone || (t.profile as any)?.phone || null,
+    };
+  };
+
+  // 회원 검색 필터 — 이메일·이름·연락처 어디에 걸려도 검색됨
+  const filteredUsers = users.filter((u) => {
+    const q = userSearch.trim().toLowerCase();
+    if (!q) return true;
+    const info = userInfoByEmail(u.email);
+    const hay = [u.email, info.name, info.phone]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    // 연락처는 숫자만으로도 검색되게
+    const digitsHay = (info.phone || "").replace(/[^0-9]/g, "");
+    const digitsQ = q.replace(/[^0-9]/g, "");
+    return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
+  });
+
   // 회원 목록 → 그 회원의 고객 진단서로 바로 이동 (이메일로 매칭)
   const goToUserDiag = (email: string | null) => {
     if (!email) {
@@ -480,7 +530,7 @@ export default function AdminPage() {
         `${email} 님의 조회권을 환불(열람 차단) 처리할까요?\n\n` +
           `· 남은 조회권이 0이 되어 결과 페이지를 더 이상 볼 수 없게 됩니다.\n` +
           `· 실제 결제 금액 환불은 PG사에서 별도로 진행해 주세요.\n` +
-          `(되돌리려면 '조회권+' 로 다시 부여하면 됩니다)`
+          `(되돌리려면 초록색 '조회권 복구' 버튼을 누르면 됩니다)`
       )
     )
       return;
@@ -491,6 +541,28 @@ export default function AdminPage() {
       error
         ? `오류: ${error.message}`
         : `${email} 님의 조회권을 차단(환불 처리)했습니다. (결제 ${String(data ?? 0)}건 열람 차단)`
+    );
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
+
+  // 조회권 환불 취소(열람 복구) — 환불 처리했던 조회권을 되돌려 다시 볼 수 있게 한다.
+  const restoreCredits = async (email: string | null) => {
+    if (!email) return;
+    if (
+      !window.confirm(
+        `${email} 님의 조회권을 복구(환불 취소)할까요?\n\n` +
+          `· 결제했던 조회권이 되살아나 결과 페이지를 다시 볼 수 있게 됩니다.`
+      )
+    )
+      return;
+    const { data, error } = await supabase.rpc("admin_restore_credits", {
+      p_email: email,
+    });
+    setMsg(
+      error
+        ? `오류: ${error.message}`
+        : `${email} 님의 조회권을 복구했습니다. (결제 ${String(data ?? 0)}건 열람 재개)`
     );
     await loadAll();
     setTimeout(() => setMsg(null), 4000);
@@ -718,11 +790,39 @@ export default function AdminPage() {
 
           {/* ------- 회원 목록 ------- */}
           {tab === "users" && (
-            <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <div>
+              {/* 🔍 회원 검색 — 이름·이메일·연락처로 즉시 검색 */}
+              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="relative flex-1">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    🔍
+                  </span>
+                  <input
+                    type="text"
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    placeholder="회원 검색 — 이름 · 이메일 · 연락처로 찾기 (예: 홍길동 / 010 / hong@)"
+                    className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 outline-none focus:border-brand-orange"
+                  />
+                </div>
+                {userSearch && (
+                  <button
+                    onClick={() => setUserSearch("")}
+                    className="rounded-xl bg-gray-100 px-3 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-200"
+                  >
+                    ✕ 초기화
+                  </button>
+                )}
+                <span className="whitespace-nowrap text-xs text-gray-400">
+                  {userSearch ? `검색결과 ${filteredUsers.length}명` : `전체 ${users.length}명`}
+                </span>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
               <table className="w-full min-w-[720px] text-left text-sm">
                 <thead className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
                   <tr>
-                    <th className="px-4 py-3 font-semibold">이메일</th>
+                    <th className="px-4 py-3 font-semibold">회원 (이름·유입경로)</th>
                     <th className="px-4 py-3 font-semibold">가입일</th>
                     <th className="px-4 py-3 font-semibold">최근접속</th>
                     <th className="px-4 py-3 font-semibold text-center">결제</th>
@@ -733,19 +833,38 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {users.length === 0 && (
+                  {filteredUsers.length === 0 && (
                     <tr>
                       <td colSpan={8} className="px-4 py-10 text-center text-gray-400">
-                        회원이 없습니다.
+                        {userSearch ? "검색 결과가 없습니다." : "회원이 없습니다."}
                       </td>
                     </tr>
                   )}
-                  {users.map((u) => {
+                  {filteredUsers.map((u) => {
                     const dl = daysLeft(u.latest_expiry);
                     const active = dl !== null && dl > 0;
+                    const info = userInfoByEmail(u.email);
+                    const badge = utmBadge(u.utm_source);
+                    // 조회권을 결제한 적이 있고(total>0) 남은 게 0이면 = 환불(차단)된 상태
+                    const isRefunded = u.credits_total > 0 && u.credits_used >= u.credits_total;
                     return (
                       <tr key={u.user_id} className="hover:bg-gray-50/60">
-                        <td className="px-4 py-3 font-medium text-gray-800">{u.email}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-gray-800">
+                                {info.name || "이름 미입력"}
+                              </span>
+                              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${badge.cls}`}>
+                                {badge.label}
+                              </span>
+                            </div>
+                            <span className="text-xs text-gray-400">{u.email}</span>
+                            {info.phone && (
+                              <span className="text-xs text-gray-400">{info.phone}</span>
+                            )}
+                          </div>
+                        </td>
                         <td className="px-4 py-3 text-gray-500">{fmtDate(u.joined_at)}</td>
                         <td className="px-4 py-3 text-gray-500">{fmtDate(u.last_sign_in)}</td>
                         <td className="px-4 py-3 text-center text-gray-700">{u.paid_count}건</td>
@@ -784,12 +903,21 @@ export default function AdminPage() {
                             >
                               기기초기화
                             </button>
-                            <button
-                              onClick={() => refundCredits(u.email)}
-                              className="rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-700 hover:bg-orange-100"
-                            >
-                              💸 조회권 환불
-                            </button>
+                            {isRefunded ? (
+                              <button
+                                onClick={() => restoreCredits(u.email)}
+                                className="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
+                              >
+                                ↩️ 조회권 복구
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => refundCredits(u.email)}
+                                className="rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-700 hover:bg-orange-100"
+                              >
+                                💸 조회권 환불
+                              </button>
+                            )}
                             <button
                               onClick={() => u.email && doBlock("email", u.email)}
                               className="rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
@@ -809,6 +937,7 @@ export default function AdminPage() {
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 
