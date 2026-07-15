@@ -278,6 +278,15 @@ function PaymentInner() {
           결제에 문제가 있나요?{" "}
           <Link href="/pricing" className="underline">플랜 다시 선택하기</Link>
         </p>
+
+        {/* 결제 화면 필수 고지 링크 (약관·개인정보·환불/청약철회) */}
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[11px] text-brand-gray">
+          <Link href="/terms" className="underline hover:text-brand-dark">이용약관</Link>
+          <span className="text-gray-300">·</span>
+          <Link href="/privacy" className="underline hover:text-brand-dark">개인정보처리방침</Link>
+          <span className="text-gray-300">·</span>
+          <Link href="/refund" className="underline hover:text-brand-dark">환불·청약철회 규정</Link>
+        </div>
       </main>
       <Footer />
     </PageShell>
