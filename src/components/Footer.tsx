@@ -17,7 +17,7 @@ export default function Footer() {
                 alt="모두의사업친구"
                 width={28}
                 height={28}
-                className="h-7 w-7 shrink-0 rounded-full"
+                className="h-7 w-7 shrink-0 rounded-lg"
               />
               <span className="text-base font-extrabold leading-none text-white">
                 모두의사업친구
