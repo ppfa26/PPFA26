@@ -159,23 +159,42 @@ function PaymentInner() {
     const origin = window.location.origin;
     try {
       const tossPayments = window.TossPayments(TOSS_CLIENT_KEY);
-      // 결제 성공 시 successUrl(/payment/success)로 리다이렉트되며
-      //  paymentKey·orderId·amount 쿼리가 붙어 옵니다.
-      //  → success 페이지의 '토스 경로'가 /api/payment/confirm 을 호출해 승인 확정합니다.
-      await tossPayments.requestPayment("카드", {
+      // 토스 SDK v1은 옵션에 undefined 값이 명시적으로 들어가면 검증에서 걸릴 수 있어
+      //  실제 값이 있는 필드만 담아서 전달합니다.
+      const payOptions: {
+        amount: number;
+        orderId: string;
+        orderName: string;
+        successUrl: string;
+        failUrl: string;
+        customerName?: string;
+        customerEmail?: string;
+      } = {
         amount: product.price,
         orderId,
         orderName: `모두의사업친구 ${product.name} 플랜`,
+        // 결제 성공 시 successUrl(/payment/success)로 리다이렉트되며
+        //  paymentKey·orderId·amount 쿼리가 붙어 옵니다.
+        //  → success 페이지의 '토스 경로'가 /api/payment/confirm 을 호출해 승인 확정합니다.
         successUrl: `${origin}/payment/success`,
-        failUrl: `${origin}/payment/success`,
-        customerName: userName || "고객",
-        customerEmail: email || undefined,
-      });
+        // 실패 시엔 별도 쿼리(payFail=1)로 구분해 성공 페이지가 실패 안내를 띄웁니다.
+        failUrl: `${origin}/payment/success?payFail=1`,
+      };
+      if (userName) payOptions.customerName = userName;
+      if (email) payOptions.customerEmail = email;
+
+      await tossPayments.requestPayment("카드", payOptions);
     } catch (err) {
       // 사용자가 결제창을 닫거나(취소) 오류가 난 경우
       setPaying(false);
+      const e = err as { code?: string; message?: string };
+      // 사용자가 스스로 창을 닫은 경우(USER_CANCEL)는 조용히 넘어갑니다.
+      if (e?.code === "USER_CANCEL") {
+        setNotice(null);
+        return;
+      }
       const msg =
-        (err as { message?: string })?.message ||
+        (e?.message ? `${e.message}${e.code ? ` (${e.code})` : ""}` : null) ||
         "결제가 취소되었거나 오류가 발생했습니다. 다시 시도해 주세요.";
       setNotice(msg);
     }

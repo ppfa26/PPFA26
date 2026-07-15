@@ -25,10 +25,14 @@ function SuccessInner() {
   const nicePayTid = params.get("tid"); // 나이스 거래 고유번호 → payment_key로 사용
   const nicePayReason = params.get("reason"); // 실패 사유
 
-  // ── 토스페이먼츠(레거시) 경로 파라미터 ──
+  // ── 토스페이먼츠 경로 파라미터 ──
   const paymentKey = params.get("paymentKey");
   const orderIdParam = params.get("orderId");
   const amountParam = params.get("amount");
+  // 결제 실패(failUrl) 시 붙는 표시 + 토스가 함께 넘겨주는 에러 코드/메시지
+  const payFail = params.get("payFail") === "1";
+  const failCode = params.get("code");
+  const failMessage = params.get("message");
 
   const [status, setStatus] = useState<Status>("processing");
   const [message, setMessage] = useState<string>("결제를 확인하고 있습니다...");
@@ -154,8 +158,20 @@ function SuccessInner() {
       }
 
       // ─────────────────────────────────────────────
-      //  ② 토스페이먼츠 경로 (레거시 · 하위호환)
+      //  ② 토스페이먼츠 경로
       // ─────────────────────────────────────────────
+      //  ②-a 결제 실패(failUrl)로 돌아온 경우 → 토스가 넘겨준 사유를 그대로 안내
+      if (payFail || failCode) {
+        setStatus("fail");
+        setMessage(
+          failMessage
+            ? `${failMessage}${failCode ? ` (${failCode})` : ""}`
+            : "결제가 취소되었거나 완료되지 않았습니다. 다시 시도해 주세요."
+        );
+        return;
+      }
+
+      //  ②-b 정상 성공 경로: paymentKey·orderId·amount 확인
       if (!paymentKey || !orderIdParam || !amountParam) {
         setStatus("fail");
         setMessage("결제 정보가 확인되지 않았습니다.");
