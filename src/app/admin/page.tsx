@@ -520,6 +520,45 @@ export default function AdminPage() {
     }, 150);
   };
 
+  // 회원 목록 → 그 고객의 '결과창'을 관리자 모드로 새 탭에서 열기.
+  //   상담(전화·카톡) 중 고객과 같은 화면을 보며 안내하기 위한 기능.
+  //   그 고객의 최근 진단 profile을 sessionStorage(mpp_diagnosis)에 심고,
+  //   /matching-preview?admin=1 로 열면 잠금 없이 전체 결과가 노출된다.
+  //   (결제·조회권 차감이 없는 미리보기 페이지를 재사용 → 부작용 없음)
+  const viewUserResult = (email: string | null) => {
+    if (!email) {
+      setMsg("이 회원은 이메일 정보가 없어 결과를 열 수 없습니다.");
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    const matched = diagnoses
+      .filter((d) => (d.email || (d.profile as any)?.email) === email)
+      .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+    if (matched.length === 0) {
+      setMsg("이 회원이 작성한 진단서가 아직 없어 결과를 만들 수 없습니다.");
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    const target = matched[0];
+    // 진단서에 저장된 profile(진단 원본)을 그대로 결과창 입력값으로 사용.
+    //   name/phone/email이 profile에 누락돼 있으면 컬럼값으로 보완한다.
+    const profile: Record<string, unknown> = {
+      ...(target.profile || {}),
+    };
+    if (!profile.name && target.name) profile.name = target.name;
+    if (!profile.phone && target.phone) profile.phone = target.phone;
+    if (!profile.email && target.email) profile.email = target.email;
+    try {
+      sessionStorage.setItem("mpp_diagnosis", JSON.stringify(profile));
+    } catch {
+      setMsg("브라우저 저장소 오류로 결과를 열 수 없습니다.");
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    // 새 탭에서 관리자 열람 모드로 결과창 열기
+    window.open("/matching-preview?admin=1", "_blank", "noopener");
+  };
+
   // 조회권 환불(열람 차단) — 실제 결제 환불은 대표님이 PG사에서 처리하고,
   //   이 버튼은 '사이트에서 더 이상 정보를 못 보게' 조회권을 0으로 만들어 열람을 즉시 차단한다.
   //   (환불만 받고 정보를 계속 빼가는 것을 방지)
@@ -896,6 +935,12 @@ export default function AdminPage() {
                               className="rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 hover:bg-sky-100"
                             >
                               📇 고객진단서
+                            </button>
+                            <button
+                              onClick={() => viewUserResult(u.email)}
+                              className="rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
+                            >
+                              📊 결과보기
                             </button>
                             <button
                               onClick={() => u.email && resetDevice(u.email)}

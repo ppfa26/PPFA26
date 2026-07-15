@@ -469,12 +469,11 @@ export default function Diagnosis() {
           {step === 3 && (
             <div className="mt-6 rounded-2xl border border-brand-orange/40 bg-brand-orange/5 p-4">
               <p className="break-keep text-sm font-bold text-brand-dark">
-                ⚠️ 정확한 정보를 입력해 주세요
+                ⚠️ 내 사업장의 정확한 정보를 입력해 주세요
               </p>
               <p className="mt-2 break-keep text-xs leading-relaxed text-brand-gray sm:text-[13px]">
                 결제 1회당 <b className="text-brand-orange">새 사업자 조회는 1회</b>까지만 가능합니다.
-                실수로 입력해서 결과가 다르게 나온다면 <b className="text-brand-dark">1:1 문의하기</b>로
-                말씀주시면 저희가 다시 초기화해드리겠습니다.
+                초기화를 원하시면 <b className="text-brand-dark">1:1 문의하기</b> 부탁드리겠습니다.
               </p>
               <p className="mt-3 break-keep text-xs leading-relaxed text-brand-gray sm:text-[13px]">
                 입력값이 정확할수록 대표님 사업장에 딱 맞는 결과를 받아보실 수 있으니,

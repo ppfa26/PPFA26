@@ -16,6 +16,10 @@ import {
 export default function MatchingPreview() {
   const [name, setName] = useState("");
   const [blockReasons, setBlockReasons] = useState<PaymentBlockReason[]>([]);
+  // 관리자 열람 모드: /matching-preview?admin=1 로 열면 잠금(previewLock) 없이
+  //   전체 결과를 그대로 보여준다. (대표님이 상담 시 고객과 같은 결과창을 보기 위함)
+  //   결제·조회권 차감이 없는 이 미리보기 페이지를 재사용하므로 부작용이 없다.
+  const [adminView, setAdminView] = useState(false);
   const [counts, setCounts] = useState<{
     total: number;
     institutions: number;
@@ -25,6 +29,9 @@ export default function MatchingPreview() {
 
   useEffect(() => {
     try {
+      const isAdmin =
+        new URLSearchParams(window.location.search).get("admin") === "1";
+      setAdminView(isAdmin);
       const raw = sessionStorage.getItem("mpp_diagnosis");
       const profile = raw ? JSON.parse(raw) : {};
       setName(profile.name || "");
@@ -107,8 +114,20 @@ export default function MatchingPreview() {
     <PageShell pageKey="matching-preview">
       <Header />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게 */}
-      <main className="px-4 pb-40 pt-8">
+      <main className={`px-4 pt-8 ${adminView ? "pb-16" : "pb-40"}`}>
         <div className="mx-auto max-w-3xl">
+          {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ── */}
+          {adminView && (
+            <div className="mb-6 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-4 text-center">
+              <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
+                🔓 관리자 열람 모드 — {name ? `${name} 대표님 ` : "이 고객 "}결과 전체 보기
+              </p>
+              <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/70">
+                이 화면은 대표님(관리자)만 보는 잠금 해제 결과창입니다. 상담 시 고객과 같은 화면을 보며 안내하세요.
+              </p>
+            </div>
+          )}
+
           {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ── */}
           <div className="text-center">
             <p className="break-keep text-sm font-bold text-brand-gray">
@@ -212,6 +231,7 @@ export default function MatchingPreview() {
           {/* ── 중간 결제 유도 박스 (대표님 요청) ──
                결과를 스크롤하기 전, 화면 중간에서 바로 '어디서 결제하는지' 찾을 수 있게 배치.
                최하단 박스·하단 sticky 바와 함께 3중으로 결제 진입점을 노출 */}
+          {!adminView && (
           <div className="mt-6 rounded-2xl border-2 border-brand-orange bg-gradient-to-br from-brand-orange/10 to-white p-4 text-center shadow-[0_8px_28px_rgba(255,140,0,0.18)] sm:p-5">
             <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
               🔓 지금 결제하면 위 <span className="text-brand-orange">{total}개</span> 항목의 상세 내용이 모두 공개됩니다
@@ -226,14 +246,17 @@ export default function MatchingPreview() {
               💳 지금 결제하고 전체 결과 확인하기
             </a>
           </div>
+          )}
 
           {/* ── 실제 결과 전체를 그대로 렌더링 (내용 대부분 공개) ──
                제목·설명·안내는 선명하게 열어 '무엇을 알려주는지' 충분히 이해시키고,
                기관명·상품명·신청 방법(버튼/링크)만 흐리게 + 클릭 차단으로 잠금 표시 */}
+          {!adminView && (
           <p className="mt-6 break-keep text-center text-xs text-brand-gray">
             👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면</b>입니다. 어떤 내용을 알려드리는지 대부분 열어뒀고,
             <b className="text-brand-orange"> 기관명·상품명·신청 방법</b>만 결제 후 공개됩니다.
           </p>
+          )}
           <div className="relative mt-3 overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
             <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-3">
@@ -258,11 +281,13 @@ export default function MatchingPreview() {
               </div>
             </div>
 
-            {/* 실제 대시보드 결과창 — 내용은 열고 이름/버튼만 부분 잠금(previewLock) */}
-            <AdvancedScreeningPanel autoRun previewLock />
+            {/* 실제 대시보드 결과창 — 내용은 열고 이름/버튼만 부분 잠금(previewLock).
+                관리자 열람 모드에서는 previewLock을 꺼서 전체 결과를 그대로 보여준다. */}
+            <AdvancedScreeningPanel autoRun previewLock={!adminView} />
           </div>
 
           {/* ── 결제 유도 박스 (최하단) ── */}
+          {!adminView && (
           <div className="mt-8 rounded-2xl border-2 border-brand-orange bg-white p-4 text-center shadow-[0_8px_28px_rgba(0,0,0,0.12)] sm:p-5">
             <Editable
               id="preview-lock-title"
@@ -296,11 +321,14 @@ export default function MatchingPreview() {
               ⚠️ 안내·추천 서비스 · 승인 보장 없음
             </Editable>
           </div>
+          )}
         </div>
       </main>
 
       {/* ── 스크롤을 따라다니는 하단 고정(sticky) 결제 유도 박스 ──
-           스크린샷의 오렌지 결제 유도 박스를 그대로 하단에 고정 → 스크롤 내내 결제 유도 */}
+           스크린샷의 오렌지 결제 유도 박스를 그대로 하단에 고정 → 스크롤 내내 결제 유도
+           (관리자 열람 모드에서는 숨김) */}
+      {!adminView && (
       <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-brand-orange bg-white/97 px-4 py-3 shadow-[0_-6px_24px_rgba(255,140,0,0.22)] backdrop-blur">
         <div className="mx-auto max-w-3xl">
           <Editable
@@ -327,6 +355,7 @@ export default function MatchingPreview() {
           </Editable>
         </div>
       </div>
+      )}
 
       <Footer />
     </PageShell>

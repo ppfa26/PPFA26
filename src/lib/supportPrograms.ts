@@ -116,7 +116,7 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
   {
     id: "employment",
     icon: "💼",
-    title: "고용지원금 — 고용24",
+    title: "고용지원금 - 고용24",
     site: "www.work24.go.kr",
     url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
     desc: "직원을 고용 중인 기업이 받을 수 있는 정부 고용장려금입니다. 청년 채용·고용 유지 시 인건비 일부를 지원받습니다.",
