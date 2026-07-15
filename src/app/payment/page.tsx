@@ -19,28 +19,36 @@ import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
 const TOSS_TEST_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
 const TOSS_CLIENT_KEY =
   (process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string) || TOSS_TEST_CLIENT_KEY;
-// 토스페이먼츠 결제창 JS SDK URL (Version 1)
-const TOSS_SDK_SRC = "https://js.tosspayments.com/v1/payment";
+// 토스페이먼츠 결제창 JS SDK URL (Version 2 · 최신 표준 SDK)
+const TOSS_SDK_SRC = "https://js.tosspayments.com/v2/standard";
 
-// 토스페이먼츠 결제창 객체 타입 (requestPayment만 사용)
-type TossPaymentsInstance = {
-  requestPayment: (
-    method: string,
-    options: {
-      amount: number;
-      orderId: string;
-      orderName: string;
-      successUrl: string;
-      failUrl: string;
-      customerName?: string;
-      customerEmail?: string;
-    }
-  ) => Promise<void>;
+// 토스페이먼츠 v2 결제창 객체 타입
+//  v2는 amount를 { currency, value } 객체로 받고, method를 대문자("CARD")로 씁니다.
+type TossPaymentInstance = {
+  requestPayment: (options: {
+    method: string;
+    amount: { currency: string; value: number };
+    orderId: string;
+    orderName: string;
+    successUrl: string;
+    failUrl: string;
+    customerName?: string;
+    customerEmail?: string;
+  }) => Promise<void>;
+};
+
+type TossPaymentsSDK = {
+  payment: (options: { customerKey: string }) => TossPaymentInstance;
+};
+
+// TossPayments 팩토리 함수. 비회원 결제용 ANONYMOUS 상수는 이 함수에 붙어 있습니다.
+type TossPaymentsFactory = ((clientKey: string) => TossPaymentsSDK) & {
+  ANONYMOUS: string;
 };
 
 declare global {
   interface Window {
-    TossPayments?: (clientKey: string) => TossPaymentsInstance;
+    TossPayments?: TossPaymentsFactory;
   }
 }
 
@@ -159,10 +167,18 @@ function PaymentInner() {
     const origin = window.location.origin;
     try {
       const tossPayments = window.TossPayments(TOSS_CLIENT_KEY);
-      // 토스 SDK v1은 옵션에 undefined 값이 명시적으로 들어가면 검증에서 걸릴 수 있어
+      // v2: 결제창 인스턴스 생성 (비회원 결제 → ANONYMOUS)
+      //  ★ 주의 ★ ANONYMOUS 상수는 인스턴스가 아니라 TossPayments 함수 자체에 있습니다.
+      //     (tossPayments.ANONYMOUS 는 undefined → customerKey 누락 오류 발생)
+      const payment = tossPayments.payment({
+        customerKey: window.TossPayments!.ANONYMOUS,
+      });
+
+      // v2는 옵션에 undefined 값이 들어가면 검증에서 걸릴 수 있어
       //  실제 값이 있는 필드만 담아서 전달합니다.
       const payOptions: {
-        amount: number;
+        method: string;
+        amount: { currency: string; value: number };
         orderId: string;
         orderName: string;
         successUrl: string;
@@ -170,7 +186,8 @@ function PaymentInner() {
         customerName?: string;
         customerEmail?: string;
       } = {
-        amount: product.price,
+        method: "CARD",
+        amount: { currency: "KRW", value: product.price },
         orderId,
         orderName: `모두의사업친구 ${product.name} 플랜`,
         // 결제 성공 시 successUrl(/payment/success)로 리다이렉트되며
@@ -183,7 +200,7 @@ function PaymentInner() {
       if (userName) payOptions.customerName = userName;
       if (email) payOptions.customerEmail = email;
 
-      await tossPayments.requestPayment("카드", payOptions);
+      await payment.requestPayment(payOptions);
     } catch (err) {
       // 사용자가 결제창을 닫거나(취소) 오류가 난 경우
       setPaying(false);
