@@ -71,7 +71,9 @@ export function computeSupportStatus(p: DiagnosisProfile): Record<string, Suppor
   //  · 소상공인 경영안정 바우처: 매출 5억 미만일 때만
   const potentialRule: Record<string, boolean> = {
     employment: !hasEmployees, // 아직 직원 없음 → 채용 시 대상
-    "youth-leap": !hasEmployees, // 청년 채용 시 대상
+    // 청년일자리도약장려금: 5인 이상이 요건 → 직원 없거나 '5명 이하'(5인 미만 가능)면
+    //  '청년 채용·규모 확대 시 대상'으로 예정 안내 (eligible은 6인 이상 확실할 때만)
+    "youth-leap": !hasEmployees || emp.includes("5명"),
     duru: !hasEmployees || emp.includes("5명") || emp.includes("10명이하"),
     "export-voucher": isExportInd, // 수출업 업종일 때만 (억지 매칭 금지)
     "innovation-voucher": isManufacturing, // 제조업일 때만
@@ -102,13 +104,22 @@ export function computeSupportEligibility(p: DiagnosisProfile): Record<string, b
   const isDuruEligible = hasEmployees && (emp.includes("5명") || emp.includes("10명이하"));
   // 소상공인 경영안정 바우처: 매출 5억 미만(매출 없음/1억 미만/5억 미만)
   const isSmallBiz = Boolean(p.revenue) && !rev.includes("5억이상") && !rev.includes("매출없음");
+  // ── 청년일자리도약장려금(팩트체크 반영) ──
+  //   공식 요건(고용노동부 2025 지침): 피보험자수 "5인 이상" 우선지원대상기업이
+  //   만 15~34세 취업애로청년을 정규직으로 채용해야 신청 가능.
+  //   진단 직원수 옵션: 0명 / 5명 이하 / 10명 이하 / 10명 이상
+  //    → "10명 이하"(6~10명)·"10명 이상"만 5인 이상이 확실 → eligible.
+  //    → "5명 이하"(1~5명)는 5인 이상 여부가 불확실하므로 eligible로 단정하지 않음
+  //      (potentialRule에서 '채용·규모 확대 시 대상'으로 안내).
+  const isYouthLeapEligible =
+    hasEmployees && (emp.includes("10명이하") || emp.includes("10명이상"));
   return {
     employment: hasEmployees,
     "export-voucher": isExport,
     "innovation-voucher": isManufacturing,
     duru: isDuruEligible,
     "sbiz-voucher": isSmallBiz,
-    "youth-leap": hasEmployees,
+    "youth-leap": isYouthLeapEligible,
   };
 }
 
@@ -170,8 +181,8 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     applyTel: "1588-0075",
     eligibleBadge: "✅ 신청 대상",
     ineligibleBadge: "직원 10명 미만 대상",
-    eligibleNote: "근로자 10명 미만 사업장으로 보험료 80% 지원 대상입니다.",
-    ineligibleNote: "근로자 10명 미만이면서 저임금 직원을 고용하면 대상이 됩니다.",
+    eligibleNote: "근로자 10명 미만 사업장입니다. 이 중 월평균보수 270만원 미만인 '신규 가입' 직원의 고용보험·국민연금 보험료 80%를 지원받을 수 있습니다.",
+    ineligibleNote: "근로자 10명 미만 사업장에서 월보수 270만원 미만 직원을 신규 채용(4대보험 신규가입)하면 대상이 됩니다.",
     detailIntro:
       "두루누리 사회보험료 지원의 승인 절차와 반영 방식, 담당 부처 연락처입니다.",
     sections: [
@@ -227,7 +238,7 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "혁신바우처",
     site: "www.mssmiv.com",
     url: "https://www.mssmiv.com",
-    desc: "제조 소기업이 컨설팅·기술지원·마케팅 서비스를 바우처로 지원받는 제도입니다. 기업당 최대 5,000만원 규모입니다.",
+    desc: "제조업을 주 업종으로 하는 소기업(3년 평균 매출 120억원 이하)이 컨설팅·기술지원·마케팅 서비스를 바우처로 지원받는 제도입니다. 기업당 최대 5,000만원 규모입니다.",
     applyHow: "중소기업 혁신바우처 포털(mssmiv.com)에서 모집공고 확인 후 온라인 신청",
     applyTel: "1357",
     eligibleBadge: "✅ 신청 대상",
@@ -290,13 +301,13 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "청년일자리도약장려금",
     site: "www.work24.go.kr",
     url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
-    desc: "취업애로청년을 정규직으로 채용·유지하는 중소기업에 1인당 최대 720만원을 지원하는 제도입니다.",
+    desc: "피보험자수 5인 이상 우선지원대상기업이 취업애로청년(만 15~34세)을 정규직으로 채용·6개월 이상 유지하면 기업에 1년간 최대 720만원을 지원하는 제도입니다. (제조업 등 빈일자리 업종은 우대)",
     applyHow: "고용24(work24.go.kr)에 기업 회원으로 로그인 → 청년일자리도약장려금 참여 신청 후 채용",
     applyTel: "1350",
     eligibleBadge: "✅ 신청 대상",
     ineligibleBadge: "청년 채용 시 대상",
-    eligibleNote: "취업애로청년을 정규직으로 채용하면 1인당 최대 720만원 지원 대상입니다.",
-    ineligibleNote: "취업애로청년을 정규직으로 채용하면 대상이 됩니다.",
+    eligibleNote: "직원 5인 이상 사업장이라 취업애로청년(만 15~34세)을 정규직 채용하면 1년간 최대 720만원 지원 대상이 됩니다. (채용 후 참여 신청)",
+    ineligibleNote: "직원 5인 이상이 되도록 청년(만 15~34세)을 정규직 채용하면 신청 대상이 됩니다.",
     detailIntro: "청년일자리도약장려금의 승인·지급 소요기간과 담당 부처 연락처입니다.",
     sections: [
       {
