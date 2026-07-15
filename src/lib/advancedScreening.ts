@@ -300,8 +300,18 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   const isTech = isTechCompany(company);
   // 신보 자격(비기술): 연매출 5억↑ (대표님: 직원 5명은 선호일 뿐 필수 아님, 1명도 승인)
   const qualifiesSinbo = revenue >= 500000000 || segment === "sme";
-  // 청년(만39세 이하) — 중진공 청년창업자금 자격
+  // 청년(만39세 이하)
   const isYoung = typeof company.ceo_age === "number" && company.ceo_age <= 39;
+  // ── 청년전용창업자금 자격(팩트체크 반영) ──
+  //   공식 요건(bizinfo·중진공 공고): 대표자 만 39세 이하 "그리고" 업력 3년 미만.
+  //   (특례: 창업성공패키지·기보 청년보증·VC투자 등은 업력 7년 미만까지 인정)
+  //   → 나이만 보고 노출하던 기존 버그 수정. 업력 미상이면 노출하지 않음(과대추천 방지).
+  const yib = company.years_in_business;
+  const qualifiesYouthFund =
+    isYoung && typeof yib === "number" && yib < 3;
+  // 특례(업력 7년 미만)까지 열어둘 여지가 있는 경계 구간 (39세↓ + 업력 3~7년)
+  const youthFundSpecialMaybe =
+    isYoung && typeof yib === "number" && yib >= 3 && yib < 7;
 
   // ── 재도전자(파산·회생 면책·인가 완료) → 일반 정책자금(보증·직접대출) 제외 ──
   //   대표님: 면책/인가 후 3년 경과해야 정책자금 가능(기관이 채권자였으면 사실상 평생 제한).
@@ -338,15 +348,20 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   // ─────────────────────────────────────────────────────────────────
 
   const DUP_NOTE =
-    "⚠️ 신용보증기금·기술보증기금은 중복 신청이 불가합니다(실제 두 곳 동시 이용은 매우 드뭅니다). 두 곳 모두 자격이 되면 유리한 1곳만 선택해 신청하세요 (기술력 강점 → 기보 / 매출·규모 강점 → 신보).";
+    "⚠️ 신용보증기금·기술보증기금은 2005년 업무협약에 따라 중복 보증이 제한됩니다(한 기업이 두 곳 동시 보증은 원칙적으로 불가). 두 곳 모두 자격이 되면 유리한 1곳만 선택해 신청하시면 됩니다 (기술력 강점 → 기보 / 매출·규모 강점 → 신보).";
 
-  // 매출 매우 큰 제조업(10억↑) → 예외적으로 신보·기보 둘 다 안내(둘 중 1곳만 실제 신청)
-  const bigManufacturer = isManufacturingCore && revenue >= 1000000000;
+  // ── 제조·기술기업 중 '신보 자격(매출 5억↑ 또는 중소기업 규모)'까지 갖춘 경우 ──
+  //   대표님 실무 기준: 제조·혁신성장 기업은 기보·신보 "둘 다" 자격이 열린다.
+  //   → 둘 다 안내하되, 2005년 협약상 중복 보증이 제한되므로 "둘 중 1곳 택1"임을 명시.
+  //   (매출·규모가 없는 소액 기술기업은 아래 isTech 분기에서 기보 단독으로 안내)
+  const techWithScale = isTech && (revenue >= 500000000 || segment === "sme");
 
-  if (bigManufacturer) {
+  if (techWithScale) {
     matches.push({
       institution: "기술보증기금",
-      criteria: "제조업은 기술보증기금이 우선입니다. 기술평가 기반 보증(첫거래 1억·최대 2억)이며, 인증이 없어도 우선 신청 후 부결 시 인증을 보완해 재신청하는 방식을 권합니다.",
+      criteria: isManufacturingCore
+        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반 보증(첫거래 1억·최대 2억)이며, 인증이 없어도 우선 신청 후 부결 시 특허·벤처·이노비즈를 보완해 재신청하는 방식을 권합니다."
+        : "기술력(특허·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증입니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다.",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
@@ -355,7 +370,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
     matches.push({
       institution: "신용보증기금",
-      criteria: "매출 10억원 이상 제조업은 신용보증기금도 자격이 됩니다(한도가 큰 편). 단, 기술보증기금과 둘 중 1곳만 신청 가능합니다.",
+      criteria: "제조·혁신성장 기업이면서 매출·규모 요건도 충족해 신용보증기금도 자격이 됩니다(매출 기반 보증이라 한도가 큰 편). 다만 기술보증기금과 둘 중 1곳만 선택해 신청하시면 됩니다.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -399,10 +414,13 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   // ── 중진공(직접대출) 병행 — 제조·혁신성장·수출·청년(39세↓)이면 직원 0명·개인도 OK ──
   //   대표님: 매출 하한 없음. 성장 방향성·자금 사용계획·대표 의지 종합 판단.
   const qualifiesJungjin =
-    isManufacturingCore || company.is_innovation_area || isExport || isYoung || employees >= 5;
+    isManufacturingCore || company.is_innovation_area || isExport || qualifiesYouthFund || youthFundSpecialMaybe || employees >= 5;
   if (qualifiesJungjin) {
     const reasons: string[] = [];
-    if (isYoung) reasons.push("만 39세 이하 청년창업자금(매출 2천만원대로도 1억원 승인 사례 있음)");
+    if (qualifiesYouthFund)
+      reasons.push("만 39세 이하·업력 3년 미만(청년전용창업자금 자격)");
+    else if (youthFundSpecialMaybe)
+      reasons.push("만 39세 이하(창업성공패키지·기보 청년보증 등 특례 시 업력 7년 미만까지 청년전용창업자금 신청 가능)");
     if (isManufacturingCore) reasons.push("제조업");
     if (company.is_innovation_area) reasons.push("혁신성장 유형");
     if (isExport) reasons.push("수출기업");
@@ -944,12 +962,20 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     products: [
       {
         name: "청년전용창업자금",
-        amount: "매출 2천만원대도 최대 1억원 승인 사례",
-        desc: "만 39세 이하 청년 창업자 (직원 0명·개인사업자도 신청 가능, 매출 하한 없음)",
+        amount: "최대 1억원 (제조업·중점지원분야 2억원) · 연 2.5% 고정",
+        desc: "만 39세 이하 · 업력 3년 미만 청년 창업자 (직원 0명·개인사업자도 신청 가능, 매출 하한 없음)",
         approval: "mid",
-        approvalNote: "만 39세 이하만 신청할 수 있습니다(초과 시 신청 불가).",
-        hookNote: "청년전용창업자금은 만 39세 이하만 신청 가능하며, 성장 방향·자금 계획·대표 의지를 종합 심사합니다.",
+        approvalNote:
+          "① 대표자 만 39세 이하 ② 업력 3년 미만, 두 조건을 모두 충족해야 신청할 수 있습니다. (창업성공패키지·기보 청년보증·VC투자 시에는 업력 7년 미만까지 특례 인정)",
+        hookNote:
+          "청년전용창업자금은 '만 39세 이하 + 업력 3년 미만'이 기본 요건이며, 성장 방향·자금 계획·대표 의지를 종합 심사합니다. 한도는 최대 1억원이나 제조업·중점지원분야는 2억원까지 가능합니다.",
         applyUrl: "https://www.kosmes.or.kr",
+        // 팩트체크: 나이(39↓) + 업력(3년 미만; 특례 감안해 7년 미만까지 노출) 조건 미충족 시 숨김
+        eligibleWhen: (c) =>
+          typeof c.ceo_age === "number" &&
+          c.ceo_age <= 39 &&
+          typeof c.years_in_business === "number" &&
+          c.years_in_business < 7,
       },
       {
         name: "혁신창업사업화자금",
@@ -958,6 +984,16 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "제조·혁신성장 분야라면 직원 0명·개인사업자도 신청이 가능합니다.",
         applyUrl: "https://www.kosmes.or.kr",
+        // 제조·기술·혁신성장 기업에게만 노출(순수 소상공인에게는 숨김 — 과대추천 방지)
+        eligibleWhen: (c) => {
+          const cat = normalizeIndustry(c.industry);
+          return (
+            cat === "manufacturing" ||
+            cat === "tech_innov" ||
+            isTechCompany(c) ||
+            Boolean(c.is_innovation_area)
+          );
+        },
       },
       {
         name: "신시장진출지원자금",
@@ -965,6 +1001,9 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         desc: "수출 실적 또는 수출 계획을 보유한 중소기업 대상",
         approval: "mid",
         applyUrl: "https://www.kosmes.or.kr",
+        // 수출 실적/계획 있는 기업에게만 노출
+        eligibleWhen: (c) =>
+          Boolean(c.is_exporter) || (c.industry || "").includes("수출"),
       },
       {
         name: "신성장기반자금",
@@ -972,6 +1011,11 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         desc: "사업 확장·설비 투자를 계획하는 기업 대상",
         approval: "mid",
         applyUrl: "https://www.kosmes.or.kr",
+        // 시설투자 목적이 있거나(설비/시설) 업력·규모가 있는 성장기업에게만 노출
+        eligibleWhen: (c) =>
+          (c.purposes || []).some((p) => /시설|설비|확장|투자/.test(p)) ||
+          (typeof c.years_in_business === "number" && c.years_in_business >= 3) ||
+          (c.annual_revenue ?? 0) >= 500000000,
       },
     ],
     tel: "1811-3655",
@@ -1103,6 +1147,9 @@ export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
     approval: "high",
     approvalNote: "창업 초기·소액이라 심사 문턱이 낮은 편입니다.",
     applyUrl: "https://untact.koreg.or.kr/",
+    // 창업 '초기' 특례 → 업력 7년 미만(또는 업력 미상)일 때만 노출. 업력 오래된 기업엔 부적합.
+    eligibleWhen: (c) =>
+      c.years_in_business === undefined || c.years_in_business < 7,
   },
   {
     name: "협약(이차보전) 보증",
