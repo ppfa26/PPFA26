@@ -812,7 +812,7 @@ function AdvancedResult({
       {autoRun && (
         <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
           <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-            🎉 진단 완료! 대표님이 지금 신청해볼 수 있는 것들을 안내해드립니다.
+            🎉 진단 완료! 대표님의 사업장 기준으로 신청해볼 수 있는 정부지원사업을 안내해드립니다.
           </p>
           <div className="mt-2 grid grid-cols-3 gap-2">
             <div className="rounded-xl bg-white/70 px-2 py-2 text-center">

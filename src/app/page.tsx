@@ -295,7 +295,7 @@ export default function Home() {
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
-                신청 가능한 기관·상품과 신청 방법까지 이렇게 안내됩니다.
+                신청 가능한 기관·상품과 신청 방법까지 안내
               </Editable>
             </div>
 
@@ -466,9 +466,8 @@ export default function Home() {
                 <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
                   이 모든 결과가 대표님을 기다리고 있어요
                 </p>
-                <p className="mt-1 break-keep text-center text-[13px] font-semibold text-brand-gray">
-                  각 항목의 <b className="text-brand-orange">신청 사이트 · 필요 서류 · 승인 전략</b>까지
-                  <br className="hidden sm:inline" /> 결제 후 전부 공개됩니다.
+                <p className="mt-1 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
+                  <b className="text-brand-orange">신청 사이트 · 필요 서류 · 승인 전략</b>까지 공개
                 </p>
               </div>
             </div>
