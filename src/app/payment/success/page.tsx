@@ -17,15 +17,7 @@ function SuccessInner() {
   const params = useSearchParams();
   const ran = useRef(false);
 
-  // ── 나이스페이먼츠(NICEPAY) 경로 파라미터 ──
-  //  서버 라우트(/api/payment/nicepay-return)에서 이미 결제 승인이 끝난 뒤
-  //  아래 쿼리를 붙여 이 페이지로 리다이렉트됩니다.
-  const isNicePay = params.get("nicepay") === "1";
-  const nicePayResult = params.get("result"); // "success" | "fail"
-  const nicePayTid = params.get("tid"); // 나이스 거래 고유번호 → payment_key로 사용
-  const nicePayReason = params.get("reason"); // 실패 사유
-
-  // ── 토스페이먼츠 경로 파라미터 ──
+  // ── 토스페이먼츠 결제 결과 파라미터 ──
   const paymentKey = params.get("paymentKey");
   const orderIdParam = params.get("orderId");
   const amountParam = params.get("amount");
@@ -131,36 +123,9 @@ function SuccessInner() {
       } catch {}
 
       // ─────────────────────────────────────────────
-      //  ① 나이스페이먼츠 경로 (현재 사용 중인 PG)
-      //     서버 라우트에서 이미 승인 완료됨 → confirm 호출 없이 저장만.
+      //  토스페이먼츠 결제 결과 처리
       // ─────────────────────────────────────────────
-      if (isNicePay) {
-        const tier = params.get("tier") || pending.tier || "basic";
-        setTierId(tier);
-
-        if (nicePayResult !== "success" || !nicePayTid || !orderIdParam || !amountParam) {
-          setStatus("fail");
-          setMessage(
-            nicePayReason === "auth"
-              ? "카드 인증에 실패했습니다. 다시 시도해 주세요."
-              : "결제 승인에 실패했습니다. 결제가 완료되지 않았다면 다시 시도해 주세요."
-          );
-          return;
-        }
-
-        await finishSuccess({
-          orderId: orderIdParam,
-          amount: Number(amountParam),
-          paymentKey: nicePayTid, // 나이스 tid를 payment_key로 저장
-          tier,
-        });
-        return;
-      }
-
-      // ─────────────────────────────────────────────
-      //  ② 토스페이먼츠 경로
-      // ─────────────────────────────────────────────
-      //  ②-a 결제 실패(failUrl)로 돌아온 경우 → 토스가 넘겨준 사유를 그대로 안내
+      //  (a) 결제 실패(failUrl)로 돌아온 경우 → 토스가 넘겨준 사유를 그대로 안내
       if (payFail || failCode) {
         setStatus("fail");
         setMessage(
@@ -171,7 +136,7 @@ function SuccessInner() {
         return;
       }
 
-      //  ②-b 정상 성공 경로: paymentKey·orderId·amount 확인
+      //  (b) 정상 성공 경로: paymentKey·orderId·amount 확인
       if (!paymentKey || !orderIdParam || !amountParam) {
         setStatus("fail");
         setMessage("결제 정보가 확인되지 않았습니다.");

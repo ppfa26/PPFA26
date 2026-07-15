@@ -17,8 +17,21 @@ import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
 //     심사 통과 후 운영 클라이언트 키를 배포 환경변수(NEXT_PUBLIC_TOSS_CLIENT_KEY)에 넣으면 그 값이 우선 사용됩니다.
 //     ※ 서버(confirm 라우트)의 시크릿 키와 반드시 '세트'여야 합니다. (테스트-테스트 / 운영-운영)
 const TOSS_TEST_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
-const TOSS_CLIENT_KEY =
-  (process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string) || TOSS_TEST_CLIENT_KEY;
+
+// ★ 키 방어 로직 ★
+//   v2 결제창 SDK(tossPayments.payment)는 'API 개별 연동 키'(client: test_ck_ / live_ck_)만 지원합니다.
+//   '결제위젯 연동 키'(client: test_gck_ / live_gck_)를 넣으면 NOT_SUPPORTED_WIDGET_KEY 에러가 납니다.
+//   배포 환경변수에 위젯 키(gck)가 잘못 남아 있을 수 있으므로, 그런 경우엔 환경변수를 무시하고
+//   올바른 개별 연동 테스트 키로 자동 대체합니다.
+function pickIndividualClientKey(): string {
+  const envKey = (process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string) || "";
+  // 위젯 키(_gck_)는 사용 불가 → 폴백. 개별 연동 키(_ck_)만 허용.
+  const isWidgetKey = envKey.includes("_gck_");
+  const isIndividualKey = envKey.includes("_ck_") && !isWidgetKey;
+  if (isIndividualKey) return envKey;
+  return TOSS_TEST_CLIENT_KEY;
+}
+const TOSS_CLIENT_KEY = pickIndividualClientKey();
 // 토스페이먼츠 결제창 JS SDK URL (Version 2 · 최신 표준 SDK)
 const TOSS_SDK_SRC = "https://js.tosspayments.com/v2/standard";
 

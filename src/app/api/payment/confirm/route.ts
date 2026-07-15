@@ -7,7 +7,19 @@ export const runtime = "nodejs";
 //     → 실제 돈은 빠지지 않는 테스트 결제로 처리됩니다. (클라이언트 키와 반드시 세트여야 함)
 //     심사 통과 후 운영 시크릿 키를 배포 환경변수(TOSS_SECRET_KEY)에 넣으면 그 값이 우선 사용됩니다.
 const TOSS_TEST_SECRET_KEY = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R";
-const TOSS_SECRET_KEY = (process.env.TOSS_SECRET_KEY as string) || TOSS_TEST_SECRET_KEY;
+
+// ★ 키 방어 로직 ★
+//   클라이언트 키(page.tsx)와 시크릿 키는 반드시 '같은 종류'의 세트여야 합니다.
+//   클라이언트에서 위젯 키(gck)를 개별 연동 키(ck)로 대체하므로, 여기서도 동일하게
+//   위젯 시크릿(_gsk_)이 들어오면 무시하고 개별 연동 테스트 시크릿으로 대체합니다.
+function pickIndividualSecretKey(): string {
+  const envKey = (process.env.TOSS_SECRET_KEY as string) || "";
+  const isWidgetKey = envKey.includes("_gsk_");
+  const isIndividualKey = envKey.includes("_sk_") && !isWidgetKey;
+  if (isIndividualKey) return envKey;
+  return TOSS_TEST_SECRET_KEY;
+}
+const TOSS_SECRET_KEY = pickIndividualSecretKey();
 
 // 토스페이먼츠 결제 승인 (서버 전용 시크릿 키 사용)
 export async function POST(req: NextRequest) {
