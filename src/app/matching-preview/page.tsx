@@ -276,11 +276,9 @@ export default function MatchingPreview() {
               as="p"
               className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm"
             >
-              🍚 점심 식사 한 끼 값입니다.
-              <br />
               내 사업장에 맞는 모든 정부지원사업을 찾아보세요.
               <br />
-              기관·상품·신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다. (VAT 포함)
+              기관·상품·신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다.
             </Editable>
             <Editable
               id="preview-lock-cta"
@@ -295,7 +293,7 @@ export default function MatchingPreview() {
               as="p"
               className="mt-2.5 break-keep text-[11px] text-brand-dark/50"
             >
-              ⚠️ 안내·추천 서비스 · 승인 보장 없음 · 대행 없음
+              ⚠️ 안내·추천 서비스 · 승인 보장 없음
             </Editable>
           </div>
         </div>
