@@ -16,7 +16,7 @@ const TRUST_BADGES = [
   { icon: "🗂️", text: "정책자금·지원금·바우처·인증" },
   { icon: "📝", text: "신청 방법·필요 서류·순서까지 안내" },
   { icon: "🚫", text: "행정 대행 없음 · 승인 수수료 0원" },
-  { icon: "🍚", text: "점심 식사 한 끼 값 · 1회성 결제" },
+  { icon: "💳", text: "부담 없는 1회성 결제" },
 ];
 
 const VALUES = [

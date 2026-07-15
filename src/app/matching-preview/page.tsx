@@ -240,7 +240,7 @@ export default function MatchingPreview() {
               🔓 지금 결제하면 위 <span className="text-brand-orange">{total}개</span> 항목의 상세 내용이 모두 공개됩니다
             </p>
             <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
-              🍚 점심 식사 한 끼 값으로 내 사업장에 맞는 모든 정부지원사업을 확인하세요. (VAT 포함)
+              💳 부담 없는 1회성 결제로 내 사업장에 맞는 모든 정부지원사업을 확인하세요. (VAT 포함)
             </p>
             <a
               href="/pricing"
@@ -346,7 +346,7 @@ export default function MatchingPreview() {
             as="p"
             className="mt-1 hidden break-keep text-center text-[11px] leading-relaxed text-brand-dark/60 sm:block sm:text-xs"
           >
-            🍚 점심 식사 한 끼 값으로 내 사업장에 해당되는 모든 정부지원사업을 확인하세요. (VAT 포함)
+            💳 부담 없는 1회성 결제로 내 사업장에 해당되는 모든 정부지원사업을 확인하세요. (VAT 포함)
           </Editable>
           <Editable
             id="preview-sticky-cta"
