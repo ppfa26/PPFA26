@@ -6,7 +6,6 @@ import { supabase } from "@/lib/supabaseClient";
 import {
   fetchViewStatus,
   consumeViewCredit,
-  daysUntil,
   type ViewStatus,
 } from "@/lib/viewCredits";
 import { registerViewDevice, logAccess, deviceKind } from "@/lib/deviceGuard";
@@ -71,7 +70,6 @@ export default function ViewCreditGate({
 }) {
   const [phase, setPhase] = useState<Phase>("loading");
   const [status, setStatus] = useState<ViewStatus | null>(null);
-  const [businessName, setBusinessName] = useState("");
   const [guardMsg, setGuardMsg] = useState("");
 
   useEffect(() => {
@@ -111,7 +109,6 @@ export default function ViewCreditGate({
       } catch {
         profile = {};
       }
-      setBusinessName(String(profile?.name ?? ""));
       const fp = fingerprint(profile);
 
       // 3) 서버에서 조회권 상태 확인
@@ -281,33 +278,9 @@ export default function ViewCreditGate({
     );
   }
 
-  // granted → 실제 결과 + 상단 조회권 안내 배너
-  const remaining = status?.remaining ?? 0;
-  const dLeft = daysUntil(status?.expiresAt ?? null);
-
-  return (
-    <>
-      <div className="mx-auto mb-5 max-w-4xl px-4">
-        <div className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-brand-yellow bg-brand-yellow/20 px-5 py-3.5 text-center text-sm">
-          <span className="break-keep font-semibold text-brand-dark">
-            {businessName ? `${businessName} ` : ""}대표님 사업장의 정밀 조회 결과입니다.
-          </span>
-          <span className="break-keep font-medium text-brand-dark/60">
-            PC버전으로 보시면 더욱 효과적으로 확인 가능합니다.
-          </span>
-          <span className="text-brand-dark/70">
-            남은 새 조회 <b className="text-brand-orange">{remaining}회</b>
-            {dLeft !== null && (
-              <>
-                {" · "}열람 기한 <b className="text-brand-dark">{dLeft}일</b> 남음
-              </>
-            )}
-          </span>
-        </div>
-      </div>
-      {children}
-    </>
-  );
+  // granted → 실제 결과만 노출 (상단 조회권 안내 배너는 대표님 요청으로 제거,
+  //           조회권·열람기한은 마이페이지에서 확인 가능)
+  return <>{children}</>;
 }
 
 function GateCard({

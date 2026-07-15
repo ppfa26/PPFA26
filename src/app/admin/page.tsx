@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
@@ -167,11 +167,36 @@ export default function AdminPage() {
   const [blocks, setBlocks] = useState<BlockRow[]>([]);
   const [openDiag, setOpenDiag] = useState<string | null>(null);
   const [selectedDiag, setSelectedDiag] = useState<Set<string>>(new Set()); // 체크선택 다운로드용
+  const [openDay, setOpenDay] = useState<string | null>(null); // 매출-일별 펼침 (YYYY-MM-DD)
+  const [openMonth, setOpenMonth] = useState<string | null>(null); // 매출-월별 펼침 (YYYY-MM)
   const [msg, setMsg] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   // 중복 신청 순번 (같은 연락처/이메일 기준 몇 번째 신청인지)
   const dupIndexMap = computeDuplicateIndex(diagnoses as unknown as DiagnosisRecord[]);
+
+  // 매출 통계 드릴다운용: 특정 일자(YYYY-MM-DD) 또는 월(YYYY-MM)에 해당하는
+  // 개별 결제 건을 payments 에서 뽑아온다. (daily/monthly 집계와 동일한 로컬시간 기준)
+  const paymentsByDay = (dayKey: string) =>
+    payments
+      .filter((p) => {
+        if (p.status !== "paid" || !p.paid_at) return false;
+        const dt = new Date(p.paid_at);
+        const k = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(
+          dt.getDate()
+        ).padStart(2, "0")}`;
+        return k === dayKey;
+      })
+      .sort((a, b) => (a.paid_at! < b.paid_at! ? 1 : -1));
+  const paymentsByMonth = (monKey: string) =>
+    payments
+      .filter((p) => {
+        if (p.status !== "paid" || !p.paid_at) return false;
+        const dt = new Date(p.paid_at);
+        const k = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+        return k === monKey;
+      })
+      .sort((a, b) => (a.paid_at! < b.paid_at! ? 1 : -1));
 
   // 체크박스 토글
   const toggleSelectDiag = (id: string) => {
@@ -409,6 +434,21 @@ export default function AdminPage() {
       p_ip: ip,
     });
     setMsg(error ? `오류: ${error.message}` : `[${ip}] 접속 기록을 삭제했습니다. ${String(data ?? "")}`);
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
+  // 개별 결제 건 삭제 (매출 통계 · 결제내역에서 1건씩 정리)
+  const deletePayment = async (orderId: string) => {
+    if (
+      !window.confirm(
+        `[${orderId}] 결제 건을 삭제할까요?\n(매출 통계·결제 내역에서 완전히 제거됩니다. 되돌릴 수 없습니다)`
+      )
+    )
+      return;
+    const { data, error } = await supabase.rpc("admin_delete_payment", {
+      p_order_id: orderId,
+    });
+    setMsg(error ? `오류: ${error.message}` : `결제 건을 삭제했습니다. ${String(data ?? "")}`);
     await loadAll();
     setTimeout(() => setMsg(null), 4000);
   };
@@ -897,71 +937,196 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* ------- 매출 통계 (일별 / 월별) ------- */}
+          {/* ------- 매출 통계 (일별 / 월별) — 행 클릭 시 개별 결제 건 펼침 + 삭제 ------- */}
           {tab === "revenue" && (
-            <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-                <h3 className="mb-3 font-bold text-gray-800">📅 일별 매출 (최근 30일)</h3>
-                <div className="max-h-[420px] overflow-y-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="sticky top-0 bg-gray-50 text-xs text-gray-500">
-                      <tr>
-                        <th className="px-3 py-2">날짜</th>
-                        <th className="px-3 py-2 text-center">건수</th>
-                        <th className="px-3 py-2 text-right">매출</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {daily.length === 0 && (
+            <div className="space-y-4">
+              <p className="rounded-xl bg-brand-yellow/10 px-4 py-2.5 text-xs text-gray-500">
+                💡 날짜(또는 월)를 <b className="text-gray-700">클릭</b>하면 그날 결제 내역이 1건씩 펼쳐집니다. 각 건의{" "}
+                <b className="text-rose-600">🗑️ 삭제</b> 버튼으로 잘못된/테스트 결제를 정리할 수 있어요.
+              </p>
+              <div className="grid gap-4 lg:grid-cols-2">
+                {/* ===== 일별 매출 ===== */}
+                <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                  <h3 className="mb-3 font-bold text-gray-800">📅 일별 매출 (최근 30일)</h3>
+                  <div className="max-h-[520px] overflow-y-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="sticky top-0 z-10 bg-gray-50 text-xs text-gray-500">
                         <tr>
-                          <td colSpan={3} className="px-3 py-8 text-center text-gray-400">
-                            결제 데이터가 없습니다.
-                          </td>
+                          <th className="px-3 py-2">날짜</th>
+                          <th className="px-3 py-2 text-center">건수</th>
+                          <th className="px-3 py-2 text-right">매출</th>
                         </tr>
-                      )}
-                      {daily.map((r) => (
-                        <tr key={r.day}>
-                          <td className="px-3 py-2 text-gray-700">{fmtDate(r.day)}</td>
-                          <td className="px-3 py-2 text-center text-gray-500">{r.cnt}건</td>
-                          <td className="px-3 py-2 text-right font-semibold text-gray-800">
-                            {won(r.revenue)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {daily.length === 0 && (
+                          <tr>
+                            <td colSpan={3} className="px-3 py-8 text-center text-gray-400">
+                              결제 데이터가 없습니다.
+                            </td>
+                          </tr>
+                        )}
+                        {daily.map((r) => {
+                          const isOpen = openDay === r.day;
+                          const rows = isOpen ? paymentsByDay(r.day) : [];
+                          return (
+                            <Fragment key={r.day}>
+                              <tr
+                                onClick={() => setOpenDay(isOpen ? null : r.day)}
+                                className={`cursor-pointer transition-colors hover:bg-brand-yellow/10 ${
+                                  isOpen ? "bg-brand-yellow/10" : ""
+                                }`}
+                              >
+                                <td className="px-3 py-2 font-medium text-gray-700">
+                                  <span className="mr-1 inline-block w-3 text-gray-400">
+                                    {isOpen ? "▼" : "▶"}
+                                  </span>
+                                  {fmtDate(r.day)}
+                                </td>
+                                <td className="px-3 py-2 text-center text-gray-500">{r.cnt}건</td>
+                                <td className="px-3 py-2 text-right font-semibold text-gray-800">
+                                  {won(r.revenue)}
+                                </td>
+                              </tr>
+                              {isOpen && (
+                                <tr>
+                                  <td colSpan={3} className="bg-gray-50/70 px-3 py-2">
+                                    <div className="space-y-1.5">
+                                      {rows.length === 0 && (
+                                        <p className="py-2 text-center text-xs text-gray-400">
+                                          표시할 개별 결제 건이 없습니다.
+                                        </p>
+                                      )}
+                                      {rows.map((p) => (
+                                        <div
+                                          key={p.order_id}
+                                          className="flex items-center justify-between gap-2 rounded-lg border border-gray-100 bg-white px-3 py-2"
+                                        >
+                                          <div className="min-w-0">
+                                            <div className="truncate text-xs font-semibold text-gray-800">
+                                              {p.email}
+                                            </div>
+                                            <div className="mt-0.5 text-[11px] text-gray-400">
+                                              {tierName(p.tier)} · {fmtDateTime(p.paid_at)}
+                                            </div>
+                                          </div>
+                                          <div className="flex shrink-0 items-center gap-2">
+                                            <span className="text-sm font-bold text-gray-800">
+                                              {won(p.amount)}
+                                            </span>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                deletePayment(p.order_id);
+                                              }}
+                                              className="rounded-md bg-rose-50 px-2 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                                            >
+                                              🗑️ 삭제
+                                            </button>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </Fragment>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-                <h3 className="mb-3 font-bold text-gray-800">🗓️ 월별 매출 (최근 12개월)</h3>
-                <div className="max-h-[420px] overflow-y-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="sticky top-0 bg-gray-50 text-xs text-gray-500">
-                      <tr>
-                        <th className="px-3 py-2">월</th>
-                        <th className="px-3 py-2 text-center">건수</th>
-                        <th className="px-3 py-2 text-right">매출</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {monthly.length === 0 && (
+
+                {/* ===== 월별 매출 ===== */}
+                <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                  <h3 className="mb-3 font-bold text-gray-800">🗓️ 월별 매출 (최근 12개월)</h3>
+                  <div className="max-h-[520px] overflow-y-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="sticky top-0 z-10 bg-gray-50 text-xs text-gray-500">
                         <tr>
-                          <td colSpan={3} className="px-3 py-8 text-center text-gray-400">
-                            결제 데이터가 없습니다.
-                          </td>
+                          <th className="px-3 py-2">월</th>
+                          <th className="px-3 py-2 text-center">건수</th>
+                          <th className="px-3 py-2 text-right">매출</th>
                         </tr>
-                      )}
-                      {monthly.map((r) => (
-                        <tr key={r.month}>
-                          <td className="px-3 py-2 text-gray-700">{r.month}</td>
-                          <td className="px-3 py-2 text-center text-gray-500">{r.cnt}건</td>
-                          <td className="px-3 py-2 text-right font-semibold text-brand-primary">
-                            {won(r.revenue)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {monthly.length === 0 && (
+                          <tr>
+                            <td colSpan={3} className="px-3 py-8 text-center text-gray-400">
+                              결제 데이터가 없습니다.
+                            </td>
+                          </tr>
+                        )}
+                        {monthly.map((r) => {
+                          const isOpen = openMonth === r.month;
+                          const rows = isOpen ? paymentsByMonth(r.month) : [];
+                          return (
+                            <Fragment key={r.month}>
+                              <tr
+                                onClick={() => setOpenMonth(isOpen ? null : r.month)}
+                                className={`cursor-pointer transition-colors hover:bg-brand-yellow/10 ${
+                                  isOpen ? "bg-brand-yellow/10" : ""
+                                }`}
+                              >
+                                <td className="px-3 py-2 font-medium text-gray-700">
+                                  <span className="mr-1 inline-block w-3 text-gray-400">
+                                    {isOpen ? "▼" : "▶"}
+                                  </span>
+                                  {r.month}
+                                </td>
+                                <td className="px-3 py-2 text-center text-gray-500">{r.cnt}건</td>
+                                <td className="px-3 py-2 text-right font-semibold text-brand-primary">
+                                  {won(r.revenue)}
+                                </td>
+                              </tr>
+                              {isOpen && (
+                                <tr>
+                                  <td colSpan={3} className="bg-gray-50/70 px-3 py-2">
+                                    <div className="space-y-1.5">
+                                      {rows.length === 0 && (
+                                        <p className="py-2 text-center text-xs text-gray-400">
+                                          표시할 개별 결제 건이 없습니다.
+                                        </p>
+                                      )}
+                                      {rows.map((p) => (
+                                        <div
+                                          key={p.order_id}
+                                          className="flex items-center justify-between gap-2 rounded-lg border border-gray-100 bg-white px-3 py-2"
+                                        >
+                                          <div className="min-w-0">
+                                            <div className="truncate text-xs font-semibold text-gray-800">
+                                              {p.email}
+                                            </div>
+                                            <div className="mt-0.5 text-[11px] text-gray-400">
+                                              {tierName(p.tier)} · {fmtDateTime(p.paid_at)}
+                                            </div>
+                                          </div>
+                                          <div className="flex shrink-0 items-center gap-2">
+                                            <span className="text-sm font-bold text-gray-800">
+                                              {won(p.amount)}
+                                            </span>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                deletePayment(p.order_id);
+                                              }}
+                                              className="rounded-md bg-rose-50 px-2 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                                            >
+                                              🗑️ 삭제
+                                            </button>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </Fragment>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

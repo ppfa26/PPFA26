@@ -80,7 +80,7 @@ export default function DashboardPage() {
                 rel="noopener noreferrer"
                 className="rounded-full bg-brand-dark px-7 py-3 font-bold text-white hover:opacity-90"
               >
-                💬 1:1 채널톡으로 물어보기
+                💬 1:1 채널톡 상담하기
               </a>
               <a
                 href="https://open.kakao.com/o/gvjec0Di"
@@ -88,12 +88,15 @@ export default function DashboardPage() {
                 rel="noopener noreferrer"
                 className="rounded-full border-2 border-brand-dark bg-white px-7 py-3 font-bold text-brand-dark hover:bg-gray-50"
               >
-                👥 결제자 대표님 오픈 단톡방 참여하기
+                👥 결제자 단톡 톡방 참여하기
               </a>
             </div>
             <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/60">
               ⚠️ 본 서비스는 정부지원사업 AI 통합 매칭 서비스이며 정부지원사업
               승인을 보장하지 않습니다.
+            </p>
+            <p className="mt-2 break-keep text-[11px] leading-relaxed text-brand-dark/40">
+              — 출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
             </p>
           </section>
         </div>
