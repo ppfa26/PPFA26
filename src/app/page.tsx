@@ -7,15 +7,16 @@ import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
+import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 
 const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 자동 크롤링" },
   { icon: "📚", text: "정부 부처 공문 팩트체크" },
   { icon: "🎯", text: "내 사업장에 진짜 되는 것만 매칭" },
   { icon: "🗂️", text: "정책자금·지원금·바우처·인증" },
-  { icon: "📝", text: "신청 방법·필요 서류·순서까지 자문" },
+  { icon: "📝", text: "신청 방법·필요 서류·순서까지 안내" },
   { icon: "🚫", text: "행정 대행 없음 · 승인 수수료 0원" },
-  { icon: "☕", text: "커피 한 잔 값 · 1회성 결제" },
+  { icon: "🍚", text: "점심 식사 한 끼 값 · 1회성 결제" },
 ];
 
 const VALUES = [
@@ -44,7 +45,7 @@ const FAQS = [
       <>
         아닙니다. 저희는 매칭 플랫폼입니다.
         <br />
-        서류 발급과 신청은 대표님이 직접 하십니다.
+        서류 발급과 신청은 이용자님이 직접 하십니다.
         <br />
         저희는 신청 가능한 사업을 추천·안내해 드립니다.
       </>
@@ -88,7 +89,7 @@ const FAQS = [
     q: "Q6. 어떤 지원사업까지 안내되나요?",
     a: (
       <>
-        정부 지원금·바우처·감면제도를 안내합니다.
+        정부 지원금·바우처·정책자금·감면제도를 안내합니다.
         <br />
         K-Startup, 창업패키지, 지자체 사업도 포함합니다.
         <br />
@@ -102,9 +103,7 @@ const FAQS = [
       <>
         매일 정부 공식 사이트를 자동으로 확인합니다.
         <br />
-        최신 공고를 반영합니다.
-        <br />
-        부처 공문으로 팩트체크 후 답변합니다.
+        최신 공고 및 공고를 팩트체크 후 반영합니다.
       </>
     ),
   },
@@ -121,7 +120,7 @@ export default function Home() {
           id="hero-section"
           className="relative overflow-hidden px-4 pb-5 pt-6 sm:pb-9 sm:pt-12"
         >
-          <div className="mx-auto max-w-3xl text-center animate-fadeUp">
+          <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-5 py-8 text-center animate-fadeUp sm:px-10 sm:py-12">
             <Editable
               id="hero-badge"
               as="div"
@@ -190,9 +189,11 @@ export default function Home() {
 
         {/* 신뢰 배지 + 핵심 강점 (7칸 통합) */}
         {/* 가치 제안 4단계 — (대표님 요청) 7네모칸 섹션보다 위로 배치 */}
+        {/* 구간 구분 — 얇은 회색 가로줄 */}
+        <div className="section-divider" aria-hidden="true" />
         <section className="bg-gray-50 px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-4xl text-center">
-            <div className="flex flex-col items-center text-center">
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 🎯 서비스 안내
               </span>
@@ -238,7 +239,7 @@ export default function Home() {
         {/* 신뢰 배지 7칸 — (대표님 요청) 서비스 안내 섹션보다 아래로 배치 */}
         <section className="border-y border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
           <div className="reveal mx-auto max-w-4xl">
-            <div className="flex flex-col items-center text-center">
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <Editable
                 id="home-compare-title"
                 as="h2"
@@ -251,8 +252,6 @@ export default function Home() {
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
               >
-                하루 커피 한 잔 값입니다.
-                <br />
                 내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
               </Editable>
             </div>
@@ -281,7 +280,7 @@ export default function Home() {
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
         <section id="result-sample-section" className="border-y border-gray-100 bg-white px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
-            <div className="flex flex-col items-center text-center">
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 🔍 실제 결과 화면 예시
               </span>
@@ -318,8 +317,8 @@ export default function Home() {
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
                   <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
                     <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                      🎉 진단 완료! 대표님이 지금 신청해볼 수 있는 것들이
-                      정리됐어요
+                      🎉 진단 완료! 대표님이 지금 신청해볼 수 있는 것들을
+                      안내해드립니다.
                     </p>
                     <div className="mt-3 grid grid-cols-3 gap-2">
                       {[
@@ -496,7 +495,7 @@ export default function Home() {
           className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-11"
         >
           <div className="reveal mx-auto max-w-5xl">
-            <div className="flex flex-col items-center text-center">
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 💳 서비스 이용료
               </span>
@@ -505,7 +504,7 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                딱 하나면 충분, AI 올인원 패키지
+                AI 올인원 패키지
               </Editable>
               <Editable
                 id="home-pricing-sub"
@@ -522,9 +521,13 @@ export default function Home() {
         </section>
 
         {/* FAQ */}
-        <section className="bg-gray-50 px-4 py-7 sm:py-11">
+        {/* 구간 구분 — 얇은 회색 가로줄 */}
+        <div className="section-divider" aria-hidden="true" />
+        {/* 대표님 요청: 가로줄 아래 제목 글래스 박스와의 위쪽 공간을 살짝 더 띄움.
+            하단 여백은 줄여 아래 CTA와의 빈 공간을 축소. */}
+        <section className="bg-gray-50 px-4 pb-5 pt-10 sm:pb-6 sm:pt-14">
           <div className="reveal mx-auto max-w-3xl">
-            <div className="flex flex-col items-center text-center">
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 💬 자주 묻는 질문
               </span>
@@ -574,8 +577,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 하단 CTA */}
-        <section className="px-4 pb-3 pt-7 sm:pb-4 sm:pt-11">
+        {/* 하단 CTA (대표님 요청: FAQ와 CTA 사이 빈 공간 축소 → 상단 여백 줄임) */}
+        <section className="px-4 pb-3 pt-2 sm:pb-4 sm:pt-3">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-grad p-8 text-center shadow-card sm:p-10">
             <Editable
               id="home-cta-title"
@@ -625,6 +628,8 @@ export default function Home() {
         </section>
       </main>
       <Footer />
+      {/* 오른쪽 하단 고정 카카오톡 1:1 상담 버튼 (대표님 요청) */}
+      <KakaoFloatingButton />
     </PageShell>
   );
 }

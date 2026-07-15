@@ -373,10 +373,15 @@ export default function Diagnosis() {
                 ⚠️ 정확한 정보를 입력해 주세요
               </p>
               <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-gray">
-                결제 1회당 <b className="text-brand-orange">새 사업자 조회는 2회</b>까지만 가능합니다.
-                (실수를 대비한 횟수입니다.) 입력값이 정확할수록 대표님 사업장에 딱 맞는 결과를
-                받아보실 수 있으니, 제출 전에 한 번 더 확인해 주세요. 조회하신 결과는{" "}
-                <b className="text-brand-dark">결제 후 1개월간</b> 언제든 다시 열람하실 수 있습니다.
+                결제 1회당 <b className="text-brand-orange">새 사업자 조회는 1회</b>까지만 가능합니다.
+                실수로 입력해서 결과가 다르게 나온다면 <b className="text-brand-dark">1:1 문의하기</b>로
+                말씀주시면 초기화해드리겠습니다.
+                <br /><br />
+                입력값이 정확할수록 대표님 사업장에 딱 맞는 결과를
+                받아보실 수 있으니, 제출 전에 한 번 더 확인해 주세요.
+                <br /><br />
+                조회하신 결과는 <b className="text-brand-dark">결제 후 1개월간</b> 언제든
+                계속적으로 열람하실 수 있습니다.
               </p>
             </div>
           )}

@@ -278,7 +278,7 @@ export default function MatchingPreview() {
               as="p"
               className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm"
             >
-              ☕ 커피 한 잔 값입니다.
+              🍚 점심 식사 한 끼 값입니다.
               <br />
               내 사업장에 맞는 모든 정부지원사업을 찾아보세요.
               <br />
@@ -297,7 +297,7 @@ export default function MatchingPreview() {
               as="p"
               className="mt-2.5 break-keep text-[11px] text-brand-dark/50"
             >
-              ⚠️ 자문 서비스 · 승인 보장 없음 · 대행 없음
+              ⚠️ 안내·추천 서비스 · 승인 보장 없음 · 대행 없음
             </Editable>
           </div>
         </div>
@@ -319,7 +319,7 @@ export default function MatchingPreview() {
             as="p"
             className="mt-1 hidden break-keep text-center text-[11px] leading-relaxed text-brand-dark/60 sm:block sm:text-xs"
           >
-            ☕ 커피 한 잔 값으로 내 사업장에 해당되는 모든 정부지원사업을 확인하세요. (VAT 포함)
+            🍚 점심 식사 한 끼 값으로 내 사업장에 해당되는 모든 정부지원사업을 확인하세요. (VAT 포함)
           </Editable>
           <Editable
             id="preview-sticky-cta"

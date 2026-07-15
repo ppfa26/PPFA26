@@ -157,16 +157,29 @@ export default function MyPage() {
                       <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
                         결제해주신 대표님만 입장하실 수 있는 <b className="text-brand-dark">비공개 오픈채팅방</b>입니다.
                         정부지원사업 최신 정보 및 승인 후기 등과 실전 노하우, 대표님들끼리의 정보 교류하는 곳입니다.
+                        단체 채팅방이 부담스러우시면 <b className="text-brand-dark">1:1 문의하기</b>로 편하게 물어보세요.
                       </p>
                     </div>
-                    <a
-                      href="https://open.kakao.com/o/gvjec0Di"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full shrink-0 whitespace-nowrap rounded-full bg-[#FEE500] px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:brightness-95 sm:w-auto"
-                    >
-                      💬 오픈채팅방 입장하기
-                    </a>
+                    {/* 단체 오픈채팅방 + 1:1 문의 버튼 (대표님 요청: 단체톡방이
+                        부담스러운 분들을 위해 1:1 안내 톡방도 함께 제공) */}
+                    <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto">
+                      <a
+                        href="https://open.kakao.com/o/gvjec0Di"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full whitespace-nowrap rounded-full bg-[#FEE500] px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:brightness-95"
+                      >
+                        💬 오픈채팅방 입장하기
+                      </a>
+                      <a
+                        href="http://pf.kakao.com/_VxfWxan/chat"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full whitespace-nowrap rounded-full border-2 border-[#FEE500] bg-white px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:bg-[#FEE500]/20"
+                      >
+                        🙋 1:1 문의하기
+                      </a>
+                    </div>
                   </div>
 
                   {/* 오픈채팅방 참여 비밀번호 — 결제 회원에게만 노출 */}
@@ -346,7 +359,7 @@ export default function MyPage() {
               </section>
 
               <p className="mt-6 break-keep text-center text-xs leading-relaxed text-brand-gray">
-                ⚠️ 본 서비스는 신청 가능 상품 안내 및 자문 서비스이며 정부지원사업
+                ⚠️ 본 서비스는 정부지원사업을 안내 및 추천하는 서비스이며 정부지원사업
                 승인을 보장하지 않습니다. 대행 신청·승인 수수료가 없습니다.
               </p>
             </>

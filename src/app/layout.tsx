@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "모두의사업친구 | 정부지원사업 통합 매칭 플랫폼",
   description:
-    "소상공인 사업지원, 이제 모두의사업친구와 함께. AI가 내 사업장에 알맞는 정책자금·정부지원금·창업지원·바우처·인증·교육을 한 번에 진단하고, 어디서 어떻게 신청하는지까지 안내해드립니다. 정부지원사업 통합 매칭 자문 플랫폼.",
+    "소상공인 사업지원, 이제 모두의사업친구와 함께. AI가 내 사업장에 알맞는 정책자금·정부지원금·창업지원·바우처·인증·교육을 한 번에 진단하고, 어디서 어떻게 신청하는지까지 안내해드립니다. 정부지원사업을 안내 및 추천하는 통합 매칭 플랫폼.",
   keywords: [
     "정책자금",
     "정부지원사업",
@@ -90,7 +90,7 @@ const structuredData = {
       url: SITE_URL,
       logo: `${SITE_URL}/favicon.png`,
       description:
-        "정책자금·정부지원금·창업지원·바우처·인증·교육을 한 곳에서 진단·매칭하는 정부지원사업 통합 자문 플랫폼입니다.",
+        "정책자금·정부지원금·창업지원·바우처·인증·교육을 한 곳에서 진단·매칭하여 정부지원사업을 안내 및 추천하는 통합 매칭 플랫폼입니다.",
       sameAs: [] as string[],
     },
     {
@@ -163,7 +163,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap"
         />
       </head>
-      <body>
+      <body className="theme-dark">
         <CopyGuard />
         <MobilePcNotice />
         {children}

@@ -18,10 +18,31 @@ html {
 
 body {
   font-family: "Pretendard Variable", Pretendard, "Noto Sans KR", system-ui, sans-serif;
-  color: #191919;
-  background: #ffffff;
+  color: #f4f5f7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+
+  /* ── 다크 야경 테마 ──
+     사이트 전체 고정 배경(야경) + 어두운 오버레이로 글자 가독성 확보.
+     배경은 스크롤해도 고정(attachment: fixed)되어 '유리 위에 도시' 느낌을 준다. */
+  background-color: #0b1020;
+  background-image:
+    linear-gradient(rgba(8, 12, 24, 0.72), rgba(8, 12, 24, 0.86)),
+    url("/images/city-night-bg.jpg");
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* 모바일은 가로가 좁으므로 세로 배경 이미지 사용 + 고정 대신 스크롤(모바일 성능/버그 회피) */
+@media (max-width: 640px) {
+  body {
+    background-image:
+      linear-gradient(rgba(8, 12, 24, 0.74), rgba(8, 12, 24, 0.9)),
+      url("/images/city-night-bg-mobile.jpg");
+    background-attachment: scroll;
+  }
 }
 
 /* 모바일 가로 잘림 방지: 긴 문자열(이메일·URL·영문 등)이
@@ -204,6 +225,404 @@ h4 {
 .hover-lift:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================================
+   다크 야경 테마 — 글래스(반투명 유리) 카드 & 헬퍼
+   ------------------------------------------------------------
+   밝은 배경(bg-white / bg-gray-50)을 대신할 반투명 어두운 카드.
+   야경 배경이 은은하게 비쳐 보이면서도 안의 글자는 또렷하게 읽힌다.
+   ============================================================ */
+
+/* 기본 글래스 카드 — 흰 카드(bg-white, shadow-card) 대체용 */
+.glass-card {
+  background: rgba(23, 28, 42, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* 조금 더 진한 글래스 — 폼/입력 영역처럼 대비가 더 필요한 곳 */
+.glass-card-strong {
+  background: rgba(15, 19, 32, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* 아주 옅은 글래스 — 배지/작은 칩 등 */
+.glass-chip {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* 히어로 글래스 박스 — 목업처럼 야경 위에 반투명 유리 패널 + 문구 */
+.hero-glass {
+  background: rgba(18, 23, 36, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* 구간 구분용 얇은 회색 가로줄 (대표님 요청).
+   페이지 전체에 걸친 다른 섹션 테두리(border-gray-100)와 색·굵기를
+   동일하게 맞춰, 화면 폭 전체로 길게 통일한다. */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* 섹션 제목/설명을 감싸는 반투명 글래스 패널 (대표님 요청: 목업처럼
+   글자 있는 곳 뒤에 반투명 유리 네모칸). 야경 위에서 문구가 또렷하게
+   읽히도록 은은한 유리 패널 + 안쪽 여백. 라이트 테마에는 영향 없음
+   (아래 body.theme-dark 블록에서만 스타일이 살아나도록 최소화). */
+.section-title-glass {
+  /* 내용 폭에 맞되(width:fit) 좌우 auto 여백으로 가운데 정렬 */
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.75rem;
+}
+
+/* 다크 테마용 입력 필드 — 어두운 배경 위에서 잘 보이게 */
+.dark-input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f4f5f7;
+}
+.dark-input::placeholder {
+  color: rgba(244, 245, 247, 0.4);
+}
+.dark-input:focus {
+  border-color: #fee500;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================
+   다크 테마 전역 자동 전환 (theme-dark)
+   ------------------------------------------------------------
+   기존 페이지들은 밝은 배경(bg-white/bg-gray-50)과 어두운 글자
+   (text-brand-dark 등)로 촘촘히 짜여 있다. 각 페이지 코드를 전부
+   수정하는 대신, 밝은 배경을 반투명 글래스로 바꾸고 어두운 글자를
+   밝게 끌어올리는 전역 규칙을 둔다.
+   → body.theme-dark 안에서만 동작하므로, 클래스만 떼면 즉시 원복.
+   ============================================================ */
+body.theme-dark {
+
+  /* 섹션 제목/설명 글래스 패널 — 다크 테마에서만 유리 배경이 살아난다.
+     (목업처럼 야경 위에 반투명 유리 네모칸을 깔고 그 위에 문구) */
+  .section-title-glass {
+    background: rgba(18, 23, 36, 0.5) !important;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     핵심 원칙:
+     - 흰/회색 배경만 글래스로 바꾼다.
+     - 브랜드 컬러 배경(노랑/그라데이션/다크버튼/주황/초록/빨강)은
+       "절대 건드리지 않는다" → :not()으로 명확히 제외해야
+       그라데이션 카드·버튼이 사라지거나 글자가 묻히지 않는다.
+     ───────────────────────────────────────────────────────── */
+
+  /* 1) 밝은 배경(흰/회색)은 기본적으로 전부 투명 처리.
+     rounded 종류를 가리지 않고 투명화해야, 어중간한 조합(rounded-full/lg
+     버튼·칩, class 없는 큰 섹션 등)에서 밝은 배경이 남아 밝은 글자가
+     묻히는 일이 없다. 카드로 살릴 것은 아래 규칙 2에서 글래스로 되살린다.
+     단, 브랜드 컬러 배경(노랑/그라데이션/다크/주황/초록/빨강)은 절대 제외. */
+  .bg-white:not(.bg-brand-grad):not(.bg-brand-yellow):not(.bg-brand-dark):not(.bg-brand-orange):not(.bg-brand-green):not(.bg-brand-red),
+  .bg-gray-50:not(.bg-brand-grad):not(.bg-brand-yellow):not(.bg-brand-dark),
+  .bg-gray-100:not(.bg-brand-grad):not(.bg-brand-yellow):not(.bg-brand-dark),
+  .bg-gray-200:not(.bg-brand-grad):not(.bg-brand-yellow):not(.bg-brand-dark),
+  /* 반투명 흰/회색(bg-white/70, bg-white/95 등)도 밝은 배경이므로 함께 투명화 */
+  [class*="bg-white/"],
+  [class*="bg-gray-50/"],
+  [class*="bg-gray-100/"] {
+    background-color: transparent !important;
+  }
+
+  /* 1-b) 옅은 그라데이션 유틸(bg-gradient-to-* from-…/10 to-white 등)은
+     밝은 흰빛이라 그 위 글자가 묻힌다 → 그라데이션 제거하고 글래스로.
+     (브랜드 노랑 그라데이션 bg-brand-grad / btn-brand은 커스텀 클래스라
+      이 셀렉터에 걸리지 않아 안전하다) */
+  [class*="bg-gradient-to-"] {
+    background-image: none !important;
+    background-color: rgba(28, 34, 50, 0.55) !important;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  /* 1-c) 불투명도가 높은(90~) 흰 박스는 '떠 있는 안내/결제 배너'로 쓰인다
+     (bg-white/90, /95, /97). 규칙 1이 이걸 투명화하면 어두운 배경 위
+     검은 글자가 겹쳐 흐려진다 → 진한 글래스 패널로 되살려 또렷하게. */
+  [class*="bg-white/9"] {
+    background-color: rgba(20, 26, 40, 0.9) !important;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* 2) '카드'로 쓰이는 박스(그림자 or 큰 둥근모서리 xl 이상) → 글래스로 되살림.
+     작은 rounded(full/lg) 버튼·칩은 카드가 아니므로 투명 유지(위 규칙 1). */
+  .bg-white.shadow-card,
+  .bg-white.rounded-3xl,
+  .bg-white.rounded-2xl,
+  .bg-white.rounded-xl,
+  .bg-gray-50.shadow-card,
+  .bg-gray-50.rounded-3xl,
+  .bg-gray-50.rounded-2xl,
+  .bg-gray-50.rounded-xl,
+  .bg-gray-100.shadow-card,
+  .bg-gray-100.rounded-3xl,
+  .bg-gray-100.rounded-2xl,
+  .bg-gray-100.rounded-xl,
+  .bg-gray-200.shadow-card,
+  .bg-gray-200.rounded-3xl,
+  .bg-gray-200.rounded-2xl,
+  .bg-gray-200.rounded-xl,
+  .shadow-card:not(.bg-brand-grad):not(.bg-brand-yellow):not(.bg-brand-dark):not(.bg-brand-orange):not(.bg-brand-green):not(.bg-brand-red):not(.bg-\[\#FEE500\]):not(.bg-\[\#fee500\]) {
+    background: rgba(28, 34, 50, 0.7) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  /* 3) 어두운 글자색 → 밝게 (묻히는 글자 전부 커버) */
+  .text-brand-dark,
+  .text-black,
+  .text-gray-900,
+  .text-gray-800 { color: #f4f5f7 !important; }
+
+  .text-brand-gray,
+  .text-gray-700,
+  .text-gray-600,
+  .text-gray-500,
+  .text-gray-400,
+  .text-gray-300 { color: #c3cad6 !important; }
+
+  /* 강조색은 어두운 배경에서도 잘 보이도록 '밝은 버전'으로 */
+  .text-brand-red { color: #ff6b60 !important; }     /* 빨강 강조 */
+  .text-brand-orange { color: #ff9f45 !important; }  /* 주황 강조 */
+  .text-brand-green { color: #34e39b !important; }   /* 초록 강조 */
+  .text-green-700, .text-green-600 { color: #34e39b !important; }
+  .text-red-600, .text-red-700 { color: #ff6b60 !important; }
+  .text-orange-600, .text-orange-700 { color: #ff9f45 !important; }
+  /* 파랑 강조(text-blue-600/700 등)도 어두운 배경에서 밝은 하늘색으로 */
+  .text-blue-600, .text-blue-700, .text-blue-800 { color: #6aa9ff !important; }
+
+  /* 4) 테두리 → 은은한 밝은 테두리 */
+  .border-gray-100,
+  .border-gray-200,
+  .border-gray-300 { border-color: rgba(255, 255, 255, 0.14) !important; }
+
+  /* 5) 입력 필드 자동 다크화 */
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #f4f5f7 !important;
+  }
+  input::placeholder,
+  textarea::placeholder { color: rgba(244, 245, 247, 0.45) !important; }
+
+  /* 6) 작은 회색 칩/구분선/알약 배경 → 살짝 밝은 반투명 */
+  .bg-gray-50.rounded-lg,
+  .bg-gray-50.rounded-full,
+  .bg-gray-100.rounded-lg,
+  .bg-gray-100.rounded-full,
+  .bg-gray-200.rounded-lg,
+  .bg-gray-200.rounded-full {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* 6-b) 옅은 컬러 tint 배경(연한 파랑/초록/주황/빨강/노랑 등)은
+     밝은 회색빛이라 그 위 밝은 글자·강조색이 묻힌다.
+     → 살짝 어두운 반투명으로 바꿔 위 글자가 또렷하게 보이게. */
+  .bg-blue-50, .bg-blue-100,
+  .bg-green-50, .bg-green-100,
+  .bg-emerald-50, .bg-emerald-100,
+  .bg-amber-50, .bg-amber-100,
+  .bg-red-50, .bg-red-100,
+  .bg-orange-50, .bg-orange-100,
+  .bg-yellow-50, .bg-yellow-100,
+  .bg-brand-orange\/5, .bg-brand-orange\/10, .bg-brand-orange\/20,
+  .bg-brand-green\/5, .bg-brand-green\/10, .bg-brand-green\/15, .bg-brand-green\/20,
+  .bg-brand-red\/5, .bg-brand-red\/10, .bg-brand-red\/15,
+  .bg-brand-primary\/5, .bg-brand-primary\/10, .bg-brand-primary\/20,
+  .bg-brand-yellow\/10, .bg-brand-yellow\/15,
+  .bg-brand-dark\/10 {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+  }
+  /* 노랑 tint(40% 이상)는 배지처럼 진하게 쓰이므로 노랑 유지 + 검은 글자 */
+  .bg-brand-yellow\/20, .bg-brand-yellow\/30, .bg-brand-yellow\/40 {
+    background-color: rgba(254, 229, 0, 0.85) !important;
+    color: #191919 !important;
+  }
+  .bg-brand-yellow\/20 *, .bg-brand-yellow\/30 *, .bg-brand-yellow\/40 * { color: #191919 !important; }
+  /* 노랑 tint 안의 반투명 어두운 글자도 검정 유지(밝게 만들지 않음) */
+  .bg-brand-yellow\/20 [class*="text-brand-dark/"],
+  .bg-brand-yellow\/30 [class*="text-brand-dark/"],
+  .bg-brand-yellow\/40 [class*="text-brand-dark/"] { color: rgba(25, 25, 25, 0.75) !important; }
+
+  /* 6-c) 반투명 어두운 글자(text-brand-dark/40~80)는 글래스(어두움) 위에서
+     묻힌다 → 밝은 반투명으로. (단 노랑/그라데이션 배경 위는 아래 예외에서 되돌림) */
+  .text-brand-dark\/40, .text-brand-dark\/45, .text-brand-dark\/50,
+  .text-brand-dark\/60, .text-brand-dark\/70, .text-brand-dark\/80 {
+    color: rgba(244, 245, 247, 0.75) !important;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     예외 처리: 브랜드 컬러 배경은 원래 색을 '복원'하고 글자를 되살린다.
+     (위 규칙들이 잘못 건드렸을 경우를 대비해 배경까지 명시적으로 재지정)
+     ═══════════════════════════════════════════════════════════ */
+
+  /* 7-a) 다크 배경 버튼/박스 → 어두운색 유지 + 흰 글자 */
+  .bg-brand-dark { background-color: #14181f !important; }
+  .bg-brand-dark,
+  .bg-brand-dark * { color: #ffffff !important; }
+
+  /* 7-b) 노랑 배경 → 노랑 복원 + 검은 글자.
+     bg-brand-yellow, 카카오 노랑 임의값(bg-[#FEE500]) 모두 포함.
+     (이들이 shadow-card를 함께 가지면 규칙 2가 글래스로 덮으므로
+      배경을 노랑으로 되돌리고 blur도 해제한다) */
+  .bg-brand-yellow,
+  .bg-\[\#FEE500\],
+  .bg-\[\#fee500\] {
+    background-color: #FEE500 !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .bg-brand-yellow,
+  .bg-brand-yellow *,
+  .bg-\[\#FEE500\],
+  .bg-\[\#FEE500\] *,
+  .bg-\[\#fee500\],
+  .bg-\[\#fee500\] * { color: #191919 !important; }
+  /* 노랑 배경 안의 반투명 어두운 아이콘칩(bg-brand-dark/10)은 옅은 검정 유지 */
+  .bg-\[\#FEE500\] .bg-brand-dark\/10,
+  .bg-brand-yellow .bg-brand-dark\/10 {
+    background-color: rgba(25, 25, 25, 0.1) !important;
+  }
+
+  /* 7-c) 브랜드 그라데이션(인기 가격카드 등) → 그라데이션 복원 + 검은 글자 */
+  .bg-brand-grad {
+    background-image: linear-gradient(135deg, #FFD500 0%, #FF9500 100%) !important;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .bg-brand-grad,
+  .bg-brand-grad * { color: #191919 !important; }
+  /* 노란 CTA(그라데이션/노랑) 박스 '안'에 놓인 검정 알약 버튼(bg-brand-dark)은
+     배경이 검정이므로 글자를 다시 흰색으로 되돌린다. (대표님: 오른쪽 버튼 안 보임)
+     bg-brand-grad * 규칙이 자식 검정 버튼 글자까지 검정으로 덮어버리던 문제 해결. */
+  .bg-brand-grad .bg-brand-dark,
+  .bg-brand-grad .bg-brand-dark *,
+  .bg-brand-yellow .bg-brand-dark,
+  .bg-brand-yellow .bg-brand-dark * { color: #ffffff !important; }
+  /* 그라데이션·노랑 카드 안의 취소선/보조(반투명 어두운) 글자는 흐린 검정 유지 */
+  .bg-brand-grad .text-brand-dark\/40, .bg-brand-grad .text-brand-dark\/45,
+  .bg-brand-grad .text-brand-dark\/50, .bg-brand-grad .text-brand-dark\/60,
+  .bg-brand-grad .text-brand-dark\/70, .bg-brand-grad .text-brand-dark\/80,
+  .bg-brand-yellow .text-brand-dark\/40, .bg-brand-yellow .text-brand-dark\/45,
+  .bg-brand-yellow .text-brand-dark\/50, .bg-brand-yellow .text-brand-dark\/60,
+  .bg-brand-yellow .text-brand-dark\/70, .bg-brand-yellow .text-brand-dark\/80 {
+    color: rgba(25, 25, 25, 0.72) !important;
+  }
+
+  /* 7-d) 노란/그라데이션 CTA 버튼 → 검은 글자 (btn-brand는 자체 배경 보유) */
+  .btn-brand,
+  .btn-brand * { color: #191919 !important; }
+
+  /* 7-f) 외곽선 버튼(btn-outline)은 흰 배경/검은 글자라 야경에서 묻힌다
+     → 반투명 글래스 + 밝은 글자 + 밝은 테두리로 재정의 */
+  .btn-outline {
+    background: rgba(20, 26, 40, 0.55) !important;
+    color: #ffffff !important;
+    border: 2px solid rgba(255, 255, 255, 0.6) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: #191919 !important;
+    text-shadow: none;
+  }
+
+  /* 7-e) 진한 컬러 배경(주황/빨강) → 원래 색 복원 + 흰 글자 */
+  .bg-brand-orange { background-color: #FF6F0F !important; }
+  .bg-brand-red { background-color: #FF3B30 !important; }
+  .bg-brand-orange,
+  .bg-brand-orange *,
+  .bg-brand-red,
+  .bg-brand-red * { color: #ffffff !important; }
+  /* 초록(#00C471)은 밝은 편이라 흰 글자 대비가 약하다 → 검은 글자가 또렷 */
+  .bg-brand-green { background-color: #00C471 !important; }
+  .bg-brand-green,
+  .bg-brand-green * { color: #0b1a12 !important; }
+
+  /* 8) 흰색으로 지정된 글자(text-white)는 그대로 흰색 유지 (전역 규칙보다 우선) */
+  .text-white { color: #ffffff !important; }
+  /* 단, 밝은 초록/노랑 배경 위의 흰 글자는 대비가 약하므로 검정으로 (규칙 8보다 뒤) */
+  .bg-brand-green .text-white,
+  .bg-brand-green.text-white { color: #0b1a12 !important; }
+  .bg-brand-yellow .text-white,
+  .bg-brand-yellow.text-white,
+  .bg-\[\#FEE500\] .text-white { color: #191919 !important; }
+
+  /* 9) 배지/알약/버튼처럼 '자체 배경이 있는 작은 요소'의 글자에는
+     그림자를 넣지 않는다(번져 보임). 히어로는 글래스 박스로 감쌌으므로
+     큰 텍스트 그림자도 제거해 선명하게. */
+  #hero-section .rounded-full,
+  #hero-section .btn-brand,
+  #hero-section .btn-outline,
+  .bg-brand-yellow,
+  .bg-\[\#FEE500\] {
+    text-shadow: none !important;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     10) 최상단(히어로 + 헤더 무료진단 버튼)만 레드 포인트.
+         나머지 섹션(가격 카드/리본 등)은 주황·노랑 그대로 둔다.
+         되돌리려면 이 블록만 삭제하면 된다.
+     ═══════════════════════════════════════════════════════════ */
+  /* 헤더 우상단 '무료 진단' 버튼 → 버건디→레드 그라데이션 */
+  .header-cta-red.btn-brand {
+    background-image: linear-gradient(135deg, #E11D2E 0%, #8E1420 100%) !important;
+    background-color: transparent !important;
+  }
+  .header-cta-red.btn-brand,
+  .header-cta-red.btn-brand * { color: #ffffff !important; }
+
+  /* 히어로 '무료 진단 시작하기' 버튼 → 레드 그라데이션 */
+  #hero-section .btn-brand {
+    background-image: linear-gradient(135deg, #E11D2E 0%, #8E1420 100%) !important;
+    background-color: transparent !important;
+  }
+  #hero-section .btn-brand,
+  #hero-section .btn-brand * { color: #ffffff !important; }
+
+  /* 히어로 체크 아이콘(✓) 주황 → 레드 */
+  #hero-section .text-brand-orange { color: #FF4D5E !important; }
+
 }
 
 /* 모션 최소화를 선호하는 사용자는 애니메이션 비활성화 (접근성) */

@@ -62,5 +62,5 @@ export function retrieve(query: string): Retrieved {
 export function buildDisclaimer(docNames: string[], siteNames: string[]): string {
   const doc = docNames.length ? docNames.slice(0, 2).join(", ") : "공식 공문 자료";
   const site = siteNames.length ? siteNames.slice(0, 2).join(", ") : "공식 사이트";
-  return `\n\n📌 본 답변은 [${doc}] 및 [${site}] 최신 공고를 기반으로 작성되었습니다.\n⚠️ 본 서비스는 자문 서비스이며 승인을 보장하지 않습니다.\n🔍 최종 확정 전 반드시 공식 사이트에서 재확인하세요.`;
+  return `\n\n📌 본 답변은 [${doc}] 및 [${site}] 최신 공고를 기반으로 작성되었습니다.\n⚠️ 본 서비스는 안내·추천 서비스이며 승인을 보장하지 않습니다.\n🔍 최종 확정 전 반드시 공식 사이트에서 재확인하세요.`;
 }

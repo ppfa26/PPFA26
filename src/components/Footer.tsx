@@ -37,7 +37,7 @@ export default function Footer() {
             >
               ⚠️ 본 서비스는 정부지원사업 승인을 보장하지 않습니다.
               <br />
-              정부지원사업 안내 및 신청 방법을 자문하는 플랫폼입니다.
+              정부지원사업을 안내 및 추천하는 매칭 플랫폼입니다.
             </Editable>
           </div>
 
@@ -79,7 +79,7 @@ export default function Footer() {
             <dt className="shrink-0 text-gray-400">대표자</dt>
             <dd className="text-gray-500">신주엽</dd>
             <dt className="shrink-0 text-gray-400">주소</dt>
-            <dd className="text-gray-500">인천광역시 서해구 청라커낼로288번길 26 (청라동) 285호</dd>
+            <dd className="text-gray-500">인천광역시 서해구 청라커낼로288번길 26, 285호</dd>
             <dt className="shrink-0 text-gray-400">사업자등록번호</dt>
             <dd className="text-gray-500">597-12-02897</dd>
             <dt className="shrink-0 text-gray-400">통신판매업신고</dt>
@@ -93,7 +93,7 @@ export default function Footer() {
           {/* PC: 기존 한 줄(가운뎃점) 형태 유지 */}
           <div className="hidden sm:block">
             <p>
-              상호 : 모두의사업친구 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로288번길 26 (청라동) 285호
+              상호 : 모두의사업친구 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호
             </p>
             <p className="mt-1">
               사업자등록번호 : 597-12-02897 · 통신판매업신고 : 제2026-인천서해-0109호

@@ -41,7 +41,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0b1020]/80 backdrop-blur-lg">
       <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-1.5 pl-2 pr-2 xs:gap-2 xs:pl-4 xs:pr-3.5 sm:h-16 sm:gap-4 sm:px-6">
         {/* 로고 + 상호명 */}
         <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
@@ -117,7 +117,7 @@ export default function Header() {
           )}
           <Link
             href="/diagnosis"
-            className="btn-brand whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-bold xs:px-3.5 xs:text-[12.5px] sm:px-5 sm:py-2 sm:text-sm"
+            className="btn-brand header-cta-red whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-bold xs:px-3.5 xs:text-[12.5px] sm:px-5 sm:py-2 sm:text-sm"
           >
             무료 진단
           </Link>

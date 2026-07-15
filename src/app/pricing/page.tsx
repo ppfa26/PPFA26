@@ -13,7 +13,7 @@ const PRICING_FAQ = [
   },
   {
     q: "Q2. 행정대행 신청해주시나요?",
-    a: "아닙니다. 저희는 매칭 플랫폼입니다.\n서류 발급과 신청은 대표님이 직접 하십니다.\n저희는 신청 가능한 사업을 추천·안내해 드립니다.",
+    a: "아닙니다. 저희는 매칭 플랫폼입니다.\n서류 발급과 신청은 이용자님이 직접 하십니다.\n저희는 신청 가능한 사업을 추천·안내해 드립니다.",
   },
   {
     q: "Q3. 승인을 보장하나요?",
@@ -29,11 +29,11 @@ const PRICING_FAQ = [
   },
   {
     q: "Q6. 어떤 지원사업까지 안내되나요?",
-    a: "정부 지원금·바우처·감면제도를 안내합니다.\nK-Startup, 창업패키지, 지자체 사업도 포함합니다.\n국내 모든 정부지원사업 안내를 목표로 합니다.",
+    a: "정부 지원금·바우처·정책자금·감면제도를 안내합니다.\nK-Startup, 창업패키지, 지자체 사업도 포함합니다.\n국내 모든 정부지원사업 안내를 목표로 합니다.",
   },
   {
     q: "Q7. 정보는 얼마나 최신인가요?",
-    a: "매일 정부 공식 사이트를 자동으로 확인합니다.\n최신 공고를 반영합니다.\n부처 공문으로 팩트체크 후 답변합니다.",
+    a: "매일 정부 공식 사이트를 자동으로 확인합니다.\n최신 공고 및 공고를 팩트체크 후 반영합니다.",
   },
 ];
 
@@ -49,14 +49,14 @@ export default function PricingPage() {
               as="h1"
               className="text-3xl font-black text-brand-dark sm:text-4xl"
             >
-              딱 하나면 충분합니다, AI 올인원 패키지
+              AI 올인원 패키지
             </Editable>
             <Editable
               id="pricing-sub"
               as="p"
               className="mx-auto mt-3 max-w-xl text-brand-gray"
             >
-              1회성 결제이며 월 구독 결제가 아닙니다. 사업하면서 이 정도는 알아야죠.
+              1회성 결제이며 월 구독 결제가 아닙니다.
             </Editable>
             <p className="mx-auto mt-4 inline-block break-keep rounded-full bg-brand-yellow/40 px-4 py-2 text-sm font-semibold text-brand-dark">
               💡 모든 가격은 부가세가 포함된 금액입니다

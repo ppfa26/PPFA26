@@ -89,7 +89,7 @@ const REVIEWS: Review[] = [
 
 const STATS = [
   { label: "누적 자금·바우처 승인", value: "300건+" },
-  { label: "자문 전문 플랫폼", value: "승인 수수료 0원" },
+  { label: "안내·추천 전문 플랫폼", value: "승인 수수료 0원" },
   { label: "취급 지원상품", value: "350종" },
   { label: "모든 기관 상품", value: "AI 활용" },
 ];
