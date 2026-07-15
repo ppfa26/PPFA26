@@ -200,6 +200,8 @@ export default function MyPage() {
                     { icon: "🧾", name: "세무조사 · 조정계산 · 기장", price: "문의", accent: false },
                     { icon: "🌏", name: "수출 관련 관세사 상담", price: "문의", accent: false },
                     { icon: "🖥️", name: "사업장 POS", price: "문의", accent: false },
+                    { icon: "🚗", name: "사업용 자동차 문의", price: "문의", accent: false },
+                    { icon: "🛡️", name: "보험 관련 문의", price: "문의", accent: false },
                   ].map((s) => (
                     <a
                       key={s.name}
@@ -360,7 +362,7 @@ export default function MyPage() {
 
               <p className="mt-6 break-keep text-center text-xs leading-relaxed text-brand-gray">
                 ⚠️ 본 서비스는 정부지원사업을 안내 및 추천하는 서비스이며 정부지원사업
-                승인을 보장하지 않습니다. 대행 신청·승인 수수료가 없습니다.
+                승인을 보장하지 않습니다.
               </p>
             </>
           )}

@@ -30,6 +30,8 @@ export default function Diagnosis() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [], certifications: [], innovation: [], currentInstitutions: [] });
+  // 지역 '기타'(직접 입력) 모드 여부 — true면 아래에 직접 입력창을 띄웁니다.
+  const [regionEtc, setRegionEtc] = useState(false);
 
   // 사업자번호 조회 상태
   const [bno, setBno] = useState("");
@@ -277,7 +279,44 @@ export default function Diagnosis() {
                 <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} /></Field>
                 <Field label={STEP1_FIELDS.revenue.label}><Radio k="revenue" opts={STEP1_FIELDS.revenue.opts} /></Field>
                 <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} /></Field>
-                <Field label={STEP1_FIELDS.region.label}><Radio k="region" opts={STEP1_FIELDS.region.opts} /></Field>
+                {/* 지역 — '기타' 클릭 시 직접 입력창 노출(대표님 요청) */}
+                <Field label={STEP1_FIELDS.region.label}>
+                  <div className="flex flex-wrap gap-2">
+                    {STEP1_FIELDS.region.opts.map((o) => {
+                      const active = o === "기타" ? regionEtc : !regionEtc && form.region === o;
+                      return (
+                        <button
+                          key={o}
+                          onClick={() => {
+                            if (o === "기타") {
+                              setRegionEtc(true);
+                              set("region", "");
+                            } else {
+                              setRegionEtc(false);
+                              set("region", o);
+                            }
+                          }}
+                          className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                            active
+                              ? "border-brand-orange bg-brand-grad text-brand-dark"
+                              : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+                          }`}
+                        >
+                          {o}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {regionEtc && (
+                    <input
+                      type="text"
+                      value={form.region || ""}
+                      onChange={(e) => set("region", e.target.value)}
+                      placeholder="지역을 직접 입력해 주세요 (예: 충남 천안시)"
+                      className="mt-3 w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                    />
+                  )}
+                </Field>
               </GroupBox>
               {/* ※ 1단계 스마트기기 질문 제거(대표님 요청) — 동일 취지 질문이 3단계 'smartDevice'에 있어 매칭은 그대로 유지됨 */}
             </div>
