@@ -75,9 +75,16 @@ export type DiagnosisRecord = {
 export function diagnosesToCsv(records: DiagnosisRecord[]): string {
   const lines: string[] = [];
   records.forEach((rec, i) => {
-    if (i > 0) lines.push(""); // 진단서 사이 빈 줄
+    if (i > 0) {
+      lines.push(""); // 진단서 사이 빈 줄
+      lines.push(""); // 고객이 많을 때 구분이 잘 되도록 한 줄 더
+    }
     const applicant = rec.name || (rec.profile as any)?.name || "이름미입력";
-    lines.push(csvCell(`■ 고객 진단서 #${i + 1} — ${applicant}`));
+    const phoneText = valueToText(rec.phone ?? (rec.profile as any)?.phone);
+    // ── 어떤 고객인지 한눈에 보이도록 상단에 이름·연락처를 굵게 표시 ──
+    lines.push(csvCell(`════════════════════════════════════`));
+    lines.push(csvCell(`■ 고객 진단서 #${i + 1}  ▶  ${applicant} (${phoneText})`));
+    lines.push(csvCell(`════════════════════════════════════`));
     lines.push([csvCell("항목"), csvCell("내용")].join(","));
     // 기본 메타
     lines.push([csvCell("접수일시"), csvCell(fmtKST(rec.created_at))].join(","));

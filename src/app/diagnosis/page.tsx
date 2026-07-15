@@ -335,7 +335,7 @@ export default function Diagnosis() {
                       type="text"
                       value={form.region || ""}
                       onChange={(e) => set("region", e.target.value)}
-                      placeholder="지역을 직접 입력해 주세요 (예: 충남 천안시)"
+                      placeholder="지역을 직접 입력해 주세요 (예: 00도 00시)"
                       className="mt-3 w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
                     />
                   )}

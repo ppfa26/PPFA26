@@ -243,8 +243,11 @@ export default function AdminPage() {
   };
   const downloadOneDiag = (d: AdminDiagnosis) => {
     const applicant = d.name || (d.profile as any)?.name || "고객";
+    // 동명이인 구분을 위해 연락처 뒤 4자리를 파일명에 추가
+    const rawPhone = String(d.phone || (d.profile as any)?.phone || "").replace(/[^0-9]/g, "");
+    const tail = rawPhone.length >= 4 ? `_${rawPhone.slice(-4)}` : "";
     const stamp = new Date(d.created_at).toISOString().slice(0, 10);
-    downloadCsv(`고객진단서_${applicant}_${stamp}`, diagnosesToCsv(toRecords([d])));
+    downloadCsv(`고객진단서_${applicant}${tail}_${stamp}`, diagnosesToCsv(toRecords([d])));
   };
 
   // 진단서 삭제 (관리자) — 관리자 전용 RPC 사용
@@ -437,6 +440,62 @@ export default function AdminPage() {
     await loadAll();
     setTimeout(() => setMsg(null), 4000);
   };
+  // 회원 목록 → 그 회원의 고객 진단서로 바로 이동 (이메일로 매칭)
+  const goToUserDiag = (email: string | null) => {
+    if (!email) {
+      setMsg("이 회원은 이메일 정보가 없어 진단서를 찾을 수 없습니다.");
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    // 같은 이메일의 진단서 중 가장 최근 것을 찾는다.
+    const matched = diagnoses
+      .filter((d) => (d.email || (d.profile as any)?.email) === email)
+      .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+    if (matched.length === 0) {
+      setMsg("이 회원이 작성한 진단서가 아직 없습니다.");
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    const target = matched[0];
+    setTab("diagnoses");
+    setOpenDiag(target.id);
+    // 탭 전환 렌더 후 해당 진단서로 스크롤 + 잠깐 강조
+    setTimeout(() => {
+      const el = document.getElementById(`diag-${target.id}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("ring-2", "ring-brand-orange");
+        setTimeout(() => el.classList.remove("ring-2", "ring-brand-orange"), 2500);
+      }
+    }, 150);
+  };
+
+  // 조회권 환불(열람 차단) — 실제 결제 환불은 대표님이 PG사에서 처리하고,
+  //   이 버튼은 '사이트에서 더 이상 정보를 못 보게' 조회권을 0으로 만들어 열람을 즉시 차단한다.
+  //   (환불만 받고 정보를 계속 빼가는 것을 방지)
+  const refundCredits = async (email: string | null) => {
+    if (!email) return;
+    if (
+      !window.confirm(
+        `${email} 님의 조회권을 환불(열람 차단) 처리할까요?\n\n` +
+          `· 남은 조회권이 0이 되어 결과 페이지를 더 이상 볼 수 없게 됩니다.\n` +
+          `· 실제 결제 금액 환불은 PG사에서 별도로 진행해 주세요.\n` +
+          `(되돌리려면 '조회권+' 로 다시 부여하면 됩니다)`
+      )
+    )
+      return;
+    const { data, error } = await supabase.rpc("admin_refund_credits", {
+      p_email: email,
+    });
+    setMsg(
+      error
+        ? `오류: ${error.message}`
+        : `${email} 님의 조회권을 차단(환불 처리)했습니다. (결제 ${String(data ?? 0)}건 열람 차단)`
+    );
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
+
   // 개별 결제 건 삭제 (매출 통계 · 결제내역에서 1건씩 정리)
   const deletePayment = async (orderId: string) => {
     if (
@@ -691,12 +750,24 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex flex-col gap-1.5 sm:flex-row">
+                          <div className="flex flex-col flex-wrap gap-1.5 sm:flex-row">
+                            <button
+                              onClick={() => goToUserDiag(u.email)}
+                              className="rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 hover:bg-sky-100"
+                            >
+                              📇 고객진단서
+                            </button>
                             <button
                               onClick={() => u.email && resetDevice(u.email)}
                               className="rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100"
                             >
                               기기초기화
+                            </button>
+                            <button
+                              onClick={() => refundCredits(u.email)}
+                              className="rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-700 hover:bg-orange-100"
+                            >
+                              💸 조회권 환불
                             </button>
                             <button
                               onClick={() => u.email && doBlock("email", u.email)}
@@ -851,7 +922,8 @@ export default function AdminPage() {
                 return (
                   <div
                     key={d.id}
-                    className="rounded-2xl border border-gray-100 bg-white shadow-sm"
+                    id={`diag-${d.id}`}
+                    className="rounded-2xl border border-gray-100 bg-white shadow-sm transition-all"
                   >
                     <div className="flex items-center gap-2 px-4 py-3">
                       {/* 체크박스 (다운로드 선택용) */}
