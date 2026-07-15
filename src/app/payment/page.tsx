@@ -11,35 +11,36 @@ import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP, COMMON_NOTES } from "@/lib/products";
 import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
 
-// 나이스페이먼츠(NICEPAY) 클라이언트 ID (공개 키). 브라우저에 노출되어도 안전한 값입니다.
-//  ★ 폴백 ★ 환경변수가 비어있으면(예: 배포 환경변수 미설정) 나이스 '공식 샌드박스 테스트키'로 자동 대체.
-//     → 실제 돈은 빠지지 않으며, "가맹점 식별코드(clientId) 잘못됨" 오류를 방지합니다.
-//     심사 통과 후 운영키를 배포 환경변수(NEXT_PUBLIC_NICEPAY_CLIENT_ID)에 넣으면 그 값이 우선 사용됩니다.
-const NICEPAY_SANDBOX_CLIENT_ID = "S2_af4543a0be4d49a98122e01ec2059a56";
-const NICEPAY_CLIENT_ID =
-  (process.env.NEXT_PUBLIC_NICEPAY_CLIENT_ID as string) || NICEPAY_SANDBOX_CLIENT_ID;
-// 나이스페이먼츠 결제창 JS SDK URL
-const NICEPAY_SDK_SRC = "https://pay.nicepay.co.kr/v1/js/";
+// 토스페이먼츠(TossPayments) 클라이언트 키 (공개 키). 브라우저에 노출되어도 안전한 값입니다.
+//  ★ 폴백 ★ 환경변수가 비어있으면(예: 배포 환경변수 미설정) 토스 '공식 문서 테스트 클라이언트 키'로 자동 대체.
+//     → 실제 돈은 빠지지 않는 테스트 결제로 처리됩니다.
+//     심사 통과 후 운영 클라이언트 키를 배포 환경변수(NEXT_PUBLIC_TOSS_CLIENT_KEY)에 넣으면 그 값이 우선 사용됩니다.
+//     ※ 서버(confirm 라우트)의 시크릿 키와 반드시 '세트'여야 합니다. (테스트-테스트 / 운영-운영)
+const TOSS_TEST_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+const TOSS_CLIENT_KEY =
+  (process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string) || TOSS_TEST_CLIENT_KEY;
+// 토스페이먼츠 결제창 JS SDK URL (Version 1)
+const TOSS_SDK_SRC = "https://js.tosspayments.com/v1/payment";
 
-// 나이스페이먼츠 SDK가 window에 심는 전역 객체 타입
-type NicePayAuth = {
-  requestPay: (options: {
-    clientId: string;
-    method: string;
-    orderId: string;
-    amount: number;
-    goodsName: string;
-    returnUrl: string;
-    mallReserved?: string;
-    buyerName?: string;
-    buyerEmail?: string;
-    fnError?: (result: { errorMsg?: string; resultMsg?: string }) => void;
-  }) => void;
+// 토스페이먼츠 결제창 객체 타입 (requestPayment만 사용)
+type TossPaymentsInstance = {
+  requestPayment: (
+    method: string,
+    options: {
+      amount: number;
+      orderId: string;
+      orderName: string;
+      successUrl: string;
+      failUrl: string;
+      customerName?: string;
+      customerEmail?: string;
+    }
+  ) => Promise<void>;
 };
 
 declare global {
   interface Window {
-    AUTHNICE?: NicePayAuth;
+    TossPayments?: (clientKey: string) => TossPaymentsInstance;
   }
 }
 
@@ -62,26 +63,26 @@ function PaymentInner() {
   const [paying, setPaying] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
-  // 나이스페이먼츠 결제창 SDK 로드 (한 번만)
-  const loadNicePaySdk = useCallback(() => {
+  // 토스페이먼츠 결제창 SDK 로드 (한 번만)
+  const loadTossSdk = useCallback(() => {
     return new Promise<void>((resolve, reject) => {
       if (typeof window === "undefined") return reject(new Error("no window"));
-      if (window.AUTHNICE) {
+      if (window.TossPayments) {
         sdkLoadedRef.current = true;
         return resolve();
       }
       // 이미 script 태그가 있으면 로드 완료를 기다림
       const existing = document.querySelector<HTMLScriptElement>(
-        `script[src="${NICEPAY_SDK_SRC}"]`
+        `script[src="${TOSS_SDK_SRC}"]`
       );
       if (existing) {
         existing.addEventListener("load", () => resolve());
         existing.addEventListener("error", () => reject(new Error("sdk load error")));
-        if (window.AUTHNICE) resolve();
+        if (window.TossPayments) resolve();
         return;
       }
       const script = document.createElement("script");
-      script.src = NICEPAY_SDK_SRC;
+      script.src = TOSS_SDK_SRC;
       script.async = true;
       script.onload = () => {
         sdkLoadedRef.current = true;
@@ -120,7 +121,7 @@ function PaymentInner() {
       }
 
       try {
-        await loadNicePaySdk();
+        await loadTossSdk();
         if (!mounted) return;
         setReady(true);
       } catch {
@@ -139,7 +140,7 @@ function PaymentInner() {
       setNotice("결제 진행을 위해 안내 사항에 동의해 주세요.");
       return;
     }
-    if (!window.AUTHNICE) {
+    if (!window.TossPayments) {
       setNotice("결제 모듈이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
       return;
     }
@@ -147,7 +148,7 @@ function PaymentInner() {
     setPaying(true);
     const orderId = makeOrderId();
 
-    // 결제 정보를 sessionStorage에 임시 저장 (success 페이지에서 확인용)
+    // 결제 정보를 sessionStorage에 임시 저장 (success 페이지에서 tier 확인용)
     try {
       sessionStorage.setItem(
         "mpp_pending_payment",
@@ -157,28 +158,26 @@ function PaymentInner() {
 
     const origin = window.location.origin;
     try {
-      window.AUTHNICE.requestPay({
-        clientId: NICEPAY_CLIENT_ID,
-        method: "card",
-        orderId,
+      const tossPayments = window.TossPayments(TOSS_CLIENT_KEY);
+      // 결제 성공 시 successUrl(/payment/success)로 리다이렉트되며
+      //  paymentKey·orderId·amount 쿼리가 붙어 옵니다.
+      //  → success 페이지의 '토스 경로'가 /api/payment/confirm 을 호출해 승인 확정합니다.
+      await tossPayments.requestPayment("카드", {
         amount: product.price,
-        goodsName: `모두의사업친구 ${product.name} 플랜`,
-        returnUrl: `${origin}/api/payment/nicepay-return`,
-        mallReserved: JSON.stringify({ tier }),
-        buyerName: userName || "고객",
-        buyerEmail: email || undefined,
-        fnError: (result) => {
-          setPaying(false);
-          setNotice(
-            result?.errorMsg ||
-              result?.resultMsg ||
-              "결제가 취소되었거나 오류가 발생했습니다. 다시 시도해 주세요."
-          );
-        },
+        orderId,
+        orderName: `모두의사업친구 ${product.name} 플랜`,
+        successUrl: `${origin}/payment/success`,
+        failUrl: `${origin}/payment/success`,
+        customerName: userName || "고객",
+        customerEmail: email || undefined,
       });
-    } catch {
+    } catch (err) {
+      // 사용자가 결제창을 닫거나(취소) 오류가 난 경우
       setPaying(false);
-      setNotice("결제가 취소되었거나 오류가 발생했습니다. 다시 시도해 주세요.");
+      const msg =
+        (err as { message?: string })?.message ||
+        "결제가 취소되었거나 오류가 발생했습니다. 다시 시도해 주세요.";
+      setNotice(msg);
     }
   };
 
@@ -191,7 +190,7 @@ function PaymentInner() {
             결제하기
           </Editable>
           <Editable id="payment-desc" as="p" className="mt-2 text-sm text-brand-gray">
-            안전한 결제를 위해 나이스페이먼츠를 사용합니다.
+            안전한 결제를 위해 토스페이먼츠를 사용합니다.
           </Editable>
         </div>
 
@@ -233,11 +232,11 @@ function PaymentInner() {
           ))}
         </ul>
 
-        {/* 결제 수단 안내 (나이스페이먼츠 결제창은 버튼 클릭 시 팝업으로 뜹니다) */}
+        {/* 결제 수단 안내 (토스페이먼츠 결제창은 버튼 클릭 시 결제창으로 이동합니다) */}
         <div className="mb-1 rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-sm">
           <p className="text-sm font-bold text-brand-dark">💳 신용/체크카드 결제</p>
           <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-gray">
-            아래 버튼을 누르면 <strong>나이스페이먼츠(NICEPAY)</strong> 결제창이 열립니다. 카드사 정식 인증 절차를 거쳐 안전하게 결제됩니다.
+            아래 버튼을 누르면 <strong>토스페이먼츠(TossPayments)</strong> 결제창이 열립니다. 카드사 정식 인증 절차를 거쳐 안전하게 결제됩니다.
           </p>
         </div>
 
