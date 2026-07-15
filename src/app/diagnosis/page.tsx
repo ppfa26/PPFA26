@@ -27,6 +27,43 @@ import {
   STEP3_CONDITIONAL_FIELDS,
 } from "@/lib/diagnosisConfig";
 
+// ── 순수 레이아웃 컴포넌트(모듈 레벨) ──
+//  ★중요★ 이 컴포넌트들을 Diagnosis() 함수 "안"에 두면, 타이핑할 때마다
+//  부모가 리렌더되면서 매번 '새로운 컴포넌트 타입'으로 인식돼 내부 input이
+//  통째로 리마운트됩니다. 그러면 텍스트 입력창(성함·연락처)이 포커스를 잃어
+//  한 글자도 안 써지는 버그가 생깁니다. 그래서 밖으로 빼서 고정시킵니다.
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-6">
+      <p className="mb-2 font-bold text-brand-dark">{label}</p>
+      {children}
+    </div>
+  );
+}
+
+function GroupBox({
+  title,
+  children,
+  tone = "gray",
+}: {
+  title: string;
+  children: React.ReactNode;
+  tone?: "gray" | "orange" | "green";
+}) {
+  const toneCls =
+    tone === "orange"
+      ? "border-brand-orange/30 bg-brand-orange/5"
+      : tone === "green"
+      ? "border-brand-green/30 bg-brand-green/5"
+      : "border-gray-200 bg-gray-50/70";
+  return (
+    <div className={`mb-5 rounded-2xl border p-4 sm:p-5 ${toneCls}`}>
+      <p className="mb-4 break-keep text-sm font-extrabold text-brand-dark">{title}</p>
+      <div className="[&>*:last-child]:mb-0">{children}</div>
+    </div>
+  );
+}
+
 export default function Diagnosis() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -180,12 +217,6 @@ export default function Diagnosis() {
       ))}
     </div>
   );
-  const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
-    <div className="mb-6">
-      <p className="mb-2 font-bold text-brand-dark">{label}</p>
-      {children}
-    </div>
-  );
   // 조건부 질문(라벨+설명힌트+단일선택) — 소진공 혁신형 상품 정밀 매칭용
   const CondQ = ({ k, field }: { k: string; field: { label: string; hint: string; opts: string[] } }) => (
     <div className="mb-6 last:mb-0">
@@ -194,29 +225,6 @@ export default function Diagnosis() {
       <Radio k={k} opts={field.opts} />
     </div>
   );
-  // 문맥별 질문을 하나의 박스로 묶는 그룹 컨테이너 (3단계처럼 깔끔한 UI)
-  const GroupBox = ({
-    title,
-    children,
-    tone = "gray",
-  }: {
-    title: string;
-    children: React.ReactNode;
-    tone?: "gray" | "orange" | "green";
-  }) => {
-    const toneCls =
-      tone === "orange"
-        ? "border-brand-orange/30 bg-brand-orange/5"
-        : tone === "green"
-        ? "border-brand-green/30 bg-brand-green/5"
-        : "border-gray-200 bg-gray-50/70";
-    return (
-      <div className={`mb-5 rounded-2xl border p-4 sm:p-5 ${toneCls}`}>
-        <p className="mb-4 break-keep text-sm font-extrabold text-brand-dark">{title}</p>
-        <div className="[&>*:last-child]:mb-0">{children}</div>
-      </div>
-    );
-  };
 
   return (
     <PageShell pageKey="diagnosis">
@@ -295,6 +303,34 @@ export default function Diagnosis() {
                 <p className="mt-2 text-xs text-brand-gray">{BNO_TEXT.note}</p>
               </div>
 
+              {/* 대표자 성함 및 연락처 — 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 */}
+              <GroupBox title={CONTACT_TEXT.groupTitle} tone="orange">
+                {CONTACT_TEXT.groupNote && (
+                  <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
+                    {CONTACT_TEXT.groupNote}
+                  </p>
+                )}
+                <Field label={CONTACT_TEXT.nameLabel}>
+                  <input
+                    type="text"
+                    value={form.name || ""}
+                    onChange={(e) => set("name", e.target.value)}
+                    placeholder={CONTACT_TEXT.namePlaceholder}
+                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                  />
+                </Field>
+                <Field label={CONTACT_TEXT.phoneLabel}>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={form.phone || ""}
+                    onChange={(e) => set("phone", e.target.value)}
+                    placeholder={CONTACT_TEXT.phonePlaceholder}
+                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                  />
+                </Field>
+              </GroupBox>
+
               {/* 사업장 정보 — 문맥별 한 박스로 묶어 깔끔하게 (유형→업종→업력→매출→연령→지역 자연스러운 순서) */}
               <GroupBox title={STEP1_GROUP}>
                 <Field label={STEP1_FIELDS.businessType.label}><Radio k="businessType" opts={STEP1_FIELDS.businessType.opts} /></Field>
@@ -342,31 +378,6 @@ export default function Diagnosis() {
                 </Field>
               </GroupBox>
 
-              {/* 대표님 연락 정보 — 진단 안내·상담을 위해 수집 (성함·연락처 필수) */}
-              <GroupBox title={CONTACT_TEXT.groupTitle} tone="orange">
-                <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
-                  {CONTACT_TEXT.groupNote}
-                </p>
-                <Field label={CONTACT_TEXT.nameLabel}>
-                  <input
-                    type="text"
-                    value={form.name || ""}
-                    onChange={(e) => set("name", e.target.value)}
-                    placeholder={CONTACT_TEXT.namePlaceholder}
-                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
-                  />
-                </Field>
-                <Field label={CONTACT_TEXT.phoneLabel}>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={form.phone || ""}
-                    onChange={(e) => set("phone", e.target.value)}
-                    placeholder={CONTACT_TEXT.phonePlaceholder}
-                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
-                  />
-                </Field>
-              </GroupBox>
               {/* ※ 1단계 스마트기기 질문 제거(대표님 요청) — 동일 취지 질문이 3단계 'smartDevice'에 있어 매칭은 그대로 유지됨 */}
             </div>
           )}

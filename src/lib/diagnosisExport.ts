@@ -70,36 +70,62 @@ export type DiagnosisRecord = {
   dupIndex?: number; // 몇 번째 신청인지 (중복 감지 결과)
 };
 
-// 여러 진단서를 하나의 CSV(엑셀)로 변환.
-//  세로 방식: 각 진단서를 블록으로 이어 붙여, 고객이 많아도 항목이 안 잘림.
+// 여러 진단서를 하나의 CSV(엑셀)로 변환 — ★가로 방식★ (대표님 요청)
+//  각 고객마다 위 줄에 '번호. 질문', 바로 아래 줄에 그 답변이 가로로 나열됩니다.
+//    (1행) 1.접수일시 | 2.이름 | 3.연락처 | 4.이메일 | 5.질문 | 6.질문 …
+//    (2행)  답변      |  답변  |  답변    |  답변    |  답변  |  답변  …
+//  고객 사이는 빈 줄로 구분합니다.
 export function diagnosesToCsv(records: DiagnosisRecord[]): string {
   const lines: string[] = [];
+
+  // ── 모든 고객이 동일한 질문(컬럼) 순서를 갖도록 통일된 질문 목록을 만든다 ──
+  //   기본 항목(접수일시·이름·연락처·이메일) + 프로필에 등장한 모든 질문 키
+  const profileKeys: string[] = [];
+  const seen = new Set<string>();
+  records.forEach((rec) => {
+    Object.keys(rec.profile || {}).forEach((k) => {
+      if (["name", "phone", "email"].includes(k)) return; // 기본 항목으로 따로 처리
+      if (!seen.has(k)) {
+        seen.add(k);
+        profileKeys.push(k);
+      }
+    });
+  });
+
+  // 질문 헤더(라벨) 목록 — 기본 4개 + 프로필 질문들
+  const baseLabels = ["접수일시", "이름", "연락처", "이메일"];
+  const questionLabels = [...baseLabels, ...profileKeys.map((k) => labelForKey(k))];
+
   records.forEach((rec, i) => {
     if (i > 0) {
       lines.push(""); // 진단서 사이 빈 줄
       lines.push(""); // 고객이 많을 때 구분이 잘 되도록 한 줄 더
     }
+
     const applicant = rec.name || (rec.profile as any)?.name || "이름미입력";
     const phoneText = valueToText(rec.phone ?? (rec.profile as any)?.phone);
-    // ── 어떤 고객인지 한눈에 보이도록 상단에 이름·연락처를 굵게 표시 ──
-    lines.push(csvCell(`════════════════════════════════════`));
-    lines.push(csvCell(`■ 고객 진단서 #${i + 1}  ▶  ${applicant} (${phoneText})`));
-    lines.push(csvCell(`════════════════════════════════════`));
-    lines.push([csvCell("항목"), csvCell("내용")].join(","));
-    // 기본 메타
-    lines.push([csvCell("접수일시"), csvCell(fmtKST(rec.created_at))].join(","));
-    if (rec.dupIndex && rec.dupIndex > 1) {
-      lines.push([csvCell("중복 신청"), csvCell(`${rec.dupIndex}번째 신청 (동일 연락처/이메일)`)].join(","));
-    }
-    lines.push([csvCell("이름"), csvCell(valueToText(applicant))].join(","));
-    lines.push([csvCell("연락처"), csvCell(valueToText(rec.phone ?? (rec.profile as any)?.phone))].join(","));
-    lines.push([csvCell("이메일"), csvCell(valueToText(rec.email ?? (rec.profile as any)?.email))].join(","));
-    // 프로필(질문 답변) 전체 — 라벨을 한글로
-    Object.entries(rec.profile || {}).forEach(([k, v]) => {
-      if (["name", "phone", "email"].includes(k)) return; // 위에서 이미 출력
-      lines.push([csvCell(labelForKey(k)), csvCell(valueToText(v))].join(","));
-    });
+    const dupNote =
+      rec.dupIndex && rec.dupIndex > 1 ? ` · ${rec.dupIndex}번째 신청(중복)` : "";
+
+    // ── 어떤 고객인지 한눈에 보이도록 상단 제목 줄 ──
+    lines.push(csvCell(`■ 고객 진단서 #${i + 1}  ▶  ${applicant} (${phoneText})${dupNote}`));
+
+    // (1행) 번호. 질문  ──  가로로 나열
+    const headerRow = questionLabels.map((label, idx) => csvCell(`${idx + 1}. ${label}`));
+    lines.push(headerRow.join(","));
+
+    // (2행) 답변  ──  가로로 나열 (질문과 같은 순서)
+    const baseValues = [
+      fmtKST(rec.created_at),
+      valueToText(applicant),
+      valueToText(rec.phone ?? (rec.profile as any)?.phone),
+      valueToText(rec.email ?? (rec.profile as any)?.email),
+    ];
+    const profileValues = profileKeys.map((k) => valueToText((rec.profile as any)?.[k]));
+    const answerRow = [...baseValues, ...profileValues].map((v) => csvCell(v));
+    lines.push(answerRow.join(","));
   });
+
   // 엑셀 한글 깨짐 방지: UTF-8 BOM
   return "\uFEFF" + lines.join("\r\n");
 }
