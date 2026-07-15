@@ -190,14 +190,14 @@ export default function MatchingPreview() {
             <div className="mt-3 space-y-2.5">
               {[
                 {
-                  icon: "🏦",
-                  t: "이용할 수 있는 정책금융기관",
-                  d: "중진공·소진공·신용보증재단 등, 대표님 조건에 맞는 기관과 신청 가능한 정책자금 상품",
-                },
-                {
                   icon: "🎁",
                   t: "신청할 수 있는 정부지원제도",
                   d: "지원금·바우처·인증·교육까지, 대출이 아닌 받을 수 있는 제도 전부",
+                },
+                {
+                  icon: "🏦",
+                  t: "이용할 수 있는 정책금융기관",
+                  d: "중진공·소진공·신용보증재단 등, 대표님 조건에 맞는 기관과 신청 가능한 정책자금 상품",
                 },
                 {
                   icon: "🔗",
@@ -206,8 +206,8 @@ export default function MatchingPreview() {
                 },
                 {
                   icon: "📄",
-                  t: "필요 서류 & 승인 전략",
-                  d: "무엇을 준비하고 어떻게 신청하면 승인 확률이 높아지는지 실전 팁",
+                  t: "필요 서류 & 신청 전략",
+                  d: "무엇을 준비하고 어떻게 신청하면 승인 확률이 다소 높아지는지 실전 팁",
                 },
               ].map((it, i) => (
                 <div
@@ -226,6 +226,9 @@ export default function MatchingPreview() {
                 </div>
               ))}
             </div>
+            <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/40">
+              — 출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
+            </p>
           </div>
 
           {/* ── 중간 결제 유도 박스 (대표님 요청) ──

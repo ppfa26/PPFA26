@@ -1096,16 +1096,16 @@ function AdvancedResult({
                         href={previewLock ? undefined : link.siteUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClickSoft}`}
+                        className={`inline-block rounded-lg bg-brand-orange px-3 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_8px_rgba(255,140,0,0.4)] hover:opacity-90 ${lockClickSoft}`}
                       >
-                        {link.siteLabel}
+                        🔗 {link.siteLabel}
                       </a>
                       {link.pdfUrl && (
                         <a
                           href={previewLock ? undefined : link.pdfUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100 ${lockClickSoft}`}
+                          className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClickSoft}`}
                         >
                           📑 {link.pdfLabel}
                         </a>
@@ -1151,16 +1151,16 @@ function AdvancedResult({
                           href={previewLock ? undefined : j.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClickSoft}`}
+                          className={`inline-block rounded-lg bg-brand-orange px-3 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_8px_rgba(255,140,0,0.4)] hover:opacity-90 ${lockClickSoft}`}
                         >
-                          {j.label}
+                          🔗 {j.label}
                         </a>
                         {j.productUrl && (
                           <a
                             href={previewLock ? undefined : j.productUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`inline-block rounded-lg border border-brand-dark/30 bg-white px-3 py-1.5 text-[11px] font-bold text-brand-dark hover:bg-gray-100 ${lockClickSoft}`}
+                            className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClickSoft}`}
                           >
                             📑 {j.productLabel}
                           </a>
