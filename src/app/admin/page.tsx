@@ -389,6 +389,29 @@ export default function AdminPage() {
     setMsg(error ? `오류: ${error.message}` : String(data));
     setTimeout(() => setMsg(null), 4000);
   };
+  // 접속 로그 전체 삭제 (테스트 기록 정리용)
+  const clearAccessLogs = async () => {
+    if (
+      !window.confirm(
+        "접속 로그를 모두 삭제할까요?\n(IP별 집계 + 최근 접속 로그가 함께 초기화됩니다. 되돌릴 수 없습니다)"
+      )
+    )
+      return;
+    const { data, error } = await supabase.rpc("admin_clear_access_logs");
+    setMsg(error ? `오류: ${error.message}` : `접속 로그를 정리했습니다. ${String(data ?? "")}`);
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
+  // 특정 IP의 접속 로그만 삭제
+  const deleteAccessByIp = async (ip: string) => {
+    if (!window.confirm(`[${ip}] IP의 접속 기록을 삭제할까요?\n(되돌릴 수 없습니다)`)) return;
+    const { data, error } = await supabase.rpc("admin_delete_access_by_ip", {
+      p_ip: ip,
+    });
+    setMsg(error ? `오류: ${error.message}` : `[${ip}] 접속 기록을 삭제했습니다. ${String(data ?? "")}`);
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
 
   useEffect(() => {
     (async () => {
@@ -1015,12 +1038,21 @@ export default function AdminPage() {
                         </td>
                         <td className="px-4 py-2 text-gray-500">{fmtDateTime(r.last_seen)}</td>
                         <td className="px-4 py-2 text-center">
-                          <button
-                            onClick={() => doBlock("ip", r.ip)}
-                            className="rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
-                          >
-                            IP차단
-                          </button>
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              onClick={() => doBlock("ip", r.ip)}
+                              className="rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 transition hover:scale-[1.03] hover:bg-rose-100"
+                            >
+                              IP차단
+                            </button>
+                            <button
+                              onClick={() => deleteAccessByIp(r.ip)}
+                              className="rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-bold text-gray-600 transition hover:scale-[1.03] hover:bg-gray-200"
+                              title="이 IP의 접속 기록 삭제"
+                            >
+                              🗑️ 삭제
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1030,8 +1062,15 @@ export default function AdminPage() {
 
               {/* 최근 접속 로그 */}
               <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
-                <div className="border-b border-gray-100 px-4 py-3">
+                <div className="flex items-center justify-between gap-2 border-b border-gray-100 px-4 py-3">
                   <h3 className="font-bold text-gray-800">🕑 최근 접속 로그</h3>
+                  <button
+                    onClick={clearAccessLogs}
+                    className="shrink-0 rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600 transition hover:scale-[1.03] hover:bg-rose-100"
+                    title="접속 로그 전체 삭제 (테스트 기록 정리)"
+                  >
+                    🗑️ 접속 로그 전체 삭제
+                  </button>
                 </div>
                 <table className="w-full min-w-[600px] text-left text-sm">
                   <thead className="bg-gray-50 text-xs text-gray-500">

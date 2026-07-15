@@ -616,7 +616,7 @@ export default function Home() {
                 href="/diagnosis"
                 className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-brand-dark px-7 py-4 text-white shadow-card transition animate-pulseGlow hover:opacity-90"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-sm">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FF0000] text-[11px] leading-none text-white shadow-sm">
                   ▶
                 </span>
                 <span className="break-keep text-base font-extrabold">
