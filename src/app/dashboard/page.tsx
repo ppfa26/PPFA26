@@ -41,9 +41,11 @@ export default function DashboardPage() {
             <div className="inline-block break-keep rounded-full bg-brand-yellow px-4 py-2.5 text-sm font-extrabold leading-snug text-brand-dark sm:px-5 sm:text-xl">
               🏦 대표님 맞춤 신청 가능 기관 및 상품 안내
             </div>
-            <p className="mt-3 break-keep text-sm text-brand-gray sm:text-base">
-              대표님 진단 정보를 기준으로 실제 신청 자격이 열리는 <b className="text-brand-orange">정책금융 기관·상품</b>과{" "}
-              <b className="text-brand-green">추가로 신청 가능한 지원제도</b>를 정리해 드렸습니다.
+            <p className="mx-auto mt-3 max-w-xl break-keep text-[13px] leading-relaxed text-brand-gray sm:text-base">
+              대표님 진단 정보를 기준으로 실제 신청 자격이 열리는{" "}
+              <b className="text-brand-orange">정책금융 기관·상품</b>과{" "}
+              <b className="text-brand-green">추가로 신청 가능한 지원제도</b>를{" "}
+              <span className="whitespace-nowrap">대표님의 사업장 기준으로</span> 정리해 드렸습니다.
             </p>
           </section>
 
