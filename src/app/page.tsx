@@ -131,12 +131,11 @@ export default function Home() {
             <Editable
               id="hero-headline-v2"
               as="h1"
-              className="break-keep text-[24px] font-black leading-[1.3] text-brand-dark xs:text-[28px] sm:text-[40px] sm:leading-tight"
+              className="break-keep text-[21px] font-black leading-[1.35] text-brand-dark xs:text-[25px] sm:text-[38px] sm:leading-tight"
             >
               AI를 활용해 내 사업장에 알맞는
               <br />
-              <span className="text-brand-red">정부지원사업</span>을
-              찾아드립니다.
+              <span className="text-brand-red">정부지원사업</span>을 찾아드립니다.
             </Editable>
 
             <Editable
