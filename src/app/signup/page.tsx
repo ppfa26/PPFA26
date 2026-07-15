@@ -168,23 +168,33 @@ function SignupInner() {
               정부지원사업 AI 통합 매칭 플랫폼
             </span>
             <h2 className="mt-4 break-keep text-2xl font-extrabold leading-snug text-white xl:text-3xl">
-              AI를 활용해 내 사업장에 알맞는<br />
-              <span className="text-brand-yellow">정부지원사업</span>을 찾아드립니다.
+              <span className="text-brand-yellow">AI</span>를 활용해 내 사업장에 알맞는<br />
+              <span className="bg-gradient-to-r from-brand-yellow to-brand-orange bg-clip-text text-transparent">
+                정부지원사업
+              </span>
+              을 찾아드립니다.
             </h2>
             <p className="mt-5 break-keep text-sm leading-relaxed text-white/70">
-              모든 정부기관 사이트를 AI가 정밀 분석해,<br />
-              대표님 사업장에 딱 맞는 정부지원사업과<br />
-              신청 방법까지 안내해드립니다.
+              모든 정부기관 사이트를 <span className="font-bold text-brand-yellow">AI가 정밀 분석</span>해,
+              <br />
+              대표님 사업장에 <span className="font-bold text-white">딱 맞는 정부지원사업</span>과<br />
+              <span className="font-bold text-brand-orange">신청 방법</span>까지 안내해드립니다.
             </p>
           </div>
           <ul className="relative space-y-2.5">
             {[
-              "AI가 업종·규모를 분석해 맞춤으로 정부지원사업 매칭",
-              "지금 바로 신청 가능한 정부지원사업만 큐레이션",
-              "정부지원사업 신청 순서·필요 서류·콜센터까지 한 번에 안내",
-            ].map((t) => (
-              <li key={t} className="flex items-center gap-2 text-sm font-semibold text-white/90">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-yellow text-[11px] text-brand-dark">✓</span>
+              <>
+                <span className="font-bold text-brand-yellow">AI가 업종·규모를 분석</span>해 맞춤으로 정부지원사업 매칭
+              </>,
+              <>
+                <span className="font-bold text-brand-yellow">지금 바로 신청 가능한</span> 정부지원사업만 큐레이션
+              </>,
+              <>
+                신청 순서·<span className="font-bold text-brand-yellow">필요 서류·콜센터</span>까지 한 번에 안내
+              </>,
+            ].map((t, i) => (
+              <li key={i} className="flex items-center gap-2 text-sm font-semibold text-white/90">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-yellow text-[11px] text-brand-dark shadow-[0_0_12px_rgba(255,193,7,0.4)]">✓</span>
                 {t}
               </li>
             ))}
