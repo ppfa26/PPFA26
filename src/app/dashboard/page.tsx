@@ -66,12 +66,12 @@ export default function DashboardPage() {
             className="mt-10 rounded-3xl bg-brand-grad p-7 text-center sm:p-8"
           >
             <h2 className="text-xl font-black text-brand-dark">
-              신청 과정에서 막히셨나요?
+              신청하시다 막히는 부분이 있으신가요?
             </h2>
             <p className="mt-2 break-keep text-sm text-brand-dark/70">
-              1:1 채널톡 상담을 신청해주세요. 결제자용 단체 커뮤니티도 있습니다.
+              혼자 고민하지 마세요. 1:1 채널톡으로 편하게 여쭤보시고,
               <br />
-              신청이 어렵거나 방법이 막막할 때 바로 물어보세요.
+              결제하신 대표님들만 모인 단톡방에서 정보도 함께 나눠보세요.
             </p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
               <a
@@ -80,7 +80,7 @@ export default function DashboardPage() {
                 rel="noopener noreferrer"
                 className="rounded-full bg-brand-dark px-7 py-3 font-bold text-white hover:opacity-90"
               >
-                💬 1:1 채널톡 상담하기
+                💬 1:1 채널톡으로 물어보기
               </a>
               <a
                 href="https://open.kakao.com/o/gvjec0Di"

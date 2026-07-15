@@ -267,13 +267,12 @@ export default function AdminPage() {
 
   const loadAll = useCallback(async () => {
     setRefreshing(true);
-    const [s, u, p, d, dr, mr, ac, ip, bl] = await Promise.all([
+    // ※ 일별/월별 매출은 서버 RPC 대신 payList로 직접 재계산하므로(관리자 제외), 여기서 호출하지 않는다.
+    const [s, u, p, d, ac, ip, bl] = await Promise.all([
       supabase.rpc("admin_stats"),
       supabase.rpc("admin_list_users"),
       supabase.rpc("admin_list_payments"),
       supabase.rpc("admin_list_diagnoses"),
-      supabase.rpc("admin_daily_revenue"),
-      supabase.rpc("admin_monthly_revenue"),
       supabase.rpc("admin_list_access", { p_limit: 200 }),
       supabase.rpc("admin_ip_summary"),
       supabase.rpc("admin_list_blocks"),
@@ -293,27 +292,65 @@ export default function AdminPage() {
     if (!u.error && u.data) setUsers(userList);
     if (!p.error && p.data) setPayments(payList);
     if (!d.error && d.data) setDiagnoses(diagList);
-    if (!dr.error && dr.data) setDaily(dr.data as DailyRow[]);
-    if (!mr.error && mr.data) setMonthly(mr.data as MonthlyRow[]);
     if (!ac.error && ac.data) setAccess(ac.data as AccessRow[]);
     if (!ip.error && ip.data) setIpSummary(ip.data as IpRow[]);
     if (!bl.error && bl.data) setBlocks(bl.data as BlockRow[]);
 
-    // 통계: 관리자 결제를 뺀 값으로 재계산 (매출·결제건수·회원수)
+    // ★ 매출 통계(일별/월별)도 관리자 결제를 제외하고 프론트에서 직접 재계산 (대표님 요청) ★
+    //   서버 RPC(admin_daily/monthly_revenue)는 관리자 테스트 결제까지 포함하므로,
+    //   관리자 이메일을 이미 걸러낸 payList(paid)로 다시 집계한다.
+    const paidRows = payList.filter((r) => r.status === "paid" && r.paid_at);
+
+    // 일별 매출 (최근 30일) — YYYY-MM-DD 로 묶어 집계
+    const dailyMap = new Map<string, { revenue: number; cnt: number }>();
+    // 월별 매출 (최근 12개월) — YYYY-MM 로 묶어 집계
+    const monthlyMap = new Map<string, { revenue: number; cnt: number }>();
+    for (const r of paidRows) {
+      const dt = new Date(r.paid_at as string);
+      const dayKey = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(
+        dt.getDate()
+      ).padStart(2, "0")}`;
+      const monKey = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+      const dCur = dailyMap.get(dayKey) ?? { revenue: 0, cnt: 0 };
+      dCur.revenue += r.amount || 0;
+      dCur.cnt += 1;
+      dailyMap.set(dayKey, dCur);
+      const mCur = monthlyMap.get(monKey) ?? { revenue: 0, cnt: 0 };
+      mCur.revenue += r.amount || 0;
+      mCur.cnt += 1;
+      monthlyMap.set(monKey, mCur);
+    }
+    const dailyRebuilt: DailyRow[] = Array.from(dailyMap.entries())
+      .map(([day, v]) => ({ day, revenue: v.revenue, cnt: v.cnt }))
+      .sort((a, b) => (a.day < b.day ? 1 : -1)) // 최신순
+      .slice(0, 30);
+    const monthlyRebuilt: MonthlyRow[] = Array.from(monthlyMap.entries())
+      .map(([month, v]) => ({ month, revenue: v.revenue, cnt: v.cnt }))
+      .sort((a, b) => (a.month < b.month ? 1 : -1)) // 최신순
+      .slice(0, 12);
+    setDaily(dailyRebuilt);
+    setMonthly(monthlyRebuilt);
+
+    // 통계: 관리자 결제를 뺀 값으로 재계산 (매출·결제건수·회원수·유효회원)
     if (!s.error && s.data?.[0]) {
       const base = s.data[0] as Stats;
-      const paid = payList.filter((r) => r.status === "paid");
+      const paid = paidRows;
       const now = new Date();
       const monthRevenue = paid
         .filter((r) => {
-          if (!r.paid_at) return false;
-          const d = new Date(r.paid_at);
+          const d = new Date(r.paid_at as string);
           return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
         })
         .reduce((sum, r) => sum + (r.amount || 0), 0);
+      // 유효 회원 = 관리자 제외 회원 중 열람 기한(latest_expiry)이 아직 남은 사람 수
+      const activeMembers = userList.filter((row) => {
+        if (!row.latest_expiry) return false;
+        return new Date(row.latest_expiry).getTime() > Date.now();
+      }).length;
       setStats({
         ...base,
-        total_users: userList.length || base.total_users,
+        total_users: userList.length,
+        active_members: activeMembers,
         total_paid: paid.length,
         total_revenue: paid.reduce((sum, r) => sum + (r.amount || 0), 0),
         month_revenue: monthRevenue,
@@ -367,7 +404,7 @@ export default function AdminPage() {
         setPhase("denied");
         return;
       }
-      if (test.data?.[0]) setStats(test.data[0] as Stats);
+      // ※ 관리자 미필터 값이 잠깐 보이지 않도록, 초기 setStats는 하지 않고 loadAll에서 필터된 값으로 채운다.
       setPhase("ready");
       await loadAll();
     })();
