@@ -8,7 +8,7 @@ export default function PrivacyPage() {
     <LegalLayout
       pageKey="privacy"
       title="개인정보처리방침"
-      updatedAt="2026년 7월 8일"
+      updatedAt="2026년 7월 15일"
     >
       <section id="privacy-intro">
         <Editable id="privacy-intro-body" as="p">

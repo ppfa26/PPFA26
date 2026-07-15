@@ -22,9 +22,17 @@ export function deviceKind(): "mobile" | "pc" {
 export function getDeviceFingerprint(): string {
   if (typeof window === "undefined") return "server";
   try {
-    let fp = localStorage.getItem(FP_KEY);
-    if (fp) return fp;
+    // ★ 지문은 "브라우저 특성"만으로 결정론적으로 생성한다.
+    //   (Math.random() 랜덤값을 붙이지 않는다!)
+    //   → localStorage 가 지워지거나 시크릿 모드여도 같은 기기면 같은 지문이
+    //     다시 나오므로, 정상 고객이 억울하게 잠기는 일이 없다.
     const parts = [
+      // deviceKind 를 앞에 넣어 모바일/PC 를 확실히 구분
+      /Mobi|Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(
+        navigator.userAgent || ""
+      )
+        ? "mobile"
+        : "pc",
       navigator.userAgent,
       navigator.language,
       String(screen.width) + "x" + String(screen.height),
@@ -39,7 +47,8 @@ export function getDeviceFingerprint(): string {
     for (let i = 0; i < parts.length; i++) {
       h = (h * 33) ^ parts.charCodeAt(i);
     }
-    fp = (h >>> 0).toString(16) + "-" + Math.random().toString(36).slice(2, 8);
+    const fp = (h >>> 0).toString(16);
+    // 캐시(같은 세션 내 재계산 방지) — 없어도 동일 값이 나오도록 설계됨
     localStorage.setItem(FP_KEY, fp);
     return fp;
   } catch {

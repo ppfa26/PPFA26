@@ -9,6 +9,7 @@ import {
   type ViewStatus,
 } from "@/lib/viewCredits";
 import { registerViewDevice, logAccess, deviceKind } from "@/lib/deviceGuard";
+import { isAdminEmail } from "@/lib/admin";
 
 // ============================================================
 // 조회권 게이트
@@ -94,12 +95,16 @@ export default function ViewCreditGate({
       }
 
       // 1-3) 기기 고정 검증 (핸드폰 1대 / PC 1대)
-      const dev = await registerViewDevice();
-      if (!mounted) return;
-      if (!dev.ok) {
-        setGuardMsg(dev.message);
-        setPhase("device-locked");
-        return;
+      //   ★ 관리자(운영자) 계정은 여러 기기로 점검해야 하므로 검증을 건너뛴다.
+      const email = sessionData.session.user.email || "";
+      if (!isAdminEmail(email)) {
+        const dev = await registerViewDevice();
+        if (!mounted) return;
+        if (!dev.ok) {
+          setGuardMsg(dev.message);
+          setPhase("device-locked");
+          return;
+        }
       }
 
       // 2) 진단 데이터 읽기

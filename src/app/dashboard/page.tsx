@@ -42,9 +42,11 @@ export default function DashboardPage() {
               🏦 대표님 맞춤 신청 가능 기관 및 상품 안내
             </div>
             <p className="mx-auto mt-3 max-w-xl break-keep text-[13px] leading-relaxed text-brand-gray sm:text-base">
-              대표님 진단 정보를 기준으로 실제 신청 자격이 열리는{" "}
+              대표님 진단 정보를 기준으로 실제 신청 자격이 열리는
+              <br className="hidden sm:inline" />{" "}
               <b className="text-brand-orange">정책금융 기관·상품</b>과{" "}
-              <b className="text-brand-green">추가로 신청 가능한 지원제도</b>를{" "}
+              <b className="text-brand-green">추가로 신청 가능한 지원사업</b>을
+              <br className="hidden sm:inline" />{" "}
               <span className="whitespace-nowrap">대표님의 사업장 기준으로</span> 정리해 드렸습니다.
             </p>
           </section>
@@ -92,7 +94,7 @@ export default function DashboardPage() {
               </a>
             </div>
             <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/60">
-              ⚠️ 본 서비스는 정부지원사업 AI 통합 매칭 서비스이며 정부지원사업
+              ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 매칭 서비스이며 정부지원사업
               승인을 보장하지 않습니다.
             </p>
           </section>

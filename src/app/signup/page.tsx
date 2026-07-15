@@ -371,7 +371,7 @@ function SignupInner() {
           <Link href="/privacy" className="underline">개인정보처리방침</Link>에 동의하게 됩니다.
         </p>
         <p className="mt-3 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
-          ⚠️ 본 서비스는 정부지원사업을 안내 및 추천하는 서비스이며 정부지원사업 승인을
+          ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 매칭 서비스이며 정부지원사업 승인을
           보장하지 않습니다.
         </p>
         </main>
