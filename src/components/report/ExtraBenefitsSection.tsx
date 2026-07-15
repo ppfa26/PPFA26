@@ -393,7 +393,8 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
             💡 이 순서만 지키면 첫 해 평균 <span className="whitespace-nowrap">1,000만원+ 절감</span> 가능
           </p>
           <p className="mt-1 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
-            놓친 항목 있으면 지금이라도 신청하세요. 소급 가능한 항목도 있습니다.
+            <span className="whitespace-nowrap">놓친 항목 있으면 지금이라도 신청하세요.</span>{" "}
+            <span className="whitespace-nowrap">소급 가능한 항목도 있습니다.</span>
           </p>
         </div>
       </div>
