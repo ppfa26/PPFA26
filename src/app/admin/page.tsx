@@ -717,9 +717,9 @@ export default function AdminPage() {
           {/* ------- 결제·조회권 관리 ------- */}
           {tab === "payments" && (
             <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <table className="w-full min-w-[860px] text-left text-sm">
+              <table className="w-full min-w-[1000px] text-left text-sm">
                 <thead className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
-                  <tr>
+                  <tr className="whitespace-nowrap">
                     <th className="px-4 py-3 font-semibold">주문번호</th>
                     <th className="px-4 py-3 font-semibold">이메일</th>
                     <th className="px-4 py-3 font-semibold">상품</th>
@@ -742,7 +742,7 @@ export default function AdminPage() {
                   {payments.map((p) => {
                     const dl = daysLeft(p.expires_at);
                     return (
-                      <tr key={p.order_id} className="hover:bg-gray-50/60">
+                      <tr key={p.order_id} className="whitespace-nowrap hover:bg-gray-50/60">
                         <td className="px-4 py-3 font-mono text-xs text-gray-500">
                           {p.order_id}
                         </td>
@@ -773,16 +773,16 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex flex-col gap-1.5 sm:flex-row">
+                          <div className="flex flex-row justify-center gap-1.5">
                             <button
                               onClick={() => addCredits(p.order_id)}
-                              className="rounded-lg bg-brand-primary/10 px-2.5 py-1 text-xs font-bold text-brand-primary hover:bg-brand-primary/20"
+                              className="whitespace-nowrap rounded-lg bg-brand-primary/10 px-2.5 py-1 text-xs font-bold text-brand-primary hover:bg-brand-primary/20"
                             >
                               조회권+
                             </button>
                             <button
                               onClick={() => extendExpiry(p.order_id)}
-                              className="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600 hover:bg-emerald-100"
+                              className="whitespace-nowrap rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600 hover:bg-emerald-100"
                             >
                               기한연장
                             </button>
