@@ -42,3 +42,4 @@ logs/
 *.tar.gz
 *.zip
 *.bak
+_diag*.png
