@@ -38,7 +38,7 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-4xl">
           {/* 헤더 — 기관·상품 안내 중심 */}
           <section id="dashboard-hero" className="text-center">
-            <div className="inline-block break-keep rounded-full bg-brand-yellow px-5 py-2.5 text-base font-extrabold text-brand-dark sm:text-xl">
+            <div className="inline-block break-keep rounded-full bg-brand-yellow px-4 py-2.5 text-sm font-extrabold leading-snug text-brand-dark sm:px-5 sm:text-xl">
               🏦 대표님 맞춤 신청 가능 기관 및 상품 안내
             </div>
             <p className="mt-3 break-keep text-sm text-brand-gray sm:text-base">
@@ -65,13 +65,11 @@ export default function DashboardPage() {
             id="consult-channels"
             className="mt-10 rounded-3xl bg-brand-grad p-7 text-center sm:p-8"
           >
-            <h2 className="text-xl font-black text-brand-dark">
+            <h2 className="break-keep text-lg font-black leading-snug text-brand-dark sm:text-xl">
               신청하시다 막히는 부분이 있으신가요?
             </h2>
-            <p className="mt-2 break-keep text-sm text-brand-dark/70">
-              혼자 고민하지 마세요. 1:1 채널톡으로 편하게 여쭤보시고,
-              <br />
-              결제하신 대표님들만 모인 단톡방에서 정보도 함께 나눠보세요.
+            <p className="mt-2 break-keep text-sm leading-relaxed text-brand-dark/70">
+              혼자 고민하지 마세요. 1:1 채널톡으로 편하게 여쭤보시고, 결제하신 대표님들만 모인 단톡방에서 정보도 함께 나눠보세요.
             </p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
               <a

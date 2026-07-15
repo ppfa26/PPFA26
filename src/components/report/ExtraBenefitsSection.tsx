@@ -389,8 +389,8 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
 
         {/* 하단 하이라이트 — 카드 안 소형 배너 */}
         <div className="mt-4 rounded-xl bg-brand-yellow/30 px-4 py-3 text-center">
-          <p className="break-keep text-sm font-black leading-relaxed text-brand-dark">
-            💡 이 순서만 지키면 첫 해 평균 <span className="whitespace-nowrap">1,000만원+</span> 절감 가능
+          <p className="break-keep text-sm font-black leading-snug text-brand-dark">
+            💡 이 순서만 지키면 첫 해 평균 <span className="whitespace-nowrap">1,000만원+ 절감</span> 가능
           </p>
           <p className="mt-1 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
             놓친 항목 있으면 지금이라도 신청하세요. 소급 가능한 항목도 있습니다.

@@ -804,7 +804,7 @@ function AdvancedResult({
 
   return (
     <div id="advanced-result" className="mt-6 space-y-4">
-      <h2 className="text-lg font-extrabold text-brand-dark">
+      <h2 className="break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">
         {autoRun ? "🏦 대표님 맞춤으로 신청가능 기관 및 상품 안내" : "🔬 정밀 추가진단 결과"}
       </h2>
 
