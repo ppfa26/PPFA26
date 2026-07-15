@@ -200,17 +200,19 @@ function PaymentInner() {
           id="payment-summary"
           className="mb-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-extrabold text-brand-dark">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="break-keep text-base font-extrabold leading-snug text-brand-dark">
                 {product.icon} {product.name} 플랜
               </p>
-              <p className="mt-0.5 text-xs text-brand-gray">
+              <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
                 {product.subtitle} · {product.period}
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-extrabold text-brand-dark">{product.priceLabel}</p>
+            <div className="shrink-0 text-right">
+              <p className="whitespace-nowrap text-xl font-extrabold text-brand-dark">
+                {product.priceLabel}
+              </p>
               <p className="mt-0.5 text-xs text-brand-gray">(VAT 포함)</p>
             </div>
           </div>
@@ -234,20 +236,18 @@ function PaymentInner() {
         {/* 결제 수단 안내 (나이스페이먼츠 결제창은 버튼 클릭 시 팝업으로 뜹니다) */}
         <div className="mb-1 rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-sm">
           <p className="text-sm font-bold text-brand-dark">💳 신용/체크카드 결제</p>
-          <p className="mt-1.5 text-xs leading-relaxed text-brand-gray">
-            아래 버튼을 누르면 <strong>나이스페이먼츠(NICEPAY)</strong> 결제창이 열립니다.
-            <br />
-            카드사 정식 인증 절차를 거쳐 안전하게 결제됩니다.
+          <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-gray">
+            아래 버튼을 누르면 <strong>나이스페이먼츠(NICEPAY)</strong> 결제창이 열립니다. 카드사 정식 인증 절차를 거쳐 안전하게 결제됩니다.
           </p>
         </div>
 
         {/* 동의 체크 */}
-        <label className="mt-4 flex items-start gap-2 text-sm text-brand-dark">
+        <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-sm text-brand-dark">
           <input
             type="checkbox"
             checked={agree}
             onChange={(e) => setAgree(e.target.checked)}
-            className="mt-0.5 h-4 w-4"
+            className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-brand-red"
           />
           <span className="break-keep leading-relaxed">
             1회 결제(자동결제 없음)이며, 본 서비스는 정부지원사업을 안내 및 추천하는
@@ -265,7 +265,11 @@ function PaymentInner() {
         <button
           onClick={handlePay}
           disabled={!ready || paying}
-          className="mt-5 w-full rounded-xl bg-brand-dark py-3.5 text-base font-extrabold text-white transition hover:opacity-90 disabled:opacity-60"
+          className={`mt-5 w-full rounded-xl py-4 text-base font-extrabold text-white shadow-md transition disabled:cursor-not-allowed ${
+            agree
+              ? "bg-brand-red shadow-brand-red/30 hover:opacity-90 disabled:opacity-60"
+              : "bg-gray-300 shadow-none"
+          }`}
         >
           {paying ? "결제창을 여는 중..." : `${product.priceLabel} 결제하기`}
         </button>
