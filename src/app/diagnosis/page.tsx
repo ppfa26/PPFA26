@@ -110,7 +110,7 @@ export default function Diagnosis() {
         <button
           key={o}
           onClick={() => set(k, o)}
-          className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+          className={`rounded-full border px-4 py-2 text-sm font-semibold transition hover:scale-[1.03] ${
             form[k] === o
               ? "border-brand-orange bg-brand-grad text-brand-dark"
               : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
@@ -127,7 +127,7 @@ export default function Diagnosis() {
         <button
           key={o}
           onClick={() => toggle(k, o)}
-          className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+          className={`rounded-full border px-4 py-2 text-sm font-semibold transition hover:scale-[1.03] ${
             (form[k] || []).includes(o)
               ? "border-brand-orange bg-brand-grad text-brand-dark"
               : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
@@ -146,7 +146,7 @@ export default function Diagnosis() {
         <button
           key={o}
           onClick={() => toggle(k, o)}
-          className={`min-h-[40px] break-keep rounded-lg border px-1.5 py-2 text-center text-[11px] font-semibold leading-tight transition sm:text-xs ${
+          className={`min-h-[40px] break-keep rounded-lg border px-1.5 py-2 text-center text-[11px] font-semibold leading-tight transition hover:scale-[1.03] sm:text-xs ${
             (form[k] || []).includes(o)
               ? "border-brand-orange bg-brand-grad text-brand-dark"
               : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
@@ -296,7 +296,7 @@ export default function Diagnosis() {
                               set("region", o);
                             }
                           }}
-                          className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                          className={`rounded-full border px-4 py-2 text-sm font-semibold transition hover:scale-[1.03] ${
                             active
                               ? "border-brand-orange bg-brand-grad text-brand-dark"
                               : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"

@@ -272,7 +272,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 {/* 상단: 아이콘 + 제목 + 대상 뱃지 (정부지원제도 항목과 동일 구조) */}
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className={`text-base ${isYes ? "" : "opacity-60"}`}>{b.icon}</span>
-                  <span className="break-keep text-sm font-extrabold text-brand-dark">
+                  <span className={`break-keep text-sm font-extrabold text-brand-dark ${lockText}`}>
                     {b.title}
                   </span>
                   {isYes ? (

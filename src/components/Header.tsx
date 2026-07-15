@@ -50,7 +50,7 @@ export default function Header() {
             alt="모두의사업친구 로고"
             width={40}
             height={40}
-            className="h-9 w-9 shrink-0 rounded-[9px] sm:h-10 sm:w-10"
+            className="h-9 w-9 shrink-0 rounded-full sm:h-10 sm:w-10"
             priority
           />
           <span className="flex flex-col justify-center pr-0.5 xs:pr-1 sm:pr-0">

@@ -76,11 +76,12 @@ h4 {
   transition: all 0.2s ease;
 }
 .btn-brand:hover {
-  transform: translateY(-1px);
+  /* 살짝 떠오르며 살짝 커지는 통일 모션 (대표님 요청) */
+  transform: translateY(-1px) scale(1.03);
   box-shadow: 0 8px 24px rgba(255, 149, 0, 0.35);
 }
 .btn-brand:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
 /* 아웃라인 버튼 */
@@ -94,6 +95,11 @@ h4 {
 .btn-outline:hover {
   background: #191919;
   color: #ffffff;
+  /* 살짝 커지는 통일 모션 (대표님 요청) */
+  transform: scale(1.03);
+}
+.btn-outline:active {
+  transform: scale(1);
 }
 
 /* 리본 배지 (가장 인기) */

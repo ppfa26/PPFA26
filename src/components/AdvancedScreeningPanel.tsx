@@ -895,7 +895,7 @@ function AdvancedResult({
                   {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
-                    <span className="text-sm font-extrabold text-brand-dark">{prog.title}</span>
+                    <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
                     {isEligible ? (
                       <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
                         ✅ 신청 대상
@@ -966,7 +966,7 @@ function AdvancedResult({
                 className="py-3 first:pt-0"
               >
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-sm font-extrabold text-brand-dark">{m.institution}</span>
+                  <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
                   {m.loan_type && (
                     <span
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${

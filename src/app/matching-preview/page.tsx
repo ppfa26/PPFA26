@@ -209,6 +209,24 @@ export default function MatchingPreview() {
             </div>
           </div>
 
+          {/* ── 중간 결제 유도 박스 (대표님 요청) ──
+               결과를 스크롤하기 전, 화면 중간에서 바로 '어디서 결제하는지' 찾을 수 있게 배치.
+               최하단 박스·하단 sticky 바와 함께 3중으로 결제 진입점을 노출 */}
+          <div className="mt-6 rounded-2xl border-2 border-brand-orange bg-gradient-to-br from-brand-orange/10 to-white p-4 text-center shadow-[0_8px_28px_rgba(255,140,0,0.18)] sm:p-5">
+            <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
+              🔓 지금 결제하면 위 <span className="text-brand-orange">{total}개</span> 항목의 상세 내용이 모두 공개됩니다
+            </p>
+            <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
+              🍚 점심 식사 한 끼 값으로 내 사업장에 맞는 모든 정부지원사업을 확인하세요. (VAT 포함)
+            </p>
+            <a
+              href="/pricing"
+              className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
+            >
+              💳 지금 결제하고 전체 결과 확인하기
+            </a>
+          </div>
+
           {/* ── 실제 결과 전체를 그대로 렌더링 (내용 대부분 공개) ──
                제목·설명·안내는 선명하게 열어 '무엇을 알려주는지' 충분히 이해시키고,
                기관명·상품명·신청 방법(버튼/링크)만 흐리게 + 클릭 차단으로 잠금 표시 */}
