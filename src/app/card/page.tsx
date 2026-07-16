@@ -2,10 +2,10 @@
 
 /* ────────────────────────────────────────────
    디지털 명함 페이지  (/card)
-   - 대표님 기존 IBSC(혁신사업지원센터) 명함을 그대로 웹으로 옮긴 페이지
+   - 모두의사업친구 명함을 그대로 웹으로 옮긴 페이지
    - 명함 이미지 + 탭 한 번으로 전화/문자/이메일/지도/연락처 저장
    - QR·링크로 공유하면 상대방이 바로 저장할 수 있음
-   - 카드 이미지 원본: /card/ibsc-card-print.png (인쇄소용 고해상도와 동일)
+   - 카드 이미지 원본: /card/modu-card-print.png (인쇄소용 고해상도와 동일)
 ──────────────────────────────────────────── */
 
 import Header from "@/components/Header";
@@ -14,11 +14,12 @@ import PageShell from "@/components/PageShell";
 
 const INFO = {
   name: "신주엽",
-  title: "혁신사업지원센터 · 대표",
-  org: "혁신사업지원센터 (IBSC)",
+  title: "모두의사업친구 · 대표",
+  org: "모두의사업친구",
   tel: "1551-7886",
   fax: "010-3032-9388",
   email: "biospartners@naver.com",
+  web: "모두의사업친구.kr",
   addr: "인천 서구 청라커낼로 288번길 26, 청라썬앤빌더테라스 285호",
   kakao: "http://pf.kakao.com/_VxfWxan/chat",
 };
@@ -35,6 +36,7 @@ function buildVCard() {
     `TEL;TYPE=WORK,VOICE:${INFO.tel}`,
     `TEL;TYPE=CELL:${INFO.fax}`,
     `EMAIL;TYPE=WORK:${INFO.email}`,
+    `URL:https://${INFO.web}`,
     `ADR;TYPE=WORK:;;${INFO.addr};;;;`,
     "END:VCARD",
   ].join("\n");
@@ -56,8 +58,8 @@ export default function CardPage() {
             className="overflow-hidden rounded-2xl bg-white shadow-card"
           >
             <img
-              src="/card/ibsc-card-print.png"
-              alt="혁신사업지원센터 신주엽 대표 명함"
+              src="/card/modu-card-print.png"
+              alt="모두의사업친구 신주엽 대표 명함"
               className="block w-full"
             />
           </section>
@@ -116,7 +118,7 @@ export default function CardPage() {
           <a
             id="card-save"
             href={buildVCard()}
-            download="신주엽_혁신사업지원센터.vcf"
+            download="신주엽_모두의사업친구.vcf"
             className="btn-brand mt-3 block rounded-2xl py-3.5 text-center text-base font-bold shadow-card"
           >
             📇 연락처 저장하기
@@ -140,6 +142,10 @@ export default function CardPage() {
               <p>
                 <span className="font-bold text-brand-yellow">E.</span>{" "}
                 {INFO.email}
+              </p>
+              <p>
+                <span className="font-bold text-brand-yellow">W.</span>{" "}
+                {INFO.web}
               </p>
               <p className="break-keep">
                 <span className="font-bold text-brand-yellow">P.</span>{" "}
