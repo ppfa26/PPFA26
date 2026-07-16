@@ -15,6 +15,7 @@ import {
   findInstitutionLink,
   JAEDAN_PRODUCTS,
 } from "./advancedScreening";
+import benefitsExtra from "@/data/benefits-extra.json";
 
 export type SupportContact = {
   label: string; // "고용노동부 고객상담센터"
@@ -499,6 +500,7 @@ export function countMatchedItems(p: DiagnosisProfile): {
   institutions: number;
   products: number;
   supports: number;
+  benefits: number;
 } {
   // ★ 결과 화면(대시보드 AdvancedScreeningPanel)의 요약 배너와 숫자를 100% 일치시키기 위해
   //    동일한 계산 방식을 사용한다 (대표님 요청: 두 화면 숫자 통일). ★
@@ -526,11 +528,16 @@ export function countMatchedItems(p: DiagnosisProfile): {
   const supports = SUPPORT_PROGRAMS.filter(
     (prog) => status[prog.id] === "eligible" || status[prog.id] === "potential"
   ).length;
+  // 추가 감면 혜택 = 화면(ExtraBenefitsSection)에 항상 전부 표시되므로 카탈로그 개수와 동일
+  const benefits = (benefitsExtra.extraBenefits as unknown[]).length;
+  // ★ 총 매칭 수 = 정책자금 상품 + 정부지원제도 + 추가 감면 혜택 (대표님 요청)
+  //   기관 '곳 수'(institutions)는 항목이 아니라 그룹이므로 합산에서 제외한다.
   return {
-    total: institutions + products + supports,
+    total: products + supports + benefits,
     institutions,
     products,
     supports,
+    benefits,
   };
 }
 

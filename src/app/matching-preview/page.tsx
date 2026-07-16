@@ -25,6 +25,7 @@ export default function MatchingPreview() {
     institutions: number;
     products: number;
     supports: number;
+    benefits: number;
   } | null>(null);
 
   useEffect(() => {
@@ -161,16 +162,16 @@ export default function MatchingPreview() {
                 {counts && total > 0 ? (
                   <>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
-                      🏦 <span className="text-brand-dark/70">기관</span>
-                      <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.institutions}곳</b>
-                    </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
                       💰 <span className="text-brand-dark/70">정책자금 상품</span>
                       <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.products}종</b>
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
                       🎁 <span className="text-brand-dark/70">정부지원제도</span>
                       <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.supports}건</b>
+                    </span>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
+                      🎁 <span className="text-brand-dark/70">추가 감면 혜택</span>
+                      <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.benefits}건</b>
                     </span>
                   </>
                 ) : (
