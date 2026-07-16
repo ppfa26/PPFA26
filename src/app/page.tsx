@@ -521,9 +521,8 @@ export default function Home() {
         {/* FAQ */}
         {/* 구간 구분 — 얇은 회색 가로줄 */}
         <div className="section-divider" aria-hidden="true" />
-        {/* 대표님 요청: 가로줄 아래 제목 글래스 박스와의 위쪽 공간을 살짝 더 띄움.
-            하단 여백은 줄여 아래 CTA와의 빈 공간을 축소. */}
-        <section className="bg-gray-50 px-4 pb-5 pt-10 sm:pb-6 sm:pt-14">
+        {/* 섹션 상하 여백 통일: 위쪽 섹션과 동일하게 py-7 sm:py-11 */}
+        <section className="bg-gray-50 px-4 py-7 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
@@ -575,8 +574,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 하단 CTA (대표님 요청: FAQ와 CTA 사이 빈 공간 축소 → 상단 여백 줄임) */}
-        <section className="px-4 pb-3 pt-2 sm:pb-4 sm:pt-3">
+        {/* 하단 CTA (섹션 상하 여백 통일: 위쪽 섹션과 동일하게 py-7 sm:py-11) */}
+        <section className="px-4 py-7 sm:py-11">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-grad p-8 text-center shadow-card sm:p-10">
             <Editable
               id="home-cta-title"
@@ -618,7 +617,7 @@ export default function Home() {
                   💬
                 </span>
                 <span className="break-keep text-base font-extrabold text-brand-dark">
-                  카톡 1:1 문의하기
+                  1:1 카톡 문의하기
                 </span>
               </a>
             </div>
