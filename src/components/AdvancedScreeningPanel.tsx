@@ -747,13 +747,6 @@ export default function AdvancedScreeningPanel({
 }
 
 
-// 등급 → 색상/라벨
-function verdictStyle(ok: boolean): { cls: string; icon: string } {
-  return ok
-    ? { cls: "bg-green-50 border-brand-green text-brand-green", icon: "✅" }
-    : { cls: "bg-red-50 border-brand-red text-brand-red", icon: "⚠️" };
-}
-
 function AdvancedResult({
   report,
   autoRun = false,
@@ -774,14 +767,8 @@ function AdvancedResult({
   const lockClickSoft = previewLock ? "preview-lock-click-soft" : "";
   // 흐림 없이 클릭만 막기 (제목·설명은 그대로 보여주되 결제 전 페이지 이동만 차단)
   const lockNoClick = previewLock ? "preview-lock-noclick" : "";
-  const {
-    company,
-    koditHardReject,
-    financials,
-    creditMatches,
-    govPrograms,
-    creditAdvice,
-  } = report;
+  // 결과창에서 실제로 사용하는 값만 구조분해 (나머지 필드는 판독용 내부 데이터라 표시하지 않음)
+  const { company, creditMatches, creditAdvice } = report;
 
   // 대표님 지역 기준으로 안내할 지역신용보증재단 목록 (인천→인천만, 서울→서울만, 지방→통합)
   const jaedanLinks = resolveJaedanLinks(company?.region);
@@ -828,43 +815,11 @@ function AdvancedResult({
         </h2>
       )}
 
-      {/* ★ 진단 요약 배너 — 숫자 요약(기관/상품/지금 신청 대상) 중심 ★
-          (상단 dashboard-hero 설명과 겹치던 "🎉 진단 완료!" 안내 문장은 제거하고,
-           숫자 요약 + 사용 방법 안내만 남겨 중복을 정리함 — 대표님 요청) */}
+      {/* ★ 사용 안내 배너 — 숫자 요약은 상단 히어로(matching-preview)와 중복이라 제거하고
+          '어떻게 보는지' 안내 문구만 남김 (대표님 요청: 결과창 중복 정리) */}
       {autoRun && (
         <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
-          {/* ★ 미리보기(결제 전) 요약 박스와 숫자·지표를 100% 통일 (대표님 요청) ★
-              기관(곳) · 정책자금 상품(종) · 정부지원제도(건) — 세 지표를 동일 정의로 표시 */}
-          <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-white/70 px-2 py-2.5 text-center">
-              <p className="text-2xl font-extrabold leading-none text-brand-dark sm:text-3xl">{creditMatches.length}</p>
-              <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark/70 sm:text-xs">
-                신청 가능 기관
-              </p>
-            </div>
-            <div className="rounded-xl bg-white/70 px-2 py-2.5 text-center">
-              <p className="text-2xl font-extrabold leading-none text-brand-dark sm:text-3xl">
-                {creditMatches.reduce((s, m) => {
-                  if (m.institution.includes("재단"))
-                    return s + Math.max(1, filterProducts(JAEDAN_PRODUCTS, company).length);
-                  const l = findInstitutionLink(m.institution);
-                  return s + Math.max(1, filterProducts(l?.products, company).length || 1);
-                }, 0)}
-              </p>
-              <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark/70 sm:text-xs">
-                정책자금 상품
-              </p>
-            </div>
-            <div className="rounded-xl bg-white/70 px-2 py-2.5 text-center">
-              <p className="text-2xl font-extrabold leading-none text-brand-dark sm:text-3xl">
-                {eligibleSupport.length}
-              </p>
-              <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark/70 sm:text-xs">
-                정부지원제도
-              </p>
-            </div>
-          </div>
-          <p className="mt-3 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/80 sm:text-xs">
+          <p className="break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/80 sm:text-xs">
             👇 아래 <b>✅ 표시</b>된 곳이 대표님이 <b>지금 바로 신청 가능한 곳</b>입니다. 각 항목의
             <b> &ldquo;상품 보기&rdquo;</b>를 누르면 신청할 상품이 펼쳐지고, <b>신청 방법</b>까지 순서대로 안내드려요.
           </p>
