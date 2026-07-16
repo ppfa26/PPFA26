@@ -11,6 +11,9 @@ import {
   Company,
   runAdvancedScreening,
   INSTITUTION_PRODUCT_LINKS,
+  filterProducts,
+  findInstitutionLink,
+  JAEDAN_PRODUCTS,
 } from "./advancedScreening";
 
 export type SupportContact = {
@@ -497,15 +500,28 @@ export function countMatchedItems(p: DiagnosisProfile): {
   products: number;
   supports: number;
 } {
+  // ★ 결과 화면(대시보드 AdvancedScreeningPanel)의 요약 배너와 숫자를 100% 일치시키기 위해
+  //    동일한 계산 방식을 사용한다 (대표님 요청: 두 화면 숫자 통일). ★
+  const company = profileToCompany(p);
   let institutions = 0;
+  let products = 0;
   try {
-    const report = runAdvancedScreening(profileToCompany(p));
-    institutions = report.creditMatches?.length || 0;
+    const report = runAdvancedScreening(company);
+    const creditMatches = report.creditMatches || [];
+    institutions = creditMatches.length;
+    // 상품 수 = 기관별 '대표님 조건에 맞는 상품'만 필터해 합산 (각 기관 최소 1)
+    products = creditMatches.reduce((sum, m) => {
+      if (m.institution.includes("재단")) {
+        return sum + Math.max(1, filterProducts(JAEDAN_PRODUCTS, company).length);
+      }
+      const link = findInstitutionLink(m.institution);
+      return sum + Math.max(1, filterProducts(link?.products, company).length || 1);
+    }, 0);
   } catch {
     institutions = 0;
+    products = 0;
   }
-  const products = INSTITUTION_PRODUCT_LINKS.length;
-  // 지원제도는 '지금 대상' + '요건 충족 시 대상'을 모두 포함해 폭넓게 집계(대표님 방침)
+  // 정부지원제도 = '지금 대상' + '요건 충족 시 대상'을 모두 포함해 폭넓게 집계(대표님 방침)
   const status = computeSupportStatus(p);
   const supports = SUPPORT_PROGRAMS.filter(
     (prog) => status[prog.id] === "eligible" || status[prog.id] === "potential"

@@ -249,10 +249,10 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
 
   return (
     <>
-      {/* ========== 🎁 4가지 추가 혜택 — 정부지원제도 박스와 동일한 흰 카드 틀 ========== */}
+      {/* ========== 🎁 추가 감면 혜택 — 정부지원제도 박스와 동일한 흰 카드 틀 ========== */}
       <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
         <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-          🎁 대표님이 챙기면 좋은 4가지 추가 혜택
+          🎁 대표님이 챙기면 좋은 추가 감면 혜택
         </p>
         <p className="mt-1 break-keep text-xs text-brand-dark/60">
           정책자금 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 혜택입니다.

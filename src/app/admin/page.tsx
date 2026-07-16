@@ -1182,11 +1182,6 @@ export default function AdminPage() {
                             </div>
                           ))}
                         </div>
-                        {d.phone && (
-                          <p className="mt-3 text-sm text-gray-600">
-                            📞 연락처: <b>{d.phone}</b>
-                          </p>
-                        )}
                         {/* 개별 다운로드 + 삭제 버튼 */}
                         <div className="mt-4 flex flex-wrap gap-2">
                           <button

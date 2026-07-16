@@ -48,13 +48,15 @@ function GroupBox({
 }: {
   title: string;
   children: React.ReactNode;
-  tone?: "gray" | "orange" | "green";
+  tone?: "gray" | "orange" | "green" | "red";
 }) {
   const toneCls =
     tone === "orange"
       ? "border-brand-orange/30 bg-brand-orange/5"
       : tone === "green"
       ? "border-brand-green/30 bg-brand-green/5"
+      : tone === "red"
+      ? "border-brand-red/20 bg-brand-red/5"
       : "border-gray-200 bg-gray-50/70";
   return (
     <div className={`mb-4 rounded-2xl border p-3.5 sm:p-5 ${toneCls}`}>
@@ -255,8 +257,8 @@ export default function Diagnosis() {
               <h1 className="mb-1 text-lg font-extrabold text-brand-dark sm:text-xl">{STEP1_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP1_SUBTITLE}</p>
 
-              {/* 사업자번호 자동 조회 (국세청 연동) */}
-              <div className="mb-6 overflow-hidden rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4">
+              {/* 사업자번호 자동 조회 (국세청 연동) — 박스 틀 색상 빨간색으로 통일(대표님 요청) */}
+              <div className="mb-6 overflow-hidden rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4">
                 <p className="mb-2 font-bold text-brand-dark">
                   {BNO_TEXT.title}
                 </p>
@@ -311,8 +313,8 @@ export default function Diagnosis() {
                 <p className="mt-2 text-xs text-brand-gray">{BNO_TEXT.note}</p>
               </div>
 
-              {/* 대표자 성함 및 연락처 — 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 */}
-              <GroupBox title={CONTACT_TEXT.groupTitle} tone="orange">
+              {/* 대표자 성함 및 연락처 — 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 · 박스 틀 색상 빨간색으로 통일 */}
+              <GroupBox title={CONTACT_TEXT.groupTitle} tone="red">
                 {CONTACT_TEXT.groupNote && (
                   <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
                     {CONTACT_TEXT.groupNote}

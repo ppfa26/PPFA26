@@ -833,6 +833,8 @@ function AdvancedResult({
            숫자 요약 + 사용 방법 안내만 남겨 중복을 정리함 — 대표님 요청) */}
       {autoRun && (
         <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
+          {/* ★ 미리보기(결제 전) 요약 박스와 숫자·지표를 100% 통일 (대표님 요청) ★
+              기관(곳) · 정책자금 상품(종) · 정부지원제도(건) — 세 지표를 동일 정의로 표시 */}
           <div className="grid grid-cols-3 gap-2">
             <div className="rounded-xl bg-white/70 px-2 py-2.5 text-center">
               <p className="text-2xl font-extrabold leading-none text-brand-dark sm:text-3xl">{creditMatches.length}</p>
@@ -850,15 +852,15 @@ function AdvancedResult({
                 }, 0)}
               </p>
               <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark/70 sm:text-xs">
-                신청 가능 상품
+                정책자금 상품
               </p>
             </div>
             <div className="rounded-xl bg-white/70 px-2 py-2.5 text-center">
               <p className="text-2xl font-extrabold leading-none text-brand-dark sm:text-3xl">
-                {eligibleSupport.filter((e) => e.status === "eligible").length}
+                {eligibleSupport.length}
               </p>
               <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark/70 sm:text-xs">
-                지금 신청 대상
+                정부지원제도
               </p>
             </div>
           </div>
@@ -961,7 +963,7 @@ function AdvancedResult({
         </div>
       )}
 
-      {/* 🎁 4가지 추가 혜택 — '받는 돈'을 먼저 몰아 보여주려 정책금융기관 '위'로 이동 (대표님 요청: 순서 개선) */}
+      {/* 🎁 추가 감면 혜택 — '받는 돈'을 먼저 몰아 보여주려 정책금융기관 '위'로 이동 (대표님 요청: 순서 개선) */}
       {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
 
       {/* ③ 신청 가능 기관 — '받는 돈(지원제도+추가혜택)' 뒤, '빌리는 돈' 자리로 배치 (대표님 요청: 순서 개선) */}
