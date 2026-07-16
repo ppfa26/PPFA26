@@ -1,12 +1,40 @@
 // ============================================================
-// 모두의공공조달 - 89개 공식 사이트 크롤러
+// 모두의사업친구 - 핵심 7개 정책금융기관 공고 크롤러
 // 실행: node scripts/crawler.mjs
 // 스케줄: 매일 새벽 03:00 (scripts/scheduler.mjs 참고)
+//
+// [대표님 요청] 크롤링 대상을 정책자금 매칭에 실제 쓰는
+//   7개 기관으로 축소:
+//     ① 기업마당(bizinfo)  ② 기술보증기금(기보)  ③ 신용보증기금(신보)
+//     ④ 지역신용보증재단(재단·중앙회)  ⑤ 한국무역보험공사(무보)
+//     ⑥ 소상공인시장진흥공단(소진공)  ⑦ 중소벤처기업진흥공단(중진공)
+//   → 결과창에 안내하는 기관과 크롤링 소스를 100% 일치시켜 관리 단순화.
 // ============================================================
 import * as cheerio from "cheerio";
-import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
+
+// ── Supabase REST insert 헬퍼 ─────────────────────────────────────────
+//  supabase-js는 Node 20에서 realtime(WebSocket) 때문에 로드 오류가 나므로,
+//  크롤러는 REST 엔드포인트(PostgREST)에 fetch로 직접 insert 한다.
+//  → 추가 의존성 없이 대표님 PC의 Node 버전과 무관하게 항상 동작.
+async function supabaseInsert(baseUrl, anonKey, table, rows) {
+  const endpoint = `${baseUrl.replace(/\/$/, "")}/rest/v1/${table}`;
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      apikey: anonKey,
+      Authorization: `Bearer ${anonKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify(rows),
+  });
+  if (!res.ok) {
+    const msg = await res.text().catch(() => "");
+    throw new Error(`${res.status} ${msg.slice(0, 120)}`);
+  }
+}
 
 // 환경변수 로드 (.env.local)
 function loadEnv() {
@@ -21,14 +49,48 @@ function loadEnv() {
 }
 loadEnv();
 
-// 크롤링 대상 사이트 (핵심 공고 게시판 위주 — 전체 89개는 src/lib/crawlSites.ts)
-// 실제 공고 목록을 안정적으로 파싱할 수 있는 대표 사이트를 우선 크롤링합니다.
+// ── 크롤링 대상: 핵심 7개 기관 (결과창 안내 기관과 동일) ──────────────
+//  url        : 크롤링 시작 페이지(공고 게시판 우선, 없으면 대표 홈)
+//  fallbackUrl: 첫 페이지 봇차단/타임아웃 시 재시도할 대체 페이지(홈 등)
+//  각 사이트가 봇차단을 하면 홈페이지라도 훑어 공고성 링크를 추출합니다.
 const TARGETS = [
-  { name: "기업마당", url: "https://www.bizinfo.go.kr/", listSel: "a", titleAttr: "text" },
-  { name: "K-Startup 창업지원포털", url: "https://www.k-startup.go.kr/", listSel: "a", titleAttr: "text" },
-  { name: "중소벤처기업진흥공단", url: "https://www.kosmes.or.kr/", listSel: "a", titleAttr: "text" },
-  { name: "소상공인시장진흥공단", url: "https://www.semas.or.kr/", listSel: "a", titleAttr: "text" },
-  { name: "신용보증기금", url: "https://www.kodit.or.kr/", listSel: "a", titleAttr: "text" },
+  {
+    name: "기업마당",
+    url: "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/list.do",
+    fallbackUrl: "https://www.bizinfo.go.kr/",
+  },
+  {
+    name: "기술보증기금",
+    url: "https://www.kibo.or.kr/main/board/boardType08.do",
+    fallbackUrl: "https://www.kibo.or.kr/portal",
+  },
+  {
+    name: "신용보증기금",
+    url: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2806&bbsId=1002",
+    fallbackUrl: "https://www.kodit.or.kr/",
+  },
+  {
+    name: "지역신용보증재단",
+    // 공식 사이트가 JS 렌더링(SPA)이라 정적 크롤링 불가 → 기업마당 기관 검색으로 대체
+    url: "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/list.do?rowCount=15&pageUnit=15&searchCnt=1&searchLclasId=&searchKeyword=%EC%8B%A0%EC%9A%A9%EB%B3%B4%EC%A6%9D%EC%9E%AC%EB%8B%A8",
+    fallbackUrl: "https://www.koreg.or.kr/",
+  },
+  {
+    name: "한국무역보험공사",
+    url: "https://www.ksure.or.kr/rh-kr/cntnts/i-104/web.do",
+    fallbackUrl: "https://www.ksure.or.kr/",
+  },
+  {
+    name: "소상공인시장진흥공단",
+    url: "https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=1",
+    fallbackUrl: "https://www.semas.or.kr/",
+  },
+  {
+    name: "중소벤처기업진흥공단",
+    // 공식 사이트가 JS 렌더링(SPA)이라 정적 크롤링 불가 → 기업마당 기관 검색으로 대체
+    url: "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/list.do?rowCount=15&pageUnit=15&searchCnt=1&searchKeyword=%EC%A4%91%EC%86%8C%EB%B2%A4%EC%B2%98%EA%B8%B0%EC%97%85%EC%A7%84%ED%9D%A5%EA%B3%B5%EB%8B%A8",
+    fallbackUrl: "https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do",
+  },
 ];
 
 const UA =
@@ -82,33 +144,42 @@ function extractAnnouncements(html, site) {
 }
 
 async function main() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const supabase = url && key ? createClient(url, key) : null;
+  const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supaKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const canSave = !!(supaUrl && supaKey);
 
   let totalSaved = 0;
   const report = [];
 
   for (const site of TARGETS) {
-    const html = await fetchHtml(site.url);
+    // 1차: 공고 게시판 URL → 실패 시 2차: fallback(홈) URL 재시도
+    let html = await fetchHtml(site.url);
+    let usedUrl = site.url;
+    if (!html && site.fallbackUrl) {
+      html = await fetchHtml(site.fallbackUrl);
+      usedUrl = site.fallbackUrl;
+    }
     if (!html) {
       report.push(`❌ ${site.name}: 접근 불가(봇차단/타임아웃)`);
       continue;
     }
-    const items = extractAnnouncements(html, site);
+    const items = extractAnnouncements(html, { ...site, url: usedUrl });
     report.push(`✅ ${site.name}: ${items.length}건 추출`);
 
-    if (supabase && items.length) {
+    if (canSave && items.length) {
       const rows = items.map((i) => ({
         site_name: site.name,
-        site_url: site.url,
+        site_url: usedUrl,
         title: i.title,
         detail_url: i.detail_url,
         crawled_at: new Date().toISOString(),
       }));
-      const { error } = await supabase.from("crawled_announcements").insert(rows);
-      if (!error) totalSaved += rows.length;
-      else report.push(`   ⚠️ 저장 실패: ${error.message}`);
+      try {
+        await supabaseInsert(supaUrl, supaKey, "crawled_announcements", rows);
+        totalSaved += rows.length;
+      } catch (err) {
+        report.push(`   ⚠️ 저장 실패: ${err.message}`);
+      }
     }
     await new Promise((r) => setTimeout(r, 1000)); // 예의상 딜레이
   }
