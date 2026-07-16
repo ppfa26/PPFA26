@@ -577,48 +577,41 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 하단 CTA (섹션 상하 여백 통일: 위쪽 섹션과 동일하게 py-7 sm:py-11) */}
+        {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) */}
         <section className="px-4 py-7 sm:py-11">
-          <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-grad p-8 text-center shadow-card sm:p-10">
+          <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-8 text-center shadow-card sm:p-10">
             <Editable
               id="home-cta-title"
               as="h2"
-              className="break-keep text-xl font-black text-brand-dark sm:text-2xl"
+              className="break-keep text-xl font-black text-white sm:text-2xl"
             >
               지금 무료로 진단받아 보세요
             </Editable>
             <Editable
               id="home-cta-sub"
               as="p"
-              className="mx-auto mt-3 max-w-md break-keep text-sm text-brand-dark/70"
+              className="mx-auto mt-3 max-w-md break-keep text-sm leading-relaxed text-gray-300"
             >
               1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.
             </Editable>
-            <div className="mt-7 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-              {/* 왼쪽 — 무료 진단 시작하기 (주 버튼, 가로 알약형, 재생 버튼) */}
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              {/* 왼쪽 — 무료 진단 시작하기 (주 버튼, 빨간색) */}
               <a
                 id="home-cta-button"
                 href="/diagnosis"
-                className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-brand-dark px-7 py-4 text-white shadow-card transition animate-pulseGlow hover:opacity-90"
+                className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FF0000] text-[11px] leading-none text-white shadow-sm">
-                  ▶
-                </span>
-                <span className="break-keep text-base font-extrabold">
-                  무료 진단 시작하기
-                </span>
+                무료 진단 시작하기
               </a>
-              {/* 오른쪽 — 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인 고스트) */}
+              {/* 오른쪽 — 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인) */}
               <a
                 id="home-cta-kakao"
                 href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center gap-2 rounded-full border border-brand-dark/15 bg-white/60 px-7 py-4 backdrop-blur-sm transition hover:bg-white/80"
+                className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3.5 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
               >
-                <span className="break-keep text-base font-extrabold text-brand-dark">
-                  💬 1:1 채널톡 상담하기
-                </span>
+                💬 1:1 채널톡 상담하기
               </a>
             </div>
           </div>
