@@ -520,28 +520,12 @@ export default function AdminPage() {
     }, 150);
   };
 
-  // 회원 목록 → 그 고객의 '결과창'을 관리자 모드로 새 탭에서 열기.
-  //   상담(전화·카톡) 중 고객과 같은 화면을 보며 안내하기 위한 기능.
-  //   그 고객의 최근 진단 profile을 sessionStorage(mpp_diagnosis)에 심고,
+  // 진단서 하나(AdminDiagnosis)를 받아 그 '결과창'을 관리자 모드로 새 탭에서 연다.
+  //   진단서에 저장된 profile(진단 원본)을 sessionStorage(mpp_diagnosis)에 심고
   //   /matching-preview?admin=1 로 열면 잠금 없이 전체 결과가 노출된다.
   //   (결제·조회권 차감이 없는 미리보기 페이지를 재사용 → 부작용 없음)
-  const viewUserResult = (email: string | null) => {
-    if (!email) {
-      setMsg("이 회원은 이메일 정보가 없어 결과를 열 수 없습니다.");
-      setTimeout(() => setMsg(null), 3000);
-      return;
-    }
-    const matched = diagnoses
-      .filter((d) => (d.email || (d.profile as any)?.email) === email)
-      .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-    if (matched.length === 0) {
-      setMsg("이 회원이 작성한 진단서가 아직 없어 결과를 만들 수 없습니다.");
-      setTimeout(() => setMsg(null), 3000);
-      return;
-    }
-    const target = matched[0];
-    // 진단서에 저장된 profile(진단 원본)을 그대로 결과창 입력값으로 사용.
-    //   name/phone/email이 profile에 누락돼 있으면 컬럼값으로 보완한다.
+  const openResultForDiag = (target: AdminDiagnosis) => {
+    // name/phone/email이 profile에 누락돼 있으면 컬럼값으로 보완한다.
     const profile: Record<string, unknown> = {
       ...(target.profile || {}),
     };
@@ -557,6 +541,54 @@ export default function AdminPage() {
     }
     // 새 탭에서 관리자 열람 모드로 결과창 열기
     window.open("/matching-preview?admin=1", "_blank", "noopener");
+  };
+
+  // 회원 목록 → 그 고객의 '결과창'을 관리자 모드로 새 탭에서 열기.
+  //   상담(전화·카톡) 중 고객과 같은 화면을 보며 안내하기 위한 기능.
+  //   ★ 이메일이 딱 맞는 진단서가 없으면, 이름+연락처로도 다시 찾아본다(폴백). ★
+  //     (비회원으로 진단 후 나중에 가입 등으로 진단서에 로그인 이메일이 안 붙는 경우 대비)
+  const viewUserResult = (email: string | null) => {
+    if (!email) {
+      setMsg("이 회원은 이메일 정보가 없어 결과를 열 수 없습니다.");
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    const byCreated = (a: AdminDiagnosis, b: AdminDiagnosis) =>
+      a.created_at < b.created_at ? 1 : -1;
+
+    // 1차: 이메일 정확 매칭 (진단서 컬럼 email 또는 profile.email)
+    let matched = diagnoses
+      .filter((d) => (d.email || (d.profile as any)?.email) === email)
+      .sort(byCreated);
+
+    // 2차(폴백): 이메일로 못 찾으면, 이 회원의 이름/연락처로 진단서를 찾는다.
+    if (matched.length === 0) {
+      const info = userInfoByEmail(email); // { name, phone } (진단서에서 역추적)
+      const onlyDigits = (v: string | null | undefined) =>
+        (v || "").replace(/[^0-9]/g, "");
+      const phoneKey = onlyDigits(info.phone);
+      const nameKey = (info.name || "").trim();
+      if (phoneKey.length >= 8 || nameKey) {
+        matched = diagnoses
+          .filter((d) => {
+            const dPhone = onlyDigits(d.phone || (d.profile as any)?.phone);
+            const dName = ((d.name || (d.profile as any)?.name) as string | undefined || "").trim();
+            const phoneHit = phoneKey.length >= 8 && dPhone === phoneKey;
+            const nameHit = !!nameKey && dName === nameKey;
+            return phoneHit || nameHit;
+          })
+          .sort(byCreated);
+      }
+    }
+
+    if (matched.length === 0) {
+      setMsg(
+        "이 회원과 연결된 진단서를 찾지 못했습니다. '고객 진단서' 탭에서 해당 진단서를 펼친 뒤 '📊 결과보기'를 눌러 주세요."
+      );
+      setTimeout(() => setMsg(null), 6000);
+      return;
+    }
+    openResultForDiag(matched[0]);
   };
 
   // 조회권 환불(열람 차단) — 실제 결제 환불은 대표님이 PG사에서 처리하고,
@@ -1182,8 +1214,14 @@ export default function AdminPage() {
                             </div>
                           ))}
                         </div>
-                        {/* 개별 다운로드 + 삭제 버튼 */}
+                        {/* 결과보기 + 개별 다운로드 + 삭제 버튼 */}
                         <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            onClick={() => openResultForDiag(d)}
+                            className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100"
+                          >
+                            📊 결과보기 (새 창)
+                          </button>
                           <button
                             onClick={() => downloadOneDiag(d)}
                             className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
