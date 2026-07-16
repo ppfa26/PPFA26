@@ -355,7 +355,7 @@ export default function Diagnosis() {
               <div className="mb-5 rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4 sm:p-5">
                 <p className="mb-3 break-keep text-sm font-extrabold leading-snug text-brand-red">
                   ⚠️ 신청 결격사유 확인{"\u00A0"}
-                  <span className="font-bold">(해당 시 승인이 어려워 먼저 확인드립니다)</span>
+                  <span className="font-bold">(해당 시 신청이 어려워 먼저 확인드립니다)</span>
                 </p>
                 <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
                 <div className="mb-0">

@@ -20,7 +20,7 @@ export default function KakaoFloatingButton() {
         💬
       </span>
       <span className="whitespace-nowrap text-[13px] font-extrabold text-brand-dark">
-        카톡 상담
+        1:1 카톡 문의
       </span>
     </a>
   );
