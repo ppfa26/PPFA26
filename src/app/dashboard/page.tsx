@@ -73,19 +73,10 @@ export default function DashboardPage() {
               신청하시다 막히는 부분이 있으신가요?
             </h2>
             <p className="mt-2 break-keep text-sm leading-relaxed text-brand-dark/70">
-              1:1 채널톡으로 편하게 문의주시고, 이용자님들만 모인 단톡방에서 정보도 함께 나눠보세요.
+              이용자님들만 모인 단톡방에서 정보도 함께 나눠보시고 추가적인 질문은 1:1 채널톡으로 편하게 문의주세요.
             </p>
             <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
-              {/* 보조 버튼 — 흰색 반투명 고스트(배경 그라데이션이 은은히 비침) */}
-              <a
-                href="http://pf.kakao.com/_VxfWxan/chat"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-dark/15 bg-white/60 px-7 py-3.5 text-sm font-bold tracking-tight text-brand-dark backdrop-blur-sm transition hover:bg-white/80 sm:w-auto sm:text-base"
-              >
-                💬 1:1 채널톡 상담하기
-              </a>
-              {/* 주 버튼 — 딥 차콜 + 흰 글자(노란 배경 위에서 가장 선명·고급) */}
+              {/* 왼쪽 · 주 버튼 — 딥 차콜 + 흰 글자(노란 배경 위에서 가장 선명·고급) */}
               <a
                 href="https://open.kakao.com/o/gvjec0Di"
                 target="_blank"
@@ -94,6 +85,15 @@ export default function DashboardPage() {
               >
                 👥 이용자 단톡방 참여하기
                 <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+              </a>
+              {/* 오른쪽 · 보조 버튼 — 흰색 반투명 고스트(배경 그라데이션이 은은히 비침) */}
+              <a
+                href="http://pf.kakao.com/_VxfWxan/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-dark/15 bg-white/60 px-7 py-3.5 text-sm font-bold tracking-tight text-brand-dark backdrop-blur-sm transition hover:bg-white/80 sm:w-auto sm:text-base"
+              >
+                💬 1:1 채널톡 상담하기
               </a>
             </div>
             <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/60">
