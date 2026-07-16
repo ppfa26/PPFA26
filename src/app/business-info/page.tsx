@@ -17,6 +17,11 @@ const ROWS: { label: string; id: string; value: string }[] = [
   { label: "이메일", id: "biz-email", value: "biospartners@naver.com" },
   { label: "업종", id: "biz-type", value: "응용 소프트웨어 개발 및 공급업" },
   { label: "서비스 제공기간", id: "biz-period", value: "결제일로부터 1개월" },
+  {
+    label: "서비스의 범위",
+    id: "biz-scope",
+    value: "결제 아이디당 1개의 사업장 매칭 및 조회 서비스",
+  },
 ];
 
 export default function BusinessInfoPage() {
@@ -24,7 +29,7 @@ export default function BusinessInfoPage() {
     <LegalLayout
       pageKey="business-info"
       title="사업자정보"
-      updatedAt="2026년 7월 8일"
+      updatedAt="2026년 7월 15일"
     >
       <section id="business-table">
         <div className="overflow-hidden rounded-2xl border border-gray-200">

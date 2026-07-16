@@ -73,7 +73,7 @@ export default function DashboardPage() {
               신청하시다 막히는 부분이 있으신가요?
             </h2>
             <p className="mt-2 break-keep text-sm leading-relaxed text-brand-dark/70">
-              혼자 고민하지 마세요. 1:1 채널톡으로 편하게 여쭤보시고, 결제하신 대표님들만 모인 단톡방에서 정보도 함께 나눠보세요.
+              1:1 채널톡으로 편하게 문의주시고, 이용자님들만 모인 단톡방에서 정보도 함께 나눠보세요.
             </p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
               <a
@@ -90,7 +90,7 @@ export default function DashboardPage() {
                 rel="noopener noreferrer"
                 className="rounded-full border-2 border-brand-dark bg-white px-7 py-3 font-bold text-brand-dark hover:bg-gray-50"
               >
-                👥 결제자 단톡방 참여하기
+                👥 이용자 단톡방 참여하기
               </a>
             </div>
             <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/60">

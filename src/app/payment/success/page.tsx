@@ -209,7 +209,7 @@ function SuccessInner() {
             </p>
             <Link
               href="/mypage"
-              className="mt-6 w-full rounded-xl bg-brand-dark py-3.5 text-base font-extrabold text-white transition hover:opacity-90"
+              className="mt-6 w-full rounded-xl bg-brand-grad py-3.5 text-base font-extrabold text-brand-dark shadow-card transition hover:scale-[1.02] hover:opacity-95"
             >
               마이페이지로 가기
             </Link>

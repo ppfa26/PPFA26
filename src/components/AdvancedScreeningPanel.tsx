@@ -979,6 +979,16 @@ function AdvancedResult({
             // 재단은 link가 없으므로 JAEDAN_PRODUCTS를 아코디언 상품으로 사용
             // ★ 대표님 조건(스마트공장·재도전·대환 등)에 해당하는 상품만 남기고 나머지는 숨김 ★
             const products = filterProducts(isJaedan ? JAEDAN_PRODUCTS : link?.products, company);
+            // ★ 각 기관에서 '가장 먼저 신청하면 좋은' 상품 1개 선정 (대표님 요청)
+            //   승인 가능성 높은 순: approval "high" → "mid" → 그 외. 첫 후보 1개에만 강조 뱃지.
+            const topProductIdx = (() => {
+              if (!products || products.length === 0) return -1;
+              const high = products.findIndex((p) => p.approval === "high");
+              if (high !== -1) return high;
+              const mid = products.findIndex((p) => p.approval === "mid");
+              if (mid !== -1) return mid;
+              return 0;
+            })();
             return (
               <div
                 key={i}
@@ -1033,11 +1043,23 @@ function AdvancedResult({
                     </button>
                     {openProducts[i] && (
                       <div className="mt-2 space-y-2">
-                        {products.map((prod, pi) => (
+                        {products.map((prod, pi) => {
+                          const isTop = pi === topProductIdx;
+                          return (
                           <div
                             key={pi}
-                            className="rounded-xl border border-gray-200 bg-gray-50 p-3"
+                            className={`rounded-xl p-3 ${
+                              isTop
+                                ? "border-2 border-brand-green bg-brand-green/5"
+                                : "border border-gray-200 bg-gray-50"
+                            }`}
                           >
+                            {/* ★ 이 기관에서 가장 먼저 신청하면 좋은 상품 — 체크 포인트 (대표님 요청) */}
+                            {isTop && (
+                              <p className={`mb-1.5 inline-flex items-center gap-1 break-keep rounded-full bg-brand-green px-2.5 py-0.5 text-[10px] font-extrabold text-white ${lockTextSoft}`}>
+                                ✅ 승인 가능성 높음 · 먼저 신청 추천
+                              </p>
+                            )}
                             <div className="flex flex-wrap items-center gap-1.5">
                               <span className={`break-keep text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>
                                 {prod.name}
@@ -1091,7 +1113,8 @@ function AdvancedResult({
                               </a>
                             )}
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </div>

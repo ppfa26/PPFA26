@@ -10,7 +10,7 @@ export default function TermsPage() {
         <h2 className="text-lg font-extrabold text-brand-dark">제1조 (목적)</h2>
         <Editable id="terms-1-body" as="p" className="mt-2">
           본 약관은 모두의사업친구(이하 &ldquo;회사&rdquo;)이
-          제공하는 정부지원사업·정책자금 통합 매칭 자문 서비스(이하 &ldquo;서비스&rdquo;)의
+          제공하는 정부지원사업 AI 통합 매칭 자문 서비스(이하 &ldquo;서비스&rdquo;)의
           이용과 관련하여 회사와 이용자 간의 권리·의무 및 책임 사항을 규정하는 것을
           목적으로 합니다.
         </Editable>

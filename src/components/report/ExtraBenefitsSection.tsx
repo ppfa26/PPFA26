@@ -268,7 +268,10 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
             const isUnknown = v.eligible === null;
 
             return (
-              <div key={b.id} className="py-4 first:pt-0 last:pb-0">
+              <div
+                key={b.id}
+                className="group origin-left py-4 transition-transform duration-150 first:pt-0 last:pb-0 hover:scale-[1.01]"
+              >
                 {/* 상단: 아이콘 + 제목 + 대상 뱃지 (정부지원제도 항목과 동일 구조) */}
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className={`text-base ${isYes ? "" : "opacity-60"}`}>{b.icon}</span>
