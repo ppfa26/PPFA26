@@ -979,17 +979,19 @@ function AdvancedResult({
             const isJaedan = m.institution.includes("재단");
             // 재단은 link가 없으므로 JAEDAN_PRODUCTS를 아코디언 상품으로 사용
             // ★ 대표님 조건(스마트공장·재도전·대환 등)에 해당하는 상품만 남기고 나머지는 숨김 ★
-            const products = filterProducts(isJaedan ? JAEDAN_PRODUCTS : link?.products, company);
-            // ★ 각 기관에서 '가장 먼저 신청하면 좋은' 상품 1개 선정 (대표님 요청)
-            //   승인 가능성 높은 순: approval "high" → "mid" → 그 외. 첫 후보 1개에만 강조 뱃지.
-            const topProductIdx = (() => {
-              if (!products || products.length === 0) return -1;
-              const high = products.findIndex((p) => p.approval === "high");
-              if (high !== -1) return high;
-              const mid = products.findIndex((p) => p.approval === "mid");
-              if (mid !== -1) return mid;
-              return 0;
-            })();
+            const filteredProducts = filterProducts(isJaedan ? JAEDAN_PRODUCTS : link?.products, company);
+            // ★ 승인 가능성 순으로 정렬해 안내 (대표님 요청)
+            //   승인 가능성 높음(high) → 조건 충족 시 가능(mid) → 승인 가능성 낮음(low) 순.
+            //   같은 등급 안에서는 원래 순서를 유지(안정 정렬).
+            const approvalRank = (a?: "high" | "mid" | "low") =>
+              a === "high" ? 0 : a === "mid" ? 1 : a === "low" ? 2 : 3;
+            const products = filteredProducts
+              ? [...filteredProducts].sort(
+                  (x, y) => approvalRank(x.approval) - approvalRank(y.approval)
+                )
+              : filteredProducts;
+            // 정렬 후에는 가장 앞(0번)이 승인 가능성이 가장 높은 상품 → 강조 뱃지 대상
+            const topProductIdx = products && products.length > 0 ? 0 : -1;
             return (
               <div
                 key={i}
@@ -1269,7 +1271,7 @@ function AdvancedResult({
                 </span>
                 <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
                   신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
-                  <b className="text-brand-orange">통상 약 8주 소요</b> · 제출 서류가 상대적으로 많은 편입니다.
+                  <b className="text-brand-orange">통상 약 8주 소요</b>
                 </p>
               </div>
             )}

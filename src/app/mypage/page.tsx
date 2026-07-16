@@ -158,17 +158,19 @@ export default function MyPage() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="mt-4 rounded-2xl bg-brand-yellow/30 p-5 text-center">
-                    <p className="break-keep text-brand-dark">
-                      {diagName ? `${diagName} 대표님 ` : "대표님 "}사업장에 딱 맞는 지원사업{" "}
-                      <b className="text-brand-orange">{matchCount}개</b>가
-                      매칭되었습니다.
+                  <div className="mt-4 rounded-3xl border border-brand-red/10 bg-gradient-to-br from-brand-yellow/25 to-brand-orange/10 p-6 text-center sm:p-7">
+                    <p className="break-keep text-sm leading-relaxed text-brand-dark/70 sm:text-base">
+                      {diagName ? `${diagName} 대표님 ` : "대표님 "}사업장에 딱 맞는 지원사업
+                    </p>
+                    <p className="mt-1.5 break-keep text-2xl font-black tracking-tight text-brand-dark sm:text-3xl">
+                      총 <span className="text-brand-red">{matchCount}개</span> 매칭 완료
                     </p>
                     <Link
                       href="/dashboard"
-                      className="btn-red mt-4 inline-block rounded-full px-8 py-3"
+                      className="btn-red group mt-5 inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:text-base"
                     >
                       대시보드에서 전체 결과 확인하기
+                      <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </Link>
                   </div>
                 )}
