@@ -532,6 +532,14 @@ export default function AdminPage() {
     if (!profile.name && target.name) profile.name = target.name;
     if (!profile.phone && target.phone) profile.phone = target.phone;
     if (!profile.email && target.email) profile.email = target.email;
+    // 관리자 열람 배너에 항상 '누구 결과인지' 뜨게, 식별용 라벨을 따로 심는다.
+    //   이름 없으면 → 연락처 → 이메일 순으로 대체 (상담 중 헷갈림 방지)
+    const adminLabel =
+      (profile.name as string) ||
+      (profile.phone as string) ||
+      (profile.email as string) ||
+      "";
+    (profile as any)._adminLabel = adminLabel;
     try {
       sessionStorage.setItem("mpp_diagnosis", JSON.stringify(profile));
     } catch {

@@ -15,6 +15,8 @@ import {
 
 export default function MatchingPreview() {
   const [name, setName] = useState("");
+  // 관리자 열람 배너 전용 식별 라벨(이름→연락처→이메일). name이 비어도 '누구 결과'인지 표시.
+  const [adminLabel, setAdminLabel] = useState("");
   const [blockReasons, setBlockReasons] = useState<PaymentBlockReason[]>([]);
   // 관리자 열람 모드: /matching-preview?admin=1 로 열면 잠금(previewLock) 없이
   //   전체 결과를 그대로 보여준다. (대표님이 상담 시 고객과 같은 결과창을 보기 위함)
@@ -36,6 +38,9 @@ export default function MatchingPreview() {
       const raw = sessionStorage.getItem("mpp_diagnosis");
       const profile = raw ? JSON.parse(raw) : {};
       setName(profile.name || "");
+      setAdminLabel(
+        profile._adminLabel || profile.name || profile.phone || profile.email || ""
+      );
       setBlockReasons(getPaymentBlockReasons(profile));
       setCounts(countMatchedItems(profile));
     } catch {
@@ -121,7 +126,15 @@ export default function MatchingPreview() {
           {adminView && (
             <div className="mb-6 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-4 text-center">
               <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                🔓 관리자 열람 모드 — {name ? `${name} 대표님 ` : "이 고객 "}결과 전체 보기
+                🔓 관리자 열람 모드 —{" "}
+                <span className="text-brand-orange">
+                  {adminLabel
+                    ? name
+                      ? `${adminLabel}\u00A0님`
+                      : adminLabel
+                    : "이 고객"}
+                </span>
+                {"\u00A0"}결과 전체 보기
               </p>
               <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/70">
                 이 화면은 대표님(관리자)만 보는 잠금 해제 결과창입니다. 상담 시 고객과 같은 화면을 보며 안내하세요.
