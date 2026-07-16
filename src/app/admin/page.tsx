@@ -192,6 +192,7 @@ export default function AdminPage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [userSearch, setUserSearch] = useState(""); // 회원 검색어(이름·이메일·연락처)
+  const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
 
   // 중복 신청 순번 (같은 연락처/이메일 기준 몇 번째 신청인지)
   const dupIndexMap = computeDuplicateIndex(diagnoses as unknown as DiagnosisRecord[]);
@@ -486,6 +487,26 @@ export default function AdminPage() {
       .toLowerCase();
     // 연락처는 숫자만으로도 검색되게
     const digitsHay = (info.phone || "").replace(/[^0-9]/g, "");
+    const digitsQ = q.replace(/[^0-9]/g, "");
+    return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
+  });
+
+  // 진단서 검색 필터 — 이름·이메일·연락처·업종·사업자번호 어디에 걸려도 검색됨
+  const filteredDiagnoses = diagnoses.filter((d) => {
+    const q = diagSearch.trim().toLowerCase();
+    if (!q) return true;
+    const p = (d.profile || {}) as Record<string, unknown>;
+    const name = (d.name || (p.name as string) || "") + "";
+    const email = (d.email || (p.email as string) || "") + "";
+    const phone = (d.phone || (p.phone as string) || "") + "";
+    const bizType = (p.businessType as string) || "";
+    const bno = (p.bno as string) || "";
+    const hay = [name, email, phone, bizType, bno]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    // 연락처·사업자번호는 숫자만으로도 검색되게
+    const digitsHay = `${phone} ${bno}`.replace(/[^0-9]/g, "");
     const digitsQ = q.replace(/[^0-9]/g, "");
     return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
   });
@@ -1111,6 +1132,36 @@ export default function AdminPage() {
           {/* ------- 고객 진단서 (질문지 + 결과) ------- */}
           {tab === "diagnoses" && (
             <div className="space-y-3">
+              {/* 🔍 진단서 검색 — 이름·이메일·연락처·업종·사업자번호로 즉시 검색 */}
+              {diagnoses.length > 0 && (
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <div className="relative flex-1">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                      🔍
+                    </span>
+                    <input
+                      type="text"
+                      value={diagSearch}
+                      onChange={(e) => setDiagSearch(e.target.value)}
+                      placeholder="진단서 검색 — 이름 · 이메일 · 연락처 · 업종으로 찾기 (예: 홍길동 / 010 / hong@)"
+                      className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 outline-none focus:border-brand-orange"
+                    />
+                  </div>
+                  {diagSearch && (
+                    <button
+                      onClick={() => setDiagSearch("")}
+                      className="rounded-xl bg-gray-100 px-3 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-200"
+                    >
+                      ✕ 초기화
+                    </button>
+                  )}
+                  <span className="whitespace-nowrap text-xs text-gray-400">
+                    {diagSearch
+                      ? `검색결과 ${filteredDiagnoses.length}건`
+                      : `전체 ${diagnoses.length}건`}
+                  </span>
+                </div>
+              )}
               {/* 다운로드 툴바 — 전체 / 선택 다운로드 + 전체선택 체크 */}
               {diagnoses.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
@@ -1154,7 +1205,12 @@ export default function AdminPage() {
                   아직 접수된 진단서가 없습니다.
                 </div>
               )}
-              {diagnoses.map((d) => {
+              {diagnoses.length > 0 && filteredDiagnoses.length === 0 && (
+                <div className="rounded-2xl border border-gray-100 bg-white px-4 py-10 text-center text-gray-400 shadow-sm">
+                  “{diagSearch}” 검색 결과가 없습니다.
+                </div>
+              )}
+              {filteredDiagnoses.map((d) => {
                 const isOpen = openDiag === d.id;
                 const p = d.profile || {};
                 const dupIdx = dupIndexMap.get(d.id) ?? 1;
