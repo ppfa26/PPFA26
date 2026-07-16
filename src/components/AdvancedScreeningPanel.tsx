@@ -157,8 +157,14 @@ export default function AdvancedScreeningPanel({
 
       // 매출 (구간 → 대략 억 값)
       const revMap: Record<string, string> = {
+        // 현재 진단 구간(2026 개정)
+        "매출 없음": "0", "매출없음": "0",
+        "2억 미만": "1", "2억미만": "1",
+        "10억 미만": "5", "10억미만": "5",
+        "10억 이상": "10", "10억이상": "10",
+        // 과거 구간(하위호환)
         "5억 이상": "5", "5억미만": "3", "5억 미만": "3",
-        "1억 미만": "0.5", "1억미만": "0.5", "매출 없음": "0", "매출없음": "0",
+        "1억 미만": "0.5", "1억미만": "0.5",
       };
       if (p.revenue && revMap[p.revenue.trim?.() || p.revenue]) {
         setRevenue억(revMap[p.revenue.trim?.() || p.revenue]);
@@ -173,11 +179,21 @@ export default function AdvancedScreeningPanel({
       const yv = yMap[(p.years || "").trim?.() || p.years];
       if (yv) { setYears(yv); touched = true; }
 
-      // 직원수
+      // 직원수 (2026 개정 라벨: 0명 / 5명 이하 / 5명 이상 / 50명 이상 / 300명 이상 / 기타)
+      //  ★ 주의: "50명이상"·"300명이상"에도 문자열 "0명"이 들어 있으므로
+      //    반드시 큰 규모(5명이상/50명이상/300명이상/10명)를 먼저 판정해야 오분류가 없다.
       if (p.employees) {
-        if (p.employees.includes("0명")) setEmployees("0");
-        else if (p.employees.includes("5명")) setEmployees("under5");
-        else if (p.employees.includes("10명")) setEmployees("5plus");
+        const empStr = p.employees.replace(/\s/g, "");
+        if (
+          empStr.includes("5명이상") ||
+          empStr.includes("50명이상") ||
+          empStr.includes("300명이상") ||
+          empStr.includes("10명이상") || // 과거 라벨 하위호환
+          empStr.includes("10명이하")
+        )
+          setEmployees("5plus");
+        else if (empStr.includes("5명이하")) setEmployees("under5");
+        else if (empStr === "0명") setEmployees("0");
         touched = true;
       }
 
@@ -249,14 +265,14 @@ export default function AdvancedScreeningPanel({
         merged.industries = [...(merged.industries || []), "수출업"];
       if (revenue억) {
         const r = parseFloat(revenue억);
-        merged.revenue = r >= 5 ? "5억 이상" : r >= 1 ? "5억 미만" : r > 0 ? "1억 미만" : "매출 없음";
+        merged.revenue = r >= 10 ? "10억 이상" : r >= 2 ? "10억 미만" : r > 0 ? "2억 미만" : "매출 없음";
       }
       if (years) {
         const y = parseFloat(years);
         merged.years = y <= 0 ? "창업 예정" : y < 1 ? "1년 미만" : y < 3 ? "3년 미만" : y < 7 ? "7년 미만" : "7년 이상";
       }
       if (ceoAge) merged.age = parseInt(ceoAge, 10) <= 39 ? "만 39세 이하 (청년)" : "만 40세 이상";
-      if (employees) merged.employees = employees === "0" ? "0명" : employees === "under5" ? "5명 이하" : "10명 이상";
+      if (employees) merged.employees = employees === "0" ? "0명" : employees === "under5" ? "5명 이하" : "5명 이상";
       if (creditKnown === "yes" && (kcb || nice)) {
         const sc = Math.max(parseInt(kcb || "0", 10), parseInt(nice || "0", 10));
         merged.credit = sc >= 840 ? "840점 이상" : sc >= 700 ? "700~839점" : "700점 미만";
@@ -804,25 +820,28 @@ function AdvancedResult({
 
   return (
     <div id="advanced-result" className="mt-6 space-y-4">
-      <h2 className="break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">
-        {autoRun ? "🏦 대표님 맞춤으로 신청가능 기관 및 상품 안내" : "🔬 정밀 추가진단 결과"}
-      </h2>
+      {/* autoRun(결제 후 대시보드)에서는 상단 dashboard-hero 제목과 중복되므로 h2를 숨긴다.
+          정밀 추가진단(수동 실행) 화면에서만 제목을 표기. */}
+      {!autoRun && (
+        <h2 className="break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">
+          🔬 정밀 추가진단 결과
+        </h2>
+      )}
 
-      {/* ★ 진단 요약 배너 — "이 진단 덕분에 이런 걸 알게 됐다"는 성취감 (대표님 요청: 와 대박 느낌) ★ */}
+      {/* ★ 진단 요약 배너 — 숫자 요약(기관/상품/지금 신청 대상) 중심 ★
+          (상단 dashboard-hero 설명과 겹치던 "🎉 진단 완료!" 안내 문장은 제거하고,
+           숫자 요약 + 사용 방법 안내만 남겨 중복을 정리함 — 대표님 요청) */}
       {autoRun && (
         <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
-          <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-            🎉 진단 완료! 대표님의 사업장 기준으로 신청해볼 수 있는 정부지원사업을 안내해드립니다.
-          </p>
-          <div className="mt-2 grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-white/70 px-2 py-2 text-center">
-              <p className="text-xl font-extrabold text-brand-dark">{creditMatches.length}</p>
-              <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="rounded-xl bg-white/70 px-2 py-2.5 text-center">
+              <p className="text-2xl font-extrabold leading-none text-brand-dark sm:text-3xl">{creditMatches.length}</p>
+              <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark/70 sm:text-xs">
                 신청 가능 기관
               </p>
             </div>
-            <div className="rounded-xl bg-white/70 px-2 py-2 text-center">
-              <p className="text-xl font-extrabold text-brand-dark">
+            <div className="rounded-xl bg-white/70 px-2 py-2.5 text-center">
+              <p className="text-2xl font-extrabold leading-none text-brand-dark sm:text-3xl">
                 {creditMatches.reduce((s, m) => {
                   if (m.institution.includes("재단"))
                     return s + Math.max(1, filterProducts(JAEDAN_PRODUCTS, company).length);
@@ -830,22 +849,22 @@ function AdvancedResult({
                   return s + Math.max(1, filterProducts(l?.products, company).length || 1);
                 }, 0)}
               </p>
-              <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
+              <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark/70 sm:text-xs">
                 신청 가능 상품
               </p>
             </div>
-            <div className="rounded-xl bg-white/70 px-2 py-2 text-center">
-              <p className="text-xl font-extrabold text-brand-dark">
+            <div className="rounded-xl bg-white/70 px-2 py-2.5 text-center">
+              <p className="text-2xl font-extrabold leading-none text-brand-dark sm:text-3xl">
                 {eligibleSupport.filter((e) => e.status === "eligible").length}
               </p>
-              <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
+              <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark/70 sm:text-xs">
                 지금 신청 대상
               </p>
             </div>
           </div>
-          <p className="mt-2 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/80">
+          <p className="mt-3 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/80 sm:text-xs">
             👇 아래 <b>✅ 표시</b>된 곳이 대표님이 <b>지금 바로 신청 가능한 곳</b>입니다. 각 항목의
-            <b> "상품 보기"</b>를 누르면 신청할 상품이 펼쳐지고, <b>신청 방법</b>까지 순서대로 안내드려요.
+            <b> &ldquo;상품 보기&rdquo;</b>를 누르면 신청할 상품이 펼쳐지고, <b>신청 방법</b>까지 순서대로 안내드려요.
           </p>
         </div>
       )}

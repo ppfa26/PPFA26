@@ -160,17 +160,17 @@ export default function MatchingPreview() {
               <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 text-left">
                 {counts && total > 0 ? (
                   <>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-sm">
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
                       🏦 <span className="text-brand-dark/70">기관</span>
-                      <b className="ml-auto text-brand-orange">{counts.institutions}곳</b>
+                      <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.institutions}곳</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-sm">
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
                       💰 <span className="text-brand-dark/70">정책자금 상품</span>
-                      <b className="ml-auto text-brand-orange">{counts.products}종</b>
+                      <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.products}종</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-sm">
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
                       🎁 <span className="text-brand-dark/70">정부지원제도</span>
-                      <b className="ml-auto text-brand-orange">{counts.supports}건</b>
+                      <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.supports}건</b>
                     </span>
                   </>
                 ) : (
@@ -226,9 +226,6 @@ export default function MatchingPreview() {
                 </div>
               ))}
             </div>
-            <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/40">
-              — 출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
-            </p>
           </div>
 
           {/* ── 중간 결제 유도 박스 (대표님 요청) ──

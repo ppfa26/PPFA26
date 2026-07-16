@@ -50,9 +50,17 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   if (bt.includes("프리")) tags.add("자영업자");
 
   // 소상공인/중소기업 판단 (공문 기준: 매출 규모)
-  //  - 매출 5억 이상 또는 법인 → 사업체 '규모'가 있어 신용보증기금(신보) 유리
+  //  - 매출 규모가 있으면(≈5억 이상) 사업체 '규모'가 있어 신용보증기금(신보) 유리
   //  - 그 외 → 소상공인(지역신용보증재단/소진공 유리)
-  if (p.revenue?.includes("5억이상") || p.revenue?.includes("5억 이상")) {
+  //  ★ 2026 개정 매출 구간 [매출 없음 / 2억 미만 / 10억 미만 / 10억 이상 / 기타] 대응:
+  //    "10억 이상"·"10억 미만"(2억~10억, 5억 이상 포함 가능) → 규모 있는 것으로 보고 신보 유리
+  //    "2억 미만"·"매출 없음"·"기타" → 소상공인 쪽
+  const revNoSpace = (p.revenue || "").replace(/\s/g, "");
+  const isLargeRevenue =
+    revNoSpace.includes("10억이상") ||
+    revNoSpace.includes("10억미만") ||
+    revNoSpace.includes("5억이상"); // 과거 구간 하위호환
+  if (isLargeRevenue) {
     tags.add("중소기업");
     tags.add("매출5억이상");
   } else if (p.businessType?.includes("법인")) {
@@ -122,8 +130,13 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   }
   // 직원수 판정 (중진공 비제조업 5명↓ 제한 규칙용)
   if (p.employees) {
-    tags.add(`직원:${p.employees.replace(/\s/g, "")}`);
-    if (p.employees.includes("0명") || p.employees.includes("5명")) tags.add("소규모직원");
+    const empNoSpace = p.employees.replace(/\s/g, "");
+    tags.add(`직원:${empNoSpace}`);
+    // 소규모직원 = 0명 또는 '5명 이하'(1~5명). '5명 이상'·'50명 이상'·'300명 이상'은 제외.
+    //  ★ "50명이상"에도 "0명" substring이 있으므로 정확 일치(===)로 판정.
+    if (empNoSpace === "0명" || empNoSpace.includes("5명이하")) {
+      tags.add("소규모직원");
+    }
   }
   // 경기도 소재 → 경기 태그 (경기신용보증재단 매칭용)
   if (p.region?.includes("경기")) tags.add("경기");
@@ -310,7 +323,8 @@ export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
       } else {
         score += 3;
         reasons.push("매출 5억원 이상 → 사업 규모를 보는 신용보증기금(신보) 보증이 유리합니다");
-        if (tags.has("직원:10명이상")) reasons.push("직원 규모가 커 신보 심사에 유리합니다");
+        if (tags.has("직원:50명이상") || tags.has("직원:300명이상") || tags.has("직원:10명이상"))
+          reasons.push("직원 규모가 커 신보 심사에 유리합니다");
       }
     }
 

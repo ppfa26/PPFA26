@@ -59,7 +59,8 @@ export function computeSupportStatus(p: DiagnosisProfile): Record<string, Suppor
   const isManufacturing = inds.some((s) => s.includes("제조"));
   const isExportInd = inds.some((s) => s.includes("수출"));
   const rev = String(p.revenue || "").replace(/\s/g, "");
-  const isSmallBizPotential = !rev.includes("5억이상"); // 5억 이상만 소상공인 예정대상 제외
+  // 소상공인 예정대상: 매출 10억 이상만 제외(그 이상은 소상공인 매출요건 초과가 확실)
+  const isSmallBizPotential = !rev.includes("10억이상");
   const emp = String(p.employees || "").replace(/\s/g, "");
   const hasEmployees = Boolean(p.employees) && emp !== "0명";
 
@@ -73,8 +74,8 @@ export function computeSupportStatus(p: DiagnosisProfile): Record<string, Suppor
     employment: !hasEmployees, // 아직 직원 없음 → 채용 시 대상
     // 청년일자리도약장려금: 5인 이상이 요건 → 직원 없거나 '5명 이하'(5인 미만 가능)면
     //  '청년 채용·규모 확대 시 대상'으로 예정 안내 (eligible은 6인 이상 확실할 때만)
-    "youth-leap": !hasEmployees || emp.includes("5명"),
-    duru: !hasEmployees || emp.includes("5명") || emp.includes("10명이하"),
+    "youth-leap": !hasEmployees || emp.includes("5명이하"),
+    duru: !hasEmployees || emp.includes("5명이하") || emp.includes("5명이상"),
     "export-voucher": isExportInd, // 수출업 업종일 때만 (억지 매칭 금지)
     "innovation-voucher": isManufacturing, // 제조업일 때만
     "sbiz-voucher": isSmallBizPotential, // 5억 이상 아니면 예정대상
@@ -100,25 +101,26 @@ export function computeSupportEligibility(p: DiagnosisProfile): Record<string, b
   // 수출바우처는 '업종=수출업'인 경우에만 신청 대상으로 본다.
   //  (음식점 등 비수출 업종에 수출바우처가 뜨던 오매칭 수정)
   const isExport = inds.some((s) => s.includes("수출"));
-  // 두루누리: 직원 10명 미만(0명 제외) — "5명 이하" 또는 "10명 이하"
-  const isDuruEligible = hasEmployees && (emp.includes("5명") || emp.includes("10명이하"));
+  // 두루누리: 직원 10명 미만(0명 제외) — 진단 구간 "5명 이하"(1~5명)가 확실히 해당.
+  //   "5명 이상"(5~50)은 10명 초과일 수 있어 불확실 → 확정 대상에서는 제외.
+  const isDuruEligible = hasEmployees && emp.includes("5명이하");
   // 소상공인 경영안정 바우처(팩트체크 반영):
   //   공식 요건(소상공인24 2026 공고): 직전년도 연 매출액 "1억 400만원 미만"(0원 초과).
-  //   진단 매출 옵션은 [매출 없음 / 1억 미만 / 5억 미만 / 5억 이상] 4구간이므로,
-  //    · "1억 미만"만 1억 400만원 미만에 '확실히' 들어감 → eligible(✅)
-  //    · "5억 미만"(1억 400만~5억일 수 있음)은 불확실 → eligible로 단정하지 않고
-  //      potentialRule에서 '매출 요건 충족 시 대상'으로만 안내 (과대추천 방지)
+  //   진단 매출 옵션(2026 개정): [매출 없음 / 2억 미만 / 10억 미만 / 10억 이상 / 기타]
+  //    · "2억 미만"(0~2억)은 대부분 소상공인 매출 요건에 들어가므로 eligible(✅)로 안내
+  //      (정확한 상한은 신청 단계에서 확인 → potentialRule에도 매출요건 문구 병행)
   //    · "매출 없음"은 0원 초과 요건 미달 → 대상 아님
-  const isSmallBiz = rev.includes("1억미만");
+  //    · "10억 미만"·"10억 이상"·"기타"는 소상공인 매출 요건 초과 가능성 커 확정 제외
+  const isSmallBiz = rev.includes("2억미만");
   // ── 청년일자리도약장려금(팩트체크 반영) ──
   //   공식 요건(고용노동부 2025 지침): 피보험자수 "5인 이상" 우선지원대상기업이
   //   만 15~34세 취업애로청년을 정규직으로 채용해야 신청 가능.
-  //   진단 직원수 옵션: 0명 / 5명 이하 / 10명 이하 / 10명 이상
-  //    → "10명 이하"(6~10명)·"10명 이상"만 5인 이상이 확실 → eligible.
+  //   진단 직원수 옵션(2026 개정): 0명 / 5명 이하 / 5명 이상 / 50명 이상 / 300명 이상 / 기타
+  //    → "5명 이상"·"50명 이상"·"300명 이상"은 5인 이상이 확실 → eligible.
   //    → "5명 이하"(1~5명)는 5인 이상 여부가 불확실하므로 eligible로 단정하지 않음
   //      (potentialRule에서 '채용·규모 확대 시 대상'으로 안내).
   const isYouthLeapEligible =
-    hasEmployees && (emp.includes("10명이하") || emp.includes("10명이상"));
+    hasEmployees && (emp.includes("5명이상") || emp.includes("50명이상") || emp.includes("300명이상"));
   return {
     employment: hasEmployees,
     "export-voucher": isExport,
@@ -349,8 +351,15 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   const industryVal = ind0 || "";
 
   const revMapWon: Record<string, number> = {
+    // ── 현재 진단 구간(2026 개정) ──
+    "매출 없음": 0, "매출없음": 0,
+    "2억 미만": 100000000, "2억미만": 100000000,
+    "10억 미만": 500000000, "10억미만": 500000000,
+    "10억 이상": 1000000000, "10억이상": 1000000000,
+    // "기타"는 매핑하지 않음 → revenueVal=undefined 로 두어 매출 조건 판정을 보류
+    // ── 과거 구간(하위호환) ──
     "5억 이상": 500000000, "5억미만": 300000000, "5억 미만": 300000000,
-    "1억 미만": 50000000, "1억미만": 50000000, "매출 없음": 0, "매출없음": 0,
+    "1억 미만": 50000000, "1억미만": 50000000,
   };
   const revStr = (p.revenue as string | undefined)?.trim?.() || (p.revenue as string | undefined);
   const revenueVal = revStr ? revMapWon[revStr] : undefined;
@@ -362,22 +371,23 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   const yearsStr = (p.years as string | undefined)?.trim?.() || (p.years as string | undefined);
   const yearsVal = yearsStr ? yMapNum[yearsStr] : undefined;
 
-  // ⚠️ 직원수 판정 버그 수정:
-  //    옵션이 ["0명","5명 이하","10명 이하","10명 이상"]인데
-  //    "10명 이상".includes("0명")도 true라서 과거엔 empCount=0으로 오판 →
-  //    중진공·고용지원금 누락. 구체적인 값부터(긴 문자열) 순서대로 검사한다.
-  //    ["0명","5명 이하","10명 이하","10명 이상"] → 대표 인원수로 환산.
-  //    소상공인 경계(비제조 5명·제조 10명)에서 오판이 없도록 구간 중앙값을 쓴다.
-  //    · "5명 이하" → 3명(비제조 소상공인 유지: 5명 미만)
-  //    · "10명 이하" → 7명(비제조는 sme로, 제조는 소상공인 유지: 10명 미만)
-  //    · "10명 이상" → 12명(양쪽 다 sme)
+  // ⚠️ 직원수 판정 (2026 개정 라벨) — "0명" substring 오판 방지가 핵심.
+  //    옵션: ["0명","5명 이하","5명 이상","50명 이상","300명 이상","기타"]
+  //    "50명 이상"·"300명 이상"에도 문자열 "0명"이 들어 있으므로,
+  //    반드시 큰 규모부터(긴/큰 값 우선) 순서대로 검사한다.
+  //    → 대표 인원수로 환산(구간 대략값):
+  //      · "300명 이상" → 300  · "50명 이상" → 50  · "5명 이상" → 7(5명 초과)
+  //      · "5명 이하" → 3      · "0명" → 0          · "기타" → 미판정(undefined)
   let empCount: number | undefined;
   if (p.employees) {
-    const e = p.employees;
-    if (e.includes("10명 이상") || e.includes("10명이상")) empCount = 12;
-    else if (e.includes("10명")) empCount = 7;       // "10명 이하"
-    else if (e.includes("5명")) empCount = 3;        // "5명 이하"
-    else if (e.includes("0명")) empCount = 0;        // "0명"
+    const e = p.employees.replace(/\s/g, "");
+    if (e.includes("300명이상")) empCount = 300;
+    else if (e.includes("50명이상")) empCount = 50;
+    else if (e.includes("10명이상")) empCount = 12; // 과거 라벨 하위호환
+    else if (e.includes("10명이하")) empCount = 7;  // 과거 라벨 하위호환
+    else if (e.includes("5명이상")) empCount = 7;
+    else if (e.includes("5명이하")) empCount = 3;
+    else if (e === "0명") empCount = 0;
   }
 
   let bizVal: "personal" | "corp" | undefined;

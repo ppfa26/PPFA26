@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -34,8 +34,8 @@ import {
 //  한 글자도 안 써지는 버그가 생깁니다. 그래서 밖으로 빼서 고정시킵니다.
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="mb-6">
-      <p className="mb-2 font-bold text-brand-dark">{label}</p>
+    <div className="mb-4 sm:mb-5">
+      <p className="mb-2 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{label}</p>
       {children}
     </div>
   );
@@ -57,8 +57,8 @@ function GroupBox({
       ? "border-brand-green/30 bg-brand-green/5"
       : "border-gray-200 bg-gray-50/70";
   return (
-    <div className={`mb-5 rounded-2xl border p-4 sm:p-5 ${toneCls}`}>
-      <p className="mb-4 break-keep text-sm font-extrabold text-brand-dark">{title}</p>
+    <div className={`mb-4 rounded-2xl border p-3.5 sm:p-5 ${toneCls}`}>
+      <p className="mb-3 break-keep text-sm font-extrabold text-brand-dark sm:mb-4">{title}</p>
       <div className="[&>*:last-child]:mb-0">{children}</div>
     </div>
   );
@@ -106,6 +106,14 @@ export default function Diagnosis() {
       setBnoLoading(false);
     }
   };
+
+  // ★ 대표님 요청 ★ 단계가 바뀌면 화면을 맨 위로 올려줘서,
+  //   고객이 스크롤을 직접 올리지 않아도 새 질문 상단부터 시작되게 한다.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [step]);
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
   const toggle = (k: string, v: string) =>
@@ -170,7 +178,7 @@ export default function Diagnosis() {
         <button
           key={o}
           onClick={() => set(k, o)}
-          className={`rounded-full border px-4 py-2 text-sm font-semibold transition hover:scale-[1.03] ${
+          className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition hover:scale-[1.03] sm:px-4 sm:py-2 ${
             form[k] === o
               ? "border-brand-orange bg-brand-grad text-brand-dark"
               : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
@@ -187,7 +195,7 @@ export default function Diagnosis() {
         <button
           key={o}
           onClick={() => toggle(k, o)}
-          className={`rounded-full border px-4 py-2 text-sm font-semibold transition hover:scale-[1.03] ${
+          className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition hover:scale-[1.03] sm:px-4 sm:py-2 ${
             (form[k] || []).includes(o)
               ? "border-brand-orange bg-brand-grad text-brand-dark"
               : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
@@ -243,9 +251,9 @@ export default function Diagnosis() {
           </div>
 
           {step === 1 && (
-            <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-1.5 text-xl font-extrabold text-brand-dark">{STEP1_TITLE}</h1>
-              <p className="mb-5 break-keep text-sm leading-relaxed text-brand-gray">{STEP1_SUBTITLE}</p>
+            <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
+              <h1 className="mb-1 text-lg font-extrabold text-brand-dark sm:text-xl">{STEP1_TITLE}</h1>
+              <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP1_SUBTITLE}</p>
 
               {/* 사업자번호 자동 조회 (국세청 연동) */}
               <div className="mb-6 overflow-hidden rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4">
@@ -330,6 +338,30 @@ export default function Diagnosis() {
                   />
                 </Field>
               </GroupBox>
+
+              {/* ★ 대표님 요청 ★ 신청 결격사유 확인을 1단계 성함 아래로 이동.
+                  어렵게 다 작성했는데 결격사유면 신청도 못 하므로, 처음에 먼저 확인.
+                  (회생·파산 / 세금 체납 — 승인 자체가 막히는 핵심 항목만) */}
+              <div className="mb-5 rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4 sm:p-5">
+                <p className="mb-3 break-keep text-sm font-extrabold text-brand-red">
+                  ⚠️ 신청 결격사유 확인 (해당 시 승인이 어려워 먼저 확인드립니다)
+                </p>
+                <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
+                <div className="mb-0">
+                  <p className="mb-2 font-bold text-brand-dark">{STEP3_FIELDS.taxDelinquent.label}</p>
+                  <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} />
+                </div>
+                {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
+                {form.businessType === "법인사업자" && (
+                  <div className="mt-5">
+                    <p className="mb-1 font-bold text-brand-dark">{STEP3_FIELDS.capitalImpairment.label}</p>
+                    <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                      {STEP3_FIELDS.capitalImpairment.hint}
+                    </p>
+                    <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
+                  </div>
+                )}
+              </div>
 
               {/* 사업장 정보 — 문맥별 한 박스로 묶어 깔끔하게 (유형→업종→업력→매출→연령→지역 자연스러운 순서) */}
               <GroupBox title={STEP1_GROUP}>
@@ -431,37 +463,20 @@ export default function Diagnosis() {
                   <br />
                   해당 없으면 &lsquo;아니요&rsquo;를 선택하시면 됩니다.
                 </p>
+                {/* ★ 대표님 요청: 질문 글자수가 긴 것부터 위 → 아래로 배치(읽기 편하게) ★ */}
                 <CondQ k="revenueGrowth2y" field={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y} />
+                <CondQ k="wantsRefinance" field={STEP3_CONDITIONAL_FIELDS.wantsRefinance} />
+                <CondQ k="govSelected" field={STEP3_CONDITIONAL_FIELDS.govSelected} />
+                <CondQ k="smartDevice" field={STEP3_CONDITIONAL_FIELDS.smartDevice} />
+                <CondQ k="reFounder" field={STEP3_CONDITIONAL_FIELDS.reFounder} />
+                <CondQ k="privateInvestment" field={STEP3_CONDITIONAL_FIELDS.privateInvestment} />
                 {/* 스마트공장은 제조업일 때만 노출 */}
                 {(form.industries || []).includes("제조업") && (
                   <CondQ k="smartFactory" field={STEP3_CONDITIONAL_FIELDS.smartFactory} />
                 )}
-                <CondQ k="smartDevice" field={STEP3_CONDITIONAL_FIELDS.smartDevice} />
-                <CondQ k="govSelected" field={STEP3_CONDITIONAL_FIELDS.govSelected} />
                 <CondQ k="policyFundGood" field={STEP3_CONDITIONAL_FIELDS.policyFundGood} />
-                <CondQ k="reFounder" field={STEP3_CONDITIONAL_FIELDS.reFounder} />
-                <CondQ k="wantsRefinance" field={STEP3_CONDITIONAL_FIELDS.wantsRefinance} />
-                <CondQ k="privateInvestment" field={STEP3_CONDITIONAL_FIELDS.privateInvestment} />
               </div>
-
-              {/* ── 신청 결격사유 (결제 차단 판정) — 한 블록으로 묶어 안내 ── */}
-              <div className="mb-2 rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4 sm:p-5">
-                <p className="mb-3 break-keep text-sm font-extrabold text-brand-red">
-                  ⚠️ 신청 결격사유 확인 (해당 시 승인이 어려워 정확히 안내드립니다)
-                </p>
-                <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
-                <Field label={STEP3_FIELDS.taxDelinquent.label}><Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} /></Field>
-                {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
-                {form.businessType === "법인사업자" && (
-                  <div className="mb-1">
-                    <p className="mb-1 font-bold text-brand-dark">{STEP3_FIELDS.capitalImpairment.label}</p>
-                    <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
-                      {STEP3_FIELDS.capitalImpairment.hint}
-                    </p>
-                    <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
-                  </div>
-                )}
-              </div>
+              {/* ※ 결격사유(회생·파산/세금체납/자본잠식) 확인은 1단계로 이동했습니다(대표님 요청). */}
             </div>
           )}
 
@@ -481,9 +496,6 @@ export default function Diagnosis() {
               <p className="mt-3 break-keep text-xs leading-relaxed text-brand-gray sm:text-[13px]">
                 조회하신 결과는 <b className="text-brand-dark">결제 후 1개월간</b> 언제든
                 계속적으로 열람하실 수 있습니다.
-              </p>
-              <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/40">
-                — 출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
               </p>
             </div>
           )}
