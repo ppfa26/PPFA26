@@ -376,14 +376,14 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                   </p>
                 )}
 
-                {/* 신청하러 가기 링크 — 결제 전에는 클릭 차단(잠금) */}
+                {/* 신청하러 가기 버튼(포인트 박스) — 결제 전에는 클릭 차단(잠금) */}
                 <a
                   href={previewLock ? undefined : b.applyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`mt-2 inline-flex items-center gap-1 break-keep text-[11px] font-bold text-brand-orange ${lockClick}`}
+                  className={`mt-3 flex w-full items-center justify-center gap-1 break-keep rounded-xl bg-brand-orange px-4 py-3 text-center text-xs font-bold text-white shadow-[0_2px_8px_rgba(255,140,0,0.4)] transition hover:opacity-90 ${lockClick}`}
                 >
-                  {b.applyName}에서 신청하러 가기 →
+                  🔗 {b.applyName}에서 신청하러 가기 →
                 </a>
               </div>
             );
