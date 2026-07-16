@@ -378,7 +378,7 @@ export default function Page() {
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/diagnosis"
-              className="btn-brand w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
+              className="btn-red w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
             >
               무료 진단 시작하기
             </Link>
@@ -386,7 +386,7 @@ export default function Page() {
               href="http://pf.kakao.com/_VxfWxan/chat"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full rounded-full bg-brand-yellow px-8 py-3 text-sm font-bold text-brand-dark hover:brightness-95 sm:w-auto"
+              className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-bold text-white hover:bg-white/10 sm:w-auto"
             >
               💬 카카오톡 상담
             </a>

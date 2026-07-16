@@ -88,7 +88,7 @@ export default function DashboardPage() {
                 href="https://open.kakao.com/o/gvjec0Di"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border-2 border-brand-dark bg-white px-7 py-3 font-bold text-brand-dark hover:bg-gray-50"
+                className="btn-red rounded-full px-7 py-3 font-bold hover:opacity-95"
               >
                 👥 이용자 단톡방 참여하기
               </a>

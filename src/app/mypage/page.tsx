@@ -166,7 +166,7 @@ export default function MyPage() {
                     </p>
                     <Link
                       href="/dashboard"
-                      className="btn-brand mt-4 inline-block rounded-full px-8 py-3"
+                      className="btn-red mt-4 inline-block rounded-full px-8 py-3"
                     >
                       대시보드에서 전체 결과 확인하기
                     </Link>
