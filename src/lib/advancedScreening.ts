@@ -770,12 +770,12 @@ export type ProductLink = {
 };
 
 export const INSTITUTION_PRODUCT_LINKS: ProductLink[] = [
+  { label: "소상공인시장진흥공단 상품 바로보기", url: "https://ols.semas.or.kr/ols/man/SMAN018M/page.do" },
+  { label: "중소벤처기업진흥공단 상품 바로보기", url: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI001M0.do" },
   { label: "신용보증기금 상품 바로보기", url: "/manuals/kodit-product-2026.pdf" },
   { label: "기술보증기금 상품 바로보기", url: "/manuals/kibo-product-2026.pdf" },
   { label: "신용보증재단 상품 바로보기", url: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124" },
   { label: "무역보험공사 상품 바로보기", url: "https://www.ksure.or.kr/rh-kr/cntnts/i-104/web.do" },
-  { label: "중소벤처기업 상품 바로보기", url: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI001M0.do" },
-  { label: "소상공인시장진흥공단 상품 바로보기", url: "https://ols.semas.or.kr/ols/man/SMAN018M/page.do" },
 ];
 
 export const INSTITUTION_LINKS: InstitutionLink[] = [
@@ -818,7 +818,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   },
   {
     match: "기술보증기금",
-    siteUrl: "https://www.kibo.or.kr",
+    siteUrl: "https://www.kibo.or.kr/portal",
     siteLabel: "기술보증기금 사이트",
     pdfUrl: "https://www.kibo.or.kr/main/board/boardType08.do",
     pdfLabel: "보증상품 안내자료 확인하기",
@@ -964,7 +964,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   },
   {
     match: "중소벤처기업진흥공단",
-    siteUrl: "https://www.kosmes.or.kr",
+    siteUrl: "https://digital.kosmes.or.kr/dh/map/main.do?",
     siteLabel: "중소벤처기업진흥공단 사이트",
     pdfUrl: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI001M0.do",
     pdfLabel: "정책자금 상품안내 확인하기",
