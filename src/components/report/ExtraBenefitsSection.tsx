@@ -255,7 +255,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
           🎁 대표님이 챙기면 좋은 추가 감면 혜택
         </p>
         <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          정책자금 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 혜택입니다.
+          지원제도 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 감면 혜택입니다.
           데드라인이 지나면 <b className="text-brand-red">영구히 못 받는</b> 항목도 있으니 꼭 확인하세요.
         </p>
 
@@ -393,7 +393,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
         {/* 하단 하이라이트 — 카드 안 소형 배너 */}
         <div className="mt-4 rounded-xl bg-brand-yellow/30 px-4 py-3 text-center">
           <p className="break-keep text-sm font-black leading-snug text-brand-dark">
-            💡 이 순서만 지키면 첫 해 평균 <span className="whitespace-nowrap">1,000만원+ 절감</span> 가능
+            💡 요건에 맞게 챙기면 첫 해 <span className="whitespace-nowrap">수십만~수백만원 절감</span> 가능
           </p>
           <p className="mt-1 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
             <span className="whitespace-nowrap">놓친 항목 있으면 지금이라도 신청하세요.</span>{" "}

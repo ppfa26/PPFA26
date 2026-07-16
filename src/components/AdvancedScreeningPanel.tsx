@@ -879,7 +879,7 @@ function AdvancedResult({
             🎁 대표님이 신청할 수 있는 정부지원제도
           </p>
           <p className="mt-1 break-keep text-xs text-brand-dark/60">
-            정책자금(대출·보증)과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
+            정책자금과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
             <b className="text-brand-green"> ✅ 지금 신청 대상</b>과
             <b className="text-brand-dark/70"> 🔜 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
             카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
@@ -972,7 +972,7 @@ function AdvancedResult({
           🏦 대표님이 이용할 수 있는 정책금융기관
         </p>
         <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          업종·직원수 등 대표님 조건을 기준으로 실제 신청 자격이 열리는 정책금융기관입니다.
+          업종·직원수 등 대표님 사업장 조건을 맞춤으로 실제 신청하실 수 있는 상품 안내입니다.
         </p>
         <div className="mt-4 divide-y divide-gray-200">
           {creditMatches.map((m, i) => {
