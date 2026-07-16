@@ -223,7 +223,7 @@ function SuccessInner() {
               💬 1:1 채팅 상담 열기
             </a>
             <p className="mt-3 break-keep text-xs leading-relaxed text-brand-gray">
-              궁금한 점은 카카오톡으로 실시간 문의하세요. (안내·추천 전용 · 대행 없음)
+              궁금한 점은 카카오톡으로 실시간 문의하세요.
             </p>
           </>
         )}
