@@ -244,14 +244,14 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                아직 몰라서 못 받고 있는 <span className="text-brand-red">정부지원사업</span>
+                아직 몰라서 못 받고 있는 정부지원사업
               </Editable>
               <Editable
                 id="home-compare-sub"
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
               >
-                내 사업장이 받을 수 있는 <b className="text-brand-red">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
+                내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
               </Editable>
             </div>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -288,7 +288,7 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                AI가 내 사업장 맞춤 <span className="text-brand-red">정부지원사업</span>을 한 번에
+                AI가 내 사업장 맞춤 정부지원사업을 한 번에
               </Editable>
               <Editable
                 id="home-sample-sub"
@@ -502,7 +502,7 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                AI <span className="text-brand-red">올인원</span> 패키지
+                AI 올인원 패키지
               </Editable>
               <Editable
                 id="home-pricing-sub"
