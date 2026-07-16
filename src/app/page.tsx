@@ -8,7 +8,7 @@ import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
-import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
+import { BETA_FREE } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 자동 크롤링" },
@@ -122,24 +122,21 @@ export default function Home() {
           className="relative overflow-hidden px-4 pb-5 pt-6 sm:pb-9 sm:pt-12"
         >
           <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-5 py-8 text-center animate-fadeUp sm:px-10 sm:py-12">
-            {/* ── 오픈 베타(무료기간) 강조 배너 ── */}
-            {BETA_FREE && (
-              <div className="mb-4 inline-flex flex-col items-center gap-1 rounded-2xl border-2 border-brand-green bg-brand-green/10 px-5 py-2.5 sm:flex-row sm:gap-2">
-                <span className="break-keep text-sm font-extrabold text-brand-green sm:text-base">
-                  🎉 오픈 베타 무료기간
+            {/* 상단 배지 — 기존 노란 배지 + (베타 기간) 작은 무료 안내만 옆에 */}
+            <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
+              <Editable
+                id="hero-badge"
+                as="div"
+                className="inline-block rounded-full bg-brand-yellow px-5 py-2 text-sm font-bold text-brand-dark sm:text-base"
+              >
+                정부지원사업 AI 통합 매칭 플랫폼
+              </Editable>
+              {BETA_FREE && (
+                <span className="inline-block rounded-full border border-brand-dark/10 bg-white/70 px-3 py-1.5 text-xs font-semibold text-brand-dark/60">
+                  무료 베타 오픈중
                 </span>
-                <span className="break-keep text-xs font-semibold text-brand-dark/70 sm:text-sm">
-                  정식 오픈가 {OFFICIAL_PRICE_LABEL} → 지금은 전부 무료
-                </span>
-              </div>
-            )}
-            <Editable
-              id="hero-badge"
-              as="div"
-              className="mb-5 inline-block rounded-full bg-brand-yellow px-5 py-2 text-sm font-bold text-brand-dark sm:text-base"
-            >
-              정부지원사업 AI 통합 매칭 플랫폼
-            </Editable>
+              )}
+            </div>
             <Editable
               id="hero-headline-v2"
               as="h1"
@@ -617,19 +614,16 @@ export default function Home() {
                   무료 진단 시작하기
                 </span>
               </a>
-              {/* 오른쪽 — 카카오톡 1:1 채팅 문의 (보조 버튼, 가로 알약형) */}
+              {/* 오른쪽 — 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인 고스트) */}
               <a
                 id="home-cta-kakao"
                 href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-[#FEE500] px-7 py-4 shadow-card transition hover:brightness-95"
+                className="group inline-flex items-center justify-center gap-2 rounded-full border border-brand-dark/15 bg-white/60 px-7 py-4 backdrop-blur-sm transition hover:bg-white/80"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-dark/10 text-lg">
-                  💬
-                </span>
                 <span className="break-keep text-base font-extrabold text-brand-dark">
-                  1:1 카톡 문의하기
+                  💬 1:1 채널톡 상담하기
                 </span>
               </a>
             </div>

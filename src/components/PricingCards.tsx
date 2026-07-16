@@ -104,7 +104,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                   : "btn-brand"
               }`}
             >
-              {BETA_FREE ? "지금 무료로 시작하기" : tier.cta}
+              {BETA_FREE ? "오픈 베타기간 무료로 시작하기" : tier.cta}
             </Link>
           </div>
         ))}

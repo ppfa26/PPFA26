@@ -388,7 +388,7 @@ export default function Page() {
               rel="noopener noreferrer"
               className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-bold text-white hover:bg-white/10 sm:w-auto"
             >
-              💬 카카오톡 상담
+              💬 1:1 채널톡 상담하기
             </a>
           </div>
         </section>

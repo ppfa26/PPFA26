@@ -12,7 +12,7 @@ import {
   PAYMENT_BLOCK_TEXT,
   type PaymentBlockReason,
 } from "@/lib/diagnosisConfig";
-import { BETA_FREE, OFFICIAL_PRICE_LABEL, OPEN_ALERT_URL } from "@/lib/betaConfig";
+import { BETA_FREE } from "@/lib/betaConfig";
 
 export default function MatchingPreview() {
   const [name, setName] = useState("");
@@ -121,7 +121,7 @@ export default function MatchingPreview() {
     <PageShell pageKey="matching-preview">
       <Header />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게 */}
-      <main className={`px-4 pt-8 ${adminView ? "pb-16" : "pb-40"}`}>
+      <main className={`px-4 pt-8 ${adminView || BETA_FREE ? "pb-16" : "pb-40"}`}>
         <div className="mx-auto max-w-3xl">
           {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ── */}
           {adminView && (
@@ -243,19 +243,11 @@ export default function MatchingPreview() {
             </div>
           </div>
 
-          {/* ── 오픈 베타(무료) 안내 박스 ──
-               베타 기간에는 결제 없이 전체 결과가 무료 공개되므로,
-               '지금 결제' 유도 대신 '오픈 베타 무료'를 안내한다. */}
+          {/* ── 오픈 베타(무료) 안내 — 큰 박스 대신 작은 한 줄 안내만 ── */}
           {!adminView && BETA_FREE && (
-          <div className="mt-6 rounded-2xl border-2 border-brand-green bg-gradient-to-br from-brand-green/10 to-white p-4 text-center shadow-[0_8px_28px_rgba(16,185,129,0.15)] sm:p-5">
-            <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-              🎉 오픈 베타 기간 — 아래 <span className="text-brand-green">{total}개</span> 항목이 모두 무료로 공개됩니다
-            </p>
-            <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
-              정식 오픈가 <b className="text-brand-dark">{OFFICIAL_PRICE_LABEL}</b>{"\u00A0"}
-              → 지금은 오픈 기념 <b className="text-brand-green">무료</b>로 전부 보실 수 있어요.
-            </p>
-          </div>
+          <p className="mt-5 break-keep text-center text-xs text-brand-gray sm:text-sm">
+            🎉 <b className="text-brand-dark">무료 베타 오픈중</b> — 아래 {total}개 항목이 모두 무료로 공개됩니다.
+          </p>
           )}
 
           {/* ── 중간 결제 유도 박스 (정식 유료 모드 전용) ──
@@ -290,7 +282,7 @@ export default function MatchingPreview() {
           {!adminView && BETA_FREE && (
           <p className="mt-6 break-keep text-center text-xs text-brand-gray">
             👇 아래는 대표님 사업장을 위해 분석된 <b>실제 결과 화면</b>입니다.
-            오픈 베타 기간이라 <b className="text-brand-green">기관명·상품명·신청 방법까지 전부 무료 공개</b>됩니다.
+            <b className="text-brand-dark"> 기관명·상품명·신청 방법까지 전부 공개</b>됩니다.
           </p>
           )}
           <div className="relative mt-3 overflow-hidden rounded-2xl border border-gray-200 bg-white">
@@ -323,29 +315,11 @@ export default function MatchingPreview() {
             <AdvancedScreeningPanel autoRun previewLock={!adminView && !BETA_FREE} />
           </div>
 
-          {/* ── 오픈 베타(무료) 안내 + 정식 오픈 알림 받기 (최하단) ── */}
+          {/* ── 오픈 베타(무료) 안내 — 최하단 작은 한 줄만 (알림 버튼 제거) ── */}
           {!adminView && BETA_FREE && (
-          <div className="mt-8 rounded-2xl border-2 border-brand-green bg-white p-4 text-center shadow-[0_8px_28px_rgba(0,0,0,0.12)] sm:p-5">
-            <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-              🎉 지금 보신 모든 내용이 오픈 베타 무료입니다
-            </p>
-            <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
-              정식 오픈 시 <b className="text-brand-dark">{OFFICIAL_PRICE_LABEL}</b>로 전환될 예정입니다.
-              <br />
-              정식 오픈 소식과 추가 혜택을 가장 먼저 받아보세요.
-            </p>
-            <a
-              href={OPEN_ALERT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
-            >
-              🔔 정식 오픈 알림 받기 (카톡 1:1)
-            </a>
-            <p className="mt-2.5 break-keep text-[11px] text-brand-dark/50">
-              ⚠️ 안내·추천 서비스 · 승인 보장 없음
-            </p>
-          </div>
+          <p className="mt-8 break-keep text-center text-xs text-brand-dark/50">
+            🎉 지금 보신 모든 내용이 무료 베타 오픈 기간 혜택입니다 · 안내·추천 서비스 · 승인 보장 없음
+          </p>
           )}
 
           {/* ── 결제 유도 박스 (최하단, 정식 유료 모드 전용) ── */}
@@ -387,24 +361,7 @@ export default function MatchingPreview() {
         </div>
       </main>
 
-      {/* ── 오픈 베타(무료) 하단 고정 바 ── */}
-      {!adminView && BETA_FREE && (
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-brand-green bg-white/97 px-4 py-3 shadow-[0_-6px_24px_rgba(16,185,129,0.2)] backdrop-blur">
-        <div className="mx-auto max-w-3xl">
-          <p className="break-keep text-center text-sm font-extrabold text-brand-dark sm:text-base">
-            🎉 오픈 베타 기간 — 전체 결과 무료 공개 중
-          </p>
-          <a
-            href={OPEN_ALERT_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-brand mt-2 block w-full rounded-full py-3 text-center text-sm font-bold sm:text-base"
-          >
-            🔔 정식 오픈 알림 받기 (카톡 1:1)
-          </a>
-        </div>
-      </div>
-      )}
+      {/* 오픈 베타(무료) 기간에는 하단 고정 바 없이 깔끔하게 둔다. */}
 
       {/* ── 스크롤을 따라다니는 하단 고정(sticky) 결제 유도 박스 (정식 유료 모드 전용) ──
            스크린샷의 오렌지 결제 유도 박스를 그대로 하단에 고정 → 스크롤 내내 결제 유도

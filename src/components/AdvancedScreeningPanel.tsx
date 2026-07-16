@@ -995,7 +995,7 @@ function AdvancedResult({
             return (
               <div
                 key={i}
-                className="py-3 first:pt-0"
+                className="border-t border-brand-dark/10 py-4 first:border-t-0 first:pt-0"
               >
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
@@ -1249,7 +1249,7 @@ function AdvancedResult({
 
         {/* 신청 → 실행 진행 절차·소요기간 안내 — 같은 맥락이라 정책금융기관 박스 '안'으로 통합 (대표님 요청, 구분선으로 구획) */}
         {(hasDae || hasDirect) && (
-          <div className="mt-5 border-t border-dashed border-brand-dark/15 pt-5">
+          <div className="mt-4 border-t border-brand-dark/10 pt-4">
             <p className="text-base font-extrabold text-brand-dark sm:text-lg">
               🗓️ 신청부터 정부지원사업 실행까지 예상 소요기간
             </p>

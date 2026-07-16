@@ -13,14 +13,11 @@ export default function KakaoFloatingButton() {
       href="http://pf.kakao.com/_VxfWxan/chat"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="카카오톡 상담하기"
-      className="group fixed bottom-5 right-5 z-50 flex items-center gap-1.5 rounded-full bg-[#FEE500] px-3.5 py-2.5 shadow-lg ring-1 ring-black/5 transition hover:brightness-95 hover:shadow-xl sm:bottom-7 sm:right-7"
+      aria-label="1:1 채널톡 상담하기"
+      className="group fixed bottom-5 right-5 z-50 flex items-center gap-1.5 rounded-full border border-brand-dark/15 bg-white px-3.5 py-2.5 shadow-lg ring-1 ring-black/5 backdrop-blur-sm transition hover:bg-white/90 hover:shadow-xl sm:bottom-7 sm:right-7"
     >
-      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark/10 text-sm">
-        💬
-      </span>
       <span className="whitespace-nowrap text-[13px] font-extrabold text-brand-dark">
-        1:1 카톡 문의
+        💬 1:1 채널톡 상담하기
       </span>
     </a>
   );
