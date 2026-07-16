@@ -1250,12 +1250,12 @@ function AdvancedResult({
         {(hasDae || hasDirect) && (
           <div className="mt-5 border-t border-dashed border-brand-dark/15 pt-5">
             <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-              🗓️ 신청부터 정부지원사업 실행까지 (예상 소요기간)
+              🗓️ 신청부터 정부지원사업 실행까지 예상 소요기간
             </p>
             {hasDae && (
               <div className="mt-3">
                 <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
-                  대리대출 (보증서 → 은행)
+                  대리대출기관 (보증서 → 은행) (재단/신보/기보/무보)
                 </span>
                 <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
                   신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행 ·{" "}
@@ -1266,7 +1266,7 @@ function AdvancedResult({
             {hasDirect && (
               <div className="mt-2.5">
                 <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                  직접대출 (공단 직접)
+                  직접대출기관 (공단 직접) (소진공/중진공)
                 </span>
                 <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
                   신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
@@ -1275,7 +1275,7 @@ function AdvancedResult({
               </div>
             )}
             <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 ${lockText}`}>
-              ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 및 규모가 큰 건은 방문 실사로 진행됩니다.
+              ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 등 진행 규모가 큰 건은 무조건 방문 실사로 진행됩니다.
             </p>
           </div>
         )}
