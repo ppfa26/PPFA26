@@ -63,13 +63,17 @@ export default function MyPage() {
       }
 
       // 3) 진단 결과 요약 (sessionStorage)
+      //   ★ 관리자 '결과보기'로 심어둔 고객 임시 데이터(_adminLabel 존재)는
+      //      대표님 본인 마이페이지에 섞이면 안 되므로 여기서는 무시한다. ★
       try {
         const raw = sessionStorage.getItem("mpp_diagnosis");
         if (raw) {
           const profile = JSON.parse(raw);
-          setDiagName(profile.name || "");
-          // 대시보드에 실제 안내되는 항목 전부 합산(기관 + 기관별 상품 + 지원제도)
-          setMatchCount(countMatchedItems(profile).total);
+          if (!profile._adminLabel) {
+            setDiagName(profile.name || "");
+            // 대시보드에 실제 안내되는 항목 전부 합산(기관 + 기관별 상품 + 지원제도)
+            setMatchCount(countMatchedItems(profile).total);
+          }
         }
       } catch {
         /* noop */
