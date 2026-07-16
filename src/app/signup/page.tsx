@@ -26,6 +26,8 @@ function SignupInner() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  // 마케팅/홍보 수신 동의 (대표님 요청 — 정식 오픈 시 문자·카톡 안내 발송용)
+  const [marketingAgree, setMarketingAgree] = useState(true);
 
   // 이미 로그인된 경우 이동:
   //  · 결제 진행 중(tier 있음) → 결제 페이지
@@ -91,7 +93,15 @@ function SignupInner() {
           email,
           password,
           options: {
-            data: { name, phone, tier: tier || "", utm_source },
+            data: {
+              name,
+              phone,
+              tier: tier || "",
+              utm_source,
+              // 마케팅 수신 동의 (동의 시각 함께 기록 — 향후 정식 오픈 안내 발송 근거)
+              marketing_agree: marketingAgree,
+              marketing_agree_at: marketingAgree ? new Date().toISOString() : null,
+            },
           },
         });
         if (error) {
@@ -341,6 +351,24 @@ function SignupInner() {
               className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-brand-dark"
             />
           </div>
+
+          {/* 마케팅/홍보 수신 동의 (선택) — 회원가입 시에만 노출 (대표님 요청) */}
+          {mode === "signup" && (
+            <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-gray-200 bg-gray-50/70 px-3.5 py-3">
+              <input
+                type="checkbox"
+                checked={marketingAgree}
+                onChange={(e) => setMarketingAgree(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+              />
+              <span className="break-keep text-xs leading-relaxed text-brand-dark/80">
+                <b className="font-bold text-brand-dark">[선택] 마케팅·홍보 정보 수신 동의</b>
+                <br />
+                정식 오픈 안내, 신규 지원사업·이벤트 소식을 문자·카카오톡·이메일로 받아보실 수 있습니다.
+                (미동의 시에도 서비스 이용에는 제한이 없습니다.)
+              </span>
+            </label>
+          )}
 
           {msg && (
             <p className="rounded-lg bg-gray-50 px-3 py-2 text-center text-sm text-brand-dark">

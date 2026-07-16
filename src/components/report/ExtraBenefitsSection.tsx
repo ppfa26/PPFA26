@@ -35,6 +35,7 @@ type ExtraBenefit = {
   processingTime: string;
   deadline: string;
   warning?: string;
+  benefit?: string; // 이 혜택을 챙기면 무엇을 얻는지 (대표님 요청)
   applyHow?: string; // 신청 방법 (대표님 요청)
   duration?: string; // 승인·반영 소요기간 (대표님 요청)
   excludedIndustries?: string[];
@@ -312,6 +313,14 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 {/* 판정 불가/대상 아님 사유 */}
                 {v.note && (
                   <p className="mt-1 break-keep text-[11px] text-brand-dark/50">ℹ️ {v.note}</p>
+                )}
+
+                {/* 혜택 — 이걸 챙기면 무엇을 얻는지 (대표님 요청) */}
+                {b.benefit && (
+                  <p className="mt-2 break-keep rounded-lg border-l-2 border-brand-orange bg-brand-yellow/15 px-3 py-2 text-[11px] font-semibold leading-relaxed text-brand-dark">
+                    <span className="font-extrabold text-brand-orange">혜택 </span>
+                    {b.benefit}
+                  </p>
                 )}
 
                 {/* 정책자금: 상품 리스트 (있을 때만) */}

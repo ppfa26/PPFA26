@@ -25,6 +25,7 @@ import {
   STEP3_SUBTITLE,
   STEP3_FIELDS,
   STEP3_CONDITIONAL_FIELDS,
+  PHONE_CONSULT_FIELD,
 } from "@/lib/diagnosisConfig";
 
 // ── 순수 레이아웃 컴포넌트(모듈 레벨) ──
@@ -132,9 +133,20 @@ export default function Diagnosis() {
       return { ...f, [k]: arr.includes(v) ? arr.filter((x: string) => x !== v) : [...arr, v] };
     });
 
-  // 다음 단계로 이동 — 1단계에서는 대표자 성함·연락처를 필수로 검증한다.
+  // 다음 단계로 이동 — 1단계에서는 사업자등록번호(필수)·성함·연락처를 검증한다.
   const goNext = () => {
     if (step === 1) {
+      // ★ 대표님 요청 ★ 사업자등록번호 필수 — 없는 사업자는 신청 불가.
+      //   단, '예비창업자'는 아직 사업자번호가 없으므로 예외로 통과시킨다.
+      const isPreStartup = form.businessType === "예비창업자";
+      if (!isPreStartup) {
+        const bnoOk = !!form.bno && bnoResult?.ok && bnoResult?.found;
+        if (!bnoOk) {
+          setContactErr(BNO_TEXT.errorRequired);
+          if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+      }
       const name = (form.name || "").trim();
       const phoneDigits = (form.phone || "").replace(/[^0-9]/g, "");
       if (!name) {
@@ -268,7 +280,8 @@ export default function Diagnosis() {
               {/* 사업자번호 자동 조회 (국세청 연동) — 박스 틀 색상 빨간색으로 통일(대표님 요청) */}
               <div className="mb-6 overflow-hidden rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4">
                 <p className="mb-2 font-bold text-brand-dark">
-                  {BNO_TEXT.title}
+                  {BNO_TEXT.title}{" "}
+                  <span className="text-xs font-bold text-brand-red">{BNO_TEXT.badge}</span>
                 </p>
                 <div className="flex w-full items-center gap-1.5">
                   <input
@@ -319,6 +332,7 @@ export default function Diagnosis() {
                   </div>
                 )}
                 <p className="mt-2 text-xs text-brand-gray">{BNO_TEXT.note}</p>
+                <p className="mt-1 text-xs font-semibold text-brand-red/80">{BNO_TEXT.errorPreStartupHint}</p>
               </div>
 
               {/* 대표자 성함 및 연락처 — 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 · 박스 틀 색상 빨간색으로 통일 */}
@@ -486,6 +500,17 @@ export default function Diagnosis() {
                   <CondQ k="smartFactory" field={STEP3_CONDITIONAL_FIELDS.smartFactory} />
                 )}
                 <CondQ k="policyFundGood" field={STEP3_CONDITIONAL_FIELDS.policyFundGood} />
+              </div>
+
+              {/* ── 전화 상담 희망 여부 (대표님 요청 — 마지막 질문 1개) ── */}
+              <div className="mb-5 rounded-2xl border border-brand-orange/40 bg-brand-orange/5 p-4 sm:p-5">
+                <p className="mb-1 break-keep text-sm font-extrabold leading-snug text-brand-dark">
+                  {PHONE_CONSULT_FIELD.label}
+                </p>
+                <p className="mb-3 break-keep text-xs leading-relaxed text-brand-gray">
+                  {PHONE_CONSULT_FIELD.hint}
+                </p>
+                <Radio k="phoneConsult" opts={PHONE_CONSULT_FIELD.opts} />
               </div>
               {/* ※ 결격사유(회생·파산/세금체납/자본잠식) 확인은 1단계로 이동했습니다(대표님 요청). */}
             </div>
