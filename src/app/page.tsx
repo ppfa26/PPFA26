@@ -8,6 +8,7 @@ import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
+import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 자동 크롤링" },
@@ -121,6 +122,17 @@ export default function Home() {
           className="relative overflow-hidden px-4 pb-5 pt-6 sm:pb-9 sm:pt-12"
         >
           <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-5 py-8 text-center animate-fadeUp sm:px-10 sm:py-12">
+            {/* ── 오픈 베타(무료기간) 강조 배너 ── */}
+            {BETA_FREE && (
+              <div className="mb-4 inline-flex flex-col items-center gap-1 rounded-2xl border-2 border-brand-green bg-brand-green/10 px-5 py-2.5 sm:flex-row sm:gap-2">
+                <span className="break-keep text-sm font-extrabold text-brand-green sm:text-base">
+                  🎉 오픈 베타 무료기간
+                </span>
+                <span className="break-keep text-xs font-semibold text-brand-dark/70 sm:text-sm">
+                  정식 오픈가 {OFFICIAL_PRICE_LABEL} → 지금은 전부 무료
+                </span>
+              </div>
+            )}
             <Editable
               id="hero-badge"
               as="div"

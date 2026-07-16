@@ -74,7 +74,7 @@ export default function Footer() {
         <div className="mt-8 break-keep border-t border-white/10 pt-6 text-[11px] leading-relaxed text-gray-500">
           {/* 모바일: 항목별 줄바꿈 */}
           <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1 sm:hidden">
-            <dt className="shrink-0 text-gray-400">상호</dt>
+            <dt className="shrink-0 text-gray-400">상호명</dt>
             <dd className="text-gray-500">모두의사업친구</dd>
             <dt className="shrink-0 text-gray-400">대표자</dt>
             <dd className="text-gray-500">신주엽</dd>
@@ -84,7 +84,7 @@ export default function Footer() {
             <dd className="text-gray-500">597-12-02897</dd>
             <dt className="shrink-0 text-gray-400">통신판매업신고</dt>
             <dd className="text-gray-500">제2026-인천서해-0109호</dd>
-            <dt className="shrink-0 text-gray-400">전화</dt>
+            <dt className="shrink-0 text-gray-400">대표번호</dt>
             <dd className="text-gray-500">1551-7886</dd>
             <dt className="shrink-0 text-gray-400">문의</dt>
             <dd className="break-all text-gray-500">biospartners@naver.com</dd>
@@ -93,12 +93,12 @@ export default function Footer() {
           {/* PC: 기존 한 줄(가운뎃점) 형태 유지 */}
           <div className="hidden sm:block">
             <p>
-              상호 : 모두의사업친구 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호
+              상호명 : 모두의사업친구 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호
             </p>
             <p className="mt-1">
               사업자등록번호 : 597-12-02897 · 통신판매업신고 : 제2026-인천서해-0109호
             </p>
-            <p className="mt-1">전화 : 1551-7886 · 문의 : biospartners@naver.com</p>
+            <p className="mt-1">대표번호 : 1551-7886 · 문의 : biospartners@naver.com</p>
           </div>
 
           <p className="mt-3 text-gray-600">
