@@ -32,10 +32,18 @@ import {
 //  부모가 리렌더되면서 매번 '새로운 컴포넌트 타입'으로 인식돼 내부 input이
 //  통째로 리마운트됩니다. 그러면 텍스트 입력창(성함·연락처)이 포커스를 잃어
 //  한 글자도 안 써지는 버그가 생깁니다. 그래서 밖으로 빼서 고정시킵니다.
+
+// 라벨 괄호 안 부가설명(예: "(복수 선택 · 없으면 넘어가기)")이 모바일에서
+// "넘어가기)"만 다음 줄로 떨어지는 어색한 줄바꿈을 막습니다.
+// 괄호 안의 일반 공백을 줄바꿈 안 되는 공백(\u00A0)으로 바꿔 괄호를 통째로 유지합니다.
+function keepBrackets(text: string): string {
+  return text.replace(/\(([^)]*)\)/g, (_m, inner) => `(${inner.replace(/ /g, "\u00A0")})`);
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="mb-4 sm:mb-5">
-      <p className="mb-2 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{label}</p>
+      <p className="mb-2 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(label)}</p>
       {children}
     </div>
   );
@@ -230,7 +238,7 @@ export default function Diagnosis() {
   // 조건부 질문(라벨+설명힌트+단일선택) — 소진공 혁신형 상품 정밀 매칭용
   const CondQ = ({ k, field }: { k: string; field: { label: string; hint: string; opts: string[] } }) => (
     <div className="mb-6 last:mb-0">
-      <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{field.label}</p>
+      <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(field.label)}</p>
       <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">{field.hint}</p>
       <Radio k={k} opts={field.opts} />
     </div>
@@ -345,18 +353,19 @@ export default function Diagnosis() {
                   어렵게 다 작성했는데 결격사유면 신청도 못 하므로, 처음에 먼저 확인.
                   (회생·파산 / 세금 체납 — 승인 자체가 막히는 핵심 항목만) */}
               <div className="mb-5 rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4 sm:p-5">
-                <p className="mb-3 break-keep text-sm font-extrabold text-brand-red">
-                  ⚠️ 신청 결격사유 확인 (해당 시 승인이 어려워 먼저 확인드립니다)
+                <p className="mb-3 break-keep text-sm font-extrabold leading-snug text-brand-red">
+                  ⚠️ 신청 결격사유 확인{"\u00A0"}
+                  <span className="font-bold">(해당 시 승인이 어려워 먼저 확인드립니다)</span>
                 </p>
                 <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
                 <div className="mb-0">
-                  <p className="mb-2 font-bold text-brand-dark">{STEP3_FIELDS.taxDelinquent.label}</p>
+                  <p className="mb-2 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.taxDelinquent.label)}</p>
                   <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} />
                 </div>
                 {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
                 {form.businessType === "법인사업자" && (
                   <div className="mt-5">
-                    <p className="mb-1 font-bold text-brand-dark">{STEP3_FIELDS.capitalImpairment.label}</p>
+                    <p className="mb-1 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.capitalImpairment.label)}</p>
                     <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
                       {STEP3_FIELDS.capitalImpairment.hint}
                     </p>
@@ -434,7 +443,7 @@ export default function Diagnosis() {
                 <Field label={STEP2_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
                 {/* 직원수(4대보험 통합) — 힌트 포함 */}
                 <div className="mb-6 last:mb-0">
-                  <p className="mb-1 font-bold text-brand-dark">{STEP2_FIELDS.employees.label}</p>
+                  <p className="mb-1 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP2_FIELDS.employees.label)}</p>
                   <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
                     {STEP2_FIELDS.employees.hint}
                   </p>
