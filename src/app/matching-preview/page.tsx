@@ -322,6 +322,46 @@ export default function MatchingPreview() {
           </p>
           )}
 
+          {/* ── 결과창 맨 하단 CTA — 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
+          <section className="mt-8 px-0 pb-2">
+            <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-8 text-center shadow-card sm:p-10">
+              <Editable
+                id="preview-bottom-cta-title"
+                as="h2"
+                className="break-keep text-xl font-black text-white sm:text-2xl"
+              >
+                더 궁금한 점이 있으신가요?
+              </Editable>
+              <Editable
+                id="preview-bottom-cta-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-md break-keep text-sm leading-relaxed text-gray-300"
+              >
+                진단 결과 해석부터 신청 전략까지, 대표님 사업장에 딱 맞게 안내해 드립니다.
+              </Editable>
+              <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                {/* 왼쪽 — 다시 진단하기 (주 버튼, 빨간색) */}
+                <a
+                  id="preview-bottom-cta-button"
+                  href="/diagnosis"
+                  className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
+                >
+                  다시 진단하기
+                </a>
+                {/* 오른쪽 — 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인) */}
+                <a
+                  id="preview-bottom-cta-kakao"
+                  href="http://pf.kakao.com/_VxfWxan/chat"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3.5 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
+                >
+                  💬 1:1 채널톡 상담하기
+                </a>
+              </div>
+            </div>
+          </section>
+
           {/* ── 결제 유도 박스 (최하단, 정식 유료 모드 전용) ── */}
           {!adminView && !BETA_FREE && (
           <div className="mt-8 rounded-2xl border-2 border-brand-orange bg-white p-4 text-center shadow-[0_8px_28px_rgba(0,0,0,0.12)] sm:p-5">

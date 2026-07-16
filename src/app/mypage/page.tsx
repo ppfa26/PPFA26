@@ -244,12 +244,12 @@ export default function MyPage() {
                 </p>
               </section>
 
-              {/* 결제완료 회원 전용 — 오픈채팅 커뮤니티 (전문가 도움 '아래'로 배치, 대표님 요청)
+              {/* 결제완료 회원 전용 — 1:1 채널톡 상담 (오픈채팅방 운영 중단, 대표님 요청)
                   (현재 유효한 이용기간(결제 후 1개월 이내)인 회원에게만 노출.
                    결제했더라도 1개월이 지나 만료된 회원에게는 보이지 않음) */}
               {viewStatus?.isActive && (
                 <section
-                  id="mypage-openchat"
+                  id="mypage-consult"
                   className="mt-5 overflow-hidden rounded-3xl border-2 border-[#FEE500] bg-[#FEE500]/10 p-6 shadow-card"
                 >
                   <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
@@ -258,44 +258,25 @@ export default function MyPage() {
                     </span>
                     <div className="min-w-0 flex-1">
                       <h2 className="break-keep text-lg font-extrabold text-brand-dark">
-                        🎉 결제 회원 전용 카카오톡 커뮤니티
+                        결제 회원 전용 1:1 상담
                       </h2>
                       <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
-                        결제해주신 대표님만 입장하실 수 있는 <b className="text-brand-dark">비공개 오픈채팅방</b>입니다.
-                        정부지원사업 최신 정보 및 승인 후기 등과 실전 노하우, 대표님들끼리의 정보 교류하는 곳입니다.
-                        단체 채팅방이 부담스러우시면 <b className="text-brand-dark">1:1 문의하기</b>로 편하게 물어보세요.
+                        결제해주신 대표님을 위한 <b className="text-brand-dark">1:1 전용 상담 채널</b>입니다.
+                        정부지원사업 최신 정보, 승인 후기, 실전 노하우까지 궁금하신 점은 무엇이든
+                        편하게 물어보세요.
                       </p>
                     </div>
-                    {/* 단체 오픈채팅방 + 1:1 문의 버튼 (대표님 요청: 단체톡방이
-                        부담스러운 분들을 위해 1:1 안내 톡방도 함께 제공) */}
+                    {/* 1:1 채널톡 상담하기 버튼만 유지 (오픈채팅방 제거) */}
                     <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto">
-                      <a
-                        href="https://open.kakao.com/o/gvjec0Di"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full whitespace-nowrap rounded-full bg-[#FEE500] px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:brightness-95"
-                      >
-                        💬 오픈채팅방 입장하기
-                      </a>
                       <a
                         href="http://pf.kakao.com/_VxfWxan/chat"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full whitespace-nowrap rounded-full border-2 border-[#FEE500] bg-white px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:bg-[#FEE500]/20"
+                        className="w-full whitespace-nowrap rounded-full bg-[#FEE500] px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:brightness-95"
                       >
-                        🙋 1:1 문의하기
+                        💬 1:1 채널톡 상담하기
                       </a>
                     </div>
-                  </div>
-
-                  {/* 오픈채팅방 참여 비밀번호 — 결제 회원에게만 노출 */}
-                  <div className="mt-4 flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-[#FEE500] bg-white/70 px-4 py-3.5 text-center sm:flex-row sm:gap-2.5">
-                    <span className="break-keep text-sm font-semibold text-brand-gray">
-                      🔒 오픈채팅방 참여 비밀번호
-                    </span>
-                    <span className="select-all rounded-lg bg-brand-dark px-4 py-1.5 text-base font-extrabold tracking-widest text-white">
-                      ppfa25
-                    </span>
                   </div>
                 </section>
               )}
