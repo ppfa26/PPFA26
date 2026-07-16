@@ -75,20 +75,22 @@ export default function DashboardPage() {
             <p className="mt-2 break-keep text-sm leading-relaxed text-brand-dark/70">
               1:1 채널톡으로 편하게 문의주시고, 이용자님들만 모인 단톡방에서 정보도 함께 나눠보세요.
             </p>
-            <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
+              {/* 보조 버튼 — 흰색 반투명 고스트(배경 그라데이션이 은은히 비침) */}
               <a
                 href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-dark px-7 py-3.5 text-sm font-bold tracking-tight text-white transition hover:opacity-90 sm:w-auto sm:text-base"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-dark/15 bg-white/60 px-7 py-3.5 text-sm font-bold tracking-tight text-brand-dark backdrop-blur-sm transition hover:bg-white/80 sm:w-auto sm:text-base"
               >
                 💬 1:1 채널톡 상담하기
               </a>
+              {/* 주 버튼 — 딥 차콜 + 흰 글자(노란 배경 위에서 가장 선명·고급) */}
               <a
                 href="https://open.kakao.com/o/gvjec0Di"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-red group inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:w-auto sm:text-base"
+                className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-dark px-7 py-3.5 text-sm font-bold tracking-tight text-white shadow-lg shadow-brand-dark/25 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-dark/30 sm:w-auto sm:text-base"
               >
                 👥 이용자 단톡방 참여하기
                 <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
