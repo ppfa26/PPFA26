@@ -1,4 +1,4 @@
-// 상품 구성 — AI 올인원 패키지 단일 상품 (확정 가격: 29,900원, 부가세 포함가)
+// 상품 구성 — AI 올인원 패키지 단일 상품 (정식 오픈가: 39,900원, 부가세 포함가)
 // ※ id는 기존 "basic"을 그대로 재사용해 결제(?tier=basic) 흐름·기존 결제내역 표기를 유지한다.
 // originalPrice = 정가(앵커링용 취소선)
 export type Tier = {
@@ -24,11 +24,11 @@ export const TIERS: Tier[] = [
     icon: "🎯",
     name: "AI 올인원 패키지",
     subtitle: "AI로 내 사업장에서 받을 수 있는 정부지원사업 찾기",
-    price: 29900,
-    priceLabel: "29,900원",
-    originalPrice: 49000,
-    originalPriceLabel: "49,000원",
-    discountLabel: "39% 할인",
+    price: 39900,
+    priceLabel: "39,900원",
+    originalPrice: 59000,
+    originalPriceLabel: "59,000원",
+    discountLabel: "32% 할인",
     monthlyLabel: "",
     period: "1개월",
     popular: true,

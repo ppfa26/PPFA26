@@ -201,7 +201,7 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                <span className="text-brand-red">29,900원</span>으로 이 모든 걸 알려드립니다.
+                <span className="text-brand-red">39,900원</span>으로 이 모든 걸 알려드립니다.
               </Editable>
               <Editable
                 id="home-value-sub"
