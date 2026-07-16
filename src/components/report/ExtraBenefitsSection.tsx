@@ -381,7 +381,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                   href={previewLock ? undefined : b.applyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`mt-3 inline-block break-keep rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClick}`}
+                  className={`mt-3 inline-block break-keep rounded-lg bg-brand-orange px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClick}`}
                 >
                   🔗 {b.applyName}에서 신청하러 가기 →
                 </a>

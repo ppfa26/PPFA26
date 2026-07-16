@@ -880,9 +880,8 @@ function AdvancedResult({
           </p>
           <p className="mt-1 break-keep text-xs text-brand-dark/60">
             정책자금과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
-            <b className="text-brand-green"> ✅ 지금 신청 대상</b>과
-            <b className="text-brand-dark/70"> 🔜 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
-            카드를 누르면 <b>승인 소요기간·담당 부처 연락처</b>를 확인할 수 있습니다.
+            <b className="text-brand-green"> ✅ 신청 대상</b>과
+            <b className="text-brand-dark/70"> 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
           </p>
           {/* ★ V표시(✅) 보고 이렇게 신청하면 된다 — 3스텝 미니 가이드 (대표님 요청) ★ */}
           <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">

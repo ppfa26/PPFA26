@@ -312,7 +312,7 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     title: "청년일자리도약장려금",
     site: "www.work24.go.kr",
     url: "https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ01",
-    desc: "피보험자수 5인 이상 우선지원대상기업이 취업애로청년(만 15~34세)을 정규직으로 채용·6개월 이상 유지하면 기업에 1년간 최대 720만원을 지원하는 제도입니다. (제조업 등 빈일자리 업종은 우대)",
+    desc: "피보험자수 5인 이상 우선지원대상기업이 취업애로청년(만 15~34세)을 정규직으로 채용·6개월 이상 유지하면 기업에 1년간 최대 720만원을 지원하는 제도입니다.",
     applyHow: "고용24(work24.go.kr)에 기업 회원으로 로그인 → 청년일자리도약장려금 참여 신청 후 채용",
     applyTel: "1350",
     eligibleBadge: "✅ 신청 대상",
