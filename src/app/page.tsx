@@ -593,7 +593,20 @@ export default function Home() {
               1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.
             </Editable>
             <div className="mt-7 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-              {/* 왼쪽 — 카카오톡 1:1 채팅 문의 (가로 알약형) */}
+              {/* 왼쪽 — 무료 진단 시작하기 (주 버튼, 가로 알약형, 재생 버튼) */}
+              <a
+                id="home-cta-button"
+                href="/diagnosis"
+                className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-brand-dark px-7 py-4 text-white shadow-card transition animate-pulseGlow hover:opacity-90"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FF0000] text-[11px] leading-none text-white shadow-sm">
+                  ▶
+                </span>
+                <span className="break-keep text-base font-extrabold">
+                  무료 진단 시작하기
+                </span>
+              </a>
+              {/* 오른쪽 — 카카오톡 1:1 채팅 문의 (보조 버튼, 가로 알약형) */}
               <a
                 id="home-cta-kakao"
                 href="http://pf.kakao.com/_VxfWxan/chat"
@@ -606,19 +619,6 @@ export default function Home() {
                 </span>
                 <span className="break-keep text-base font-extrabold text-brand-dark">
                   카톡 1:1 문의하기
-                </span>
-              </a>
-              {/* 오른쪽 — 무료 진단 시작하기 (가로 알약형, 재생 버튼) */}
-              <a
-                id="home-cta-button"
-                href="/diagnosis"
-                className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-brand-dark px-7 py-4 text-white shadow-card transition animate-pulseGlow hover:opacity-90"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FF0000] text-[11px] leading-none text-white shadow-sm">
-                  ▶
-                </span>
-                <span className="break-keep text-base font-extrabold">
-                  무료 진단 시작하기
                 </span>
               </a>
             </div>
