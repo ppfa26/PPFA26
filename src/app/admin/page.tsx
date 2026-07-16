@@ -161,9 +161,16 @@ function StatCard({
 }) {
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
-      <p className="text-xs font-semibold text-gray-500 sm:text-sm">{label}</p>
-      <p className={`mt-1.5 text-2xl font-extrabold sm:text-3xl ${accent}`}>{value}</p>
-      {sub && <p className="mt-0.5 text-xs text-gray-400">{sub}</p>}
+      {/* 라벨·금액이 좁은 카드에서 세로로 쪼개지지 않도록 한 줄 고정(whitespace-nowrap) */}
+      <p className="whitespace-nowrap text-xs font-semibold text-gray-500 sm:text-sm">
+        {label}
+      </p>
+      <p
+        className={`mt-1.5 whitespace-nowrap text-xl font-extrabold sm:text-2xl lg:text-3xl ${accent}`}
+      >
+        {value}
+      </p>
+      {sub && <p className="mt-0.5 whitespace-nowrap text-xs text-gray-400">{sub}</p>}
     </div>
   );
 }
@@ -923,7 +930,7 @@ export default function AdminPage() {
 
               <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
               <table className="w-full min-w-[720px] text-left text-sm">
-                <thead className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
+                <thead className="whitespace-nowrap border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
                   <tr>
                     <th className="px-4 py-3 font-semibold">회원 (이름·유입경로)</th>
                     <th className="px-4 py-3 font-semibold">가입일</th>
@@ -968,10 +975,10 @@ export default function AdminPage() {
                             )}
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-gray-500">{fmtDate(u.joined_at)}</td>
-                        <td className="px-4 py-3 text-gray-500">{fmtDate(u.last_sign_in)}</td>
-                        <td className="px-4 py-3 text-center text-gray-700">{u.paid_count}건</td>
-                        <td className="px-4 py-3 text-right font-semibold text-gray-800">
+                        <td className="whitespace-nowrap px-4 py-3 text-gray-500">{fmtDate(u.joined_at)}</td>
+                        <td className="whitespace-nowrap px-4 py-3 text-gray-500">{fmtDate(u.last_sign_in)}</td>
+                        <td className="whitespace-nowrap px-4 py-3 text-center text-gray-700">{u.paid_count}건</td>
+                        <td className="whitespace-nowrap px-4 py-3 text-right font-semibold text-gray-800">
                           {won(u.total_amount)}
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -979,7 +986,7 @@ export default function AdminPage() {
                             {u.credits_used}/{u.credits_total}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="whitespace-nowrap px-4 py-3">
                           {u.latest_expiry ? (
                             active ? (
                               <span className="text-emerald-600 font-semibold">
@@ -993,49 +1000,49 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex flex-col flex-wrap gap-1.5 sm:flex-row">
+                          <div className="flex flex-row flex-wrap gap-1.5">
                             <button
                               onClick={() => goToUserDiag(u.email)}
-                              className="rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 hover:bg-sky-100"
+                              className="whitespace-nowrap rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 hover:bg-sky-100"
                             >
                               📇 고객진단서
                             </button>
                             <button
                               onClick={() => viewUserResult(u.email)}
-                              className="rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
+                              className="whitespace-nowrap rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
                             >
                               📊 결과보기
                             </button>
                             <button
                               onClick={() => u.email && resetDevice(u.email)}
-                              className="rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100"
+                              className="whitespace-nowrap rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100"
                             >
                               기기초기화
                             </button>
                             {isRefunded ? (
                               <button
                                 onClick={() => restoreCredits(u.email)}
-                                className="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
+                                className="whitespace-nowrap rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
                               >
                                 ↩️ 조회권 복구
                               </button>
                             ) : (
                               <button
                                 onClick={() => refundCredits(u.email)}
-                                className="rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-700 hover:bg-orange-100"
+                                className="whitespace-nowrap rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-700 hover:bg-orange-100"
                               >
                                 💸 조회권 환불
                               </button>
                             )}
                             <button
                               onClick={() => u.email && doBlock("email", u.email)}
-                              className="rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                              className="whitespace-nowrap rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
                             >
                               계정차단
                             </button>
                             <button
                               onClick={() => deleteUser(u.email)}
-                              className="rounded-lg bg-red-600 px-2.5 py-1 text-xs font-bold text-white hover:bg-red-700"
+                              className="whitespace-nowrap rounded-lg bg-red-600 px-2.5 py-1 text-xs font-bold text-white hover:bg-red-700"
                             >
                               🗑️ 삭제
                             </button>
@@ -1054,7 +1061,7 @@ export default function AdminPage() {
           {tab === "payments" && (
             <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
               <table className="w-full min-w-[1000px] text-left text-sm">
-                <thead className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
+                <thead className="whitespace-nowrap border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
                   <tr className="whitespace-nowrap">
                     <th className="px-4 py-3 font-semibold">주문번호</th>
                     <th className="px-4 py-3 font-semibold">이메일</th>
@@ -1323,7 +1330,7 @@ export default function AdminPage() {
                   <h3 className="mb-3 font-bold text-gray-800">📅 일별 매출 (최근 30일)</h3>
                   <div className="max-h-[520px] overflow-y-auto">
                     <table className="w-full text-left text-sm">
-                      <thead className="sticky top-0 z-10 bg-gray-50 text-xs text-gray-500">
+                      <thead className="whitespace-nowrap sticky top-0 z-10 bg-gray-50 text-xs text-gray-500">
                         <tr>
                           <th className="px-3 py-2">날짜</th>
                           <th className="px-3 py-2 text-center">건수</th>
@@ -1415,7 +1422,7 @@ export default function AdminPage() {
                   <h3 className="mb-3 font-bold text-gray-800">🗓️ 월별 매출 (최근 12개월)</h3>
                   <div className="max-h-[520px] overflow-y-auto">
                     <table className="w-full text-left text-sm">
-                      <thead className="sticky top-0 z-10 bg-gray-50 text-xs text-gray-500">
+                      <thead className="whitespace-nowrap sticky top-0 z-10 bg-gray-50 text-xs text-gray-500">
                         <tr>
                           <th className="px-3 py-2">월</th>
                           <th className="px-3 py-2 text-center">건수</th>
@@ -1547,7 +1554,7 @@ export default function AdminPage() {
                   </p>
                 </div>
                 <table className="w-full min-w-[560px] text-left text-sm">
-                  <thead className="bg-gray-50 text-xs text-gray-500">
+                  <thead className="whitespace-nowrap bg-gray-50 text-xs text-gray-500">
                     <tr>
                       <th className="px-4 py-2">IP</th>
                       <th className="px-4 py-2 text-center">접속수</th>
@@ -1611,7 +1618,7 @@ export default function AdminPage() {
                   </button>
                 </div>
                 <table className="w-full min-w-[600px] text-left text-sm">
-                  <thead className="bg-gray-50 text-xs text-gray-500">
+                  <thead className="whitespace-nowrap bg-gray-50 text-xs text-gray-500">
                     <tr>
                       <th className="px-4 py-2">시각</th>
                       <th className="px-4 py-2">이메일</th>
