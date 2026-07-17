@@ -139,7 +139,7 @@ export default function InstallAppButton() {
           backgroundImage:
             "linear-gradient(135deg, #E11D2E 0%, #8E1420 100%)",
         }}
-        className="group fixed bottom-[68px] right-4 z-50 flex w-[128px] items-center justify-center gap-1 rounded-full border border-black/5 px-2.5 py-1.5 shadow-lg ring-1 ring-black/5 transition hover:shadow-xl sm:bottom-24 sm:right-7 sm:w-[176px] sm:gap-1.5 sm:px-3.5 sm:py-2.5"
+        className="group fixed bottom-[54px] right-4 z-50 flex w-[128px] items-center justify-center gap-1 rounded-full border border-black/5 px-2.5 py-1.5 shadow-lg ring-1 ring-black/5 transition hover:shadow-xl sm:bottom-24 sm:right-7 sm:w-[176px] sm:gap-1.5 sm:px-3.5 sm:py-2.5"
       >
         {/* 홈 화면 추가 아이콘 — 화면(사각형) 안에 + 추가 */}
         <svg
