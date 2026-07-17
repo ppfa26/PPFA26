@@ -27,6 +27,8 @@ export const metadata: Metadata = {
     "경영컨설팅",
     "모두의사업친구",
   ],
+  // 홈(대표 페이지) 표준 주소 지정 — 검색엔진 중복 색인 방지
+  alternates: { canonical: "/" },
   // PWA: 홈 화면 설치용 매니페스트 연결
   manifest: "/manifest.webmanifest",
   // iOS 홈 화면 앱 이름
