@@ -30,8 +30,39 @@ function SignupInner() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  // 마케팅/홍보 수신 동의 (대표님 요청 — 정식 오픈 시 문자·카톡 안내 발송용)
-  const [marketingAgree, setMarketingAgree] = useState(true);
+  // 이메일 가입 폼 아코디언 (기본 닫힘 — 소셜 로그인 우선 노출, 대표님 요청)
+  const [emailOpen, setEmailOpen] = useState(false);
+
+  // ── 약관 동의 (삼쩜삼式 필수/선택 분리, 대표님 요청) ──
+  //  필수 4종 + 선택(마케팅) 1종. '전체 동의' 마스터 체크 제공.
+  //  가입/소셜로그인 버튼을 누르면 필수 항목은 자동 체크되어 진행된다.
+  const [agreeAge, setAgreeAge] = useState(false);        // [필수] 만 14세 이상
+  const [agreeTerms, setAgreeTerms] = useState(false);    // [필수] 이용약관
+  const [agreePrivacy, setAgreePrivacy] = useState(false);// [필수] 개인정보 수집·이용
+  const [agreeThird, setAgreeThird] = useState(false);    // [필수] 개인정보 제3자 제공
+  const [marketingAgree, setMarketingAgree] = useState(true); // [선택] 마케팅·홍보 수신
+
+  const allRequiredChecked = agreeAge && agreeTerms && agreePrivacy && agreeThird;
+  const allChecked = allRequiredChecked && marketingAgree;
+
+  // 전체 동의 토글
+  const setAllAgree = (v: boolean) => {
+    setAgreeAge(v);
+    setAgreeTerms(v);
+    setAgreePrivacy(v);
+    setAgreeThird(v);
+    setMarketingAgree(v);
+  };
+
+  // 가입/로그인 버튼 클릭 시 필수 동의 자동 체크 (대표님 요청 — 버튼 누르면 자동 클릭)
+  const ensureRequiredAgreed = () => {
+    if (!allRequiredChecked) {
+      setAgreeAge(true);
+      setAgreeTerms(true);
+      setAgreePrivacy(true);
+      setAgreeThird(true);
+    }
+  };
 
   // 이미 로그인된 경우 이동:
   //  · 결제 진행 중(tier 있음) → 결제 페이지
@@ -76,6 +107,27 @@ function SignupInner() {
   // 소셜 로그인 (카카오 / 구글) — Supabase OAuth
   const handleOAuth = async (provider: "kakao" | "google", label = "") => {
     setMsg(null);
+    // 소셜 로그인도 가입 절차 → 필수 동의 자동 체크 후 진행 (대표님 요청)
+    ensureRequiredAgreed();
+    // 동의 시각을 기록해 두었다가 콜백 후 가입 완료 시점에 사용 (근거 보관)
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "mpp_consent",
+          JSON.stringify({
+            age: true,
+            terms: true,
+            privacy: true,
+            third_party: true,
+            marketing: marketingAgree,
+            at: new Date().toISOString(),
+            method: provider,
+          })
+        );
+      }
+    } catch {
+      /* noop */
+    }
     setLoading(true);
     try {
       // 소셜 로그인 후 돌아올 주소 — tier(결제) 또는 next(진단 결과)를 그대로 유지
@@ -117,6 +169,8 @@ function SignupInner() {
       setMsg("비밀번호는 6자 이상으로 입력해 주세요.");
       return;
     }
+    // 회원가입 시 필수 동의 자동 체크 후 진행 (대표님 요청 — 버튼 누르면 자동 클릭)
+    if (mode === "signup") ensureRequiredAgreed();
 
     setLoading(true);
     try {
@@ -132,6 +186,12 @@ function SignupInner() {
               phone,
               tier: tier || "",
               utm_source,
+              // ── 약관 동의 기록 (가입 시 필수 동의 근거 보관, 대표님 요청) ──
+              agree_age: true,             // [필수] 만 14세 이상
+              agree_terms: true,           // [필수] 이용약관
+              agree_privacy: true,         // [필수] 개인정보 수집·이용
+              agree_third_party: true,     // [필수] 개인정보 제3자 제공
+              consent_at: new Date().toISOString(),
               // 마케팅 수신 동의 (동의 시각 함께 기록 — 향후 정식 오픈 안내 발송 근거)
               marketing_agree: marketingAgree,
               marketing_agree_at: marketingAgree ? new Date().toISOString() : null,
@@ -309,13 +369,29 @@ function SignupInner() {
           </button>
         </div>
 
-        {/* 구분선 */}
-        <div className="mb-5 flex items-center gap-3">
+        {/* 이메일 가입 아코디언 토글 (기본 닫힘 — 소셜 로그인 우선, 대표님 요청) */}
+        <button
+          type="button"
+          onClick={() => setEmailOpen((v) => !v)}
+          aria-expanded={emailOpen}
+          className="mb-5 flex w-full items-center gap-3 text-brand-gray"
+        >
           <span className="h-px flex-1 bg-gray-200" />
-          <span className="text-xs text-brand-gray">또는 이메일로 가입</span>
+          <span className="flex items-center gap-1 text-xs font-semibold">
+            또는 이메일로 {mode === "login" ? "로그인" : "가입"}
+            <svg
+              className={`h-3.5 w-3.5 transition-transform duration-200 ${emailOpen ? "rotate-180" : ""}`}
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+              strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
           <span className="h-px flex-1 bg-gray-200" />
-        </div>
+        </button>
 
+        {emailOpen && (
+        <>
         {/* 모드 전환 탭 */}
         <div className="mb-5 grid grid-cols-2 gap-1 rounded-xl bg-gray-100 p-1">
           <button
@@ -386,24 +462,6 @@ function SignupInner() {
             />
           </div>
 
-          {/* 마케팅/홍보 수신 동의 (선택) — 회원가입 시에만 노출 (대표님 요청) */}
-          {mode === "signup" && (
-            <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-gray-200 bg-gray-50/70 px-3.5 py-3">
-              <input
-                type="checkbox"
-                checked={marketingAgree}
-                onChange={(e) => setMarketingAgree(e.target.checked)}
-                className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
-              />
-              <span className="break-keep text-xs leading-relaxed text-brand-dark/80">
-                <b className="font-bold text-brand-dark">[선택] 마케팅·홍보 정보 수신 동의</b>
-                <br />
-                정식 오픈 안내, 신규 지원사업·이벤트 소식을 문자·카카오톡·이메일로 받아보실 수 있습니다.
-                (미동의 시에도 서비스 이용에는 제한이 없습니다.)
-              </span>
-            </label>
-          )}
-
           {msg && (
             <p className="rounded-lg bg-gray-50 px-3 py-2 text-center text-sm text-brand-dark">
               {msg}
@@ -426,12 +484,120 @@ function SignupInner() {
               : "로그인"}
           </button>
         </form>
+        </>
+        )}
 
-        <p className="mt-5 text-center text-xs text-brand-gray">
-          가입 시{" "}
-          <Link href="/terms" className="underline">이용약관</Link> 및{" "}
-          <Link href="/privacy" className="underline">개인정보처리방침</Link>에 동의하게 됩니다.
-        </p>
+        {/* ── 약관 동의 영역 (삼쩜삼式, 회원가입 시 노출) ──
+            소셜/이메일 공통. 가입 버튼을 누르면 필수 항목이 자동 체크되어 진행됩니다. */}
+        {mode === "signup" && (
+          <div className="mt-5 rounded-2xl border border-gray-200 bg-gray-50/70 p-4">
+            {/* 전체 동의 */}
+            <label className="flex cursor-pointer items-center gap-2.5 border-b border-gray-200 pb-3">
+              <input
+                type="checkbox"
+                checked={allChecked}
+                onChange={(e) => setAllAgree(e.target.checked)}
+                className="h-5 w-5 shrink-0 accent-brand-orange"
+              />
+              <span className="text-sm font-extrabold text-brand-dark">
+                아래 약관에 모두 동의합니다
+              </span>
+            </label>
+
+            <div className="mt-3 space-y-2.5">
+              {/* [필수] 만 14세 이상 */}
+              <label className="flex cursor-pointer items-start gap-2.5">
+                <input
+                  type="checkbox"
+                  checked={agreeAge}
+                  onChange={(e) => setAgreeAge(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+                />
+                <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
+                  <b className="text-brand-red">[필수]</b> 만 14세 이상입니다.
+                </span>
+              </label>
+
+              {/* [필수] 이용약관 */}
+              <label className="flex cursor-pointer items-start gap-2.5">
+                <input
+                  type="checkbox"
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+                />
+                <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
+                  <b className="text-brand-red">[필수]</b>{" "}
+                  <Link href="/terms" target="_blank" className="underline underline-offset-2">
+                    이용약관
+                  </Link>
+                  에 동의합니다.
+                </span>
+              </label>
+
+              {/* [필수] 개인정보 수집·이용 */}
+              <label className="flex cursor-pointer items-start gap-2.5">
+                <input
+                  type="checkbox"
+                  checked={agreePrivacy}
+                  onChange={(e) => setAgreePrivacy(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+                />
+                <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
+                  <b className="text-brand-red">[필수]</b>{" "}
+                  <Link href="/privacy" target="_blank" className="underline underline-offset-2">
+                    개인정보 수집·이용
+                  </Link>
+                  에 동의합니다. (이름·연락처·이메일·사업장 정보)
+                </span>
+              </label>
+
+              {/* [필수] 개인정보 제3자 제공 */}
+              <label className="flex cursor-pointer items-start gap-2.5">
+                <input
+                  type="checkbox"
+                  checked={agreeThird}
+                  onChange={(e) => setAgreeThird(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+                />
+                <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
+                  <b className="text-brand-red">[필수]</b> 개인정보 제3자 제공에 동의합니다.
+                  <span className="mt-0.5 block text-[11px] text-brand-gray">
+                    매칭된 정책금융기관·제휴 컨설팅 상담 연계를 위해 필요한 범위에서 제공됩니다.
+                  </span>
+                </span>
+              </label>
+
+              {/* [선택] 마케팅·홍보 수신 */}
+              <label className="flex cursor-pointer items-start gap-2.5">
+                <input
+                  type="checkbox"
+                  checked={marketingAgree}
+                  onChange={(e) => setMarketingAgree(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+                />
+                <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
+                  <b className="text-brand-gray">[선택]</b> 마케팅·홍보 정보 수신에 동의합니다.
+                  <span className="mt-0.5 block text-[11px] text-brand-gray">
+                    정식 오픈 안내·신규 지원사업·이벤트 소식을 문자·카카오톡·이메일로 받아보실 수 있습니다.
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <p className="mt-3 break-keep rounded-lg bg-brand-yellow/30 px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
+              💡 가입(또는 소셜 로그인) 버튼을 누르면 필수 항목에 자동으로 동의 처리됩니다.
+            </p>
+          </div>
+        )}
+
+        {mode === "login" && (
+          <p className="mt-5 text-center text-xs text-brand-gray">
+            로그인 시{" "}
+            <Link href="/terms" className="underline">이용약관</Link> 및{" "}
+            <Link href="/privacy" className="underline">개인정보처리방침</Link>에 동의하게 됩니다.
+          </p>
+        )}
         <p className="mt-3 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
           ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 매칭 서비스이며 정부지원사업 승인을
           보장하지 않습니다.
