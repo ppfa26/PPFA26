@@ -123,8 +123,13 @@ export default function Home() {
           className="relative overflow-hidden px-4 pb-5 pt-6 sm:pb-9 sm:pt-12"
         >
           <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-5 py-8 text-center animate-fadeUp sm:px-10 sm:py-12">
-            {/* 상단 배지 — 노란 배지 */}
-            <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
+            {/* 상단 배지 — 오픈 베타(빨강)는 모바일에서 맨 위, PC에서는 왼쪽에 위치 (대표님 요청) */}
+            <div className="mb-5 flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
+              {BETA_FREE && (
+                <span className="order-first inline-flex items-center gap-1 rounded-full bg-brand-red px-4 py-2 text-sm font-bold text-white animate-pulseGlow sm:order-none sm:text-base">
+                  🎉 오픈 베타 · 전부 무료
+                </span>
+              )}
               <Editable
                 id="hero-badge"
                 as="div"
@@ -132,11 +137,6 @@ export default function Home() {
               >
                 정부지원사업 AI 통합 매칭 플랫폼
               </Editable>
-              {BETA_FREE && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-brand-red px-4 py-2 text-sm font-bold text-white animate-pulseGlow sm:text-base">
-                  🎉 오픈 베타 · 전부 무료
-                </span>
-              )}
             </div>
             <Editable
               id="hero-headline-v2"
@@ -203,7 +203,7 @@ export default function Home() {
               <Editable
                 id="hero-cta-secondary"
                 as="a"
-                href="/pricing"
+                href={BETA_FREE ? "#result-sample-section" : "/pricing"}
                 className="btn-outline w-full rounded-full px-8 py-3.5 text-base sm:w-auto sm:py-4 sm:text-lg"
               >
                 {BETA_FREE ? "무엇을 알려주나요?" : "상품 자세히 보기"}
@@ -325,7 +325,7 @@ export default function Home() {
         </section>
 
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
-        <section id="result-sample-section" className="border-y border-gray-100 bg-white px-4 py-7 sm:py-11">
+        <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
