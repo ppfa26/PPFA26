@@ -198,6 +198,8 @@ export default function AdminPage() {
   const [openMonth, setOpenMonth] = useState<string | null>(null); // 매출-월별 펼침 (YYYY-MM)
   const [msg, setMsg] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  // 데이터 로딩 진단 — RPC가 실패하면 (권한/함수누락 등) 원인을 화면에 그대로 표시한다.
+  const [loadDebug, setLoadDebug] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState(""); // 회원 검색어(이름·이메일·연락처)
   const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
 
@@ -334,6 +336,25 @@ export default function AdminPage() {
       supabase.rpc("admin_ip_summary"),
       supabase.rpc("admin_list_blocks"),
     ]);
+
+    // ── 로딩 진단: 어떤 RPC가 실패했는지 정확히 수집 (권한 없음/함수 누락 등) ──
+    const errs: string[] = [];
+    if (s.error) errs.push(`admin_stats: ${s.error.message}`);
+    if (u.error) errs.push(`admin_list_users: ${u.error.message}`);
+    if (p.error) errs.push(`admin_list_payments: ${p.error.message}`);
+    if (d.error) errs.push(`admin_list_diagnoses: ${d.error.message}`);
+    if (ac.error) errs.push(`admin_list_access: ${ac.error.message}`);
+    if (ip.error) errs.push(`admin_ip_summary: ${ip.error.message}`);
+    if (bl.error) errs.push(`admin_list_blocks: ${bl.error.message}`);
+    // 에러는 없는데 회원 원본이 비어 있으면 (auth.users 조회 결과 0) 그 사실도 알림
+    const rawUserCount = !u.error && Array.isArray(u.data) ? (u.data as unknown[]).length : null;
+    if (errs.length > 0) {
+      setLoadDebug(`⚠️ 데이터 조회 오류: ${errs.join(" | ")}`);
+    } else if (rawUserCount === 0) {
+      setLoadDebug("ℹ️ 서버 조회는 정상이나 회원(auth.users)이 0명으로 반환되었습니다. (가입 데이터가 실제로 없거나, 다른 Supabase 프로젝트를 보고 있을 수 있습니다.)");
+    } else {
+      setLoadDebug(null);
+    }
     // ★ 관리자(운영자) 계정 데이터는 화면·통계에서 제외 (대표님 요청) ★
     //   기존에 쌓인 관리자 테스트 데이터도 여기서 걸러내고, 매출·건수를 다시 계산합니다.
     const payList = (!p.error && p.data ? (p.data as AdminPayment[]) : []).filter(
@@ -839,6 +860,13 @@ export default function AdminPage() {
           {msg && (
             <div className="mb-4 rounded-xl border border-brand-primary/30 bg-brand-primary/5 px-4 py-3 text-sm font-semibold text-brand-dark">
               {msg}
+            </div>
+          )}
+
+          {/* 데이터 로딩 진단 배너 — RPC 실패/빈 결과 시 원인 표시 */}
+          {loadDebug && (
+            <div className="mb-4 break-keep rounded-xl border border-amber-400/60 bg-amber-50 px-4 py-3 text-sm font-semibold leading-relaxed text-amber-900">
+              {loadDebug}
             </div>
           )}
 
