@@ -35,9 +35,10 @@ export default function AccordionCard({
         className="flex w-full items-center gap-3 px-5 py-4 text-left transition hover:bg-brand-orange/5"
       >
         <span className="min-w-0 flex-1">
-          <span className="flex items-center gap-1.5 break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-            {emoji && <span>{emoji}</span>}
-            <span>{title}</span>
+          <span className="flex items-center gap-1.5 text-[15px] font-extrabold leading-tight text-brand-dark sm:text-lg">
+            {emoji && <span className="shrink-0">{emoji}</span>}
+            {/* 모바일에서 제목이 2줄로 안 넘어가고 1줄로 깔끔하게 보이도록 nowrap 유지 */}
+            <span className="min-w-0 whitespace-nowrap">{title}</span>
           </span>
           {subtitle && (
             <span className="mt-1 block break-keep text-xs text-brand-dark/60">

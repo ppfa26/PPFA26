@@ -833,7 +833,7 @@ function AdvancedResult({
       {eligibleSupport.length > 0 && (
         <AccordionCard
           emoji="🎁"
-          title="대표님이 신청할 수 있는 정부지원제도"
+          title="신청 가능한 정부지원제도"
           subtitle={
             <>
               정책자금과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
@@ -929,7 +929,7 @@ function AdvancedResult({
       {/* ③ 신청 가능 기관 — '받는 돈(지원제도+추가혜택)' 뒤, '빌리는 돈' 자리로 배치 (대표님 요청: 순서 개선) */}
       <AccordionCard
         emoji="🏦"
-        title="대표님이 이용할 수 있는 정책금융기관"
+        title="이용 가능한 정책금융기관"
         subtitle="업종·직원수 등 대표님 사업장 조건을 맞춤으로 실제 신청하실 수 있는 상품 안내입니다."
       >
         <div className="mt-4 divide-y divide-gray-200">

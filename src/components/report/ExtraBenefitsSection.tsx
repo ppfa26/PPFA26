@@ -255,7 +255,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
       {/* ========== 🎁 추가 감면 혜택 — 아코디언(접기) 카드 (대표님 요청) ========== */}
       <AccordionCard
         emoji="🎁"
-        title="대표님이 챙기면 좋은 추가 감면 혜택"
+        title="챙기면 좋은 추가 감면 혜택"
         subtitle={
           <>
             지원제도 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 감면 혜택입니다.
