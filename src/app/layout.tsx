@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 import MobilePcNotice from "@/components/MobilePcNotice";
 import CopyGuard from "@/components/CopyGuard";
 import UtmCapture from "@/components/UtmCapture";
@@ -182,6 +183,8 @@ export default function RootLayout({
         <UtmCapture />
         <MobilePcNotice />
         {children}
+        {/* Vercel 방문자 분석 — 화면에 보이지 않으며, 방문자 수·페이지·기기 통계를 수집합니다. */}
+        <Analytics />
       </body>
     </html>
   );
