@@ -601,12 +601,10 @@ export default function AdminPage() {
   //   상담(전화·카톡) 중 고객과 같은 화면을 보며 안내하기 위한 기능.
   //   ★ 이메일이 딱 맞는 진단서가 없으면, 이름+연락처로도 다시 찾아본다(폴백). ★
   //     (비회원으로 진단 후 나중에 가입 등으로 진단서에 로그인 이메일이 안 붙는 경우 대비)
-  const viewUserResult = (email: string | null) => {
-    if (!email) {
-      setMsg("이 회원은 이메일 정보가 없어 결과를 열 수 없습니다.");
-      setTimeout(() => setMsg(null), 3000);
-      return;
-    }
+  //   ★ 진단서 찾기 로직을 함수로 분리 (회원 목록 버튼 활성/비활성 판단에도 재사용) ★
+  //     이메일 정확 매칭 → 실패 시 이름/연락처 폴백. 찾으면 진단서, 없으면 null.
+  const findUserDiagnosis = (email: string | null): AdminDiagnosis | null => {
+    if (!email) return null;
     const byCreated = (a: AdminDiagnosis, b: AdminDiagnosis) =>
       a.created_at < b.created_at ? 1 : -1;
 
@@ -634,15 +632,24 @@ export default function AdminPage() {
           .sort(byCreated);
       }
     }
+    return matched[0] ?? null;
+  };
 
-    if (matched.length === 0) {
-      setMsg(
-        "이 회원과 연결된 진단서를 찾지 못했습니다. '고객 진단서' 탭에서 해당 진단서를 펼친 뒤 '📊 결과보기'를 눌러 주세요."
-      );
-      setTimeout(() => setMsg(null), 6000);
+  const viewUserResult = (email: string | null) => {
+    if (!email) {
+      setMsg("이 회원은 이메일 정보가 없어 결과를 열 수 없습니다.");
+      setTimeout(() => setMsg(null), 3000);
       return;
     }
-    openResultForDiag(matched[0]);
+    const target = findUserDiagnosis(email);
+    if (!target) {
+      setMsg(
+        "이 회원은 아직 진단(설문)을 완료하지 않아 결과가 없습니다. (가입만 하고 진단 전인 회원)"
+      );
+      setTimeout(() => setMsg(null), 5000);
+      return;
+    }
+    openResultForDiag(target);
   };
 
   // 조회권 환불(열람 차단) — 실제 결제 환불은 대표님이 PG사에서 처리하고,
@@ -979,6 +986,8 @@ export default function AdminPage() {
                     const badge = utmBadge(u.utm_source);
                     // 조회권을 결제한 적이 있고(total>0) 남은 게 0이면 = 환불(차단)된 상태
                     const isRefunded = u.credits_total > 0 && u.credits_used >= u.credits_total;
+                    // 이 회원이 진단(설문)을 완료했는지 → 결과보기 버튼 활성/비활성 판단
+                    const hasDiag = !!findUserDiagnosis(u.email);
                     return (
                       <tr key={u.user_id} className="hover:bg-gray-50/60">
                         <td className="px-4 py-3">
@@ -1029,12 +1038,21 @@ export default function AdminPage() {
                             >
                               📇 고객진단서
                             </button>
-                            <button
-                              onClick={() => viewUserResult(u.email)}
-                              className="whitespace-nowrap rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
-                            >
-                              📊 결과보기
-                            </button>
+                            {hasDiag ? (
+                              <button
+                                onClick={() => viewUserResult(u.email)}
+                                className="whitespace-nowrap rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
+                              >
+                                📊 결과보기
+                              </button>
+                            ) : (
+                              <span
+                                title="가입만 하고 아직 진단(설문)을 완료하지 않은 회원입니다"
+                                className="cursor-not-allowed whitespace-nowrap rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-bold text-gray-400"
+                              >
+                                📊 진단 전
+                              </span>
+                            )}
                             <button
                               onClick={() => u.email && resetDevice(u.email)}
                               className="whitespace-nowrap rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100"
