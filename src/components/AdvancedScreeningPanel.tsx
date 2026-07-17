@@ -35,6 +35,7 @@ import {
   type SupportStatus,
 } from "@/lib/supportPrograms";
 import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
+import AccordionCard from "@/components/report/AccordionCard";
 import { loadDiagnosisRaw, saveDiagnosis } from "@/lib/diagnosisStore";
 
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
@@ -830,15 +831,18 @@ function AdvancedResult({
       {/* ① 정부지원제도 — 최상단 배치 (대표님 요청) · 기관 박스와 동일한 틀 */}
       {/*  정책자금(대출·보증)과 별개로 병행 신청 가능 · 진단 기준 '해당되는 것만' · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
       {eligibleSupport.length > 0 && (
-        <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
-          <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-            🎁 대표님이 신청할 수 있는 정부지원제도
-          </p>
-          <p className="mt-1 break-keep text-xs text-brand-dark/60">
-            정책자금과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
-            <b className="text-brand-green"> ✅ 신청 대상</b>과
-            <b className="text-brand-dark/70"> 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
-          </p>
+        <AccordionCard
+          emoji="🎁"
+          title="대표님이 신청할 수 있는 정부지원제도"
+          defaultOpen
+          subtitle={
+            <>
+              정책자금과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
+              <b className="text-brand-green"> ✅ 신청 대상</b>과
+              <b className="text-brand-dark/70"> 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
+            </>
+          }
+        >
           {/* ★ V표시(✅) 보고 이렇게 신청하면 된다 — 3스텝 미니 가이드 (대표님 요청) ★ */}
           <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">
             <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
@@ -917,20 +921,18 @@ function AdvancedResult({
               );
             })}
           </div>
-        </div>
+        </AccordionCard>
       )}
 
       {/* 🎁 추가 감면 혜택 — '받는 돈'을 먼저 몰아 보여주려 정책금융기관 '위'로 이동 (대표님 요청: 순서 개선) */}
       {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
 
       {/* ③ 신청 가능 기관 — '받는 돈(지원제도+추가혜택)' 뒤, '빌리는 돈' 자리로 배치 (대표님 요청: 순서 개선) */}
-      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
-        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-          🏦 대표님이 이용할 수 있는 정책금융기관
-        </p>
-        <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          업종·직원수 등 대표님 사업장 조건을 맞춤으로 실제 신청하실 수 있는 상품 안내입니다.
-        </p>
+      <AccordionCard
+        emoji="🏦"
+        title="대표님이 이용할 수 있는 정책금융기관"
+        subtitle="업종·직원수 등 대표님 사업장 조건을 맞춤으로 실제 신청하실 수 있는 상품 안내입니다."
+      >
         <div className="mt-4 divide-y divide-gray-200">
           {creditMatches.map((m, i) => {
             const link = findInstitutionLink(m.institution);
@@ -1238,16 +1240,14 @@ function AdvancedResult({
             </p>
           </div>
         )}
-      </div>
+      </AccordionCard>
 
       {/* 기관별 상품 한눈에 보기 — 지원제도 박스 '아래' 별도 박스로 배치 (대표님 요청) */}
-      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
-        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-          🏛️ 기관별 상품 한눈에 보기
-        </p>
-        <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          각 기관의 상품 안내 자료·페이지로 바로 이동합니다.
-        </p>
+      <AccordionCard
+        emoji="🏛️"
+        title="기관별 상품 한눈에 보기"
+        subtitle="각 기관의 상품 안내 자료·페이지로 바로 이동합니다."
+      >
         <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
           {INSTITUTION_PRODUCT_LINKS.map((p) => (
             <a
@@ -1261,7 +1261,7 @@ function AdvancedResult({
             </a>
           ))}
         </div>
-      </div>
+      </AccordionCard>
 
       {/* 소상공인·중소기업이 알아두면 좋은 정부 사이트 모음으로 이동 */}
       <a

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import benefitsData from "@/data/benefits-extra.json";
 import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
+import AccordionCard from "@/components/report/AccordionCard";
 
 // ── Props 구조 (지시사항 명세 그대로) ─────────────────────────────
 //  값이 없으면 undefined 또는 0으로 전달 → 내부에서 "정보 부족" 처리
@@ -251,16 +252,17 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
 
   return (
     <>
-      {/* ========== 🎁 추가 감면 혜택 — 정부지원제도 박스와 동일한 흰 카드 틀 ========== */}
-      <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-5 shadow-card">
-        <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-          🎁 대표님이 챙기면 좋은 추가 감면 혜택
-        </p>
-        <p className="mt-1 break-keep text-xs text-brand-dark/60">
-          지원제도 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 감면 혜택입니다.
-          데드라인이 지나면 <b className="text-brand-red">영구히 못 받는</b> 항목도 있으니 꼭 확인하세요.
-        </p>
-
+      {/* ========== 🎁 추가 감면 혜택 — 아코디언(접기) 카드 (대표님 요청) ========== */}
+      <AccordionCard
+        emoji="🎁"
+        title="대표님이 챙기면 좋은 추가 감면 혜택"
+        subtitle={
+          <>
+            지원제도 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 감면 혜택입니다.
+            데드라인이 지나면 <b className="text-brand-red">영구히 못 받는</b> 항목도 있으니 꼭 확인하세요.
+          </>
+        }
+      >
         {/* 5개 혜택 항목 — 기관 박스처럼 구분선(divide)으로 정리 */}
         <div className="mt-4 divide-y divide-gray-200">
           {benefits.map((b) => {
@@ -410,7 +412,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
             <span className="whitespace-nowrap">소급 가능한 항목도 있습니다.</span>
           </p>
         </div>
-      </div>
+      </AccordionCard>
       {/* ※ 🗓️ '이 순서대로만 챙기세요' 타임라인 블록 제거(대표님 요청) — 위 4가지 혜택 카드로 충분 */}
     </>
   );
