@@ -139,9 +139,9 @@ export default function InstallAppButton() {
           backgroundImage:
             "linear-gradient(135deg, #E11D2E 0%, #8E1420 100%)",
         }}
-        className="group fixed bottom-20 right-5 z-50 flex items-center gap-1.5 rounded-full border border-black/5 px-3.5 py-2.5 shadow-lg ring-1 ring-black/5 transition hover:shadow-xl sm:bottom-24 sm:right-7"
+        className="group fixed bottom-20 right-5 z-50 flex w-[168px] items-center justify-center gap-1.5 rounded-full border border-black/5 px-3.5 py-2.5 shadow-lg ring-1 ring-black/5 transition hover:shadow-xl sm:bottom-24 sm:right-7 sm:w-[176px]"
       >
-        {/* 다운로드(설치) 아이콘 — 휴대폰 안으로 내려받는 형태 */}
+        {/* 홈 화면 추가 아이콘 — 화면(사각형) 안에 + 추가 */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -153,9 +153,9 @@ export default function InstallAppButton() {
           className="h-4 w-4 shrink-0"
           aria-hidden="true"
         >
-          <path d="M12 3v10" />
-          <path d="m8 11 4 4 4-4" />
-          <rect x="4" y="17" width="16" height="4" rx="1.5" />
+          <rect x="3" y="3" width="18" height="18" rx="4" />
+          <path d="M12 8v8" />
+          <path d="M8 12h8" />
         </svg>
         <span className="whitespace-nowrap text-[13px] font-extrabold text-white">
           앱으로 설치하기
