@@ -35,6 +35,7 @@ import {
   type SupportStatus,
 } from "@/lib/supportPrograms";
 import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
+import { loadDiagnosisRaw, saveDiagnosis } from "@/lib/diagnosisStore";
 
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
 type SupportItem = { prog: SupportProgram; status: SupportStatus };
@@ -78,7 +79,7 @@ export default function AdvancedScreeningPanel({
   useEffect(() => {
     const recompute = () => {
       try {
-        const raw = sessionStorage.getItem("mpp_diagnosis");
+        const raw = loadDiagnosisRaw();
         const p = raw ? JSON.parse(raw) : {};
         const status = computeSupportStatus(p);
         // 대상(eligible)을 먼저, 예정대상(potential)을 뒤로 정렬해 노출
@@ -133,7 +134,7 @@ export default function AdvancedScreeningPanel({
   //  (둘 다 포괄적으로 보되, 정밀진단 값을 최종 판독에 사용)
   useEffect(() => {
     try {
-      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const raw = loadDiagnosisRaw();
       if (!raw) return;
       const p = JSON.parse(raw);
       let touched = false;
@@ -224,7 +225,7 @@ export default function AdvancedScreeningPanel({
   useEffect(() => {
     if (!autoRun) return;
     try {
-      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const raw = loadDiagnosisRaw();
       const p = raw ? JSON.parse(raw) : {};
 
       // 기본 질문지(mpp_diagnosis) → Company 스키마 변환은 공용 함수로 통일한다.
@@ -247,7 +248,7 @@ export default function AdvancedScreeningPanel({
     //     정밀진단 경로에서도 그대로 반영되어(기보/중진공 판정 등) 정확해진다.
     let merged: any = {};
     try {
-      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const raw = loadDiagnosisRaw();
       const base = raw ? JSON.parse(raw) : {};
 
       // 정밀진단 업종키 → 처음 질문지 업종 라벨로 역변환
@@ -283,7 +284,7 @@ export default function AdvancedScreeningPanel({
       if (isReFounder) merged.bankruptcy = "있음";
       merged._advancedApplied = true; // 정밀진단 반영 표시
 
-      sessionStorage.setItem("mpp_diagnosis", JSON.stringify(merged));
+      saveDiagnosis(merged);
       // 대시보드가 즉시 재계산하도록 커스텀 이벤트 발신
       window.dispatchEvent(new CustomEvent("mpp-advanced-applied"));
     } catch {

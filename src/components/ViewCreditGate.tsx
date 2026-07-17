@@ -10,6 +10,7 @@ import {
 } from "@/lib/viewCredits";
 import { registerViewDevice, logAccess, deviceKind } from "@/lib/deviceGuard";
 import { isAdminEmail } from "@/lib/admin";
+import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 
 // ============================================================
 // 조회권 게이트
@@ -110,7 +111,7 @@ export default function ViewCreditGate({
       // 2) 진단 데이터 읽기
       let profile: Record<string, unknown> = {};
       try {
-        profile = JSON.parse(sessionStorage.getItem("mpp_diagnosis") || "{}");
+        profile = JSON.parse(loadDiagnosisRaw() || "{}");
       } catch {
         profile = {};
       }

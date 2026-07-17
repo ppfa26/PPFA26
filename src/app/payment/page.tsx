@@ -10,6 +10,7 @@ import Editable from "@/components/Editable";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP, COMMON_NOTES } from "@/lib/products";
 import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
+import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 
 // 토스페이먼츠(TossPayments) 클라이언트 키 (공개 키). 브라우저에 노출되어도 안전한 값입니다.
 //  ★ 폴백 ★ 환경변수가 비어있으면(예: 배포 환경변수 미설정) 토스 '공식 문서 테스트 클라이언트 키'로 자동 대체.
@@ -121,7 +122,7 @@ function PaymentInner() {
     // ── 이중 안전장치: 신청 불가 상태(파산·회생 진행중/세금체납/자본잠식)면 결제 차단 ──
     //  matching-preview에서 이미 막지만, URL 직접 접근 등을 대비해 결제 페이지에서도 재확인.
     try {
-      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const raw = loadDiagnosisRaw();
       const profile = raw ? JSON.parse(raw) : {};
       if (getPaymentBlockReasons(profile).length > 0) {
         router.replace("/matching-preview");

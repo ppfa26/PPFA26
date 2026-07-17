@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { DiagnosisProfile } from "@/lib/matching";
+import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
 import ViewCreditGate from "@/components/ViewCreditGate";
 import { ADVISORY_DISCLAIMER, REVALIDATION_NOTICE } from "@/lib/advancedScreening";
@@ -17,7 +18,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const recompute = () => {
       try {
-        const raw = sessionStorage.getItem("mpp_diagnosis");
+        const raw = loadDiagnosisRaw();
         setProfileData(raw ? JSON.parse(raw) : {});
       } catch {
         setProfileData({});
@@ -64,39 +65,28 @@ export default function DashboardPage() {
             <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">🗓️ {REVALIDATION_NOTICE}</p>
           </div>
 
-          {/* 상담 채널 안내 */}
+          {/* 상담 채널 안내 — 어두운 카드 + 1:1 채널톡만 (대표님 요청: 단톡방 제거, 2번째 사진 스타일 통일) */}
           <section
             id="consult-channels"
-            className="mt-10 rounded-3xl bg-brand-grad p-7 text-center sm:p-8"
+            className="mt-10 rounded-3xl bg-brand-dark p-8 text-center shadow-card sm:p-10"
           >
-            <h2 className="break-keep text-lg font-black leading-snug text-brand-dark sm:text-xl">
-              신청하시다 막히는 부분이 있으신가요?
+            <h2 className="break-keep text-xl font-black leading-snug text-white sm:text-2xl">
+              더 궁금한 점이 있으신가요?
             </h2>
-            <p className="mt-2 break-keep text-sm leading-relaxed text-brand-dark/70">
-              이용자님들만 모인 단톡방에서 정보도 함께 나눠보시고 추가적인 질문은 1:1 채널톡으로 편하게 문의주세요.
+            <p className="mx-auto mt-3 max-w-md break-keep text-sm leading-relaxed text-gray-300">
+              진단 결과 해석부터 신청 전략까지, 대표님 사업장에 딱 맞게 안내해 드립니다.
             </p>
-            <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
-              {/* 왼쪽 · 주 버튼 — 딥 차콜 + 흰 글자(노란 배경 위에서 가장 선명·고급) */}
-              <a
-                href="https://open.kakao.com/o/gvjec0Di"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-dark px-7 py-3.5 text-sm font-bold tracking-tight text-white shadow-lg shadow-brand-dark/25 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-dark/30 sm:w-auto sm:text-base"
-              >
-                👥 이용자 단톡방 참여하기
-                <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
-              </a>
-              {/* 오른쪽 · 보조 버튼 — 흰색 반투명 고스트(배경 그라데이션이 은은히 비침) */}
+            <div className="mt-7 flex justify-center">
               <a
                 href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-dark/15 bg-white/60 px-7 py-3.5 text-sm font-bold tracking-tight text-brand-dark backdrop-blur-sm transition hover:bg-white/80 sm:w-auto sm:text-base"
+                className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3.5 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
               >
                 💬 1:1 채널톡 상담하기
               </a>
             </div>
-            <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/60">
+            <p className="mt-6 break-keep text-xs leading-relaxed text-gray-400">
               ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 매칭 서비스이며 정부지원사업
               승인을 보장하지 않습니다.
             </p>

@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { supabase } from "@/lib/supabaseClient";
 import { isAdminEmail } from "@/lib/admin";
+import { saveDiagnosis } from "@/lib/diagnosisStore";
 import {
   DIAGNOSIS_TEXT,
   BNO_TEXT,
@@ -163,9 +164,8 @@ export default function Diagnosis() {
   };
 
   const submit = () => {
-    try {
-      sessionStorage.setItem("mpp_diagnosis", JSON.stringify(form));
-    } catch {}
+    // 진단 결과를 localStorage 에 30일간 저장 (탭 닫아도 유지 · 1달 후 자동 만료)
+    saveDiagnosis(form);
 
     // 진단 응답을 DB(diagnoses)에도 저장 → 어드민에서 전체 고객 진단서 열람 가능
     // (로그인 안 한 상태여도 저장. 실패해도 흐름은 계속 진행)

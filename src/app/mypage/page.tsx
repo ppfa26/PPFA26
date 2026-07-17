@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
+import { loadDiagnosisRaw, getDiagnosisExpiry } from "@/lib/diagnosisStore";
 
 type Payment = {
   order_id: string;
@@ -27,6 +28,7 @@ export default function MyPage() {
   const [viewStatus, setViewStatus] = useState<ViewStatus | null>(null);
   const [matchCount, setMatchCount] = useState<number | null>(null);
   const [diagName, setDiagName] = useState("");
+  const [diagExpiry, setDiagExpiry] = useState<Date | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -62,17 +64,19 @@ export default function MyPage() {
         }
       }
 
-      // 3) 진단 결과 요약 (sessionStorage)
+      // 3) 진단 결과 요약 (localStorage · 30일 유지)
       //   ★ 관리자 '결과보기'로 심어둔 고객 임시 데이터(_adminLabel 존재)는
       //      대표님 본인 마이페이지에 섞이면 안 되므로 여기서는 무시한다. ★
       try {
-        const raw = sessionStorage.getItem("mpp_diagnosis");
+        const raw = loadDiagnosisRaw();
         if (raw) {
           const profile = JSON.parse(raw);
           if (!profile._adminLabel) {
             setDiagName(profile.name || "");
             // 대시보드에 실제 안내되는 항목 전부 합산(기관 + 기관별 상품 + 지원제도)
             setMatchCount(countMatchedItems(profile).total);
+            // 진단 결과 유지 만료일(저장 후 30일)
+            if (mounted) setDiagExpiry(getDiagnosisExpiry());
           }
         }
       } catch {
@@ -176,6 +180,16 @@ export default function MyPage() {
                       대시보드에서 전체 결과 확인하기
                       <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </Link>
+                    {diagExpiry && (
+                      <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/50">
+                        📅 이 진단 결과는{" "}
+                        <b className="text-brand-dark/70">
+                          {diagExpiry.getFullYear()}년 {diagExpiry.getMonth() + 1}월{" "}
+                          {diagExpiry.getDate()}일
+                        </b>{" "}
+                        까지 확인하실 수 있습니다.
+                      </p>
+                    )}
                   </div>
                 )}
               </section>

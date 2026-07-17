@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import benefitsData from "@/data/benefits-extra.json";
+import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 
 // ── Props 구조 (지시사항 명세 그대로) ─────────────────────────────
 //  값이 없으면 undefined 또는 0으로 전달 → 내부에서 "정보 부족" 처리
@@ -237,7 +238,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
       return;
     }
     try {
-      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const raw = loadDiagnosisRaw();
       const profile = raw ? JSON.parse(raw) : {};
       setInput(mapProfileToUserInput(profile));
     } catch {

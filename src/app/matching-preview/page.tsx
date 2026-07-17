@@ -13,6 +13,7 @@ import {
   type PaymentBlockReason,
 } from "@/lib/diagnosisConfig";
 import { BETA_FREE } from "@/lib/betaConfig";
+import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 
 export default function MatchingPreview() {
   const [name, setName] = useState("");
@@ -36,7 +37,7 @@ export default function MatchingPreview() {
       const isAdmin =
         new URLSearchParams(window.location.search).get("admin") === "1";
       setAdminView(isAdmin);
-      const raw = sessionStorage.getItem("mpp_diagnosis");
+      const raw = loadDiagnosisRaw();
       const profile = raw ? JSON.parse(raw) : {};
       setName(profile.name || "");
       setAdminLabel(
@@ -243,11 +244,13 @@ export default function MatchingPreview() {
             </div>
           </div>
 
-          {/* ── 오픈 베타(무료) 안내 — 큰 박스 대신 작은 한 줄 안내만 ── */}
+          {/* ── 오픈 베타(무료) 안내 — 반투명 포인트 박스 (대표님 요청) ── */}
           {!adminView && BETA_FREE && (
-          <p className="mt-5 break-keep text-center text-xs text-brand-gray sm:text-sm">
-            🎉 <b className="text-brand-dark">무료 베타 오픈중</b> — 아래 {total}개 항목이 모두 무료로 공개됩니다.
-          </p>
+          <div className="mt-5 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-5 py-3.5 text-center backdrop-blur-sm">
+            <p className="break-keep text-xs leading-relaxed text-brand-dark/80 sm:text-sm">
+              🎉 <b className="text-brand-dark">무료 베타 오픈중</b> — 아래 {total}개 항목이 모두 무료로 공개됩니다.
+            </p>
+          </div>
           )}
 
           {/* ── 중간 결제 유도 박스 (정식 유료 모드 전용) ──
@@ -280,10 +283,12 @@ export default function MatchingPreview() {
           </p>
           )}
           {!adminView && BETA_FREE && (
-          <p className="mt-6 break-keep text-center text-xs text-brand-gray">
-            👇 아래는 대표님 사업장을 위해 분석된 <b>실제 결과 화면</b>입니다.
-            <b className="text-brand-dark"> 기관명·상품명·신청 방법까지 전부 공개</b>됩니다.
-          </p>
+          <div className="mt-6 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-5 py-3.5 text-center backdrop-blur-sm">
+            <p className="break-keep text-xs leading-relaxed text-brand-dark/80 sm:text-sm">
+              👇 아래는 대표님 사업장을 위해 분석된 <b className="text-brand-dark">실제 결과 화면</b>입니다.
+              <b className="text-brand-dark"> 기관명·상품명·신청 방법까지 전부 공개</b>됩니다.
+            </p>
+          </div>
           )}
           <div className="relative mt-3 overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
