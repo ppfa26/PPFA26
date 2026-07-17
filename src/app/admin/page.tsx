@@ -346,15 +346,25 @@ export default function AdminPage() {
     if (ac.error) errs.push(`admin_list_access: ${ac.error.message}`);
     if (ip.error) errs.push(`admin_ip_summary: ${ip.error.message}`);
     if (bl.error) errs.push(`admin_list_blocks: ${bl.error.message}`);
-    // 에러는 없는데 회원 원본이 비어 있으면 (auth.users 조회 결과 0) 그 사실도 알림
+
+    // ── 상세 진단: 서버가 실제로 무엇을 반환했는지 "항상" 화면에 표시 ──
+    //   (추측을 없애기 위해: 로그인 이메일 / 서버 전체회원수 / 목록 원본 개수를 그대로 노출)
     const rawUserCount = !u.error && Array.isArray(u.data) ? (u.data as unknown[]).length : null;
-    if (errs.length > 0) {
-      setLoadDebug(`⚠️ 데이터 조회 오류: ${errs.join(" | ")}`);
-    } else if (rawUserCount === 0) {
-      setLoadDebug("ℹ️ 서버 조회는 정상이나 회원(auth.users)이 0명으로 반환되었습니다. (가입 데이터가 실제로 없거나, 다른 Supabase 프로젝트를 보고 있을 수 있습니다.)");
-    } else {
-      setLoadDebug(null);
-    }
+    const serverTotal =
+      !s.error && Array.isArray(s.data) && s.data[0]
+        ? (s.data[0] as Stats).total_users
+        : (!s.error && s.data ? (s.data as unknown as Stats).total_users : null);
+    let loginEmail = "(확인불가)";
+    try {
+      const sess = await supabase.auth.getSession();
+      loginEmail = sess.data.session?.user?.email || "(세션없음)";
+    } catch {}
+    const diag =
+      `🔎 진단 · 로그인: ${loginEmail} · ` +
+      `admin_stats 전체회원=${serverTotal ?? "?"} · ` +
+      `admin_list_users 원본=${rawUserCount ?? "?"}건` +
+      (errs.length > 0 ? ` · ⚠️오류: ${errs.join(" | ")}` : "");
+    setLoadDebug(diag);
     // ★ 관리자(운영자) 계정 데이터는 화면·통계에서 제외 (대표님 요청) ★
     //   기존에 쌓인 관리자 테스트 데이터도 여기서 걸러내고, 매출·건수를 다시 계산합니다.
     const payList = (!p.error && p.data ? (p.data as AdminPayment[]) : []).filter(
@@ -863,9 +873,9 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* 데이터 로딩 진단 배너 — RPC 실패/빈 결과 시 원인 표시 */}
+          {/* 데이터 로딩 진단 배너 — 서버 반환값을 항상 표시 (원인 추적용) */}
           {loadDebug && (
-            <div className="mb-4 break-keep rounded-xl border border-amber-400/60 bg-amber-50 px-4 py-3 text-sm font-semibold leading-relaxed text-amber-900">
+            <div className="mb-4 break-keep rounded-xl border border-sky-400/60 bg-sky-50 px-4 py-3 text-xs font-semibold leading-relaxed text-sky-900 sm:text-sm">
               {loadDebug}
             </div>
           )}
