@@ -18,6 +18,10 @@ function SignupInner() {
   const params = useSearchParams();
   const tier = (params.get("tier") as "basic" | "premier" | "pro" | null) || null;
   const selected = tier ? TIER_MAP[tier] : null;
+  // 로그인/가입 후 돌아갈 곳 (예: 진단 결과 페이지 /matching-preview).
+  //  안전을 위해 우리 사이트 내부 경로(/로 시작)만 허용한다.
+  const rawNext = params.get("next") || "";
+  const nextPath = rawNext.startsWith("/") ? rawNext : "";
 
   const [mode, setMode] = useState<Mode>("signup");
   const [email, setEmail] = useState("");
@@ -36,13 +40,14 @@ function SignupInner() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        router.replace(tier ? `/payment?tier=${tier}` : "/mypage");
+        router.replace(tier ? `/payment?tier=${tier}` : nextPath || "/mypage");
       }
     });
-  }, [router, tier]);
+  }, [router, tier, nextPath]);
 
   const goNext = () => {
-    router.push(tier ? `/payment?tier=${tier}` : "/mypage");
+    // 결제 흐름(tier)이 우선, 그다음 next(진단 결과 등), 없으면 마이페이지
+    router.push(tier ? `/payment?tier=${tier}` : nextPath || "/mypage");
   };
 
   // 소셜 로그인 (카카오 / 구글) — Supabase OAuth
@@ -50,9 +55,15 @@ function SignupInner() {
     setMsg(null);
     setLoading(true);
     try {
+      // 소셜 로그인 후 돌아올 주소 — tier(결제) 또는 next(진단 결과)를 그대로 유지
+      const qs = tier
+        ? `?tier=${tier}`
+        : nextPath
+        ? `?next=${encodeURIComponent(nextPath)}`
+        : "";
       const redirectTo =
         typeof window !== "undefined"
-          ? `${window.location.origin}/signup${tier ? `?tier=${tier}` : ""}`
+          ? `${window.location.origin}/signup${qs}`
           : undefined;
       const { error } = await supabase.auth.signInWithOAuth({
         provider,

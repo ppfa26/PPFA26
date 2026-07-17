@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
@@ -14,6 +15,8 @@ import {
 } from "@/lib/diagnosisConfig";
 import { BETA_FREE } from "@/lib/betaConfig";
 import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
+import { supabase } from "@/lib/supabaseClient";
+import { logAccess } from "@/lib/deviceGuard";
 
 export default function MatchingPreview() {
   const [name, setName] = useState("");
@@ -24,6 +27,10 @@ export default function MatchingPreview() {
   //   전체 결과를 그대로 보여준다. (대표님이 상담 시 고객과 같은 결과창을 보기 위함)
   //   결제·조회권 차감이 없는 이 미리보기 페이지를 재사용하므로 부작용이 없다.
   const [adminView, setAdminView] = useState(false);
+  // 로그인(회원가입) 게이트 상태:
+  //   "checking" = 세션 확인 중 · "guest" = 비로그인(결과 잠금) · "ready" = 로그인 완료(결과 공개)
+  //   ※ 관리자 열람 모드(?admin=1)는 게이트를 통과시켜 항상 "ready".
+  const [gate, setGate] = useState<"checking" | "guest" | "ready">("checking");
   const [counts, setCounts] = useState<{
     total: number;
     institutions: number;
@@ -50,8 +57,108 @@ export default function MatchingPreview() {
     }
   }, []);
 
+  // ── 로그인(회원가입) 게이트 ──
+  //  결과를 보려면 반드시 카카오/구글/이메일로 로그인해야 한다. (대표님 요청)
+  //  · 관리자 열람 모드(?admin=1)는 그대로 통과 (상담 시 고객 결과 열람용)
+  //  · 로그인 완료 시 접속 로그(IP·기기)를 기록해 관리자 통계에 잡히게 한다.
+  useEffect(() => {
+    (async () => {
+      const isAdmin =
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("admin") === "1";
+      if (isAdmin) {
+        setGate("ready");
+        return;
+      }
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user) {
+        setGate("ready");
+        // 로그인 사용자의 접속 기록(IP·기기) 남기기 → 관리자 접속 로그/IP 집계에 반영
+        try {
+          await logAccess("/matching-preview");
+        } catch {
+          /* 로그 실패해도 결과 열람은 계속 */
+        }
+      } else {
+        setGate("guest");
+      }
+    })();
+  }, []);
+
   const total = counts?.total ?? 0;
   const isBlocked = blockReasons.length > 0;
+
+  // ── 세션 확인 중 로딩 화면 ──
+  if (gate === "checking") {
+    return (
+      <PageShell pageKey="matching-preview">
+        <Header />
+        <main className="flex min-h-[50vh] items-center justify-center px-4 py-20">
+          <p className="text-sm font-semibold text-brand-gray">불러오는 중...</p>
+        </main>
+        <Footer />
+      </PageShell>
+    );
+  }
+
+  // ── 로그인(회원가입) 게이트 화면 (비로그인 시) ──
+  //  진단(mpp_diagnosis)은 localStorage 에 그대로 남아 있으므로,
+  //  로그인/가입 후 이 페이지로 돌아오면 곧바로 결과가 열린다.
+  if (gate === "guest") {
+    return (
+      <PageShell pageKey="matching-preview">
+        <Header />
+        <main className="px-4 py-12">
+          <div className="mx-auto max-w-md">
+            <div className="rounded-3xl border-2 border-brand-orange/50 bg-white p-7 text-center shadow-card sm:p-9">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
+                🔒
+              </div>
+              <h1 className="mt-4 break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
+                {name ? `${name} 대표님, ` : ""}분석이 완료되었습니다!
+              </h1>
+              <p className="mt-2 break-keep text-lg font-black text-brand-orange">
+                받을 수 있는 지원사업 {total}개 매칭 🎉
+              </p>
+              <p className="mt-4 break-keep text-sm leading-relaxed text-brand-dark/70">
+                결과를 확인하시려면{" "}
+                <b className="text-brand-dark">간편 회원가입(로그인)</b>이 필요합니다.
+                <br />
+                <b className="text-brand-orange">카카오·구글·이메일</b> 중 편한 방법으로
+                <br />
+                10초 만에 시작하고 전체 결과를 무료로 확인하세요.
+              </p>
+
+              <Link
+                href="/signup?next=%2Fmatching-preview"
+                className="btn-brand mt-6 block rounded-full py-3.5 text-center text-base font-bold"
+              >
+                🔓 회원가입하고 결과 전체 보기
+              </Link>
+              <p className="mt-3 break-keep text-xs text-brand-gray">
+                이미 가입하셨나요?{" "}
+                <Link
+                  href="/signup?next=%2Fmatching-preview"
+                  className="font-bold text-brand-dark underline"
+                >
+                  로그인
+                </Link>
+              </p>
+
+              <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-left text-xs leading-relaxed text-brand-dark/70">
+                💡 진단 결과는 안전하게 보관되어 있습니다. 로그인하시면 방금 분석한 결과가 그대로
+                열립니다.
+              </div>
+              <p className="mt-4 break-keep text-[11px] text-brand-dark/50">
+                ⚠️ 본 서비스는 정부지원사업 안내·추천 서비스이며 승인을 보장하지 않습니다.
+              </p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </PageShell>
+    );
+  }
 
   // ── 결제 차단 화면 (파산·회생 진행 중 / 세금 체납 / 자본잠식) ──
   //  안 되는데 결제받으면 환불 요청이 뻔하므로, 결제 유도 대신 정직하게 안내한다.
