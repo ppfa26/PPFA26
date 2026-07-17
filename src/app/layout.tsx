@@ -27,9 +27,18 @@ export const metadata: Metadata = {
     "경영컨설팅",
     "모두의사업친구",
   ],
+  // PWA: 홈 화면 설치용 매니페스트 연결
+  manifest: "/manifest.webmanifest",
+  // iOS 홈 화면 앱 이름
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "사업친구",
+  },
   icons: {
     icon: "/favicon.png",
-    apple: "/apple-touch-icon.png",
+    // iOS 홈 화면 설치 시 'm' 로고 아이콘 사용
+    apple: "/apple-icon-180.png",
   },
   verification: {
     // 구글 서치콘솔 사이트 소유확인
@@ -73,6 +82,8 @@ export const viewport: Viewport = {
   //  → 시력이 약하신 대표님·중장년 고객도 글자를 크게 키워 볼 수 있도록 접근성 보장.
   maximumScale: 5,
   userScalable: true,
+  // PWA: 앱 실행 시 상단 상태바/브라우저 UI 색상 (다크 테마에 맞춘 어두운 색)
+  themeColor: "#0b0b0f",
 };
 
 // ─────────────────────────────────────────────────────────────
