@@ -9,6 +9,7 @@ import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
+import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 자동 크롤링" },
@@ -131,6 +132,11 @@ export default function Home() {
               >
                 정부지원사업 AI 통합 매칭 플랫폼
               </Editable>
+              {BETA_FREE && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-brand-red px-4 py-2 text-sm font-bold text-white animate-pulseGlow sm:text-base">
+                  🎉 오픈 베타 · 전부 무료
+                </span>
+              )}
             </div>
             <Editable
               id="hero-headline-v2"
@@ -151,6 +157,22 @@ export default function Home() {
               <br />
               대표님 사업장에 딱 맞는 사업과 신청 방법까지 안내해 드립니다.
             </Editable>
+
+            {/* 오픈 베타 무료 앵커링 — 원래 39,900원인데 지금은 전부 무료 */}
+            {BETA_FREE && (
+              <div className="mx-auto mt-5 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border-2 border-brand-red/30 bg-brand-red/5 px-5 py-3">
+                <span className="text-sm font-semibold text-brand-gray sm:text-base">
+                  원래{" "}
+                  <span className="font-bold text-brand-dark line-through decoration-brand-red decoration-2">
+                    {OFFICIAL_PRICE_LABEL}
+                  </span>{" "}
+                  →
+                </span>
+                <span className="text-base font-black text-brand-red sm:text-lg">
+                  오픈 베타 기간 전부 0원
+                </span>
+              </div>
+            )}
 
             {/* 핵심 혜택 — 가로 컴팩트 배지 */}
             <ul className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:gap-x-3">
@@ -176,7 +198,7 @@ export default function Home() {
                 href="/diagnosis"
                 className="btn-brand w-full rounded-full px-8 py-3.5 text-base animate-pulseGlow sm:w-auto sm:py-4 sm:text-lg"
               >
-                무료 진단 시작하기
+                {BETA_FREE ? "지금 무료로 진단 시작하기" : "무료 진단 시작하기"}
               </Editable>
               <Editable
                 id="hero-cta-secondary"
@@ -184,7 +206,7 @@ export default function Home() {
                 href="/pricing"
                 className="btn-outline w-full rounded-full px-8 py-3.5 text-base sm:w-auto sm:py-4 sm:text-lg"
               >
-                상품 자세히 보기
+                {BETA_FREE ? "무엇을 알려주나요?" : "상품 자세히 보기"}
               </Editable>
             </div>
           </div>
@@ -205,16 +227,38 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                <span className="text-brand-red">39,900원</span>으로 이 모든 걸 알려드립니다.
+                {BETA_FREE ? (
+                  <>
+                    원래{" "}
+                    <span className="text-brand-gray line-through decoration-brand-red decoration-2">
+                      39,900원
+                    </span>
+                    , 지금은 <span className="text-brand-red">전부 무료</span>로 알려드립니다.
+                  </>
+                ) : (
+                  <>
+                    <span className="text-brand-red">39,900원</span>으로 이 모든 걸 알려드립니다.
+                  </>
+                )}
               </Editable>
               <Editable
                 id="home-value-sub"
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
-                복잡한 정부지원사업을 정리해 드립니다.
-                <br />
-                무엇을·어디서·어떻게까지 한 번에 알려드립니다.
+                {BETA_FREE ? (
+                  <>
+                    복잡한 정부지원사업을 정리해 드립니다.
+                    <br />
+                    오픈 베타 기간 동안 무엇을·어디서·어떻게까지 <b className="text-brand-dark">한 푼도 안 받고</b> 전부 알려드립니다.
+                  </>
+                ) : (
+                  <>
+                    복잡한 정부지원사업을 정리해 드립니다.
+                    <br />
+                    무엇을·어디서·어떻게까지 한 번에 알려드립니다.
+                  </>
+                )}
               </Editable>
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -357,8 +401,8 @@ export default function Home() {
                       업종·직원수·매출 등 대표님 조건을 봅니다.
                       실제 신청 자격이 열리는 정책자금을 한 번에 안내합니다.
                     </p>
-                    {/* 개별 상품·기관명은 블러 처리 */}
-                    <div className="preview-film mt-3 divide-y divide-gray-200" aria-hidden="true">
+                    {/* 개별 상품·기관명 — 베타 기간엔 블러 없이 공개, 정식 땐 블러 */}
+                    <div className={`mt-3 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
                         {
                           inst: "중소벤처기업진흥공단",
@@ -428,8 +472,8 @@ export default function Home() {
                       대출이 아닙니다. 지원금·바우처·인증·교육까지 챙깁니다.
                       받을 수 있는 제도를 모두 찾아 신청 방법과 함께 안내합니다.
                     </p>
-                    {/* 개별 제도명은 블러 처리 */}
-                    <div className="preview-film mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2" aria-hidden="true">
+                    {/* 개별 제도명 — 베타 기간엔 블러 없이 공개, 정식 땐 블러 */}
+                    <div className={`mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
                         { t: "스마트상점 기술보급 지원", c: "지원금", cls: "bg-green-100 text-green-700" },
                         { t: "수출바우처 지원", c: "바우처", cls: "bg-purple-100 text-purple-700" },
@@ -456,22 +500,66 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
+
+                  {/* 추가 감면 혜택 섹션 — '이런것까지?' 후킹 포인트 (대표님 요청: 정보 최대치) */}
+                  <div className="rounded-2xl border-2 border-brand-red/20 bg-brand-red/5 p-4 shadow-card sm:p-5">
+                    <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold text-brand-dark sm:text-lg">
+                      🎁 지원사업 말고 이런 것까지 챙겨드려요
+                      <span className="rounded-full bg-brand-red px-2 py-0.5 text-[10px] font-bold text-white">
+                        놓치기 쉬운 절세·감면
+                      </span>
+                    </p>
+                    <p className="mt-1 break-keep text-xs text-brand-dark/60">
+                      대부분 몰라서 못 챙기는 세금·수수료 감면 혜택.
+                      대표님 조건에 맞는 것만 골라 신청 방법과 함께 알려드립니다.
+                    </p>
+                    <div className={`mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                      {[
+                        { t: "카드수수료 우대·감면", d: "연매출 30억 이하 우대수수료 적용" },
+                        { t: "창업 세액감면 (최대 50%)", d: "청년·수도권 외 창업 소득·법인세 감면" },
+                        { t: "노란우산공제 소득공제", d: "연 최대 500만원 소득공제 + 폐업 대비" },
+                        { t: "정신·육체노동자 세액감면", d: "요건 충족 시 근로·사업소득세 감면" },
+                      ].map((b, i) => (
+                        <div
+                          key={i}
+                          className="rounded-xl border border-brand-red/20 bg-white px-3 py-2.5"
+                        >
+                          <p className="break-keep text-[12px] font-bold text-brand-dark">
+                            💰 {b.t}
+                          </p>
+                          <p className="mt-0.5 break-keep text-[11px] text-brand-gray">
+                            {b.d}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-3 break-keep rounded-xl bg-brand-yellow/40 px-3 py-2 text-center text-[12px] font-bold text-brand-dark">
+                      ✨ 요건에 맞게 챙기면 첫 해 최대 700만원 절감도 가능
+                    </p>
+                  </div>
                 </div>
 
-                {/* 하단 페이드 + 잠금 (뒤에 더 많다는 느낌) */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-white via-white/95 to-transparent" />
+                {/* 하단 페이드 — 베타 땐 뒤에 더 있다는 느낌만, 정식 땐 잠금 페이드 */}
+                <div className={`pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent ${BETA_FREE ? "h-24" : "h-44"}`} />
               </div>
 
-              {/* 잠금 오버레이 안내 — '이만큼 준다, 결제하면 전부 공개' */}
+              {/* 오버레이 안내 — 베타: '지금 무료로 전부 공개' / 정식: '결제하면 공개' */}
               <div className="relative -mt-24 flex flex-col items-center pb-2">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-dark text-2xl text-white shadow-xl">
-                  🔒
+                <span
+                  className={`flex h-14 w-14 items-center justify-center rounded-full text-2xl text-white shadow-xl ${
+                    BETA_FREE ? "bg-brand-red animate-pulseGlow" : "bg-brand-dark"
+                  }`}
+                >
+                  {BETA_FREE ? "🎁" : "🔒"}
                 </span>
                 <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
-                  이 모든 결과가 대표님을 기다리고 있어요
+                  {BETA_FREE
+                    ? "이 모든 결과, 지금은 무료로 전부 열립니다"
+                    : "이 모든 결과가 대표님을 기다리고 있어요"}
                 </p>
                 <p className="mt-1 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                  <b className="text-brand-orange">신청 사이트 · 필요 서류 · 승인 전략</b>까지 공개
+                  <b className="text-brand-orange">신청 사이트 · 필요 서류 · 승인 전략</b>
+                  {BETA_FREE ? "까지 오픈 베타 기간 0원으로 공개" : "까지 공개"}
                 </p>
               </div>
             </div>
@@ -482,7 +570,9 @@ export default function Home() {
               href="/diagnosis"
               className="btn-brand mx-auto mt-5 block max-w-md rounded-full py-4 text-center text-base font-bold sm:text-lg"
             >
-              내 사업장 무료로 진단해보기
+              {BETA_FREE
+                ? "지금 무료로 내 결과 전부 받아보기"
+                : "내 사업장 무료로 진단해보기"}
             </Editable>
             <p className="mt-3 text-center text-xs text-brand-gray/70">
               * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
@@ -513,7 +603,15 @@ export default function Home() {
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
-                1회성 결제이며 월 구독 결제가 아닙니다.
+                {BETA_FREE ? (
+                  <>
+                    정식 오픈가는 39,900원(1회성 결제)입니다.
+                    <br />
+                    <b className="text-brand-red">오픈 베타 기간에는 결제 없이 전부 무료로 이용</b>하실 수 있습니다.
+                  </>
+                ) : (
+                  <>1회성 결제이며 월 구독 결제가 아닙니다.</>
+                )}
               </Editable>
             </div>
             <div className="mt-6">
@@ -586,14 +684,24 @@ export default function Home() {
               as="h2"
               className="break-keep text-xl font-black text-white sm:text-2xl"
             >
-              지금 무료로 진단받아 보세요
+              {BETA_FREE
+                ? "오픈 베타 기간, 지금은 전부 무료입니다"
+                : "지금 무료로 진단받아 보세요"}
             </Editable>
             <Editable
               id="home-cta-sub"
               as="p"
               className="mx-auto mt-3 max-w-md break-keep text-sm leading-relaxed text-gray-300"
             >
-              1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.
+              {BETA_FREE ? (
+                <>
+                  원래 39,900원짜리 진단 결과를 지금은 0원에.
+                  <br />
+                  1분이면 내 사업장에 알맞는 정부지원사업을 전부 확인할 수 있습니다.
+                </>
+              ) : (
+                <>1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.</>
+              )}
             </Editable>
             <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
               {/* 왼쪽 — 무료 진단 시작하기 (주 버튼, 빨간색) */}
@@ -602,7 +710,7 @@ export default function Home() {
                 href="/diagnosis"
                 className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
               >
-                무료 진단 시작하기
+                {BETA_FREE ? "무료로 진단 시작하기" : "무료 진단 시작하기"}
               </a>
               {/* 오른쪽 — 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인) */}
               <a
