@@ -834,7 +834,6 @@ function AdvancedResult({
         <AccordionCard
           emoji="🎁"
           title="대표님이 신청할 수 있는 정부지원제도"
-          defaultOpen
           subtitle={
             <>
               정책자금과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
