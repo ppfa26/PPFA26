@@ -37,12 +37,35 @@ function SignupInner() {
   //  · 결제 진행 중(tier 있음) → 결제 페이지
   //  · 그 외(순수 로그인) → 마이페이지(결과를 클릭해서 확인하도록 유도 · 대표님 요청)
   //  ※ 진단 데이터(mpp_diagnosis)는 localStorage에 30일간 보관되므로 로그인/이동해도 유지됨
+  //
+  //  ★ 카카오/구글 소셜 로그인 콜백 안정화 (대표님 요청 — 가입 이탈 방지) ★
+  //   OAuth 로 돌아오면 세션이 URL(#access_token=...)로 넘어오는데, supabase-js 가
+  //   이를 파싱해 저장하는 데 아주 잠깐 시간이 걸린다. getSession() 을 딱 한 번만
+  //   호출하면 저장 '이전'이라 세션을 못 잡고 가입 화면에 머물러 → 사용자가
+  //   "가입이 안 됐네" 하고 이탈할 수 있다.
+  //   → onAuthStateChange 리스너를 함께 걸어, 세션이 저장되는 '그 순간' 바로
+  //     다음 페이지로 넘어가게 한다. (소셜 로그인 완료가 항상 즉시 반영됨)
   useEffect(() => {
+    let done = false;
+    const go = () => {
+      if (done) return;
+      done = true;
+      router.replace(tier ? `/payment?tier=${tier}` : nextPath || "/mypage");
+    };
+
+    // 1) 진입 즉시 한 번 확인 (이미 로그인 상태였던 경우)
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        router.replace(tier ? `/payment?tier=${tier}` : nextPath || "/mypage");
-      }
+      if (data.session) go();
     });
+
+    // 2) 세션이 새로 생기는 순간(소셜 로그인 콜백 포함) 즉시 이동
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) go();
+    });
+
+    return () => {
+      sub.subscription.unsubscribe();
+    };
   }, [router, tier, nextPath]);
 
   const goNext = () => {
