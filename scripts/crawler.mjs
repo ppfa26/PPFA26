@@ -145,8 +145,27 @@ function extractAnnouncements(html, site) {
 
 async function main() {
   const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supaKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // ── 저장 키 선택 ────────────────────────────────────────────────
+  //  크롤러는 "대표님 PC에서만 도는 관리자 프로그램"이므로 RLS를 우회하는
+  //  service_role 키를 우선 사용한다. (일반 고객의 anon 키는 RLS에 막혀 401)
+  //  service_role 키는 .env.local 의 SUPABASE_SERVICE_ROLE_KEY 에만 넣고,
+  //  절대 웹사이트/GitHub 코드(NEXT_PUBLIC_*)에는 노출하지 않는다.
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supaKey = serviceKey || anonKey; // service_role 있으면 우선 사용
+  const usingServiceRole = !!serviceKey;
   const canSave = !!(supaUrl && supaKey);
+
+  if (!supaUrl) {
+    console.warn("⚠️ NEXT_PUBLIC_SUPABASE_URL 미설정 → 저장 건너뜀 (추출만 진행)");
+  } else if (!serviceKey) {
+    console.warn(
+      "⚠️ SUPABASE_SERVICE_ROLE_KEY 미설정 → anon 키로 저장 시도 (RLS로 막힐 수 있음).\n" +
+        "   .env.local 에 SUPABASE_SERVICE_ROLE_KEY 를 추가하면 안전하게 저장됩니다."
+    );
+  } else {
+    console.log("🔐 service_role 키로 저장합니다 (RLS 우회, 관리자 전용).");
+  }
 
   let totalSaved = 0;
   const report = [];
