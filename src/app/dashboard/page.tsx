@@ -74,7 +74,7 @@ export default function DashboardPage() {
               더 궁금한 점이 있으신가요?
             </h2>
             <p className="mx-auto mt-3 max-w-md break-keep text-sm leading-relaxed text-gray-300">
-              진단 결과 해석부터 신청 전략까지, 대표님 사업장에 딱 맞게 안내해 드립니다.
+              서비스 이용에 어려움을 겪고 있으시다면 1:1 채널톡 상담하기를 클릭하세요.
             </p>
             <div className="mt-7 flex justify-center">
               <a

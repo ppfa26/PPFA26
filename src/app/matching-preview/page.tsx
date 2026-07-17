@@ -342,7 +342,7 @@ export default function MatchingPreview() {
                 as="p"
                 className="mx-auto mt-3 max-w-md break-keep text-sm leading-relaxed text-gray-300"
               >
-                진단 결과 해석부터 신청 전략까지, 대표님 사업장에 딱 맞게 안내해 드립니다.
+                서비스 이용에 어려움을 겪고 있으시다면 1:1 채널톡 상담하기를 클릭하세요.
               </Editable>
               <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 {/* 왼쪽 — 다시 진단하기 (주 버튼, 빨간색) */}
