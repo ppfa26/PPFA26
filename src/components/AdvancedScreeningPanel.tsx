@@ -908,8 +908,8 @@ function AdvancedResult({
                       )}
                     </div>
                   )}
-                  {/* 상세보기 — 주황색 포인트 박스로 강조 (대표님 요청) */}
-                  <span className="mt-2.5 flex items-center justify-between gap-1 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange transition group-hover:border-brand-orange/60 group-hover:bg-brand-orange/15">
+                  {/* 상세보기 — 주황색 포인트 박스로 강조 (대표님 요청) · 글자 길이에 맞춰 짧게 */}
+                  <span className="mt-2.5 inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange transition group-hover:border-brand-orange/60 group-hover:bg-brand-orange/15">
                     상세 · 승인 소요기간 · 연락처 보기
                     <span className="transition group-hover:translate-x-0.5">→</span>
                   </span>

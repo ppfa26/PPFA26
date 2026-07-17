@@ -43,10 +43,15 @@ export default function DashboardPage() {
               🏦 대표님 맞춤 신청 가능 기관 및 상품 안내
             </div>
             <p className="mx-auto mt-3 max-w-2xl break-keep text-[13px] leading-relaxed text-brand-gray sm:text-base">
-              대표님 진단 정보를 기준으로 실제 신청 자격이 열리는{" "}
-              <b className="text-brand-orange">정책금융 기관·상품</b>과
-              <br className="hidden sm:inline" />{" "}
-              <b className="text-brand-green">추가로 신청 가능한 지원사업</b>을{" "}
+              대표님 진단 정보를 기준으로 실제 신청 자격이 열리는
+              {/* 모바일: '열리는' 뒤 줄바꿈 (3줄) */}
+              <br className="sm:hidden" />{" "}
+              <b className="text-brand-orange">정책금융 기관·상품</b>과{" "}
+              {/* PC: '기관·상품과' 뒤 줄바꿈 (2줄) */}
+              <br className="hidden sm:inline" />
+              <b className="text-brand-green">추가로 신청 가능한 지원사업</b>을
+              {/* 모바일: '지원사업을' 뒤 줄바꿈 (3줄) */}
+              <br className="sm:hidden" />{" "}
               <span className="whitespace-nowrap">대표님의 사업장 기준으로</span> 정리해 드렸습니다.
             </p>
           </section>
@@ -80,7 +85,7 @@ export default function DashboardPage() {
                 href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3.5 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
+                className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
               >
                 💬 1:1 채널톡 상담하기
               </a>

@@ -345,21 +345,21 @@ export default function MatchingPreview() {
                 서비스 이용에 어려움을 겪고 있으시다면 1:1 채널톡 상담하기를 클릭하세요.
               </Editable>
               <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                {/* 왼쪽 — 다시 진단하기 (주 버튼, 빨간색) */}
+                {/* 왼쪽 — 다시 진단하기 (보조 버튼, 흰색 아웃라인) */}
                 <a
                   id="preview-bottom-cta-button"
                   href="/diagnosis"
-                  className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
+                  className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3.5 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
                 >
                   다시 진단하기
                 </a>
-                {/* 오른쪽 — 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인) */}
+                {/* 오른쪽 — 1:1 채널톡 상담하기 (주 버튼, 빨간색) */}
                 <a
                   id="preview-bottom-cta-kakao"
                   href="http://pf.kakao.com/_VxfWxan/chat"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3.5 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
+                  className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
                 >
                   💬 1:1 채널톡 상담하기
                 </a>
