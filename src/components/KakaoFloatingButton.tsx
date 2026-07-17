@@ -14,9 +14,9 @@ export default function KakaoFloatingButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="1:1 채널톡 상담하기"
-      className="group fixed bottom-5 right-5 z-50 flex w-[168px] items-center justify-center gap-1.5 rounded-full border border-brand-dark/15 bg-white px-3.5 py-2.5 shadow-lg ring-1 ring-black/5 backdrop-blur-sm transition hover:bg-white/90 hover:shadow-xl sm:bottom-7 sm:right-7 sm:w-[176px]"
+      className="group fixed bottom-4 right-4 z-50 flex w-[128px] items-center justify-center gap-1 rounded-full border border-brand-dark/15 bg-white px-2.5 py-1.5 shadow-lg ring-1 ring-black/5 backdrop-blur-sm transition hover:bg-white/90 hover:shadow-xl sm:bottom-7 sm:right-7 sm:w-[176px] sm:gap-1.5 sm:px-3.5 sm:py-2.5"
     >
-      <span className="whitespace-nowrap text-[13px] font-extrabold text-brand-dark">
+      <span className="whitespace-nowrap text-[11px] font-extrabold text-brand-dark sm:text-[13px]">
         💬 1:1 채널톡 상담하기
       </span>
     </a>

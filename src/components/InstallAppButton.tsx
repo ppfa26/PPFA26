@@ -139,7 +139,7 @@ export default function InstallAppButton() {
           backgroundImage:
             "linear-gradient(135deg, #E11D2E 0%, #8E1420 100%)",
         }}
-        className="group fixed bottom-20 right-5 z-50 flex w-[168px] items-center justify-center gap-1.5 rounded-full border border-black/5 px-3.5 py-2.5 shadow-lg ring-1 ring-black/5 transition hover:shadow-xl sm:bottom-24 sm:right-7 sm:w-[176px]"
+        className="group fixed bottom-[68px] right-4 z-50 flex w-[128px] items-center justify-center gap-1 rounded-full border border-black/5 px-2.5 py-1.5 shadow-lg ring-1 ring-black/5 transition hover:shadow-xl sm:bottom-24 sm:right-7 sm:w-[176px] sm:gap-1.5 sm:px-3.5 sm:py-2.5"
       >
         {/* 홈 화면 추가 아이콘 — 화면(사각형) 안에 + 추가 */}
         <svg
@@ -150,14 +150,14 @@ export default function InstallAppButton() {
           strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="h-4 w-4 shrink-0"
+          className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4"
           aria-hidden="true"
         >
           <rect x="3" y="3" width="18" height="18" rx="4" />
           <path d="M12 8v8" />
           <path d="M8 12h8" />
         </svg>
-        <span className="whitespace-nowrap text-[13px] font-extrabold text-white">
+        <span className="whitespace-nowrap text-[11px] font-extrabold text-white sm:text-[13px]">
           앱으로 설치하기
         </span>
       </button>

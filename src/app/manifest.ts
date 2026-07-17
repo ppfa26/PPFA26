@@ -8,7 +8,7 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "모두의사업친구",
-    short_name: "사업친구",
+    short_name: "모두의사업친구",
     description:
       "AI가 내 사업장에 딱 맞는 정책자금·정부지원사업을 한 번에 진단하고 매칭해주는 통합 플랫폼.",
     start_url: "/",

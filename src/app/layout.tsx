@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "사업친구",
+    title: "모두의사업친구",
   },
   icons: {
     icon: "/favicon.png",
