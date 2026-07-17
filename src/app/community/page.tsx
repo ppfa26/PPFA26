@@ -227,7 +227,7 @@ export default function Page() {
           </h1>
           <p className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base">
             <span className="font-semibold text-brand-dark">모두의사업친구</span>
-            은 2년간 약 300여 기업의 자금 고민을 함께 풀어왔습니다.
+            은 지난 2년간 약 300여 기업의 고민을 함께 해결해왔습니다.
             <br className="hidden sm:block" />
             당근마켓·네이버 블로그·카카오 채널에서 만난 대표님들의 실제 이야기입니다.
           </p>
