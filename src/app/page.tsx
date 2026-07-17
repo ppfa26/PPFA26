@@ -8,6 +8,7 @@ import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
+import InstallAppButton from "@/components/InstallAppButton";
 
 const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 자동 크롤링" },
@@ -618,7 +619,8 @@ export default function Home() {
         </section>
       </main>
       <Footer />
-      {/* 오른쪽 하단 고정 카카오톡 1:1 상담 버튼 (대표님 요청) */}
+      {/* 오른쪽 하단 고정 — 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
+      <InstallAppButton />
       <KakaoFloatingButton />
     </PageShell>
   );
