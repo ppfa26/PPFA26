@@ -369,7 +369,7 @@ export default function Diagnosis() {
               <div className="mb-5 rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4 sm:p-5">
                 <p className="mb-3 break-keep text-sm font-extrabold leading-snug text-brand-red">
                   ⚠️ 신청 결격사유 확인{"\u00A0"}
-                  <span className="font-bold">(해당 시 신청이 불가합니다.)</span>
+                  <span className="font-bold">(해당 시 신청이 불가)</span>
                 </p>
                 <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
                 <div className="mb-0">
@@ -484,18 +484,16 @@ export default function Diagnosis() {
                   🎯 맞춤 매칭을 위한 추가 질문
                 </p>
                 <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
-                  아래 질문은 맞는 상품만 골라 드리기 위한 것입니다.
-                  <br />
-                  해당 없으면 &lsquo;아니요&rsquo;를 선택하시면 됩니다.
+                  아래 질문은 맞는 상품만 골라 드리기 위한 것입니다. 해당 없으면 &lsquo;아니요&rsquo;를 선택하시면 됩니다.
                 </p>
-                {/* ★ 대표님 요청 순서대로 배치 (스마트공장 질문은 화면에서 제외) ★ */}
+                {/* ★ 대표님 요청 순서 ★ 연매출성장 → 스마트기기 → 대환 → 재도전 → 정부선정 → 민간투자
+                    (성실상환 policyFundGood 질문은 대표님 요청으로 삭제, 스마트공장 질문도 화면 제외) */}
                 <CondQ k="revenueGrowth2y" field={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y} />
                 <CondQ k="smartDevice" field={STEP3_CONDITIONAL_FIELDS.smartDevice} />
                 <CondQ k="wantsRefinance" field={STEP3_CONDITIONAL_FIELDS.wantsRefinance} />
-                <CondQ k="govSelected" field={STEP3_CONDITIONAL_FIELDS.govSelected} />
                 <CondQ k="reFounder" field={STEP3_CONDITIONAL_FIELDS.reFounder} />
+                <CondQ k="govSelected" field={STEP3_CONDITIONAL_FIELDS.govSelected} />
                 <CondQ k="privateInvestment" field={STEP3_CONDITIONAL_FIELDS.privateInvestment} />
-                <CondQ k="policyFundGood" field={STEP3_CONDITIONAL_FIELDS.policyFundGood} />
               </div>
 
               {/* ── 전화 상담 희망 여부 (대표님 요청 — 마지막 질문 1개) ── */}

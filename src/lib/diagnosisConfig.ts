@@ -27,8 +27,8 @@ export const DIAGNOSIS_TEXT = {
 
 // ── 사업자번호 자동조회 블록 문구 ──────────────────────────────
 export const BNO_TEXT = {
-  title: "🔍 사업자등록번호로 자동 조회",
-  badge: "(필수 · 국세청 실시간)",
+  title: "🔍 사업자등록번호로 국세청 자동 조회",
+  badge: "(필수)",
   placeholder: "예: 123-45-67890",
   button: "조회",
   buttonLoading: "조회 중...",
@@ -51,7 +51,7 @@ export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본
 export const STEP1_GROUP = "🏢 사업장 정보";
 // ── 대표자 연락 정보 (진단 결과·상담 안내를 위해 수집) ──────────────
 export const CONTACT_TEXT = {
-  groupTitle: "📇 대표자 성함 및 연락처",
+  groupTitle: "📇 대표자 성함 및 연락처 (필수)",
   groupNote: "",
   nameLabel: "대표자 성함",
   namePlaceholder: "예: 홍길동",
@@ -93,7 +93,7 @@ export const STEP1_FIELDS = {
 //  ★ 간소화 ★ 예전 '상담 목적'과 '관심 분야'가 거의 중복이라 하나로 합쳤습니다.
 //    (정부지원금·인증이 양쪽에 겹쳤음) → 문항 수는 줄고 정보량은 그대로.
 export const STEP2_TITLE = "2단계 · 필요한 지원과 기업 역량";
-export const STEP2_SUBTITLE = "어떤 자금·지원이 필요하신지와, 대표님 사업장의 강점을 확인하는 단계예요.";
+export const STEP2_SUBTITLE = "어떤 자금·지원이 필요하신지와 대표님 사업장의 강점을 확인입니다.";
 // 2단계 문맥별 그룹 소제목
 export const STEP2_GROUP_NEED = "💰 어떤 지원이 필요하세요?";
 export const STEP2_GROUP_FINANCE = "🏦 자금 여건 · 현재 이용 현황";
@@ -132,6 +132,7 @@ export const STEP2_FIELDS = {
       "기술보증기금",
       "무역보험공사",
       "기타",
+      "없음",
     ],
   },
   collateral: {
@@ -178,12 +179,6 @@ export const STEP3_CONDITIONAL_FIELDS = {
     hint: "소진공·중기부 등에서 우수 소상공인으로 선정·지정받은 경우 체크",
     opts: ["예, 선정됐어요", "아니요·해당 없음"],
   },
-  // 혁신형 졸업후보 — 정책자금 졸업후보 / 직접대출 성실상환 이력
-  policyFundGood: {
-    label: "기존 정책자금을 성실히 상환하고 계신가요?",
-    hint: "소진공·중진공 등 정책자금 직접대출을 연체 없이 상환 중이거나 곧 상환완료 예정인 경우 체크",
-    opts: ["예, 성실상환 중이에요", "아니요·해당 없음"],
-  },
   // 재도전특별자금 / 재도전 — 폐업 후 재창업(재도전)
   //   ※ bankruptcy 값이 '면책·인가 완료'면 자동 재도전 처리도 하되, 명시 질문으로 정확도↑
   reFounder: {
@@ -222,22 +217,22 @@ export const STEP3_FIELDS = {
   },
   // ★ 특허 및 인증 유무 (다중 선택) ★
   certifications: {
-    label: "특허·인증 보유 여부 (복수 선택 · 없으면 넘어가기)",
-    opts: ["벤처인증", "이노비즈", "메인비즈", "연구소", "특허", "기타"],
+    label: "특허·인증 보유 여부 (복수 선택)",
+    opts: ["벤처인증", "이노비즈", "메인비즈", "연구소", "특허", "기타", "없음"],
   },
   // ★ 혁신성장 분야 (혁신성장 공동기준 6차 개정 9개 테마) ★
   //   해당 시 직원수 무관하게 중진공 신청 자격이 열립니다.
   //   모르면 선택하지 않고 넘어가도 됩니다.
   innovation: {
-    label: "혁신성장 분야 해당 여부 (복수 선택 · 없으면 넘어가기)",
-    opts: INNOVATION_THEME_LABELS,
+    label: "혁신성장 분야 해당 여부 (복수 선택)",
+    opts: [...INNOVATION_THEME_LABELS, "해당 없음"],
   },
   // ★ 대표자 회생·파산 상태 (3단계) — 결제 차단·정책자금 제한 판정의 핵심 ★
   //   · 진행 중 → 정책자금·정부지원 모두 신청 불가 → 결제 차단
   //   · 면책/인가 완료 → 3년 경과 시 정책자금 가능, 정부지원금·인증은 바로 가능
   bankruptcy: {
     label: "대표자 회생·파산 상태",
-    opts: ["해당 없음 (진행 가능)", "파산·회생 진행 중 (진행 불가)", "면책·인가 완료 (3년 경과) (진행 가능)"],
+    opts: ["해당 없음 (진행 가능)", "파산·회생 진행 중 (진행 불가)"],
   },
   // ★ 세금 체납 여부 — 체납 중이면 정책자금·정부지원 전체 신청 불가 → 결제 차단 ★
   taxDelinquent: {
