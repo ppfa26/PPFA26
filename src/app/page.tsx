@@ -123,13 +123,8 @@ export default function Home() {
           className="relative overflow-hidden px-4 pb-5 pt-6 sm:pb-9 sm:pt-12"
         >
           <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-5 py-8 text-center animate-fadeUp sm:px-10 sm:py-12">
-            {/* 상단 배지 — 오픈 베타(빨강)는 모바일에서 맨 위, PC에서는 왼쪽에 위치 (대표님 요청) */}
+            {/* 상단 배지 (노란색 서비스 소개 배지) */}
             <div className="mb-5 flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
-              {BETA_FREE && (
-                <span className="order-first inline-flex items-center gap-1 rounded-full bg-brand-red px-4 py-2 text-sm font-bold text-white animate-pulseGlow sm:order-none sm:text-base">
-                  🎉 오픈 베타 · 전부 무료
-                </span>
-              )}
               <Editable
                 id="hero-badge"
                 as="div"
