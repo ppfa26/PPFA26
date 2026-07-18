@@ -450,11 +450,9 @@ export default function Diagnosis() {
                 <Field label={STEP2_FIELDS.desiredAmount.label}><Radio k="desiredAmount" opts={STEP2_FIELDS.desiredAmount.opts} /></Field>
               </GroupBox>
 
-              {/* ② 자금 여건·현재 이용 현황 (신용점수·담보·이용기관·직원수) — 대출 자격 판정 문맥으로 묶음 */}
+              {/* ② 자금 여건·현재 이용 현황 — 순서(대표님 요청): 신용점수 → 4대보험 직원수 → 담보 → 이용 중인 정책기관 */}
               <GroupBox title={STEP2_GROUP_FINANCE}>
                 <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
-                <Field label={STEP2_FIELDS.collateral.label}><Radio k="collateral" opts={STEP2_FIELDS.collateral.opts} /></Field>
-                <Field label={STEP2_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
                 {/* 직원수(4대보험 통합) — 힌트 포함 */}
                 <div className="mb-6 last:mb-0">
                   <p className="mb-1 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP2_FIELDS.employees.label)}</p>
@@ -463,6 +461,8 @@ export default function Diagnosis() {
                   </p>
                   <Radio k="employees" opts={STEP2_FIELDS.employees.opts} />
                 </div>
+                <Field label={STEP2_FIELDS.collateral.label}><Radio k="collateral" opts={STEP2_FIELDS.collateral.opts} /></Field>
+                <Field label={STEP2_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
               </GroupBox>
 
               {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) — 있으면 자격이 열려 더 유리한 문맥으로 묶음 */}
