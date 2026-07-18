@@ -395,11 +395,14 @@ export default function Home() {
                   <details open className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
                       <div className="min-w-0 flex-1">
-                        <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold text-brand-dark sm:text-lg">
-                          <span>🏦 대표님이 이용할 수 있는 정책금융기관</span>
-                          <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[11px] font-bold text-brand-dark/70">3곳</span>
+                        {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청: 검정으로 통일) */}
+                        <p className="flex flex-wrap items-center gap-1.5">
+                          <span className="inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-base font-extrabold text-white sm:text-lg">
+                            🏦 대표님이 이용할 수 있는 정책금융기관
+                          </span>
+                          <span className="shrink-0 rounded-full bg-brand-dark/15 px-2 py-0.5 text-[11px] font-bold text-brand-dark/70">3곳</span>
                         </p>
-                        <p className="mt-1 break-keep text-xs text-brand-dark/60">
+                        <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
                           업종·직원수·매출 등 대표님 조건을 봅니다.
                           실제 신청 자격이 열리는 정책자금을 한 번에 안내합니다.
                         </p>
