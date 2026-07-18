@@ -821,9 +821,9 @@ function AdvancedResult({
           '어떻게 보는지' 안내 문구만 남김 (대표님 요청: 결과창 중복 정리) */}
       {autoRun && (
         <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
-          <p className="break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/80 sm:text-xs">
-            👇 아래 <b>✅ 표시</b>된 곳이 대표님이 <b>지금 바로 신청 가능한 곳</b>입니다. 각 항목의
-            <b> &ldquo;상품 보기&rdquo;</b>를 누르면 신청할 상품이 펼쳐지고, <b>신청 방법</b>까지 순서대로 안내드려요.
+          <p className="break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/80 sm:whitespace-nowrap sm:text-xs">
+            👇 <b>✅ 표시</b>된 곳이 <b>지금 바로 신청 가능한 곳</b>입니다.{" "}
+            <b>&ldquo;상품 보기&rdquo;</b>를 누르면 신청 상품과 방법을 순서대로 안내드려요.
           </p>
         </div>
       )}
