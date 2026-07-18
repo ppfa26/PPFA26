@@ -15,6 +15,10 @@ export type ExtraBenefitsUserInput = {
   workerCount?: number;
   region?: string;
   representativeAge?: number;
+  // 추가 신호 (조건별 차등 추천용)
+  hasRnd?: boolean; // 연구소·연구전담부서·특허 등 R&D 신호
+  isInnovation?: boolean; // 혁신성장 분야 선택
+  hiredRecently?: boolean; // 직원이 있음(=고용세액공제 가능성)
 };
 
 type Props = {
@@ -55,22 +59,29 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
     return undefined;
   };
 
-  // 연매출(한글) → 대략 숫자(원). 구간 대표값 사용.
-  const revenueStr = get("revenue");
+  // 연매출(한글) → 대략 숫자(원). ★ 현행 진단 구간(2026 개정)에 맞춤 ★
+  //   현재 옵션: [매출 없음 / 2억 미만 / 10억 미만 / 10억 이상 / 기타]
+  //   (과거 "1억 미만/5억 미만/5억 이상"도 하위호환 유지)
+  const revenueStr = (get("revenue") || "").replace(/\s/g, "");
   let annualRevenue: number | undefined;
-  if (revenueStr === "매출 없음") annualRevenue = 0;
-  else if (revenueStr === "1억 미만") annualRevenue = 50_000_000;
-  else if (revenueStr === "5억 미만") annualRevenue = 300_000_000;
-  else if (revenueStr === "5억 이상") annualRevenue = 600_000_000;
+  if (revenueStr.includes("매출없음")) annualRevenue = 0;
+  else if (revenueStr.includes("2억미만")) annualRevenue = 100_000_000;
+  else if (revenueStr.includes("10억미만")) annualRevenue = 500_000_000;
+  else if (revenueStr.includes("10억이상")) annualRevenue = 1_500_000_000;
+  // 과거 라벨 하위호환
+  else if (revenueStr.includes("1억미만")) annualRevenue = 50_000_000;
+  else if (revenueStr.includes("5억미만")) annualRevenue = 300_000_000;
+  else if (revenueStr.includes("5억이상")) annualRevenue = 600_000_000;
+  // "기타"는 매핑하지 않음 → undefined (매출 조건 보류)
 
   // 업력(한글) → 대략 연차(년)
-  const yearsStr = get("years");
+  const yearsStr = (get("years") || "").replace(/\s/g, "");
   let yearsInBusiness: number | undefined;
-  if (yearsStr === "창업 예정") yearsInBusiness = 0;
-  else if (yearsStr === "1년 미만") yearsInBusiness = 0;
-  else if (yearsStr === "3년 미만") yearsInBusiness = 2;
-  else if (yearsStr === "7년 미만") yearsInBusiness = 5;
-  else if (yearsStr === "7년 이상") yearsInBusiness = 7;
+  if (yearsStr.includes("창업예정")) yearsInBusiness = 0;
+  else if (yearsStr.includes("1년미만")) yearsInBusiness = 0;
+  else if (yearsStr.includes("3년미만")) yearsInBusiness = 2;
+  else if (yearsStr.includes("7년미만")) yearsInBusiness = 5;
+  else if (yearsStr.includes("7년이상")) yearsInBusiness = 8;
 
   // 대표자 연령(한글) → 대략 나이 (신·구 옵션 모두 인정: "만 39세 이하 (청년)" / "만 40세 이상")
   const ageStr = get("age");
@@ -83,15 +94,33 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
     ? (industriesRaw as string[]).join(", ")
     : get("industries");
 
+  // ★ 직원수(한글) → 대략 인원 (2026 옵션: 0명/5명 이하/5명 이상/50명 이상/300명 이상/기타) ★
+  const empStr = (get("employees") || "").replace(/\s/g, "");
+  let workerCount: number | undefined;
+  if (empStr.includes("300명이상")) workerCount = 300;
+  else if (empStr.includes("50명이상")) workerCount = 50;
+  else if (empStr.includes("5명이상")) workerCount = 7;
+  else if (empStr.includes("5명이하")) workerCount = 3;
+  else if (empStr === "0명") workerCount = 0;
+
+  // 인증·혁신 신호 (R&D 세액공제 등 조건별 차등용)
+  const certsRaw = profile["certifications"];
+  const certs = Array.isArray(certsRaw) ? (certsRaw as string[]) : [];
+  const hasRnd = certs.some((c) => c.includes("연구소") || c.includes("특허"));
+  const innovationRaw = profile["innovation"];
+  const isInnovation = Array.isArray(innovationRaw) && innovationRaw.length > 0;
+
   return {
     businessType: get("businessType"),
     industry,
     yearsInBusiness,
     annualRevenue,
-    // 진단에 직원수 필드가 없음 → undefined (정보 부족 처리)
-    workerCount: undefined,
+    workerCount,
     region: get("region"),
     representativeAge,
+    hasRnd,
+    isInnovation,
+    hiredRecently: typeof workerCount === "number" && workerCount > 0,
   };
 }
 
@@ -109,10 +138,16 @@ function formatKRW(won: number): string {
 }
 
 // ── 자격 판정 결과 타입 ─────────────────────────────────────────
+//  status: "yes"       → 지금 바로 신청 대상 (초록 ✅ 신청 가능)
+//          "condition" → 조건 충족 시 신청 가능 (주황 🟡)  ← 대표님 방침
+//          "no"        → 대상 아님 (노출하지 않음 = 상위 6개에서 밀려남)
+//  score : 가능성 점수 (높을수록 위로 정렬) — 대표님 방침 "가능성 높은 것 위로"
 type Verdict = {
-  eligible: boolean | null; // null = 정보 부족으로 판정 불가
+  status: "yes" | "condition" | "no";
+  score: number; // 0~100 (정렬용)
   savingText?: string; // 예상 절감·수령액 (큰 글씨)
-  note?: string; // 보조 설명 (판정 불가 사유 등)
+  note?: string; // 보조 설명 (조건·사유)
+  conditionText?: string; // "조건 충족 시 신청 가능" 상세 안내
 };
 
 // 수도권 판정 (서울/경기/인천)
@@ -121,105 +156,225 @@ function isMetro(region?: string): boolean {
   return ["서울", "경기", "인천"].some((r) => region.includes(r));
 }
 
+// 업종 문자열 헬퍼
+function hasInd(u: ExtraBenefitsUserInput, ...keys: string[]): boolean {
+  const s = u.industry ?? "";
+  return keys.some((k) => s.includes(k));
+}
+function isExcluded(b: ExtraBenefit, u: ExtraBenefitsUserInput): boolean {
+  return (b.excludedIndustries ?? []).some((ex) => (u.industry ?? "").includes(ex));
+}
+
+// ★ 조건별 차등 판정 — 대표님 방침 ★
+//  · 확실히 되면 status:"yes" (초록 · 높은 점수)
+//  · 조건 맞으면 되면 status:"condition" (주황 · 중간 점수) → "조건 충족 시 신청 가능"
+//  · 명백히 아니면 status:"no" (노출 제외 → 상위 6개에서 밀림)
 function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
+  const rev = u.annualRevenue;
+  const years = u.yearsInBusiness;
+  const age = u.representativeAge;
+  const emp = u.workerCount;
+  const metro = isMetro(u.region);
+
   switch (b.id) {
-    // ── 카드 수수료 우대율 ──
+    // ── 카드 수수료 우대율 (거의 전 사업자 · 매출 클수록 절감 큼) ──
     case "cardFee": {
-      const rev = u.annualRevenue;
-      if (rev === undefined) return { eligible: null, note: "연매출 정보 부족으로 판정 불가" };
-      if (rev > 3_000_000_000) return { eligible: false, note: "연매출 30억 초과" };
-      let rate = 0;
-      if (rev <= 300_000_000) rate = 0.003;
-      else if (rev <= 500_000_000) rate = 0.004;
-      else if (rev <= 1_000_000_000) rate = 0.005;
-      else rate = 0.006;
-      const saving = rev * rate;
+      if (isExcluded(b, u)) return { status: "no", score: 0, note: "우대 제외 업종" };
+      if (rev !== undefined && rev > 3_000_000_000)
+        return { status: "no", score: 0, note: "연매출 30억 초과" };
+      let rate = 0.003;
+      if (rev !== undefined) {
+        if (rev <= 300_000_000) rate = 0.003;
+        else if (rev <= 500_000_000) rate = 0.004;
+        else if (rev <= 1_000_000_000) rate = 0.005;
+        else rate = 0.006;
+      }
+      const saving = (rev ?? 0) * rate;
       return {
-        eligible: true,
-        savingText: rev === 0 ? "매출 발생 시 절감" : `연 약 ${formatKRW(saving)} 절감`,
+        status: "yes",
+        score: 90, // 사실상 전 사업자 대상 → 최상위
+        savingText: !rev ? "매출 발생 시 자동 절감" : `연 약 ${formatKRW(saving)} 절감`,
       };
     }
 
-    // ── 창업 세액감면 ──
+    // ── 창업중소기업 세액감면 (창업 5년 이내) ──
     case "startupTaxCut": {
-      const years = u.yearsInBusiness;
-      const rev = u.annualRevenue;
-      const age = u.representativeAge;
-      if (years === undefined || age === undefined)
-        return { eligible: null, note: "업력·연령 정보 부족으로 판정 불가" };
-      // 업종 제외 판정
-      const excluded = (b.excludedIndustries ?? []).some((ex) =>
-        (u.industry ?? "").includes(ex)
-      );
-      if (years > 5) return { eligible: false, note: "창업 5년 초과" };
-      if (excluded) return { eligible: false, note: "감면 제외 업종" };
-
-      const metro = isMetro(u.region);
-      let rate = 0;
-      if (age <= 34 && !metro) rate = 100;
-      else if (age <= 34 && metro) rate = 50;
-      else if (age >= 35 && !metro) rate = 50;
-      else rate = 0;
-
-      if (rate === 0)
-        return { eligible: false, note: "연령·지역 요건상 감면 대상 아님" };
-
-      if (rev === undefined || rev === 0)
+      if (isExcluded(b, u)) return { status: "no", score: 0, note: "감면 제외 업종" };
+      if (years !== undefined && years > 5)
+        return { status: "no", score: 0, note: "창업 5년 초과 (→ 중소기업 특별세액감면 대상)" };
+      // 청년(34세 이하)은 청년창업감면이 더 유리 → 이건 비청년/일반 대상으로 점수 조정
+      const rate = metro ? 50 : 100;
+      if (years === undefined)
         return {
-          eligible: true,
-          savingText: `소득세 ${rate}% 감면 대상`,
-          note: "매출 발생 시 감면액 산정",
+          status: "condition",
+          score: 55,
+          savingText: `소득세·법인세 최대 ${rate}% 감면`,
+          conditionText: "창업 후 5년 이내 사업자라면 신청 가능합니다.",
         };
-      const saving = rev * 0.1 * (rate / 100);
       return {
-        eligible: true,
-        savingText: `첫 해 약 ${formatKRW(saving)} 절감 (${rate}% 감면)`,
+        status: "yes",
+        score: 82,
+        savingText: `소득세·법인세 ${rate}% 감면 (${metro ? "수도권" : "수도권 외"})`,
+        note: "창업 후 5년간 적용 · 신고 시 자동",
       };
     }
 
-    // ── 노란우산공제 ──
+    // ── 노란우산공제 (개인사업자) ──
     case "noransanggong": {
       const bt = u.businessType;
-      if (bt === undefined) return { eligible: null, note: "사업자 유형 정보 부족으로 판정 불가" };
-      if (bt !== "개인사업자") return { eligible: false, note: "개인사업자 대상" };
-      return { eligible: true, savingText: `연 약 ${formatKRW(1_200_000)} 절세` };
+      if (bt === "법인사업자")
+        return { status: "no", score: 0, note: "개인사업자 대상 (법인 제외)" };
+      if (bt === "개인사업자")
+        return { status: "yes", score: 80, savingText: `연 약 ${formatKRW(1_200_000)} 절세` };
+      return {
+        status: "condition",
+        score: 50,
+        savingText: `연 약 ${formatKRW(1_200_000)} 절세`,
+        conditionText: "개인사업자(대표)라면 가입 즉시 소득공제 대상입니다.",
+      };
     }
 
-    // ── 청년창업중소기업 세액감면 ──
+    // ── 청년창업중소기업 세액감면 (만 34세 이하 · 창업 5년 이내) ──
     case "youngStartupTaxCut": {
-      const age = u.representativeAge;
-      const years = u.yearsInBusiness;
-      const rev = u.annualRevenue;
-      if (age === undefined || years === undefined)
-        return { eligible: null, note: "대표자 연령·업력 정보 부족으로 판정 불가" };
-      // 청년 요건: 만 34세 이하
-      if (age > 34) return { eligible: false, note: "만 34세 이하 청년 대상" };
-      if (years > 5) return { eligible: false, note: "창업 5년 초과" };
-      // 업종 제외 판정
-      const excluded = (b.excludedIndustries ?? []).some((ex) =>
-        (u.industry ?? "").includes(ex)
-      );
-      if (excluded) return { eligible: false, note: "감면 제외 업종" };
-
-      // 수도권과밀억제권역 외 100% / 수도권 50%
-      const metro = isMetro(u.region);
+      if (isExcluded(b, u)) return { status: "no", score: 0, note: "감면 제외 업종" };
+      if (age !== undefined && age > 34)
+        return { status: "no", score: 0, note: "만 34세 이하 청년 대상" };
+      if (years !== undefined && years > 5)
+        return { status: "no", score: 0, note: "창업 5년 초과" };
       const rate = metro ? 50 : 100;
-      if (rev === undefined || rev === 0)
+      if (age === undefined || years === undefined)
         return {
-          eligible: true,
+          status: "condition",
+          score: 58,
           savingText: `소득세·법인세 ${rate}% 감면 대상`,
-          note: `${metro ? "수도권" : "수도권 외"} 창업 · 창업 후 5년간 적용`,
+          conditionText: "대표자가 만 34세 이하이고 창업 5년 이내면 신청 가능합니다.",
         };
-      const saving = rev * 0.1 * (rate / 100);
       return {
-        eligible: true,
-        savingText: `연 약 ${formatKRW(saving)} 절감 (${rate}% 감면)`,
-        note: `${metro ? "수도권" : "수도권 외"} 창업 · 창업 후 5년간 적용`,
+        status: "yes",
+        score: 88, // 청년+창업이면 감면율 최고 → 상위
+        savingText: `소득세·법인세 ${rate}% 감면 (${metro ? "수도권" : "수도권 외"})`,
+        note: "청년 창업 · 창업 후 5년간 적용",
+      };
+    }
+
+    // ── 중소기업 특별세액감면 (창업 5년 지난 상시 감면) ──
+    case "smallBizSpecialTaxCut": {
+      if (isExcluded(b, u)) return { status: "no", score: 0, note: "감면 제외 업종" };
+      // 감면 업종(제조·도소매·음식 등)에 해당하면 확실, 그 외는 조건부
+      const coreInd = hasInd(u, "제조", "도소매", "도매", "소매", "음식", "건설", "운수", "출판", "수출");
+      if (years !== undefined && years <= 5)
+        return {
+          status: "condition",
+          score: 45,
+          savingText: "소득세·법인세 5~30% 감면",
+          conditionText: "창업감면(최대 100%) 기간(5년)이 끝난 뒤 이어서 받는 감면입니다.",
+        };
+      if (coreInd)
+        return {
+          status: "yes",
+          score: 78,
+          savingText: "소득세·법인세 5~30% 감면",
+          note: "업종·지역·규모별 상시 감면 · 매년 신고 시 적용",
+        };
+      return {
+        status: "condition",
+        score: 48,
+        savingText: "소득세·법인세 5~30% 감면",
+        conditionText: "제조·도소매·음식 등 감면 대상 업종이면 매년 받을 수 있습니다.",
+      };
+    }
+
+    // ── 통합고용세액공제 (직원 증가 시) ──
+    case "integratedEmploymentTaxCredit": {
+      if (emp !== undefined && emp > 0)
+        return {
+          status: "yes",
+          score: 76,
+          savingText: "1인당 최대 1,550만원 · 3년 세액공제",
+          note: "직원을 고용 중이라 채용 순증분만큼 공제 대상",
+        };
+      return {
+        status: "condition",
+        score: 40,
+        savingText: "1인당 최대 1,550만원 · 3년 세액공제",
+        conditionText: "직원을 채용(4대보험 가입)해 인원이 늘면 신청 가능합니다.",
+      };
+    }
+
+    // ── 두루누리 사회보험료 지원 (10인 미만) ──
+    case "duruNuri": {
+      if (emp !== undefined && emp > 0 && emp < 10)
+        return {
+          status: "yes",
+          score: 74,
+          savingText: "고용·국민연금 보험료 최대 80% 지원",
+          note: "근로자 10명 미만 사업장 · 월보수 270만원 미만 직원 대상",
+        };
+      if (emp !== undefined && emp >= 10)
+        return { status: "no", score: 0, note: "근로자 10명 이상 (대상 아님)" };
+      return {
+        status: "condition",
+        score: 42,
+        savingText: "고용·국민연금 보험료 최대 80% 지원",
+        conditionText: "10인 미만 사업장에서 월보수 270만원 미만 직원을 채용하면 신청 가능합니다.",
+      };
+    }
+
+    // ── 착한 임대인 세액공제 (임차 소상공인) ──
+    case "greenTaxCut": {
+      // 매출 규모가 작을수록(소상공인) 임차 가능성 ↑ → 조건부 위주
+      return {
+        status: "condition",
+        score: 30,
+        savingText: "임대료 인하액의 최대 70% 세액공제(임대인)",
+        conditionText: "상가를 임차 중이고 임대료 인하를 협의하면 활용할 수 있습니다.",
+      };
+    }
+
+    // ── R&D 세액공제 (기술·연구 기업) ──
+    case "rndTaxCredit": {
+      const techInd = hasInd(u, "제조", "정보", "서비스", "지식", "IT", "소프트");
+      if (u.hasRnd || u.isInnovation)
+        return {
+          status: "yes",
+          score: 72,
+          savingText: "연구개발비 최대 25~40% 세액공제",
+          note: "연구소·특허·혁신성장 분야 신호 확인 → 대상 가능성 높음",
+        };
+      if (techInd)
+        return {
+          status: "condition",
+          score: 38,
+          savingText: "연구개발비 최대 25~40% 세액공제",
+          conditionText: "연구개발비 지출·연구전담부서 인정이 있으면 신청 가능합니다.",
+        };
+      return { status: "no", score: 0, note: "R&D 지출 기업 대상" };
+    }
+
+    // ── 간이과세 (연매출 1.04억 미만 개인) ──
+    case "simplifiedVat": {
+      if (isExcluded(b, u)) return { status: "no", score: 0, note: "간이과세 배제 업종" };
+      if (u.businessType === "법인사업자")
+        return { status: "no", score: 0, note: "개인사업자 대상 (법인 제외)" };
+      if (rev !== undefined && rev >= 104_000_000)
+        return { status: "no", score: 0, note: "연매출 1억400만원 이상 (일반과세)" };
+      if (rev !== undefined && rev < 104_000_000)
+        return {
+          status: "yes",
+          score: 60,
+          savingText: "부가세 낮은 세율(1.5~4%) · 4,800만원 미만 납부 면제",
+          note: "연매출 1억400만원 미만 개인사업자",
+        };
+      return {
+        status: "condition",
+        score: 28,
+        savingText: "부가세 낮은 세율(1.5~4%) 적용",
+        conditionText: "연매출 1억400만원 미만 개인사업자면 간이과세 전환 가능합니다.",
       };
     }
 
     default:
-      return { eligible: null, note: "판정 불가" };
+      return { status: "no", score: 0, note: "판정 불가" };
   }
 }
 
@@ -250,6 +405,17 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
   const u = input ?? {};
   const benefits = benefitsData.extraBenefits as ExtraBenefit[];
 
+  // ★ 조건별 차등 + 가능성 높은 순 정렬 + 상위 6개 (대표님 방침) ★
+  //   1) 각 혜택을 판정(judge)해 점수 매김
+  //   2) status "no"(명백히 대상 아님)는 제외
+  //   3) 점수 내림차순 정렬 → 가능성 높은 게 위로
+  //   4) 상위 6개만 노출 (너무 많으면 다 안 하니까)
+  const judged = benefits
+    .map((b) => ({ b, v: judge(b, u) }))
+    .filter(({ v }) => v.status !== "no")
+    .sort((a, z) => z.v.score - a.v.score)
+    .slice(0, 6);
+
   return (
     <>
       {/* ========== 🎁 추가 감면 혜택 — 아코디언(접기) 카드 (대표님 요청) ========== */}
@@ -258,18 +424,17 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
         title="챙기면 좋은 추가 감면 혜택"
         subtitle={
           <>
-            지원제도 외에도 <b>지금 순서대로 챙기면</b> 큰 돈을 아낄 수 있는 감면 혜택입니다.
-            데드라인이 지나면 <b className="text-brand-red">영구히 못 받는</b> 항목도 있으니 꼭 확인하세요.
+            대표님 <b>업종·규모·매출</b>에 맞춰 <b>가능성이 높은 순서</b>로 정리했습니다.
+            <b className="text-brand-green"> ✅ 신청 가능</b>은 지금 바로,
+            <b className="text-brand-orange"> 🟡 조건 충족 시</b>는 요건을 갖추면 받을 수 있습니다.
           </>
         }
       >
-        {/* 5개 혜택 항목 — 기관 박스처럼 구분선(divide)으로 정리 */}
+        {/* 가능성 높은 순 상위 6개 — 기관 박스처럼 구분선(divide)으로 정리 */}
         <div className="mt-4 divide-y divide-gray-200">
-          {benefits.map((b) => {
-            const v = judge(b, u);
-            const isYes = v.eligible === true;
-            const isNo = v.eligible === false;
-            const isUnknown = v.eligible === null;
+          {judged.map(({ b, v }) => {
+            const isYes = v.status === "yes";
+            const isCondition = v.status === "condition";
 
             return (
               <div
@@ -278,21 +443,17 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
               >
                 {/* 상단: 아이콘 + 제목 + 대상 뱃지 (정부지원제도 항목과 동일 구조) */}
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className={`text-base ${isYes ? "" : "opacity-60"}`}>{b.icon}</span>
+                  <span className="text-base">{b.icon}</span>
                   <span className={`break-keep text-sm font-extrabold text-brand-dark ${lockText}`}>
                     {b.title}
                   </span>
                   {isYes ? (
                     <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                      ✅ 신청 대상
-                    </span>
-                  ) : isNo ? (
-                    <span className="shrink-0 break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
-                      대상 아님
+                      ✅ 신청 가능
                     </span>
                   ) : (
-                    <span className="shrink-0 break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
-                      🔜 판정 불가
+                    <span className="shrink-0 break-keep rounded-full bg-brand-orange px-2 py-0.5 text-[10px] font-bold text-white">
+                      🟡 조건 충족 시 신청 가능
                     </span>
                   )}
                 </div>
@@ -301,7 +462,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 {v.savingText && (
                   <p
                     className={`mt-1 break-keep text-sm font-extrabold ${
-                      isYes ? "text-brand-orange" : "text-brand-dark/50"
+                      isYes ? "text-brand-orange" : "text-brand-dark/70"
                     } ${lockText}`}
                   >
                     {v.savingText}
@@ -313,8 +474,15 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                   {b.description}
                 </p>
 
-                {/* 판정 불가/대상 아님 사유 */}
-                {v.note && (
+                {/* 조건 충족 시 안내 (대표님 방침: "조건 충족 시 신청 가능") */}
+                {isCondition && v.conditionText && (
+                  <p className="mt-1 break-keep rounded-lg bg-brand-orange/10 px-2.5 py-1.5 text-[11px] font-semibold text-brand-orange">
+                    🟡 {v.conditionText}
+                  </p>
+                )}
+
+                {/* 대상 확정 시 보조 사유 */}
+                {isYes && v.note && (
                   <p className="mt-1 break-keep text-[11px] text-brand-dark/50">ℹ️ {v.note}</p>
                 )}
 

@@ -877,11 +877,11 @@ function AdvancedResult({
                     <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
                     {isEligible ? (
                       <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                        ✅ 신청 대상
+                        ✅ 신청 가능
                       </span>
                     ) : (
-                      <span className="shrink-0 break-keep rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold text-brand-dark/60">
-                        🔜 요건 충족 시 대상
+                      <span className="shrink-0 break-keep rounded-full bg-brand-orange px-2 py-0.5 text-[10px] font-bold text-white">
+                        🟡 조건 충족 시 신청 가능
                       </span>
                     )}
                   </div>
