@@ -30,7 +30,9 @@ export default function MatchingPreview() {
   // 로그인(회원가입) 게이트 상태:
   //   "checking" = 세션 확인 중 · "guest" = 비로그인(결과 잠금) · "ready" = 로그인 완료(결과 공개)
   //   ※ 관리자 열람 모드(?admin=1)는 게이트를 통과시켜 항상 "ready".
-  const [gate, setGate] = useState<"checking" | "guest" | "ready">("checking");
+  const [gate, setGate] = useState<"checking" | "guest" | "analyzing" | "ready">("checking");
+  // 분석 연출 진행 단계(0~3) — "AI가 실제로 판독 중"이라는 신뢰감을 주기 위한 짧은 연출
+  const [analyzeStep, setAnalyzeStep] = useState(0);
   const [counts, setCounts] = useState<{
     total: number;
     institutions: number;
@@ -72,7 +74,15 @@ export default function MatchingPreview() {
       }
       const { data } = await supabase.auth.getSession();
       if (data.session?.user) {
-        setGate("ready");
+        // 결과를 바로 띄우지 않고, 짧은 'AI 분석 중' 연출을 거쳐 신뢰감을 준다.
+        //  · 이미 이번 세션에서 결과를 본 적이 있으면(뒤로가기 등) 연출 생략하고 바로 공개.
+        let seen = false;
+        try {
+          seen = sessionStorage.getItem("mpp_result_seen") === "1";
+        } catch {
+          /* sessionStorage 접근 불가 시 무시 */
+        }
+        setGate(seen ? "ready" : "analyzing");
         // 로그인 사용자의 접속 기록(IP·기기) 남기기 → 관리자 접속 로그/IP 집계에 반영
         try {
           await logAccess("/matching-preview");
@@ -88,6 +98,30 @@ export default function MatchingPreview() {
   const total = counts?.total ?? 0;
   const isBlocked = blockReasons.length > 0;
 
+  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 2.2초 후 ready) ──
+  //  단계별 문구가 순차 점등되며 실제 판독하는 느낌을 준다. 끝나면 결과 공개 + '본 적 있음' 표시.
+  useEffect(() => {
+    if (gate !== "analyzing") return;
+    setAnalyzeStep(0);
+    const t1 = setTimeout(() => setAnalyzeStep(1), 600);
+    const t2 = setTimeout(() => setAnalyzeStep(2), 1200);
+    const t3 = setTimeout(() => setAnalyzeStep(3), 1800);
+    const done = setTimeout(() => {
+      try {
+        sessionStorage.setItem("mpp_result_seen", "1");
+      } catch {
+        /* 무시 */
+      }
+      setGate("ready");
+    }, 2400);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(done);
+    };
+  }, [gate]);
+
   // ── 세션 확인 중 로딩 화면 ──
   if (gate === "checking") {
     return (
@@ -95,6 +129,61 @@ export default function MatchingPreview() {
         <Header />
         <main className="flex min-h-[50vh] items-center justify-center px-4 py-20">
           <p className="text-sm font-semibold text-brand-gray">불러오는 중...</p>
+        </main>
+        <Footer />
+      </PageShell>
+    );
+  }
+
+  // ── AI 분석 중 연출 화면 ──
+  if (gate === "analyzing") {
+    const steps = [
+      { icon: "🏢", label: "사업장 정보 확인" },
+      { icon: "🏦", label: "지원 가능 기관 매칭" },
+      { icon: "💳", label: "정책자금·지원사업 판독" },
+      { icon: "🎯", label: "맞춤 결과 정리" },
+    ];
+    return (
+      <PageShell pageKey="matching-preview">
+        <Header />
+        <main className="flex min-h-[60vh] items-center justify-center px-4 py-16">
+          <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-7 text-center shadow-card sm:p-9">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10">
+              <span className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
+            </div>
+            <p className="text-lg font-extrabold text-brand-dark sm:text-xl">
+              {name ? `${name} 대표님 사업장을 ` : "대표님 사업장을 "}
+              <span className="text-brand-orange">AI가 분석</span>하고 있어요
+            </p>
+            <p className="mt-1.5 text-xs text-brand-gray sm:text-sm">
+              전국 정책자금·정부지원사업 데이터와 대조 중입니다
+            </p>
+
+            <ul className="mt-6 space-y-2.5 text-left">
+              {steps.map((s, i) => {
+                const active = analyzeStep >= i;
+                const done = analyzeStep > i;
+                return (
+                  <li
+                    key={s.label}
+                    className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 transition-all duration-300 ${
+                      active
+                        ? "border-brand-orange/40 bg-brand-yellow/10 opacity-100"
+                        : "border-gray-100 bg-gray-50 opacity-40"
+                    }`}
+                  >
+                    <span className="text-lg">{s.icon}</span>
+                    <span className="flex-1 text-sm font-bold text-brand-dark">{s.label}</span>
+                    {done ? (
+                      <span className="text-sm font-extrabold text-green-600">✓</span>
+                    ) : active ? (
+                      <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-brand-orange/30 border-t-brand-orange" />
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </main>
         <Footer />
       </PageShell>

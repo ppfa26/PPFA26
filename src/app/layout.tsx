@@ -163,19 +163,20 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        {/* ── (성능) 본문 폰트: Pretendard 한 종류만 로딩 ──
+            Pretendard는 CDN을 미리 연결(preconnect)해 두어 첫 화면 폰트 적용을 앞당깁니다.
+            ※ 예전에는 Noto Sans KR·나눔고딕·나눔명조까지 함께 받았는데,
+              이 폰트들은 '관리자 편집 툴바'의 글꼴 선택 옵션에서만 쓰여
+              일반 방문자에겐 초기 로딩만 무겁게 했습니다. 그래서 제거했습니다.
+              (관리자가 편집 시 해당 글꼴을 고르면 방문자 브라우저의 시스템 글꼴로 대체됩니다.) */}
         <link
           rel="preconnect"
-          href="https://fonts.gstatic.com"
+          href="https://cdn.jsdelivr.net"
           crossOrigin="anonymous"
         />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&display=swap"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
         />
       </head>
       <body className="theme-dark">
