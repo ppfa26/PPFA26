@@ -387,6 +387,52 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
+
+                  {/* ⭐ 우선 신청 추천 TOP — 승인가능성 높은 순 (대표님 요청: 상단에서 먼저 알려주기) */}
+                  <div className="mt-3 rounded-2xl border-2 border-brand-green/40 bg-brand-green/5 p-4 shadow-card">
+                    <p className="flex flex-wrap items-center gap-1.5 text-sm font-extrabold text-brand-dark sm:text-base">
+                      ⭐ 지금 바로 신청하세요
+                      <span className="rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                        승인가능성 높은 순
+                      </span>
+                    </p>
+                    <p className="mt-1 break-keep text-[11px] text-brand-dark/60">
+                      대표님 조건상 요건이 충족돼 <b className="text-brand-green">거의 확정으로 받을 수 있는</b> 것부터 우선순위로 안내합니다.
+                    </p>
+                    <div className={`mt-3 space-y-2 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                      {[
+                        { rank: "1", t: "노란우산공제 소득공제", g: "연 600만원 공제", why: "가입만 하면 자동 · 심사 탈락 없음", prob: "99%" },
+                        { rank: "2", t: "소상공인 경영안정 바우처", g: "25만원 현금성", why: "매출 기준만 맞으면 온라인 즉시 신청", prob: "95%" },
+                        { rank: "3", t: "창업중소기업 세액감면", g: "5년 최대 100%", why: "요건 충족 시 세무신고로 자동 적용", prob: "90%" },
+                      ].map((r) => (
+                        <div
+                          key={r.rank}
+                          className="flex items-center gap-3 rounded-xl border border-brand-green/30 bg-white px-3 py-2.5"
+                        >
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-green text-sm font-black text-white">
+                            {r.rank}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="break-keep text-[13px] font-extrabold text-brand-dark">
+                                {r.t}
+                              </span>
+                              <span className="shrink-0 rounded-full bg-brand-orange/15 px-2 py-0.5 text-[10px] font-bold text-brand-orange">
+                                {r.g}
+                              </span>
+                            </div>
+                            <p className="mt-0.5 break-keep text-[11px] text-brand-gray">
+                              💡 {r.why}
+                            </p>
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <p className="text-[10px] font-bold text-brand-dark/50">승인가능성</p>
+                            <p className="text-base font-black leading-none text-brand-green">{r.prob}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 {/* 결과 본문 — 섹션 제목(목차)은 선명하게 열고, 내부 항목만 블러 처리 */}
@@ -475,27 +521,37 @@ export default function Home() {
                     {/* 개별 제도명 — 베타 기간엔 블러 없이 공개, 정식 땐 블러 */}
                     <div className={`mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { t: "스마트상점 기술보급 지원", c: "지원금", cls: "bg-green-100 text-green-700" },
-                        { t: "수출바우처 지원", c: "바우처", cls: "bg-purple-100 text-purple-700" },
-                        { t: "데이터바우처 지원", c: "바우처", cls: "bg-purple-100 text-purple-700" },
-                        { t: "소상공인 경영개선 지원", c: "지원금", cls: "bg-green-100 text-green-700" },
-                        { t: "일자리 안정·고용 지원금", c: "지원금", cls: "bg-green-100 text-green-700" },
-                        { t: "이노비즈·메인비즈 인증", c: "인증", cls: "bg-amber-100 text-amber-700" },
-                        { t: "소상공인 역량강화 교육", c: "교육", cls: "bg-sky-100 text-sky-700" },
-                        { t: "정책자금 연계 컨설팅", c: "제도", cls: "bg-gray-100 text-gray-700" },
+                        { t: "소상공인 경영안정 바우처", c: "바우처", cls: "bg-purple-100 text-purple-700", easy: true, d: "25만원 · 매출기준만 맞으면 지급" },
+                        { t: "소상공인 부담경감 크레딧", c: "지원금", cls: "bg-green-100 text-green-700", easy: true, d: "50만원 · 공공요금·4대보험 사용" },
+                        { t: "두루누리 사회보험료 지원", c: "고용", cls: "bg-teal-100 text-teal-700", easy: true, d: "보험료 최대 80% · 4대보험 연동 자동" },
+                        { t: "청년일자리도약장려금", c: "고용", cls: "bg-teal-100 text-teal-700", easy: false, d: "청년 채용 시 최대 720만원" },
+                        { t: "계속고용장려금", c: "고용", cls: "bg-teal-100 text-teal-700", easy: false, d: "정년 근로자 계속고용 최대 1,080만원" },
+                        { t: "스마트상점 기술보급 지원", c: "지원금", cls: "bg-green-100 text-green-700", easy: false, d: "매장 스마트기기 도입비 지원" },
+                        { t: "수출·데이터 바우처", c: "바우처", cls: "bg-purple-100 text-purple-700", easy: false, d: "수출·데이터 활용 비용 지원" },
+                        { t: "이노비즈·메인비즈 인증", c: "인증", cls: "bg-amber-100 text-amber-700", easy: false, d: "정책자금·입찰 가점 연계" },
                       ].map((g, i) => (
                         <div
                           key={i}
-                          className="flex items-center justify-between gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5"
+                          className="rounded-xl border border-gray-200 bg-white px-3 py-2.5"
                         >
-                          <span className="break-keep text-[12px] font-bold text-brand-dark">
-                            {g.t}
-                          </span>
-                          <span
-                            className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${g.cls}`}
-                          >
-                            {g.c}
-                          </span>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="break-keep text-[12px] font-bold text-brand-dark">
+                              {g.t}
+                            </span>
+                            <span
+                              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${g.cls}`}
+                            >
+                              {g.c}
+                            </span>
+                          </div>
+                          <div className="mt-1 flex items-center gap-1.5">
+                            {g.easy && (
+                              <span className="shrink-0 rounded-full bg-brand-green/15 px-1.5 py-0.5 text-[9px] font-bold text-brand-green">
+                                ✅ 받기 쉬움
+                              </span>
+                            )}
+                            <span className="break-keep text-[10px] text-brand-gray">{g.d}</span>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -515,18 +571,27 @@ export default function Home() {
                     </p>
                     <div className={`mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { t: "카드수수료 우대·감면", d: "연매출 30억 이하 우대수수료 적용" },
-                        { t: "창업 세액감면 (최대 50%)", d: "청년·수도권 외 창업 소득·법인세 감면" },
-                        { t: "노란우산공제 소득공제", d: "연 최대 500만원 소득공제 + 폐업 대비" },
-                        { t: "정신·육체노동자 세액감면", d: "요건 충족 시 근로·사업소득세 감면" },
+                        { t: "노란우산공제 소득공제", d: "연 최대 600만원 공제 + 폐업 대비 목돈", easy: true },
+                        { t: "창업중소기업 세액감면", d: "창업 5년간 소득·법인세 최대 100%", easy: true },
+                        { t: "통합고용세액공제", d: "직원 1명 채용 시 최대 1,550만원 공제", easy: false },
+                        { t: "중소기업 특별세액감면", d: "업종·지역별 소득·법인세 5~30% 감면", easy: true },
+                        { t: "카드수수료 우대·감면", d: "연매출 30억 이하 우대수수료 자동 적용", easy: true },
+                        { t: "정신·육체노동자 세액감면", d: "요건 충족 시 근로·사업소득세 감면", easy: false },
                       ].map((b, i) => (
                         <div
                           key={i}
                           className="rounded-xl border border-brand-red/20 bg-white px-3 py-2.5"
                         >
-                          <p className="break-keep text-[12px] font-bold text-brand-dark">
-                            💰 {b.t}
-                          </p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="break-keep text-[12px] font-bold text-brand-dark">
+                              💰 {b.t}
+                            </p>
+                            {b.easy && (
+                              <span className="shrink-0 rounded-full bg-brand-green/15 px-1.5 py-0.5 text-[9px] font-bold text-brand-green">
+                                ✅ 받기 쉬움
+                              </span>
+                            )}
+                          </div>
                           <p className="mt-0.5 break-keep text-[11px] text-brand-gray">
                             {b.d}
                           </p>
@@ -534,7 +599,7 @@ export default function Home() {
                       ))}
                     </div>
                     <p className="mt-3 break-keep rounded-xl bg-brand-yellow/40 px-3 py-2 text-center text-[12px] font-bold text-brand-dark">
-                      ✨ 요건에 맞게 챙기면 첫 해 최대 700만원 절감도 가능
+                      ✨ 요건에 맞게 챙기면 세액감면만으로 수백~수천만원 절감도 가능
                     </p>
                   </div>
                 </div>
