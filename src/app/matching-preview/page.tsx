@@ -229,7 +229,7 @@ export default function MatchingPreview() {
     <PageShell pageKey="matching-preview">
       <Header />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게 */}
-      <main className={`px-4 pt-8 ${adminView || BETA_FREE ? "pb-16" : "pb-40"}`}>
+      <main className={`px-4 pt-6 ${adminView || BETA_FREE ? "pb-16" : "pb-40"}`}>
         <div className="mx-auto max-w-3xl">
           {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ── */}
           {adminView && (
@@ -258,7 +258,7 @@ export default function MatchingPreview() {
             </p>
 
             {/* 가로형 카드: 왼쪽=큰 숫자, 오른쪽=매칭 요약 배지 (모바일에서도 한 줄 유지) */}
-            <div className="mt-3 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-4 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:gap-5 sm:p-6">
+            <div className="mt-3 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3.5 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:gap-5 sm:p-5">
               {/* 왼쪽: 큰 숫자 */}
               <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-3 sm:pr-5">
                 <span className="break-keep text-[11px] font-bold leading-tight text-brand-dark/80 sm:text-sm">
@@ -267,7 +267,7 @@ export default function MatchingPreview() {
                   지원사업
                 </span>
                 <span className="mt-0.5 flex items-end gap-0.5">
-                  <b className="text-5xl font-black leading-none text-brand-orange sm:text-6xl">
+                  <b className="text-5xl font-black leading-none text-brand-orange sm:text-[3.25rem]">
                     {total}
                   </b>
                   <b className="pb-1 text-xl font-extrabold text-brand-orange sm:text-2xl">
@@ -280,18 +280,18 @@ export default function MatchingPreview() {
               </div>
 
               {/* 오른쪽: 매칭 요약 (세로로 쌓아 가로 공간 절약 → 모바일에서도 안 짤림) */}
-              <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 text-left">
+              <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 text-left">
                 {counts && total > 0 ? (
                   <>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[13px] font-bold text-brand-dark sm:text-base">
                       💰 <span className="text-brand-dark/70">정책자금 상품</span>
                       <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.products}종</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[13px] font-bold text-brand-dark sm:text-base">
                       🎁 <span className="text-brand-dark/70">정부지원제도</span>
                       <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.supports}건</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[13px] font-bold text-brand-dark sm:text-base">
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[13px] font-bold text-brand-dark sm:text-base">
                       🎁 <span className="text-brand-dark/70">추가 감면 혜택</span>
                       <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.benefits}건</b>
                     </span>
@@ -306,11 +306,11 @@ export default function MatchingPreview() {
           </div>
 
           {/* ── 무엇을 알려주는지(목차) 선명 공개 — '이런 걸 알려주는구나' 궁금증 유발 ── */}
-          <div className="mt-6 rounded-2xl border border-brand-dark/10 bg-white p-5 shadow-card">
+          <div className="mt-5 rounded-2xl border border-brand-dark/10 bg-white p-4 shadow-card sm:p-5">
             <p className="break-keep text-sm font-extrabold text-brand-dark">
               📋 {BETA_FREE ? "이런 내용을 알려드립니다" : "결제하시면 이런 내용을 알려드립니다"}
             </p>
-            <div className="mt-3 space-y-2.5">
+            <div className="mt-2.5 space-y-2">
               {[
                 {
                   icon: "🎁",
@@ -335,7 +335,7 @@ export default function MatchingPreview() {
               ].map((it, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-3"
+                  className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-2.5"
                 >
                   <span className="mt-0.5 text-lg">{it.icon}</span>
                   <div className="min-w-0">
@@ -353,7 +353,7 @@ export default function MatchingPreview() {
 
           {/* ── 오픈 베타(무료) 안내 — 반투명 포인트 박스 (대표님 요청) ── */}
           {!adminView && BETA_FREE && (
-          <div className="mt-5 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-5 py-3.5 text-center backdrop-blur-sm">
+          <div className="mt-4 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-5 py-3 text-center backdrop-blur-sm">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80 sm:text-sm">
               🎉 <b className="text-brand-dark">무료 베타 오픈중</b> — 아래 {total}개 항목이 모두 무료로 공개됩니다.
             </p>
@@ -390,7 +390,7 @@ export default function MatchingPreview() {
           </p>
           )}
           {!adminView && BETA_FREE && (
-          <div className="mt-6 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-5 py-3.5 text-center backdrop-blur-sm">
+          <div className="mt-4 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-5 py-3 text-center backdrop-blur-sm">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80 sm:text-sm">
               👇 아래는 대표님 사업장을 위해 분석된 <b className="text-brand-dark">실제 결과 화면</b>입니다.
               <b className="text-brand-dark"> 기관명·상품명·신청 방법까지 전부 공개</b>됩니다.
@@ -435,8 +435,8 @@ export default function MatchingPreview() {
           )}
 
           {/* ── 결과창 맨 하단 CTA — 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
-          <section className="mt-8 px-0 pb-2">
-            <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-8 text-center shadow-card sm:p-10">
+          <section className="mt-7 px-0 pb-2">
+            <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-7 text-center shadow-card sm:p-9">
               <Editable
                 id="preview-bottom-cta-title"
                 as="h2"

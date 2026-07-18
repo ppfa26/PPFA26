@@ -342,8 +342,8 @@ export default function Diagnosis() {
                 </Link>
               </p>
 
-              <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-left text-xs leading-relaxed text-brand-dark/70">
-                💡 로그인하시면 진단 결과가 계정에 저장되어, 언제든 마이페이지에서 다시 확인하실 수 있습니다.
+              <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-center text-xs leading-relaxed text-brand-dark/70">
+                💡 로그인하면 진단 결과가 저장되어 언제든 다시 볼 수 있어요.
               </div>
               <p className="mt-4 break-keep text-[11px] text-brand-dark/50">
                 ⚠️ 본 서비스는 정부지원사업 안내·추천 서비스이며 승인을 보장하지 않습니다.
