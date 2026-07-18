@@ -389,20 +389,26 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* 결과 본문 — 섹션 제목(목차)은 선명하게 열고, 내부 항목만 블러 처리 */}
-                <div className="space-y-4 p-4 text-left sm:p-6">
-                  {/* 정책금융기관 섹션 */}
-                  <div className="rounded-2xl border-2 border-brand-dark/10 bg-white p-4 shadow-card sm:p-5">
-                    {/* 제목·설명은 선명하게 공개 → '무엇을 알려주는지' 파악 가능 */}
-                    <p className="text-base font-extrabold text-brand-dark sm:text-lg">
-                      🏦 대표님이 이용할 수 있는 정책금융기관
-                    </p>
-                    <p className="mt-1 break-keep text-xs text-brand-dark/60">
-                      업종·직원수·매출 등 대표님 조건을 봅니다.
-                      실제 신청 자격이 열리는 정책자금을 한 번에 안내합니다.
-                    </p>
+                {/* 결과 본문 — 아코디언(접기/펼치기) 구조: 한눈에 목차처럼, 클릭하면 상세 (대표님 요청: A안) */}
+                <div className="space-y-3 p-4 text-left sm:p-6">
+                  {/* 정책금융기관 섹션 (기본 펼침) */}
+                  <details open className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-dark/10 bg-white shadow-card">
+                    <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
+                      <div className="min-w-0 flex-1">
+                        <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold text-brand-dark sm:text-lg">
+                          <span>🏦 대표님이 이용할 수 있는 정책금융기관</span>
+                          <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[11px] font-bold text-brand-dark/70">3곳</span>
+                        </p>
+                        <p className="mt-1 break-keep text-xs text-brand-dark/60">
+                          업종·직원수·매출 등 대표님 조건을 봅니다.
+                          실제 신청 자격이 열리는 정책자금을 한 번에 안내합니다.
+                        </p>
+                      </div>
+                      <span className="mt-0.5 shrink-0 text-lg text-brand-dark/40 transition-transform group-open:rotate-180">⌄</span>
+                    </summary>
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5">
                     {/* 개별 상품·기관명 — 베타 기간엔 블러 없이 공개, 정식 땐 블러 */}
-                    <div className={`mt-3 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
                         {
                           inst: "중소벤처기업진흥공단",
@@ -467,20 +473,30 @@ export default function Home() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                    </div>
+                  </details>
 
-                  {/* 정부지원제도 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) */}
-                  <div className="rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 p-4 shadow-card sm:p-5">
-                    {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청) */}
-                    <p className="inline-block rounded-lg bg-brand-orange px-3 py-1.5 text-base font-extrabold text-white sm:text-lg">
-                      🎁 대표님이 신청할 수 있는 정부지원제도
-                    </p>
-                    <p className="mt-1 break-keep text-xs text-brand-dark/60">
-                      대출이 아닙니다. 지원금·바우처·인증·교육까지 챙깁니다.
-                      받을 수 있는 제도를 모두 찾아 신청 방법과 함께 안내합니다.
-                    </p>
+                  {/* 정부지원제도 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언 */}
+                  <details className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 shadow-card">
+                    <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
+                      <div className="min-w-0 flex-1">
+                        {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청) */}
+                        <p className="flex flex-wrap items-center gap-1.5">
+                          <span className="inline-block rounded-lg bg-brand-orange px-3 py-1.5 text-base font-extrabold text-white sm:text-lg">
+                            🎁 대표님이 신청할 수 있는 정부지원제도
+                          </span>
+                          <span className="shrink-0 rounded-full bg-brand-orange/20 px-2 py-0.5 text-[11px] font-bold text-brand-orange">3건</span>
+                        </p>
+                        <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
+                          대출이 아닙니다. 지원금·바우처·인증·교육까지 챙깁니다.
+                          받을 수 있는 제도를 모두 찾아 신청 방법과 함께 안내합니다.
+                        </p>
+                      </div>
+                      <span className="mt-0.5 shrink-0 text-lg text-brand-orange/50 transition-transform group-open:rotate-180">⌄</span>
+                    </summary>
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5">
                     {/* 개별 제도 — 상세 박스(둥근 카드) 형태 (대표님 요청: 정책금융기관처럼) */}
-                    <div className={`mt-3 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
                         { t: "소상공인 경영안정 바우처", c: "바우처", cls: "bg-purple-100 text-purple-700", easy: true, d: "사업체당 25만원. 공과금·4대보험료·연료비 등 9개 항목에 사용 가능.", hook: "연매출 약 1억400만원 미만이면 온라인 신청만으로 지급됩니다." },
                         { t: "소상공인 부담경감 크레딧", c: "지원금", cls: "bg-green-100 text-green-700", easy: true, d: "50만원 상당. 공공요금(전기·가스·수도)과 4대보험료 납부에 사용.", hook: "연매출 3억원 이하면 카드 연동으로 간편 신청됩니다." },
@@ -526,24 +542,31 @@ export default function Home() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                    </div>
+                  </details>
 
-                  {/* 추가 감면 혜택 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) */}
-                  <div className="rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 p-4 shadow-card sm:p-5">
-                    <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold sm:text-lg">
-                      <span className="inline-block rounded-lg bg-brand-red px-3 py-1.5 text-white">
-                        🎁 지원사업 말고 이런 것까지 챙겨드려요
-                      </span>
-                      <span className="rounded-full bg-brand-red px-2 py-0.5 text-[10px] font-bold text-white">
-                        놓치기 쉬운 절세·감면
-                      </span>
-                    </p>
-                    <p className="mt-1 break-keep text-xs text-brand-dark/60">
-                      대부분 몰라서 못 챙기는 세금·수수료 감면 혜택.
-                      대표님 조건에 맞는 것만 골라 신청 방법과 함께 알려드립니다.
-                    </p>
+                  {/* 추가 감면 혜택 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언 */}
+                  <details className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 shadow-card">
+                    <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
+                      <div className="min-w-0 flex-1">
+                        <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold sm:text-lg">
+                          <span className="inline-block rounded-lg bg-brand-red px-3 py-1.5 text-white">
+                            🎁 지원사업 말고 이런 것까지 챙겨드려요
+                          </span>
+                          <span className="rounded-full bg-brand-red px-2 py-0.5 text-[10px] font-bold text-white">
+                            놓치기 쉬운 절세·감면
+                          </span>
+                        </p>
+                        <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
+                          대부분 몰라서 못 챙기는 세금·수수료 감면 혜택.
+                          대표님 조건에 맞는 것만 골라 신청 방법과 함께 알려드립니다.
+                        </p>
+                      </div>
+                      <span className="mt-0.5 shrink-0 text-lg text-brand-red/50 transition-transform group-open:rotate-180">⌄</span>
+                    </summary>
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5">
                     {/* 개별 감면 — 상세 박스(둥근 카드) 형태 (대표님 요청: 정책금융기관처럼) */}
-                    <div className={`mt-3 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
                         { t: "노란우산공제 소득공제", c: "소득공제", cls: "bg-rose-100 text-rose-700", easy: true, d: "납입액을 연 최대 600만원까지 소득공제. 폐업 시 퇴직금처럼 목돈 회수.", hook: "가입만 하면 자동 적용돼 심사 탈락이 없습니다. 자영업자 필수." },
                         { t: "창업중소기업 세액감면", c: "세액감면", cls: "bg-rose-100 text-rose-700", easy: true, d: "창업 후 5년간 소득세·법인세를 50~100% 감면(청년·수도권 외 100%).", hook: "요건만 맞으면 세무신고 때 자동 적용, 별도 경쟁이 없습니다." },
@@ -579,7 +602,8 @@ export default function Home() {
                     <p className="mt-3 break-keep rounded-xl bg-brand-yellow/40 px-3 py-2 text-center text-[12px] font-bold text-brand-dark">
                       ✨ 요건에 맞게 챙기면 세액감면만으로 수백~수천만원 절감도 가능
                     </p>
-                  </div>
+                    </div>
+                  </details>
                 </div>
 
                 {/* 하단 페이드 — 베타 땐 뒤에 더 있다는 느낌만, 정식 땐 잠금 페이드 */}

@@ -664,3 +664,21 @@ body.theme-dark {
     scroll-behavior: auto;
   }
 }
+
+/* 결과화면 아코디언(접기/펼치기) — 대표님 요청 A안 */
+.result-accordion > summary {
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.result-accordion > summary::-webkit-details-marker {
+  display: none;
+}
+.result-accordion > summary::marker {
+  display: none;
+  content: "";
+}
+/* 펼침 상태에서 요약 아래 얇은 구분선 */
+.result-accordion[open] > summary {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 0.5rem;
+}

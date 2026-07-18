@@ -86,9 +86,7 @@ export const USEFUL_SITE_CATEGORIES: SiteCategory[] = [
     emoji: "📙",
     label: "사업 실무·데이터·조회 도구",
     sites: [
-      { name: "웰로 정책 추천 서비스", url: "https://www.welfarehello.com/" },
       { name: "중소기업현황정보시스템", url: "https://sminfo.mss.go.kr/" },
-      { name: "혁신사업지원센터 IBSC", url: "https://www.ibsc.co.kr/" },
       { name: "국세청 홈택스", url: "https://www.hometax.go.kr/" },
       { name: "한국전자인증 공인인증서", url: "https://www.crosscert.com/" },
       { name: "나이스지키미", url: "https://www.credit.co.kr/" },
@@ -109,7 +107,7 @@ export const USEFUL_SITE_CATEGORIES: SiteCategory[] = [
       { name: "인터넷 등기소", url: "https://www.iros.go.kr/" },
       { name: "국민건강보험 (4대보험 완납증명)", url: "https://si4n.nhis.or.kr/" },
       { name: "4대보험 통합징수포털", url: "https://si4n.nhis.or.kr/", note: "공동인증서 등록" },
-      { name: "고용·산재보험 토탈서비스", url: "https://total.comwel.or.kr/", note: "고용보험가입자명부" },
+      { name: "고용·산재보험 토탈서비스", url: "https://total.kcomwel.or.kr/", note: "고용보험가입자명부" },
       { name: "4대사회보험 정보연계센터", url: "https://www.4insure.or.kr/", note: "공동인증서 등록" },
       { name: "ONECLICK 중진공 자료제출", url: "https://www.one-click.co.kr/" },
       { name: "KOfind 기보 자료제출", url: "https://www.kofind.co.kr/" },
