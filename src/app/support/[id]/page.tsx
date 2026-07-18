@@ -20,7 +20,7 @@ export default function SupportDetailPage({ params }: { params: { id: string } }
         <div className="mx-auto max-w-3xl">
           {/* 뒤로 가기 */}
           <Link
-            href="/dashboard"
+            href="/matching-preview"
             className="inline-flex items-center gap-1 text-sm font-bold text-brand-gray hover:text-brand-dark"
           >
             ← 기관·상품 안내로 돌아가기
@@ -114,7 +114,7 @@ export default function SupportDetailPage({ params }: { params: { id: string } }
 
           <div className="mt-6 text-center">
             <Link
-              href="/dashboard"
+              href="/matching-preview"
               className="inline-flex items-center gap-1 rounded-xl border-2 border-brand-dark px-5 py-2.5 text-sm font-bold text-brand-dark hover:bg-brand-dark hover:text-white"
             >
               ← 기관·상품 안내로 돌아가기

@@ -28,8 +28,8 @@ export default function FundDetailPage({
           <p className="mt-3 max-w-md text-brand-gray">
             요청하신 지원사업 정보가 존재하지 않거나 삭제되었습니다.
           </p>
-          <Link href="/dashboard" className="btn-brand mt-8 rounded-full px-8 py-3">
-            대시보드로 돌아가기
+          <Link href="/matching-preview" className="btn-brand mt-8 rounded-full px-8 py-3">
+            진단 결과로 돌아가기
           </Link>
         </main>
         <Footer />
@@ -49,10 +49,10 @@ export default function FundDetailPage({
         <div className="mx-auto max-w-3xl">
           {/* 뒤로가기 */}
           <Link
-            href="/dashboard"
+            href="/matching-preview"
             className="inline-flex items-center gap-1 text-sm font-semibold text-brand-gray hover:text-brand-dark"
           >
-            ‹ 대시보드로 돌아가기
+            ‹ 진단 결과로 돌아가기
           </Link>
 
           {/* 헤더 카드 */}

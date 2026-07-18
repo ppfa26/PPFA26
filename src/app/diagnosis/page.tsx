@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
@@ -68,9 +69,28 @@ function GroupBox({
       : tone === "red"
       ? "border-brand-red/20 bg-brand-red/5"
       : "border-gray-200 bg-gray-50/70";
+  // 제목 안의 "(필수)"·"(선택)" 등 괄호 표기는 포인트색 + 살짝 작은 글씨로 분리해
+  // 강조하되 크기는 줄인다. (대표님 요청) 나머지 제목은 그대로 굵게 표시.
+  const m = title.match(/^(.*?)\s*(\([^)]*\))\s*$/);
+  const mainTitle = m ? m[1] : title;
+  const badge = m ? m[2] : "";
+  // 톤별 포인트색 (박스 색과 맞춤)
+  const badgeColor =
+    tone === "orange"
+      ? "text-brand-orange"
+      : tone === "green"
+      ? "text-brand-green"
+      : "text-brand-red";
   return (
     <div className={`mb-4 rounded-2xl border p-3.5 sm:p-5 ${toneCls}`}>
-      <p className="mb-3 break-keep text-sm font-extrabold text-brand-dark sm:mb-4">{title}</p>
+      <p className="mb-3 break-keep text-sm font-extrabold text-brand-dark sm:mb-4">
+        {mainTitle}
+        {badge && (
+          <span className={`ml-1 align-middle text-xs font-bold ${badgeColor}`}>
+            {badge}
+          </span>
+        )}
+      </p>
       <div className="[&>*:last-child]:mb-0">{children}</div>
     </div>
   );
@@ -82,6 +102,10 @@ export default function Diagnosis() {
   const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [], certifications: [], innovation: [], currentInstitutions: [] });
   // 지역 '기타'(직접 입력) 모드 여부 — true면 아래에 직접 입력창을 띄웁니다.
   const [regionEtc, setRegionEtc] = useState(false);
+  // ── 진단 시작 전 로그인(회원가입) 게이트 (대표님 요청) ──
+  //   "checking" = 세션 확인 중 · "guest" = 비로그인(진단 시작 차단) · "ready" = 로그인 완료
+  //   블덱스처럼, 로그인하지 않으면 진단 자체를 시작할 수 없게 막는다.
+  const [gate, setGate] = useState<"checking" | "guest" | "ready">("checking");
   // 대표자 연락 정보(성함·연락처) 필수 검증 에러 메시지
   const [contactErr, setContactErr] = useState("");
 
@@ -126,6 +150,15 @@ export default function Diagnosis() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [step]);
+
+  // ── 로그인(회원가입) 게이트 확인 ──
+  //   로그인돼 있으면 진단 시작(ready), 아니면 회원가입 유도 화면(guest).
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      setGate(data.session?.user ? "ready" : "guest");
+    })();
+  }, []);
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
   const toggle = (k: string, v: string) =>
@@ -255,6 +288,73 @@ export default function Diagnosis() {
       <Radio k={k} opts={field.opts} />
     </div>
   );
+
+  // ── 세션 확인 중 로딩 화면 ──
+  if (gate === "checking") {
+    return (
+      <PageShell pageKey="diagnosis">
+        <Header />
+        <main className="flex min-h-[50vh] items-center justify-center px-4 py-20">
+          <p className="text-sm font-semibold text-brand-gray">불러오는 중...</p>
+        </main>
+        <Footer />
+      </PageShell>
+    );
+  }
+
+  // ── 로그인(회원가입) 게이트 화면 (비로그인 시) ──
+  //   블덱스처럼 로그인하지 않으면 진단을 시작조차 못 하게 막는다. (대표님 요청)
+  //   로그인/가입 후 next 파라미터로 다시 이 진단 페이지로 돌아온다.
+  if (gate === "guest") {
+    return (
+      <PageShell pageKey="diagnosis">
+        <Header />
+        <main className="px-4 py-12">
+          <div className="mx-auto max-w-md">
+            <div className="rounded-3xl border-2 border-brand-orange/50 bg-white p-7 text-center shadow-card sm:p-9">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
+                🔒
+              </div>
+              <h1 className="mt-4 break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
+                무료 진단을 시작하려면
+                <br />
+                <span className="text-brand-orange">간편 로그인</span>이 필요합니다
+              </h1>
+              <p className="mt-4 break-keep text-sm leading-relaxed text-brand-dark/70">
+                <b className="text-brand-orange">카카오·구글·이메일</b> 중 편한 방법으로
+                <br />
+                10초 만에 시작하고, 진단 결과를 안전하게 보관하세요.
+              </p>
+
+              <Link
+                href="/signup?next=%2Fdiagnosis"
+                className="btn-brand mt-6 block rounded-full py-3.5 text-center text-base font-bold"
+              >
+                🔓 회원가입하고 무료 진단 시작하기
+              </Link>
+              <p className="mt-3 break-keep text-xs text-brand-gray">
+                이미 가입하셨나요?{" "}
+                <Link
+                  href="/signup?next=%2Fdiagnosis"
+                  className="font-bold text-brand-dark underline"
+                >
+                  로그인
+                </Link>
+              </p>
+
+              <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-left text-xs leading-relaxed text-brand-dark/70">
+                💡 로그인하시면 진단 결과가 계정에 저장되어, 언제든 마이페이지에서 다시 확인하실 수 있습니다.
+              </div>
+              <p className="mt-4 break-keep text-[11px] text-brand-dark/50">
+                ⚠️ 본 서비스는 정부지원사업 안내·추천 서비스이며 승인을 보장하지 않습니다.
+              </p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell pageKey="diagnosis">

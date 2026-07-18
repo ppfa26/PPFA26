@@ -174,10 +174,10 @@ export default function MyPage() {
                       총 <span className="text-brand-red">{matchCount}개</span> 매칭 완료
                     </p>
                     <Link
-                      href="/dashboard"
+                      href="/matching-preview"
                       className="btn-red group mt-5 inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:text-base"
                     >
-                      대시보드에서 전체 결과 확인하기
+                      진단 결과 전체 확인하기
                       <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </Link>
                     {diagExpiry && (
