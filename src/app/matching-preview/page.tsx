@@ -253,12 +253,12 @@ export default function MatchingPreview() {
 
           {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ── */}
           <div className="text-center">
-            <p className="break-keep text-sm font-bold text-brand-gray">
+            <p className="break-keep text-sm font-bold text-brand-gray sm:text-base">
               {name ? `${name} 대표님 사업장의 ` : "대표님 사업장의 "}분석이 완료되었습니다.
             </p>
 
             {/* 가로형 카드: 왼쪽=큰 숫자, 오른쪽=매칭 요약 배지 (모바일에서도 한 줄 유지) */}
-            <div className="mt-3 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3.5 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:gap-5 sm:p-5">
+            <div className="mt-3 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white px-3.5 py-3 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:gap-5 sm:px-5 sm:py-4">
               {/* 왼쪽: 큰 숫자 */}
               <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-3 sm:pr-5">
                 <span className="break-keep text-[11px] font-bold leading-tight text-brand-dark/80 sm:text-sm">
@@ -310,7 +310,7 @@ export default function MatchingPreview() {
             <p className="break-keep text-sm font-extrabold text-brand-dark">
               📋 {BETA_FREE ? "이런 내용을 알려드립니다" : "결제하시면 이런 내용을 알려드립니다"}
             </p>
-            <div className="mt-2.5 space-y-2">
+            <div className="mt-2 space-y-1.5">
               {[
                 {
                   icon: "🎁",
@@ -335,7 +335,7 @@ export default function MatchingPreview() {
               ].map((it, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-2.5"
+                  className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-2"
                 >
                   <span className="mt-0.5 text-lg">{it.icon}</span>
                   <div className="min-w-0">
@@ -351,14 +351,7 @@ export default function MatchingPreview() {
             </div>
           </div>
 
-          {/* ── 오픈 베타(무료) 안내 — 반투명 포인트 박스 (대표님 요청) ── */}
-          {!adminView && BETA_FREE && (
-          <div className="mt-4 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-5 py-3 text-center backdrop-blur-sm">
-            <p className="break-keep text-xs leading-relaxed text-brand-dark/80 sm:text-sm">
-              🎉 <b className="text-brand-dark">무료 베타 오픈중</b> — 아래 {total}개 항목이 모두 무료로 공개됩니다.
-            </p>
-          </div>
-          )}
+          {/* ── (대표님 요청) '무료 베타 오픈중' 안내 문구 삭제 — 화면 간결화 ── */}
 
           {/* ── 중간 결제 유도 박스 (정식 유료 모드 전용) ──
                결과를 스크롤하기 전, 화면 중간에서 바로 '어디서 결제하는지' 찾을 수 있게 배치.
@@ -389,15 +382,8 @@ export default function MatchingPreview() {
             <b className="text-brand-orange"> 기관명·상품명·신청 방법</b>만 결제 후 공개됩니다.
           </p>
           )}
-          {!adminView && BETA_FREE && (
-          <div className="mt-4 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-5 py-3 text-center backdrop-blur-sm">
-            <p className="break-keep text-xs leading-relaxed text-brand-dark/80 sm:text-sm">
-              👇 아래는 대표님 사업장을 위해 분석된 <b className="text-brand-dark">실제 결과 화면</b>입니다.
-              <b className="text-brand-dark"> 기관명·상품명·신청 방법까지 전부 공개</b>됩니다.
-            </p>
-          </div>
-          )}
-          <div className="relative mt-3 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 — 화면 간결화 ── */}
+          <div className="relative mt-5 overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
             <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-3">
               <p className="mb-2 break-keep text-[11px] font-bold text-brand-dark/50">

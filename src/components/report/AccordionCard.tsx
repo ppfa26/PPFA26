@@ -46,16 +46,24 @@ export default function AccordionCard({
             </span>
           )}
         </span>
-        {/* 펼침/접힘 화살표 */}
-        <span
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
-          aria-hidden
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+        {/* 클릭 유도 라벨 + 펼침/접힘 화살표 */}
+        <span className="flex shrink-0 items-center gap-1.5">
+          {/* 닫혀 있을 때만 '클릭해서 펼쳐보기' 유도 (열리면 숨김) */}
+          {!open && (
+            <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-extrabold text-brand-orange sm:text-xs">
+              👆 클릭
+            </span>
+          )}
+          <span
+            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 ${
+              open ? "rotate-180" : ""
+            }`}
+            aria-hidden
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
         </span>
       </button>
 
