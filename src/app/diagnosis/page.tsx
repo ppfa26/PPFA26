@@ -369,7 +369,7 @@ export default function Diagnosis() {
               <div className="mb-5 rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4 sm:p-5">
                 <p className="mb-3 break-keep text-sm font-extrabold leading-snug text-brand-red">
                   ⚠️ 신청 결격사유 확인{"\u00A0"}
-                  <span className="font-bold">(해당 시 신청이 어려워 먼저 확인드립니다)</span>
+                  <span className="font-bold">(해당 시 신청이 불가합니다.)</span>
                 </p>
                 <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
                 <div className="mb-0">
@@ -488,17 +488,13 @@ export default function Diagnosis() {
                   <br />
                   해당 없으면 &lsquo;아니요&rsquo;를 선택하시면 됩니다.
                 </p>
-                {/* ★ 대표님 요청: 질문 글자수가 긴 것부터 위 → 아래로 배치(읽기 편하게) ★ */}
+                {/* ★ 대표님 요청 순서대로 배치 (스마트공장 질문은 화면에서 제외) ★ */}
                 <CondQ k="revenueGrowth2y" field={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y} />
+                <CondQ k="smartDevice" field={STEP3_CONDITIONAL_FIELDS.smartDevice} />
                 <CondQ k="wantsRefinance" field={STEP3_CONDITIONAL_FIELDS.wantsRefinance} />
                 <CondQ k="govSelected" field={STEP3_CONDITIONAL_FIELDS.govSelected} />
-                <CondQ k="smartDevice" field={STEP3_CONDITIONAL_FIELDS.smartDevice} />
                 <CondQ k="reFounder" field={STEP3_CONDITIONAL_FIELDS.reFounder} />
                 <CondQ k="privateInvestment" field={STEP3_CONDITIONAL_FIELDS.privateInvestment} />
-                {/* 스마트공장은 제조업일 때만 노출 */}
-                {(form.industries || []).includes("제조업") && (
-                  <CondQ k="smartFactory" field={STEP3_CONDITIONAL_FIELDS.smartFactory} />
-                )}
                 <CondQ k="policyFundGood" field={STEP3_CONDITIONAL_FIELDS.policyFundGood} />
               </div>
 

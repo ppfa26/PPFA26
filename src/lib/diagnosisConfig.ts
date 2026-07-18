@@ -35,18 +35,18 @@ export const BNO_TEXT = {
   statusPrefix: "사업자 상태:",
   taxTypePrefix: "과세유형:",
   endDatePrefix: "폐업일:",
-  note: "※ 국세청 등록 정보(정상/휴업/폐업·과세유형)를 실시간 확인합니다. 매출·재무는 조회되지 않습니다.",
+  note: "※ 국세청 등록 정보(정상/휴업/폐업·과세유형)를 실시간 확인합니다.",
   errorLength: "사업자등록번호 10자리를 정확히 입력해 주세요.",
   errorServer: "조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
   // 필수화 (대표님 요청) — 사업자번호 조회를 완료해야 다음 단계로 진행 가능
   errorRequired: "사업자등록번호를 조회해 주세요. (정상 사업자만 신청 가능합니다)",
   errorNotFound: "국세청에 등록되지 않은 사업자등록번호입니다. 정확한 번호로 다시 조회해 주세요.",
-  errorPreStartupHint: "아직 사업자등록 전이시라면 위 '사업자 유형'에서 '예비창업자'를 선택해 주세요.",
+  errorPreStartupHint: "아직 사업자 등록전이라면 아래 구분에서 \"예비창업자\"를 클릭하세요.",
 };
 
 // ── 1단계 · 기본 정보 ─────────────────────────────────────────
 export const STEP1_TITLE = "1단계 · 사업장 기본 정보";
-export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본 정보예요. 아는 대로 편하게 선택해 주세요.";
+export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본 정보 입력란입니다. 정확히 입력해야 AI가 판단해줍니다.";
 // 1단계 안내 박스 소제목
 export const STEP1_GROUP = "🏢 사업장 정보";
 // ── 대표자 연락 정보 (진단 결과·상담 안내를 위해 수집) ──────────────
@@ -156,8 +156,8 @@ export const STEP2_FIELDS = {
 export const STEP3_CONDITIONAL_FIELDS = {
   // 혁신형 성장가속화(2년 성장) — 최근 2년 매출/고용 성장 소상공인
   revenueGrowth2y: {
-    label: "최근 2년 매출 10% 연속 상승 또는 4대보험 가입 직원 1명 이상 고용하셨나요?",
-    hint: "예: 2년 연속 10% 매출이 늘었거나 4대보험 가입 직원을 새로 채용해 늘린 경우 체크",
+    label: "최근 2년 매출 10% 연속 상승하셨나요?",
+    hint: "예: 부과세과세표준증명원 혹은 재무제표상 2년 연속 10% 매출 상승한 경우 체크",
     opts: ["예, 성장했어요", "아니요·해당 없음"],
   },
   // 혁신형 스마트공장 — 스마트공장 구축/도입 (제조업 대상)
@@ -237,12 +237,12 @@ export const STEP3_FIELDS = {
   //   · 면책/인가 완료 → 3년 경과 시 정책자금 가능, 정부지원금·인증은 바로 가능
   bankruptcy: {
     label: "대표자 회생·파산 상태",
-    opts: ["해당 없음", "파산·회생 진행 중", "면책·인가 완료 (3년 경과)"],
+    opts: ["해당 없음 (진행 가능)", "파산·회생 진행 중 (진행 불가)", "면책·인가 완료 (3년 경과) (진행 가능)"],
   },
   // ★ 세금 체납 여부 — 체납 중이면 정책자금·정부지원 전체 신청 불가 → 결제 차단 ★
   taxDelinquent: {
-    label: "세금(국세·지방세) 체납 여부",
-    opts: ["해당 없음 (완납 상태)", "체납 있음 (체납중,분납중)"],
+    label: "국세 및 지방세 (미납/체납 여부)",
+    opts: ["완납 상태 (신청 가능)", "미납/체납 중 (신청 불가)"],
   },
   // ★ 자본잠식 여부 (법인만 해당) — 자본잠식이면 정책자금·정부지원 신청 불가 → 결제 차단 ★
   //   개인사업자는 자본잠식 개념이 없어 이 질문은 표시하지 않습니다(파산·회생으로 판정).
@@ -265,7 +265,8 @@ export function getPaymentBlockReasons(p: any): PaymentBlockReason[] {
   const reasons: PaymentBlockReason[] = [];
   // 옵션 문구 뒤에 부가설명(예: " (6회차 경과)")이 붙어도 판정되도록 startsWith 사용
   if (typeof p?.bankruptcy === "string" && p.bankruptcy.startsWith("파산·회생 진행 중")) reasons.push("bankruptcy");
-  if (typeof p?.taxDelinquent === "string" && p.taxDelinquent.startsWith("체납 있음")) reasons.push("tax");
+  // 세금 체납 판정 — 새 문구("미납/체납 중 …")와 구 문구("체납 있음 …") 모두 대응
+  if (typeof p?.taxDelinquent === "string" && (p.taxDelinquent.startsWith("미납/체납 중") || p.taxDelinquent.startsWith("체납 있음"))) reasons.push("tax");
   // 자본잠식은 법인만 판정 (개인사업자·예비창업자는 해당 없음)
   if (p?.businessType === "법인사업자" && p?.capitalImpairment === "예(자본잠식)") reasons.push("capital");
   return reasons;

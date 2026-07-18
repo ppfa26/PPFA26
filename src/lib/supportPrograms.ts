@@ -466,7 +466,8 @@ export function profileToCompany(p: DiagnosisProfile): Company {
         ? "discharged"
         : "none",
     tax_delinquent:
-      typeof p.taxDelinquent === "string" && p.taxDelinquent.startsWith("체납 있음"),
+      typeof p.taxDelinquent === "string" &&
+      (p.taxDelinquent.startsWith("미납/체납 중") || p.taxDelinquent.startsWith("체납 있음")),
     full_capital_impairment:
       p.businessType === "법인사업자" && p.capitalImpairment === "예(자본잠식)",
     // ── 인증·기술 신호 (전부 전달) ──
