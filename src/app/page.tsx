@@ -387,52 +387,6 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
-
-                  {/* ⭐ 우선 신청 추천 TOP — 승인가능성 높은 순 (대표님 요청: 상단에서 먼저 알려주기) */}
-                  <div className="mt-3 rounded-2xl border-2 border-brand-green/40 bg-brand-green/5 p-4 shadow-card">
-                    <p className="flex flex-wrap items-center gap-1.5 text-sm font-extrabold text-brand-dark sm:text-base">
-                      ⭐ 지금 바로 신청하세요
-                      <span className="rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                        승인가능성 높은 순
-                      </span>
-                    </p>
-                    <p className="mt-1 break-keep text-[11px] text-brand-dark/60">
-                      대표님 조건상 요건이 충족돼 <b className="text-brand-green">거의 확정으로 받을 수 있는</b> 것부터 우선순위로 안내합니다.
-                    </p>
-                    <div className={`mt-3 space-y-2 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
-                      {[
-                        { rank: "1", t: "노란우산공제 소득공제", g: "연 600만원 공제", why: "가입만 하면 자동 · 심사 탈락 없음", prob: "99%" },
-                        { rank: "2", t: "소상공인 경영안정 바우처", g: "25만원 현금성", why: "매출 기준만 맞으면 온라인 즉시 신청", prob: "95%" },
-                        { rank: "3", t: "창업중소기업 세액감면", g: "5년 최대 100%", why: "요건 충족 시 세무신고로 자동 적용", prob: "90%" },
-                      ].map((r) => (
-                        <div
-                          key={r.rank}
-                          className="flex items-center gap-3 rounded-xl border border-brand-green/30 bg-white px-3 py-2.5"
-                        >
-                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-green text-sm font-black text-white">
-                            {r.rank}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-1.5">
-                              <span className="break-keep text-[13px] font-extrabold text-brand-dark">
-                                {r.t}
-                              </span>
-                              <span className="shrink-0 rounded-full bg-brand-orange/15 px-2 py-0.5 text-[10px] font-bold text-brand-orange">
-                                {r.g}
-                              </span>
-                            </div>
-                            <p className="mt-0.5 break-keep text-[11px] text-brand-gray">
-                              💡 {r.why}
-                            </p>
-                          </div>
-                          <div className="shrink-0 text-right">
-                            <p className="text-[10px] font-bold text-brand-dark/50">승인가능성</p>
-                            <p className="text-base font-black leading-none text-brand-green">{r.prob}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
 
                 {/* 결과 본문 — 섹션 제목(목차)은 선명하게 열고, 내부 항목만 블러 처리 */}
