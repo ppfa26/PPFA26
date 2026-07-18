@@ -323,7 +323,7 @@ export default function Diagnosis() {
               <p className="mt-4 break-keep text-sm leading-relaxed text-brand-dark/70">
                 <b className="text-brand-orange">카카오·구글·이메일</b> 중 편한 방법으로
                 <br />
-                10초 만에 시작하고, 진단 결과를 안전하게 보관하세요.
+                간편 로그인하고 무료 진단 받으세요.
               </p>
 
               <Link
@@ -343,7 +343,7 @@ export default function Diagnosis() {
               </p>
 
               <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-center text-xs leading-relaxed text-brand-dark/70">
-                💡 로그인하면 진단 결과가 저장되어 언제든 다시 볼 수 있어요.
+                💡 로그인하면 진단 결과가 저장됩니다.
               </div>
               <p className="mt-4 break-keep text-[11px] text-brand-dark/50">
                 ⚠️ 본 서비스는 정부지원사업 안내·추천 서비스이며 승인을 보장하지 않습니다.
