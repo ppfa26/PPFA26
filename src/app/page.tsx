@@ -457,14 +457,11 @@ export default function Home() {
                           <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
                             💡 {m.hook}
                           </p>
-                          {/* 신청 방법 메뉴얼 박스 — '신청 방법까지 알려준다' 각인 (대표님 요청) */}
-                          <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-brand-dark/15 bg-brand-yellow/25 px-2.5 py-1.5">
+                          {/* 신청 방법 메뉴얼 박스 — '신청 방법까지 알려준다' 각인 (대표님 요청: 주황 포인트색) */}
+                          <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-brand-orange/40 bg-brand-orange/10 px-2.5 py-1.5">
                             <span className="text-xs">📄</span>
-                            <span className="break-keep text-[11px] font-bold text-brand-dark">
+                            <span className="break-keep text-[11px] font-bold text-brand-orange">
                               신청 방법 메뉴얼
-                            </span>
-                            <span className="break-keep text-[10px] font-semibold text-brand-dark/50">
-                              접수 순서까지 안내
                             </span>
                           </div>
                         </div>
@@ -474,8 +471,8 @@ export default function Home() {
 
                   {/* 정부지원제도 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) */}
                   <div className="rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 p-4 shadow-card sm:p-5">
-                    {/* 제목 — 포인트색 강조 */}
-                    <p className="text-base font-extrabold text-brand-orange sm:text-lg">
+                    {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청) */}
+                    <p className="inline-block rounded-lg bg-brand-orange px-3 py-1.5 text-base font-extrabold text-white sm:text-lg">
                       🎁 대표님이 신청할 수 있는 정부지원제도
                     </p>
                     <p className="mt-1 break-keep text-xs text-brand-dark/60">
@@ -533,8 +530,10 @@ export default function Home() {
 
                   {/* 추가 감면 혜택 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) */}
                   <div className="rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 p-4 shadow-card sm:p-5">
-                    <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold text-brand-red sm:text-lg">
-                      🎁 지원사업 말고 이런 것까지 챙겨드려요
+                    <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold sm:text-lg">
+                      <span className="inline-block rounded-lg bg-brand-red px-3 py-1.5 text-white">
+                        🎁 지원사업 말고 이런 것까지 챙겨드려요
+                      </span>
                       <span className="rounded-full bg-brand-red px-2 py-0.5 text-[10px] font-bold text-white">
                         놓치기 쉬운 절세·감면
                       </span>
