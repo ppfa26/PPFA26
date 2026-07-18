@@ -419,7 +419,7 @@ export default function Home() {
                           hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상",
                         },
                         {
-                          inst: "신용보증기금 / 지역신용보증재단",
+                          inst: "신용보증기금 / 기술보증기금 / 무역보험공사 / 신용보증재단",
                           cat: "보증서",
                           catCls: "bg-indigo-100 text-indigo-700",
                           prod: "보증서 발급 → 은행 대리대출 연계",
@@ -472,39 +472,54 @@ export default function Home() {
                       대출이 아닙니다. 지원금·바우처·인증·교육까지 챙깁니다.
                       받을 수 있는 제도를 모두 찾아 신청 방법과 함께 안내합니다.
                     </p>
-                    {/* 개별 제도명 — 베타 기간엔 블러 없이 공개, 정식 땐 블러 */}
-                    <div className={`mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    {/* 개별 제도 — 상세 박스(둥근 카드) 형태 (대표님 요청: 정책금융기관처럼) */}
+                    <div className={`mt-3 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { t: "소상공인 경영안정 바우처", c: "바우처", cls: "bg-purple-100 text-purple-700", easy: true, d: "25만원 · 매출기준만 맞으면 지급" },
-                        { t: "소상공인 부담경감 크레딧", c: "지원금", cls: "bg-green-100 text-green-700", easy: true, d: "50만원 · 공공요금·4대보험 사용" },
-                        { t: "두루누리 사회보험료 지원", c: "고용", cls: "bg-teal-100 text-teal-700", easy: true, d: "보험료 최대 80% · 4대보험 연동 자동" },
-                        { t: "청년일자리도약장려금", c: "고용", cls: "bg-teal-100 text-teal-700", easy: false, d: "청년 채용 시 최대 720만원" },
-                        { t: "계속고용장려금", c: "고용", cls: "bg-teal-100 text-teal-700", easy: false, d: "정년 근로자 계속고용 최대 1,080만원" },
-                        { t: "스마트상점 기술보급 지원", c: "지원금", cls: "bg-green-100 text-green-700", easy: false, d: "매장 스마트기기 도입비 지원" },
-                        { t: "수출·데이터 바우처", c: "바우처", cls: "bg-purple-100 text-purple-700", easy: false, d: "수출·데이터 활용 비용 지원" },
-                        { t: "이노비즈·메인비즈 인증", c: "인증", cls: "bg-amber-100 text-amber-700", easy: false, d: "정책자금·입찰 가점 연계" },
+                        { t: "소상공인 경영안정 바우처", c: "바우처", cls: "bg-purple-100 text-purple-700", easy: true, d: "사업체당 25만원. 공과금·4대보험료·연료비 등 9개 항목에 사용 가능.", hook: "연매출 약 1억400만원 미만이면 온라인 신청만으로 지급됩니다." },
+                        { t: "소상공인 부담경감 크레딧", c: "지원금", cls: "bg-green-100 text-green-700", easy: true, d: "50만원 상당. 공공요금(전기·가스·수도)과 4대보험료 납부에 사용.", hook: "연매출 3억원 이하면 카드 연동으로 간편 신청됩니다." },
+                        { t: "두루누리 사회보험료 지원", c: "고용", cls: "bg-teal-100 text-teal-700", easy: true, d: "신규 채용 근로자·사업주의 국민연금·고용보험료 최대 80% 지원.", hook: "근로자 10명 미만 사업장은 4대보험 신고 시 함께 신청돼 사실상 자동입니다." },
+                        { t: "청년일자리도약장려금", c: "고용", cls: "bg-teal-100 text-teal-700", easy: false, d: "청년(15~34세) 채용 후 6개월 이상 유지 시 기업 최대 720만원 지원.", hook: "청년 신규 채용 계획이 있다면 금액이 크고 요건이 명확합니다." },
+                        { t: "계속고용장려금", c: "고용", cls: "bg-teal-100 text-teal-700", easy: false, d: "정년 도달 근로자 계속고용 시 1인당 분기 90만원, 최대 3년(1,080만원).", hook: "고령 직원을 계속 고용하는 사업장이면 안정적으로 받습니다." },
+                        { t: "스마트상점 기술보급 지원", c: "지원금", cls: "bg-green-100 text-green-700", easy: false, d: "키오스크·서빙로봇 등 매장 스마트기기 도입 비용 일부 지원.", hook: "매장 디지털화를 계획 중이라면 도입비 부담을 크게 줄일 수 있습니다." },
+                        { t: "수출·데이터 바우처", c: "바우처", cls: "bg-purple-100 text-purple-700", easy: false, d: "수출 마케팅·데이터 구매/가공 비용을 바우처로 지원.", hook: "온라인 판로·수출을 준비하는 사업장에 적합합니다." },
+                        { t: "이노비즈·메인비즈 인증", c: "인증", cls: "bg-amber-100 text-amber-700", easy: false, d: "기술·경영 혁신형 중소기업 인증. 정책자금·입찰 가점으로 연계.", hook: "인증을 받아두면 이후 정책자금 심사에서 유리해집니다." },
                       ].map((g, i) => (
                         <div
                           key={i}
-                          className="rounded-xl border border-gray-200 bg-white px-3 py-2.5"
+                          className={`rounded-2xl border p-3.5 sm:p-4 ${g.easy ? "border-brand-green/40 bg-brand-green/5" : "border-gray-200 bg-white"}`}
                         >
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="break-keep text-[12px] font-bold text-brand-dark">
+                          {g.easy && (
+                            <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                              ✅ 받기 쉬움 · 먼저 신청 추천
+                            </span>
+                          )}
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="break-keep text-sm font-extrabold text-brand-dark">
                               {g.t}
                             </span>
-                            <span
-                              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${g.cls}`}
-                            >
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${g.cls}`}>
                               {g.c}
                             </span>
+                            <span className="shrink-0 text-xs font-bold text-brand-green">
+                              ✅ 신청 가능
+                            </span>
                           </div>
-                          <div className="mt-1 flex items-center gap-1.5">
-                            {g.easy && (
-                              <span className="shrink-0 rounded-full bg-brand-green/15 px-1.5 py-0.5 text-[9px] font-bold text-brand-green">
-                                ✅ 받기 쉬움
-                              </span>
-                            )}
-                            <span className="break-keep text-[10px] text-brand-gray">{g.d}</span>
+                          <p className="mt-1.5 break-keep text-[11px] text-brand-gray">
+                            {g.d}
+                          </p>
+                          <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
+                            💡 {g.hook}
+                          </p>
+                          <div className="mt-2.5 flex flex-wrap gap-1.5">
+                            <span className="inline-flex items-center gap-1 rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-2.5 py-1 text-[11px] font-bold text-brand-orange">
+                              📑 지원 내용 보기
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/30 bg-white px-2.5 py-1 text-[11px] font-bold text-brand-dark">
+                              🔗 신청 사이트
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green">
+                              ☎ 문의처
+                            </span>
                           </div>
                         </div>
                       ))}
@@ -523,31 +538,38 @@ export default function Home() {
                       대부분 몰라서 못 챙기는 세금·수수료 감면 혜택.
                       대표님 조건에 맞는 것만 골라 신청 방법과 함께 알려드립니다.
                     </p>
-                    <div className={`mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    {/* 개별 감면 — 상세 박스(둥근 카드) 형태 (대표님 요청: 정책금융기관처럼) */}
+                    <div className={`mt-3 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { t: "노란우산공제 소득공제", d: "연 최대 600만원 공제 + 폐업 대비 목돈", easy: true },
-                        { t: "창업중소기업 세액감면", d: "창업 5년간 소득·법인세 최대 100%", easy: true },
-                        { t: "통합고용세액공제", d: "직원 1명 채용 시 최대 1,550만원 공제", easy: false },
-                        { t: "중소기업 특별세액감면", d: "업종·지역별 소득·법인세 5~30% 감면", easy: true },
-                        { t: "카드수수료 우대·감면", d: "연매출 30억 이하 우대수수료 자동 적용", easy: true },
-                        { t: "정신·육체노동자 세액감면", d: "요건 충족 시 근로·사업소득세 감면", easy: false },
+                        { t: "노란우산공제 소득공제", c: "소득공제", cls: "bg-rose-100 text-rose-700", easy: true, d: "납입액을 연 최대 600만원까지 소득공제. 폐업 시 퇴직금처럼 목돈 회수.", hook: "가입만 하면 자동 적용돼 심사 탈락이 없습니다. 자영업자 필수." },
+                        { t: "창업중소기업 세액감면", c: "세액감면", cls: "bg-rose-100 text-rose-700", easy: true, d: "창업 후 5년간 소득세·법인세를 50~100% 감면(청년·수도권 외 100%).", hook: "요건만 맞으면 세무신고 때 자동 적용, 별도 경쟁이 없습니다." },
+                        { t: "통합고용세액공제", c: "세액공제", cls: "bg-rose-100 text-rose-700", easy: false, d: "상시근로자 1명 증가당 최대 1,550만원 공제(3년간 적용).", hook: "직원을 1명이라도 늘렸다면 절세액이 매우 큽니다." },
+                        { t: "중소기업 특별세액감면", c: "세액감면", cls: "bg-rose-100 text-rose-700", easy: true, d: "업종·지역·규모별로 소득세·법인세를 5~30% 감면하는 상시형 감면.", hook: "창업감면 기간이 끝난 사업자도 계속 받을 수 있습니다." },
+                        { t: "카드수수료 우대·감면", c: "수수료", cls: "bg-rose-100 text-rose-700", easy: true, d: "연매출 30억원 이하 영세·중소가맹점 우대수수료율 적용.", hook: "매출 구간만 맞으면 별도 신청 없이 자동 적용됩니다." },
+                        { t: "정신·육체노동자 세액감면", c: "세액감면", cls: "bg-rose-100 text-rose-700", easy: false, d: "일정 요건을 충족한 근로·사업소득에 대한 소득세 감면.", hook: "업종·소득 요건 확인 후 신고 시 적용받을 수 있습니다." },
                       ].map((b, i) => (
                         <div
                           key={i}
-                          className="rounded-xl border border-brand-red/20 bg-white px-3 py-2.5"
+                          className={`rounded-2xl border p-3.5 sm:p-4 ${b.easy ? "border-brand-green/40 bg-brand-green/5" : "border-brand-red/20 bg-white"}`}
                         >
-                          <div className="flex items-center gap-1.5">
-                            <p className="break-keep text-[12px] font-bold text-brand-dark">
+                          {b.easy && (
+                            <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                              ✅ 받기 쉬움 · 먼저 챙기기 추천
+                            </span>
+                          )}
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="break-keep text-sm font-extrabold text-brand-dark">
                               💰 {b.t}
-                            </p>
-                            {b.easy && (
-                              <span className="shrink-0 rounded-full bg-brand-green/15 px-1.5 py-0.5 text-[9px] font-bold text-brand-green">
-                                ✅ 받기 쉬움
-                              </span>
-                            )}
+                            </span>
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${b.cls}`}>
+                              {b.c}
+                            </span>
                           </div>
-                          <p className="mt-0.5 break-keep text-[11px] text-brand-gray">
+                          <p className="mt-1.5 break-keep text-[11px] text-brand-gray">
                             {b.d}
+                          </p>
+                          <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
+                            💡 {b.hook}
                           </p>
                         </div>
                       ))}
