@@ -397,7 +397,7 @@ export default function Home() {
                       <div className="min-w-0 flex-1">
                         {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청: 검정으로 통일) */}
                         <p className="flex flex-wrap items-center gap-1.5">
-                          <span className="inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-base font-extrabold text-white sm:text-lg">
+                          <span className="inline-block whitespace-nowrap rounded-lg bg-brand-dark px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
                             🏦 대표님이 이용할 수 있는 정책금융기관
                           </span>
                           <span className="shrink-0 rounded-full bg-brand-dark/15 px-2 py-0.5 text-[11px] font-bold text-brand-dark/70">3곳</span>
@@ -485,7 +485,7 @@ export default function Home() {
                       <div className="min-w-0 flex-1">
                         {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청) */}
                         <p className="flex flex-wrap items-center gap-1.5">
-                          <span className="inline-block rounded-lg bg-brand-orange px-3 py-1.5 text-base font-extrabold text-white sm:text-lg">
+                          <span className="inline-block whitespace-nowrap rounded-lg bg-brand-orange px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
                             🎁 대표님이 신청할 수 있는 정부지원제도
                           </span>
                           <span className="shrink-0 rounded-full bg-brand-orange/20 px-2 py-0.5 text-[11px] font-bold text-brand-orange">3건</span>
@@ -553,7 +553,7 @@ export default function Home() {
                     <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
                       <div className="min-w-0 flex-1">
                         <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold sm:text-lg">
-                          <span className="inline-block rounded-lg bg-brand-red px-3 py-1.5 text-white">
+                          <span className="inline-block whitespace-nowrap rounded-lg bg-brand-red px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
                             🎁 지원사업 말고 이런 것까지 챙겨드려요
                           </span>
                           <span className="rounded-full bg-brand-red px-2 py-0.5 text-[10px] font-bold text-white">

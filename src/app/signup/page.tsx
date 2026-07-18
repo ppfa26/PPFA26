@@ -84,14 +84,37 @@ function SignupInner() {
       router.replace(tier ? `/payment?tier=${tier}` : nextPath || "/mypage");
     };
 
+    // ★ 소셜 로그인(카카오/구글) 유입경로(UTM) 백필 ★
+    //   OAuth 는 signInWithOAuth 로 페이지를 떠나므로 가입 시 utm_source 를 넣을 수 없다.
+    //   → 콜백으로 돌아와 세션이 생긴 이 시점에, 아직 utm_source 가 비어 있는 유저에게만
+    //     방문 때 UtmCapture 가 저장해 둔 채널을 메타데이터에 채워 넣는다.
+    //     (이미 값이 있으면 첫 유입 채널 보존을 위해 덮어쓰지 않는다.)
+    //   ⚠️ 리다이렉트(go)를 막지 않도록 백그라운드로 실행하되, 값 반영을 위해 먼저 시도한다.
+    const backfillUtm = async (session: any) => {
+      try {
+        const existing = session?.user?.user_metadata?.utm_source;
+        if (existing) return; // 이미 채널이 기록됨 → 유지
+        const captured = getCapturedUtmSource(); // 없으면 "direct"
+        await supabase.auth.updateUser({ data: { utm_source: captured } });
+      } catch {
+        /* 실패해도 로그인/이동에는 영향 없음 */
+      }
+    };
+
     // 1) 진입 즉시 한 번 확인 (이미 로그인 상태였던 경우)
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) go();
+      if (data.session) {
+        void backfillUtm(data.session);
+        go();
+      }
     });
 
     // 2) 세션이 새로 생기는 순간(소셜 로그인 콜백 포함) 즉시 이동
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) go();
+      if (session) {
+        void backfillUtm(session);
+        go();
+      }
     });
 
     return () => {
