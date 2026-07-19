@@ -165,7 +165,7 @@ export default function MatchingPreview() {
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10">
               <span className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
             </div>
-            <p className="text-lg font-extrabold text-brand-dark sm:text-xl">
+            <p className="break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-xl">
               {name ? `${name} 대표님 사업장을 ` : "대표님 사업장을 "}
               <span className="text-brand-orange">AI가 분석</span>하고 있어요
             </p>
@@ -356,7 +356,7 @@ export default function MatchingPreview() {
 
           {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ── */}
           <div className="text-center">
-            <p className="break-keep text-base font-bold text-brand-gray sm:text-lg">
+            <p className="break-keep text-base font-bold leading-snug text-brand-gray sm:text-lg">
               {name ? (
                 <>
                   <span className="font-black text-brand-orange">{name} 대표님</span> 사업장의{" "}
@@ -390,20 +390,20 @@ export default function MatchingPreview() {
               </div>
 
               {/* 오른쪽: 매칭 요약 (세로로 쌓아 가로 공간 절약 → 모바일에서도 안 짤림) */}
-              <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 text-left">
+              <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 text-left">
                 {counts && total > 0 ? (
                   <>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-0.5 text-[13px] font-bold text-brand-dark sm:text-base">
-                      💰 <span className="text-brand-dark/70">정책자금 상품</span>
-                      <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.products}종</b>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
+                      💰 <span className="whitespace-nowrap text-brand-dark/70">정책자금 상품</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{counts.products}종</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-0.5 text-[13px] font-bold text-brand-dark sm:text-base">
-                      🏅 <span className="text-brand-dark/70">정부지원제도</span>
-                      <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.supports}건</b>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
+                      🏅 <span className="whitespace-nowrap text-brand-dark/70">정부지원제도</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{counts.supports}건</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-0.5 text-[13px] font-bold text-brand-dark sm:text-base">
-                      💎 <span className="text-brand-dark/70">추가 감면 혜택</span>
-                      <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.benefits}건</b>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
+                      💎 <span className="whitespace-nowrap text-brand-dark/70">추가 감면 혜택</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{counts.benefits}건</b>
                     </span>
                   </>
                 ) : (

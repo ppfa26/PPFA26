@@ -32,16 +32,16 @@ export default function AccordionCard({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-3 px-5 py-4 text-left transition hover:bg-brand-orange/5"
+        className="flex w-full items-center gap-2 px-4 py-3.5 text-left transition hover:bg-brand-orange/5 sm:gap-3 sm:px-5 sm:py-4"
       >
         <span className="min-w-0 flex-1">
-          <span className="flex items-center gap-1.5 text-[15px] font-extrabold leading-tight text-brand-dark sm:text-lg">
+          <span className="flex items-start gap-1.5 text-[14px] font-extrabold leading-snug text-brand-dark sm:text-lg">
             {emoji && <span className="shrink-0">{emoji}</span>}
-            {/* 모바일에서 제목이 2줄로 안 넘어가고 1줄로 깔끔하게 보이도록 nowrap 유지 */}
-            <span className="min-w-0 whitespace-nowrap">{title}</span>
+            {/* 모바일: 폭이 좁으면 단어 단위로 자연스럽게 줄바꿈(break-keep)해 글자가 잘리지 않게 */}
+            <span className="min-w-0 break-keep">{title}</span>
           </span>
           {subtitle && (
-            <span className="mt-1 block break-keep text-xs text-brand-dark/60">
+            <span className="mt-1 block break-keep text-[11px] leading-relaxed text-brand-dark/60 sm:text-xs">
               {subtitle}
             </span>
           )}
@@ -51,7 +51,7 @@ export default function AccordionCard({
           {/* 닫혀 있을 때만 '클릭해서 펼쳐보기' 유도 (열리면 숨김) */}
           {!open && (
             <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-extrabold text-brand-orange sm:text-xs">
-              👆 클릭
+              👆<span className="hidden sm:inline"> 클릭</span>
             </span>
           )}
           <span
