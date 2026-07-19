@@ -251,31 +251,35 @@ export default function Diagnosis() {
 
   const submit = () => {
     // 진단 결과를 localStorage 에 30일간 저장 (탭 닫아도 유지 · 1달 후 자동 만료)
-    saveDiagnosis(form);
-
-    // 진단 응답을 DB(diagnoses)에도 저장 → 어드민에서 전체 고객 진단서 열람 가능
-    // (로그인 안 한 상태여도 저장. 실패해도 흐름은 계속 진행)
+    // ★ 어느 로그인 계정의 진단인지 '소유자'를 함께 저장 → 다른 계정으로 로그인하면
+    //    이 진단이 따라오지 않도록 한다. (계정별 데이터 분리)
     (async () => {
       try {
         const { data: sessionData } = await supabase.auth.getSession();
         const user = sessionData.session?.user ?? null;
+
+        // 소유자(user.id)를 붙여 저장 (push 전에 확실히 저장 완료)
+        saveDiagnosis(form, user?.id ?? null);
+
         // ★ 관리자(운영자) 계정은 DB에 기록하지 않음 (대표님 요청 — 테스트가 통계에 안 섞이게) ★
-        if (isAdminEmail(user?.email)) return;
-        // 1단계에서 받은 대표자 성함·연락처를 전용 컬럼(name/phone)에도 저장
-        // → 관리자 목록·엑셀·상담 안내에서 정확히 식별됩니다. (profile 안에도 함께 보관)
-        await supabase.from("diagnoses").insert({
-          user_id: user?.id ?? null,
-          profile: form,
-          name: (form.name || "").trim() || null,
-          phone: (form.phone || "").trim() || null,
-          email: user?.email ?? null,
-        });
+        if (!isAdminEmail(user?.email)) {
+          // 1단계에서 받은 대표자 성함·연락처를 전용 컬럼(name/phone)에도 저장
+          // → 관리자 목록·엑셀·상담 안내에서 정확히 식별됩니다. (profile 안에도 함께 보관)
+          await supabase.from("diagnoses").insert({
+            user_id: user?.id ?? null,
+            profile: form,
+            name: (form.name || "").trim() || null,
+            phone: (form.phone || "").trim() || null,
+            email: user?.email ?? null,
+          });
+        }
       } catch {
         /* 저장 실패해도 사용자 흐름은 막지 않음 */
+      } finally {
+        // 저장 시도 후 결과 화면으로 이동 (localStorage 저장이 먼저 끝나 있음)
+        router.push("/matching-preview");
       }
     })();
-
-    router.push("/matching-preview");
   };
 
   const progress = (step / 3) * 100;

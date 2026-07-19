@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { isAdminEmail } from "@/lib/admin";
+import { clearDiagnosis } from "@/lib/diagnosisStore";
 
 export default function Header() {
   const pathname = usePathname();
@@ -34,6 +35,9 @@ export default function Header() {
   }, []);
 
   const handleLogout = async () => {
+    // ★ 계정 분리 ★ 로그아웃 시 이 기기에 남은 진단 결과를 지운다.
+    //   (다음에 다른 사람이 로그인해도 이전 진단이 따라오지 않도록)
+    clearDiagnosis();
     await supabase.auth.signOut();
     setLoggedIn(false);
     router.push("/");

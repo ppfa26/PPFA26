@@ -14,7 +14,7 @@ import {
   type PaymentBlockReason,
 } from "@/lib/diagnosisConfig";
 import { BETA_FREE } from "@/lib/betaConfig";
-import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, clearDiagnosisIfNotOwner } from "@/lib/diagnosisStore";
 import { supabase } from "@/lib/supabaseClient";
 import { logAccess } from "@/lib/deviceGuard";
 
@@ -42,21 +42,31 @@ export default function MatchingPreview() {
   } | null>(null);
 
   useEffect(() => {
-    try {
-      const isAdmin =
-        new URLSearchParams(window.location.search).get("admin") === "1";
-      setAdminView(isAdmin);
-      const raw = loadDiagnosisRaw();
-      const profile = raw ? JSON.parse(raw) : {};
-      setName(profile.name || "");
-      setAdminLabel(
-        profile._adminLabel || profile.name || profile.phone || profile.email || ""
-      );
-      setBlockReasons(getPaymentBlockReasons(profile));
-      setCounts(countMatchedItems(profile));
-    } catch {
-      setCounts(null);
-    }
+    (async () => {
+      try {
+        const isAdmin =
+          new URLSearchParams(window.location.search).get("admin") === "1";
+        setAdminView(isAdmin);
+
+        // ★ 계정 분리 ★ 관리자 열람이 아닐 때만, 현재 로그인 계정이 저장된 진단의
+        //   소유자와 다르면(남의 기기에 남은 진단) 즉시 삭제한다.
+        if (!isAdmin) {
+          const { data } = await supabase.auth.getSession();
+          clearDiagnosisIfNotOwner(data.session?.user?.id ?? null);
+        }
+
+        const raw = loadDiagnosisRaw();
+        const profile = raw ? JSON.parse(raw) : {};
+        setName(profile.name || "");
+        setAdminLabel(
+          profile._adminLabel || profile.name || profile.phone || profile.email || ""
+        );
+        setBlockReasons(getPaymentBlockReasons(profile));
+        setCounts(countMatchedItems(profile));
+      } catch {
+        setCounts(null);
+      }
+    })();
   }, []);
 
   // ── 로그인(회원가입) 게이트 ──
@@ -394,30 +404,7 @@ export default function MatchingPreview() {
             </div>
           </div>
 
-          {/* ── 무엇을 알려주는지(목차) 선명 공개 — '이런 걸 알려주는구나' 궁금증 유발 ── */}
-          <div className="mt-5 rounded-2xl border border-brand-dark/10 bg-white p-4 shadow-card sm:p-5">
-            <p className="break-keep text-sm font-extrabold text-brand-dark">
-              📋 {BETA_FREE ? "이런 내용을 알려드립니다" : "결제하시면 이런 내용을 알려드립니다"}
-            </p>
-            <div className="mt-2 space-y-1.5">
-              {[
-                { icon: "🎁", t: "신청할 수 있는 정부지원제도" },
-                { icon: "🏦", t: "이용할 수 있는 정책금융기관" },
-                { icon: "🔗", t: "각 항목의 신청 방법" },
-                { icon: "📄", t: "필요 서류 & 신청 전략" },
-              ].map((it, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-2.5"
-                >
-                  <span className="text-lg">{it.icon}</span>
-                  <p className="min-w-0 break-keep text-sm font-bold text-brand-dark">
-                    {it.t}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* ── (대표님 요청) '이런 내용을 알려드립니다' 목차 박스 삭제 — 세로 길이 축소 ── */}
 
           {/* ── (대표님 요청) '무료 베타 오픈중' 안내 문구 삭제 — 화면 간결화 ── */}
 
@@ -455,19 +442,20 @@ export default function MatchingPreview() {
             {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
             <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-3">
               <p className="mb-2 break-keep text-[11px] font-bold text-brand-dark/50">
-                📑 아래 결과에는 이런 항목들이 담겨 있어요
+                📑 아래 결과에는 다음과 같은 항목들이 담겨 있습니다.
               </p>
-              <div className="flex flex-wrap gap-1.5">
+              {/* 한 줄 유지 — 좁은 화면에서는 가로 스크롤(스크롤바 숨김) */}
+              <div className="flex flex-nowrap gap-1.5 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
-                  "🏦 이용 가능 정책금융기관",
-                  "💰 신청 가능 정책자금 상품",
-                  "🎁 받을 수 있는 정부지원제도",
+                  "🎁 신청 가능한 정부지원제도",
+                  "🎁 챙기면 좋은 추가 감면 혜택",
+                  "🏦 이용 가능한 정책금융기관",
+                  "🏛️ 기관별 상품 한눈에 보기",
                   "🔗 신청 사이트 · 콜센터",
-                  "📄 필요 서류 · 승인 전략",
                 ].map((t) => (
                   <span
                     key={t}
-                    className="rounded-full border border-brand-orange/30 bg-white px-2.5 py-1 text-[11px] font-bold text-brand-dark"
+                    className="shrink-0 rounded-full border border-brand-orange/30 bg-white px-2 py-1 text-[10px] font-bold text-brand-dark"
                   >
                     {t}
                   </span>

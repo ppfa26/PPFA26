@@ -36,7 +36,7 @@ import {
 } from "@/lib/supportPrograms";
 import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
 import AccordionCard from "@/components/report/AccordionCard";
-import { loadDiagnosisRaw, saveDiagnosis } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, saveDiagnosis, getDiagnosisOwner } from "@/lib/diagnosisStore";
 
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
 type SupportItem = { prog: SupportProgram; status: SupportStatus };
@@ -285,7 +285,8 @@ export default function AdvancedScreeningPanel({
       if (isReFounder) merged.bankruptcy = "있음";
       merged._advancedApplied = true; // 정밀진단 반영 표시
 
-      saveDiagnosis(merged);
+      // 기존 진단의 소유자(로그인 계정)를 유지한 채 업데이트 저장
+      saveDiagnosis(merged, getDiagnosisOwner());
       // 대시보드가 즉시 재계산하도록 커스텀 이벤트 발신
       window.dispatchEvent(new CustomEvent("mpp-advanced-applied"));
     } catch {

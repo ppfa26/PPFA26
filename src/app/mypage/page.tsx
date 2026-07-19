@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
-import { loadDiagnosisRaw, getDiagnosisExpiry } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, clearDiagnosis } from "@/lib/diagnosisStore";
 
 type Payment = {
   order_id: string;
@@ -64,6 +64,10 @@ export default function MyPage() {
         }
       }
 
+      // ★ 계정 분리 ★ 현재 로그인 계정이 저장된 진단의 소유자와 다르면
+      //   (예: 공용 PC에서 다른 사람이 진단 후 내가 로그인) → 남의 진단을 즉시 삭제.
+      clearDiagnosisIfNotOwner(user?.id ?? null);
+
       // 3) 진단 결과 요약 (localStorage · 30일 유지)
       //   ★ 관리자 '결과보기'로 심어둔 고객 임시 데이터(_adminLabel 존재)는
       //      대표님 본인 마이페이지에 섞이면 안 되므로 여기서는 무시한다. ★
@@ -92,6 +96,8 @@ export default function MyPage() {
   }, []);
 
   async function handleLogout() {
+    // 로그아웃 시 이 기기에 남은 진단 결과 삭제 (계정 분리)
+    clearDiagnosis();
     await supabase.auth.signOut();
     router.replace("/");
   }

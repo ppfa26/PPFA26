@@ -16,16 +16,29 @@
 const STORAGE_KEY = "mpp_diagnosis";
 // 저장한 시각(밀리초)을 함께 담아두는 별도 키
 const STAMP_KEY = "mpp_diagnosis_savedAt";
+// ★ 이 진단 결과가 '어느 로그인 계정(user.id)'의 것인지 기록하는 키 ★
+//   로그인 계정이 바뀌면 예전 사람의 진단이 따라오면 안 되므로 소유자를 함께 저장한다.
+const OWNER_KEY = "mpp_diagnosis_owner";
 
 // 진단 결과 유지 기간 (일) — 여기 숫자만 바꾸면 됩니다.
 export const DIAGNOSIS_TTL_DAYS = 30;
 const TTL_MS = DIAGNOSIS_TTL_DAYS * 24 * 60 * 60 * 1000;
 
-/** 진단 결과(profile 객체)를 저장합니다. 저장 시각도 함께 기록. */
-export function saveDiagnosis(profile: unknown): void {
+/**
+ * 진단 결과(profile 객체)를 저장합니다. 저장 시각과 소유자(로그인 계정)도 함께 기록.
+ * @param profile 진단 프로필 객체
+ * @param ownerId 이 진단을 소유한 로그인 계정 id (user.id). 비회원이면 생략/빈값.
+ */
+export function saveDiagnosis(profile: unknown, ownerId?: string | null): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
     localStorage.setItem(STAMP_KEY, String(Date.now()));
+    // 소유자 기록 — 나중에 다른 계정으로 로그인하면 이 값과 달라 무시된다.
+    if (ownerId) {
+      localStorage.setItem(OWNER_KEY, ownerId);
+    } else {
+      localStorage.removeItem(OWNER_KEY);
+    }
     // 예전 sessionStorage 값이 남아 혼선을 주지 않도록 정리
     try {
       sessionStorage.removeItem(STORAGE_KEY);
@@ -35,6 +48,34 @@ export function saveDiagnosis(profile: unknown): void {
   } catch {
     /* 저장 불가(사생활 보호 모드 등)여도 흐름은 계속 진행 */
   }
+}
+
+/** 현재 저장된 진단 결과의 소유자 계정 id를 돌려줍니다. (없으면 null = 비회원 진단) */
+export function getDiagnosisOwner(): string | null {
+  try {
+    return localStorage.getItem(OWNER_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 현재 로그인 계정(currentUserId)이 저장된 진단의 소유자와 일치하는지 확인합니다.
+ *  - 소유자 정보가 없는(예전/비회원) 데이터는 "확정할 수 없음"으로 보고 false 반환하지 않음(호출부 판단).
+ *  - 소유자가 있는데 현재 계정과 다르면 → 남의 데이터이므로 지우고 true(=지웠음) 반환.
+ */
+export function clearDiagnosisIfNotOwner(currentUserId: string | null): boolean {
+  try {
+    const owner = localStorage.getItem(OWNER_KEY);
+    // 소유자가 명시돼 있고, 지금 로그인 계정과 다르면 → 남의 진단 → 삭제
+    if (owner && owner !== (currentUserId ?? "")) {
+      clearDiagnosis();
+      return true;
+    }
+  } catch {
+    /* noop */
+  }
+  return false;
 }
 
 /**
@@ -113,6 +154,7 @@ export function clearDiagnosis(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(STAMP_KEY);
+    localStorage.removeItem(OWNER_KEY);
   } catch {
     /* noop */
   }
