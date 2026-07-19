@@ -85,14 +85,17 @@ export default function MatchingPreview() {
       const { data } = await supabase.auth.getSession();
       if (data.session?.user) {
         // 결과를 바로 띄우지 않고, 짧은 'AI 분석 중' 연출을 거쳐 신뢰감을 준다.
-        //  · 이미 이번 세션에서 결과를 본 적이 있으면(뒤로가기 등) 연출 생략하고 바로 공개.
+        //  ★ ?analyze=1 로 들어오면(무료진단 완료 직후 / 마이페이지 '확인하기') 무조건 연출 ★
+        //  · 그 외(결과 화면 내 뒤로가기·새로고침 등)에서는 이미 본 적 있으면 연출 생략.
+        const forceAnalyze =
+          new URLSearchParams(window.location.search).get("analyze") === "1";
         let seen = false;
         try {
           seen = sessionStorage.getItem("mpp_result_seen") === "1";
         } catch {
           /* sessionStorage 접근 불가 시 무시 */
         }
-        setGate(seen ? "ready" : "analyzing");
+        setGate(forceAnalyze || !seen ? "analyzing" : "ready");
         // 로그인 사용자의 접속 기록(IP·기기) 남기기 → 관리자 접속 로그/IP 집계에 반영
         try {
           await logAccess("/matching-preview");
@@ -113,9 +116,10 @@ export default function MatchingPreview() {
   useEffect(() => {
     if (gate !== "analyzing") return;
     setAnalyzeStep(0);
-    const t1 = setTimeout(() => setAnalyzeStep(1), 600);
-    const t2 = setTimeout(() => setAnalyzeStep(2), 1200);
-    const t3 = setTimeout(() => setAnalyzeStep(3), 1800);
+    // 4단계가 순차 점등되며 '정밀 분석 중' 느낌 → 약 2.3초 후 결과 공개
+    const t1 = setTimeout(() => setAnalyzeStep(1), 550);
+    const t2 = setTimeout(() => setAnalyzeStep(2), 1050);
+    const t3 = setTimeout(() => setAnalyzeStep(3), 1550);
     const done = setTimeout(() => {
       try {
         sessionStorage.setItem("mpp_result_seen", "1");
@@ -123,7 +127,7 @@ export default function MatchingPreview() {
         /* 무시 */
       }
       setGate("ready");
-    }, 2400);
+    }, 2300);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);

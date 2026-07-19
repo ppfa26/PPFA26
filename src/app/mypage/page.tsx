@@ -180,7 +180,7 @@ export default function MyPage() {
                       총 <span className="text-brand-red">{matchCount}개</span> 매칭 완료
                     </p>
                     <Link
-                      href="/matching-preview"
+                      href="/matching-preview?analyze=1"
                       className="btn-red group mt-5 inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:text-base"
                     >
                       진단 결과 전체 확인하기

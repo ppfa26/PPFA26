@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { supabase } from "@/lib/supabaseClient";
-import { isAdminEmail } from "@/lib/admin";
+import { isStatsExcludedEmail } from "@/lib/admin";
 import { TIER_MAP } from "@/lib/products";
 
 type Status = "processing" | "success" | "fail";
@@ -45,9 +45,8 @@ function SuccessInner() {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const user = sessionData.session?.user;
-      // ★ 관리자(운영자) 계정 결제는 DB에 기록하지 않음 (대표님 요청 — 매출/통계에 안 섞이게) ★
-      //   단, 결과 열람은 되도록 localStorage 표시는 그대로 진행됩니다.
-      if (user && !isAdminEmail(user.email)) {
+      // ★ 통계 제외 계정 결제만 DB 기록 생략. (현재는 비어 있어 관리자 결제도 기록됨) ★
+      if (user && !isStatsExcludedEmail(user.email)) {
         const row = {
           user_id: user.id,
           order_id: opts.orderId,

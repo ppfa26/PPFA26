@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { supabase } from "@/lib/supabaseClient";
-import { isAdminEmail } from "@/lib/admin";
+import { isStatsExcludedEmail } from "@/lib/admin";
 import { saveDiagnosis } from "@/lib/diagnosisStore";
 import {
   DIAGNOSIS_TEXT,
@@ -261,8 +261,8 @@ export default function Diagnosis() {
         // 소유자(user.id)를 붙여 저장 (push 전에 확실히 저장 완료)
         saveDiagnosis(form, user?.id ?? null);
 
-        // ★ 관리자(운영자) 계정은 DB에 기록하지 않음 (대표님 요청 — 테스트가 통계에 안 섞이게) ★
-        if (!isAdminEmail(user?.email)) {
+        // ★ 통계 제외 계정만 DB 기록 생략. (현재는 비어 있어 관리자도 일반 고객처럼 기록됨) ★
+        if (!isStatsExcludedEmail(user?.email)) {
           // 1단계에서 받은 대표자 성함·연락처를 전용 컬럼(name/phone)에도 저장
           // → 관리자 목록·엑셀·상담 안내에서 정확히 식별됩니다. (profile 안에도 함께 보관)
           await supabase.from("diagnoses").insert({
@@ -277,7 +277,8 @@ export default function Diagnosis() {
         /* 저장 실패해도 사용자 흐름은 막지 않음 */
       } finally {
         // 저장 시도 후 결과 화면으로 이동 (localStorage 저장이 먼저 끝나 있음)
-        router.push("/matching-preview");
+        //  ?analyze=1 → 결과 화면에서 'AI 분석 중' 연출을 반드시 보여준다.
+        router.push("/matching-preview?analyze=1");
       }
     })();
   };
