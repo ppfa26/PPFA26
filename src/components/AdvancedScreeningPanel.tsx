@@ -837,9 +837,9 @@ function AdvancedResult({
           title="신청 가능한 정부지원제도"
           subtitle={
             <>
-              정책자금과 <b>별개로 병행 신청</b>할 수 있는 제도입니다.
+              정책자금과 <b>별개로 병행 신청</b> 가능 ·
               <b className="text-brand-green"> ✅ 신청 대상</b>과
-              <b className="text-brand-dark/70"> 요건 충족 시 대상</b>이 되는 제도를 함께 안내합니다.
+              <b className="text-brand-orange"> 🟡 조건 충족 시 대상</b>을 함께 안내합니다.
             </>
           }
         >
@@ -928,7 +928,13 @@ function AdvancedResult({
       <AccordionCard
         emoji="💳"
         title="이용 가능한 정책금융기관"
-        subtitle="업종·직원수 등 대표님 사업장 조건을 맞춤으로 실제 신청하실 수 있는 상품 안내입니다."
+        subtitle={
+          <>
+            업종·직원수 등 사업장 조건에 맞춰 ·
+            <b className="text-brand-green"> ✅ 신청 대상</b>과
+            <b className="text-brand-orange"> 🟡 조건 충족 시 대상</b>을 함께 안내합니다.
+          </>
+        }
       >
         <div className="mt-4 divide-y divide-gray-200">
           {creditMatches.map((m, i) => {

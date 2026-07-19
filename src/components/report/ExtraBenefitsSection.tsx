@@ -424,9 +424,9 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
         title="챙기면 좋은 추가 감면 혜택"
         subtitle={
           <>
-            <b>업종·규모</b>에 맞춰 <b>가능성이 높은 순서</b>로 정리했으며
+            업종·규모에 맞춰 가능성 높은 순으로 ·
             <b className="text-brand-green"> ✅ 신청 대상</b>과
-            <b className="text-brand-dark/70"> 요건 충족 시 대상</b>이 되는 감면 혜택을 안내합니다.
+            <b className="text-brand-orange"> 🟡 조건 충족 시 대상</b>을 함께 안내합니다.
           </>
         }
       >
