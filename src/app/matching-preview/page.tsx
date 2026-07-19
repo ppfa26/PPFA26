@@ -14,7 +14,7 @@ import {
   type PaymentBlockReason,
 } from "@/lib/diagnosisConfig";
 import { BETA_FREE } from "@/lib/betaConfig";
-import { loadDiagnosisRaw, clearDiagnosisIfNotOwner } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw } from "@/lib/diagnosisStore";
 import { supabase } from "@/lib/supabaseClient";
 import { logAccess } from "@/lib/deviceGuard";
 
@@ -48,6 +48,21 @@ export default function MatchingPreview() {
           new URLSearchParams(window.location.search).get("admin") === "1";
         setAdminView(isAdmin);
 
+        // ★ 관리자 결과보기 ★ 새 탭은 sessionStorage 를 공유하지 않으므로,
+        //   관리자가 localStorage 임시 키(mpp_diagnosis_admin)에 심어둔 '그 고객'의 진단을
+        //   이 탭의 sessionStorage(mpp_diagnosis)로 복사해, 하위 컴포넌트(AdvancedScreeningPanel)까지
+        //   전부 동일한 '그 고객' 데이터를 읽게 한다. → 이름이 대표님(신주엽)으로 섞이는 버그 방지.
+        if (isAdmin) {
+          const adminRaw = loadAdminDiagnosisRaw();
+          if (adminRaw) {
+            try {
+              sessionStorage.setItem("mpp_diagnosis", adminRaw);
+            } catch {
+              /* noop */
+            }
+          }
+        }
+
         // ★ 계정 분리 ★ 관리자 열람이 아닐 때만, 현재 로그인 계정이 저장된 진단의
         //   소유자와 다르면(남의 기기에 남은 진단) 즉시 삭제한다.
         if (!isAdmin) {
@@ -55,7 +70,7 @@ export default function MatchingPreview() {
           clearDiagnosisIfNotOwner(data.session?.user?.id ?? null);
         }
 
-        const raw = loadDiagnosisRaw();
+        const raw = isAdmin ? (loadAdminDiagnosisRaw() ?? loadDiagnosisRaw()) : loadDiagnosisRaw();
         const profile = raw ? JSON.parse(raw) : {};
         setName(profile.name || "");
         setAdminLabel(

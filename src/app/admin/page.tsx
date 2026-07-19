@@ -584,9 +584,12 @@ export default function AdminPage() {
       "";
     (profile as any)._adminLabel = adminLabel;
     try {
-      // 결과창(하위 컴포넌트)은 mpp_diagnosis를 읽으므로 여기에 넣어 결과를 렌더링하게 하되,
-      //   _adminLabel 플래그를 함께 심어 '관리자 임시 데이터'임을 표시한다.
-      //   → 대표님 마이페이지·대시보드는 이 플래그를 보고 본인 데이터가 아니라 무시한다.
+      // ★ 중요 ★ 새 탭은 sessionStorage 를 공유하지 않으므로(특히 noopener),
+      //   같은 도메인의 모든 탭이 공유하는 localStorage 의 '관리자 전용 임시 키'에 저장한다.
+      //   결과창(matching-preview)은 ?admin=1 일 때 이 키를 최우선으로 읽는다.
+      //   _adminLabel 플래그가 있어 대표님 마이페이지·대시보드는 본인 데이터가 아니라 무시한다.
+      localStorage.setItem("mpp_diagnosis_admin", JSON.stringify(profile));
+      // 예전 방식(sessionStorage)도 혹시 몰라 함께 심어 호환 유지
       sessionStorage.setItem("mpp_diagnosis", JSON.stringify(profile));
     } catch {
       setMsg("브라우저 저장소 오류로 결과를 열 수 없습니다.");

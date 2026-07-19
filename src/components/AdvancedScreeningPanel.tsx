@@ -286,7 +286,14 @@ export default function AdvancedScreeningPanel({
       merged._advancedApplied = true; // 정밀진단 반영 표시
 
       // 기존 진단의 소유자(로그인 계정)를 유지한 채 업데이트 저장
-      saveDiagnosis(merged, getDiagnosisOwner());
+      //  ★ 단, 관리자 결과보기(?admin=1) 모드에서는 '남의(고객) 데이터'이므로
+      //    대표님 본인의 localStorage 진단을 덮어쓰면 안 된다 → 저장 건너뜀.
+      const isAdminView =
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("admin") === "1";
+      if (!isAdminView) {
+        saveDiagnosis(merged, getDiagnosisOwner());
+      }
       // 대시보드가 즉시 재계산하도록 커스텀 이벤트 발신
       window.dispatchEvent(new CustomEvent("mpp-advanced-applied"));
     } catch {

@@ -19,6 +19,11 @@ const STAMP_KEY = "mpp_diagnosis_savedAt";
 // ★ 이 진단 결과가 '어느 로그인 계정(user.id)'의 것인지 기록하는 키 ★
 //   로그인 계정이 바뀌면 예전 사람의 진단이 따라오면 안 되므로 소유자를 함께 저장한다.
 const OWNER_KEY = "mpp_diagnosis_owner";
+// ★ 관리자 '결과보기' 전용 임시 키 ★
+//   관리자가 고객 결과창을 새 탭으로 열 때 이 키(localStorage)에 고객 진단을 심는다.
+//   sessionStorage 는 새 탭(특히 noopener)과 공유되지 않아 이름이 섞이는 문제가 있어
+//   같은 도메인 모든 탭이 공유하는 localStorage 를 쓴다. (본인 진단 mpp_diagnosis 와 분리)
+const ADMIN_KEY = "mpp_diagnosis_admin";
 
 // 진단 결과 유지 기간 (일) — 여기 숫자만 바꾸면 됩니다.
 export const DIAGNOSIS_TTL_DAYS = 30;
@@ -76,6 +81,42 @@ export function clearDiagnosisIfNotOwner(currentUserId: string | null): boolean 
     /* noop */
   }
   return false;
+}
+
+/**
+ * ★ 관리자 '결과보기' 전용 로드 ★
+ * 관리자가 새 탭으로 연 고객 결과창(?admin=1)에서 호출한다.
+ * localStorage 의 관리자 전용 임시 키를 최우선으로 읽고, 없으면 sessionStorage(구방식) 폴백.
+ * 본인 진단(mpp_diagnosis)과 완전히 분리돼 이름이 섞이지 않는다.
+ */
+export function loadAdminDiagnosisRaw(): string | null {
+  try {
+    const admin = localStorage.getItem(ADMIN_KEY);
+    if (admin) return admin;
+  } catch {
+    /* noop */
+  }
+  try {
+    const session = sessionStorage.getItem(STORAGE_KEY);
+    if (session) return session;
+  } catch {
+    /* noop */
+  }
+  return null;
+}
+
+/** 관리자 전용 임시 진단 데이터를 지웁니다. */
+export function clearAdminDiagnosis(): void {
+  try {
+    localStorage.removeItem(ADMIN_KEY);
+  } catch {
+    /* noop */
+  }
+  try {
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* noop */
+  }
 }
 
 /**
