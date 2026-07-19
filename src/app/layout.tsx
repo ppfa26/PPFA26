@@ -79,17 +79,21 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   // ★ 데스크톱(PC) 화면 고정 표시 (대표님 요청) ★
-  //  모바일·앱에서 접속해도 브라우저의 "데스크톱 사이트" 옵션을 켠 것과 동일하게,
-  //  처음부터 PC 레이아웃(1280px 폭)으로 축소되어 보이도록 뷰포트 폭을 고정한다.
+  //  모바일·앱에서 접속해도 처음부터 PC 레이아웃(1280px 폭)으로,
+  //  화면 크기에 맞게 "자동 축소"되어 전체가 한눈에 보이도록 한다.
   //  → 정보량이 많은 진단 폼·결과 화면을 넓게 한눈에 보도록 하기 위함.
-  //  ※ width 를 고정 숫자로 주면 모바일에서도 sm:(PC) 스타일이 항상 적용된다.
+  //
+  //  ※ initialScale 은 일부러 지정하지 않는다.
+  //    instagram/threads 인앱 브라우저는 initialScale=1 이 있으면 1280px 화면을
+  //    축소하지 않고 "왼쪽 위 귀퉁이만" 크게 보여주는 버그가 있다.
+  //    → 대신 <head> 의 스크립트에서 (실제 화면폭 ÷ 1280) 배율을 계산해
+  //      viewport meta 를 동적으로 세팅한다. (아래 layout <head> 참고)
   width: 1280,
-  initialScale: 1,
   // 화면 확대·축소(핀치 줌)를 막지 않습니다.
   //  → PC 화면이 작게 보이면 손가락으로 원하는 부분을 키워 볼 수 있도록 접근성 보장.
   //    (시력이 약하신 중장년 고객 배려)
   maximumScale: 5,
-  minimumScale: 0.25,
+  minimumScale: 0.1,
   userScalable: true,
   // PWA: 앱 실행 시 상단 상태바/브라우저 UI 색상 (다크 테마에 맞춘 어두운 색)
   themeColor: "#0b0b0f",
@@ -162,6 +166,44 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* ─────────────────────────────────────────────────────────
+            ★ PC(1280px) 화면을 화면 크기에 맞춰 '자동 축소'하는 스크립트 ★
+            instagram·threads 인앱 브라우저는 viewport 를 스스로 축소하지 못해
+            1280px 화면의 "왼쪽 위 귀퉁이"만 크게 보여주는 문제가 있다.
+            → 실제 화면 폭을 재서 (화면폭 ÷ 1280) 배율을 계산하고,
+              viewport meta 의 initial-scale 로 직접 지정해 전체가 딱 맞게
+              축소되어 보이도록 한다. 화면 회전·크기 변경 시에도 다시 맞춘다.
+            ※ next/script 가 아닌 순수 인라인 스크립트로, <body> 그려지기 전에
+              최대한 빨리 실행되도록 <head> 최상단에 둔다.
+        ───────────────────────────────────────────────────────── */}
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+  var BASE = 1280; // PC 레이아웃 기준 폭
+  function fit(){
+    try {
+      var m = document.querySelector('meta[name=viewport]');
+      if (!m) { m = document.createElement('meta'); m.name = 'viewport'; document.head.appendChild(m); }
+      var w = window.screen && window.screen.width ? window.screen.width : window.innerWidth;
+      // 세로/가로 모드 모두 대응: 실제 보이는 폭 중 작은 값 기준
+      if (window.innerWidth && window.innerWidth < w) w = window.innerWidth;
+      if (!w || w <= 0) w = 360;
+      if (w >= BASE) {
+        // 태블릿/PC 등 넓은 화면: 그대로 1배율
+        m.setAttribute('content', 'width=' + BASE + ', initial-scale=1, minimum-scale=0.1, maximum-scale=5, user-scalable=yes');
+        return;
+      }
+      var scale = w / BASE; // 예: 화면폭 400 → 0.3125 배율
+      m.setAttribute('content', 'width=' + BASE + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=5, user-scalable=yes');
+    } catch(e){}
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', function(){ setTimeout(fit, 200); });
+})();`,
+          }}
+        />
         {/* eslint-disable-next-line react/no-danger */}
         <meta name="copyright" content="© 모두의사업친구 (biospartners). All rights reserved. 무단 복제·도용 금지" />
         <meta name="author" content="모두의사업친구" />
