@@ -332,7 +332,7 @@ export default function MatchingPreview() {
     <PageShell pageKey="matching-preview">
       <Header />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게 */}
-      <main className={`px-4 pt-6 ${adminView || BETA_FREE ? "pb-16" : "pb-40"}`}>
+      <main className={`px-4 pt-2 ${adminView || BETA_FREE ? "pb-6" : "pb-40"}`}>
         <div className="mx-auto max-w-3xl">
           {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ── */}
           {adminView && (
@@ -488,7 +488,7 @@ export default function MatchingPreview() {
           )}
 
           {/* ── 결과창 맨 하단 CTA — 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
-          <section className="mt-7 px-0 pb-2">
+          <section className="mt-5 px-0 pb-0">
             <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-5 text-center shadow-card sm:p-7">
               <Editable
                 id="preview-bottom-cta-title"
