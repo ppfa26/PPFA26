@@ -459,8 +459,8 @@ export default function MatchingPreview() {
               <div className="flex flex-nowrap gap-1.5 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
                   "🏅 신청 가능한 정부지원제도",
+                  "💳 이용 가능한 정책금융기관",
                   "💎 챙기면 좋은 추가 감면 혜택",
-                  "🏦 이용 가능한 정책금융기관",
                   "📊 기관별 상품 한눈에 보기",
                   "🌐 신청 사이트 · 콜센터",
                 ].map((t) => (
