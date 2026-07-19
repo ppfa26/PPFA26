@@ -113,34 +113,77 @@ export default function Diagnosis() {
   const [bno, setBno] = useState("");
   const [bnoLoading, setBnoLoading] = useState(false);
   const [bnoResult, setBnoResult] = useState<any>(null);
+  // ★ 국세청 서버 오류 시에만 수동입력을 허용하기 위한 상태 ★
+  const [bnoServerDown, setBnoServerDown] = useState(false); // 국세청 서버 오류 감지 여부
+  const [bnoManual, setBnoManual] = useState(false); // 사용자가 수동입력을 택했는지
 
   const checkBno = async () => {
     setBnoResult(null);
+    setBnoServerDown(false);
+    setBnoManual(false);
     const digits = bno.replace(/[^0-9]/g, "");
     if (digits.length !== 10) {
       setBnoResult({ ok: false, message: BNO_TEXT.errorLength });
       return;
     }
     setBnoLoading(true);
+
+    // 국세청 일시 장애 대비 — 서버 오류(serverError)면 최대 3회까지 자동 재시도한다.
+    const MAX_TRIES = 3;
+    let lastData: any = null;
     try {
-      const res = await fetch("/api/business-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bno: digits }),
-      });
-      const data = await res.json();
-      setBnoResult(data);
-      if (data.ok && data.found) {
-        // 조회 결과를 진단 데이터에 함께 저장
-        set("bno", digits);
-        set("bnoStatus", data.status);
-        set("bnoTaxType", data.taxType);
+      for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
+        try {
+          const res = await fetch("/api/business-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bno: digits }),
+          });
+          const data = await res.json();
+          lastData = data;
+
+          if (data.ok && data.found) {
+            // 정상 조회 성공 → 진단 데이터에 저장하고 종료
+            setBnoResult(data);
+            set("bno", digits);
+            set("bnoStatus", data.status);
+            set("bnoTaxType", data.taxType);
+            set("bnoVerified", true); // 국세청 검증됨
+            return;
+          }
+
+          // 국세청 서버 오류가 아닌 '정상 응답이지만 미등록/오류'는 재시도하지 않는다.
+          if (!data.serverError) {
+            setBnoResult(data);
+            return;
+          }
+          // serverError면 잠깐 쉬고 재시도
+          if (attempt < MAX_TRIES) await new Promise((r) => setTimeout(r, 800));
+        } catch {
+          lastData = { ok: false, serverError: true, message: BNO_TEXT.errorServer };
+          if (attempt < MAX_TRIES) await new Promise((r) => setTimeout(r, 800));
+        }
       }
-    } catch {
-      setBnoResult({ ok: false, message: BNO_TEXT.errorServer });
+      // 여기까지 왔다면 3회 모두 국세청 서버 오류 → 수동입력 우회 허용
+      setBnoResult(lastData || { ok: false, serverError: true, message: BNO_TEXT.errorServer });
+      setBnoServerDown(true);
     } finally {
       setBnoLoading(false);
     }
+  };
+
+  // ★ 국세청 서버 장애 시 수동입력 확정 — 검증 없이 사업자번호를 접수한다(신청 누락 방지) ★
+  const confirmManualBno = () => {
+    const digits = bno.replace(/[^0-9]/g, "");
+    if (digits.length !== 10) {
+      setBnoResult({ ok: false, message: BNO_TEXT.errorLength });
+      return;
+    }
+    set("bno", digits);
+    set("bnoStatus", "국세청 점검으로 자동확인 없이 접수");
+    set("bnoTaxType", "");
+    set("bnoVerified", false); // 국세청 검증 안 됨(수동 접수)
+    setBnoManual(true);
   };
 
   // ★ 대표님 요청 ★ 단계가 바뀌면 화면을 맨 위로 올려줘서,
@@ -174,7 +217,10 @@ export default function Diagnosis() {
       //   단, '예비창업자'는 아직 사업자번호가 없으므로 예외로 통과시킨다.
       const isPreStartup = form.businessType === "예비창업자";
       if (!isPreStartup) {
-        const bnoOk = !!form.bno && bnoResult?.ok && bnoResult?.found;
+        // 정상 조회 성공 OR 국세청 서버 장애 시 수동입력 확정(bnoManual) → 통과 허용
+        const bnoOk =
+          (!!form.bno && bnoResult?.ok && bnoResult?.found) ||
+          (!!form.bno && bnoManual);
         if (!bnoOk) {
           setContactErr(BNO_TEXT.errorRequired);
           if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
@@ -403,7 +449,44 @@ export default function Diagnosis() {
                 </div>
                 {bnoResult && (
                   <div className="mt-3 text-sm">
-                    {!bnoResult.ok ? (
+                    {bnoManual ? (
+                      /* 국세청 장애 → 수동 접수 완료 안내 */
+                      <div className="rounded-xl border border-brand-orange/30 bg-brand-orange/10 px-4 py-3">
+                        <p className="font-semibold text-brand-dark">
+                          ✅ 사업자등록번호가 접수되었습니다.
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-brand-gray">
+                          국세청 서버 점검으로 자동확인 없이 접수되었습니다. 다음 단계로
+                          진행하실 수 있으며, 자동확인은 추후 처리됩니다.
+                        </p>
+                      </div>
+                    ) : bnoServerDown ? (
+                      /* 국세청 서버 오류 → 수동입력 우회 제공 */
+                      <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-4 py-3">
+                        <p className="font-semibold text-brand-red">
+                          ⚠️ 국세청 서버가 일시적으로 혼잡합니다.
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-brand-gray">
+                          잠시 후 다시 <b>조회</b>를 눌러주시거나, 신청을 놓치지 않도록 아래 버튼으로
+                          사업자등록번호를 <b>직접 입력하여 접수</b>하실 수 있습니다.
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <button
+                            onClick={checkBno}
+                            disabled={bnoLoading}
+                            className="rounded-full border border-brand-red/40 bg-white px-3 py-1.5 text-xs font-semibold text-brand-red disabled:opacity-60"
+                          >
+                            {bnoLoading ? "재시도 중…" : "다시 조회"}
+                          </button>
+                          <button
+                            onClick={confirmManualBno}
+                            className="btn-brand rounded-full px-3 py-1.5 text-xs font-semibold"
+                          >
+                            직접 입력하고 계속하기
+                          </button>
+                        </div>
+                      </div>
+                    ) : !bnoResult.ok ? (
                       <p className="text-brand-red">⚠️ {bnoResult.message}</p>
                     ) : !bnoResult.found ? (
                       <p className="text-brand-red">⚠️ {bnoResult.message}</p>

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     if (!NTS_API_KEY) {
       return NextResponse.json(
-        { ok: false, message: "서버 설정 오류(인증키 미설정). 관리자에게 문의해 주세요." },
+        { ok: false, serverError: true, message: "서버 설정 오류(인증키 미설정). 관리자에게 문의해 주세요." },
         { status: 500 }
       );
     }
@@ -41,8 +41,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
+      // 국세청(공공데이터포털) 서버 자체 오류 → 우리 잘못이 아님.
+      // serverError 플래그를 함께 내려서, 프론트가 '수동 입력' 우회를 열 수 있게 한다.
       return NextResponse.json(
-        { ok: false, message: `국세청 조회 서버 오류 (${res.status})` },
+        {
+          ok: false,
+          serverError: true,
+          message: `국세청 조회 서버 오류 (${res.status})`,
+        },
         { status: 502 }
       );
     }
@@ -78,8 +84,9 @@ export async function POST(req: NextRequest) {
       endDate: item.end_dt || "", // 폐업일(있는 경우)
     });
   } catch (e: any) {
+    // 네트워크/타임아웃 등도 국세청 측 연결 문제로 간주 → 수동 입력 우회 허용
     return NextResponse.json(
-      { ok: false, message: "조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." },
+      { ok: false, serverError: true, message: "조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." },
       { status: 500 }
     );
   }
