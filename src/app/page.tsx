@@ -395,7 +395,7 @@ export default function Home() {
                           <span className="inline-block whitespace-nowrap rounded-lg bg-brand-dark px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
                             🏦 대표님이 이용할 수 있는 정책금융기관
                           </span>
-                          <span className="shrink-0 rounded-full bg-brand-dark px-2 py-0.5 text-[10px] font-bold text-white">바로 신청 가능한 곳</span>
+                          <span className="shrink-0 rounded-full bg-brand-dark px-2 py-0.5 text-[10px] font-bold text-white">몰라서 못 받은 융자</span>
                         </p>
                         <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
                           업종·직원수·매출 등 대표님 조건을 봅니다.
