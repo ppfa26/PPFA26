@@ -3,6 +3,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import CopyGuard from "@/components/CopyGuard";
 import UtmCapture from "@/components/UtmCapture";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의사업친구.kr";
@@ -184,6 +185,7 @@ export default function RootLayout({
         />
       </head>
       <body className="theme-dark">
+        <ScrollToTop />
         <CopyGuard />
         <UtmCapture />
         {children}

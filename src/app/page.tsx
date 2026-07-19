@@ -9,6 +9,8 @@ import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
+import TrustBadges from "@/components/home/TrustBadges";
+import MobileCollapsibleDetails from "@/components/home/MobileCollapsibleDetails";
 import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
@@ -297,25 +299,7 @@ export default function Home() {
                 내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
               </Editable>
             </div>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              {TRUST_BADGES.map((b, i) => (
-                <div
-                  key={i}
-                  className="hover-lift flex w-[calc(50%-0.375rem)] flex-col items-center justify-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-3 py-4 text-center shadow-card sm:w-[calc(25%-0.6rem)]"
-                >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-xl">
-                    {b.icon}
-                  </span>
-                  <Editable
-                    id={`home-trust-${i}`}
-                    as="span"
-                    className="flex min-h-[2.4rem] items-center break-keep text-[13px] font-semibold leading-tight text-brand-dark"
-                  >
-                    {b.text}
-                  </Editable>
-                </div>
-              ))}
-            </div>
+            <TrustBadges badges={TRUST_BADGES} />
           </div>
         </section>
 
@@ -474,8 +458,11 @@ export default function Home() {
                     </div>
                   </details>
 
-                  {/* 정부지원제도 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언 */}
-                  <details open className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 shadow-card">
+                  {/* 정부지원제도 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언
+                      모바일에선 접힌 상태로 시작(정보 압축), PC는 펼침 그대로 */}
+                  <MobileCollapsibleDetails
+                    className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 shadow-card"
+                    summary={
                     <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
                       <div className="min-w-0 flex-1">
                         {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청) */}
@@ -492,6 +479,8 @@ export default function Home() {
                       </div>
                       <span className="mt-0.5 shrink-0 text-lg text-brand-orange/50 transition-transform group-open:rotate-180">⌄</span>
                     </summary>
+                    }
+                  >
                     <div className="px-4 pb-4 sm:px-5 sm:pb-5">
                     {/* 개별 제도 — 상세 박스(둥근 카드) 형태 (대표님 요청: 정책금융기관처럼) */}
                     <div className={`space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
@@ -541,10 +530,13 @@ export default function Home() {
                       ))}
                     </div>
                     </div>
-                  </details>
+                  </MobileCollapsibleDetails>
 
-                  {/* 추가 감면 혜택 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언 */}
-                  <details open className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 shadow-card">
+                  {/* 추가 감면 혜택 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언
+                      모바일에선 접힌 상태로 시작(정보 압축), PC는 펼침 그대로 */}
+                  <MobileCollapsibleDetails
+                    className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 shadow-card"
+                    summary={
                     <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
                       <div className="min-w-0 flex-1">
                         <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold sm:text-lg">
@@ -562,6 +554,8 @@ export default function Home() {
                       </div>
                       <span className="mt-0.5 shrink-0 text-lg text-brand-red/50 transition-transform group-open:rotate-180">⌄</span>
                     </summary>
+                    }
+                  >
                     <div className="px-4 pb-4 sm:px-5 sm:pb-5">
                     {/* 개별 감면 — 상세 박스(둥근 카드) 형태 (대표님 요청: 정책금융기관처럼) */}
                     <div className={`space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
@@ -601,7 +595,7 @@ export default function Home() {
                       ✨ 요건에 맞게 챙기면 세액감면만으로 수백~수천만원 절감도 가능
                     </p>
                     </div>
-                  </details>
+                  </MobileCollapsibleDetails>
                 </div>
 
                 {/* 하단 페이드 — 베타 땐 뒤에 더 있다는 느낌만, 정식 땐 잠금 페이드 */}
