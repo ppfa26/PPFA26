@@ -42,11 +42,6 @@ export default function SitesPage() {
                       >
                         {site.name}
                       </a>
-                      {site.note && (
-                        <span className="mt-0.5 block break-words text-xs text-brand-gray">
-                          {site.note}
-                        </span>
-                      )}
                     </td>
                   </tr>
                 ))}
