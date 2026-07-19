@@ -298,7 +298,7 @@ function SignupInner() {
               정부지원사업 AI 통합 매칭 플랫폼
             </span>
             <h2 className="mt-4 break-keep text-2xl font-extrabold leading-snug text-white xl:text-3xl">
-              <span className="text-brand-yellow">AI</span>를 활용해 내 사업장에 알맞는<br />
+              <span className="text-brand-yellow">AI</span>를 활용해 내 사업장에 알맞은<br />
               <span className="bg-gradient-to-r from-brand-yellow to-brand-orange bg-clip-text text-transparent">
                 정부지원사업
               </span>
@@ -551,7 +551,7 @@ function SignupInner() {
                 />
                 <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
                   <b className="text-brand-red">[필수]</b>{" "}
-                  <Link href="/terms" target="_blank" className="underline underline-offset-2">
+                  <Link href="/terms" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
                     이용약관
                   </Link>
                   에 동의합니다.
@@ -568,7 +568,7 @@ function SignupInner() {
                 />
                 <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
                   <b className="text-brand-red">[필수]</b>{" "}
-                  <Link href="/privacy" target="_blank" className="underline underline-offset-2">
+                  <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
                     개인정보 수집·이용
                   </Link>
                   에 동의합니다. (이름·연락처·이메일·사업장 정보)

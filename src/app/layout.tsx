@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
-    description: "AI가 내 사업장에 알맞는 정부지원사업을 전부 찾아드립니다.",
+    description: "AI가 내 사업장에 알맞은 정부지원사업을 전부 찾아드립니다.",
     type: "website",
     locale: "ko_KR",
     siteName: "모두의사업친구",
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
-    description: "AI가 내 사업장에 알맞는 정부지원사업을 전부 찾아드립니다.",
+    description: "AI가 내 사업장에 알맞은 정부지원사업을 전부 찾아드립니다.",
     images: ["/og-image-v2.png"],
   },
 };

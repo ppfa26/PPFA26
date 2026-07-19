@@ -140,7 +140,7 @@ export default function Home() {
               as="h1"
               className="break-keep text-[21px] font-black leading-[1.35] text-brand-dark xs:text-[25px] sm:text-[38px] sm:leading-tight"
             >
-              AI를 활용해 내 사업장에 알맞는
+              AI를 활용해 내 사업장에 알맞은
               <br />
               <span className="text-brand-red">정부지원사업</span>을 찾아드립니다.
             </Editable>
@@ -756,10 +756,10 @@ export default function Home() {
                 <>
                   원래 39,900원짜리 진단 결과를 지금은 0원에.
                   <br />
-                  1분이면 내 사업장에 알맞는 정부지원사업을 전부 확인할 수 있습니다.
+                  1분이면 내 사업장에 알맞은 정부지원사업을 전부 확인할 수 있습니다.
                 </>
               ) : (
-                <>1분이면 내 사업장에 알맞는 정부지원사업을 찾을 수 있습니다.</>
+                <>1분이면 내 사업장에 알맞은 정부지원사업을 찾을 수 있습니다.</>
               )}
             </Editable>
             <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
