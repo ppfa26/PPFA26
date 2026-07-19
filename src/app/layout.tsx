@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
-import MobilePcNotice from "@/components/MobilePcNotice";
 import CopyGuard from "@/components/CopyGuard";
 import UtmCapture from "@/components/UtmCapture";
 
@@ -79,11 +78,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  width: "device-width",
+  // ★ 데스크톱(PC) 화면 고정 표시 (대표님 요청) ★
+  //  모바일·앱에서 접속해도 브라우저의 "데스크톱 사이트" 옵션을 켠 것과 동일하게,
+  //  처음부터 PC 레이아웃(1280px 폭)으로 축소되어 보이도록 뷰포트 폭을 고정한다.
+  //  → 정보량이 많은 진단 폼·결과 화면을 넓게 한눈에 보도록 하기 위함.
+  //  ※ width 를 고정 숫자로 주면 모바일에서도 sm:(PC) 스타일이 항상 적용된다.
+  width: 1280,
   initialScale: 1,
-  // 화면 확대(핀치 줌)를 막지 않습니다.
-  //  → 시력이 약하신 대표님·중장년 고객도 글자를 크게 키워 볼 수 있도록 접근성 보장.
+  // 화면 확대·축소(핀치 줌)를 막지 않습니다.
+  //  → PC 화면이 작게 보이면 손가락으로 원하는 부분을 키워 볼 수 있도록 접근성 보장.
+  //    (시력이 약하신 중장년 고객 배려)
   maximumScale: 5,
+  minimumScale: 0.25,
   userScalable: true,
   // PWA: 앱 실행 시 상단 상태바/브라우저 UI 색상 (다크 테마에 맞춘 어두운 색)
   themeColor: "#0b0b0f",
@@ -182,7 +188,6 @@ export default function RootLayout({
       <body className="theme-dark">
         <CopyGuard />
         <UtmCapture />
-        <MobilePcNotice />
         {children}
         {/* Vercel 방문자 분석 — 화면에 보이지 않으며, 방문자 수·페이지·기기 통계를 수집합니다. */}
         <Analytics />

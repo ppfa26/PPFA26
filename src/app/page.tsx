@@ -395,7 +395,7 @@ export default function Home() {
                           <span className="inline-block whitespace-nowrap rounded-lg bg-brand-dark px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
                             🏦 대표님이 이용할 수 있는 정책금융기관
                           </span>
-                          <span className="shrink-0 rounded-full bg-brand-dark/15 px-2 py-0.5 text-[11px] font-bold text-brand-dark/70">3곳</span>
+                          <span className="shrink-0 rounded-full bg-brand-dark px-2 py-0.5 text-[10px] font-bold text-white">바로 신청 가능한 곳</span>
                         </p>
                         <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
                           업종·직원수·매출 등 대표님 조건을 봅니다.
@@ -475,7 +475,7 @@ export default function Home() {
                   </details>
 
                   {/* 정부지원제도 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언 */}
-                  <details className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 shadow-card">
+                  <details open className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 shadow-card">
                     <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
                       <div className="min-w-0 flex-1">
                         {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청) */}
@@ -483,7 +483,7 @@ export default function Home() {
                           <span className="inline-block whitespace-nowrap rounded-lg bg-brand-orange px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
                             🎁 대표님이 신청할 수 있는 정부지원제도
                           </span>
-                          <span className="shrink-0 rounded-full bg-brand-orange/20 px-2 py-0.5 text-[11px] font-bold text-brand-orange">3건</span>
+                          <span className="shrink-0 rounded-full bg-brand-orange px-2 py-0.5 text-[10px] font-bold text-white">놓치면 아까운 혜택</span>
                         </p>
                         <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
                           대출이 아닙니다. 지원금·바우처·인증·교육까지 챙깁니다.
@@ -544,7 +544,7 @@ export default function Home() {
                   </details>
 
                   {/* 추가 감면 혜택 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언 */}
-                  <details className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 shadow-card">
+                  <details open className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 shadow-card">
                     <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
                       <div className="min-w-0 flex-1">
                         <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold sm:text-lg">
