@@ -56,10 +56,13 @@ function GroupBox({
   title,
   children,
   tone = "gray",
+  // matchBno=true 이면 제목 글자크기·굵기를 '국세청 자동 조회' 제목과 동일하게 맞춘다.
+  matchBno = false,
 }: {
   title: string;
   children: React.ReactNode;
   tone?: "gray" | "orange" | "green" | "red";
+  matchBno?: boolean;
 }) {
   const toneCls =
     tone === "orange"
@@ -83,7 +86,11 @@ function GroupBox({
       : "text-brand-red";
   return (
     <div className={`mb-4 rounded-2xl border p-3.5 sm:p-5 ${toneCls}`}>
-      <p className="mb-3 break-keep text-sm font-extrabold text-brand-dark sm:mb-4">
+      <p
+        className={`mb-3 break-keep text-brand-dark sm:mb-4 ${
+          matchBno ? "font-bold" : "text-sm font-extrabold"
+        }`}
+      >
         {mainTitle}
         {badge && (
           <span className={`ml-1 align-middle text-xs font-bold ${badgeColor}`}>
@@ -128,46 +135,46 @@ export default function Diagnosis() {
     }
     setBnoLoading(true);
 
-    // 국세청 일시 장애 대비 — 서버 오류(serverError)면 최대 3회까지 자동 재시도한다.
-    const MAX_TRIES = 3;
-    let lastData: any = null;
+    // ★ 대표님 요청 ★ 고객은 오래 못 기다린다.
+    //   조회는 '한 번'만 시도하고, 6초 안에 응답이 없거나(느림) 서버 오류면
+    //   바로 수동입력 우회를 열어준다. (재시도로 시간 끌지 않음)
+    const TIMEOUT_MS = 6000;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
     try {
-      for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
-        try {
-          const res = await fetch("/api/business-status", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ bno: digits }),
-          });
-          const data = await res.json();
-          lastData = data;
+      const res = await fetch("/api/business-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bno: digits }),
+        signal: controller.signal,
+      });
+      const data = await res.json();
 
-          if (data.ok && data.found) {
-            // 정상 조회 성공 → 진단 데이터에 저장하고 종료
-            setBnoResult(data);
-            set("bno", digits);
-            set("bnoStatus", data.status);
-            set("bnoTaxType", data.taxType);
-            set("bnoVerified", true); // 국세청 검증됨
-            return;
-          }
-
-          // 국세청 서버 오류가 아닌 '정상 응답이지만 미등록/오류'는 재시도하지 않는다.
-          if (!data.serverError) {
-            setBnoResult(data);
-            return;
-          }
-          // serverError면 잠깐 쉬고 재시도
-          if (attempt < MAX_TRIES) await new Promise((r) => setTimeout(r, 800));
-        } catch {
-          lastData = { ok: false, serverError: true, message: BNO_TEXT.errorServer };
-          if (attempt < MAX_TRIES) await new Promise((r) => setTimeout(r, 800));
-        }
+      if (data.ok && data.found) {
+        // 정상 조회 성공 → 진단 데이터에 저장
+        setBnoResult(data);
+        set("bno", digits);
+        set("bnoStatus", data.status);
+        set("bnoTaxType", data.taxType);
+        set("bnoVerified", true); // 국세청 검증됨
+        return;
       }
-      // 여기까지 왔다면 3회 모두 국세청 서버 오류 → 수동입력 우회 허용
-      setBnoResult(lastData || { ok: false, serverError: true, message: BNO_TEXT.errorServer });
+
+      if (data.serverError) {
+        // 국세청 서버 오류 → 즉시 수동입력 우회 열기
+        setBnoResult(data);
+        setBnoServerDown(true);
+        return;
+      }
+
+      // 정상 응답이지만 미등록/형식오류 → 그대로 안내(수동입력 안 열림)
+      setBnoResult(data);
+    } catch {
+      // 타임아웃(6초 초과) 또는 네트워크 오류 → 느린 것으로 보고 즉시 수동입력 열기
+      setBnoResult({ ok: false, serverError: true, message: BNO_TEXT.errorServer });
       setBnoServerDown(true);
     } finally {
+      clearTimeout(timer);
       setBnoLoading(false);
     }
   };
@@ -519,7 +526,7 @@ export default function Diagnosis() {
               </div>
 
               {/* 대표자 성함 및 연락처 — 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 · 박스 틀 색상 빨간색으로 통일 */}
-              <GroupBox title={CONTACT_TEXT.groupTitle} tone="red">
+              <GroupBox title={CONTACT_TEXT.groupTitle} tone="red" matchBno>
                 {CONTACT_TEXT.groupNote && (
                   <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
                     {CONTACT_TEXT.groupNote}

@@ -401,40 +401,19 @@ export default function MatchingPreview() {
             </p>
             <div className="mt-2 space-y-1.5">
               {[
-                {
-                  icon: "🎁",
-                  t: "신청할 수 있는 정부지원제도",
-                  d: "지원금·바우처·인증·교육까지, 대출이 아닌 받을 수 있는 제도 전부",
-                },
-                {
-                  icon: "🏦",
-                  t: "이용할 수 있는 정책금융기관",
-                  d: "중진공·소진공·신용보증재단 등, 대표님 조건에 맞는 기관과 신청 가능한 정책자금 상품",
-                },
-                {
-                  icon: "🔗",
-                  t: "각 항목의 신청 방법",
-                  d: "공식 신청 사이트·담당 콜센터·접수 순서까지 하나하나 안내",
-                },
-                {
-                  icon: "📄",
-                  t: "필요 서류 & 신청 전략",
-                  d: "무엇을 준비하고 어떻게 신청하면 승인 확률이 다소 높아지는지 실전 팁",
-                },
+                { icon: "🎁", t: "신청할 수 있는 정부지원제도" },
+                { icon: "🏦", t: "이용할 수 있는 정책금융기관" },
+                { icon: "🔗", t: "각 항목의 신청 방법" },
+                { icon: "📄", t: "필요 서류 & 신청 전략" },
               ].map((it, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-2"
+                  className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50/60 px-3.5 py-2.5"
                 >
-                  <span className="mt-0.5 text-lg">{it.icon}</span>
-                  <div className="min-w-0">
-                    <p className="break-keep text-sm font-bold text-brand-dark">
-                      {it.t}
-                    </p>
-                    <p className="mt-0.5 break-keep text-xs leading-relaxed text-brand-gray">
-                      {it.d}
-                    </p>
-                  </div>
+                  <span className="text-lg">{it.icon}</span>
+                  <p className="min-w-0 break-keep text-sm font-bold text-brand-dark">
+                    {it.t}
+                  </p>
                 </div>
               ))}
             </div>

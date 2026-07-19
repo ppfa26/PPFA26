@@ -51,7 +51,7 @@ export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본
 export const STEP1_GROUP = "🏢 사업장 정보";
 // ── 대표자 연락 정보 (진단 결과·상담 안내를 위해 수집) ──────────────
 export const CONTACT_TEXT = {
-  groupTitle: "📇 대표자 성함 및 연락처 (필수)",
+  groupTitle: "📇 대표자 기본정보 (필수)",
   groupNote: "",
   nameLabel: "대표자 성함",
   namePlaceholder: "예: 홍길동",
