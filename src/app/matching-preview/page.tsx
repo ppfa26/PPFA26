@@ -356,12 +356,19 @@ export default function MatchingPreview() {
 
           {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ── */}
           <div className="text-center">
-            <p className="break-keep text-sm font-bold text-brand-gray sm:text-base">
-              {name ? `${name} 대표님 사업장의 ` : "대표님 사업장의 "}분석이 완료되었습니다.
+            <p className="break-keep text-base font-bold text-brand-gray sm:text-lg">
+              {name ? (
+                <>
+                  <span className="font-black text-brand-orange">{name} 대표님</span> 사업장의{" "}
+                </>
+              ) : (
+                "대표님 사업장의 "
+              )}
+              분석이 완료되었습니다.
             </p>
 
             {/* 가로형 카드: 왼쪽=큰 숫자, 오른쪽=매칭 요약 배지 (모바일에서도 한 줄 유지) */}
-            <div className="mt-3 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white px-3.5 py-3 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:gap-5 sm:px-5 sm:py-4">
+            <div className="mt-2.5 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white px-3.5 py-2 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:gap-5 sm:px-5 sm:py-2.5">
               {/* 왼쪽: 큰 숫자 */}
               <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-3 sm:pr-5">
                 <span className="break-keep text-[11px] font-bold leading-tight text-brand-dark/80 sm:text-sm">
@@ -383,19 +390,19 @@ export default function MatchingPreview() {
               </div>
 
               {/* 오른쪽: 매칭 요약 (세로로 쌓아 가로 공간 절약 → 모바일에서도 안 짤림) */}
-              <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 text-left">
+              <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 text-left">
                 {counts && total > 0 ? (
                   <>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[13px] font-bold text-brand-dark sm:text-base">
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-0.5 text-[13px] font-bold text-brand-dark sm:text-base">
                       💰 <span className="text-brand-dark/70">정책자금 상품</span>
                       <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.products}종</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[13px] font-bold text-brand-dark sm:text-base">
-                      🎁 <span className="text-brand-dark/70">정부지원제도</span>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-0.5 text-[13px] font-bold text-brand-dark sm:text-base">
+                      🏅 <span className="text-brand-dark/70">정부지원제도</span>
                       <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.supports}건</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[13px] font-bold text-brand-dark sm:text-base">
-                      🎁 <span className="text-brand-dark/70">추가 감면 혜택</span>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-0.5 text-[13px] font-bold text-brand-dark sm:text-base">
+                      💎 <span className="text-brand-dark/70">추가 감면 혜택</span>
                       <b className="ml-auto text-base text-brand-orange sm:text-lg">{counts.benefits}건</b>
                     </span>
                   </>
@@ -451,11 +458,11 @@ export default function MatchingPreview() {
               {/* 한 줄 유지 — 좁은 화면에서는 가로 스크롤(스크롤바 숨김) */}
               <div className="flex flex-nowrap gap-1.5 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
-                  "🎁 신청 가능한 정부지원제도",
-                  "🎁 챙기면 좋은 추가 감면 혜택",
+                  "🏅 신청 가능한 정부지원제도",
+                  "💎 챙기면 좋은 추가 감면 혜택",
                   "🏦 이용 가능한 정책금융기관",
-                  "🏛️ 기관별 상품 한눈에 보기",
-                  "🔗 신청 사이트 · 콜센터",
+                  "📊 기관별 상품 한눈에 보기",
+                  "🌐 신청 사이트 · 콜센터",
                 ].map((t) => (
                   <span
                     key={t}
@@ -482,7 +489,7 @@ export default function MatchingPreview() {
 
           {/* ── 결과창 맨 하단 CTA — 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
           <section className="mt-7 px-0 pb-2">
-            <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-7 text-center shadow-card sm:p-9">
+            <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-5 text-center shadow-card sm:p-7">
               <Editable
                 id="preview-bottom-cta-title"
                 as="h2"
@@ -493,11 +500,11 @@ export default function MatchingPreview() {
               <Editable
                 id="preview-bottom-cta-sub"
                 as="p"
-                className="mx-auto mt-3 max-w-md break-keep text-sm leading-relaxed text-gray-300"
+                className="mx-auto mt-2 max-w-md break-keep text-sm leading-relaxed text-gray-300"
               >
                 서비스 이용에 어려움을 겪고 있으시다면 1:1 채널톡 상담하기를 클릭하세요.
               </Editable>
-              <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 {/* 왼쪽 — 다시 진단하기 (보조 버튼, 흰색 아웃라인) */}
                 <a
                   id="preview-bottom-cta-button"

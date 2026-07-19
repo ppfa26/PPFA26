@@ -420,7 +420,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
     <>
       {/* ========== 🎁 추가 감면 혜택 — 아코디언(접기) 카드 (대표님 요청) ========== */}
       <AccordionCard
-        emoji="🎁"
+        emoji="💎"
         title="챙기면 좋은 추가 감면 혜택"
         subtitle={
           <>

@@ -833,7 +833,7 @@ function AdvancedResult({
       {/*  정책자금(대출·보증)과 별개로 병행 신청 가능 · 진단 기준 '해당되는 것만' · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
       {eligibleSupport.length > 0 && (
         <AccordionCard
-          emoji="🎁"
+          emoji="🏅"
           title="신청 가능한 정부지원제도"
           subtitle={
             <>
@@ -924,12 +924,9 @@ function AdvancedResult({
         </AccordionCard>
       )}
 
-      {/* 🎁 추가 감면 혜택 — '받는 돈'을 먼저 몰아 보여주려 정책금융기관 '위'로 이동 (대표님 요청: 순서 개선) */}
-      {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
-
-      {/* ③ 신청 가능 기관 — '받는 돈(지원제도+추가혜택)' 뒤, '빌리는 돈' 자리로 배치 (대표님 요청: 순서 개선) */}
+      {/* ② 이용 가능한 정책금융기관 — 정부지원제도 바로 아래 배치 (대표님 요청: 순서 변경) */}
       <AccordionCard
-        emoji="🏦"
+        emoji="💳"
         title="이용 가능한 정책금융기관"
         subtitle="업종·직원수 등 대표님 사업장 조건을 맞춤으로 실제 신청하실 수 있는 상품 안내입니다."
       >
@@ -1242,9 +1239,12 @@ function AdvancedResult({
         )}
       </AccordionCard>
 
-      {/* 기관별 상품 한눈에 보기 — 지원제도 박스 '아래' 별도 박스로 배치 (대표님 요청) */}
+      {/* ③ 챙기면 좋은 추가 감면 혜택 — 정책금융기관 '아래'로 이동 (대표님 요청: 순서 변경) */}
+      {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
+
+      {/* ④ 기관별 상품 한눈에 보기 — 별도 박스로 배치 (대표님 요청) */}
       <AccordionCard
-        emoji="🏛️"
+        emoji="📊"
         title="기관별 상품 한눈에 보기"
         subtitle="각 기관의 상품 안내 자료·페이지로 바로 이동합니다."
       >
