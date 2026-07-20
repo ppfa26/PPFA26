@@ -830,21 +830,21 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approvalNote: "제조업은 신용보증기금보다 먼저 접근하는 것이 유리하며, 인증이 없어도 우선 신청해 볼 만합니다.",
         hookNote:
           "특허·벤처·이노비즈·연구소 인증이 없어도 우선 신청해 보시기를 권합니다. 부결 시 인증을 하나씩 보완해 재신청하면 승인 가능성이 높아집니다.",
-        applyUrl: "https://www.kibo.or.kr",
+        applyUrl: "https://www.kibo.or.kr/portal",
       },
       {
         name: "기술운전자금보증",
         amount: "기술평가 기준",
         desc: "기술력 기반 운전자금 보증",
         approval: "mid",
-        applyUrl: "https://www.kibo.or.kr",
+        applyUrl: "https://www.kibo.or.kr/portal",
       },
       {
         name: "기술시설자금보증",
         amount: "시설투자액 기준",
         desc: "R&D·생산설비 등 시설투자 보증",
         approval: "mid",
-        applyUrl: "https://www.kibo.or.kr",
+        applyUrl: "https://www.kibo.or.kr/portal",
       },
     ],
     tel: "1544-1120",
@@ -977,7 +977,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
           "① 대표자 만 39세 이하 ② 업력 3년 미만, 두 조건을 모두 충족해야 신청할 수 있습니다. (창업성공패키지·기보 청년보증·VC투자 시에는 업력 7년 미만까지 특례 인정)",
         hookNote:
           "청년전용창업자금은 '만 39세 이하 + 업력 3년 미만'이 기본 요건이며, 성장 방향·자금 계획·대표 의지를 종합 심사합니다. 한도는 최대 1억원이나 제조업·중점지원분야는 2억원까지 가능합니다.",
-        applyUrl: "https://www.kosmes.or.kr",
+        applyUrl: "https://digital.kosmes.or.kr/dh/map/main.do?",
         // 팩트체크: 나이(39↓) + 업력(3년 미만; 특례 감안해 7년 미만까지 노출) 조건 미충족 시 숨김
         eligibleWhen: (c) =>
           typeof c.ceo_age === "number" &&
@@ -991,7 +991,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         desc: "제조업·혁신성장 분야·기술창업 기업 대상",
         approval: "mid",
         approvalNote: "제조·혁신성장 분야라면 직원 0명·개인사업자도 신청이 가능합니다.",
-        applyUrl: "https://www.kosmes.or.kr",
+        applyUrl: "https://digital.kosmes.or.kr/dh/map/main.do?",
         // 제조·기술·혁신성장 기업에게만 노출(순수 소상공인에게는 숨김 — 과대추천 방지)
         eligibleWhen: (c) => {
           const cat = normalizeIndustry(c.industry);
@@ -1008,7 +1008,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "수출 실적·계획 보유 기업",
         desc: "수출 실적 또는 수출 계획을 보유한 중소기업 대상",
         approval: "mid",
-        applyUrl: "https://www.kosmes.or.kr",
+        applyUrl: "https://digital.kosmes.or.kr/dh/map/main.do?",
         // 수출 실적/계획 있는 기업에게만 노출
         eligibleWhen: (c) =>
           Boolean(c.is_exporter) || (c.industry || "").includes("수출"),
@@ -1018,7 +1018,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         amount: "시설투자액 기준",
         desc: "사업 확장·설비 투자를 계획하는 기업 대상",
         approval: "mid",
-        applyUrl: "https://www.kosmes.or.kr",
+        applyUrl: "https://digital.kosmes.or.kr/dh/map/main.do?",
         // 시설투자 목적이 있거나(설비/시설) 업력·규모가 있는 성장기업에게만 노출
         eligibleWhen: (c) =>
           (c.purposes || []).some((p) => /시설|설비|확장|투자/.test(p)) ||
