@@ -140,9 +140,9 @@ export default function Home() {
               as="h1"
               className="break-keep text-[21px] font-black leading-[1.35] text-brand-dark xs:text-[25px] sm:text-[38px] sm:leading-tight"
             >
-              내가 받을 수 있는 <span className="text-brand-red">정부지원사업</span>,
+              내가 받을 수 있는 <span className="text-brand-red">정부지원사업</span>
               <br />
-              <span className="text-brand-orange">AI</span>를 활용해 <span className="text-brand-orange">전부</span> 찾아드립니다.
+              <span className="text-brand-red">AI</span>를 활용해 <span className="text-brand-red">전부</span> 찾아드립니다.
             </Editable>
 
             <Editable
