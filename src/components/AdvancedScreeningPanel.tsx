@@ -1292,14 +1292,14 @@ function AdvancedResult({
         </div>
       </AccordionCard>
 
-      {/* 소상공인·중소기업이 알아두면 좋은 정부 사이트 모음으로 이동 */}
+      {/* 대표님들이 알아두면 좋은 정부 사이트 모음으로 이동 */}
       <a
         href={previewLock ? undefined : "/sites"}
         className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-brand-dark bg-brand-dark px-5 py-4 shadow-card transition hover:opacity-90 ${previewLock ? "pointer-events-none" : ""}`}
       >
         <span className="min-w-0">
           <span className="block break-keep text-base font-extrabold text-white">
-            🔖 소상공인·중소기업들이 알아두면 좋은 정부 사이트
+            🔖 대표님들이 알아두면 좋은 정부 사이트
           </span>
           <span className="mt-0.5 block break-keep text-[11px] leading-relaxed text-white/70">
             정책자금·보증·창업·인증 업무에 자주 쓰이는 공식 사이트를 분야별로 모았습니다.

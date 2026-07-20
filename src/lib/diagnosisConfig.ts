@@ -27,7 +27,7 @@ export const DIAGNOSIS_TEXT = {
 
 // ── 사업자번호 자동조회 블록 문구 ──────────────────────────────
 export const BNO_TEXT = {
-  title: "🔍 사업자등록번호로 국세청 자동 조회",
+  title: "🔍 사업자등록번호 국세청 자동 조회",
   badge: "(필수)",
   placeholder: "예: 123-45-67890",
   button: "조회",
