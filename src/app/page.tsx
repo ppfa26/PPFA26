@@ -142,7 +142,7 @@ export default function Home() {
             >
               내가 받을 수 있는 <span className="text-brand-red">정부지원사업</span>,
               <br />
-              전부 찾아드립니다.
+              AI를 활용해 전부 찾아드립니다.
             </Editable>
 
             <Editable
