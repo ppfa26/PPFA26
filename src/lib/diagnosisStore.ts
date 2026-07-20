@@ -65,6 +65,28 @@ export function getDiagnosisOwner(): string | null {
 }
 
 /**
+ * ★ 진단 결과 '입양(소유자 자동 연결)' ★
+ * 비회원 상태에서 진단을 마친 뒤(소유자 없음) 나중에 로그인하는 흐름을 위한 함수.
+ *  - 저장된 진단이 있고, 소유자 정보가 아직 비어 있으면 → 지금 로그인한 계정을 소유자로 등록.
+ *  - 이렇게 하면 '진단 먼저 → 로그인 나중' 순서에서도 진단 결과가 그대로 유지된다.
+ *  - 이미 다른 소유자가 기록돼 있으면 건드리지 않는다. (남의 진단 보호는 clearDiagnosisIfNotOwner 담당)
+ */
+export function adoptDiagnosisIfOwnerless(currentUserId: string | null): void {
+  try {
+    if (!currentUserId) return;
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return; // 저장된 진단 자체가 없으면 할 일 없음
+    const owner = localStorage.getItem(OWNER_KEY);
+    if (!owner) {
+      // 소유자 미기록(비회원 진단) → 지금 로그인 계정으로 연결
+      localStorage.setItem(OWNER_KEY, currentUserId);
+    }
+  } catch {
+    /* noop */
+  }
+}
+
+/**
  * 현재 로그인 계정(currentUserId)이 저장된 진단의 소유자와 일치하는지 확인합니다.
  *  - 소유자 정보가 없는(예전/비회원) 데이터는 "확정할 수 없음"으로 보고 false 반환하지 않음(호출부 판단).
  *  - 소유자가 있는데 현재 계정과 다르면 → 남의 데이터이므로 지우고 true(=지웠음) 반환.

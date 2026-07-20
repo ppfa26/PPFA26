@@ -14,7 +14,7 @@ import {
   type PaymentBlockReason,
 } from "@/lib/diagnosisConfig";
 import { BETA_FREE } from "@/lib/betaConfig";
-import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adoptDiagnosisIfOwnerless } from "@/lib/diagnosisStore";
 import { supabase } from "@/lib/supabaseClient";
 import { logAccess } from "@/lib/deviceGuard";
 
@@ -67,7 +67,10 @@ export default function MatchingPreview() {
         //   소유자와 다르면(남의 기기에 남은 진단) 즉시 삭제한다.
         if (!isAdmin) {
           const { data } = await supabase.auth.getSession();
-          clearDiagnosisIfNotOwner(data.session?.user?.id ?? null);
+          const uid = data.session?.user?.id ?? null;
+          // 비회원 진단 후 로그인한 경우 → 지금 계정을 소유자로 연결(입양)해 결과 유지
+          adoptDiagnosisIfOwnerless(uid);
+          clearDiagnosisIfNotOwner(uid);
         }
 
         const raw = isAdmin ? (loadAdminDiagnosisRaw() ?? loadDiagnosisRaw()) : loadDiagnosisRaw();
@@ -346,8 +349,9 @@ export default function MatchingPreview() {
   return (
     <PageShell pageKey="matching-preview">
       <Header />
-      {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게 */}
-      <main className={`px-4 pt-2 ${adminView || BETA_FREE ? "pb-6" : "pb-40"}`}>
+      {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
+          상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
+      <main className={`px-4 pt-8 sm:pt-10 ${adminView || BETA_FREE ? "pb-6" : "pb-40"}`}>
         <div className="mx-auto max-w-3xl">
           {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ── */}
           {adminView && (
@@ -383,7 +387,7 @@ export default function MatchingPreview() {
             </p>
 
             {/* 가로형 카드: 왼쪽=큰 숫자, 오른쪽=매칭 요약 배지 (모바일에서도 한 줄 유지) */}
-            <div className="mt-2.5 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white px-3.5 py-2 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:gap-5 sm:px-5 sm:py-2.5">
+            <div className="mt-4 flex flex-row items-stretch gap-3 rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white px-3.5 py-2.5 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:mt-5 sm:gap-5 sm:px-5 sm:py-3">
               {/* 왼쪽: 큰 숫자 */}
               <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-3 sm:pr-5">
                 <span className="break-keep text-[11px] font-bold leading-tight text-brand-dark/80 sm:text-sm">

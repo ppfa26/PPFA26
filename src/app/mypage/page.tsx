@@ -10,7 +10,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
-import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, clearDiagnosis } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, clearDiagnosis, adoptDiagnosisIfOwnerless } from "@/lib/diagnosisStore";
+import { isAdminEmail } from "@/lib/admin";
 
 type Payment = {
   order_id: string;
@@ -29,6 +30,9 @@ export default function MyPage() {
   const [matchCount, setMatchCount] = useState<number | null>(null);
   const [diagName, setDiagName] = useState("");
   const [diagExpiry, setDiagExpiry] = useState<Date | null>(null);
+  // ★ 관리자(대표님) 여부 — 결제 내역 삭제 버튼은 관리자에게만 노출 ★
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [deletingOrder, setDeletingOrder] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -42,6 +46,8 @@ export default function MyPage() {
 
       if (user) {
         setEmail(user.email ?? null);
+        // ★ 관리자(대표님) 계정이면 결제 내역 삭제 버튼을 보여준다 ★
+        setIsAdmin(isAdminEmail(user.email));
         // 2) 결제 내역 조회
         try {
           const { data } = await supabase
@@ -63,6 +69,10 @@ export default function MyPage() {
           /* 실패 시 미노출(안전) */
         }
       }
+
+      // ★ 진단 입양 ★ 비회원으로 진단을 마친 뒤 로그인한 경우(소유자 미기록)
+      //   지금 로그인 계정을 소유자로 연결해 결과가 사라지지 않게 한다. (진단 먼저 → 로그인 나중 대응)
+      adoptDiagnosisIfOwnerless(user?.id ?? null);
 
       // ★ 계정 분리 ★ 현재 로그인 계정이 저장된 진단의 소유자와 다르면
       //   (예: 공용 PC에서 다른 사람이 진단 후 내가 로그인) → 남의 진단을 즉시 삭제.
@@ -94,6 +104,34 @@ export default function MyPage() {
       mounted = false;
     };
   }, []);
+
+  // ★ 결제 건 삭제 (관리자 전용) ★
+  //   관리자 서버함수(admin_delete_payment)를 호출해 매출 통계·결제 내역에서 완전히 제거.
+  //   일반 고객에게는 버튼 자체가 노출되지 않으며, 서버에서도 관리자만 실행 가능하다.
+  async function handleDeletePayment(orderId: string) {
+    if (
+      !window.confirm(
+        `[${orderId}] 결제 건을 삭제할까요?\n매출 통계·결제 내역에서 완전히 제거되며 되돌릴 수 없습니다.`
+      )
+    )
+      return;
+    setDeletingOrder(orderId);
+    try {
+      const { error } = await supabase.rpc("admin_delete_payment", {
+        p_order_id: orderId,
+      });
+      if (error) {
+        alert(`삭제 중 오류가 발생했습니다: ${error.message}`);
+      } else {
+        // 화면 목록에서도 즉시 제거
+        setPayments((prev) => prev.filter((p) => p.order_id !== orderId));
+      }
+    } catch (e) {
+      alert(`삭제 중 오류가 발생했습니다: ${String(e)}`);
+    } finally {
+      setDeletingOrder(null);
+    }
+  }
 
   async function handleLogout() {
     // 로그아웃 시 이 기기에 남은 진단 결과 삭제 (계정 분리)
@@ -306,9 +344,16 @@ export default function MyPage() {
                 id="mypage-payments"
                 className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
               >
-                <h2 className="text-lg font-extrabold text-brand-dark">
-                  🧾 결제 내역
-                </h2>
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="text-lg font-extrabold text-brand-dark">
+                    🧾 결제 내역
+                  </h2>
+                  {isAdmin && payments.length > 0 && (
+                    <span className="rounded-full bg-brand-red/10 px-2.5 py-1 text-[11px] font-bold text-brand-red">
+                      관리자 · 삭제 가능
+                    </span>
+                  )}
+                </div>
                 {payments.length === 0 ? (
                   <div className="mt-4 rounded-2xl border border-dashed border-gray-300 p-8 text-center text-brand-gray">
                     아직 결제 내역이 없습니다.
@@ -340,19 +385,32 @@ export default function MyPage() {
                                 : ""}
                             </p>
                           </div>
-                          <div className="text-right">
-                            <p className="font-extrabold text-brand-dark">
-                              {p.amount.toLocaleString()}원
-                            </p>
-                            <span
-                              className={`text-xs font-semibold ${
-                                p.status === "paid"
-                                  ? "text-brand-green"
-                                  : "text-brand-gray"
-                              }`}
-                            >
-                              {p.status === "paid" ? "결제완료" : p.status}
-                            </span>
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <p className="font-extrabold text-brand-dark">
+                                {p.amount.toLocaleString()}원
+                              </p>
+                              <span
+                                className={`text-xs font-semibold ${
+                                  p.status === "paid"
+                                    ? "text-brand-green"
+                                    : "text-brand-gray"
+                                }`}
+                              >
+                                {p.status === "paid" ? "결제완료" : p.status}
+                              </span>
+                            </div>
+                            {/* 관리자(대표님)에게만 보이는 결제 건 삭제 버튼 */}
+                            {isAdmin && (
+                              <button
+                                onClick={() => handleDeletePayment(p.order_id)}
+                                disabled={deletingOrder === p.order_id}
+                                title="이 결제 건 삭제 (관리자 전용)"
+                                className="shrink-0 rounded-lg border border-brand-red/40 px-3 py-1.5 text-xs font-bold text-brand-red transition hover:bg-brand-red/10 disabled:opacity-50"
+                              >
+                                {deletingOrder === p.order_id ? "삭제 중…" : "삭제"}
+                              </button>
+                            )}
                           </div>
                         </li>
                       );
