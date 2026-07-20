@@ -437,9 +437,9 @@ export default function Diagnosis() {
 
               {/* 사업자번호 자동 조회 (국세청 연동) — 박스 틀 색상 빨간색으로 통일(대표님 요청) */}
               <div className="mb-6 overflow-hidden rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4">
-                <p className="mb-2 font-bold text-brand-dark">
+                <p className="mb-2 break-keep text-[13px] font-bold text-brand-dark xs:text-sm sm:text-base">
                   {BNO_TEXT.title}{" "}
-                  <span className="text-xs font-bold text-brand-red">{BNO_TEXT.badge}</span>
+                  <span className="whitespace-nowrap text-xs font-bold text-brand-red">{BNO_TEXT.badge}</span>
                 </p>
                 <div className="flex w-full items-center gap-1.5">
                   <input
