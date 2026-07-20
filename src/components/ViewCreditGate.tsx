@@ -132,21 +132,25 @@ export default function ViewCreditGate({
         return;
       }
 
-      // 4) 이미 조회 확정한 사업장인가?
+      // 4) 이미 조회 확정한 사업장인가? (로컬 캐시 = '빠른 통과' 용도)
+      //    ★ 최종 판정은 서버(지문 기준)가 하지만, 로컬에 기록이 있으면
+      //      서버 왕복 없이 즉시 통과시켜 체감 속도를 높인다.
+      //    ★ 캐시가 비어 있어도(캐시 삭제·기기 변경) 아래 6)에서 서버가
+      //      같은 사업장이면 차감 없이 '재열람' 으로 통과시켜 준다.
       const consumed = getConsumed();
       if (consumed.includes(fp)) {
-        // 재열람 → 차감 없이 통과 (1개월간 무제한)
         setPhase("granted");
         return;
       }
 
-      // 5) 새 사업장 → 조회권 남았는지 확인
-      if (st.remaining <= 0) {
-        setPhase("no-credit");
-        return;
-      }
-
-      // 6) 조회권 1개 차감 (서버)
+      // 5) 조회권 1개 차감 시도 (서버)
+      //    ★ 서버가 '지문' 으로 판정한다:
+      //       · 같은 사업장을 이미 조회했으면 → 차감 없이 재열람 통과
+      //       · 처음 보는 사업장이면 → 조회권 1개 차감
+      //    ★ 그래서 여기서 remaining 으로 미리 막지 않는다.
+      //      (남은 조회권이 0 이어도 '예전에 본 사업장 재열람' 은 서버가 허용)
+      //    ★ 단, 확실히 새 사업장이고 남은 조회권이 0 이면 서버가 실패를 돌려주고
+      //      아래에서 no-credit 을 띄운다.
       const result = await consumeViewCredit(
         String(profile?.name ?? ""),
         profile
@@ -154,7 +158,7 @@ export default function ViewCreditGate({
       if (!mounted) return;
 
       if (result.ok) {
-        addConsumed(fp);
+        addConsumed(fp); // 다음부터는 즉시 통과 (로컬 캐시 갱신)
         // 최신 상태 반영
         const st2 = await fetchViewStatus();
         if (mounted && st2) setStatus(st2);
