@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import CopyGuard from "@/components/CopyGuard";
 import UtmCapture from "@/components/UtmCapture";
 import ScrollToTop from "@/components/ScrollToTop";
+import FontLoader from "@/components/FontLoader";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의사업친구.kr";
@@ -179,10 +180,21 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net"
           crossOrigin="anonymous"
         />
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
-        />
+        {/* ── (성능) 폰트 CSS 비동기 로딩 ──
+            렌더블로킹을 없애 첫 화면(FCP)을 앞당깁니다.
+            · media="print" 로 받아오면 브라우저가 '인쇄용'으로 판단해 렌더를 막지 않고,
+              로드가 끝나면 onLoad 에서 media="all" 로 바꿔 화면에 적용합니다.
+              (React/Next 가 지원하는 '함수형' onLoad 라 문자열 핸들러 문제 없음)
+            · JS 비활성 환경을 위해 <noscript> 로 동기 로딩 폴백을 둡니다.
+            그동안에는 system-ui(아래 globals) 로 즉시 렌더 → 폰트 도착 후 교체.  */}
+        <FontLoader />
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-css-tags */}
+          <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+          />
+        </noscript>
       </head>
       <body className="theme-dark">
         <ScrollToTop />

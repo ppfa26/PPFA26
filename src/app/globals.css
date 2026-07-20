@@ -682,3 +682,38 @@ body.theme-dark {
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   margin-bottom: 0.5rem;
 }
+
+/* ============================================================
+   (성능) 모바일 스크롤 부드럽게 — backdrop-filter blur 경량화
+   ------------------------------------------------------------
+   backdrop-filter의 blur는 모바일 GPU에서 프레임당 비용이 커서
+   글래스 카드가 많은 화면(랜딩·결과창)에서 스크롤이 버벅이는
+   주된 원인입니다. 데스크톱은 여유가 있어 그대로 두되,
+   좁은 화면(모바일)에서는 blur 강도를 절반 수준으로 낮춰
+   시각 효과는 거의 유지하면서 스크롤을 매끄럽게 만듭니다.
+   ============================================================ */
+@media (max-width: 768px) {
+  .glass-card,
+  .glass-card-strong,
+  .hero-glass {
+    /* 14~18px → 8px 수준으로 경량화 (체감 차이 최소, 성능 이득 큼) */
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  /* 스크롤 등장 모션 완료 후에도 남던 will-change 힌트를 모바일에선 짧게 유지
+     (레이어 상시 승격으로 인한 메모리 부담 완화) */
+  .reveal.is-visible {
+    will-change: auto;
+  }
+}
+
+/* (성능) 터치 반응 즉시성 — 모바일 탭 하이라이트/지연 제거 */
+@media (hover: none) and (pointer: coarse) {
+  a,
+  button,
+  [role="button"],
+  summary {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* 더블탭 확대 지연(300ms) 제거 → 버튼 반응 즉각 */
+  }
+}
