@@ -382,7 +382,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "기술보증기금",
       criteria: isManufacturingCore
-        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다(첫거래 1억·최대 2억). 인증이 없어도 우선 신청 후, 부결 시 특허·벤처·이노비즈를 보완해 재신청하세요."
+        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다.\n(첫거래 1억·최대 2억). 인증이 없어도 우선 신청 후, 부결 시 특허·벤처·이노비즈를 보완해 재신청하세요."
         : "기술력(특허·상표·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증입니다. 매출이 낮아도 승인 가능성이 있습니다(신용보증기금·재단과 중복 불가).",
       priority: "TECH_BASED",
       loan_type: "대리대출",
@@ -877,7 +877,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "low",
         approvalNote: "대상 범위는 넓지만 승인율은 낮은 편입니다.",
         hookNote:
-          "스마트기술 도입만으로 '대상'은 되지만, 실제 승인은 '기업현황 및 사업계획서'를 통해 스마트기술 활용→매출 시현이 증명되어야 이루어집니다. 사업계획서 완성도가 승인의 핵심입니다.",
+          "스마트기술 도입만으로 '대상'은 되지만, 실제 승인은\n'기업현황 및 사업계획서'를 통해 스마트기술 활용→매출 시현이 증명되어야 이루어집니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.uses_smart_tech),
       },

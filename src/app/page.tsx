@@ -140,9 +140,9 @@ export default function Home() {
               as="h1"
               className="break-keep text-[21px] font-black leading-[1.35] text-brand-dark xs:text-[25px] sm:text-[38px] sm:leading-tight"
             >
-              대표님이 놓친 <span className="text-brand-red">정부지원사업</span>,
+              내가 받을 수 있는 <span className="text-brand-red">정부지원사업</span>,
               <br />
-              여기 다 있습니다.
+              전부 찾아드립니다.
             </Editable>
 
             <Editable
@@ -150,22 +150,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base"
             >
-              전국 정부·공공기관을 AI가 매일 분석해,
-              <br />
-              <b className="text-brand-dark">수백 개</b>의 정책자금·지원금·세금감면 중
-              <br />
-              대표님이 실제로 받을 수 있는 것만 골라드립니다.
-            </Editable>
-
-            {/* Before → After 한 줄 */}
-            <Editable
-              id="hero-before-after"
-              as="p"
-              className="mx-auto mt-4 max-w-xl break-keep text-xs font-medium leading-relaxed text-brand-gray sm:text-sm"
-            >
-              어디서부터 알아봐야 할지 막막했다면{" "}
-              <span className="font-bold text-brand-orange">→</span>{" "}
-              <b className="text-brand-dark">이제 신청 순서대로 클릭만 하시면 됩니다.</b>
+              AI가 대표님이 지원 가능한 사업만을 알아서 찾아줍니다.
             </Editable>
 
             {/* 오픈 베타 무료 앵커링 — 원래 39,900원인데 지금은 전부 무료 */}
