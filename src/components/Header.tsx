@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { isAdminEmail } from "@/lib/admin";
-import { clearDiagnosis } from "@/lib/diagnosisStore";
 
 export default function Header() {
   const pathname = usePathname();
@@ -35,9 +34,10 @@ export default function Header() {
   }, []);
 
   const handleLogout = async () => {
-    // ★ 계정 분리 ★ 로그아웃 시 이 기기에 남은 진단 결과를 지운다.
-    //   (다음에 다른 사람이 로그인해도 이전 진단이 따라오지 않도록)
-    clearDiagnosis();
+    // ★ 진단 결과 30일 유지 ★ 로그아웃해도 진단 결과를 삭제하지 않는다.
+    //   같은 계정으로 다시 로그인하면 그대로 볼 수 있고(owner 일치),
+    //   다른 계정이 로그인하면 clearDiagnosisIfNotOwner()가 자동으로 정리하므로
+    //   계정 분리는 그대로 보장된다.
     await supabase.auth.signOut();
     setLoggedIn(false);
     router.push("/");

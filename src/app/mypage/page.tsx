@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
-import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, clearDiagnosis, adoptDiagnosisIfOwnerless } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless } from "@/lib/diagnosisStore";
 import { isAdminEmail } from "@/lib/admin";
 
 type Payment = {
@@ -134,8 +134,9 @@ export default function MyPage() {
   }
 
   async function handleLogout() {
-    // 로그아웃 시 이 기기에 남은 진단 결과 삭제 (계정 분리)
-    clearDiagnosis();
+    // ★ 진단 결과 30일 유지 ★ 로그아웃해도 진단 결과를 삭제하지 않는다.
+    //   같은 계정으로 다시 로그인하면 그대로 볼 수 있고(owner 일치),
+    //   다른 계정이 로그인하면 clearDiagnosisIfNotOwner()가 자동으로 정리한다.
     await supabase.auth.signOut();
     router.replace("/");
   }
