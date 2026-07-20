@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
-import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
 import { isAdminEmail } from "@/lib/admin";
 
 type Payment = {
@@ -77,6 +77,31 @@ export default function MyPage() {
       // ★ 계정 분리 ★ 현재 로그인 계정이 저장된 진단의 소유자와 다르면
       //   (예: 공용 PC에서 다른 사람이 진단 후 내가 로그인) → 남의 진단을 즉시 삭제.
       clearDiagnosisIfNotOwner(user?.id ?? null);
+
+      // ★ 서버(Supabase) 동기화 ★ 로그인 계정이 있으면 서버에 저장된 본인 최근 진단(30일 이내)을
+      //   먼저 불러와 localStorage 에 심는다. → 같은 PC에서 다른 계정으로 로그인했다 돌아와도,
+      //   폰↔PC 다른 기기에서 봐도, 로그인 순서와 무관하게 본인 진단이 항상 보인다.
+      //   (관리자 '결과보기' 임시 데이터가 떠 있으면 그건 건드리지 않는다.)
+      if (user?.id) {
+        try {
+          const existing = loadDiagnosisRaw();
+          const isAdminTemp =
+            !!existing && (() => {
+              try {
+                return !!JSON.parse(existing)._adminLabel;
+              } catch {
+                return false;
+              }
+            })();
+          if (!isAdminTemp) {
+            await loadDiagnosisFromServer(user.id);
+          }
+        } catch {
+          /* 서버 조회 실패 시 localStorage 폴백 */
+        }
+      }
+
+      if (!mounted) return;
 
       // 3) 진단 결과 요약 (localStorage · 30일 유지)
       //   ★ 관리자 '결과보기'로 심어둔 고객 임시 데이터(_adminLabel 존재)는

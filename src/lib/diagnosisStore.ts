@@ -13,6 +13,8 @@
 //     세 함수만 쓰면 됩니다.
 // ════════════════════════════════════════════════════════════════
 
+import { supabase } from "@/lib/supabaseClient";
+
 const STORAGE_KEY = "mpp_diagnosis";
 // 저장한 시각(밀리초)을 함께 담아두는 별도 키
 const STAMP_KEY = "mpp_diagnosis_savedAt";
@@ -236,6 +238,67 @@ export function getDiagnosisExpiry(): Date | null {
     const savedAt = Number(stampStr);
     if (!Number.isFinite(savedAt)) return null;
     return new Date(savedAt + TTL_MS);
+  } catch {
+    return null;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  ★ 서버(Supabase) 진단 결과 동기화 ★
+//
+//  ─ 왜 필요한가 ─
+//  진단 결과를 브라우저(localStorage)에만 두면, 같은 PC에서 다른 계정으로
+//  로그인했다가 돌아오거나(계정 분리 로직이 지움), 다른 기기(폰↔PC)에서 보면
+//  결과가 안 보입니다. 진단 시점에 Supabase `diagnoses` 테이블에 계정별로
+//  이미 저장되고 있으므로, "로그인 계정 기준 최근 진단(30일 이내)"을 서버에서
+//  다시 불러와 화면에 항상 뿌려줄 수 있습니다. (기기·로그인 순서 무관)
+// ════════════════════════════════════════════════════════════════
+
+/**
+ * 로그인한 계정의 최근 진단(30일 이내)을 서버에서 불러옵니다.
+ *  · 서버에 있으면 그 profile 을 반환하고, 동시에 localStorage 에도 심어
+ *    (owner=본인) 이후 오프라인/빠른 조회에도 대비합니다.
+ *  · 서버에 없거나(비회원·기록없음) 30일 초과면 null 을 반환합니다.
+ * @param currentUserId 현재 로그인 계정 user.id (없으면 서버 조회 생략)
+ */
+export async function loadDiagnosisFromServer(
+  currentUserId: string | null
+): Promise<unknown | null> {
+  if (!currentUserId) return null;
+  try {
+    // 본인(user_id=현재계정)의 가장 최근 진단 1건
+    const { data, error } = await supabase
+      .from("diagnoses")
+      .select("profile, created_at")
+      .eq("user_id", currentUserId)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (error || !data || data.length === 0) return null;
+
+    const row = data[0] as { profile: unknown; created_at: string };
+    const savedAtMs = new Date(row.created_at).getTime();
+    // 30일(TTL) 초과한 진단은 보여주지 않는다.
+    if (!Number.isFinite(savedAtMs) || Date.now() - savedAtMs > TTL_MS) {
+      return null;
+    }
+    if (!row.profile) return null;
+
+    // 화면·이후 조회를 위해 localStorage 에도 반영 (소유자=본인, 저장시각=진단 생성시각)
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(row.profile));
+      localStorage.setItem(STAMP_KEY, String(savedAtMs));
+      localStorage.setItem(OWNER_KEY, currentUserId);
+      try {
+        sessionStorage.removeItem(STORAGE_KEY);
+      } catch {
+        /* noop */
+      }
+    } catch {
+      /* localStorage 실패해도 반환값은 유효 */
+    }
+
+    return row.profile;
   } catch {
     return null;
   }
