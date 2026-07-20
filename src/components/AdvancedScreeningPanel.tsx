@@ -919,11 +919,27 @@ function AdvancedResult({
                       )}
                     </div>
                   )}
-                  {/* 상세보기 — 주황색 포인트 박스로 강조 (대표님 요청) · 글자 길이에 맞춰 짧게 */}
-                  <span className="mt-2.5 inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange transition group-hover:border-brand-orange/60 group-hover:bg-brand-orange/15">
-                    상세 · 승인 소요기간 · 연락처 보기
-                    <span className="transition group-hover:translate-x-0.5">→</span>
-                  </span>
+                  {/* 결과창에서 바로 신청 사이트로 가는 버튼 + 상세보기 버튼 (대표님 요청)
+                      · 검정 버튼: 신청 사이트 새 탭으로 즉시 이동 (상위 Link로 전파되지 않도록 stopPropagation)
+                      · 주황 버튼: 상세(승인 소요기간·연락처) 페이지로 이동 */}
+                  <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                    {prog.url && (
+                      <a
+                        href={previewLock ? undefined : prog.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className={`inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white transition hover:opacity-90 ${lockClickSoft}`}
+                      >
+                        이 상품 신청하러 가기
+                        <span>→</span>
+                      </a>
+                    )}
+                    <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange transition group-hover:border-brand-orange/60 group-hover:bg-brand-orange/15">
+                      상세 · 승인 소요기간 · 연락처 보기
+                      <span className="transition group-hover:translate-x-0.5">→</span>
+                    </span>
+                  </div>
                 </Link>
               );
             })}
