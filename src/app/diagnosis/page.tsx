@@ -88,12 +88,14 @@ function GroupBox({
     <div className={`mb-4 rounded-2xl border p-3.5 sm:p-5 ${toneCls}`}>
       <p
         className={`mb-3 break-keep text-brand-dark sm:mb-4 ${
-          matchBno ? "font-bold" : "text-sm font-extrabold"
+          matchBno
+            ? "text-[13px] font-bold xs:text-sm sm:text-base"
+            : "text-sm font-extrabold"
         }`}
       >
         {mainTitle}
         {badge && (
-          <span className={`ml-1 align-middle text-xs font-bold ${badgeColor}`}>
+          <span className={`ml-1 whitespace-nowrap align-middle text-xs font-bold ${badgeColor}`}>
             {badge}
           </span>
         )}
