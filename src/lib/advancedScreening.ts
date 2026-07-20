@@ -360,8 +360,8 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "기술보증기금",
       criteria: isManufacturingCore
-        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반 보증(첫거래 1억·최대 2억)이며, 인증이 없어도 우선 신청 후 부결 시 특허·벤처·이노비즈를 보완해 재신청하는 방식을 권합니다."
-        : "기술력(특허·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증입니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다.",
+        ? "제조업은 기술보증기금부터가 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능하며(첫거래 1억·최대 2억), 인증이 없어도 우선 신청 후 부결 시 특허·벤처·이노비즈를 보완해 재신청하세요."
+        : "기술력(특허·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증이라, 매출이 낮아도 보증이 가능합니다.",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
@@ -370,7 +370,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
     matches.push({
       institution: "신용보증기금",
-      criteria: "제조·혁신성장 기업이면서 매출·규모 요건도 충족해 신용보증기금도 자격이 됩니다(매출 기반 보증이라 한도가 큰 편). 다만 기술보증기금과 둘 중 1곳만 선택해 신청하시면 됩니다.",
+      criteria: "제조·혁신성장 기업이면서 매출·규모 요건도 충족해 신용보증기금도 자격이 됩니다(한도가 큰 편).\n단, 기술보증기금과 둘 중 1곳만 선택해 신청하세요.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -393,7 +393,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     // ── 비기술 + 매출 5억↑ → 신보 우선 (기보·재단 X) ──
     matches.push({
       institution: "신용보증기금",
-      criteria: "연매출 5억원 이상·신용점수 양호한 경우 신용보증기금이 우선입니다(재단과 중복 불가). 매출 기반 보증이라 한도가 큰 편이며, 직원 수가 많을수록 유리하지만 필수 요건은 아닙니다.",
+      criteria: "연매출 5억원 이상·신용점수 양호하면 신용보증기금이 우선입니다(재단과 중복 불가).\n매출 기반 보증이라 한도가 큰 편이며, 직원 수가 많을수록 유리합니다(필수는 아님).",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -403,7 +403,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     // ── 소상공인·소액 → 재단 우선 (신보·기보 X) ──
     matches.push({
       institution: "지역신용보증재단",
-      criteria: "소상공인·소액(3천~5천만원)은 지역신용보증재단이 우선입니다(신용보증기금·기술보증기금과 중복 불가). 사업장이 있으면 승인율이 높은 편이며, 창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
+      criteria: "소상공인·소액(3천~5천만원)은 지역신용보증재단이 우선입니다(신보·기보와 중복 불가).\n사업장이 있으면 승인율이 높은 편이고, 창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -427,7 +427,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     if (!reasons.length && employees >= 5) reasons.push("상시직원 5명 이상");
     matches.push({
       institution: "중소벤처기업진흥공단",
-      criteria: `${reasons.join(" · ")} 조건으로 중소벤처기업진흥공단 정책자금(직접대출) 병행이 가능합니다. 성장 계획·자금 사용처·대표 의지를 종합 심사하며, 보증기관과는 별개로 진행됩니다.`,
+      criteria: `${reasons.join(" · ")} 조건으로 중진공 정책자금(직접대출) 병행이 가능합니다.\n성장 계획·자금 사용처·대표 의지를 종합 심사하며, 보증기관과는 별개로 진행됩니다.`,
       priority: "HIGH",
       loan_type: "직접대출",
       step: 2,
@@ -441,7 +441,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "소상공인시장진흥공단",
       criteria:
-        "중소벤처기업진흥공단 직접대출을 받은 기업도 추가로 진행 가능하며 소상공인시장진흥공단 대리대출도 같이 병행할 수 있습니다. 승인율이 높은 상품 : 혁신성장촉진(2년 연속 10% 성장·수출)·재도전특별·대환·청년고용연계·일반경영안정·민간투자연계·TIPS / 승인율이 낮은 상품 : 스마트기기·일시적경영애로·신용취약소상공인입니다. 대상 범위는 넓지만 승인율은 지역마다 편차가 심하고, 사업계획서 완성도가 일정 수준 이상이면 계획서보다는 대표자의 신용 및 매출상태·상환여력·지속가능 여부 등으로 승인을 판단합니다.",
+        "중진공 직접대출을 받은 기업도 병행 가능하며, 소진공 대리대출도 함께 진행할 수 있습니다.\n· 승인율 높은 상품 : 혁신성장촉진·재도전특별·대환·청년고용연계·일반경영안정·민간투자연계·TIPS\n· 승인율 낮은 상품 : 스마트기기·일시적경영애로·신용취약소상공인\n지역별 편차가 크며, 실제 승인은 대표자의 신용·매출·상환여력을 종합해 판단합니다.",
       priority: "MEDIUM",
       loan_type: "직접대출",
       step: 3,
@@ -829,7 +829,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "제조업은 신용보증기금보다 먼저 접근하는 것이 유리하며, 인증이 없어도 우선 신청해 볼 만합니다.",
         hookNote:
-          "특허·벤처·이노비즈·연구소 인증이 없어도 우선 신청해 보시기를 권합니다. 부결 시 인증을 하나씩 보완해 재신청하면 승인 가능성이 높아집니다.",
+          "특허·벤처·이노비즈·연구소 인증이 없어도 우선 신청해 보세요.\n부결 시 인증을 하나씩 보완해 재신청하면 승인 가능성이 높아집니다.",
         applyUrl: "https://www.kibo.or.kr/portal",
       },
       {
@@ -976,7 +976,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approvalNote:
           "① 대표자 만 39세 이하 ② 업력 3년 미만, 두 조건을 모두 충족해야 신청할 수 있습니다. (창업성공패키지·기보 청년보증·VC투자 시에는 업력 7년 미만까지 특례 인정)",
         hookNote:
-          "청년전용창업자금은 '만 39세 이하 + 업력 3년 미만'이 기본 요건이며, 성장 방향·자금 계획·대표 의지를 종합 심사합니다. 한도는 최대 1억원이나 제조업·중점지원분야는 2억원까지 가능합니다.",
+          "'만 39세 이하 + 업력 3년 미만'이 기본 요건이며, 성장 방향·자금 계획·대표 의지를 종합 심사합니다.\n한도는 최대 1억원, 제조업·중점지원분야는 2억원까지 가능합니다.",
         applyUrl: "https://digital.kosmes.or.kr/dh/map/main.do?",
         // 팩트체크: 나이(39↓) + 업력(3년 미만; 특례 감안해 7년 미만까지 노출) 조건 미충족 시 숨김
         eligibleWhen: (c) =>

@@ -1003,7 +1003,7 @@ function AdvancedResult({
                     </span>
                   )}
                 </div>
-                <p className="mt-1 break-keep text-xs text-brand-gray">{m.criteria}</p>
+                <p className="mt-1 whitespace-pre-line break-keep text-xs leading-relaxed text-brand-gray">{m.criteria}</p>
 
                 {/* 신보·기보 둘 다 자격일 때 → 중복 신청 불가 안내 (대표님 요청) */}
                 {m.exclusiveNote && (
@@ -1087,7 +1087,7 @@ function AdvancedResult({
                               </p>
                             )}
                             {prod.hookNote && (
-                              <p className="mt-1.5 break-keep rounded-lg bg-brand-yellow/10 px-2 py-1.5 text-[10px] leading-relaxed text-brand-dark/70">
+                              <p className="mt-1.5 whitespace-pre-line break-keep rounded-lg bg-brand-yellow/10 px-2 py-1.5 text-[10px] leading-relaxed text-brand-dark/70">
                                 💡 {prod.hookNote}
                               </p>
                             )}
