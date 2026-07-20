@@ -142,7 +142,7 @@ export default function Home() {
             >
               내가 받을 수 있는 <span className="text-brand-red">정부지원사업</span>
               <br />
-              <span className="text-brand-red">AI</span>를 활용해 <span className="text-brand-red">전부</span> 찾아드립니다.
+              <span className="text-brand-red">AI</span>를 활용해 <span className="text-brand-red">모두</span> 찾아드립니다.
             </Editable>
 
             <Editable
@@ -150,7 +150,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base"
             >
-              AI가 대표님이 지원 가능한 사업만을 알아서 찾아줍니다.
+              AI가 대표님이 지원 가능한 사업만을 알아서
             </Editable>
 
             {/* 오픈 베타 무료 앵커링 — 원래 39,900원인데 지금은 전부 무료 */}
@@ -616,7 +616,7 @@ export default function Home() {
                 </p>
                 <p className="mt-1 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
                   <b className="text-brand-orange">신청 사이트 · 필요 서류 · 승인 전략</b>
-                  {BETA_FREE ? "까지 오픈 베타 기간 0원으로 공개" : "까지 공개"}
+                  {BETA_FREE ? "까지 오픈 베타 기간 0원" : "까지 공개"}
                 </p>
               </div>
             </div>
@@ -752,8 +752,6 @@ export default function Home() {
             >
               {BETA_FREE ? (
                 <>
-                  원래 39,900원짜리 진단 결과를 지금은 0원에.
-                  <br />
                   1분이면 내 사업장에 알맞은 정부지원사업을 전부 확인할 수 있습니다.
                 </>
               ) : (
