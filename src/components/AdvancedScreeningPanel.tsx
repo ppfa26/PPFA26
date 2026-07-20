@@ -1077,12 +1077,12 @@ function AdvancedResult({
                               )}
                             </div>
                             {prod.desc && (
-                              <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-gray">
+                              <p className="mt-1 whitespace-pre-line break-keep text-[11px] leading-relaxed text-brand-gray">
                                 {prod.desc}
                               </p>
                             )}
                             {prod.approvalNote && (
-                              <p className="mt-1 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
+                              <p className="mt-1 whitespace-pre-line break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
                                 {prod.approvalNote}
                               </p>
                             )}

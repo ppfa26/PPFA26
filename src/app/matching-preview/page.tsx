@@ -356,7 +356,7 @@ export default function MatchingPreview() {
       <Header />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
           상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`px-4 pt-8 sm:pt-10 ${adminView || BETA_FREE ? "pb-6" : "pb-40"}`}>
+      <main className={`px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-2" : "pb-40"}`}>
         <div className="mx-auto max-w-3xl">
           {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ── */}
           {adminView && (

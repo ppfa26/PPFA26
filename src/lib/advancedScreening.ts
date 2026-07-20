@@ -803,7 +803,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
       {
         name: "수출성장자금보증",
         amount: "수출실적 기준",
-        desc: "수출 실적을 보유한 기업에 대한 우대 보증 (무역보험과 별개)",
+        desc: "수출 실적을 보유한 기업에 대한 우대 보증\n(무역보험과 별개)",
         approval: "mid",
         applyUrl: "https://www.kodit.or.kr/apps/index.do",
       },
@@ -825,7 +825,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
       {
         name: "기술보증 (신진기업·첫거래)",
         amount: "첫거래 1억원 · 최대 2억원",
-        desc: "제조업·기술기업의 첫 거래 보증 (매출이 낮아도 기술력으로 심사)",
+        desc: "제조업·기술기업의 첫 거래 보증\n(매출이 낮아도 기술력으로 심사)",
         approval: "mid",
         approvalNote: "제조업은 신용보증기금보다 먼저 접근하는 것이 유리하며, 인증이 없어도 우선 신청해 볼 만합니다.",
         hookNote:
@@ -873,7 +873,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
       {
         name: "혁신성장촉진자금 (일반형) — 스마트기술 도입 소상공인",
         amount: "운전 1억원 · 시설 5억원",
-        desc: "키오스크·무인판매기·서빙로봇·스마트 POS·재고관리 S/W 등 스마트기술을 도입한 소상공인",
+        desc: "키오스크·무인판매기·서빙로봇·스마트 POS·재고관리 S/W 등\n스마트기술을 도입한 소상공인",
         approval: "low",
         approvalNote: "대상 범위는 넓지만 승인율은 낮은 편입니다.",
         hookNote:
@@ -911,7 +911,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
       {
         name: "혁신성장촉진자금 (혁신형) — 강한소상공인·로컬크리에이터",
         amount: "운전 2억원 · 시설 10억원",
-        desc: "중기부 '강한소상공인 성장지원' 또는 '로컬크리에이터' 선정 기업",
+        desc: "중기부 '강한소상공인 성장지원' 또는\n'로컬크리에이터' 선정 기업",
         approval: "mid",
         approvalNote: "선정 이력이 있으면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
@@ -920,7 +920,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
       {
         name: "혁신성장촉진자금 (혁신형) — 성실상환자",
         amount: "운전 2억원 · 시설 10억원",
-        desc: "소진공·중진공 등 정책자금 직접대출을 연체 없이 성실히 상환 중인 소상공인",
+        desc: "소진공·중진공 등 정책자금 직접대출을\n연체 없이 성실히 상환 중인 소상공인",
         approval: "mid",
         approvalNote: "요건을 충족하면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
@@ -929,7 +929,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
       {
         name: "재도전특별자금",
         amount: "최대 1억원",
-        desc: "폐업 후 재창업하거나 채무조정을 성실히 상환 중인 소상공인 (재도전자 전용)",
+        desc: "폐업 후 재창업하거나 채무조정을 성실히 상환 중인\n소상공인 (재도전자 전용)",
         approval: "mid",
         approvalNote: "재도전자 요건을 갖추면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
@@ -971,7 +971,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
       {
         name: "청년전용창업자금",
         amount: "최대 1억원 (제조업·중점지원분야 2억원) · 연 2.5% 고정",
-        desc: "만 39세 이하 · 업력 3년 미만 청년 창업자 (직원 0명·개인사업자도 신청 가능, 매출 하한 없음)",
+        desc: "만 39세 이하 · 업력 3년 미만 청년 창업자\n(직원 0명·개인사업자도 신청 가능, 매출 하한 없음)",
         approval: "mid",
         approvalNote:
           "① 대표자 만 39세 이하 ② 업력 3년 미만, 두 조건을 모두 충족해야 신청할 수 있습니다. (창업성공패키지·기보 청년보증·VC투자 시에는 업력 7년 미만까지 특례 인정)",
@@ -1043,7 +1043,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
       {
         name: "선적전 수출신용보증",
         amount: "수출실적 기준",
-        desc: "수출 계약 후 생산·조달 자금 보증 (수출실적증명원 발급 기업)",
+        desc: "수출 계약 후 생산·조달 자금 보증\n(수출실적증명원 발급 기업)",
         approval: "mid",
         approvalNote: "기업등급 BB+ 이상이면 승인율이 높은 편이며, 그 이하도 신청 가능합니다.",
         hookNote: "법인을 선호하지만 개인사업자도 가능합니다. 심사~실행까지 약 1.5개월 소요됩니다.",
@@ -1143,7 +1143,7 @@ export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
   {
     name: "소상공인 일반보증",
     amount: "보증 최대 1억원(지역별 상이)",
-    desc: "사업자등록 후 정상 영업 중인 소상공인이면 신청 가능한 기본 보증. 신보·기보 이용 중이 아니면 대부분 대상.",
+    desc: "사업자등록 후 정상 영업 중인 소상공인이면 신청 가능한 기본 보증.\n신보·기보 이용 중이 아니면 대부분 대상.",
     approval: "high",
     approvalNote: "사업장이 있으면 승인율이 높은 편입니다.",
     applyUrl: "https://untact.koreg.or.kr/",
@@ -1162,7 +1162,7 @@ export const JAEDAN_PRODUCTS: InstitutionProduct[] = [
   {
     name: "협약(이차보전) 보증",
     amount: "지자체·은행 협약 한도",
-    desc: "지자체·은행과 재단이 맺은 협약 상품. 이자 일부를 지자체가 지원(이차보전)해 실부담 금리가 낮습니다.",
+    desc: "지자체·은행과 재단이 맺은 협약 상품.\n이자 일부를 지자체가 지원(이차보전)해 실부담 금리가 낮습니다.",
     approval: "mid",
     approvalNote: "협약 예산·자격요건이 있어 시기·지역에 따라 달라집니다.",
     applyUrl: "https://untact.koreg.or.kr/",
