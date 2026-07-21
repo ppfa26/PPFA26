@@ -204,6 +204,15 @@ export default function Home() {
                 {BETA_FREE ? "무엇을 알려주나요?" : "상품 자세히 보기"}
               </Editable>
             </div>
+
+            {/* 면책 고지 — 광고 심사/표시광고법 대응 (대표님 요청) */}
+            <Editable
+              id="hero-disclaimer"
+              as="p"
+              className="mx-auto mt-5 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:text-xs"
+            >
+              본 서비스는 정부지원사업을 안내·매칭하는 플랫폼이며, 지원사업의 승인·선정·수령을 보장하지 않습니다.
+            </Editable>
           </div>
         </section>
 
