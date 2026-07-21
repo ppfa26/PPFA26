@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
+import { trackConversion } from "@/components/KarrotPixel";
 import { supabase } from "@/lib/supabaseClient";
 import { isStatsExcludedEmail } from "@/lib/admin";
 import { saveDiagnosis } from "@/lib/diagnosisStore";
@@ -278,6 +279,10 @@ export default function Diagnosis() {
       } catch {
         /* 저장 실패해도 사용자 흐름은 막지 않음 */
       } finally {
+        // ★ 전환 추적 ★ 진단(설문) 제출 완료 = 서비스 신청 전환.
+        //   당근 표준 이벤트 SubmitApplication 으로 전송한다.
+        trackConversion("SubmitApplication");
+
         // 저장 시도 후 결과 화면으로 이동 (localStorage 저장이 먼저 끝나 있음)
         //  ?analyze=1 → 결과 화면에서 'AI 분석 중' 연출을 반드시 보여준다.
         router.push("/matching-preview?analyze=1");

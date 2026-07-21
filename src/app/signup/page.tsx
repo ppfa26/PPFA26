@@ -10,6 +10,7 @@ import Editable from "@/components/Editable";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
 import { getCapturedUtmSource } from "@/components/UtmCapture";
+import { trackConversion } from "@/components/KarrotPixel";
 
 type Mode = "signup" | "login";
 
@@ -110,8 +111,14 @@ function SignupInner() {
     });
 
     // 2) 세션이 새로 생기는 순간(소셜 로그인 콜백 포함) 즉시 이동
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
+        // ★ 전환 추적 ★ 새로 '로그인/가입'이 일어난 순간(SIGNED_IN)에만
+        //   회원가입 완료 전환을 1회 전송한다. (이미 로그인 상태로 페이지에
+        //   재진입한 경우엔 INITIAL_SESSION 이라 중복 전송되지 않는다.)
+        if (event === "SIGNED_IN") {
+          trackConversion("CompleteRegistration");
+        }
         void backfillUtm(session);
         go();
       }

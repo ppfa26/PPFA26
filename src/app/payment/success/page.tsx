@@ -9,6 +9,7 @@ import PageShell from "@/components/PageShell";
 import { supabase } from "@/lib/supabaseClient";
 import { isStatsExcludedEmail } from "@/lib/admin";
 import { TIER_MAP } from "@/lib/products";
+import { trackConversion } from "@/components/KarrotPixel";
 
 type Status = "processing" | "success" | "fail";
 
@@ -100,6 +101,15 @@ function SuccessInner() {
       localStorage.setItem("mpp_paid_tier", opts.tier);
       localStorage.setItem("mpp_paid_at", new Date().toISOString());
     } catch {}
+
+    // ★ 전환 추적 ★ 결제 승인·확정 완료 = Purchase 전환.
+    //   금액(value)·통화(currency)를 함께 보내 당근에서 ROAS(광고 대비 매출)를
+    //   계산할 수 있게 한다. (order_id 는 중복 집계 방지용 식별자)
+    trackConversion("Purchase", {
+      value: opts.amount,
+      currency: "KRW",
+      order_id: opts.orderId,
+    });
 
     setStatus("success");
     setMessage("결제가 완료되었습니다!");
