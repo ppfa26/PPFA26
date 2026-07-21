@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
-import { BETA_FREE } from "@/lib/betaConfig";
 
 const PRICING_FAQ = [
   {
@@ -63,13 +62,6 @@ export default function PricingPage() {
               💡 모든 가격은 부가세가 포함된 금액입니다
             </p>
           </div>
-
-          {/* ── 오픈 베타(무료) 안내 — 작은 한 줄만 ── */}
-          {BETA_FREE && (
-            <p className="mx-auto mt-4 inline-block break-keep rounded-full border border-brand-dark/10 bg-white px-4 py-2 text-xs font-semibold text-brand-dark/70 sm:text-sm">
-              🎉 무료 베타 오픈중 — 지금은 별도 결제 없이 전체 결과를 무료로 보실 수 있습니다
-            </p>
-          )}
 
           <div className="mt-12">
             <PricingCards prefix="pricing" />
