@@ -169,7 +169,7 @@ export default function MyPage() {
   return (
     <PageShell pageKey="mypage">
       <Header />
-      <main className="bg-gray-50 px-4 py-8">
+      <main className="bg-gray-50 px-4 py-6">
         <div className="mx-auto max-w-3xl">
           <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">
             마이페이지
@@ -182,7 +182,7 @@ export default function MyPage() {
               {/* 계정 정보 */}
               <section
                 id="mypage-account"
-                className="mt-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
+                className="mt-5 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
               >
                 <h2 className="text-lg font-extrabold text-brand-dark">
                   👤 계정 정보
@@ -219,13 +219,13 @@ export default function MyPage() {
               {/* 진단 결과 요약 (위로) */}
               <section
                 id="mypage-diagnosis"
-                className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
+                className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
               >
                 <h2 className="text-lg font-extrabold text-brand-dark">
                   🎯 나의 진단 결과
                 </h2>
                 {matchCount === null ? (
-                  <div className="mt-4 rounded-2xl border border-dashed border-gray-300 p-8 text-center text-brand-gray">
+                  <div className="mt-3 rounded-2xl border border-dashed border-gray-300 p-6 text-center text-brand-gray">
                     아직 진단 결과가 없습니다.
                     <br />
                     <Link
@@ -236,7 +236,7 @@ export default function MyPage() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="mt-4 rounded-3xl border border-brand-red/10 bg-gradient-to-br from-brand-yellow/25 to-brand-orange/10 p-6 text-center sm:p-7">
+                  <div className="mt-3 rounded-3xl border border-brand-red/10 bg-gradient-to-br from-brand-yellow/25 to-brand-orange/10 p-5 text-center sm:p-6">
                     <p className="break-keep text-sm leading-relaxed text-brand-dark/70 sm:text-base">
                       {diagName ? `${diagName} 대표님 ` : "대표님 "}사업장에 딱 맞는 지원사업
                     </p>
@@ -245,13 +245,13 @@ export default function MyPage() {
                     </p>
                     <Link
                       href="/matching-preview?analyze=1"
-                      className="btn-red group mt-5 inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:text-base"
+                      className="btn-red group mt-4 inline-flex items-center gap-2 rounded-full px-8 py-3 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:text-base"
                     >
                       진단 결과 전체 확인하기
                       <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </Link>
                     {diagExpiry && (
-                      <p className="mt-4 break-keep text-xs leading-relaxed text-brand-dark/50">
+                      <p className="mt-3 break-keep text-xs leading-relaxed text-brand-dark/50">
                         📅 이 진단 결과는{" "}
                         <b className="text-brand-dark/70">
                           {diagExpiry.getFullYear()}년 {diagExpiry.getMonth() + 1}월{" "}
@@ -267,7 +267,7 @@ export default function MyPage() {
               {/* 추가 신청 (전문가 도움 요청) — 결제 내역 '위'로 배치 (대표님 요청) */}
               <section
                 id="mypage-extra-services"
-                className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
+                className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
               >
                 <h2 className="text-lg font-extrabold text-brand-dark">
                   🤝 전문가 도움이 더 필요하신가요?
@@ -277,7 +277,7 @@ export default function MyPage() {
                   <b className="text-brand-dark">신청하신 분에 한해</b> 별도로 진행됩니다. 필요하신 항목을 눌러 편하게 문의해 주세요.
                 </p>
 
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
                   {[
                     { icon: "📊", name: "회사 IR 자료 제작", price: "50만원", accent: true },
                     { icon: "📝", name: "사업계획서 첨삭", price: "50만원", accent: true },
@@ -295,7 +295,7 @@ export default function MyPage() {
                       href="http://pf.kakao.com/_VxfWxan/chat"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3.5 transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       <span className="flex min-w-0 flex-1 items-center gap-2">
                         <span className="shrink-0 text-base">{s.icon}</span>
@@ -319,7 +319,7 @@ export default function MyPage() {
                   ))}
                 </div>
 
-                <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-gray">
+                <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
                   ※ 위 서비스는 AI 올인원 패키지에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
                   <br />
                   버튼을 누르면 공식 카카오톡 채널톡으로 연결됩니다.
@@ -334,7 +334,7 @@ export default function MyPage() {
               {viewStatus?.isActive && (
                 <section
                   id="mypage-consult"
-                  className="mt-5 overflow-hidden rounded-3xl border-2 border-[#FEE500] bg-[#FEE500]/10 p-6 shadow-card"
+                  className="mt-4 overflow-hidden rounded-3xl border-2 border-[#FEE500] bg-[#FEE500]/10 p-5 shadow-card"
                 >
                   <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
                     <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#FEE500] text-3xl shadow-sm">
@@ -368,7 +368,7 @@ export default function MyPage() {
               {/* 결제 내역 — 커뮤니티 '아래'로 배치 (대표님 요청) */}
               <section
                 id="mypage-payments"
-                className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card"
+                className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
               >
                 <div className="flex items-center justify-between gap-2">
                   <h2 className="text-lg font-extrabold text-brand-dark">
@@ -381,7 +381,7 @@ export default function MyPage() {
                   )}
                 </div>
                 {payments.length === 0 ? (
-                  <div className="mt-4 rounded-2xl border border-dashed border-gray-300 p-8 text-center text-brand-gray">
+                  <div className="mt-3 rounded-2xl border border-dashed border-gray-300 p-6 text-center text-brand-gray">
                     아직 결제 내역이 없습니다.
                     <br />
                     <Link
@@ -448,7 +448,7 @@ export default function MyPage() {
                 </p>
               </section>
 
-              <p className="mt-6 break-keep text-center text-xs leading-relaxed text-brand-gray">
+              <p className="mt-5 break-keep text-center text-xs leading-relaxed text-brand-gray">
                 ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 매칭 서비스이며 정부지원사업
                 승인을 보장하지 않습니다.
               </p>
