@@ -7,7 +7,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
-import { isAdminEmail } from "@/lib/admin";
 import {
   labelForKey,
   valueToText,
@@ -349,17 +348,11 @@ export default function AdminPage() {
 
     // 데이터 로딩 중 오류가 발생하면 관리자에게만 조용히 알림 (정상이면 배너 없음)
     setLoadDebug(errs.length > 0 ? `⚠️ 일부 데이터 로딩 오류: ${errs.join(" | ")}` : null);
-    // ★ 관리자(운영자) 계정 데이터는 화면·통계에서 제외 (대표님 요청) ★
-    //   기존에 쌓인 관리자 테스트 데이터도 여기서 걸러내고, 매출·건수를 다시 계산합니다.
-    const payList = (!p.error && p.data ? (p.data as AdminPayment[]) : []).filter(
-      (row) => !isAdminEmail(row.email)
-    );
-    const userList = (!u.error && u.data ? (u.data as AdminUser[]) : []).filter(
-      (row) => !isAdminEmail(row.email)
-    );
-    const diagList = (!d.error && d.data ? (d.data as AdminDiagnosis[]) : []).filter(
-      (row) => !isAdminEmail(row.email)
-    );
+    // ★ 관리자(운영자) 계정 데이터도 일반 고객과 동일하게 목록·통계에 포함 (대표님 요청) ★
+    //   테스트 단계 종료로, 관리자 무료진단·회원가입·접속기록도 고객과 똑같이 노출한다.
+    const payList = !p.error && p.data ? (p.data as AdminPayment[]) : [];
+    const userList = !u.error && u.data ? (u.data as AdminUser[]) : [];
+    const diagList = !d.error && d.data ? (d.data as AdminDiagnosis[]) : [];
 
     if (!u.error && u.data) setUsers(userList);
     if (!p.error && p.data) setPayments(payList);
@@ -368,9 +361,7 @@ export default function AdminPage() {
     if (!ip.error && ip.data) setIpSummary(ip.data as IpRow[]);
     if (!bl.error && bl.data) setBlocks(bl.data as BlockRow[]);
 
-    // ★ 매출 통계(일별/월별)도 관리자 결제를 제외하고 프론트에서 직접 재계산 (대표님 요청) ★
-    //   서버 RPC(admin_daily/monthly_revenue)는 관리자 테스트 결제까지 포함하므로,
-    //   관리자 이메일을 이미 걸러낸 payList(paid)로 다시 집계한다.
+    // ★ 매출 통계(일별/월별)를 프론트에서 직접 재계산 (관리자 포함 전체 결제 기준) ★
     const paidRows = payList.filter((r) => r.status === "paid" && r.paid_at);
 
     // 일별 매출 (최근 30일) — YYYY-MM-DD 로 묶어 집계
