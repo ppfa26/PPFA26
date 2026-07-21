@@ -5,6 +5,7 @@ import CopyGuard from "@/components/CopyGuard";
 import UtmCapture from "@/components/UtmCapture";
 import ScrollToTop from "@/components/ScrollToTop";
 import FontLoader from "@/components/FontLoader";
+import KarrotPixel from "@/components/KarrotPixel";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의사업친구.kr";
@@ -203,6 +204,8 @@ export default function RootLayout({
         {children}
         {/* Vercel 방문자 분석 — 화면에 보이지 않으며, 방문자 수·페이지·기기 통계를 수집합니다. */}
         <Analytics />
+        {/* 당근마켓 전환 추적 픽셀 — 당근 광고 성과(조회·전환) 측정용. 화면에 보이지 않음. */}
+        <KarrotPixel />
       </body>
     </html>
   );
