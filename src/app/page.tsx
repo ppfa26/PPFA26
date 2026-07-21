@@ -459,6 +459,7 @@ export default function Home() {
                   {/* 정부지원제도 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언
                       모바일에선 접힌 상태로 시작(정보 압축), PC는 펼침 그대로 */}
                   <MobileCollapsibleDetails
+                    collapseOnMobile={false}
                     className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 shadow-card"
                     summary={
                     <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
@@ -533,6 +534,7 @@ export default function Home() {
                   {/* 추가 감면 혜택 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언
                       모바일에선 접힌 상태로 시작(정보 압축), PC는 펼침 그대로 */}
                   <MobileCollapsibleDetails
+                    collapseOnMobile={false}
                     className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 shadow-card"
                     summary={
                     <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
