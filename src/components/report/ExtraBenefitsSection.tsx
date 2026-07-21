@@ -422,7 +422,6 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
       <AccordionCard
         emoji="💎"
         title="챙기면 좋은 추가 감면 혜택"
-        defaultOpen
         subtitle={
           <>
             업종·규모에 맞춰 가능성 높은 순으로 ·

@@ -842,7 +842,6 @@ function AdvancedResult({
         <AccordionCard
           emoji="🏅"
           title="신청 가능한 정부지원제도"
-          defaultOpen
           subtitle={
             <>
               정책자금과 <b>별개로 병행 신청</b> 가능 ·
@@ -952,7 +951,6 @@ function AdvancedResult({
       <AccordionCard
         emoji="💳"
         title="이용 가능한 정책금융기관"
-        defaultOpen
         subtitle={
           <>
             업종·직원수 등 사업장 조건에 맞춰 ·
@@ -1277,7 +1275,6 @@ function AdvancedResult({
       <AccordionCard
         emoji="📊"
         title="기관별 상품 한눈에 보기"
-        defaultOpen
         subtitle="각 기관의 상품 안내 자료·페이지로 바로 이동합니다."
       >
         <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
