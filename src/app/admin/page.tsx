@@ -197,6 +197,7 @@ export default function AdminPage() {
   const [openMonth, setOpenMonth] = useState<string | null>(null); // 매출-월별 펼침 (YYYY-MM)
   const [msg, setMsg] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [crawling, setCrawling] = useState(false); // 정부공고 수집 진행중
   // 데이터 로딩 진단 — RPC가 실패하면 (권한/함수누락 등) 원인을 화면에 그대로 표시한다.
   const [loadDebug, setLoadDebug] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState(""); // 회원 검색어(이름·이메일·연락처)
@@ -451,6 +452,45 @@ export default function AdminPage() {
     });
     setMsg(error ? `오류: ${error.message}` : String(data));
     setTimeout(() => setMsg(null), 4000);
+  };
+  // 정부지원사업 공고 수집(기업마당 OpenAPI) — 관리자 세션 토큰으로 서버 호출
+  const runCrawl = async () => {
+    if (crawling) return;
+    if (
+      !window.confirm(
+        "기업마당에서 최신 정부지원사업 공고를 지금 수집할까요?\n(최대 수백 건, 30초~1분 정도 걸릴 수 있습니다)"
+      )
+    )
+      return;
+    setCrawling(true);
+    setMsg("공고 수집 중… 잠시만 기다려 주세요.");
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess?.session?.access_token;
+      if (!token) {
+        setMsg("로그인 세션이 만료되었습니다. 새로고침 후 다시 시도해 주세요.");
+        setCrawling(false);
+        return;
+      }
+      const res = await fetch("/api/crawl?pages=3", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const j = await res.json();
+      if (!res.ok || j?.ok === false) {
+        const detail = Array.isArray(j?.errors) && j.errors.length ? ` (${j.errors[0]})` : "";
+        setMsg(`수집 실패: ${j?.note || "오류"}${detail}`);
+      } else {
+        setMsg(
+          `✅ 공고 수집 완료 — 조회 ${j.fetched ?? 0}건 / 저장·갱신 ${j.saved ?? 0}건 (출처: ${j.source || "기업마당"})`
+        );
+      }
+    } catch (e: any) {
+      setMsg(`수집 실패: ${e?.message || "네트워크 오류"}`);
+    } finally {
+      setCrawling(false);
+      setTimeout(() => setMsg(null), 8000);
+    }
   };
   // 접속 로그 전체 삭제 (테스트 기록 정리용)
   const clearAccessLogs = async () => {
@@ -843,13 +883,23 @@ export default function AdminPage() {
                 회원 · 결제 · 조회권 · 매출을 한 곳에서 관리하세요.
               </p>
             </div>
-            <button
-              onClick={loadAll}
-              disabled={refreshing}
-              className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
-            >
-              {refreshing ? "새로고침 중…" : "🔄 새로고침"}
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={runCrawl}
+                disabled={crawling}
+                className="rounded-xl border border-brand-primary/40 bg-brand-primary/10 px-4 py-2 text-sm font-semibold text-brand-dark shadow-sm hover:bg-brand-primary/20 disabled:opacity-50"
+                title="기업마당에서 최신 정부지원사업 공고를 지금 수집합니다"
+              >
+                {crawling ? "공고 수집 중…" : "📡 공고 수집"}
+              </button>
+              <button
+                onClick={loadAll}
+                disabled={refreshing}
+                className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
+              >
+                {refreshing ? "새로고침 중…" : "🔄 새로고침"}
+              </button>
+            </div>
           </div>
 
           {msg && (
