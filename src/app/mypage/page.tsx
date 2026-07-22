@@ -219,7 +219,7 @@ export default function MyPage() {
               {/* 진단 결과 요약 (위로) */}
               <section
                 id="mypage-diagnosis"
-                className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
+                className="mt-4 rounded-3xl border border-gray-200 bg-white p-4 shadow-card sm:p-5"
               >
                 <h2 className="text-lg font-extrabold text-brand-dark">
                   🎯 나의 진단 결과
@@ -236,22 +236,22 @@ export default function MyPage() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="mt-3 rounded-3xl border border-brand-red/10 bg-gradient-to-br from-brand-yellow/25 to-brand-orange/10 p-5 text-center sm:p-6">
-                    <p className="break-keep text-sm leading-relaxed text-brand-dark/70 sm:text-base">
+                  <div className="mt-3 rounded-3xl border border-brand-red/10 bg-gradient-to-br from-brand-yellow/25 to-brand-orange/10 p-4 text-center sm:p-5">
+                    <p className="break-keep text-sm leading-snug text-brand-dark/70 sm:text-base">
                       {diagName ? `${diagName} 대표님 ` : "대표님 "}사업장에 딱 맞는 지원사업
                     </p>
-                    <p className="mt-1.5 break-keep text-2xl font-black tracking-tight text-brand-dark sm:text-3xl">
+                    <p className="mt-1 break-keep text-2xl font-black tracking-tight text-brand-dark sm:text-3xl">
                       총 <span className="text-brand-red">{matchCount}개</span> 매칭 완료
                     </p>
                     <Link
                       href="/matching-preview?analyze=1"
-                      className="btn-red group mt-4 inline-flex items-center gap-2 rounded-full px-8 py-3 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:text-base"
+                      className="btn-red group mt-3 inline-flex items-center gap-2 rounded-full px-8 py-2.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:text-base"
                     >
                       진단 결과 전체 확인하기
                       <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </Link>
                     {diagExpiry && (
-                      <p className="mt-3 break-keep text-xs leading-relaxed text-brand-dark/50">
+                      <p className="mt-2.5 break-keep text-xs leading-snug text-brand-dark/50">
                         📅 이 진단 결과는{" "}
                         <b className="text-brand-dark/70">
                           {diagExpiry.getFullYear()}년 {diagExpiry.getMonth() + 1}월{" "}
@@ -368,7 +368,7 @@ export default function MyPage() {
               {/* 결제 내역 — 커뮤니티 '아래'로 배치 (대표님 요청) */}
               <section
                 id="mypage-payments"
-                className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
+                className="mt-4 rounded-3xl border border-gray-200 bg-white p-4 shadow-card sm:p-5"
               >
                 <div className="flex items-center justify-between gap-2">
                   <h2 className="text-lg font-extrabold text-brand-dark">
@@ -381,12 +381,12 @@ export default function MyPage() {
                   )}
                 </div>
                 {payments.length === 0 ? (
-                  <div className="mt-3 rounded-2xl border border-dashed border-gray-300 p-6 text-center text-brand-gray">
+                  <div className="mt-3 rounded-2xl border border-dashed border-gray-300 px-4 py-4 text-center text-sm text-brand-gray">
                     아직 결제 내역이 없습니다.
                     <br />
                     <Link
                       href="/pricing"
-                      className="mt-2 inline-block font-bold text-brand-orange underline"
+                      className="mt-1.5 inline-block font-bold text-brand-orange underline"
                     >
                       상품 보러 가기
                     </Link>
@@ -443,7 +443,7 @@ export default function MyPage() {
                     })}
                   </ul>
                 )}
-                <p className="mt-3 text-xs text-brand-gray">
+                <p className="mt-2.5 text-xs text-brand-gray">
                   ✅ 일시불 1회 결제 · 자동결제(정기결제) 없음
                 </p>
               </section>
