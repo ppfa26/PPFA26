@@ -7,7 +7,6 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
-import RelatedAnnouncements from "@/components/RelatedAnnouncements";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import {
   getPaymentBlockReasons,
@@ -505,13 +504,12 @@ export default function MatchingPreview() {
             {/* 실제 대시보드 결과창 — 내용은 열고 이름/버튼만 부분 잠금(previewLock).
                 관리자 열람 모드 또는 오픈 베타(무료) 모드에서는 previewLock을 꺼서
                 전체 결과를 그대로 보여준다. (베타: 결제 없이 전부 무료 공개) */}
-            <AdvancedScreeningPanel autoRun previewLock={!adminView && !BETA_FREE} />
+            <AdvancedScreeningPanel
+              autoRun
+              previewLock={!adminView && !BETA_FREE}
+              relatedProfile={profileData}
+            />
           </div>
-
-          {/* ── 지금 열려있는 관련 정부지원사업(기업마당 실공고) ──
-              진단 프로필의 지역·업종·관심분야로 실제 공고를 추려 노출.
-              AI 해설 없이 공고명·신청기간·기관만 보여주고 기업마당 원문으로 링크. */}
-          <RelatedAnnouncements profile={profileData} />
 
           {/* ── 오픈 베타(무료) 안내 — 최하단 작은 한 줄만 (알림 버튼 제거) ── */}
           {!adminView && BETA_FREE && (

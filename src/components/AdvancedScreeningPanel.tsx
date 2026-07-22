@@ -36,6 +36,7 @@ import {
 } from "@/lib/supportPrograms";
 import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
 import AccordionCard from "@/components/report/AccordionCard";
+import RelatedAnnouncements from "@/components/RelatedAnnouncements";
 import { loadDiagnosisRaw, saveDiagnosis, getDiagnosisOwner } from "@/lib/diagnosisStore";
 
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
@@ -68,9 +69,12 @@ type Tri = "yes" | "no" | "unknown" | "";
 export default function AdvancedScreeningPanel({
   autoRun = false,
   previewLock = false,
+  relatedProfile = null,
 }: {
   autoRun?: boolean;
   previewLock?: boolean;
+  // '지금 열려있는 관련 정부지원사업'(기업마당 실공고) 매칭용 진단 프로필
+  relatedProfile?: Record<string, unknown> | null;
 }) {
   const [report, setReport] = useState<AdvancedScreeningReport | null>(null);
 
@@ -740,7 +744,7 @@ export default function AdvancedScreeningPanel({
       {/* 판정 결과 */}
       {report && (
         <>
-          <AdvancedResult report={report} autoRun={autoRun} eligibleSupport={eligibleSupport} previewLock={previewLock} />
+          <AdvancedResult report={report} autoRun={autoRun} eligibleSupport={eligibleSupport} previewLock={previewLock} relatedProfile={relatedProfile} />
           {!autoRun && (
             <button
               type="button"
@@ -762,11 +766,13 @@ function AdvancedResult({
   autoRun = false,
   eligibleSupport = [],
   previewLock = false,
+  relatedProfile = null,
 }: {
   report: AdvancedScreeningReport;
   autoRun?: boolean;
   eligibleSupport?: SupportItem[];
   previewLock?: boolean;
+  relatedProfile?: Record<string, unknown> | null;
 }) {
   // 미리보기 잠금용 클래스 헬퍼 (기관명·상품명 텍스트 / 클릭요소)
   const lockText = previewLock ? "preview-lock-text" : "";
@@ -1270,6 +1276,11 @@ function AdvancedResult({
 
       {/* ③ 챙기면 좋은 추가 감면 혜택 — 정책금융기관 '아래'로 이동 (대표님 요청: 순서 변경) */}
       {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
+
+      {/* ③-2 지금 열려있는 관련 정부지원사업(기업마당 실공고) — 감면 혜택 '바로 아래' (대표님 요청)
+             진단 프로필의 지역·업종·관심분야로 실제 공고를 추려 아코디언으로 노출.
+             AI 해설 없이 공고명·신청기간·기관만 보여주고 기업마당 원문으로 링크. */}
+      {autoRun && !previewLock && <RelatedAnnouncements profile={relatedProfile} />}
 
       {/* ④ 기관별 상품 한눈에 보기 — 별도 박스로 배치 (대표님 요청) */}
       <AccordionCard
