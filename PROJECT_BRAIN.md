@@ -143,3 +143,19 @@ GHTOK=$(gh auth token) && git -c credential.helper= push "https://x-access-token
 - lib 파일은 모두 사용 중 (crawlSites·diagnosisExport·innovationAreas·knowledge·usefulSites 포함) — 함부로 지우지 말 것
 - 정리 후 항상 3곳 저장: 로컬 → GitHub(ppfa26/PPFA26) → Genspark 브레인(SB-Git)
 - **브레인/허브 저장은 주기적으로 업데이트** (대표님 요청 2026-07-22)
+
+## 10. 성능 최적화 진단 결과 (2026-07-22, 2차)
+
+이미 잘 되어 있는 부분 (손대지 말 것 — 건드리면 오히려 느려짐):
+- **의존성**: cheerio→scripts/crawler.mjs, node-cron→scripts/scheduler.mjs, openai→API 라우트(서버). 프론트 번들에 무거운 서버 라이브러리 안 섞임 ✅
+- **이미지**: `<img>` 태그 0개, 전부 next/image 또는 CSS 배경 ✅. sitemap.xml·robots.txt 존재 ✅
+- **폰트**: Pretendard 1종만 media="print" 비동기 로딩 + preconnect + noscript 폴백. 구글 권장 패턴 ✅ (예전엔 Noto·나눔까지 받던 것 이미 정리됨)
+- **공유 번들**: 87.3 kB (경량)
+
+미사용 이미지 (재사용 위해 보존, 필요시 삭제 가능 — logo/ 폴더):
+- app-icon-black/white/white-alt/white-new.png, header-black/white.png, instagram-white.png, favicon-src.png, og-image.png (구버전)
+- 실사용: brand-header.png, brand-footer-dark.png, favicon.png, apple-icon-180.png, og-image-v2.png
+
+매칭 로직 정확도: 12/12 테스트 통과 (`/tmp/test_matching.mjs`). 서비스/음식/도소매/건설+해당없음→기보 미노출, 실제혁신·특허·경력·이노비즈·제조·수출·IT→기보 노출. 정확함 ✅
+
+결론: 사이트는 이미 성능 최적화가 상당히 잘 되어 있음. 무리한 리팩터링보다 정확도 유지가 우선.
