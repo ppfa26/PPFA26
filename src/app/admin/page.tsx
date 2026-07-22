@@ -118,9 +118,10 @@ const utmBadge = (src: string | null) => {
     meta: { label: "📘 메타", cls: "bg-blue-100 text-blue-700" },
     instagram: { label: "📷 인스타", cls: "bg-pink-100 text-pink-700" },
     naver: { label: "🟢 네이버", cls: "bg-green-100 text-green-700" },
-    google: { label: "🔍 구글", cls: "bg-sky-100 text-sky-700" },
+    google: { label: "🔍 검색유입", cls: "bg-sky-100 text-sky-700" },
     kakao: { label: "💬 카카오", cls: "bg-yellow-100 text-yellow-800" },
     youtube: { label: "▶️ 유튜브", cls: "bg-red-100 text-red-700" },
+    threads: { label: "🧵 스레드", cls: "bg-gray-800 text-white" },
     tiktok: { label: "🎵 틱톡", cls: "bg-gray-800 text-white" },
     band: { label: "🟩 밴드", cls: "bg-lime-100 text-lime-700" },
     direct: { label: "🔗 직접유입", cls: "bg-gray-100 text-gray-500" },
@@ -1354,20 +1355,20 @@ export default function AdminPage() {
                       </button>
                     </div>
                     {isOpen && (
-                      <div className="border-t border-gray-100 bg-gray-50/60 px-4 py-4">
-                        <p className="mb-2 text-xs font-bold text-gray-500">
+                      <div className="border-t border-slate-700 bg-slate-900 px-4 py-4">
+                        <p className="mb-2 text-xs font-bold text-slate-300">
                           📝 작성한 질문지 전체
                         </p>
                         <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
                           {Object.entries(p).map(([k, v]) => (
                             <div
                               key={k}
-                              className="flex gap-2 border-b border-gray-100 py-1 text-sm"
+                              className="flex gap-2 border-b border-slate-700/60 py-1 text-sm"
                             >
-                              <span className="shrink-0 font-semibold text-gray-500">
+                              <span className="shrink-0 font-semibold text-slate-400">
                                 {labelForKey(k)}
                               </span>
-                              <span className="break-all text-gray-800">
+                              <span className="break-all font-semibold text-white">
                                 {valueToText(v)}
                               </span>
                             </div>
