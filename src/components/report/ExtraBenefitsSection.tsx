@@ -12,6 +12,9 @@ export type ExtraBenefitsUserInput = {
   industry?: string;
   yearsInBusiness?: number;
   annualRevenue?: number;
+  // 매출 구간 원문 라벨(예: "2억 미만") — 간이과세처럼 경계가 민감한 판정에서
+  // 대략 매핑 숫자만으로 오판하지 않도록 원문을 함께 검사하기 위한 필드
+  revenueLabel?: string;
   workerCount?: number;
   region?: string;
   representativeAge?: number;
@@ -115,6 +118,7 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
     industry,
     yearsInBusiness,
     annualRevenue,
+    revenueLabel: revenueStr || undefined,
     workerCount,
     region: get("region"),
     representativeAge,
@@ -352,25 +356,53 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
     }
 
     // ── 간이과세 (연매출 1.04억 미만 개인) ──
+    //   ★ 대표님 지적: "간이과세 못 하는 매출인데 혜택이라고 안내하면 안 된다" ★
+    //   간이과세 기준은 직전연도 공급대가 1억400만원 미만. 경계가 민감하므로
+    //   진단표에 적힌 매출을 '꼼꼼히' 확인해 확실할 때만 대상으로 안내한다.
+    //     · 법인 → 무조건 제외 (개인사업자 전용 제도)
+    //     · 배제 업종 → 제외
+    //     · 매출 미입력/"기타" → 노출 안 함 (확인 안 된 걸 혜택으로 단정하지 않음)
+    //     · 매출 구간이 "1억400만원 미만"임이 확실할 때(매출없음/1억미만)만 대상
+    //     · "2억 미만"·"10억" 등 상한이 1억400만원을 넘는 구간 → 제외
     case "simplifiedVat": {
       if (isExcluded(b, u)) return { status: "no", score: 0, note: "간이과세 배제 업종" };
       if (u.businessType === "법인사업자")
         return { status: "no", score: 0, note: "개인사업자 대상 (법인 제외)" };
-      if (rev !== undefined && rev >= 104_000_000)
+
+      const label = u.revenueLabel ?? "";
+      const SIMPLE_LIMIT = 104_000_000; // 간이과세 상한(공급대가)
+
+      // 1) 매출 정보가 아예 없으면(미입력·"기타") 간이과세는 노출하지 않는다.
+      //    → 매출을 확인할 수 없는데 "혜택 대상"으로 오안내하는 것을 방지.
+      if (rev === undefined && !label) {
+        return { status: "no", score: 0, note: "매출 미입력 — 간이과세 여부 확인 불가" };
+      }
+
+      // 2) 구간 라벨로 명확히 '초과'가 확정되는 경우는 배제.
+      //    "2억 미만/이상", "5억", "10억" 등은 상한이 1억400만원을 넘으므로 일반과세.
+      const overLabel = /2억|5억|10억|이상/.test(label);
+      if (overLabel) {
+        return { status: "no", score: 0, note: "연매출 1억400만원 초과 구간 (일반과세)" };
+      }
+
+      // 3) 숫자 매핑값으로도 1억400만원 이상이면 배제.
+      if (rev !== undefined && rev >= SIMPLE_LIMIT) {
         return { status: "no", score: 0, note: "연매출 1억400만원 이상 (일반과세)" };
-      if (rev !== undefined && rev < 104_000_000)
+      }
+
+      // 4) 여기까지 왔으면 매출이 1억400만원 미만임이 확인된 경우.
+      //    (매출없음 / 1억 미만 등) → 개인사업자 대상.
+      if (rev !== undefined && rev < SIMPLE_LIMIT) {
         return {
           status: "yes",
           score: 60,
           savingText: "부가세 낮은 세율(1.5~4%) · 4,800만원 미만 납부 면제",
           note: "연매출 1억400만원 미만 개인사업자",
         };
-      return {
-        status: "condition",
-        score: 28,
-        savingText: "부가세 낮은 세율(1.5~4%) 적용",
-        conditionText: "연매출 1억400만원 미만 개인사업자면 간이과세 전환 가능합니다.",
-      };
+      }
+
+      // 5) 그 밖(라벨은 있으나 숫자 매핑이 안 된 애매한 경우)은 노출하지 않음.
+      return { status: "no", score: 0, note: "간이과세 요건 확인 불가" };
     }
 
     default:

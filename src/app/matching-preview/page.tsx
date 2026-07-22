@@ -520,27 +520,27 @@ export default function MatchingPreview() {
 
           {/* ── 결과창 맨 하단 CTA — 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
           <section className="mt-5 px-0 pb-0">
-            <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-5 text-center shadow-card sm:p-7">
+            <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
               <Editable
                 id="preview-bottom-cta-title"
                 as="h2"
-                className="break-keep text-xl font-black text-white sm:text-2xl"
+                className="break-keep text-xl font-black leading-snug text-white sm:text-2xl"
               >
                 더 궁금한 점이 있으신가요?
               </Editable>
               <Editable
                 id="preview-bottom-cta-sub"
                 as="p"
-                className="mx-auto mt-2 max-w-md break-keep text-sm leading-relaxed text-gray-300"
+                className="mx-auto mt-1.5 max-w-md break-keep text-sm leading-snug text-gray-300"
               >
                 서비스 이용에 어려움을 겪고 있으시다면 1:1 채널톡 상담하기를 클릭하세요.
               </Editable>
-              <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <div className="mt-4 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
                 {/* 왼쪽 — 다시 진단하기 (보조 버튼, 흰색 아웃라인) */}
                 <a
                   id="preview-bottom-cta-button"
                   href="/diagnosis"
-                  className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3.5 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
+                  className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
                 >
                   다시 진단하기
                 </a>
@@ -550,7 +550,7 @@ export default function MatchingPreview() {
                   href="http://pf.kakao.com/_VxfWxan/chat"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
+                  className="btn-red w-full rounded-full px-8 py-3 text-base font-bold sm:w-auto"
                 >
                   💬 1:1 채널톡 상담하기
                 </a>
