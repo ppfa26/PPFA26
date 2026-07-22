@@ -61,8 +61,7 @@ export default function RelatedAnnouncements({
       subtitle={
         <>
           지역·업종·규모에 맞춰 ·
-          <b className="text-brand-orange"> 🟢 지금 공고 중인 실제 사업</b>을
-          가능성 높은 순으로 안내합니다.
+          <b className="text-brand-orange"> 🟢 공고 중인 실제 사업</b>을 가능성 높은 순으로 안내합니다.
         </>
       }
     >

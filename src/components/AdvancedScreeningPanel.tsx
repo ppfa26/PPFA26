@@ -850,9 +850,8 @@ function AdvancedResult({
           title="신청 가능한 정부지원제도"
           subtitle={
             <>
-              정책자금과 <b>별개로 병행 신청</b> 가능 ·
-              <b className="text-brand-green"> ✅ 신청 대상</b>과
-              <b className="text-brand-orange"> 🟡 조건 충족 시 대상</b>을 함께 안내합니다.
+              업종·규모에 맞춰 ·
+              <b className="text-brand-green"> ✅ 신청 대상</b>을 가능성 높은 순으로 안내합니다.
             </>
           }
         >
@@ -962,9 +961,8 @@ function AdvancedResult({
         title="이용 가능한 정책금융기관"
         subtitle={
           <>
-            업종·직원수 등 사업장 조건에 맞춰 ·
-            <b className="text-brand-green"> ✅ 신청 대상</b>과
-            <b className="text-brand-orange"> 🟡 조건 충족 시 대상</b>을 함께 안내합니다.
+            업종·규모에 맞춰 ·
+            <b className="text-brand-green"> ✅ 신청 대상</b>을 가능성 높은 순으로 안내합니다.
           </>
         }
       >
@@ -1286,7 +1284,7 @@ function AdvancedResult({
       <AccordionCard
         emoji="📊"
         title="기관별 상품 한눈에 보기"
-        subtitle="각 기관의 상품 안내 자료·페이지로 바로 이동합니다."
+        subtitle="기관별 상품 안내 자료·페이지로 · 바로 이동해 확인할 수 있습니다."
       >
         <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
           {INSTITUTION_PRODUCT_LINKS.map((p) => (

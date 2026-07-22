@@ -32,7 +32,7 @@ export default function AccordionCard({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-2 px-4 py-3.5 text-left transition hover:bg-brand-orange/5 sm:gap-3 sm:px-5 sm:py-4"
+        className="flex w-full items-center gap-2 px-4 py-3 text-left transition hover:bg-brand-orange/5 sm:gap-3 sm:px-5 sm:py-3.5"
       >
         <span className="min-w-0 flex-1">
           <span className="flex items-start gap-1.5 text-[14px] font-extrabold leading-snug text-brand-dark sm:text-lg">
@@ -41,7 +41,7 @@ export default function AccordionCard({
             <span className="min-w-0 break-keep">{title}</span>
           </span>
           {subtitle && (
-            <span className="mt-1 block break-keep text-[11px] leading-relaxed text-brand-dark/60 sm:text-xs">
+            <span className="mt-0.5 block break-keep text-[11px] leading-snug text-brand-dark/60 sm:text-xs">
               {subtitle}
             </span>
           )}
@@ -68,7 +68,7 @@ export default function AccordionCard({
       </button>
 
       {/* 내용 */}
-      {open && <div className="px-5 pb-5 pt-0">{children}</div>}
+      {open && <div className="px-5 pb-4 pt-0">{children}</div>}
     </div>
   );
 }
