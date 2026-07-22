@@ -156,9 +156,9 @@ GHTOK=$(gh auth token) && git -c credential.helper= push "https://x-access-token
 - **폰트**: Pretendard 1종만 media="print" 비동기 로딩 + preconnect + noscript 폴백. 구글 권장 패턴 ✅ (예전엔 Noto·나눔까지 받던 것 이미 정리됨)
 - **공유 번들**: 87.3 kB (경량)
 
-미사용 이미지 (재사용 위해 보존, 필요시 삭제 가능 — logo/ 폴더):
-- app-icon-black/white/white-alt/white-new.png, header-black/white.png, instagram-white.png, favicon-src.png, og-image.png (구버전)
-- 실사용: brand-header.png, brand-footer-dark.png, favicon.png, apple-icon-180.png, og-image-v2.png
+미사용 이미지 정리 완료 (2026-07-22): og-image.png(구버전)·logo/app-icon-black/white/white-alt/white-new.png·header-black/white.png·instagram-white.png·favicon-src.png → 8개 삭제(436K 절감, 참조 0건 확인·빌드 통과)
+- 현재 logo/ 잔존(실사용): brand-header.png, brand-footer-dark.png
+- 기타 실사용: favicon.png, apple-icon-180.png, og-image-v2.png(다크네이비+골드 신버전)
 
 매칭 로직 정확도: 12/12 테스트 통과 (`/tmp/test_matching.mjs`). 서비스/음식/도소매/건설+해당없음→기보 미노출, 실제혁신·특허·경력·이노비즈·제조·수출·IT→기보 노출. 정확함 ✅
 
