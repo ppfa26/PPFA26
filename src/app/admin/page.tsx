@@ -1002,7 +1002,7 @@ export default function AdminPage() {
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <table className="w-full min-w-[720px] text-left text-sm">
+              <table className="w-full min-w-[920px] text-left text-sm">
                 <thead className="whitespace-nowrap border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
                   <tr>
                     <th className="px-4 py-3 font-semibold">회원 (이름·유입경로)</th>
@@ -1034,19 +1034,20 @@ export default function AdminPage() {
                     const hasDiag = !!findUserDiagnosis(u.email);
                     return (
                       <tr key={u.user_id} className="hover:bg-gray-50/60">
-                        <td className="px-4 py-3">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-bold text-gray-800">
-                                {info.name || "이름 미입력"}
-                              </span>
-                              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${badge.cls}`}>
-                                {badge.label}
-                              </span>
-                            </div>
+                        <td className="whitespace-nowrap px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-gray-800">
+                              {info.name || "이름 미입력"}
+                            </span>
+                            <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${badge.cls}`}>
+                              {badge.label}
+                            </span>
                             <span className="text-xs text-gray-400">{u.email}</span>
                             {info.phone && (
-                              <span className="text-xs text-gray-400">{info.phone}</span>
+                              <>
+                                <span className="text-gray-300">·</span>
+                                <span className="text-xs text-gray-400">{info.phone}</span>
+                              </>
                             )}
                           </div>
                         </td>
