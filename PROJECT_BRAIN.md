@@ -132,5 +132,14 @@ GHTOK=$(gh auth token) && git -c credential.helper= push "https://x-access-token
 - [완료] 홈페이지 결과예시 페이드/공백 축소
 - [완료] 기보 매칭 정밀화 ("해당 없음" 필터 + 수출업 추가), node 6/6 통과
 - [완료] SNS 홍보글 5종 + 홍보 이미지 3종 (고정 템플릿)
+- [완료] 코드 최적화 1차: 미사용 컴포넌트 4개 제거(ComingSoon/EditToolbar/MobilePcNotice/ViewCreditGate, 총 612줄) + 빈 thumbnails 폴더 정리. 빌드 정상.
 - [보류] 네이버 블로그 썸네일 7~16 (중단됨, 대표님이 그만하기로 함)
 - [대기] 사업계획서 총자산 수치 (대표님 회신 대기)
+
+## 9. 코드 최적화 규칙 (주기적 정리)
+
+- 미사용 컴포넌트/파일 제거 전 반드시 `grep`으로 전체 참조 확인 → 완전 미사용만 삭제 → `npm run build`로 검증
+- console.log는 CopyGuard.tsx의 저작권 경고문만 의도적 유지 (나머지는 제거)
+- lib 파일은 모두 사용 중 (crawlSites·diagnosisExport·innovationAreas·knowledge·usefulSites 포함) — 함부로 지우지 말 것
+- 정리 후 항상 3곳 저장: 로컬 → GitHub(ppfa26/PPFA26) → Genspark 브레인(SB-Git)
+- **브레인/허브 저장은 주기적으로 업데이트** (대표님 요청 2026-07-22)
