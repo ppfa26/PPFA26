@@ -249,23 +249,9 @@ export default function Page() {
           </div>
         </section>
 
-        {/* ── 이용자 정부지원사업 승인후기 ── */}
-        <section className="mt-20">
-          <div className="text-center">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-brand-orange">
-              Verified Records
-            </p>
-            <h2 className="mt-2 break-keep text-xl font-extrabold tracking-tight text-brand-dark sm:text-3xl">
-              이용자 정부지원사업 승인후기
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl break-keep text-sm leading-relaxed text-brand-gray">
-              정책자금·보증·바우처는 물론 벤처·이노비즈·메인비즈 등
-              <br className="hidden sm:block" />
-              각종 인증까지, 실제로 승인·선정된 사례를 요약해 공개합니다.
-            </p>
-          </div>
-
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* ── 이용자 정부지원사업 승인후기 (소제목 블록 제거 — 상단 대제목과 중복, 대표님 요청) ── */}
+        <section className="mt-12">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {APPROVALS.map((a, i) => (
               <article
                 key={i}
