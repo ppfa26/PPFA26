@@ -580,7 +580,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
 
                 {/* 혜택 — 이걸 챙기면 무엇을 얻는지 (대표님 요청) */}
                 {b.benefit && (
-                  <p className="mt-2 break-keep rounded-lg border-l-2 border-brand-orange bg-brand-yellow/15 px-3 py-2 text-[11px] font-semibold leading-relaxed text-brand-dark">
+                  <p className="mt-2 break-keep rounded-lg border-l-2 border-brand-orange bg-brand-yellow/15 px-3 py-2 text-xs font-semibold leading-relaxed text-brand-dark">
                     <span className="font-extrabold text-brand-orange">혜택 </span>
                     {b.benefit}
                   </p>
@@ -609,7 +609,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 <div className={`mt-2 rounded-lg bg-gray-50 px-3 py-2 ${lockText}`}>
                   {/* 신청 방법 (대표님 요청 — 간단하게라도) */}
                   {b.applyHow && (
-                    <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                    <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
                       <span className="font-bold text-brand-dark">📝 신청 방법 </span>
                       {b.applyHow}
                     </p>
@@ -641,7 +641,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 {/* 데드라인 경고 (빨강) — 목차성 경고라 노출 유지 */}
                 {b.warning && (
                   <p
-                    className="mt-2 break-keep rounded-lg px-3 py-2 text-[11px] font-semibold leading-relaxed"
+                    className="mt-2 break-keep rounded-lg px-3 py-2 text-xs font-semibold leading-relaxed"
                     style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
                   >
                     ⚠️ {b.deadline} · {b.warning}
@@ -667,7 +667,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
           <p className="break-keep text-sm font-black leading-snug text-brand-dark">
             💡 요건에 맞게 챙기면 첫 해 <span className="whitespace-nowrap">연 최대 700만원 절감</span> 가능
           </p>
-          <p className="mt-1 break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
+          <p className="mt-1 break-keep text-xs font-semibold leading-relaxed text-brand-dark/70">
             <span className="whitespace-nowrap">놓친 항목 있으면 지금이라도 신청하세요.</span>{" "}
             <span className="whitespace-nowrap">소급 가능한 항목도 있습니다.</span>
           </p>

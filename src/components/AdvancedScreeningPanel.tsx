@@ -835,7 +835,7 @@ function AdvancedResult({
           '어떻게 보는지' 안내 문구만 남김 (대표님 요청: 결과창 중복 정리) */}
       {autoRun && (
         <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
-          <p className="break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/80 sm:whitespace-nowrap sm:text-xs">
+          <p className="break-keep text-xs font-semibold leading-relaxed text-brand-dark/80 sm:whitespace-nowrap">
             👇 <b>✅ 표시</b>된 곳이 <b>지금 바로 신청 가능한 곳</b>입니다.{" "}
             <b>&ldquo;상품 보기&rdquo;</b>를 누르면 신청 상품과 방법을 순서대로 안내드려요.
           </p>
@@ -861,15 +861,15 @@ function AdvancedResult({
               ✅ 표시된 곳, 이렇게 신청하시면 됩니다
             </p>
             <ol className="space-y-1">
-              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+              <li className="flex items-start gap-1.5 break-keep text-xs leading-relaxed text-brand-dark/80">
                 <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">1</span>
                 <span><b>✅ 신청 대상</b>인 제도의 카드를 눌러 상세 페이지로 들어가세요.</span>
               </li>
-              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+              <li className="flex items-start gap-1.5 break-keep text-xs leading-relaxed text-brand-dark/80">
                 <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">2</span>
                 <span>상세 페이지의 <b>필요서류·소요기간</b>을 확인하고 서류를 준비하세요.</span>
               </li>
-              <li className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+              <li className="flex items-start gap-1.5 break-keep text-xs leading-relaxed text-brand-dark/80">
                 <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
                 <span><b>공식 신청 사이트/연락처</b>로 접수하시면 됩니다. 헷갈리시면 담당 부처에 문의하시면 쉽게 진행 가능합니다.</span>
               </li>
@@ -899,7 +899,7 @@ function AdvancedResult({
                     )}
                   </div>
                   <p
-                    className={`mt-1 break-keep text-[11px] font-semibold leading-relaxed ${
+                    className={`mt-1 break-keep text-xs font-semibold leading-relaxed ${
                       isEligible ? "text-brand-green" : "text-brand-dark/50"
                     }`}
                   >
@@ -912,13 +912,13 @@ function AdvancedResult({
                   {(prog.applyHow || prog.applyTel) && (
                     <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
                       {prog.applyHow && (
-                        <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                        <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
                           <span className="font-bold text-brand-dark">신청방법 </span>
                           <span className={lockTextSoft}>{prog.applyHow}</span>
                         </p>
                       )}
                       {prog.applyTel && (
-                        <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/60">
+                        <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
                           잘 모르시겠으면 <span className={`font-bold text-brand-orange ${lockTextSoft}`}>☎ {prog.applyTel}</span> 로 문의하시면 쉽게 진행 가능합니다.
                         </p>
                       )}
@@ -1084,17 +1084,17 @@ function AdvancedResult({
                               )}
                             </div>
                             {prod.desc && (
-                              <p className="mt-1 whitespace-pre-line break-keep text-[11px] leading-relaxed text-brand-gray">
+                              <p className="mt-1 whitespace-pre-line break-keep text-xs leading-relaxed text-brand-gray">
                                 {prod.desc}
                               </p>
                             )}
                             {prod.approvalNote && (
-                              <p className="mt-1 whitespace-pre-line break-keep text-[11px] font-semibold leading-relaxed text-brand-dark/70">
+                              <p className="mt-1 whitespace-pre-line break-keep text-xs font-semibold leading-relaxed text-brand-dark/70">
                                 {prod.approvalNote}
                               </p>
                             )}
                             {prod.hookNote && (
-                              <p className="mt-1.5 whitespace-pre-line break-keep rounded-lg bg-brand-yellow/10 px-2 py-1.5 text-[10px] leading-relaxed text-brand-dark/70">
+                              <p className="mt-1.5 whitespace-pre-line break-keep rounded-lg bg-brand-yellow/10 px-2 py-1.5 text-[11px] leading-relaxed text-brand-dark/70">
                                 💡 {prod.hookNote}
                               </p>
                             )}
@@ -1158,14 +1158,14 @@ function AdvancedResult({
                           📞 {link.tel}
                         </a>
                         {link.telNote && (
-                          <span className={`break-keep text-[10px] leading-relaxed text-brand-dark/45 ${lockTextSoft}`}>
+                          <span className={`break-keep text-[11px] leading-relaxed text-brand-dark/45 ${lockTextSoft}`}>
                             {link.telNote}
                           </span>
                         )}
                       </div>
                     )}
                     {link.note && (
-                      <p className={`break-keep text-[11px] leading-relaxed text-brand-dark/50 ${lockTextSoft}`}>
+                      <p className={`break-keep text-xs leading-relaxed text-brand-dark/50 ${lockTextSoft}`}>
                         {link.note}
                       </p>
                     )}
@@ -1212,7 +1212,7 @@ function AdvancedResult({
                       >
                         📞 {JAEDAN_CALL_CENTER.tel}
                       </a>
-                      <span className="break-keep text-[10px] leading-relaxed text-brand-dark/45">
+                      <span className="break-keep text-[11px] leading-relaxed text-brand-dark/45">
                         {JAEDAN_CALL_CENTER.telNote}
                       </span>
                     </div>
@@ -1223,12 +1223,12 @@ function AdvancedResult({
           })}
         </div>
         <div className="mt-3 space-y-2">
-          <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
+          <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-xs leading-relaxed text-brand-dark">
             💡 대출은 보통 <b>직접대출 1곳(공단 직접) + 대리대출 1곳(보증서→은행), 총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>
           {/* 신용점수 안내 — 알맹이라 결제 전 잠금 */}
           <p
-            className={`break-keep rounded-lg px-3 py-2 text-[11px] leading-relaxed ${
+            className={`break-keep rounded-lg px-3 py-2 text-xs leading-relaxed ${
               creditAdvice.tier === "good"
                 ? "bg-green-50 text-brand-green"
                 : creditAdvice.tier === "caution"
@@ -1251,7 +1251,7 @@ function AdvancedResult({
                 <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
                   대리대출기관 (보증서 → 은행) (재단/신보/기보/무보)
                 </span>
-                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
+                <p className={`mt-1 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
                   신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행 ·{" "}
                   <b className="text-brand-orange">통상 3~6주 소요</b>
                 </p>
@@ -1262,13 +1262,13 @@ function AdvancedResult({
                 <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
                   직접대출기관 (공단 직접) (소진공/중진공)
                 </span>
-                <p className={`mt-1 break-keep text-[11px] leading-relaxed text-brand-dark ${lockText}`}>
+                <p className={`mt-1 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
                   신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
                   <b className="text-brand-orange">통상 약 8주 소요</b>
                 </p>
               </div>
             )}
-            <p className={`mt-2.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 ${lockText}`}>
+            <p className={`mt-2.5 break-keep text-xs leading-relaxed text-brand-dark/60 ${lockText}`}>
               ※ 소상공인·소액 건(재단·소진공)은 비대면(모바일) 실사로 진행되는 경우가 많으며, 기술보증기금·신용보증기금 등 진행 규모가 큰 건은 무조건 방문 실사로 진행됩니다.
             </p>
           </div>
