@@ -68,32 +68,34 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
     return undefined;
   };
 
-  // 연매출(한글) → 대략 숫자(원). ★ 현행 진단 구간(2026 개정)에 맞춤 ★
-  //   현재 옵션: [매출 없음 / 2억 미만 / 10억 미만 / 10억 이상 / 기타]
-  //   (과거 "1억 미만/5억 미만/5억 이상"도 하위호환 유지)
+  // 연매출(한글) → 대략 숫자(원). ★ 정밀화된 진단 구간에 맞춤 ★
+  //   현재 옵션: [매출 없음 / 1억 미만 / 3억 미만 / 10억 미만 / 10억 이상]
+  //   "1억 미만"은 간이과세 기준선(1억 400만원)을 안전하게 커버 → 8천만으로 매핑해
+  //   간이과세를 '확정(yes)'으로 안내할 수 있게 함.
+  //   (구 "2억 미만/5억 미만/5억 이상"도 하위호환 유지 — 단 구 "2억 미만"은 간이 초과로 취급)
   const revenueStr = (get("revenue") || "").replace(/\s/g, "");
   let annualRevenue: number | undefined;
   if (revenueStr.includes("매출없음")) annualRevenue = 0;
-  else if (revenueStr.includes("2억미만")) annualRevenue = 100_000_000;
+  else if (revenueStr.includes("1억미만")) annualRevenue = 80_000_000;   // 간이과세 대상 구간
+  else if (revenueStr.includes("3억미만")) annualRevenue = 200_000_000;  // 일반과세
   else if (revenueStr.includes("10억미만")) annualRevenue = 500_000_000;
   else if (revenueStr.includes("10억이상")) annualRevenue = 1_500_000_000;
   // 과거 라벨 하위호환
-  else if (revenueStr.includes("1억미만")) annualRevenue = 50_000_000;
+  else if (revenueStr.includes("2억미만")) annualRevenue = 150_000_000;  // 구 라벨 → 간이 초과
   else if (revenueStr.includes("5억미만")) annualRevenue = 300_000_000;
   else if (revenueStr.includes("5억이상")) annualRevenue = 600_000_000;
-  // "기타"는 매핑하지 않음 → undefined (매출 조건 보류)
 
   // 업력(한글) → 대략 연차(년)
-  //  ※ 진단표 구간: 창업예정 / 1년 미만 / 3년 미만 / 7년 미만 / 7년 이상
-  //    "7년 미만"은 3~7년으로 폭이 넓어 창업 5년 경계를 정확히 알 수 없다.
-  //    창업감면(5년 이내)에서 6~7년차를 확정 대상으로 오안내하지 않도록,
-  //    "7년 미만"은 6년(=5년 초과 가능)으로 보수적으로 매핑한다. → 판정은 조건부로만.
+  //  ※ 정밀화된 진단표 구간: 창업예정 / 1년 미만 / 3년 미만 / 5년 미만 / 7년 미만 / 7년 이상
+  //    "5년 미만"(3~5년) → 창업 5년 이내 확정(창업감면 yes 가능).
+  //    "7년 미만"(5~7년) → 창업 5년 초과 확정(창업감면 no).
   const yearsStr = (get("years") || "").replace(/\s/g, "");
   let yearsInBusiness: number | undefined;
   if (yearsStr.includes("창업예정")) yearsInBusiness = 0;
   else if (yearsStr.includes("1년미만")) yearsInBusiness = 0;
   else if (yearsStr.includes("3년미만")) yearsInBusiness = 2;
-  else if (yearsStr.includes("7년미만")) yearsInBusiness = 6; // 3~7년 → 5년 초과 가능 (보수적)
+  else if (yearsStr.includes("5년미만")) yearsInBusiness = 4;   // 3~5년 → 5년 이내 확정
+  else if (yearsStr.includes("7년미만")) yearsInBusiness = 6;   // 5~7년 → 5년 초과 확정
   else if (yearsStr.includes("7년이상")) yearsInBusiness = 8;
 
   // 업력 라벨 원문 — 경계(창업 5년) 판정 시 "정확히 5년 이내"인지 알 수 없는 구간을
@@ -101,15 +103,22 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
   const yearsLabel = yearsStr || undefined;
 
   // 대표자 연령(한글) → 대략 나이
-  //  ※ 진단표 구간: "만 39세 이하 (청년)" / "만 40세 이상"
-  //    청년창업감면 기준은 '만 34세 이하'인데, 진단표만으로는 35~39세인지 34세 이하인지
-  //    구분할 수 없다. 따라서 "39세 이하"는 37세(=34 초과 가능)로 매핑해
-  //    청년창업감면을 '확정'이 아니라 '조건부'로만 안내한다. (오안내 방지)
+  //  ※ 정밀화된 진단표 구간: "만 34세 이하" / "만 39세 이하" / "만 40세 이상"
+  //    "만 34세 이하" → 30세: 청년창업감면(만34세) 확정 대상.
+  //    "만 39세 이하" → 37세: 34세 초과 확정 → 청년창업감면 배제(청년정책자금만 해당).
+  //    "만 40세 이상" → 45세: 비청년.
+  //    (구 라벨 "39세 이하 (청년)"은 34세 여부 불명 → 37세 + youthBand로 조건부 처리)
   const ageStr = get("age");
   let representativeAge: number | undefined;
-  if (ageStr?.includes("39세 이하") || ageStr?.includes("청년")) representativeAge = 37;
-  else if (ageStr?.includes("40세 이상") || ageStr?.includes("39세 이상")) representativeAge = 45;
-  const ageIsYouthBand = !!(ageStr && (ageStr.includes("39세 이하") || ageStr.includes("청년")));
+  let ageIsYouthBand = false;
+  if (ageStr?.includes("34세")) {
+    representativeAge = 30;               // 청년감면 확정
+  } else if (ageStr?.includes("39세 이하") || ageStr?.includes("청년")) {
+    representativeAge = 37;               // 34세 초과 확정(정밀 라벨) 또는 구 라벨(조건부)
+    ageIsYouthBand = !ageStr.includes("만 39세 이하") ? true : false; // 구 '청년' 라벨만 불확정
+  } else if (ageStr?.includes("40세 이상") || ageStr?.includes("39세 이상")) {
+    representativeAge = 45;
+  }
 
   const industriesRaw = profile["industries"];
   const industry = Array.isArray(industriesRaw)
@@ -236,8 +245,8 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
           savingText: `소득세·법인세 최대 ${rate}% 감면`,
           conditionText: "창업 후 5년 이내 사업자라면 신청 가능합니다.",
         };
-      // ★ "7년 미만" 구간(3~7년)은 창업 5년 이내인지 확정 불가 → 확정(yes) 대신 조건부.
-      //    6~7년차를 창업감면 대상으로 오안내하지 않기 위함 (본질: 맞는 것만 안내).
+      // ★ 정밀화 후 "7년 미만"(5~7년)은 위 years>5 에서 이미 no로 확정 배제됨.
+      //    (구 데이터 안전상 조건부 분기는 유지 — 구 "7년 미만"=3~7년 불확정 대응)
       if (u.yearsLabel && u.yearsLabel.includes("7년미만"))
         return {
           status: "condition",
@@ -245,7 +254,7 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
           savingText: `소득세·법인세 최대 ${rate}% 감면`,
           conditionText: "창업 후 5년 이내라면 신청 가능합니다. (창업일 기준 확인 필요)",
         };
-      // 여기까지 왔으면 창업예정/1년미만/3년미만 → 창업 5년 이내가 확실
+      // 여기까지 왔으면 창업예정/1년미만/3년미만/5년미만 → 창업 5년 이내가 확실
       return {
         status: "yes",
         score: 82,
@@ -285,15 +294,16 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
     // ── 청년창업중소기업 세액감면 (만 34세 이하 · 창업 5년 이내) ──
     case "youngStartupTaxCut": {
       if (isExcluded(b, u)) return { status: "no", score: 0, note: "감면 제외 업종" };
-      // 진단표 연령 구간이 '만 40세 이상'이면 청년(34세 이하) 아님 → 배제
-      if (u.representativeAge !== undefined && u.representativeAge >= 40)
-        return { status: "no", score: 0, note: "만 34세 이하 청년 대상 (40세 이상 제외)" };
+      // ★ 정밀화된 연령 구간 기준 확정 배제 ★
+      //   "만 34세 이하"→30, "만 39세 이하"→37, "만 40세 이상"→45.
+      //   35세 이상(=37,45)이면 청년감면(만34세) 대상이 아님 → 확정 배제(no).
+      if (u.representativeAge !== undefined && u.representativeAge >= 35)
+        return { status: "no", score: 0, note: "만 34세 이하 청년 대상 (35세 이상 제외)" };
       if (years !== undefined && years > 5)
         return { status: "no", score: 0, note: "창업 5년 초과" };
       const rate = metro ? 50 : 100;
-      // ★ 진단표는 '만 39세 이하(청년)'까지만 확인 가능 → 34세 이하인지 확정 불가.
-      //    또 "7년 미만" 업력도 창업 5년 이내 확정 불가.
-      //    둘 중 하나라도 경계가 애매하면 확정(yes) 대신 조건부로만 안내. (오안내 방지)
+      // ★ 경계가 애매한 경우만 조건부. (구 '청년' 라벨=ageIsYouthBand true, 또는 연령 미입력)
+      //    정밀 라벨 "만 34세 이하"(age=30)는 확정이므로 여기서 조건부로 빠지지 않음.
       const ageUncertain = u.ageIsYouthBand || age === undefined;
       const yearsUncertain =
         years === undefined || (u.yearsLabel ? u.yearsLabel.includes("7년미만") : false);
@@ -430,8 +440,8 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
       }
 
       // 2) 구간 라벨로 명확히 '초과'가 확정되는 경우는 배제.
-      //    "2억 미만/이상", "5억", "10억" 등은 상한이 1억400만원을 넘으므로 일반과세.
-      const overLabel = /2억|5억|10억|이상/.test(label);
+      //    "2억 미만/이상", "3억", "5억", "10억" 등은 상한이 1억400만원을 넘으므로 일반과세.
+      const overLabel = /2억|3억|5억|10억|이상/.test(label);
       if (overLabel) {
         return { status: "no", score: 0, note: "연매출 1억400만원 초과 구간 (일반과세)" };
       }

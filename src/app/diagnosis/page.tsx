@@ -292,18 +292,18 @@ export default function Diagnosis() {
 
   const progress = (step / 3) * 100;
 
+  // ── 선택 버튼 공통 스타일 (Radio·Multi 완전 통일 · 모바일/PC 최적화) ──
+  //   모바일: 살짝 큰 터치영역(py-2) · PC: 여유있게(sm:py-2). 글자·모서리·색 전부 동일.
+  const pillCls = (active: boolean) =>
+    `rounded-full border px-4 py-2 text-sm font-semibold transition hover:scale-[1.03] ${
+      active
+        ? "border-brand-orange bg-brand-grad text-brand-dark"
+        : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+    }`;
   const Radio = ({ k, opts }: { k: string; opts: string[] }) => (
     <div className="flex flex-wrap gap-2">
       {opts.map((o) => (
-        <button
-          key={o}
-          onClick={() => set(k, o)}
-          className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition hover:scale-[1.03] sm:px-4 sm:py-2 ${
-            form[k] === o
-              ? "border-brand-orange bg-brand-grad text-brand-dark"
-              : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
-          }`}
-        >
+        <button key={o} onClick={() => set(k, o)} className={pillCls(form[k] === o)}>
           {o}
         </button>
       ))}
@@ -312,15 +312,7 @@ export default function Diagnosis() {
   const Multi = ({ k, opts }: { k: string; opts: string[] }) => (
     <div className="flex flex-wrap gap-2">
       {opts.map((o) => (
-        <button
-          key={o}
-          onClick={() => toggle(k, o)}
-          className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition hover:scale-[1.03] sm:px-4 sm:py-2 ${
-            (form[k] || []).includes(o)
-              ? "border-brand-orange bg-brand-grad text-brand-dark"
-              : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
-          }`}
-        >
+        <button key={o} onClick={() => toggle(k, o)} className={pillCls((form[k] || []).includes(o))}>
           {o}
         </button>
       ))}
@@ -347,9 +339,9 @@ export default function Diagnosis() {
   );
   // 조건부 질문(라벨+설명힌트+단일선택) — 소진공 혁신형 상품 정밀 매칭용
   const CondQ = ({ k, field }: { k: string; field: { label: string; hint: string; opts: string[] } }) => (
-    <div className="mb-6 last:mb-0">
+    <div className="mb-5 last:mb-0">
       <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(field.label)}</p>
-      <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">{field.hint}</p>
+      <p className="mb-2 break-keep text-xs leading-snug text-brand-gray">{field.hint}</p>
       <Radio k={k} opts={field.opts} />
     </div>
   );
@@ -649,9 +641,9 @@ export default function Diagnosis() {
           )}
 
           {step === 2 && (
-            <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-1.5 text-xl font-extrabold text-brand-dark">{STEP2_TITLE}</h1>
-              <p className="mb-5 break-keep text-sm leading-relaxed text-brand-gray">{STEP2_SUBTITLE}</p>
+            <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
+              <h1 className="mb-1 text-lg font-extrabold text-brand-dark sm:text-xl">{STEP2_TITLE}</h1>
+              <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP2_SUBTITLE}</p>
 
               {/* ① 어떤 지원이 필요한가 (상담목적+관심분야 통합, 희망 금액) */}
               <GroupBox title={STEP2_GROUP_NEED} tone="orange">
@@ -683,9 +675,9 @@ export default function Diagnosis() {
           )}
 
           {step === 3 && (
-            <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
-              <h1 className="mb-1.5 text-xl font-extrabold text-brand-dark">{STEP3_TITLE}</h1>
-              <p className="mb-5 break-keep text-sm leading-relaxed text-brand-gray">{STEP3_SUBTITLE}</p>
+            <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
+              <h1 className="mb-1 text-lg font-extrabold text-brand-dark sm:text-xl">{STEP3_TITLE}</h1>
+              <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP3_SUBTITLE}</p>
 
               {/* ── 정밀 매칭 질문 (소진공 혁신형 상품 정확히 골라내기) ── */}
               <div className="mb-5 rounded-2xl border border-brand-yellow/50 bg-brand-yellow/10 p-4 sm:p-5">

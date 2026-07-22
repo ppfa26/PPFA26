@@ -355,22 +355,25 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   const industryVal = ind0 || "";
 
   const revMapWon: Record<string, number> = {
-    // ── 현재 진단 구간(2026 개정) ──
+    // ── 현재 진단 구간(정밀화: 간이과세 1억400만원 선 커버) ──
     "매출 없음": 0, "매출없음": 0,
-    "2억 미만": 100000000, "2억미만": 100000000,
+    "1억 미만": 80000000, "1억미만": 80000000,      // 간이과세 대상 구간(대표값 8천만)
+    "3억 미만": 200000000, "3억미만": 200000000,    // 일반과세(대표값 2억)
     "10억 미만": 500000000, "10억미만": 500000000,
     "10억 이상": 1000000000, "10억이상": 1000000000,
-    // "기타"는 매핑하지 않음 → revenueVal=undefined 로 두어 매출 조건 판정을 보류
     // ── 과거 구간(하위호환) ──
+    "2억 미만": 150000000, "2억미만": 150000000,     // 구 라벨(간이과세 초과로 취급)
     "5억 이상": 500000000, "5억미만": 300000000, "5억 미만": 300000000,
-    "1억 미만": 50000000, "1억미만": 50000000,
   };
   const revStr = (p.revenue as string | undefined)?.trim?.() || (p.revenue as string | undefined);
   const revenueVal = revStr ? revMapWon[revStr] : undefined;
 
   const yMapNum: Record<string, number> = {
     "창업 예정": 0, "창업예정": 0, "1년 미만": 0.5, "1년미만": 0.5,
-    "3년 미만": 2, "3년미만": 2, "7년 미만": 5, "7년미만": 5, "7년 이상": 10, "7년이상": 10,
+    "3년 미만": 2, "3년미만": 2,
+    "5년 미만": 4, "5년미만": 4,   // ★ 창업 5년 이내 감면 확정 판정용(대표값 4년)
+    "7년 미만": 6, "7년미만": 6,   // ★ 5~7년 구간(대표값 6년) — 창업 5년 초과로 확정
+    "7년 이상": 10, "7년이상": 10,
   };
   const yearsStr = (p.years as string | undefined)?.trim?.() || (p.years as string | undefined);
   const yearsVal = yearsStr ? yMapNum[yearsStr] : undefined;
@@ -444,7 +447,18 @@ export function profileToCompany(p: DiagnosisProfile): Company {
       (p.smartDevice && p.smartDevice.includes("예")) ||
         (p.smartTech && p.smartTech.includes("예"))
     ),
-    ceo_age: p.age?.includes?.("39세 이하") ? 35 : undefined,
+    // ★ 연령 정밀화 ★ 새 3구간 대응:
+    //   "만 34세 이하" → 30 (청년감면 만34세·청년정책자금 만39세 둘 다 통과)
+    //   "만 39세 이하" → 37 (청년정책자금 만39세 통과, 청년감면 만34세 필터는 초과로 배제)
+    //   "만 40세 이상" → 45 (비청년)
+    //   (구 라벨 "39세 이하 (청년)"도 34세 초과 가능성이 있으므로 37로 안전 처리)
+    ceo_age: p.age?.includes?.("34세")
+      ? 30
+      : p.age?.includes?.("39세")
+        ? 37
+        : p.age?.includes?.("40세")
+          ? 45
+          : undefined,
     years_in_business: yearsVal,
     kcb_score: creditScore,
     nice_score: creditScore,
