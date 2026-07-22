@@ -139,8 +139,6 @@ GHTOK=$(gh auth token) && git -c credential.helper= push "https://x-access-token
 - [완료] 기보 매칭 정밀화 ("해당 없음" 필터 + 수출업 추가), node 6/6 통과
 - [완료] SNS 홍보글 5종 + 홍보 이미지 3종 (고정 템플릿)
 - [완료] 코드 최적화 1차: 미사용 컴포넌트 4개 제거(ComingSoon/EditToolbar/MobilePcNotice/ViewCreditGate, 총 612줄) + 빈 thumbnails 폴더 정리. 빌드 정상.
-- [보류] 네이버 블로그 썸네일 7~16 (중단됨, 대표님이 그만하기로 함)
-- [대기] 사업계획서 총자산 수치 (대표님 회신 대기)
 
 ## 9. 코드 최적화 규칙 (주기적 정리)
 
@@ -165,3 +163,76 @@ GHTOK=$(gh auth token) && git -c credential.helper= push "https://x-access-token
 매칭 로직 정확도: 12/12 테스트 통과 (`/tmp/test_matching.mjs`). 서비스/음식/도소매/건설+해당없음→기보 미노출, 실제혁신·특허·경력·이노비즈·제조·수출·IT→기보 노출. 정확함 ✅
 
 결론: 사이트는 이미 성능 최적화가 상당히 잘 되어 있음. 무리한 리팩터링보다 정확도 유지가 우선.
+
+---
+
+## 11. 정부지원사업 / 정책자금 매칭 로직 최신 코드 (2026-07-22 기준 · 핵심 자산)
+
+> 파일: `src/lib/advancedScreening.ts` (1617줄) · `src/lib/supportPrograms.ts`
+> 이 로직이 사이트의 심장. 수정 시 반드시 `node /tmp/test_matching.mjs`로 12/12 재검증.
+
+### 11-1. 업종 분류 `normalizeIndustry(industry)` — 5분류
+반환값: `manufacturing | tech_innov | retail_food | service | etc`
+- 제조 → **manufacturing**
+- 로봇·AI·인공지능·바이오·혁신·소프트·IT·기술·딥테크·반도체·이차전지 → **tech_innov**
+- 도소매·도매·소매·음식·외식·유통 → **retail_food**
+- 서비스·운수·물류·건설·농림·어업 → **service**
+- 그 외 → **etc**
+
+### 11-2. 기술기업(기보 트랙) 판정 `isTechCompany(company)` → boolean
+기보(기술보증기금)를 여는 게이트. 아래 중 하나라도 true면 true:
+1. 업종이 manufacturing 또는 tech_innov
+2. 수출업(업종에 "수출" 포함) 또는 `is_exporter === true`
+3. 실증 인증/신호 보유: `has_patent | has_rnd_center | has_venture_cert | has_innobiz | is_innovation_area | has_tech_career`
+
+★ 핵심: `is_innovation_area`는 진단에서 '해당 없음/없음'을 고르면 **false**로 계산됨(아래 11-4). 그래서 음식·서비스·도소매인데 혁신분야도 '해당 없음'이면 기보 대상 아님 → 재단·신보로 안내. (기보 과대추천 방지 버그픽스)
+
+### 11-3. 규모 판정 `resolveSegment(company)` → `"small" | "sme"`
+- `is_small_business` 명시값 있으면 그대로 사용
+- 법인 + 매출 5억↑ → **sme** (소상공인 오판 방지)
+- 직원수 입력 시: 상시근로자 기준(제조·건설·운수 10명 미만, 그 외 5명 미만) **그리고** 매출이 업종상한 미만이어야 small. 하나라도 초과 → sme
+- 업종별 소상공인 매출상한(추정): 도소매·음식 30억 / 서비스·제조 10억 / 기타 5억
+- 직원수 미입력: 법인=sme, 개인=업종별 매출기준 추정
+
+### 11-4. 혁신분야 실제 해당 판정 `isInnovationArea` (supportPrograms.ts ~422줄)
+'해당 없음'/'해당없음'/'없음'을 제외한 **실제 혁신테마가 1개 이상**일 때만 true.
+→ 사용자가 '해당 없음'만 골라도 기보가 잘못 열리는 것 방지.
+
+### 11-5. 기관 매칭 `matchInstitutions(company)` → CreditMatch[]
+
+**중복배제 핵심 규칙 (2005년 신보·기보 업무협약):**
+신보·기보·재단은 같은 신용보증 → 원칙적으로 **하나만** 신청.
+- 기술기업 → **기보** 우선 (재단·신보 X)
+- 비기술 + 매출 5억↑(또는 sme) → **신보** 우선 (기보·재단 X)
+- 비기술 + 소액 → **재단** 우선 (신보·기보 X)
+- **예외**: 기술기업 + 규모(매출5억↑ or sme) → 신보·기보 **둘 다** 안내하되 `DUP_NOTE`로 '중복 신청 불가, 택1' 명시
+- 소진공·중진공은 보증기관 아닌 정책자금(직접대출) → **병행 가능**
+- 무역보험공사는 수출 전용 + 한도 별도 → **항상 병행 가능**
+
+**분기 순서:**
+1. **재도전자**(`bankruptcy_status === "discharged"`) → 소진공 재도전특별자금 전용만 반환하고 종료 (일반 정책자금·보증은 면책·인가 후 3년 경과 필요, 기관이 채권자였으면 사실상 제한)
+2. **보증기관 택1** (위 규칙):
+   - `techWithScale = isTech && (매출5억↑ || sme)` → 기보 + 신보 둘 다 push (exclusiveNote=DUP_NOTE)
+   - else `isTech` → 기보 단독
+   - else `qualifiesSinbo`(매출5억↑ || sme) → 신보 단독
+   - else → 지역신용보증재단 단독
+3. **중진공(직접대출) 병행** — `isManufacturingCore || is_innovation_area || isExport || 청년자금자격 || 청년특례 || 직원5명↑` (매출 하한 없음, 성장성·자금계획·대표의지 종합)
+4. **소진공(직접대출) 병행** — `segment==="small" || isManufacturingCore || uses_smart_tech`
+5. **무역보험공사** — `isExport`(수출실적증명원 발급). 법인 선호, BB+↑ 승인율 높음
+6. **고정 정렬**: 재단 → 신보 → 기보 → 중진공 → 소진공 → 무역보험공사 → 농신보 → 기타
+
+**청년전용창업자금 자격:**
+- 정식: 대표 만39세↓ **AND** 업력 3년 미만 (`qualifiesYouthFund`)
+- 특례: 39세↓ + 업력 3~7년 (창업성공패키지·기보 청년보증·VC투자 시) (`youthFundSpecialMaybe`)
+- ★ 업력 미상이면 노출 안 함(과대추천 방지). 나이만 보고 노출하던 버그 픽스됨.
+
+### 11-6. 승인 시기 `timingAdvice(month)` (대표님 실무 기준)
+1~6월 승인율 높음 / 7~9월 추경·일부 / 10~12월 어려움.
+
+### 11-7. 소진공 상품별 승인율(결과창 정직 명시)
+- 승인율 높음: 혁신성장촉진·재도전특별·대환·청년고용연계·일반경영안정·민간투자연계·TIPS
+- 승인율 낮음: 스마트기기·일시적경영애로·신용취약소상공인
+- 지역별 편차 큼. 대표자 신용·매출·상환여력 종합 판단.
+
+### 11-8. 검증 방법
+`node /tmp/test_matching.mjs` → **12/12 통과** 기준. 서비스/음식/도소매/건설+해당없음 → 기보 미노출, 특허·경력·이노비즈·제조·수출·IT → 기보 노출.
