@@ -419,7 +419,12 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   const hasMainbiz = certs.includes("메인비즈");
 
   // ── 혁신성장 분야 해당 여부 (직원수·업종 무관하게 중진공·기보 자격이 열리는 핵심) ──
-  const isInnovationArea = (p.innovation || []).length > 0;
+  //   ★ 버그 수정 ★ 옵션에 "해당 없음"이 있어, 사용자가 '해당 없음'을 골라도
+  //     배열 길이가 1이라 length>0 로 true 가 되어 기보·중진공이 잘못 열리던 문제.
+  //     → "해당 없음"/"없음"을 제외한 실제 혁신테마가 1개 이상일 때만 true.
+  const isInnovationArea = (p.innovation || []).some(
+    (v) => v && !v.includes("해당 없음") && !v.includes("해당없음") && v.trim() !== "없음"
+  );
 
   // ── 소진공 혁신형/특별 상품 정밀 매칭용 조건부 응답 (3단계 추가질문) ──
   //   각 값은 "예..."로 시작하면 true. eligibleWhen 조건이 이 플래그를 읽어
