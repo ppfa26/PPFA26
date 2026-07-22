@@ -476,10 +476,10 @@ export default function MatchingPreview() {
           </p>
           )}
           {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 — 화면 간결화 ── */}
-          <div className="relative mt-5 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <div className="relative mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
-            <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-3">
-              <p className="mb-2 break-keep text-[11px] font-bold text-brand-dark/50">
+            <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-2.5">
+              <p className="mb-1.5 break-keep text-[11px] font-bold text-brand-dark/50">
                 📑 아래 결과에는 다음과 같은 항목들이 담겨 있습니다.
               </p>
               {/* 한 줄 유지 — 좁은 화면에서는 가로 스크롤(스크롤바 숨김) */}
@@ -519,7 +519,7 @@ export default function MatchingPreview() {
           )}
 
           {/* ── 결과창 맨 하단 CTA — 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
-          <section className="mt-5 px-0 pb-0">
+          <section className="mt-4 px-0 pb-0">
             <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
               <Editable
                 id="preview-bottom-cta-title"

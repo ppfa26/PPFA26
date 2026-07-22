@@ -11,6 +11,9 @@ export type ExtraBenefitsUserInput = {
   businessType?: string;
   industry?: string;
   yearsInBusiness?: number;
+  // 업력 구간 원문 라벨(예: "7년 미만") — 창업 5년 경계처럼 진단표 구간만으로는
+  // 정확히 알 수 없는 경우 확정 대신 조건부로 안내하기 위한 필드
+  yearsLabel?: string;
   annualRevenue?: number;
   // 매출 구간 원문 라벨(예: "2억 미만") — 간이과세처럼 경계가 민감한 판정에서
   // 대략 매핑 숫자만으로 오판하지 않도록 원문을 함께 검사하기 위한 필드
@@ -18,6 +21,9 @@ export type ExtraBenefitsUserInput = {
   workerCount?: number;
   region?: string;
   representativeAge?: number;
+  // 대표자가 '만 39세 이하(청년)' 구간인지 — 청년창업감면(만 34세 이하) 경계 판정용.
+  // true라도 34세 이하 확정은 아니므로 확정 대상으로 단정하지 않는다.
+  ageIsYouthBand?: boolean;
   // 추가 신호 (조건별 차등 추천용)
   hasRnd?: boolean; // 연구소·연구전담부서·특허 등 R&D 신호
   isInnovation?: boolean; // 혁신성장 분야 선택
@@ -78,19 +84,32 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
   // "기타"는 매핑하지 않음 → undefined (매출 조건 보류)
 
   // 업력(한글) → 대략 연차(년)
+  //  ※ 진단표 구간: 창업예정 / 1년 미만 / 3년 미만 / 7년 미만 / 7년 이상
+  //    "7년 미만"은 3~7년으로 폭이 넓어 창업 5년 경계를 정확히 알 수 없다.
+  //    창업감면(5년 이내)에서 6~7년차를 확정 대상으로 오안내하지 않도록,
+  //    "7년 미만"은 6년(=5년 초과 가능)으로 보수적으로 매핑한다. → 판정은 조건부로만.
   const yearsStr = (get("years") || "").replace(/\s/g, "");
   let yearsInBusiness: number | undefined;
   if (yearsStr.includes("창업예정")) yearsInBusiness = 0;
   else if (yearsStr.includes("1년미만")) yearsInBusiness = 0;
   else if (yearsStr.includes("3년미만")) yearsInBusiness = 2;
-  else if (yearsStr.includes("7년미만")) yearsInBusiness = 5;
+  else if (yearsStr.includes("7년미만")) yearsInBusiness = 6; // 3~7년 → 5년 초과 가능 (보수적)
   else if (yearsStr.includes("7년이상")) yearsInBusiness = 8;
 
-  // 대표자 연령(한글) → 대략 나이 (신·구 옵션 모두 인정: "만 39세 이하 (청년)" / "만 40세 이상")
+  // 업력 라벨 원문 — 경계(창업 5년) 판정 시 "정확히 5년 이내"인지 알 수 없는 구간을
+  // 확정 대상으로 안내하지 않기 위해 함께 검사한다.
+  const yearsLabel = yearsStr || undefined;
+
+  // 대표자 연령(한글) → 대략 나이
+  //  ※ 진단표 구간: "만 39세 이하 (청년)" / "만 40세 이상"
+  //    청년창업감면 기준은 '만 34세 이하'인데, 진단표만으로는 35~39세인지 34세 이하인지
+  //    구분할 수 없다. 따라서 "39세 이하"는 37세(=34 초과 가능)로 매핑해
+  //    청년창업감면을 '확정'이 아니라 '조건부'로만 안내한다. (오안내 방지)
   const ageStr = get("age");
   let representativeAge: number | undefined;
-  if (ageStr?.includes("39세 이하") || ageStr?.includes("청년")) representativeAge = 30;
+  if (ageStr?.includes("39세 이하") || ageStr?.includes("청년")) representativeAge = 37;
   else if (ageStr?.includes("40세 이상") || ageStr?.includes("39세 이상")) representativeAge = 45;
+  const ageIsYouthBand = !!(ageStr && (ageStr.includes("39세 이하") || ageStr.includes("청년")));
 
   const industriesRaw = profile["industries"];
   const industry = Array.isArray(industriesRaw)
@@ -117,11 +136,13 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
     businessType: get("businessType"),
     industry,
     yearsInBusiness,
+    yearsLabel,
     annualRevenue,
     revenueLabel: revenueStr || undefined,
     workerCount,
     region: get("region"),
     representativeAge,
+    ageIsYouthBand,
     hasRnd,
     isInnovation,
     hiredRecently: typeof workerCount === "number" && workerCount > 0,
@@ -206,8 +227,8 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
       if (isExcluded(b, u)) return { status: "no", score: 0, note: "감면 제외 업종" };
       if (years !== undefined && years > 5)
         return { status: "no", score: 0, note: "창업 5년 초과 (→ 중소기업 특별세액감면 대상)" };
-      // 청년(34세 이하)은 청년창업감면이 더 유리 → 이건 비청년/일반 대상으로 점수 조정
       const rate = metro ? 50 : 100;
+      // 업력 미입력 → 조건부
       if (years === undefined)
         return {
           status: "condition",
@@ -215,6 +236,16 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
           savingText: `소득세·법인세 최대 ${rate}% 감면`,
           conditionText: "창업 후 5년 이내 사업자라면 신청 가능합니다.",
         };
+      // ★ "7년 미만" 구간(3~7년)은 창업 5년 이내인지 확정 불가 → 확정(yes) 대신 조건부.
+      //    6~7년차를 창업감면 대상으로 오안내하지 않기 위함 (본질: 맞는 것만 안내).
+      if (u.yearsLabel && u.yearsLabel.includes("7년미만"))
+        return {
+          status: "condition",
+          score: 50,
+          savingText: `소득세·법인세 최대 ${rate}% 감면`,
+          conditionText: "창업 후 5년 이내라면 신청 가능합니다. (창업일 기준 확인 필요)",
+        };
+      // 여기까지 왔으면 창업예정/1년미만/3년미만 → 창업 5년 이내가 확실
       return {
         status: "yes",
         score: 82,
@@ -223,30 +254,50 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
       };
     }
 
-    // ── 노란우산공제 (개인사업자) ──
+    // ── 노란우산공제 (사업자등록한 개인/법인 대표) ──
+    //   ※ 사업자등록이 된 소기업·소상공인 대표가 가입 대상.
+    //     예비창업자(등록 전)는 아직 가입 불가 → 조건부로만 안내. (오안내 방지)
     case "noransanggong": {
       const bt = u.businessType;
-      if (bt === "법인사업자")
-        return { status: "no", score: 0, note: "개인사업자 대상 (법인 제외)" };
-      if (bt === "개인사업자")
-        return { status: "yes", score: 80, savingText: `연 약 ${formatKRW(1_200_000)} 절세` };
+      if (bt === "예비창업자")
+        return {
+          status: "condition",
+          score: 46,
+          savingText: `연 약 ${formatKRW(1_200_000)} 절세`,
+          conditionText: "사업자등록을 마치면(개인·법인 대표) 가입해 소득공제받을 수 있습니다.",
+        };
+      // 노란우산공제는 개인·법인 대표 모두 가입 가능(공제 방식 차이) → 법인도 배제하지 않음
+      if (bt === "개인사업자" || bt === "법인사업자")
+        return {
+          status: "yes",
+          score: 80,
+          savingText: `연 약 ${formatKRW(1_200_000)} 절세`,
+          note: bt === "법인사업자" ? "법인 대표도 소기업 요건 시 가입 가능" : "개인사업자 대표 가입 대상",
+        };
       return {
         status: "condition",
         score: 50,
         savingText: `연 약 ${formatKRW(1_200_000)} 절세`,
-        conditionText: "개인사업자(대표)라면 가입 즉시 소득공제 대상입니다.",
+        conditionText: "사업자 대표(개인·법인)라면 가입해 소득공제받을 수 있습니다.",
       };
     }
 
     // ── 청년창업중소기업 세액감면 (만 34세 이하 · 창업 5년 이내) ──
     case "youngStartupTaxCut": {
       if (isExcluded(b, u)) return { status: "no", score: 0, note: "감면 제외 업종" };
-      if (age !== undefined && age > 34)
-        return { status: "no", score: 0, note: "만 34세 이하 청년 대상" };
+      // 진단표 연령 구간이 '만 40세 이상'이면 청년(34세 이하) 아님 → 배제
+      if (u.representativeAge !== undefined && u.representativeAge >= 40)
+        return { status: "no", score: 0, note: "만 34세 이하 청년 대상 (40세 이상 제외)" };
       if (years !== undefined && years > 5)
         return { status: "no", score: 0, note: "창업 5년 초과" };
       const rate = metro ? 50 : 100;
-      if (age === undefined || years === undefined)
+      // ★ 진단표는 '만 39세 이하(청년)'까지만 확인 가능 → 34세 이하인지 확정 불가.
+      //    또 "7년 미만" 업력도 창업 5년 이내 확정 불가.
+      //    둘 중 하나라도 경계가 애매하면 확정(yes) 대신 조건부로만 안내. (오안내 방지)
+      const ageUncertain = u.ageIsYouthBand || age === undefined;
+      const yearsUncertain =
+        years === undefined || (u.yearsLabel ? u.yearsLabel.includes("7년미만") : false);
+      if (ageUncertain || yearsUncertain)
         return {
           status: "condition",
           score: 58,

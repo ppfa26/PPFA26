@@ -822,7 +822,7 @@ function AdvancedResult({
     v ? `${(v / 100000000).toFixed(v % 100000000 === 0 ? 0 : 2)}억` : "";
 
   return (
-    <div id="advanced-result" className="mt-6 space-y-4">
+    <div id="advanced-result" className="mt-5 space-y-3">
       {/* autoRun(결제 후 대시보드)에서는 상단 dashboard-hero 제목과 중복되므로 h2를 숨긴다.
           정밀 추가진단(수동 실행) 화면에서만 제목을 표기. */}
       {!autoRun && (
