@@ -215,7 +215,7 @@ export default function Page() {
   return (
     <PageShell pageKey="community">
       <Header />
-      <main className="mx-auto w-full max-w-5xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8">
         {/* ── 상단 히어로 ── */}
         <section className="text-center">
           <span className="inline-block rounded-full border border-brand-yellow/50 bg-brand-yellow/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-orange break-keep sm:text-xs">
@@ -354,7 +354,7 @@ export default function Page() {
         <ReviewWriteSection />
 
         {/* ── 하단 CTA ── */}
-        <section className="mt-12 rounded-3xl bg-brand-dark px-6 py-8 text-center">
+        <section className="mt-8 rounded-3xl bg-brand-dark px-6 py-7 text-center">
           <h2 className="break-keep text-xl font-extrabold text-white sm:text-2xl">
             다음 후기의 주인공은 대표님입니다
           </h2>
@@ -438,7 +438,7 @@ function LiveReviews() {
   if (!loading && rows.length === 0) return null;
 
   return (
-    <section className="mt-12">
+    <section className="mt-8">
       <div className="text-center">
         <p className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider text-brand-orange">
           Live
@@ -585,7 +585,7 @@ function ReviewWriteSection() {
   };
 
   return (
-    <section className="mt-12 rounded-3xl border border-brand-yellow/40 bg-brand-yellow/10 px-5 py-6 sm:px-8">
+    <section className="mt-8 rounded-3xl border border-brand-yellow/40 bg-brand-yellow/10 px-5 py-6 sm:px-8">
       <div className="text-center">
         <span className="inline-block rounded-full bg-brand-orange/10 px-3 py-1 text-[11px] font-bold text-brand-orange sm:text-xs">
           🎁 후기 작성 이벤트 진행 중

@@ -265,25 +265,29 @@ export function scoreTier(company: Company): CreditTier {
   return "hard";
 }
 
-// ── 기술기업 판정 (하이브리드) ─────────────────────────────────────
-//  대표님 기준: 기보(기술보증기금)는 "제조·기술" 업종에만 안내한다.
-//  다만 업종 문자열이 '서비스/기타'로 잡혀도, 아래 기술 신호가 하나라도 있으면
-//  기술평가 기반 보증(기보) 자격이 실제로 열리므로 기술트랙으로 본다.
-//   - 업종 자체가 제조/혁신기술(로봇·AI·바이오·반도체 등)
-//   - 특허·기업부설연구소 보유
-//   - 벤처인증·이노비즈 보유
-//   - 혁신성장 공동기준 9개 테마 해당
-//   - 동종업계 기술경력 보유
+// ── 기술기업(기보 트랙) 판정 ─────────────────────────────────────
+//  대표님 기준(2026-07 정밀화):
+//   기보(기술보증기금)는 "제조업·수출업" 또는 "실증 기술 인증(특허·연구소·벤처·이노비즈)"
+//   을 갖춘 기업에만 안내한다.
+//   → 음식점·서비스·도소매 등은 이 신호가 없으면 기보 대상이 아니다(재단·신보로 안내).
+//
+//  ★ 중요(과대추천 방지) ★
+//   '혁신성장 분야 체크(is_innovation_area)'나 '대표 경력(has_tech_career)'만으로는
+//   기보를 열지 않는다. 이 신호들은 서비스업 대표도 쉽게 체크할 수 있어,
+//   예전엔 서비스업인데도 기보가 새어 나오는 원인이었다.
+//   → 혁신분야·경력은 '중진공(직접대출)' 자격 판단에만 사용한다.
 export function isTechCompany(company: Company): boolean {
   const cat = normalizeIndustry(company.industry);
+  // 1) 업종 자체가 제조·기술혁신
   if (cat === "manufacturing" || cat === "tech_innov") return true;
+  // 2) 수출업(수출기업은 기술평가 보증 대상) — 업종 문자열/플래그로 판정
+  if ((company.industry || "").includes("수출") || company.is_exporter === true) return true;
+  // 3) 실증 기술 인증 보유 (특허·연구소·벤처·이노비즈) — 서류로 증빙되는 기술력만 인정
   return Boolean(
     company.has_patent ||
       company.has_rnd_center ||
       company.has_venture_cert ||
-      company.has_innobiz ||
-      company.is_innovation_area ||
-      company.has_tech_career
+      company.has_innobiz
   );
 }
 
