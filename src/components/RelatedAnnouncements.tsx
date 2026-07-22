@@ -6,9 +6,9 @@ import AccordionCard from "@/components/report/AccordionCard";
 // ────────────────────────────────────────────────────────────────
 // 진단 결과 화면에 "지금 열려있는 관련 정부지원사업" 실제 공고를 보여준다.
 //   · 출처: 기업마당(crawled_announcements) — 매일 자동 수집되는 실공고
-//   · 매칭: 프로필의 지역·업종·관심분야 키워드 (서버 /api/announcements/match)
+//   · 매칭: 프로필의 지역·업종·직원수·매출규모·관심분야 (서버 /api/announcements/match)
 //   · AI 해설 없음. 공고명·신청기간·소관기관만 노출하고 원문(기업마당)으로 링크.
-//   · 다른 결과 카드와 통일된 아코디언(AccordionCard)로 표시.
+//   · 디자인: 다른 결과 카드(정책금융기관 등)와 동일한 아코디언 + divide-y 목록.
 // ────────────────────────────────────────────────────────────────
 
 type Item = {
@@ -58,54 +58,70 @@ export default function RelatedAnnouncements({
     <AccordionCard
       emoji="📢"
       title="지금 열려있는 관련 정부지원사업"
-      subtitle="진단 정보(지역·업종·관심분야)를 바탕으로 현재 공고 중인 실제 사업을 추렸습니다."
+      subtitle={
+        <>
+          지역·업종·규모에 맞춰 ·
+          <b className="text-brand-orange"> 🟢 지금 공고 중인 실제 사업</b>을
+          가능성 높은 순으로 안내합니다.
+        </>
+      }
     >
       {loading ? (
         <p className="mt-4 text-sm text-brand-dark/50">📢 관련 공고를 불러오는 중…</p>
       ) : (
         <>
-          <ul className="mt-4 space-y-2.5">
+          {/* 정책금융기관 카드와 동일한 divide-y 목록 스타일 */}
+          <div className="mt-4 divide-y divide-gray-200">
             {(items || []).map((it, i) => {
               const inner = (
-                <div className="flex flex-col gap-1.5 rounded-2xl border border-gray-200 bg-gray-50/60 p-3.5 transition hover:border-brand-primary/50 hover:bg-brand-primary/5 sm:p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">
+                <>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="break-keep text-sm font-extrabold text-brand-dark">
                       {it.title}
-                    </p>
-                    {it.detail_url && (
-                      <span className="mt-0.5 shrink-0 text-xs font-bold text-brand-primary">
-                        원문 보기 →
+                    </span>
+                    {it.support_scale && (
+                      <span className="shrink-0 rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
+                        {it.support_scale}
                       </span>
                     )}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-brand-dark/60 sm:text-xs">
-                    {it.site_name && (
-                      <span className="inline-flex items-center gap-1">🏛️ {it.site_name}</span>
-                    )}
                     {it.deadline && (
-                      <span className="inline-flex items-center gap-1 font-semibold text-brand-dark/75">
+                      <span className="shrink-0 rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                         🗓️ {it.deadline}
                       </span>
                     )}
-                    {it.support_scale && (
-                      <span className="inline-flex items-center gap-1">🏷️ {it.support_scale}</span>
-                    )}
                   </div>
-                </div>
+                  <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
+                    {it.site_name && <>🏛️ {it.site_name}</>}
+                    {it.target && <>{it.site_name ? " · " : ""}대상: {it.target}</>}
+                  </p>
+                  {it.detail_url && (
+                    <p className="mt-1.5 text-[11px] font-bold text-brand-orange">
+                      공고 원문 보기 →
+                    </p>
+                  )}
+                </>
               );
               return (
-                <li key={i}>
+                <div
+                  key={i}
+                  className="border-t border-brand-dark/10 py-4 first:border-t-0 first:pt-0"
+                >
                   {it.detail_url ? (
-                    <a href={it.detail_url} target="_blank" rel="noopener noreferrer" className="block">
+                    <a
+                      href={it.detail_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block transition hover:opacity-80"
+                    >
                       {inner}
                     </a>
                   ) : (
                     inner
                   )}
-                </li>
+                </div>
               );
             })}
-          </ul>
+          </div>
 
           {/* 출처 표시 — 공공데이터 라이선스(제3유형: 출처표시) 준수 */}
           <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-dark/45">

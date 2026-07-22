@@ -953,7 +953,10 @@ function AdvancedResult({
         </AccordionCard>
       )}
 
-      {/* ② 이용 가능한 정책금융기관 — 정부지원제도 바로 아래 배치 (대표님 요청: 순서 변경) */}
+      {/* ② 챙기면 좋은 추가 감면 혜택 — 정부지원제도 바로 아래 (대표님 요청: 순서 🏅→💎→💳) */}
+      {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
+
+      {/* ③ 이용 가능한 정책금융기관 — 감면 혜택 바로 아래 (대표님 요청: 순서 변경) */}
       <AccordionCard
         emoji="💳"
         title="이용 가능한 정책금융기관"
@@ -1274,10 +1277,7 @@ function AdvancedResult({
         )}
       </AccordionCard>
 
-      {/* ③ 챙기면 좋은 추가 감면 혜택 — 정책금융기관 '아래'로 이동 (대표님 요청: 순서 변경) */}
-      {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
-
-      {/* ③-2 지금 열려있는 관련 정부지원사업(기업마당 실공고) — 감면 혜택 '바로 아래' (대표님 요청)
+      {/* ④ 지금 열려있는 관련 정부지원사업(기업마당 실공고) — 정책금융기관 '바로 아래' (대표님 요청)
              진단 프로필의 지역·업종·관심분야로 실제 공고를 추려 아코디언으로 노출.
              AI 해설 없이 공고명·신청기간·기관만 보여주고 기업마당 원문으로 링크. */}
       {autoRun && !previewLock && <RelatedAnnouncements profile={relatedProfile} />}

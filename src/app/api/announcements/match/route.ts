@@ -85,6 +85,23 @@ export async function POST(req: Request) {
       ...(typeof profile.industry === "string" ? [profile.industry] : []),
     ];
     const topics = [...normList(profile.interests), ...normList(profile.purposes)];
+    const businessType = typeof profile.businessType === "string" ? profile.businessType : "";
+    const revenue = typeof profile.revenue === "string" ? profile.revenue : "";
+    const employees = typeof profile.employees === "string" ? profile.employees : "";
+
+    // 규모 판정: 매출/직원수가 작으면 '소상공인' 성격, 크면 '중소기업' 성격
+    //  → 공고 대상(소상공인/중소기업/창업 등)과 맞춰 가점
+    const isSmall =
+      revenue.includes("없음") ||
+      revenue.includes("1억") ||
+      employees.includes("0명") ||
+      employees.includes("5명");
+    const isMidLarge =
+      revenue.includes("5억이상") || employees.includes("10명이상");
+    const isStartup =
+      businessType.includes("예비") ||
+      (typeof profile.years === "string" &&
+        (profile.years.includes("예정") || profile.years.includes("1년미만")));
 
     const regionKwSet = new Set<string>();
     for (const [name, kws] of Object.entries(REGION_KEYWORDS)) {
@@ -131,6 +148,14 @@ export async function POST(req: Request) {
       }
 
       for (const k of topicKw) if (hay.includes(k)) score += 2;
+
+      // 규모/유형 매칭: 사업장 규모가 공고 대상과 맞으면 가점
+      //  · 소상공인 규모(매출↓·직원↓) → '소상공인' 공고 +2
+      //  · 중소기업 규모(매출↑·직원↑) → '중소기업/중견' 공고 +2
+      //  · 예비/초기 창업 → '창업/스타트업' 공고 +2
+      if (isSmall && /소상공인|소기업|1인/.test(hay)) score += 2;
+      if (isMidLarge && /중소기업|중견|기업/.test(hay)) score += 2;
+      if (isStartup && /창업|스타트업|예비창업|초기/.test(hay)) score += 2;
 
       return { r, score };
     });
