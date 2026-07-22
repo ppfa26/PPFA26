@@ -215,17 +215,17 @@ export default function Page() {
   return (
     <PageShell pageKey="community">
       <Header />
-      <main className="mx-auto w-full max-w-5xl px-4 pb-20 pt-12 sm:px-6 sm:pt-16">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
         {/* ── 상단 히어로 ── */}
         <section className="text-center">
           <span className="inline-block rounded-full border border-brand-yellow/50 bg-brand-yellow/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-orange break-keep sm:text-xs">
             Customer Stories · 고객 성공 사례
           </span>
-          <h1 className="mt-5 break-keep text-2xl font-extrabold leading-tight tracking-tight text-brand-dark xs:text-3xl sm:text-[2.6rem]">
+          <h1 className="mt-4 break-keep text-2xl font-extrabold leading-tight tracking-tight text-brand-dark xs:text-3xl sm:text-[2.6rem]">
             대표님들의 진짜 후기로
             <br className="sm:hidden" /> 증명합니다
           </h1>
-          <p className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base">
+          <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base">
             <span className="font-semibold text-brand-dark">모두의사업친구</span>
             은 지난 2년간 약 300여 기업의 고민을 함께 해결해왔습니다.
             <br className="hidden sm:block" />
@@ -234,10 +234,10 @@ export default function Page() {
         </section>
 
         {/* ── 통계 바 (구분선형 미니멀) ── */}
-        <section className="mx-auto mt-10 max-w-3xl">
+        <section className="mx-auto mt-6 max-w-3xl">
           <div className="grid grid-cols-2 divide-x divide-y divide-gray-100 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm sm:grid-cols-4 sm:divide-y-0">
             {STATS.map((s) => (
-              <div key={s.label} className="px-2 py-6 text-center sm:px-3">
+              <div key={s.label} className="px-2 py-4 text-center sm:px-3">
                 <p className="whitespace-nowrap text-lg font-extrabold leading-none text-brand-dark xs:text-xl sm:text-2xl">
                   {s.value}
                 </p>
@@ -250,7 +250,7 @@ export default function Page() {
         </section>
 
         {/* ── 이용자 정부지원사업 승인후기 (소제목 블록 제거 — 상단 대제목과 중복, 대표님 요청) ── */}
-        <section className="mt-12">
+        <section className="mt-8">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {APPROVALS.map((a, i) => (
               <article
@@ -304,7 +304,7 @@ export default function Page() {
           </p>
 
           {/* 승인후기와 이어지는 실제 이용 후기(별점) 카드 */}
-          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {REVIEWS.map((r, i) => (
               <article
                 key={i}
@@ -354,7 +354,7 @@ export default function Page() {
         <ReviewWriteSection />
 
         {/* ── 하단 CTA ── */}
-        <section className="mt-20 rounded-3xl bg-brand-dark px-6 py-10 text-center">
+        <section className="mt-12 rounded-3xl bg-brand-dark px-6 py-8 text-center">
           <h2 className="break-keep text-xl font-extrabold text-white sm:text-2xl">
             다음 후기의 주인공은 대표님입니다
           </h2>
@@ -438,7 +438,7 @@ function LiveReviews() {
   if (!loading && rows.length === 0) return null;
 
   return (
-    <section className="mt-20">
+    <section className="mt-12">
       <div className="text-center">
         <p className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider text-brand-orange">
           Live
@@ -455,7 +455,7 @@ function LiveReviews() {
       </div>
 
       {loading ? (
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {[0, 1].map((i) => (
             <div
               key={i}
@@ -464,7 +464,7 @@ function LiveReviews() {
           ))}
         </div>
       ) : (
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {rows.map((r) => (
             <article
               key={r.id}
@@ -585,7 +585,7 @@ function ReviewWriteSection() {
   };
 
   return (
-    <section className="mt-20 rounded-3xl border border-brand-yellow/40 bg-brand-yellow/10 px-5 py-8 sm:px-8">
+    <section className="mt-12 rounded-3xl border border-brand-yellow/40 bg-brand-yellow/10 px-5 py-6 sm:px-8">
       <div className="text-center">
         <span className="inline-block rounded-full bg-brand-orange/10 px-3 py-1 text-[11px] font-bold text-brand-orange sm:text-xs">
           🎁 후기 작성 이벤트 진행 중
