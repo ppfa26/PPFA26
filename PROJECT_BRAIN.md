@@ -120,7 +120,13 @@ GHTOK=$(gh auth token) && git -c credential.helper= push "https://x-access-token
 - 네이버 서치어드바이저 + 구글 서치콘솔 등록 완료
 - 검색 시 노출: 1위 당근, 2위 인포크링크(ppfa25) ⚠️, 3위 자사 도메인
 - **정착 예상**: 구글 1~2주 / 네이버 3~6주
-- **할 일**: ① 인포크링크(ppfa25) 정리(2위 지저분함 원인) ② sitemap.xml 제출 확인 ③ JSON-LD 구조화 데이터(회사명·주소·전화·평점) ④ NAP 일관성 ⑤ 블로그/카페 콘텐츠 신호 쌓기
+- **할 일**: ① 인포크링크(ppfa25) 정리(2위 지저분함 원인) ② sitemap.xml 제출 확인 ③ ~~JSON-LD 구조화 데이터~~ ✅완료 ④ NAP 일관성 ⑤ 블로그/카페 콘텐츠 신호 쌓기
+
+### SEO 코드 작업 완료 내역 (2026-07-22)
+- **JSON-LD 보강** (`src/app/layout.tsx`): Organization에 email·telephone·sameAs(당근·카카오) 추가 / **LocalBusiness 신규 추가**(주소·전화·평점 4.3/75 AggregateRating) → 네이버 지역검색·지식카드 대응. 실렌더 검증 통과.
+- **"정부지원금"·"경영컨설팅" 제거**: layout keywords에서 규칙 위반 단어 제거("정부지원금"→"정부지원사업 조회"). 이제 layout 전체에 "정부지원금" 0건.
+- **sitemap.ts**: 지원제도 상세 6개(`/support/{employment,duru,export-voucher,innovation-voucher,sbiz-voucher,youth-leap}`) 자동 추가 — SUPPORT_PROGRAMS에서 동적 생성.
+- ⚠️ 검증 팁: `npm start` 후 curl 검증 시 이전 서버 프로세스가 살아있으면 stale 응답을 줌. 반드시 `fuser -k 3000/tcp`로 완전 종료 후 새로 띄워서 검증할 것.
 
 ---
 

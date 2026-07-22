@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   keywords: [
     "정책자금",
     "정부지원사업",
-    "정부지원금",
+    "정부지원사업 조회",
     "사업지원",
     "소상공인 사업지원",
     "소상공인",
@@ -27,7 +27,6 @@ export const metadata: Metadata = {
     "K-Startup",
     "창업지원",
     "바우처",
-    "경영컨설팅",
     "모두의사업친구",
   ],
   // 홈(대표 페이지) 표준 주소 지정 — 검색엔진 중복 색인 방지
@@ -108,12 +107,43 @@ const structuredData = {
       "@type": "Organization",
       "@id": `${SITE_URL}/#organization`,
       name: "모두의사업친구",
-      alternateName: "소상공인 사업지원 · 정부지원사업 통합 매칭 플랫폼",
+      alternateName: "정부지원사업 AI 통합 매칭 플랫폼",
       url: SITE_URL,
       logo: `${SITE_URL}/favicon.png`,
       description:
-        "정책자금·정부지원금·창업지원·바우처·인증·교육을 한 곳에서 진단·매칭하여 정부지원사업을 안내·추천하는 통합 매칭 플랫폼입니다.",
-      sameAs: [] as string[],
+        "정책자금·창업지원·바우처·인증·교육 등 전국의 정부지원사업을 한 곳에서 AI가 진단·매칭하여 안내·추천하는 통합 매칭 플랫폼입니다.",
+      email: "biospartners@naver.com",
+      telephone: "+82-1551-7886",
+      // 동일 사업체 신호(NAP 통일) — 검색엔진이 여러 채널을 한 회사로 묶습니다.
+      sameAs: [
+        "https://www.daangn.com/kr/business/모두의사업친구",
+        "http://pf.kakao.com/_VxfWxan",
+      ] as string[],
+    },
+    {
+      // 지역 사업체 정보 — 네이버 지역검색·지식카드에 주소·전화·평점이 깔끔하게 노출되도록 제공
+      "@type": "LocalBusiness",
+      "@id": `${SITE_URL}/#localbusiness`,
+      name: "모두의사업친구",
+      image: `${SITE_URL}/og-image-v2.png`,
+      url: SITE_URL,
+      telephone: "+82-1551-7886",
+      email: "biospartners@naver.com",
+      priceRange: "₩",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "청라커낼로288번길 26, 285호",
+        addressLocality: "서구",
+        addressRegion: "인천광역시",
+        addressCountry: "KR",
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.3",
+        bestRating: "5",
+        ratingCount: "75",
+      },
+      parentOrganization: { "@id": `${SITE_URL}/#organization` },
     },
     {
       "@type": "WebSite",

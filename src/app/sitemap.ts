@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SUPPORT_PROGRAMS } from "@/lib/supportPrograms";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의사업친구.kr";
@@ -18,10 +19,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/refund", priority: 0.4, freq: "monthly" },
   ];
 
-  return pages.map((p) => ({
-    url: `${SITE_URL}${p.path}`,
+  // 정부지원사업(지원제도) 상세 페이지 — 검색 유입 가치가 높아 개별 색인 대상에 포함
+  const supportPages: MetadataRoute.Sitemap = SUPPORT_PROGRAMS.map((p) => ({
+    url: `${SITE_URL}/support/${p.id}`,
     lastModified: now,
-    changeFrequency: p.freq,
-    priority: p.priority,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
   }));
+
+  return [
+    ...pages.map((p) => ({
+      url: `${SITE_URL}${p.path}`,
+      lastModified: now,
+      changeFrequency: p.freq,
+      priority: p.priority,
+    })),
+    ...supportPages,
+  ];
 }
