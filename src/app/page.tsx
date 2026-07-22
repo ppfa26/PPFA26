@@ -607,8 +607,8 @@ export default function Home() {
                   </MobileCollapsibleDetails>
                 </div>
 
-                {/* 하단 페이드 — 베타 땐 뒤에 더 있다는 느낌만, 정식 땐 잠금 페이드 */}
-                <div className={`pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent ${BETA_FREE ? "h-24" : "h-44"}`} />
+                {/* 하단 페이드 — 베타 땐 뒤에 더 있다는 느낌만(아코디언 다 펼침 → 얇게), 정식 땐 잠금 페이드 */}
+                <div className={`pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent ${BETA_FREE ? "h-16" : "h-44"}`} />
               </div>
 
               {/* 오버레이 안내 — 베타: '지금 무료로 전부 공개' / 정식: '결제하면 공개' */}
@@ -691,8 +691,8 @@ export default function Home() {
         {/* FAQ */}
         {/* 구간 구분 — 얇은 회색 가로줄 */}
         <div className="section-divider" aria-hidden="true" />
-        {/* 섹션 상하 여백 통일: 위쪽 섹션과 동일하게 py-7 sm:py-11 */}
-        <section className="bg-gray-50 px-4 py-7 sm:py-11">
+        {/* 섹션 상하 여백 — 하단 여백 축소(대표님 요청) */}
+        <section className="bg-gray-50 px-4 py-6 sm:py-8">
           <div className="reveal mx-auto max-w-3xl">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
@@ -745,8 +745,8 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) */}
-        <section className="px-4 py-7 sm:py-11">
-          <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-8 text-center shadow-card sm:p-10">
+        <section className="px-4 py-6 sm:py-8">
+          <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
               as="h2"
@@ -769,7 +769,7 @@ export default function Home() {
                 <>1분이면 내 사업장에 알맞은 정부지원사업을 찾을 수 있습니다.</>
               )}
             </Editable>
-            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
               {/* 왼쪽 — 무료 진단 시작하기 (주 버튼, 빨간색) */}
               <a
                 id="home-cta-button"

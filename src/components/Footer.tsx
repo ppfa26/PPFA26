@@ -6,7 +6,7 @@ import Editable from "./Editable";
 
 export default function Footer() {
   return (
-    <footer className="mt-12 border-t border-gray-100 bg-brand-dark px-4 py-10 text-gray-300">
+    <footer className="mt-8 border-t border-gray-100 bg-brand-dark px-4 py-8 text-gray-300">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
           {/* 브랜드 */}
