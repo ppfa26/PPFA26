@@ -325,27 +325,32 @@ export default function Home() {
             </div>
 
             {/* 절세 임팩트 후킹 — 대표님 인사이트: '절세만으로도 큰돈을 세이브' 를 첫눈에 각인 */}
-            <div className="mx-auto mt-6 max-w-2xl rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 p-4 sm:p-5">
-              <p className="break-keep text-center text-sm font-extrabold text-brand-dark sm:text-base">
-                💰 지원금·대출만이 아닙니다.{" "}
-                <span className="text-brand-red">몰라서 못 챙긴 절세·감면</span>부터
-                찾아드립니다.
-              </p>
-              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="mx-auto mt-6 max-w-2xl overflow-hidden rounded-2xl border-2 border-brand-red/30 bg-white shadow-card">
+              {/* 상단 임팩트 바 — '얼마 아끼나'를 큰 숫자로 */}
+              <div className="bg-gradient-to-r from-brand-red to-orange-500 px-4 py-4 text-center sm:px-5">
+                <p className="break-keep text-[13px] font-bold text-white/90 sm:text-sm">
+                  💰 지원금·융자만이 아닙니다 — 몰라서 못 챙긴 세금까지
+                </p>
+                <p className="mt-1 break-keep text-lg font-black leading-tight text-white sm:text-2xl">
+                  세금·수수료만 아껴도 <span className="rounded-md bg-white px-1.5 text-brand-red">연 수백만원 ↑</span>
+                </p>
+              </div>
+              {/* 대표 절감 항목 4칸 — 혹하는 실제 금액/비율 */}
+              <div className="grid grid-cols-2 gap-px bg-gray-100 sm:grid-cols-4">
                 {[
-                  { n: "50~100%", l: "창업 세액감면", d: "5년간 소득·법인세" },
-                  { n: "연 600만원", l: "노란우산 소득공제", d: "가입만 하면 자동" },
-                  { n: "5~30%", l: "중기 특별세액감면", d: "상시형 감면" },
-                  { n: "자동 적용", l: "카드수수료 우대", d: "영세·중소 가맹점" },
+                  { n: "최대 100%", l: "창업 세액감면", d: "5년간 소득·법인세" },
+                  { n: "연 최대 600만원", l: "노란우산 소득공제", d: "가입만 하면 자동" },
+                  { n: "최대 30%", l: "중기 특별세액감면", d: "매년 반복 적용" },
+                  { n: "매년 자동", l: "카드수수료 우대", d: "영세·중소 가맹점" },
                 ].map((s) => (
                   <div
                     key={s.l}
-                    className="rounded-xl border border-brand-red/15 bg-white px-2.5 py-3 text-center"
+                    className="bg-white px-2.5 py-3.5 text-center"
                   >
-                    <p className="text-base font-black leading-tight text-brand-red sm:text-lg">
+                    <p className="text-[15px] font-black leading-tight text-brand-red sm:text-base">
                       {s.n}
                     </p>
-                    <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark">
+                    <p className="mt-1.5 break-keep text-[11px] font-extrabold text-brand-dark">
                       {s.l}
                     </p>
                     <p className="mt-0.5 break-keep text-[10px] text-brand-gray">
@@ -354,8 +359,8 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <p className="mt-3 break-keep text-center text-[12px] font-bold text-brand-dark">
-                ✨ 요건에 맞게 챙기면 <span className="text-brand-red">세금만으로도 수백~수천만원 절감</span>도 가능합니다.
+              <p className="break-keep bg-brand-yellow/40 px-3 py-2.5 text-center text-[12px] font-bold text-brand-dark">
+                ✨ 대부분 <b className="text-brand-red">신청·심사 없이 자동 적용</b> — 요건만 맞으면 세금만으로도 수백~수천만원 절감
               </p>
             </div>
 
@@ -465,11 +470,11 @@ export default function Home() {
                             <span className="inline-flex items-center gap-1 rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-2.5 py-1 text-[11px] font-bold text-brand-orange">
                               📑 상품 보기
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/30 bg-white px-2.5 py-1 text-[11px] font-bold text-brand-dark">
-                              🔗 신청 사이트
+                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/20 bg-gray-50 px-2.5 py-1 text-[11px] font-bold text-brand-gray">
+                              🔒 신청 사이트
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green">
-                              ☎ 콜센터
+                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/20 bg-gray-50 px-2.5 py-1 text-[11px] font-bold text-brand-gray">
+                              🔒 콜센터
                             </span>
                           </div>
                           <p className="mt-1.5 break-keep text-[11px] text-brand-gray">
@@ -478,9 +483,9 @@ export default function Home() {
                           <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
                             💡 {m.hook}
                           </p>
-                          {/* 신청 방법 메뉴얼 박스 — '신청 방법까지 알려준다' 각인 (대표님 요청: 주황 포인트색) */}
+                          {/* 신청 방법 메뉴얼 박스 — 잠금(결과 페이지에서 열림) 표시 */}
                           <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-brand-orange/40 bg-brand-orange/10 px-2.5 py-1.5">
-                            <span className="text-xs">📄</span>
+                            <span className="text-xs">🔒</span>
                             <span className="break-keep text-[11px] font-bold text-brand-orange">
                               신청 방법 메뉴얼
                             </span>
@@ -553,11 +558,11 @@ export default function Home() {
                             <span className="inline-flex items-center gap-1 rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-2.5 py-1 text-[11px] font-bold text-brand-orange">
                               📑 지원 내용 보기
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/30 bg-white px-2.5 py-1 text-[11px] font-bold text-brand-dark">
-                              🔗 신청 사이트
+                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/20 bg-gray-50 px-2.5 py-1 text-[11px] font-bold text-brand-gray">
+                              🔒 신청 사이트
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green">
-                              ☎ 문의처
+                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/20 bg-gray-50 px-2.5 py-1 text-[11px] font-bold text-brand-gray">
+                              🔒 문의처
                             </span>
                           </div>
                         </div>
@@ -633,27 +638,22 @@ export default function Home() {
                   </MobileCollapsibleDetails>
                 </div>
 
-                {/* 하단 페이드 — 베타 땐 뒤에 더 있다는 느낌만(아코디언 다 펼침 → 얇게), 정식 땐 잠금 페이드 */}
-                <div className={`pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-white via-white/95 to-transparent ${BETA_FREE ? "h-16" : "h-44"}`} />
+                {/* 하단 잠금 페이드 — 미리보기는 '맛보기', 상세는 가려서 '더 있다'는 느낌 강조 */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white via-white/95 to-transparent" />
               </div>
 
-              {/* 오버레이 안내 — 베타: '지금 무료로 전부 공개' / 정식: '결제하면 공개' */}
-              <div className="relative -mt-24 flex flex-col items-center pb-2">
-                <span
-                  className={`flex h-14 w-14 items-center justify-center rounded-full text-2xl text-white shadow-xl ${
-                    BETA_FREE ? "bg-brand-red animate-pulseGlow" : "bg-brand-dark"
-                  }`}
-                >
-                  {BETA_FREE ? "🎁" : "🔒"}
+              {/* 잠금 오버레이 — '핵심 상세는 결과 페이지에서 전부' 유도 */}
+              <div className="relative -mt-28 flex flex-col items-center px-4 pb-2">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
+                  🔒
                 </span>
                 <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
-                  {BETA_FREE
-                    ? "이 모든 결과, 지금은 무료로 전부 열립니다"
-                    : "이 모든 결과가 대표님을 기다리고 있어요"}
+                  신청 사이트·필요 서류·승인 전략은 결과 페이지에서 전부 열립니다
                 </p>
-                <p className="mt-1 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                  <b className="text-brand-orange">신청 사이트 · 필요 서류 · 승인 전략</b>
-                  {BETA_FREE ? "까지 오픈 베타 기간 0원" : "까지 공개"}
+                <p className="mt-1.5 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
+                  위 목록은 <b className="text-brand-dark">맛보기</b>입니다.
+                  진단을 마치면 <b className="text-brand-orange">내 사업장에 맞는 기관·제도·감면 전체와
+                  신청 방법</b>을 한 번에 확인할 수 있습니다.
                 </p>
               </div>
             </div>
@@ -662,13 +662,25 @@ export default function Home() {
               id="home-sample-cta"
               as="a"
               href="/diagnosis"
-              className="btn-brand mx-auto mt-5 block max-w-md rounded-full py-4 text-center text-base font-bold sm:text-lg"
+              className="btn-brand mx-auto mt-5 block max-w-md rounded-full py-4 text-center text-base font-bold sm:text-lg animate-pulseGlow"
             >
               {BETA_FREE
-                ? "지금 무료로 내 결과 전부 받아보기"
-                : "내 사업장 무료로 진단해보기"}
+                ? "🎁 지금 무료로 내 결과 전부 확인하기"
+                : "내 결과 전체 확인하기"}
             </Editable>
-            <p className="mt-3 text-center text-xs text-brand-gray/70">
+            {/* 결제 유도 안내 — 대표님 요청: '결제 시 모든 정보를 확인할 수 있습니다' */}
+            <p className="mx-auto mt-2.5 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
+              {BETA_FREE ? (
+                <>
+                  🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
+                </>
+              ) : (
+                <>
+                  🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
+                </>
+              )}
+            </p>
+            <p className="mt-2 text-center text-xs text-brand-gray/70">
               * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
               실제 결과는 사업장 정보에 따라 달라집니다.
             </p>
