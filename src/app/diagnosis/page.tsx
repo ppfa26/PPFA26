@@ -735,12 +735,10 @@ export default function Diagnosis() {
                 결제 1회당 <b className="text-brand-orange">새 사업자 조회는 1회</b>까지만 가능합니다.
               </p>
               <p className="mt-3 break-keep text-xs leading-relaxed text-brand-gray sm:text-[13px]">
-                입력값이 정확할수록 딱 맞는 결과를 받아보실 수 있으니,
-                제출 전에 한 번 더 확인해 주세요.
+                입력값이 정확할수록 딱 알맞는 결과를 받아보실 수 있습니다.
               </p>
               <p className="mt-3 break-keep text-xs leading-relaxed text-brand-gray sm:text-[13px]">
-                조회하신 결과는 <b className="text-brand-dark">결제 후 1개월간</b> 언제든
-                계속적으로 열람하실 수 있습니다.
+                진단 결과는 <b className="text-brand-dark">결제 후 1개월간</b> 계속해서 열람하실 수 있습니다.
               </p>
             </div>
           )}

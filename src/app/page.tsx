@@ -225,9 +225,7 @@ export default function Home() {
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
                 {BETA_FREE ? (
-                  <>
-                    <span className="text-brand-red">오픈 베타 기간 전부 무료</span>로 알려드립니다.
-                  </>
+                  <>오픈 베타 기간 전부 무료로 알려드립니다.</>
                 ) : (
                   <>
                     <span className="text-brand-red">{OFFICIAL_PRICE_LABEL}</span>으로 이 모든 걸 알려드립니다.
@@ -318,8 +316,7 @@ export default function Home() {
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
-                신청 가능한 정책자금·지원금은 물론,{" "}
-                <b className="text-brand-dark">대부분 몰라서 놓치는 절세·감면</b>까지
+                신청 가능한 정부지원사업은 물론, 대부분 몰라서 놓치는 절세·감면까지
                 신청 방법과 함께 안내합니다.
               </Editable>
             </div>
