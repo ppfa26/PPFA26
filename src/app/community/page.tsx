@@ -212,6 +212,28 @@ const channelStyle: Record<Review["channel"], string> = {
 };
 
 export default function Page() {
+  // ── 사이트링크 검색창(SearchAction) 대응 ──
+  //  네이버/구글 검색결과의 브랜드 검색창에서 넘어온 ?q= 검색어로 후기를 필터링.
+  //  검색어가 없으면 전체 후기를 그대로 노출한다.
+  const [query, setQuery] = useState("");
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search).get("q") || "";
+    setQuery(q);
+  }, []);
+
+  const norm = (s: string) => s.toLowerCase().replace(/\s+/g, "");
+  const q = norm(query);
+  const filteredReviews = q
+    ? REVIEWS.filter((r) =>
+        norm(
+          [r.name, r.business, r.region, r.channel, r.title, r.body, r.result]
+            .filter(Boolean)
+            .join(" ")
+        ).includes(q)
+      )
+    : REVIEWS;
+
   return (
     <PageShell pageKey="community">
       <Header />
@@ -303,9 +325,22 @@ export default function Page() {
             있습니다.
           </p>
 
+          {/* 검색어가 있을 때 안내 배너 (SearchAction으로 넘어온 경우) */}
+          {query && (
+            <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-brand-yellow/40 bg-brand-yellow/5 px-4 py-3 text-center text-[13px] text-brand-dark">
+              <span className="font-semibold">&lsquo;{query}&rsquo;</span> 검색 결과 ·{" "}
+              <span className="font-semibold">{filteredReviews.length}건</span>의 후기
+              {filteredReviews.length === 0 && (
+                <span className="mt-1 block text-[12px] text-brand-gray">
+                  검색 결과가 없어 전체 후기를 보여드립니다.
+                </span>
+              )}
+            </div>
+          )}
+
           {/* 승인후기와 이어지는 실제 이용 후기(별점) 카드 */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {REVIEWS.map((r, i) => (
+            {(filteredReviews.length > 0 ? filteredReviews : REVIEWS).map((r, i) => (
               <article
                 key={i}
                 className="flex flex-col rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-yellow/40 hover:shadow-lg sm:p-7"

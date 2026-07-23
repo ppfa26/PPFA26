@@ -107,13 +107,41 @@ const structuredData = {
       "@type": "Organization",
       "@id": `${SITE_URL}/#organization`,
       name: "모두의사업친구",
-      alternateName: "정부지원사업 AI 통합 매칭 플랫폼",
+      // ★ 브랜드 이름 충돌 방지 ★
+      //  네이버가 "모두의사업친구"를 '모두의 + 친구'(서울시복지재단 '모두의 친구' 사업)로
+      //  쪼개 인식하는 문제를 막기 위해, 붙여 쓴 고유 브랜드명의 변형들을 alternateName 으로
+      //  명시해 하나의 단일 고유명사임을 검색엔진에 각인시킨다.
+      alternateName: [
+        "모두의사업친구",
+        "모두의 사업친구",
+        "모두의사업친구 정부지원사업",
+        "정부지원사업 AI 통합 매칭 플랫폼",
+        "모두의사업친구 (biospartners)",
+      ],
+      // 브랜드 검색 대표 키워드 — 지원제도·정책자금 검색과 브랜드를 연결
+      slogan: "내 사업장에 딱 맞는 정부지원사업, AI가 한 번에 찾아드립니다",
+      knowsAbout: [
+        "정부지원사업",
+        "정책자금",
+        "창업지원",
+        "소상공인 지원",
+        "중소기업 지원",
+        "바우처",
+      ],
       url: SITE_URL,
       logo: `${SITE_URL}/favicon.png`,
       description:
         "정책자금·창업지원·바우처·인증·교육 등 전국의 정부지원사업을 한 곳에서 AI가 진단·매칭하여 안내·추천하는 통합 매칭 플랫폼입니다.",
       email: "biospartners@naver.com",
       telephone: "+82-1551-7886",
+      foundingDate: "2026",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "청라커낼로288번길 26, 285호",
+        addressLocality: "서구",
+        addressRegion: "인천광역시",
+        addressCountry: "KR",
+      },
       // 동일 사업체 신호(NAP 통일) — 검색엔진이 여러 채널을 한 회사로 묶습니다.
       sameAs: [
         "https://www.daangn.com/kr/business/모두의사업친구",
@@ -150,8 +178,18 @@ const structuredData = {
       "@id": `${SITE_URL}/#website`,
       url: SITE_URL,
       name: "모두의사업친구",
+      // WebSite 레벨에서도 브랜드 고유명을 재확인해 사이트링크 검색창(브랜드 박스) 유도
+      alternateName: [
+        "모두의사업친구",
+        "모두의 사업친구",
+        "정부지원사업 AI 통합 매칭 플랫폼",
+      ],
+      description:
+        "AI가 내 사업장에 딱 맞는 정책자금·정부지원사업을 진단·매칭하고 신청 방법까지 안내하는 통합 매칭 플랫폼.",
       inLanguage: "ko-KR",
       publisher: { "@id": `${SITE_URL}/#organization` },
+      // ★ 사이트링크 검색창(Sitelinks Searchbox) ★
+      //  실제 검색이 동작하는 커뮤니티 경로로 지정 (검색어는 q 파라미터로 전달).
       potentialAction: {
         "@type": "SearchAction",
         target: {
@@ -160,6 +198,38 @@ const structuredData = {
         },
         "query-input": "required name=search_term_string",
       },
+    },
+    {
+      // ★ 빵부스러기(BreadcrumbList) ★
+      //  검색엔진이 사이트 계층 구조를 이해해 '사이트링크(하위 메뉴)'를 뽑기 쉽게 한다.
+      "@type": "BreadcrumbList",
+      "@id": `${SITE_URL}/#breadcrumb`,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "홈",
+          item: SITE_URL,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "무료 진단",
+          item: `${SITE_URL}/diagnosis`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: "정부지원사업 정보",
+          item: `${SITE_URL}/business-info`,
+        },
+        {
+          "@type": "ListItem",
+          position: 4,
+          name: "요금 안내",
+          item: `${SITE_URL}/pricing`,
+        },
+      ],
     },
     {
       // 검색결과 사이트링크용 주요 메뉴
