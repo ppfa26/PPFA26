@@ -295,6 +295,11 @@ export default function Diagnosis() {
   };
 
   const submit = () => {
+    // ★ 담보 질문 제거(대표님 요청)에 따른 매칭 안전장치 ★
+    //   '담보 보유' 질문을 화면에서 뺐으므로, 매칭이 참조하는 collateral 값을
+    //   '없음'으로 자동 세팅한다. (대부분 소상공인 = 담보없음 → 보증서·정책자금 매칭 유지)
+    //   ※ setForm은 비동기라 저장에 넘기는 form을 즉시 보정하기 위해 직접 채워둔다.
+    if (!form.collateral) form.collateral = "없음";
     // 진단 결과를 localStorage 에 30일간 저장 (탭 닫아도 유지 · 1달 후 자동 만료)
     // ★ 어느 로그인 계정의 진단인지 '소유자'를 함께 저장 → 다른 계정으로 로그인하면
     //    이 진단이 따라오지 않도록 한다. (계정별 데이터 분리)
@@ -353,7 +358,7 @@ export default function Diagnosis() {
     { key: "revenue" }, { key: "years" }, { key: "age" }, { key: "region" },
     // 2단계 (필요한 지원 + 자금 여건 + 강점)
     { key: "purposes", multi: true }, { key: "credit" }, { key: "employees" },
-    { key: "collateral" }, { key: "currentInstitutions", multi: true },
+    { key: "currentInstitutions", multi: true },
     { key: "certifications", multi: true }, { key: "innovation", multi: true },
     // 3단계 (맞춤 매칭 + 결격 + 전화상담)
     { key: "revenueGrowth2y" }, { key: "smartDevice" }, { key: "wantsRefinance" },
@@ -672,11 +677,12 @@ export default function Diagnosis() {
                 <Field label={STEP2_FIELDS.purposes.label} hint={STEP2_FIELDS.purposes.hint}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} /></Field>
               </GroupBox>
 
-              {/* ② 자금 여건·현재 이용 현황 — 순서(대표님 요청): 신용점수 → 직원수 → 담보 → 이용 중인 정책기관 */}
+              {/* ② 자금 여건·현재 이용 현황 — 순서(대표님 요청): 신용점수 → 직원수 → 이용 중인 정책기관
+                  ※ '담보 보유 여부' 질문은 제거(대표님 요청). 매칭은 '담보없음' 기준(대부분 소상공인)으로
+                     제출 시 자동 세팅되므로 보증서·정책자금 매칭 정확도는 그대로 유지됨. */}
               <GroupBox title={STEP2_GROUP_FINANCE}>
                 <Field label={STEP3_FIELDS.credit.label} hint={STEP3_FIELDS.credit.hint}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
                 <Field label={STEP2_FIELDS.employees.label} hint={STEP2_FIELDS.employees.hint}><Radio k="employees" opts={STEP2_FIELDS.employees.opts} /></Field>
-                <Field label={STEP2_FIELDS.collateral.label} hint={STEP2_FIELDS.collateral.hint}><Radio k="collateral" opts={STEP2_FIELDS.collateral.opts} /></Field>
                 <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
               </GroupBox>
 

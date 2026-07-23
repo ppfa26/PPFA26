@@ -300,37 +300,28 @@ export default function Home() {
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
         <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
-            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
-                🔍 실제 결과 화면 예시
-              </span>
-              <Editable
-                id="home-sample-title"
-                as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
-              >
-                진단 한 번으로, 이 모든 걸 한눈에
-              </Editable>
-              <Editable
-                id="home-sample-sub"
-                as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
-              >
-                신청 가능한 정부지원사업은 물론, 대부분 몰라서 놓치는 절세·감면까지
-                신청 방법과 함께 안내합니다.
-              </Editable>
-            </div>
-
-            {/* 절세 임팩트 후킹 — 대표님 인사이트: '절세만으로도 큰돈을 세이브' 를 첫눈에 각인 */}
-            <div className="mx-auto mt-6 max-w-2xl overflow-hidden rounded-2xl border-2 border-brand-red/30 bg-white shadow-card">
-              {/* 상단 임팩트 바 — '얼마 아끼나'를 큰 숫자로 */}
-              <div className="bg-gradient-to-r from-brand-red to-orange-500 px-4 py-4 text-center sm:px-5">
-                <p className="break-keep text-[13px] font-bold text-white/90 sm:text-sm">
-                  💰 지원금·융자만이 아닙니다 — 몰라서 못 챙긴 세금까지
-                </p>
-                <p className="mt-1 break-keep text-lg font-black leading-tight text-white sm:text-2xl">
-                  세금·수수료만 아껴도 <span className="rounded-md bg-white px-1.5 text-brand-red">연 수백만원 ↑</span>
-                </p>
+            {/* 제목 + 절세 임팩트를 1개 박스로 통합 (대표님 요청) */}
+            <div className="mx-auto max-w-2xl overflow-hidden rounded-3xl border-2 border-brand-red/30 bg-white shadow-card">
+              {/* 상단 — 제목·부제 + 임팩트 헤드라인 (그라데이션) */}
+              <div className="bg-gradient-to-r from-brand-red to-orange-500 px-5 py-5 text-center sm:px-6 sm:py-6">
+                <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-[11px] font-bold text-white sm:text-xs">
+                  🔍 실제 결과 화면 예시
+                </span>
+                <Editable
+                  id="home-sample-title"
+                  as="h2"
+                  className="mt-2.5 break-keep text-xl font-black leading-tight text-white sm:text-2xl"
+                >
+                  진단 한 번으로, 이 모든 걸 한눈에
+                </Editable>
+                <Editable
+                  id="home-sample-sub"
+                  as="p"
+                  className="mx-auto mt-2 max-w-md break-keep text-[12px] font-medium leading-relaxed text-white/90 sm:text-[13px]"
+                >
+                  신청 가능한 정부지원사업은 물론, 대부분 몰라서 놓치는{" "}
+                  <b className="text-white">절세·감면</b>까지 신청 방법과 함께 안내합니다.
+                </Editable>
               </div>
               {/* 대표 절감 항목 4칸 — 혹하는 실제 금액/비율 */}
               <div className="grid grid-cols-2 gap-px bg-gray-100 sm:grid-cols-4">
@@ -342,7 +333,7 @@ export default function Home() {
                 ].map((s) => (
                   <div
                     key={s.l}
-                    className="bg-white px-2.5 py-3.5 text-center"
+                    className="bg-white px-2.5 py-3 text-center"
                   >
                     <p className="text-[15px] font-black leading-tight text-brand-red sm:text-base">
                       {s.n}
@@ -374,14 +365,13 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* 진단 완료 배너 + 3칸 통계 (선명하게 노출 — '이만큼 매칭됐다'를 확실히 보여줌) */}
+                {/* 진단 완료 배너 + 3칸 통계 (세로 컴팩트화 — 대표님 요청) */}
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
-                  <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
-                    <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                      🎉 진단 완료! 대표님이 지금 신청해볼 수 있는 것들을
-                      안내해드립니다.
+                  <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-3 shadow-card">
+                    <p className="break-keep text-[13px] font-extrabold text-brand-dark sm:text-sm">
+                      🎉 진단 완료! 지금 신청해볼 수 있는 것들이에요.
                     </p>
-                    <div className="mt-3 grid grid-cols-3 gap-2">
+                    <div className="mt-2 grid grid-cols-3 gap-2">
                       {[
                         { n: "6", l: "정책자금" },
                         { n: "8", l: "지원금·바우처" },
@@ -389,14 +379,14 @@ export default function Home() {
                       ].map((s) => (
                         <div
                           key={s.l}
-                          className="rounded-xl bg-white/70 px-2 py-2.5 text-center"
+                          className="flex items-center justify-center gap-1.5 rounded-xl bg-white/70 px-2 py-1.5 text-center"
                         >
-                          <p className="text-xl font-extrabold text-brand-dark sm:text-2xl">
+                          <span className="text-lg font-extrabold leading-none text-brand-dark sm:text-xl">
                             {s.n}
-                          </p>
-                          <p className="mt-0.5 break-keep text-[11px] font-bold text-brand-dark/70">
+                          </span>
+                          <span className="break-keep text-[11px] font-bold text-brand-dark/70">
                             {s.l}
-                          </p>
+                          </span>
                         </div>
                       ))}
                     </div>
