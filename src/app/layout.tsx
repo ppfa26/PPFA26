@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
   description:
-    "AI가 내 사업장에 딱 맞는 정책자금·정부지원사업·바우처·기업인증·세금감면을 한 번에 무료 진단하고, 사업자금(운영·시설·운전)까지 신청 방법을 안내하는 통합 매칭 플랫폼, 모두의사업친구.",
+    "AI가 내 사업장에 딱 맞는 정부지원사업을 한 번에 진단하고, 신청 방법까지 한번에 안내하는 AI 통합 매칭 플랫폼입니다.",
   keywords: [
     // ── 핵심 키워드 ──
     "정책자금",
@@ -228,7 +228,7 @@ const structuredData = {
         "정부지원사업 AI 통합 매칭 플랫폼",
       ],
       description:
-        "AI가 내 사업장에 딱 맞는 정책자금·정부지원사업을 진단·매칭하고 신청 방법까지 안내하는 통합 매칭 플랫폼.",
+        "AI가 내 사업장에 딱 맞는 정부지원사업을 한 번에 진단하고, 신청 방법까지 한번에 안내하는 AI 통합 매칭 플랫폼입니다.",
       inLanguage: "ko-KR",
       publisher: { "@id": `${SITE_URL}/#organization` },
       // ★ 사이트링크 검색창(Sitelinks Searchbox) ★
