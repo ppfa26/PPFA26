@@ -222,7 +222,7 @@ export const PHONE_CONSULT_FIELD = {
 
 // ── 3단계 · 현재 이용 현황 및 특이사항 ──────────────────────────
 export const STEP3_TITLE = "3단계 · 맞춤 매칭 · 결격사유 확인 · 총 3페이지 중 3페이지";
-export const STEP3_SUBTITLE = "딱 맞는 상품만 골라 안내 해 드리기 위해 최종 정보를 확인합니다.";
+export const STEP3_SUBTITLE = "딱 맞는 상품만 골라 안내 해 드리기 위한 마지막 정보 확인입니다.";
 export const STEP3_FIELDS = {
   // ★ 선택지 간소화 (대표님 요청) ★ 3구간→2구간. 신용취약 기준선(NCB 839점)에 맞춰 "839점 이하 / 839점 이상"으로 단순화.
   //   ※ matching.ts:155~161 은 이미 "839점 이상"/"이하" 문자열을 하위호환으로 인식 → 매칭 영향 없음.
