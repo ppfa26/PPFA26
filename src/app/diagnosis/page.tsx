@@ -458,7 +458,7 @@ export default function Diagnosis() {
 
           {step === 1 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
-              <h1 className="mb-1 text-lg font-extrabold text-brand-dark sm:text-xl">{STEP1_TITLE}</h1>
+              <h1 className="mb-1 break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP1_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP1_SUBTITLE}</p>
 
               {/* 사업자번호 자동 조회 (국세청 연동) — 박스 틀 색상 빨간색으로 통일(대표님 요청) */}
@@ -669,7 +669,7 @@ export default function Diagnosis() {
 
           {step === 2 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
-              <h1 className="mb-1 text-lg font-extrabold text-brand-dark sm:text-xl">{STEP2_TITLE}</h1>
+              <h1 className="mb-1 break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP2_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP2_SUBTITLE}</p>
 
               {/* ① 어떤 지원이 필요한가 — 3단계처럼 라벨+짧은 힌트로 간결화(대표님 요청). 희망금액 질문 제거 */}
@@ -696,7 +696,7 @@ export default function Diagnosis() {
 
           {step === 3 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
-              <h1 className="mb-1 text-lg font-extrabold text-brand-dark sm:text-xl">{STEP3_TITLE}</h1>
+              <h1 className="mb-1 break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP3_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP3_SUBTITLE}</p>
 
               {/* ── 정밀 매칭 질문 (소진공 혁신형 상품 정확히 골라내기) ── */}

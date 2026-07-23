@@ -45,7 +45,7 @@ export const BNO_TEXT = {
 };
 
 // ── 1단계 · 기본 정보 ─────────────────────────────────────────
-export const STEP1_TITLE = "1단계 · 사업장 기본 정보";
+export const STEP1_TITLE = "1단계 · 사업장 기본 정보 · 총 3페이지 중 1페이지";
 export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본 정보 입력란입니다.";
 // 1단계 안내 박스 소제목
 export const STEP1_GROUP = "🏢 사업장 정보";
@@ -100,7 +100,7 @@ export const STEP1_FIELDS = {
 // ── 2단계 · 무엇을 도와드릴까요 (상담목적+관심분야 통합) ──────────
 //  ★ 간소화 ★ 예전 '상담 목적'과 '관심 분야'가 거의 중복이라 하나로 합쳤습니다.
 //    (정부지원금·인증이 양쪽에 겹쳤음) → 문항 수는 줄고 정보량은 그대로.
-export const STEP2_TITLE = "2단계 · 필요한 지원과 기업 역량";
+export const STEP2_TITLE = "2단계 · 필요한 지원과 기업 역량 · 총 3페이지 중 2페이지";
 export const STEP2_SUBTITLE = "어떤 자금·지원이 필요하신지와 사업장의 강점을 확인합니다.";
 // 2단계 문맥별 그룹 소제목
 export const STEP2_GROUP_NEED = "💰 어떤 지원이 필요하세요?";
@@ -221,7 +221,7 @@ export const PHONE_CONSULT_FIELD = {
 };
 
 // ── 3단계 · 현재 이용 현황 및 특이사항 ──────────────────────────
-export const STEP3_TITLE = "3단계 · 맞춤 매칭 · 결격사유 확인";
+export const STEP3_TITLE = "3단계 · 맞춤 매칭 · 결격사유 확인 · 총 3페이지 중 3페이지";
 export const STEP3_SUBTITLE = "딱 맞는 상품만 골라 안내 해 드리기 위해 최종 정보를 확인합니다.";
 export const STEP3_FIELDS = {
   // ★ 선택지 간소화 (대표님 요청) ★ 3구간→2구간. 신용취약 기준선(NCB 839점)에 맞춰 "839점 이하 / 839점 이상"으로 단순화.
