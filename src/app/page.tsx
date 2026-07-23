@@ -150,7 +150,9 @@ export default function Home() {
               as="p"
               className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base"
             >
-              복잡한 정부지원사업, 이제 대표님이 직접 찾지 마세요. 지원 가능한 사업만 AI가 골라 신청 방법까지 안내합니다.
+              복잡한 정부지원사업, 이제 대표님이 직접 찾지 마세요.
+              <br className="hidden sm:block" />
+              지원 가능한 사업만 AI가 찾아 신청 방법까지 안내합니다.
             </Editable>
 
             {/* 오픈 베타 무료 앵커링 — 오픈 베타 기간 전부 0원으로 통일 (대표님 요청: '원래 9,900원' 삭제) */}
@@ -300,31 +302,34 @@ export default function Home() {
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
         <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
-            {/* 제목 + 절세 임팩트를 1개 박스로 통합 (대표님 요청) */}
-            <div className="mx-auto max-w-2xl overflow-hidden rounded-3xl border-2 border-brand-red/30 bg-white shadow-card">
-              {/* 상단 — 제목·부제 + 임팩트 헤드라인 (그라데이션) */}
-              <div className="bg-gradient-to-r from-brand-red to-orange-500 px-5 py-5 text-center sm:px-6 sm:py-6">
-                <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-[11px] font-bold text-white sm:text-xs">
+            {/* 제목 + 절세 임팩트를 1개 박스로 통합 (대표님 요청).
+                ★ 홈 전체 다크 톤과 자연스럽게 잇기 위해 그라데이션·흰배경을 쓰지 않고
+                  bg-white + rounded-3xl 기반으로 둔다 → theme-dark 전역 규칙이 자동으로
+                  다크 글래스로 변환해 주변 카드와 동일한 유리 톤이 된다. 강조는 글자색만. */}
+            <div className="mx-auto max-w-2xl overflow-hidden rounded-3xl bg-white p-5 shadow-card sm:p-6">
+              {/* 상단 — 제목·부제 */}
+              <div className="text-center">
+                <span className="inline-block rounded-full bg-brand-orange/10 px-3 py-1 text-[11px] font-bold text-brand-orange sm:text-xs">
                   🔍 실제 결과 화면 예시
                 </span>
                 <Editable
                   id="home-sample-title"
                   as="h2"
-                  className="mt-2.5 break-keep text-xl font-black leading-tight text-white sm:text-2xl"
+                  className="mt-2.5 break-keep text-xl font-black leading-tight text-brand-dark sm:text-2xl"
                 >
                   진단 한 번으로, 이 모든 걸 한눈에
                 </Editable>
                 <Editable
                   id="home-sample-sub"
                   as="p"
-                  className="mx-auto mt-2 max-w-md break-keep text-[12px] font-medium leading-relaxed text-white/90 sm:text-[13px]"
+                  className="mx-auto mt-2 max-w-md break-keep text-[12px] font-medium leading-relaxed text-brand-gray sm:text-[13px]"
                 >
                   신청 가능한 정부지원사업은 물론, 대부분 몰라서 놓치는{" "}
-                  <b className="text-white">절세·감면</b>까지 신청 방법과 함께 안내합니다.
+                  <b className="text-brand-dark">절세·감면</b>까지 신청 방법과 함께 안내합니다.
                 </Editable>
               </div>
-              {/* 대표 절감 항목 4칸 — 혹하는 실제 금액/비율 */}
-              <div className="grid grid-cols-2 gap-px bg-gray-100 sm:grid-cols-4">
+              {/* 대표 절감 항목 4칸 — 혹하는 실제 금액/비율 (투명 칸 + 은은한 구분선 → 자동 다크화) */}
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[
                   { n: "최대 100%", l: "창업 세액감면", d: "5년간 소득·법인세" },
                   { n: "연 최대 600만원", l: "노란우산 소득공제", d: "가입만 하면 자동" },
@@ -333,7 +338,7 @@ export default function Home() {
                 ].map((s) => (
                   <div
                     key={s.l}
-                    className="bg-white px-2.5 py-3 text-center"
+                    className="rounded-xl border border-gray-100 px-2.5 py-3 text-center"
                   >
                     <p className="text-[15px] font-black leading-tight text-brand-red sm:text-base">
                       {s.n}
@@ -347,7 +352,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <p className="break-keep bg-brand-yellow/40 px-3 py-2.5 text-center text-[12px] font-bold text-brand-dark">
+              <p className="mt-3 break-keep rounded-xl border border-brand-red/20 px-3 py-2.5 text-center text-[12px] font-bold text-brand-dark">
                 ✨ 대부분 <b className="text-brand-red">신청·심사 없이 자동 적용</b> — 요건만 맞으면 세금만으로도 수백~수천만원 절감
               </p>
             </div>
