@@ -140,9 +140,10 @@ export default function Home() {
               as="h1"
               className="break-keep text-[21px] font-black leading-[1.35] text-brand-dark xs:text-[25px] sm:text-[38px] sm:leading-tight"
             >
-              대표님 사업장이 받을 수 있는 모든
+              내가 받을 수 있는 모든{" "}
+              <span className="text-brand-red">정부지원사업</span>
               <br />
-              <span className="text-brand-red">정부지원사업</span> AI가 찾아드립니다.
+              <span className="text-brand-red">AI로 직접</span> 찾아드립니다.
             </Editable>
 
             <Editable
@@ -150,7 +151,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-5 max-w-xl break-keep text-sm leading-relaxed text-brand-gray sm:text-base"
             >
-              AI가 대표님이 지원 가능한 사업만을 알아서
+              복잡한 정부지원사업, 이제 대표님이 직접 찾지 마세요. 지원 가능한 사업만 AI가 골라 신청 방법까지 안내합니다.
             </Editable>
 
             {/* 오픈 베타 무료 앵커링 — 원래 9,900원인데 지금은 전부 무료 */}

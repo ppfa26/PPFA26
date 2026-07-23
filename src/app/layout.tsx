@@ -12,7 +12,7 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "모두의사업친구 | 정부지원사업 통합 매칭 플랫폼",
+  title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
   description:
     "AI가 내 사업장에 딱 맞는 정책자금·정부지원사업·바우처·기업인증·세금감면을 한 번에 무료 진단하고, 사업자금(운영·시설·운전)까지 신청 방법을 안내하는 통합 매칭 플랫폼, 모두의사업친구.",
   keywords: [
@@ -44,7 +44,9 @@ export const metadata: Metadata = {
     // ── 지역(로컬 SEO) 키워드 ──
     "청라 정책자금",
     "인천 정부지원사업",
+    "인천 서해구 정책자금",
     "인천 서구 정책자금",
+    "검단 정책자금",
     "서울 정부지원사업",
     "경기 정부지원사업",
     // ── 브랜드 ──
@@ -158,9 +160,12 @@ const structuredData = {
         "중소기업 지원",
         "정부지원사업 무료진단",
       ],
-      // 서비스 제공 지역 — 로컬 검색 신호 (청라·인천 중심, 서울·경기 포함)
+      // 서비스 제공 지역 — 로컬 검색 신호
+      //  ※ 2026.7.1 인천 행정개편으로 '서구'가 '서해구'로 명칭 변경(청라=서해구).
+      //    검색 과도기이므로 '서해구'·'서구' 둘 다 신호로 유지한다.
       areaServed: [
-        { "@type": "City", name: "인천광역시 서구 청라" },
+        { "@type": "City", name: "인천광역시 서해구 청라" },
+        { "@type": "City", name: "인천광역시 서해구" },
         { "@type": "City", name: "인천광역시" },
         { "@type": "City", name: "서울특별시" },
         { "@type": "State", name: "경기도" },
@@ -176,7 +181,7 @@ const structuredData = {
       address: {
         "@type": "PostalAddress",
         streetAddress: "청라커낼로288번길 26, 285호",
-        addressLocality: "서구",
+        addressLocality: "서해구",
         addressRegion: "인천광역시",
         addressCountry: "KR",
       },
@@ -199,7 +204,7 @@ const structuredData = {
       address: {
         "@type": "PostalAddress",
         streetAddress: "청라커낼로288번길 26, 285호",
-        addressLocality: "서구",
+        addressLocality: "서해구",
         addressRegion: "인천광역시",
         addressCountry: "KR",
       },
