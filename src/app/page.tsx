@@ -153,16 +153,9 @@ export default function Home() {
               복잡한 정부지원사업, 이제 대표님이 직접 찾지 마세요. 지원 가능한 사업만 AI가 골라 신청 방법까지 안내합니다.
             </Editable>
 
-            {/* 오픈 베타 무료 앵커링 — 원래 9,900원인데 지금은 전부 무료 */}
+            {/* 오픈 베타 무료 앵커링 — 오픈 베타 기간 전부 0원으로 통일 (대표님 요청: '원래 9,900원' 삭제) */}
             {BETA_FREE && (
               <div className="mx-auto mt-5 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border-2 border-brand-red/30 bg-brand-red/5 px-5 py-3">
-                <span className="text-sm font-semibold text-brand-gray sm:text-base">
-                  원래{" "}
-                  <span className="font-bold text-brand-dark line-through decoration-brand-red decoration-2">
-                    {OFFICIAL_PRICE_LABEL}
-                  </span>{" "}
-                  →
-                </span>
                 <span className="text-base font-black text-brand-red sm:text-lg">
                   오픈 베타 기간 전부 0원
                 </span>
@@ -233,11 +226,7 @@ export default function Home() {
               >
                 {BETA_FREE ? (
                   <>
-                    원래{" "}
-                    <span className="text-brand-gray line-through decoration-brand-red decoration-2">
-                      {OFFICIAL_PRICE_LABEL}
-                    </span>
-                    , 지금은 <span className="text-brand-red">전부 무료</span>로 알려드립니다.
+                    <span className="text-brand-red">오픈 베타 기간 전부 무료</span>로 알려드립니다.
                   </>
                 ) : (
                   <>
@@ -322,15 +311,52 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                AI가 내 사업장 맞춤 정부지원사업을 한 번에
+                진단 한 번으로, 이 모든 걸 한눈에
               </Editable>
               <Editable
                 id="home-sample-sub"
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
-                신청 가능한 기관·상품과 신청 방법까지 안내
+                신청 가능한 정책자금·지원금은 물론,{" "}
+                <b className="text-brand-dark">대부분 몰라서 놓치는 절세·감면</b>까지
+                신청 방법과 함께 안내합니다.
               </Editable>
+            </div>
+
+            {/* 절세 임팩트 후킹 — 대표님 인사이트: '절세만으로도 큰돈을 세이브' 를 첫눈에 각인 */}
+            <div className="mx-auto mt-6 max-w-2xl rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 p-4 sm:p-5">
+              <p className="break-keep text-center text-sm font-extrabold text-brand-dark sm:text-base">
+                💰 지원금·대출만이 아닙니다.{" "}
+                <span className="text-brand-red">몰라서 못 챙긴 절세·감면</span>부터
+                찾아드립니다.
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {[
+                  { n: "50~100%", l: "창업 세액감면", d: "5년간 소득·법인세" },
+                  { n: "연 600만원", l: "노란우산 소득공제", d: "가입만 하면 자동" },
+                  { n: "5~30%", l: "중기 특별세액감면", d: "상시형 감면" },
+                  { n: "자동 적용", l: "카드수수료 우대", d: "영세·중소 가맹점" },
+                ].map((s) => (
+                  <div
+                    key={s.l}
+                    className="rounded-xl border border-brand-red/15 bg-white px-2.5 py-3 text-center"
+                  >
+                    <p className="text-base font-black leading-tight text-brand-red sm:text-lg">
+                      {s.n}
+                    </p>
+                    <p className="mt-1 break-keep text-[11px] font-bold text-brand-dark">
+                      {s.l}
+                    </p>
+                    <p className="mt-0.5 break-keep text-[10px] text-brand-gray">
+                      {s.d}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 break-keep text-center text-[12px] font-bold text-brand-dark">
+                ✨ 요건에 맞게 챙기면 <span className="text-brand-red">세금만으로도 수백~수천만원 절감</span>도 가능합니다.
+              </p>
             </div>
 
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
@@ -673,9 +699,7 @@ export default function Home() {
               >
                 {BETA_FREE ? (
                   <>
-                    정식 오픈가는 9,900원(1회성 결제)입니다.
-                    <br />
-                    <b className="text-brand-red">오픈 베타 기간에는 결제 없이 전부 무료로 이용</b>하실 수 있습니다.
+                    <b className="text-brand-red">오픈 베타 기간 전부 무료</b>로 이용하실 수 있습니다.
                   </>
                 ) : (
                   <>1회성 결제이며 월 구독 결제가 아닙니다.</>
