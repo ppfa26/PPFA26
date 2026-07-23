@@ -113,8 +113,16 @@ function profileTags(p: DiagnosisProfile): Set<string> {
     certs.includes("이노비즈");
   if (techCert) tags.add("기술인증보유");
 
-  // 혁신성장 분야 해당 여부 (혁신성장 공동기준 9개 테마 중 하나라도 선택)
-  if ((p.innovation || []).length > 0) tags.add("혁신성장");
+  // 혁신성장 분야 해당 여부 (간소화 후: "예…"만 true, "아니요/모르겠음"·"해당 없음"은 제외)
+  const innovationYes = (p.innovation || []).some(
+    (v) =>
+      v &&
+      !v.includes("해당 없음") &&
+      !v.includes("해당없음") &&
+      !v.startsWith("아니") &&
+      v.trim() !== "없음"
+  );
+  if (innovationYes) tags.add("혁신성장");
 
   // 현재 이용 중인 기관 (중복배제 규칙용)
   (p.currentInstitutions || []).forEach((inst) => tags.add(`이용:${inst}`));

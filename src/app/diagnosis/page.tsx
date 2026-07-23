@@ -52,7 +52,7 @@ function keepBrackets(text: string): string {
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div className="mb-5 last:mb-0 sm:mb-6">
-      <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(label)}</p>
+      {label && <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(label)}</p>}
       {hint && <p className="mb-2 break-keep text-xs leading-snug text-brand-gray">{hint}</p>}
       {children}
     </div>
