@@ -81,7 +81,9 @@ function profileTags(p: DiagnosisProfile): Set<string> {
     if (y.includes("1년미만") || y.includes("3년미만")) {
       tags.add("업력3년이내");
       tags.add("업력7년이내");
-    } else if (y.includes("7년미만")) {
+    } else if (y.includes("5년미만") || y.includes("7년미만")) {
+      // ★ 버그 수정 ★ "5년 미만"이 어느 태그에도 안 걸려 창업지원사업이 매칭 안 되던 문제.
+      //   5년·7년 미만 → 업력 7년 이내(창업지원사업 자격 유지)
       tags.add("업력7년이내");
     }
     // 7년이상 → 창업지원사업 대상 아님 (태그 없음)

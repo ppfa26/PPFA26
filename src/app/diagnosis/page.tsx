@@ -593,7 +593,7 @@ export default function Diagnosis() {
                   </span>
                 </div>
                 <div className="p-4 sm:p-5">
-                  <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
+                  <Field label={STEP3_FIELDS.bankruptcy.label} hint={STEP3_FIELDS.bankruptcy.hint}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
                   <div className="mb-0">
                     <p className="mb-2 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.taxDelinquent.label)}</p>
                     <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} />

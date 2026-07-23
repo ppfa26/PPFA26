@@ -180,7 +180,7 @@ export default function MatchingPreview() {
     const steps = [
       { icon: "🏢", label: "사업장 정보 확인" },
       { icon: "🏦", label: "지원 가능 기관 매칭" },
-      { icon: "💳", label: "정책자금·지원사업 판독" },
+      { icon: "💳", label: "정부지원사업 판독" },
       { icon: "🎯", label: "맞춤 결과 정리" },
     ];
     return (
@@ -192,11 +192,10 @@ export default function MatchingPreview() {
               <span className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
             </div>
             <p className="break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-xl">
-              {name ? `${name} 대표님 사업장을 ` : "대표님 사업장을 "}
-              <span className="text-brand-orange">AI가 분석</span>하고 있어요
+              대표님 사업장을 <span className="text-brand-orange">AI가 분석</span>하고 있어요
             </p>
             <p className="mt-1.5 text-xs text-brand-gray sm:text-sm">
-              전국 정책자금·정부지원사업 데이터와 대조 중입니다
+              전국 정부지원사업 데이터와 대조 중입니다
             </p>
 
             <ul className="mt-6 space-y-2.5 text-left">
