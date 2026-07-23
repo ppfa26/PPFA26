@@ -423,7 +423,12 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   //     배열 길이가 1이라 length>0 로 true 가 되어 기보·중진공이 잘못 열리던 문제.
   //     → "해당 없음"/"없음"을 제외한 실제 혁신테마가 1개 이상일 때만 true.
   const isInnovationArea = (p.innovation || []).some(
-    (v) => v && !v.includes("해당 없음") && !v.includes("해당없음") && v.trim() !== "없음"
+    (v) =>
+      v &&
+      !v.includes("해당 없음") &&
+      !v.includes("해당없음") &&
+      !v.startsWith("아니") && // 새 옵션 "아니요/모르겠음" 제외 (간소화 후)
+      v.trim() !== "없음"
   );
 
   // ── 소진공 혁신형/특별 상품 정밀 매칭용 조건부 응답 (3단계 추가질문) ──

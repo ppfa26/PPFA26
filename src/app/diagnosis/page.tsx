@@ -663,7 +663,7 @@ export default function Diagnosis() {
               {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) — 있으면 자격이 열려 더 유리한 문맥으로 묶음 */}
               <GroupBox title={STEP2_GROUP_STRENGTH} tone="green">
                 <Field label={STEP3_FIELDS.certifications.label} hint={STEP3_FIELDS.certifications.hint}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
-                <Field label={STEP3_FIELDS.innovation.label} hint={STEP3_FIELDS.innovation.hint}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
+                <Field label={STEP3_FIELDS.innovation.label} hint={STEP3_FIELDS.innovation.hint}><Multi k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
               </GroupBox>
             </div>
           )}
