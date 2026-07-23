@@ -153,7 +153,7 @@ export default function Home() {
               AI가 대표님이 지원 가능한 사업만을 알아서
             </Editable>
 
-            {/* 오픈 베타 무료 앵커링 — 원래 39,900원인데 지금은 전부 무료 */}
+            {/* 오픈 베타 무료 앵커링 — 원래 9,900원인데 지금은 전부 무료 */}
             {BETA_FREE && (
               <div className="mx-auto mt-5 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border-2 border-brand-red/30 bg-brand-red/5 px-5 py-3">
                 <span className="text-sm font-semibold text-brand-gray sm:text-base">
@@ -235,13 +235,13 @@ export default function Home() {
                   <>
                     원래{" "}
                     <span className="text-brand-gray line-through decoration-brand-red decoration-2">
-                      39,900원
+                      {OFFICIAL_PRICE_LABEL}
                     </span>
                     , 지금은 <span className="text-brand-red">전부 무료</span>로 알려드립니다.
                   </>
                 ) : (
                   <>
-                    <span className="text-brand-red">39,900원</span>으로 이 모든 걸 알려드립니다.
+                    <span className="text-brand-red">{OFFICIAL_PRICE_LABEL}</span>으로 이 모든 걸 알려드립니다.
                   </>
                 )}
               </Editable>
@@ -664,7 +664,7 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                AI 올인원 패키지
+                AI 진단 리포트
               </Editable>
               <Editable
                 id="home-pricing-sub"
@@ -673,7 +673,7 @@ export default function Home() {
               >
                 {BETA_FREE ? (
                   <>
-                    정식 오픈가는 39,900원(1회성 결제)입니다.
+                    정식 오픈가는 9,900원(1회성 결제)입니다.
                     <br />
                     <b className="text-brand-red">오픈 베타 기간에는 결제 없이 전부 무료로 이용</b>하실 수 있습니다.
                   </>

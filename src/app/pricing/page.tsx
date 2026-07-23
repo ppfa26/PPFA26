@@ -49,7 +49,7 @@ export default function PricingPage() {
               as="h1"
               className="text-3xl font-black text-brand-dark sm:text-4xl"
             >
-              AI 올인원 패키지
+              AI 진단 리포트
             </Editable>
             <Editable
               id="pricing-sub"

@@ -1,4 +1,6 @@
-// 상품 구성 — AI 올인원 패키지 단일 상품 (정식 오픈가: 39,900원, 부가세 포함가)
+// 상품 구성 — AI 진단 리포트 단일 상품 (오픈가: 9,900원, 부가세 포함가)
+// ※ 결과창 자체가 심화 진단 리포트이므로 상품명을 "AI 진단 리포트"로 정의.
+// ※ 심리적 저항선 최소화를 위해 "커피 2잔" 무저항 구간(9,900원)으로 책정.
 // ※ id는 기존 "basic"을 그대로 재사용해 결제(?tier=basic) 흐름·기존 결제내역 표기를 유지한다.
 // originalPrice = 정가(앵커링용 취소선)
 export type Tier = {
@@ -22,13 +24,13 @@ export const TIERS: Tier[] = [
   {
     id: "basic",
     icon: "🎯",
-    name: "AI 올인원 패키지",
+    name: "AI 진단 리포트",
     subtitle: "AI로 내 사업장에서 받을 수 있는 정부지원사업 찾기",
-    price: 39900,
-    priceLabel: "39,900원",
-    originalPrice: 59000,
-    originalPriceLabel: "59,000원",
-    discountLabel: "32% 할인",
+    price: 9900,
+    priceLabel: "9,900원",
+    originalPrice: 19000,
+    originalPriceLabel: "19,000원",
+    discountLabel: "48% 할인",
     monthlyLabel: "",
     period: "1개월",
     popular: true,
@@ -37,7 +39,7 @@ export const TIERS: Tier[] = [
       "정부지원사업 신청 방법 및 관련 사이트 링크",
       "공식 카카오 채널 톡 상담",
     ],
-    cta: "AI 올인원 패키지 시작하기",
+    cta: "AI 진단 리포트 받기",
   },
 ];
 

@@ -54,7 +54,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <div className="mt-2">
               {BETA_FREE ? (
                 <>
-                  {/* 베타: 정식가(39,900원) 취소선 + '오픈 베타 기간 0원' 강조 (대표님 요청) */}
+                  {/* 베타: 정식가(9,900원) 취소선 + '오픈 베타 기간 0원' 강조 (대표님 요청) */}
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-sm line-through ${

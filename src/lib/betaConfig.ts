@@ -5,7 +5,7 @@
 // "오픈 베타 = 전부 무료"로 운영한다.
 //   - 결과창 잠금(previewLock) 해제 → 결제 없이 전체 결과 무료 공개
 //   - 결제 유도 박스 → "오픈 베타 무료" 안내 + "정식 오픈 알림 받기"로 교체
-//   - 가격은 정식 오픈가(39,900원)만 "정식 오픈 예정가"로 앵커링 노출
+//   - 가격은 정식 오픈가(9,900원)만 "정식 오픈 예정가"로 앵커링 노출
 //   - 결제 흐름 코드는 지우지 않고 그대로 유지(숨김만) → 토스 심사/재연동 시 스위치 하나로 복구
 //
 // ⚠️ 토스 결제 승인 후 재연동할 때: BETA_FREE 를 false 로만 바꾸면
@@ -16,8 +16,8 @@
 export const BETA_FREE = true;
 
 /** 정식 오픈가 (정식 유료 전환 시 판매가) */
-export const OFFICIAL_PRICE = 39900;
-export const OFFICIAL_PRICE_LABEL = "39,900원";
+export const OFFICIAL_PRICE = 9900;
+export const OFFICIAL_PRICE_LABEL = "9,900원";
 
 /** 정식 오픈 알림 신청 링크 (자발적 연락처/알림 신청 — 카카오 채널 1:1) */
 export const OPEN_ALERT_URL = "http://pf.kakao.com/_VxfWxan/chat";

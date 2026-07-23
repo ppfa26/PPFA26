@@ -40,7 +40,7 @@ declare global {
  * 어느 컴포넌트에서든 import 해서 호출하면 된다.
  *   trackConversion("CompleteRegistration");            // 회원가입 완료
  *   trackConversion("SubmitApplication");               // 진단(서비스 신청) 완료
- *   trackConversion("Purchase", { value: 39900 });      // 결제 완료(금액 포함)
+ *   trackConversion("Purchase", { value: 9900 });       // 결제 완료(금액 포함)
  *
  * · 당근 이벤트명(ViewPage/Purchase/CompleteRegistration/SubmitApplication 등)은
  *   당근이 정한 표준 이름을 그대로 사용한다.

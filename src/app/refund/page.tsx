@@ -26,7 +26,7 @@ export default function RefundPage() {
           열람·매칭 추천이 개시되며, 별도 배송이 없는 상품입니다.
         </Editable>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
-          <li>AI 올인원 패키지 : <b>결제일로부터 1개월</b> 이용</li>
+          <li>AI 진단 리포트 : <b>결제일로부터 1개월</b> 이용</li>
           <li>
             결제 아이디당 <b>1개의 사업장 조회</b>를 기준으로 합니다.
             조회된 내용 재접속은 <b>1개월간 무제한</b>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모두의사업친구 성장·마케팅·가격 심층전략 리포트</title>
+<style>
+  :root{
+    --navy:#0f1e3d; --navy2:#16264a; --gold:#c8a24a; --gold-l:#e5c877;
+    --ink:#1a2233; --gray:#5b6472; --line:#e3e7ee; --bg:#f6f8fc;
+    --red:#d34a3a; --green:#2e8b57; --blue:#2b6cb0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px 80px;}
+  /* Cover */
+  .cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+    padding:60px 40px 50px;border-radius:0 0 24px 24px;margin-bottom:40px;}
+  .cover .badge{display:inline-block;border:1px solid var(--gold);color:var(--gold-l);
+    padding:5px 14px;border-radius:20px;font-size:13px;letter-spacing:1px;margin-bottom:22px;}
+  .cover h1{font-size:34px;line-height:1.35;margin:0 0 14px;font-weight:800;}
+  .cover h1 span{color:var(--gold-l);}
+  .cover .sub{font-size:16px;color:#c3ccdd;max-width:640px;}
+  .cover .meta{margin-top:26px;font-size:13px;color:#8fa0bd;border-top:1px solid #2a3a5e;padding-top:16px;}
+  /* Section */
+  section{background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:34px 36px;margin-bottom:26px;box-shadow:0 2px 14px rgba(15,30,61,.04);}
+  .kicker{display:inline-block;background:var(--navy);color:#fff;font-size:12px;font-weight:700;
+    padding:4px 12px;border-radius:6px;letter-spacing:.5px;margin-bottom:14px;}
+  h2{font-size:25px;font-weight:800;margin:0 0 6px;color:var(--navy);}
+  h2 .num{color:var(--gold);}
+  h3{font-size:19px;font-weight:700;margin:28px 0 10px;color:var(--navy2);
+    border-left:4px solid var(--gold);padding-left:12px;}
+  h4{font-size:16px;font-weight:700;margin:18px 0 6px;color:var(--ink);}
+  p{margin:8px 0;color:#2c3444;}
+  .lead{font-size:17px;color:var(--gray);margin-bottom:8px;}
+  strong{color:var(--navy);font-weight:700;}
+  .hl{background:linear-gradient(transparent 60%,#f6e6b8 60%);font-weight:700;color:var(--ink);}
+  ul,ol{padding-left:22px;margin:10px 0;}
+  li{margin:6px 0;}
+  /* Table */
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px;}
+  th,td{border:1px solid var(--line);padding:11px 12px;text-align:left;vertical-align:top;}
+  th{background:var(--navy);color:#fff;font-weight:600;font-size:13.5px;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  td .up{color:var(--green);font-weight:700;}
+  /* Cards */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0;}
+  .card{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:#fbfcfe;}
+  .card.navy{background:var(--navy);color:#fff;border:none;}
+  .card.navy h4{color:var(--gold-l);}
+  .card.navy p, .card.navy li{color:#d5ddec;}
+  .card h4{margin-top:0;}
+  .stat{font-size:30px;font-weight:800;color:var(--gold);line-height:1;}
+  .stat .u{font-size:15px;color:var(--gray);font-weight:600;}
+  /* Callout */
+  .callout{border-radius:12px;padding:18px 22px;margin:18px 0;font-size:15px;}
+  .callout.gold{background:#fdf6e3;border:1px solid #ecd9a0;}
+  .callout.red{background:#fdeeeb;border:1px solid #f0c4bb;}
+  .callout.blue{background:#eaf2fb;border:1px solid #bcd6f0;}
+  .callout .t{font-weight:800;display:block;margin-bottom:6px;font-size:15px;}
+  .callout.gold .t{color:#a67c1a;} .callout.red .t{color:var(--red);} .callout.blue .t{color:var(--blue);}
+  /* Quote */
+  blockquote{margin:16px 0;padding:14px 20px;background:#f4f6fb;border-left:4px solid var(--navy2);
+    font-style:italic;color:#3a4557;border-radius:0 8px 8px 0;}
+  .timeline{margin:16px 0;border-left:2px solid var(--gold);padding-left:22px;}
+  .timeline .item{margin-bottom:16px;position:relative;}
+  .timeline .item:before{content:'';width:11px;height:11px;background:var(--gold);border-radius:50%;
+    position:absolute;left:-28px;top:6px;}
+  .timeline .yr{font-weight:800;color:var(--navy);}
+  .price-box{border:2px solid var(--gold);border-radius:14px;padding:22px;margin:16px 0;background:#fffdf7;}
+  .price-box .big{font-size:34px;font-weight:800;color:var(--navy);}
+  .price-box .big small{font-size:16px;color:var(--gray);font-weight:600;}
+  .tag{display:inline-block;background:#eef1f7;color:var(--navy2);font-size:12px;font-weight:600;
+    padding:3px 10px;border-radius:12px;margin:2px 4px 2px 0;}
+  .footer{text-align:center;color:var(--gray);font-size:13px;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);}
+  @media(max-width:640px){
+    .cover{padding:44px 22px 36px;} .cover h1{font-size:26px;}
+    section{padding:24px 20px;} h2{font-size:21px;} .grid{grid-template-columns:1fr;}
+    table{font-size:13px;} th,td{padding:8px 8px;}
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="wrap" style="padding:0;">
+    <span class="badge">STRATEGY REPORT · 2026.07</span>
+    <h1>삼쩜삼 · 아정당을 이기는 법<br><span>모두의사업친구</span> 성장·마케팅·가격 심층전략</h1>
+    <p class="sub">두 롤모델 기업의 실제 성장 데이터를 해부하고, 정부지원사업 매칭 플랫폼 '모두의사업친구'가 나아갈 성장 경로·마케팅 설계·심리적 저항선을 없애는 가격 전략을 도출한다.</p>
+    <div class="meta">작성: 신주엽 대표 전략 리포트 · 인천 서구 · 모두의사업친구.kr &nbsp;|&nbsp; 데이터 출처: 플래텀·한경·조선비즈·벤처스퀘어·카카오비즈니스·nextunicorn·neversleep 인터뷰 등 공개자료</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- 요약 -->
+<section>
+  <span class="kicker">EXECUTIVE SUMMARY</span>
+  <h2>한 장 요약</h2>
+  <p class="lead">두 회사는 업종이 다르지만 <strong>똑같은 공식</strong>으로 컸다. 그 공식이 모두의사업친구에 그대로 적용된다.</p>
+  <div class="callout gold">
+    <span class="t">★ 공통 성공 공식 (삼쩜삼 = 아정당 = 모두의사업친구가 가야 할 길)</span>
+    ① <strong>무료 조회(진단)로 대량 유입</strong> → ② <strong>"내가 못 받고 있던 돈"이라는 손실회피 훅</strong> → ③ <strong>정보성 콘텐츠로 검색·바이럴 장악</strong> → ④ <strong>낮은 심리 장벽의 성공보수형/소액 결제</strong> → ⑤ <strong>후기·CRM으로 재방문·확산 락인</strong>
+  </div>
+  <div class="grid">
+    <div class="card"><div class="stat">2,450<span class="u">만 명</span></div><p style="margin-top:8px;"><strong>삼쩜삼</strong> 누적 가입자(2026). 경제활동인구의 약 83%. 무료 환급조회로 유입.</p></div>
+    <div class="card"><div class="stat">2,196<span class="u">억 원</span></div><p style="margin-top:8px;"><strong>아정당</strong> 2025 매출(영업이익 166억). 2020년 21억 → 5년 만에 100배. 네이버카페 부업에서 시작.</p></div>
+  </div>
+  <p><strong>모두의사업친구의 현재 위치:</strong> 제품(AI 매칭 엔진)·브랜드(썸네일·도메인)·SEO 기반은 이미 완성. 지금은 <span class="hl">BETA_FREE(전부 무료)</span> 단계 — 즉 두 회사의 <strong>①단계(무료 유입)에 정확히 서 있다.</strong> 다음 과제는 ③콘텐츠 엔진과 ④가격 설계다.</p>
+</section>
+
+<!-- 삼쩜삼 -->
+<section>
+  <span class="kicker">CASE 1</span>
+  <h2><span class="num">01.</span> 삼쩜삼 — "몰라서 못 받은 내 돈"으로 2,450만 명을 모으다</h2>
+
+  <h3>초창기 vs 현재</h3>
+  <table>
+    <tr><th>구분</th><th>초창기 (2020 출시)</th><th>현재 (2025~2026)</th></tr>
+    <tr><td>정체성</td><td>단순 "3.3% 세금 환급 조회" 서비스</td><td>생애주기 <strong>생활금융 플랫폼</strong> (환급·보험·상조·행운테크 럭키즈)</td></tr>
+    <tr><td>가입자</td><td>출시 1년 740만 명</td><td class="up">누적 2,450만 명</td></tr>
+    <tr><td>누적 환급액</td><td>2021.6 · 1,000억</td><td class="up">2024 · 1조 돌파 (2025.3 신고액 1.67조)</td></tr>
+    <tr><td>매출/이익</td><td>거의 0</td><td class="up">2024 매출 861억 · 영업익 102억</td></tr>
+    <tr><td>투자</td><td>시드~시리즈</td><td>1,500억 신규 투자 유치 추진</td></tr>
+  </table>
+
+  <h3>어떻게 컸나 — 4개의 결정적 레버</h3>
+  <h4>① 무료 조회 = 미끼(Hook), 신고 대행 = 수익</h4>
+  <p>"예상 환급액 <strong>무료 조회</strong>"로 수천만 명을 유입시킨 뒤, 실제 환급을 원하면 <strong>환급액의 10~20% 수수료</strong>로 신고 대행을 판매. 조회는 공짜라 진입 장벽이 0에 수렴 → 일단 "내 환급액 얼마?"를 확인하게 만든 게 전부의 시작.</p>
+  <h4>② 손실회피 심리 훅 — 전문용어 버리고 "꽁돈·눈먼돈"</h4>
+  <p>'종합소득세 경정청구' 같은 전문어 대신 <span class="hl">"꽁돈", "눈먼돈", "환급금 받고 소고기 먹은 썰"</span>로 번역. 20대(환급대상 비율 50%)를 정조준한 정보성 게시글형 광고.</p>
+  <h4>③ 트위터發 바이럴 → 실검 1위</h4>
+  <p>2021.1 한 트위터 유저의 "이거 개꿀" 후기가 커뮤니티로 확산 → 포털 실검 1위 → 한 달 방문자 279만, 가입자 전월比 4.3배. <strong>후기 하나가 폭발의 방아쇠</strong>.</p>
+  <h4>④ 카카오 3종 세트로 유입+락인</h4>
+  <p><span class="tag">카카오싱크</span> 로그인만으로 채널친구 자동 등록 → <span class="tag">알림톡·친구톡</span>으로 "새 환급액 도착" 재방문 유도 → <span class="tag">비즈보드</span> 배너로 신규 유입. A/B테스트로 클릭률 22% 개선. TV CF(유아인)로 4050까지 확장 → 3주 만에 가입자 +91%.</p>
+
+  <div class="callout red">
+    <span class="t">⚠ 그림자에서 배울 것 — 삼쩜삼의 위기</span>
+    ⑴ 국세청이 <strong>무료 '원클릭' 환급</strong> 출시 → 수수료 모델 직격탄. ⑵ 공정위: "새 환급액 도착" 알고보니 0원 → <strong>거짓·과장광고 과징금</strong>. <br><b>교훈:</b> 무료 미끼는 강력하지만 <u>과장하면 신뢰가 무너진다.</u> 모두의사업친구는 "받을 수 있다"를 <b>정직하게(조건·확률)</b> 보여줘야 규제·평판 리스크를 피한다. 정부(국세청) 대체재가 나온 삼쩜삼과 달리, <b>정부지원사업은 창구가 수백 개로 파편화</b>되어 있어 "통합·해석" 가치가 훨씬 방어적이다. ← 우리의 강점.
+  </div>
+</section>
+
+<!-- 아정당 -->
+<section>
+  <span class="kicker">CASE 2</span>
+  <h2><span class="num">02.</span> 아정당 — "정보 없는 시장"을 콘텐츠로 뚫어 5년 만에 100배</h2>
+
+  <h3>성장 타임라인</h3>
+  <div class="timeline">
+    <div class="item"><span class="yr">2018~19</span> — 아버지 용달일 돕다 '중개가 기사보다 더 번다'는 구조 발견 → 네이버 카페 개설(무급 1년, 회원 3~4만).</div>
+    <div class="item"><span class="yr">부업기</span> — 광고비 대신 "회원 혜택 경쟁" 요구 → 인터넷 가입 수수료 모델 발견. 이모가 전화상담, 본인은 마케팅. 월매출 2,500만 원.</div>
+    <div class="item"><span class="yr">위기 1</span> — 네이버 카페 로직 변경, 계정 소멸(하루 5천만 손해) → <strong>블로그</strong>로 전환, 매출 3~4배.</div>
+    <div class="item"><span class="yr">위기 2</span> — 블로그 로직도 변경 → <strong>유튜브</strong>로 전환, 매출 3배.</div>
+    <div class="item"><span class="yr">2021</span> — 법인화(아정네트웍스). 1년 6개월 만에 180억.</div>
+    <div class="item"><span class="yr">2024~25</span> — 매출 1,191억 → <strong>2,196억</strong>(영업익 166억, 직원 602명). 탁재훈·원빈 CF. 커넥트웨이브가 지분 51%를 1,500억에 인수(기업가치 3,000억).</div>
+  </div>
+
+  <h3>어떻게 컸나 — 아정당의 진짜 무기</h3>
+  <h4>① "진짜 도움되는 정보"를 맨 앞에 놓는 콘텐츠</h4>
+  <blockquote>"검색하면 전화번호만 있고 정보가 하나도 없다는 얘기가 많았어요. '인터넷 요금' 글이면 고객이 보고 싶은 요금표를 <b>맨 앞에</b> 보여주는 식으로 썼죠." — 김민기 대표</blockquote>
+  <p>경쟁사가 "상담 문의 주세요"만 할 때, 아정당은 <span class="hl">답을 먼저 다 줬다.</span> 이게 검색·신뢰·전환을 동시에 잡은 핵심. → <b>모두의사업친구가 그대로 베낄 전략.</b></p>
+  <h4>② 채널 다각화 = 위기 대응력</h4>
+  <p>카페→블로그→유튜브. 플랫폼 알고리즘이 바뀔 때마다 죽지 않고 <b>갈아탔다.</b> "한 채널에 올인하면 로직 한 번에 죽는다"는 교훈.</p>
+  <h4>③ 후기가 다음 고객을 데려온다</h4>
+  <p>가입 70만 건 돌파의 동력은 <b>고객 후기의 연쇄</b>. "내돈내산 비교 후기"가 검색에 깔리며 신뢰가 복리로 쌓임.</p>
+  <h4>④ 파트너스(제휴 부업) — 고객이 영업사원이 되다</h4>
+  <p>일반인이 고유링크로 가입을 발생시키면 수익을 나눠주는 <span class="tag">아정당 파트너스</span>. 마케팅비를 <b>성과보수로 전환</b>하고 확산을 외주화. "월 100만 원 부업" 콘텐츠가 또 검색을 채움.</p>
+  <h4>⑤ 대표 없이 도는 시스템(노션 매뉴얼·교육 투자)</h4>
+  <p>연 5,000만 원 교육 투자, 전 과정 노션 문서화. 1인 의존 탈피 = 지속가능성.</p>
+
+  <div class="callout red">
+    <span class="t">⚠ 그림자 — 아정당의 위기(아이폰17 사전예약 논란)</span>
+    '알뜰런 가능' 홍보 후 계약단계서 조건(유지기간·지원금)이 바뀌어 뒤통수 논란 → 대표 사과·전액보상. <b>교훈:</b> <u>조회/광고에서 약속한 조건과 실제 계약이 어긋나면 브랜드가 흔들린다.</u> 모두의사업친구는 "매칭 결과 = 실제 지원조건"의 정합성을 절대 지켜야 한다.
+  </div>
+</section>
+
+<!-- 공통 해부 -->
+<section>
+  <span class="kicker">PATTERN</span>
+  <h2><span class="num">03.</span> 두 회사를 관통하는 5개의 뼈대</h2>
+  <table>
+    <tr><th>레버</th><th>삼쩜삼</th><th>아정당</th><th>모두의사업친구 적용</th></tr>
+    <tr><td><b>무료 미끼</b></td><td>예상 환급액 무료조회</td><td>무료 요금/지원금 비교</td><td class="up">✅ 무료 AI 진단 (이미 보유)</td></tr>
+    <tr><td><b>손실회피 훅</b></td><td>"꽁돈·눈먼돈"</td><td>"3년마다 갈아타야 돈 번다"</td><td>"몰라서 못 받는 정부지원사업"</td></tr>
+    <tr><td><b>콘텐츠 장악</b></td><td>정보성 SNS·유튜브 후기</td><td>답을 먼저 주는 블로그</td><td class="up">지역·업종별 지원사업 정보글 (핵심 미개척)</td></tr>
+    <tr><td><b>낮은 결제장벽</b></td><td>성공보수(환급액 %)</td><td>수수료 0원 표방(공급사 수취)</td><td>성공보수/소액 진단리포트 (설계 필요)</td></tr>
+    <tr><td><b>재방문·확산</b></td><td>카카오 알림톡 CRM</td><td>후기 연쇄 + 파트너스</td><td>카톡 채널 + 후기 + 제휴</td></tr>
+  </table>
+  <div class="callout blue">
+    <span class="t">핵심 통찰</span>
+    두 회사 모두 <b>"제품이 특별해서" 큰 게 아니다.</b> 세금 환급도, 인터넷 가입도 원래 있던 서비스다. <span class="hl">이긴 이유는 ① 어려운 걸 쉽게 번역하고 ② 무료로 일단 맛보게 하고 ③ 정보 콘텐츠로 검색을 장악했기 때문.</span> 모두의사업친구의 "정부지원사업"은 세금·통신보다 <b>훨씬 더 어렵고, 정보가 더 파편화</b>되어 있다 → 번역·통합의 가치가 더 크고, 방어벽도 더 높다.
+  </div>
+</section>
+
+<!-- 모두의사업친구 성장 로드맵 -->
+<section>
+  <span class="kicker">ROADMAP</span>
+  <h2><span class="num">04.</span> 모두의사업친구 성장 로드맵 — 어떤 모습으로 커야 하나</h2>
+  <p class="lead">삼쩜삼·아정당의 궤적을 우리 상황에 맞춰 3단계로 압축한다.</p>
+
+  <div class="card navy">
+    <h4>STAGE 1 — 지금 (0→신뢰) · "무료 진단 + 정보 콘텐츠 엔진"</h4>
+    <ul>
+      <li><b>지금의 BETA_FREE 무료 진단을 미끼로 유지</b>. 단, 삼쩜삼처럼 과장 금지 — "받을 수 있다"가 아니라 "이 조건이면 이 사업, 이 확률"로 <b>정직하게</b>.</li>
+      <li><b>아정당식 콘텐츠 폭격</b>: "인천 서구 소상공인 정부지원사업 총정리", "제조업 5인 미만 받을 수 있는 자금 6가지" 등 <u>답을 맨 앞에 주는 글</u>을 블로그·홈페이지에 대량 축적. (현재 브레인상 최대 미개척 영역)</li>
+      <li><b>후기 수집 시스템</b>: 진단 후 "실제로 받았다" 후기를 구조적으로 모아 검색에 노출.</li>
+    </ul>
+  </div>
+  <div class="card navy" style="margin-top:14px;">
+    <h4>STAGE 2 — 수익화 (신뢰→매출) · "소액/성공보수 결제 도입"</h4>
+    <ul>
+      <li>무료 진단 → <b>유료 심화 리포트</b> 또는 <b>신청 대행/컨설팅 연결</b>로 전환. (아래 05장 가격전략)</li>
+      <li>카카오 채널·알림톡 CRM 구축 → "새 지원사업 공고 도착" 재방문 루프.</li>
+      <li>탈퇴 없는 락인: 사업자 정보 저장 → 매년 재진단.</li>
+    </ul>
+  </div>
+  <div class="card navy" style="margin-top:14px;">
+    <h4>STAGE 3 — 확장 (매출→플랫폼) · "생애주기 사업자 플랫폼"</h4>
+    <ul>
+      <li>삼쩜삼이 환급→보험·상조로 넓혔듯, 우리는 <b>정부지원사업 → 정책자금 → 세무·노무·인증(벤처/이노비즈) → 사업 컨설팅</b>으로 확장.</li>
+      <li>아정당 파트너스처럼 <b>제휴 파트너(세무사·행정사·중개인) 네트워크</b>로 공급/확산 외주화.</li>
+      <li>대표 없이 도는 시스템(매뉴얼·자동화) 구축.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 마케팅 -->
+<section>
+  <span class="kicker">MARKETING</span>
+  <h2><span class="num">05.</span> 마케팅 — 무엇을, 어디서, 어떻게</h2>
+
+  <h3>메시지 (손실회피 + 번역)</h3>
+  <div class="grid">
+    <div class="card"><h4>❌ 이렇게 쓰지 말 것</h4><p>"정부지원사업 통합 매칭 컨설팅 서비스" (전문적·차가움·안 읽힘)</p></div>
+    <div class="card"><h4>✅ 이렇게</h4><p>"사장님, <b>몰라서 못 받은 지원금</b> 얼마일까요? 3분 무료 진단"<br>"제조업 5년차, 이 6가지는 무조건 받으세요"</p></div>
+  </div>
+
+  <h3>채널 우선순위 (자원 대비 효율순)</h3>
+  <table>
+    <tr><th>순위</th><th>채널</th><th>역할</th><th>실행</th></tr>
+    <tr><td>1</td><td><b>네이버 블로그·홈 콘텐츠 SEO</b></td><td>검색 유입 (아정당 핵심 무기)</td><td>지역·업종별 "답을 먼저 주는" 정보글 주 2~3편 축적</td></tr>
+    <tr><td>2</td><td><b>카카오 채널 + 알림톡</b></td><td>재방문·락인 (삼쩜삼 핵심)</td><td>진단자 채널 등록 → "새 공고" 알림톡</td></tr>
+    <tr><td>3</td><td><b>후기·사례 콘텐츠</b></td><td>신뢰·바이럴</td><td>"인천 ○○업체 5천만 원 받은 사례" 구조화</td></tr>
+    <tr><td>4</td><td><b>유튜브 숏폼/릴스</b></td><td>인지·확산 (아정당 2차 무기)</td><td>"이거 모르면 손해" 30초 정보</td></tr>
+    <tr><td>5</td><td><b>지역 오프라인·제휴</b></td><td>인천 서구 초기 신뢰 거점</td><td>소상공인회·상공회의소·세무사 제휴</td></tr>
+  </table>
+  <div class="callout gold">
+    <span class="t">💡 아정당의 "정보 맨 앞에" 원칙을 우리 홈페이지에 이식</span>
+    지원사업 검색 시 대부분 "상담 신청하세요"만 뜬다. 우리는 <b>조건·금액·확률·신청링크를 먼저 다 보여주고</b>, 그 다음에 "복잡하면 대신 해드릴게요"를 붙인다. 이게 검색·신뢰·전환을 동시에 잡는 유일한 길.
+  </div>
+</section>
+
+<!-- 가격 -->
+<section>
+  <span class="kicker">PRICING · 가장 중요</span>
+  <h2><span class="num">06.</span> 가격 전략 — 심리적 저항선을 없애는 법</h2>
+  <p class="lead">대표님 질문의 핵심: <b>"현재 가격은 적당한가? 저항선을 없애려면 얼마?"</b> 지금은 BETA_FREE(전부 무료)이므로, <u>무료에서 유료로 넘어갈 때의 첫 가격 설계</u>가 승부처다.</p>
+
+  <h3>원칙 1 — "조회는 무료, 결정은 돈" (두 회사 공통)</h3>
+  <p>삼쩜삼·아정당 모두 <b>진단/조회는 절대 유료화하지 않았다.</b> 유입이 생명이기 때문. 모두의사업친구도 <span class="hl">AI 진단은 영구 무료 유지</span>가 정답. 돈은 "진단 이후"에서 받는다.</p>
+
+  <h3>원칙 2 — 심리적 저항선의 3개 구간</h3>
+  <table>
+    <tr><th>가격대</th><th>고객 심리</th><th>적용</th></tr>
+    <tr><td><b>~9,900원</b></td><td>"이 정도면 그냥 질러본다" (커피 2잔). 삼쩜삼 결제 3,000원대와 같은 무저항 구간</td><td>심화 리포트 PDF·PDF다운로드·경쟁률 분석 등 <b>디지털 상품</b></td></tr>
+    <tr><td><b>3만~5만원</b></td><td>"고민되지만 받을 게 크면 OK" (성공보수 아니면 저항 시작)</td><td>1:1 서류 검토·신청 가이드 (성공 가능성 확인 후)</td></tr>
+    <tr><td><b>수십만~%</b></td><td>"진짜 받게 해주면 낸다" — <b>성공보수</b> 구조라야 저항 소멸</td><td>신청 대행·컨설팅 = <b>받은 금액의 %</b> 또는 착수금 최소화</td></tr>
+  </table>
+
+  <h3>원칙 3 — 저항선을 없애는 결정타: "성공보수(Contingency)"</h3>
+  <div class="callout blue">
+    <span class="t">왜 성공보수인가</span>
+    삼쩜삼이 "환급 안 되면 수수료 전액 환불", 수수료도 "환급액의 %"로 받은 이유 = <b>고객은 '내가 실제로 받은 돈에서 떼는 것'엔 저항이 거의 없다.</b> 반대로 <b>선불·정액은 "못 받으면 손해"</b> 심리로 저항이 크다.<br>
+    → 모두의사업친구 핵심 유료상품은 <b>"지원금 받으시면 그 중 일부만"</b> 구조로 가야 저항선이 사라진다.
+  </div>
+
+  <h3>추천 가격 구조 (베타 종료 후 1차안)</h3>
+  <div class="price-box">
+    <p><b>① 무료</b> — AI 진단 + 매칭 결과 요약 (영구 무료, 미끼)</p>
+    <p class="big" style="margin:10px 0;">② 심화 리포트 <small>9,900원</small></p>
+    <p style="margin:0 0 12px;color:#5b6472;">경쟁률·서류·타임라인·기관별 승인 팁 포함 PDF. <b>무저항 구간 소액 → 첫 결제 경험을 만들고 신뢰 검증.</b></p>
+    <hr style="border:none;border-top:1px dashed #d8c48a;margin:14px 0;">
+    <p class="big" style="margin:10px 0;">③ 신청 대행/컨설팅 <small>성공보수형</small></p>
+    <p style="margin:0;color:#5b6472;">착수금 최소(예: 0~10만원) + <b>실제 수령액의 5~15%</b>. "못 받으면 안 낸다"로 저항선 제거.</p>
+  </div>
+  <div class="callout gold">
+    <span class="t">⚠ 지금 당장 유료화하지 말 것 — 순서가 중요</span>
+    두 회사 모두 <b>가입자(신뢰)가 먼저, 돈이 나중</b>이었다. 삼쩜삼도 초기엔 매출 0. <b>모두의사업친구는 아직 STAGE 1(무료 유입·콘텐츠 축적)이 충분치 않다.</b> 지금 가격을 붙이면 유입이 죽는다. <br><b>권장 순서:</b> (1) 콘텐츠·후기로 월 진단 수요를 먼저 키운다 → (2) 진단 완료자 수가 쌓이면 <b>9,900원 심화 리포트</b>부터 조용히 A/B 테스트 → (3) 반응 보고 성공보수 대행 오픈.
+  </div>
+</section>
+
+<!-- 액션 -->
+<section>
+  <span class="kicker">ACTION</span>
+  <h2><span class="num">07.</span> 지금부터 90일 액션 플랜</h2>
+  <table>
+    <tr><th>기간</th><th>할 일</th><th>롤모델 근거</th></tr>
+    <tr><td><b>0~30일</b></td><td>① "답을 먼저 주는" 지역·업종 정보글 8~12편 작성<br>② 카카오 채널 개설 + 진단자 자동 등록 설계<br>③ 진단 후 후기 요청 팝업</td><td>아정당 콘텐츠 / 삼쩜삼 카카오싱크</td></tr>
+    <tr><td><b>30~60일</b></td><td>① 유튜브·릴스 "이거 모르면 손해" 숏폼 시작<br>② 알림톡 "새 지원사업 공고" 발송 루프<br>③ 실제 수령 사례 3건 확보·콘텐츠화</td><td>삼쩜삼 CRM / 아정당 후기 연쇄</td></tr>
+    <tr><td><b>60~90일</b></td><td>① 9,900원 심화 리포트 소규모 A/B 오픈<br>② 세무사·행정사 제휴 1~2곳(성공보수 대행 백엔드)<br>③ 인천 서구 소상공인 오프라인 거점 접촉</td><td>삼쩜삼 성공보수 / 아정당 파트너스</td></tr>
+  </table>
+  <div class="callout blue">
+    <span class="t">한 문장 결론</span>
+    <b>제품은 이미 됐다. 이제 필요한 건 "무료 진단으로 모아 → 정직한 정보 콘텐츠로 신뢰를 쌓고 → 성공보수로 저항 없이 결제시키는" 두 회사의 검증된 공식뿐이다.</b> 가격은 서두르지 말고, 유입이 먼저다.
+  </div>
+</section>
+
+<div class="footer">
+  모두의사업친구 성장·마케팅·가격 심층전략 리포트 · 2026.07 · 내부 전략용<br>
+  ※ 수치는 공개 언론·기업정보 기준이며 시점에 따라 변동될 수 있음.
+</div>
+
+</div>
+</body>
+</html>
