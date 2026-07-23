@@ -46,7 +46,7 @@ export const BNO_TEXT = {
 
 // ── 1단계 · 기본 정보 ─────────────────────────────────────────
 export const STEP1_TITLE = "1단계 · 사업장 기본 정보";
-export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본 정보 입력란입니다. 정확히 입력해야 AI가 판단해줍니다.";
+export const STEP1_SUBTITLE = "대표님 사업장을 파악하기 위한 기본 정보 입력란입니다.";
 // 1단계 안내 박스 소제목
 export const STEP1_GROUP = "🏢 사업장 정보";
 // ── 대표자 연락 정보 (진단 결과·상담 안내를 위해 수집) ──────────────
@@ -222,7 +222,7 @@ export const PHONE_CONSULT_FIELD = {
 
 // ── 3단계 · 현재 이용 현황 및 특이사항 ──────────────────────────
 export const STEP3_TITLE = "3단계 · 맞춤 매칭 · 결격사유 확인";
-export const STEP3_SUBTITLE = "딱 맞는 상품만 골라 안내드리고, 승인이 어려운 사유가 있는지 마지막으로 확인해요.";
+export const STEP3_SUBTITLE = "딱 맞는 상품만 골라 안내 해 드리기 위해 최종 정보를 확인합니다.";
 export const STEP3_FIELDS = {
   // ★ 선택지 간소화 (대표님 요청) ★ 3구간→2구간. 신용취약 기준선(NCB 839점)에 맞춰 "839점 이하 / 839점 이상"으로 단순화.
   //   ※ matching.ts:155~161 은 이미 "839점 이상"/"이하" 문자열을 하위호환으로 인식 → 매칭 영향 없음.

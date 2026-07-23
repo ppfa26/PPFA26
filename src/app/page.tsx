@@ -322,10 +322,9 @@ export default function Home() {
                 <Editable
                   id="home-sample-sub"
                   as="p"
-                  className="mx-auto mt-2 max-w-md break-keep text-[12px] font-medium leading-relaxed text-brand-gray sm:text-[13px]"
+                  className="mx-auto mt-2 max-w-xl break-keep text-[12px] font-medium leading-relaxed text-brand-gray sm:text-[13px]"
                 >
-                  신청 가능한 정부지원사업은 물론, 대부분 몰라서 놓치는{" "}
-                  <b className="text-brand-dark">절세·감면</b>까지 신청 방법과 함께 안내합니다.
+                  신청 가능한 정부지원사업은 물론, 대부분 몰라서 놓치는 <b className="text-brand-dark">절세·감면</b>까지 함께 안내해드립니다.
                 </Editable>
               </div>
               {/* 대표 절감 항목 4칸 — 혹하는 실제 금액/비율 (투명 칸 + 은은한 구분선 → 자동 다크화) */}
@@ -352,9 +351,6 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <p className="mt-3 break-keep rounded-xl border border-brand-red/20 px-3 py-2.5 text-center text-[12px] font-bold text-brand-dark">
-                ✨ 대부분 <b className="text-brand-red">신청·심사 없이 자동 적용</b> — 요건만 맞으면 세금만으로도 수백~수천만원 절감
-              </p>
             </div>
 
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
@@ -705,7 +701,7 @@ export default function Home() {
         >
           <div className="reveal mx-auto max-w-5xl">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+              <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
                 💳 서비스 이용료
               </span>
               <Editable
@@ -721,9 +717,7 @@ export default function Home() {
                 className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
               >
                 {BETA_FREE ? (
-                  <>
-                    <b className="text-brand-red">오픈 베타 기간 전부 무료</b>로 이용하실 수 있습니다.
-                  </>
+                  <>오픈 베타 기간 전부 무료로 이용하실 수 있습니다.</>
                 ) : (
                   <>1회성 결제이며 월 구독 결제가 아닙니다.</>
                 )}
