@@ -370,30 +370,46 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* 진단 완료 배너 + 3칸 통계 (세로 컴팩트화 — 대표님 요청) */}
+                {/* 진단 완료 배너 — 실제 결과창 상단 배너와 동일한 톤(가로형·다크글래스 자동변환) */}
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
-                  <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-3 shadow-card">
-                    <p className="break-keep text-[13px] font-extrabold text-brand-dark sm:text-sm">
-                      🎉 진단 완료! 지금 신청해볼 수 있는 것들이에요.
+                  <div className="rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3.5 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:p-4">
+                    <p className="break-keep text-center text-[12px] font-bold leading-snug text-brand-dark/80 sm:text-sm">
+                      🎉 진단 완료! <b className="font-black text-brand-orange">지금 신청해볼 수 있는 것들</b>이에요.
                     </p>
-                    <div className="mt-2 grid grid-cols-3 gap-2">
-                      {[
-                        { n: "6", l: "정책자금" },
-                        { n: "8", l: "지원금·바우처" },
-                        { n: "5", l: "지금 신청 대상" },
-                      ].map((s) => (
-                        <div
-                          key={s.l}
-                          className="flex items-center justify-center gap-1.5 rounded-xl bg-white/70 px-2 py-1.5 text-center"
-                        >
-                          <span className="text-lg font-extrabold leading-none text-brand-dark sm:text-xl">
-                            {s.n}
+                    {/* 가로형: 왼쪽 큰 숫자 + 오른쪽 세로 요약 (실제 결과창 히어로와 동일 구조) */}
+                    <div className="mt-2.5 flex flex-row items-stretch gap-2.5 sm:gap-4">
+                      {/* 왼쪽: 총 개수 큰 숫자 */}
+                      <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-2.5 sm:pr-4">
+                        <span className="break-keep text-[10px] font-bold leading-tight text-brand-dark/70 sm:text-xs">
+                          받을 수 있는
+                          <br />
+                          지원사업
+                        </span>
+                        <span className="mt-0.5 flex items-end gap-0.5">
+                          <b className="text-4xl font-black leading-none text-brand-orange sm:text-5xl">14</b>
+                          <b className="pb-0.5 text-lg font-extrabold text-brand-orange sm:text-xl">개</b>
+                        </span>
+                        <span className="mt-0.5 break-keep text-[9px] font-bold text-brand-dark/50 sm:text-[10px]">
+                          매칭 완료 🎉
+                        </span>
+                      </div>
+                      {/* 오른쪽: 세로 요약 배지 */}
+                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+                        {[
+                          { icon: "💰", l: "정책자금 상품", n: "6종" },
+                          { icon: "🏅", l: "지원금·바우처", n: "8건" },
+                          { icon: "✅", l: "지금 신청 대상", n: "5건" },
+                        ].map((s) => (
+                          <span
+                            key={s.l}
+                            className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[11px] font-bold text-brand-dark sm:text-sm"
+                          >
+                            {s.icon}{" "}
+                            <span className="whitespace-nowrap text-brand-dark/70">{s.l}</span>
+                            <b className="ml-auto text-[13px] text-brand-orange sm:text-base">{s.n}</b>
                           </span>
-                          <span className="break-keep text-[11px] font-bold text-brand-dark/70">
-                            {s.l}
-                          </span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -454,19 +470,8 @@ export default function Home() {
                             >
                               {m.cat}
                             </span>
-                            <span className="shrink-0 text-xs font-bold text-brand-green">
+                            <span className="shrink-0 rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
                               ✅ 신청 가능
-                            </span>
-                          </div>
-                          <div className="mt-2 flex flex-wrap gap-1.5">
-                            <span className="inline-flex items-center gap-1 rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-2.5 py-1 text-[11px] font-bold text-brand-orange">
-                              📑 상품 보기
-                            </span>
-                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/20 bg-gray-50 px-2.5 py-1 text-[11px] font-bold text-brand-gray">
-                              🔒 신청 사이트
-                            </span>
-                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/20 bg-gray-50 px-2.5 py-1 text-[11px] font-bold text-brand-gray">
-                              🔒 콜센터
                             </span>
                           </div>
                           <p className="mt-1.5 break-keep text-[11px] text-brand-gray">
@@ -475,11 +480,20 @@ export default function Home() {
                           <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
                             💡 {m.hook}
                           </p>
-                          {/* 신청 방법 메뉴얼 박스 — 잠금(결과 페이지에서 열림) 표시 */}
-                          <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-brand-orange/40 bg-brand-orange/10 px-2.5 py-1.5">
-                            <span className="text-xs">🔒</span>
-                            <span className="break-keep text-[11px] font-bold text-brand-orange">
-                              신청 방법 메뉴얼
+                          {/* 신청 방법 안내 박스 (실제 결과창의 bg-gray-50 신청방법 박스와 동일 톤) — 내용은 잠금 */}
+                          <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
+                            <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                              <span className="font-bold text-brand-dark">신청방법 </span>
+                              <span className="align-middle">🔒 ●●●●●●● 결과 페이지에서 공개</span>
+                            </p>
+                          </div>
+                          {/* 실제 결과창과 동일한 버튼 2종: 검정 CTA + 주황 아웃라인 (잠금 표시) */}
+                          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white">
+                              🔒 이 상품 신청하러 가기 →
+                            </span>
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange">
+                              🔒 상세 · 승인 소요기간 · 연락처 →
                             </span>
                           </div>
                         </div>
@@ -546,15 +560,20 @@ export default function Home() {
                           <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
                             💡 {g.hook}
                           </p>
-                          <div className="mt-2.5 flex flex-wrap gap-1.5">
-                            <span className="inline-flex items-center gap-1 rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-2.5 py-1 text-[11px] font-bold text-brand-orange">
-                              📑 지원 내용 보기
+                          {/* 신청방법 안내 박스 (잠금) */}
+                          <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
+                            <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                              <span className="font-bold text-brand-dark">신청방법 </span>
+                              <span className="align-middle">🔒 ●●●●●●● 결과 페이지에서 공개</span>
+                            </p>
+                          </div>
+                          {/* 실제 결과창과 동일한 버튼 2종 (잠금 표시) */}
+                          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white">
+                              🔒 이 지원사업 신청하러 가기 →
                             </span>
-                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/20 bg-gray-50 px-2.5 py-1 text-[11px] font-bold text-brand-gray">
-                              🔒 신청 사이트
-                            </span>
-                            <span className="inline-flex items-center gap-1 rounded-lg border border-brand-dark/20 bg-gray-50 px-2.5 py-1 text-[11px] font-bold text-brand-gray">
-                              🔒 문의처
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange">
+                              🔒 상세 · 지원 내용 · 문의처 →
                             </span>
                           </div>
                         </div>
