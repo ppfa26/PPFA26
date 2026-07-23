@@ -131,7 +131,8 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
   if (empStr.includes("300명이상")) workerCount = 300;
   else if (empStr.includes("50명이상")) workerCount = 50;
   else if (empStr.includes("5명이상")) workerCount = 7;
-  else if (empStr.includes("5명이하")) workerCount = 3;
+  else if (empStr.includes("5명미만")) workerCount = 3; // 신 옵션
+  else if (empStr.includes("5명이하")) workerCount = 3; // 구 옵션 하위호환
   else if (empStr === "0명") workerCount = 0;
 
   // 인증·혁신 신호 (R&D 세액공제 등 조건별 차등용)

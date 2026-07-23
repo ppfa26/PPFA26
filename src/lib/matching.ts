@@ -106,8 +106,9 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   if (certs.length > 0) tags.add("인증보유");
   certs.forEach((c) => tags.add(`인증:${c}`));
   // 기보는 특허/연구소/벤처인증 등 '기술성 인증'이 있으면 자격이 열림
+  //  ※ "특허/상표권"(신 옵션)·"특허"(구 옵션) 모두 인식하도록 some+includes 사용.
   const techCert =
-    certs.includes("특허") ||
+    certs.some((c) => c.includes("특허")) ||
     certs.includes("연구소") ||
     certs.includes("벤처인증") ||
     certs.includes("이노비즈");
@@ -140,9 +141,10 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   if (p.employees) {
     const empNoSpace = p.employees.replace(/\s/g, "");
     tags.add(`직원:${empNoSpace}`);
-    // 소규모직원 = 0명 또는 '5명 이하'(1~5명). '5명 이상'·'50명 이상'·'300명 이상'은 제외.
+    // 소규모직원 = 0명 또는 '5명 미만'(1~4명). '5명 이상'·'50명 이상'은 제외.
     //  ★ "50명이상"에도 "0명" substring이 있으므로 정확 일치(===)로 판정.
-    if (empNoSpace === "0명" || empNoSpace.includes("5명이하")) {
+    //  ※ 신 옵션 "5명미만" + 구 옵션 "5명이하" 모두 인식(하위호환).
+    if (empNoSpace === "0명" || empNoSpace.includes("5명미만") || empNoSpace.includes("5명이하")) {
       tags.add("소규모직원");
     }
   }
@@ -340,8 +342,8 @@ export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
     if (program.id === "kibo-tech-guarantee") {
       if (tags.has("기술인증보유")) {
         score += 4;
-        const held = (p.certifications || []).filter((c) =>
-          ["특허", "연구소", "벤처인증", "이노비즈"].includes(c)
+        const held = (p.certifications || []).filter(
+          (c) => c.includes("특허") || ["연구소", "벤처인증", "이노비즈"].includes(c)
         );
         reasons.push(
           `${held.join("·")} 보유 → 기술력으로 보증하는 기술보증기금(기보) 자격이 열리며 승인 가능성이 높아집니다`

@@ -78,8 +78,8 @@ export function computeSupportStatus(p: DiagnosisProfile): Record<string, Suppor
     employment: !hasEmployees, // 아직 직원 없음 → 채용 시 대상
     // 청년일자리도약장려금: 5인 이상이 요건 → 직원 없거나 '5명 이하'(5인 미만 가능)면
     //  '청년 채용·규모 확대 시 대상'으로 예정 안내 (eligible은 6인 이상 확실할 때만)
-    "youth-leap": !hasEmployees || emp.includes("5명이하"),
-    duru: !hasEmployees || emp.includes("5명이하") || emp.includes("5명이상"),
+    "youth-leap": !hasEmployees || emp.includes("5명미만") || emp.includes("5명이하"),
+    duru: !hasEmployees || emp.includes("5명미만") || emp.includes("5명이하") || emp.includes("5명이상"),
     "export-voucher": isExportInd, // 수출업 업종일 때만 (억지 매칭 금지)
     "innovation-voucher": isManufacturing, // 제조업일 때만
     "sbiz-voucher": isSmallBizPotential, // 5억 이상 아니면 예정대상
@@ -107,7 +107,7 @@ export function computeSupportEligibility(p: DiagnosisProfile): Record<string, b
   const isExport = inds.some((s) => s.includes("수출"));
   // 두루누리: 직원 10명 미만(0명 제외) — 진단 구간 "5명 이하"(1~5명)가 확실히 해당.
   //   "5명 이상"(5~50)은 10명 초과일 수 있어 불확실 → 확정 대상에서는 제외.
-  const isDuruEligible = hasEmployees && emp.includes("5명이하");
+  const isDuruEligible = hasEmployees && (emp.includes("5명미만") || emp.includes("5명이하"));
   // 소상공인 경영안정 바우처(팩트체크 반영):
   //   공식 요건(소상공인24 2026 공고): 직전년도 연 매출액 "1억 400만원 미만"(0원 초과).
   //   진단 매출 옵션(2026 개정): [매출 없음 / 2억 미만 / 10억 미만 / 10억 이상 / 기타]
@@ -119,9 +119,9 @@ export function computeSupportEligibility(p: DiagnosisProfile): Record<string, b
   // ── 청년일자리도약장려금(팩트체크 반영) ──
   //   공식 요건(고용노동부 2025 지침): 피보험자수 "5인 이상" 우선지원대상기업이
   //   만 15~34세 취업애로청년을 정규직으로 채용해야 신청 가능.
-  //   진단 직원수 옵션(2026 개정): 0명 / 5명 이하 / 5명 이상 / 50명 이상 / 300명 이상 / 기타
-  //    → "5명 이상"·"50명 이상"·"300명 이상"은 5인 이상이 확실 → eligible.
-  //    → "5명 이하"(1~5명)는 5인 이상 여부가 불확실하므로 eligible로 단정하지 않음
+  //   진단 직원수 옵션(2026 개정): 0명 / 5명 미만 / 5명 이상 / 50명 이상
+  //    → "5명 이상"·"50명 이상"은 5인 이상이 확실 → eligible.
+  //    → "5명 미만"(1~4명)은 5인 이상 여부가 불확실하므로 eligible로 단정하지 않음
   //      (potentialRule에서 '채용·규모 확대 시 대상'으로 안내).
   const isYouthLeapEligible =
     hasEmployees && (emp.includes("5명이상") || emp.includes("50명이상") || emp.includes("300명이상"));
@@ -388,12 +388,13 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   let empCount: number | undefined;
   if (p.employees) {
     const e = p.employees.replace(/\s/g, "");
-    if (e.includes("300명이상")) empCount = 300;
+    if (e.includes("300명이상")) empCount = 300; // 과거 라벨 하위호환
     else if (e.includes("50명이상")) empCount = 50;
     else if (e.includes("10명이상")) empCount = 12; // 과거 라벨 하위호환
     else if (e.includes("10명이하")) empCount = 7;  // 과거 라벨 하위호환
     else if (e.includes("5명이상")) empCount = 7;
-    else if (e.includes("5명이하")) empCount = 3;
+    else if (e.includes("5명미만")) empCount = 3;   // 신 옵션 (1~4명)
+    else if (e.includes("5명이하")) empCount = 3;   // 구 옵션 하위호환
     else if (e === "0명") empCount = 0;
   }
 
@@ -403,16 +404,18 @@ export function profileToCompany(p: DiagnosisProfile): Company {
 
   let creditScore: number | undefined;
   if (p.credit) {
-    if (p.credit.includes("840")) creditScore = 850;
+    // 신 옵션: "839점 이하" / "839점 이상"  · 구 옵션: "840 이상" / "700~839" / "700점 미만"
+    //  ※ "이하"·"미만"·"취약"이 먼저 걸리도록 순서 배치(‘839점 이하’가 양호로 오판되던 문제 방지).
+    if (p.credit.includes("이하") || p.credit.includes("미만") || p.credit.includes("취약")) creditScore = 690;
+    else if (p.credit.includes("840") || p.credit.includes("839점 이상") || p.credit.includes("839 이상")) creditScore = 850;
     else if (p.credit.includes("700~839") || p.credit.includes("839")) creditScore = 820;
-    else if (p.credit.includes("700점 미만") || p.credit.includes("700")) creditScore = 690;
   }
 
   // ── 인증·기술 신호 전달 (기보 트랙 자격의 핵심) ──
   //   과거 버그: has_mainbiz만 넘기고 특허·연구소·벤처·이노비즈를 전부 버려서
   //   기술기업인데도 기보가 안 뜨던 문제. → 인증 전부 개별 플래그로 전달한다.
   const certs = p.certifications || [];
-  const hasPatent = certs.includes("특허");
+  const hasPatent = certs.some((c) => c.includes("특허")); // "특허/상표권"(신)·"특허"(구) 모두 인식
   const hasRnd = certs.includes("연구소");
   const hasVenture = certs.includes("벤처인증");
   const hasInnobiz = certs.includes("이노비즈");
