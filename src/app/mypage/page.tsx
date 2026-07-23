@@ -322,9 +322,7 @@ export default function MyPage() {
                 <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
                   ※ 위 서비스는 AI 진단 리포트에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
                   <br />
-                  버튼을 누르면 공식 카카오톡 채널톡으로 연결됩니다.
-                  <br />
-                  담당자가 세부 내용과 금액을 안내해 드립니다.
+                  원하시는 서비스 버튼을 누르면 공식 카카오톡 채널톡 상담원으로 연결됩니다.
                 </p>
               </section>
 

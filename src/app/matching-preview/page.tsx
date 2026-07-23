@@ -179,7 +179,7 @@ export default function MatchingPreview() {
   if (gate === "analyzing") {
     const steps = [
       { icon: "🏢", label: "사업장 정보 확인" },
-      { icon: "🏦", label: "지원 가능 기관 매칭" },
+      { icon: "🏦", label: "지원가능 기관매칭" },
       { icon: "💳", label: "정부지원사업 판독" },
       { icon: "🎯", label: "맞춤 결과 정리" },
     ];
