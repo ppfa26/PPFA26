@@ -138,12 +138,11 @@ export default function Home() {
             <Editable
               id="hero-headline-v2"
               as="h1"
-              className="break-keep text-[21px] font-black leading-[1.35] text-brand-dark xs:text-[25px] sm:text-[38px] sm:leading-tight"
+              className="whitespace-nowrap text-[19px] font-black leading-[1.4] text-brand-dark xs:text-[23px] sm:whitespace-normal sm:text-[38px] sm:leading-tight"
             >
-              내가 받을 수 있는 모든{" "}
-              <span className="text-brand-red">정부지원사업</span>
+              내가 받을 수 있는 모든 <span className="text-brand-red">정부지원사업</span>
               <br />
-              <span className="text-brand-red">AI로 직접</span> 찾아드립니다.
+              <span className="text-brand-red">AI</span>로 직접 찾아드립니다
             </Editable>
 
             <Editable

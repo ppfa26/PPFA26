@@ -13,7 +13,7 @@ export type DiagnosisProfile = {
   smartDevice?: string; // 스마트기기 사용 여부 (3단계) → 혁신성장촉진자금·스마트상점 매칭용
   // 2단계 (상담 목적)
   purposes?: string[]; // 창업자금/운전자금/시설자금/수출자금/정부지원금/인증및특허
-  desiredAmount?: string;
+  desiredAmount?: string; // (구) 희망 금액 질문 — 제거됨. 매칭 미사용. 하위호환 위해 타입만 유지
   interests?: string[]; // 정책자금/정부지원금/창업지원/바우처/인증/교육
   // 3단계
   credit?: string;

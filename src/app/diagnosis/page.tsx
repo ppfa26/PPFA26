@@ -49,10 +49,11 @@ function keepBrackets(text: string): string {
   return text.replace(/\(([^)]*)\)/g, (_m, inner) => `(${inner.replace(/ /g, "\u00A0")})`);
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
-    <div className="mb-4 sm:mb-5">
-      <p className="mb-2 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(label)}</p>
+    <div className="mb-5 last:mb-0 sm:mb-6">
+      <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(label)}</p>
+      {hint && <p className="mb-2 break-keep text-xs leading-snug text-brand-gray">{hint}</p>}
       {children}
     </div>
   );
@@ -620,31 +621,23 @@ export default function Diagnosis() {
               <h1 className="mb-1 text-lg font-extrabold text-brand-dark sm:text-xl">{STEP2_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP2_SUBTITLE}</p>
 
-              {/* ① 어떤 지원이 필요한가 (상담목적+관심분야 통합, 희망 금액) */}
+              {/* ① 어떤 지원이 필요한가 — 3단계처럼 라벨+짧은 힌트로 간결화(대표님 요청). 희망금액 질문 제거 */}
               <GroupBox title={STEP2_GROUP_NEED} tone="orange">
-                <Field label={STEP2_FIELDS.purposes.label}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} /></Field>
-                <Field label={STEP2_FIELDS.desiredAmount.label}><Radio k="desiredAmount" opts={STEP2_FIELDS.desiredAmount.opts} /></Field>
+                <Field label={STEP2_FIELDS.purposes.label} hint={STEP2_FIELDS.purposes.hint}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} /></Field>
               </GroupBox>
 
-              {/* ② 자금 여건·현재 이용 현황 — 순서(대표님 요청): 신용점수 → 4대보험 직원수 → 담보 → 이용 중인 정책기관 */}
+              {/* ② 자금 여건·현재 이용 현황 — 순서(대표님 요청): 신용점수 → 직원수 → 담보 → 이용 중인 정책기관 */}
               <GroupBox title={STEP2_GROUP_FINANCE}>
-                <Field label={STEP3_FIELDS.credit.label}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
-                {/* 직원수(4대보험 통합) — 힌트 포함 */}
-                <div className="mb-6 last:mb-0">
-                  <p className="mb-1 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP2_FIELDS.employees.label)}</p>
-                  <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
-                    {STEP2_FIELDS.employees.hint}
-                  </p>
-                  <Radio k="employees" opts={STEP2_FIELDS.employees.opts} />
-                </div>
-                <Field label={STEP2_FIELDS.collateral.label}><Radio k="collateral" opts={STEP2_FIELDS.collateral.opts} /></Field>
-                <Field label={STEP2_FIELDS.currentInstitutions.label}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
+                <Field label={STEP3_FIELDS.credit.label} hint={STEP3_FIELDS.credit.hint}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
+                <Field label={STEP2_FIELDS.employees.label} hint={STEP2_FIELDS.employees.hint}><Radio k="employees" opts={STEP2_FIELDS.employees.opts} /></Field>
+                <Field label={STEP2_FIELDS.collateral.label} hint={STEP2_FIELDS.collateral.hint}><Radio k="collateral" opts={STEP2_FIELDS.collateral.opts} /></Field>
+                <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
               </GroupBox>
 
               {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) — 있으면 자격이 열려 더 유리한 문맥으로 묶음 */}
               <GroupBox title={STEP2_GROUP_STRENGTH} tone="green">
-                <Field label={STEP3_FIELDS.certifications.label}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
-                <Field label={STEP3_FIELDS.innovation.label}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
+                <Field label={STEP3_FIELDS.certifications.label} hint={STEP3_FIELDS.certifications.hint}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
+                <Field label={STEP3_FIELDS.innovation.label} hint={STEP3_FIELDS.innovation.hint}><MultiGrid k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
               </GroupBox>
             </div>
           )}
