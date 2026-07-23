@@ -27,9 +27,63 @@ const OWNER_KEY = "mpp_diagnosis_owner";
 //   같은 도메인 모든 탭이 공유하는 localStorage 를 쓴다. (본인 진단 mpp_diagnosis 와 분리)
 const ADMIN_KEY = "mpp_diagnosis_admin";
 
+// ★ 진단 '진행중 초안(draft)' 임시 저장 키 ★
+//   진단을 다 끝내기 전이라도, 입력 도중의 폼과 진행 단계를 계속 저장해 둔다.
+//   → 진단 중간에 로그인/회원가입을 하러 페이지를 떠났다 돌아와도,
+//     처음(1단계)으로 튕기지 않고 "하던 그대로" 이어서 진단할 수 있게 한다.
+//   (이게 없으면 로그인 왕복 시 form 이 메모리에서 사라져 진단이 초기화됨 — 예전 버그의 원인)
+const DRAFT_KEY = "mpp_diagnosis_draft";
+const DRAFT_STAMP_KEY = "mpp_diagnosis_draft_savedAt";
+// 초안 유지 시간 — 로그인 왕복은 몇 분이면 끝나므로 24시간이면 충분(그 이상은 폐기)
+const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
+
 // 진단 결과 유지 기간 (일) — 여기 숫자만 바꾸면 됩니다.
 export const DIAGNOSIS_TTL_DAYS = 30;
 const TTL_MS = DIAGNOSIS_TTL_DAYS * 24 * 60 * 60 * 1000;
+
+/**
+ * 진단 진행중 초안(폼 + 현재 단계)을 임시 저장합니다.
+ * 입력이 바뀔 때마다 호출해도 부담 없도록 가볍게 동작합니다.
+ */
+export function saveDiagnosisDraft(form: unknown, step: number): void {
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, step }));
+    localStorage.setItem(DRAFT_STAMP_KEY, String(Date.now()));
+  } catch {
+    /* 저장 불가여도 흐름은 계속 */
+  }
+}
+
+/**
+ * 저장된 진단 초안을 돌려줍니다. 24시간이 지났으면 자동 폐기하고 null 반환.
+ * @returns { form, step } 또는 null
+ */
+export function loadDiagnosisDraft<T = unknown>(): { form: T; step: number } | null {
+  try {
+    const stamp = Number(localStorage.getItem(DRAFT_STAMP_KEY) || 0);
+    if (!stamp || Date.now() - stamp > DRAFT_TTL_MS) {
+      clearDiagnosisDraft();
+      return null;
+    }
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    return { form: parsed.form as T, step: Number(parsed.step) || 1 };
+  } catch {
+    return null;
+  }
+}
+
+/** 진단 초안을 지웁니다. (진단 완료·제출 후 호출) */
+export function clearDiagnosisDraft(): void {
+  try {
+    localStorage.removeItem(DRAFT_KEY);
+    localStorage.removeItem(DRAFT_STAMP_KEY);
+  } catch {
+    /* noop */
+  }
+}
 
 /**
  * 진단 결과(profile 객체)를 저장합니다. 저장 시각과 소유자(로그인 계정)도 함께 기록.

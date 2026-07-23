@@ -9,7 +9,12 @@ import PageShell from "@/components/PageShell";
 import { trackConversion } from "@/components/KarrotPixel";
 import { supabase } from "@/lib/supabaseClient";
 import { isStatsExcludedEmail } from "@/lib/admin";
-import { saveDiagnosis } from "@/lib/diagnosisStore";
+import {
+  saveDiagnosis,
+  saveDiagnosisDraft,
+  loadDiagnosisDraft,
+  clearDiagnosisDraft,
+} from "@/lib/diagnosisStore";
 import {
   DIAGNOSIS_TEXT,
   BNO_TEXT,
@@ -204,14 +209,30 @@ export default function Diagnosis() {
     }
   }, [step]);
 
-  // ── 로그인(회원가입) 게이트 확인 ──
-  //   로그인돼 있으면 진단 시작(ready), 아니면 회원가입 유도 화면(guest).
+  // ── 진단 시작 (게이트 제거 · 대표님 요청 변경) ──
+  //   [변경 전] 진단 시작 '전'에 로그인을 강제 → 처음 온 방문자가 경험도 하기 전에
+  //            개인정보를 요구받아 대부분 이탈(당근 유입 대비 진단 0명의 주원인).
+  //   [변경 후] 로그인 없이 '바로' 진단을 시작할 수 있게 열어준다.
+  //            로그인은 진단을 다 마치고 '결과를 볼 때' 자연스럽게 유도한다.
+  //            (진단을 먼저 경험 → 결과가 궁금해서 가입 → 전환율 상승. 삼쩜삼·아정당 방식)
+  //
+  //   ★ 초안 복구 ★ 로그인 왕복 등으로 페이지를 떠났다 돌아와도 하던 진단을 이어가도록,
+  //     저장해 둔 초안(폼 + 단계)이 있으면 복구한다. (예전 '처음으로 튕김' 버그 해결)
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      setGate(data.session?.user ? "ready" : "guest");
-    })();
+    setGate("ready"); // 게이트 없이 항상 진단 가능
+    const draft = loadDiagnosisDraft<any>();
+    if (draft && draft.form) {
+      setForm(draft.form);
+      if (draft.step >= 1 && draft.step <= 3) setStep(draft.step);
+    }
   }, []);
+
+  // ── 진단 초안 자동 저장 ──
+  //   폼/단계가 바뀔 때마다 초안을 저장해 둔다. → 로그인하러 떠나도 복구 가능.
+  useEffect(() => {
+    // 초기 렌더(빈 폼)엔 굳이 저장하지 않도록 최소 조건만 둔다.
+    saveDiagnosisDraft(form, step);
+  }, [form, step]);
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
   const toggle = (k: string, v: string) =>
@@ -257,35 +278,43 @@ export default function Diagnosis() {
     // ★ 어느 로그인 계정의 진단인지 '소유자'를 함께 저장 → 다른 계정으로 로그인하면
     //    이 진단이 따라오지 않도록 한다. (계정별 데이터 분리)
     (async () => {
+      // 결과 화면 목적지 — ?analyze=1 로 'AI 분석 중' 연출을 보여준다.
+      const RESULT_URL = "/matching-preview?analyze=1";
       try {
         const { data: sessionData } = await supabase.auth.getSession();
         const user = sessionData.session?.user ?? null;
 
-        // 소유자(user.id)를 붙여 저장 (push 전에 확실히 저장 완료)
+        // 소유자(user.id)를 붙여 저장 — 비회원이면 null(나중에 로그인 시 자동 연결)
         saveDiagnosis(form, user?.id ?? null);
+        // 진단이 완료됐으니 진행중 초안은 정리
+        clearDiagnosisDraft();
 
-        // ★ 통계 제외 계정만 DB 기록 생략. (현재는 비어 있어 관리자도 일반 고객처럼 기록됨) ★
-        if (!isStatsExcludedEmail(user?.email)) {
-          // 1단계에서 받은 대표자 성함·연락처를 전용 컬럼(name/phone)에도 저장
-          // → 관리자 목록·엑셀·상담 안내에서 정확히 식별됩니다. (profile 안에도 함께 보관)
-          await supabase.from("diagnoses").insert({
-            user_id: user?.id ?? null,
-            profile: form,
-            name: (form.name || "").trim() || null,
-            phone: (form.phone || "").trim() || null,
-            email: user?.email ?? null,
-          });
-        }
-      } catch {
-        /* 저장 실패해도 사용자 흐름은 막지 않음 */
-      } finally {
         // ★ 전환 추적 ★ 진단(설문) 제출 완료 = 서비스 신청 전환.
-        //   당근 표준 이벤트 SubmitApplication 으로 전송한다.
         trackConversion("SubmitApplication");
 
-        // 저장 시도 후 결과 화면으로 이동 (localStorage 저장이 먼저 끝나 있음)
-        //  ?analyze=1 → 결과 화면에서 'AI 분석 중' 연출을 반드시 보여준다.
-        router.push("/matching-preview?analyze=1");
+        if (user) {
+          // ── 이미 로그인한 경우: 곧바로 결과로 (DB에도 기록) ──
+          if (!isStatsExcludedEmail(user.email)) {
+            await supabase.from("diagnoses").insert({
+              user_id: user.id,
+              profile: form,
+              name: (form.name || "").trim() || null,
+              phone: (form.phone || "").trim() || null,
+              email: user.email ?? null,
+            });
+          }
+          router.push(RESULT_URL);
+          return;
+        }
+
+        // ── 비회원인 경우 (게이트 제거로 진단을 끝까지 마친 방문자) ──
+        //   진단은 이미 localStorage 에 저장됨 → 로그인만 하면 결과가 그대로 뜬다.
+        //   로그인 후 곧장 '결과 화면'으로 보내므로(next=결과URL) 진단 페이지로
+        //   되돌아가 처음부터 다시 하는 예전 버그가 발생하지 않는다.
+        router.push(`/signup?next=${encodeURIComponent(RESULT_URL)}`);
+      } catch {
+        // 세션 확인/DB 저장 실패해도 진단은 저장돼 있으니 결과 화면으로는 보낸다.
+        router.push(RESULT_URL);
       }
     })();
   };
@@ -353,60 +382,6 @@ export default function Diagnosis() {
         <Header />
         <main className="flex min-h-[50vh] items-center justify-center px-4 py-20">
           <p className="text-sm font-semibold text-brand-gray">불러오는 중...</p>
-        </main>
-        <Footer />
-      </PageShell>
-    );
-  }
-
-  // ── 로그인(회원가입) 게이트 화면 (비로그인 시) ──
-  //   블덱스처럼 로그인하지 않으면 진단을 시작조차 못 하게 막는다. (대표님 요청)
-  //   로그인/가입 후 next 파라미터로 다시 이 진단 페이지로 돌아온다.
-  if (gate === "guest") {
-    return (
-      <PageShell pageKey="diagnosis">
-        <Header />
-        <main className="px-4 py-12">
-          <div className="mx-auto max-w-md">
-            <div className="rounded-3xl border-2 border-brand-orange/50 bg-white p-7 text-center shadow-card sm:p-9">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
-                🔒
-              </div>
-              <h1 className="mt-4 break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
-                무료 진단을 시작하려면
-                <br />
-                <span className="text-brand-orange">간편 로그인</span>이 필요합니다
-              </h1>
-              <p className="mt-4 break-keep text-sm leading-relaxed text-brand-dark/70">
-                <b className="text-brand-orange">카카오·구글·이메일</b> 중 편한 방법으로
-                <br />
-                간편 로그인하고 무료 진단 받으세요.
-              </p>
-
-              <Link
-                href="/signup?next=%2Fdiagnosis"
-                className="btn-brand mt-6 block rounded-full py-3.5 text-center text-base font-bold"
-              >
-                🔓 회원가입하고 무료 진단 시작하기
-              </Link>
-              <p className="mt-3 break-keep text-xs text-brand-gray">
-                이미 가입하셨나요?{" "}
-                <Link
-                  href="/signup?next=%2Fdiagnosis"
-                  className="font-bold text-brand-dark underline"
-                >
-                  로그인
-                </Link>
-              </p>
-
-              <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-center text-xs leading-relaxed text-brand-dark/70">
-                💡 로그인하면 진단 결과가 저장됩니다.
-              </div>
-              <p className="mt-4 break-keep text-[11px] text-brand-dark/50">
-                ⚠️ 본 서비스는 정부지원사업 안내·추천 서비스이며 승인을 보장하지 않습니다.
-              </p>
-            </div>
-          </div>
         </main>
         <Footer />
       </PageShell>
