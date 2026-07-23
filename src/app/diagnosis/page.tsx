@@ -14,6 +14,8 @@ import {
   saveDiagnosisDraft,
   loadDiagnosisDraft,
   clearDiagnosisDraft,
+  savePartialLead,
+  saveCompletedDiagnosis,
 } from "@/lib/diagnosisStore";
 import {
   DIAGNOSIS_TEXT,
@@ -270,6 +272,24 @@ export default function Diagnosis() {
         return;
       }
       setContactErr("");
+
+      // ★ 부분완료 리드 저장 (대표님 전략) ★
+      //   여기까지 왔다 = 사업자번호 필터 통과 + 이름·전화 입력 완료 = '검증된 진짜 사업자'.
+      //   이후 진단을 중간에 그만두더라도 연락처는 DB(status='partial')에 남겨,
+      //   대표님이 직접 전화 돌릴 고품질 리드로 확보한다. (실패해도 진행에는 영향 없음)
+      (async () => {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const uid = sessionData.session?.user?.id ?? null;
+          const uemail = sessionData.session?.user?.email ?? null;
+          // 관리자·통계제외 계정(대표님 테스트)은 저장하지 않음
+          if (!isStatsExcludedEmail(uemail)) {
+            await savePartialLead(form, uid);
+          }
+        } catch {
+          /* noop */
+        }
+      })();
     }
     setStep(step + 1);
   };
@@ -293,17 +313,17 @@ export default function Diagnosis() {
         // ★ 전환 추적 ★ 진단(설문) 제출 완료 = 서비스 신청 전환.
         trackConversion("SubmitApplication");
 
+        // ── DB 저장 (회원·비회원 공통) ──
+        //   완료 저장 RPC는 같은 전화번호의 partial 리드가 있으면 completed 로
+        //   '승격'하고 없으면 새로 저장한다. → 1단계에서 남긴 부분리드가 중복으로
+        //   쌓이지 않고, 진단을 끝까지 마치면 자동으로 완료 상태가 된다.
+        //   ※ 관리자·통계제외 계정(대표님 테스트)은 저장 생략.
+        if (!isStatsExcludedEmail(user?.email)) {
+          await saveCompletedDiagnosis(form, user?.id ?? null);
+        }
+
         if (user) {
-          // ── 이미 로그인한 경우: 곧바로 결과로 (DB에도 기록) ──
-          if (!isStatsExcludedEmail(user.email)) {
-            await supabase.from("diagnoses").insert({
-              user_id: user.id,
-              profile: form,
-              name: (form.name || "").trim() || null,
-              phone: (form.phone || "").trim() || null,
-              email: user.email ?? null,
-            });
-          }
+          // ── 이미 로그인한 경우: 곧바로 결과로 ──
           router.push(RESULT_URL);
           return;
         }

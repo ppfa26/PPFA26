@@ -357,3 +357,54 @@ export async function loadDiagnosisFromServer(
     return null;
   }
 }
+
+// ════════════════════════════════════════════════════════════════
+//  ★ 부분완료 리드(partial lead) 서버 저장 ★  (대표님 전략)
+//
+//  사업자번호 필터를 통과하고 이름·전화까지 입력한 '검증된 진짜 사업자'가
+//  진단 도중 이탈하더라도 연락처를 놓치지 않도록, 1단계 통과 시점에 즉시
+//  Supabase 에 status='partial' 로 저장한다. (전화번호 기준 중복 방지)
+//
+//  · 실패해도 조용히 무시 — 진단 진행에는 절대 영향 주지 않는다.
+// ════════════════════════════════════════════════════════════════
+export async function savePartialLead(
+  profile: Record<string, unknown>,
+  userId: string | null
+): Promise<void> {
+  try {
+    const name = (profile.name as string) || "";
+    const phone = (profile.phone as string) || "";
+    // 전화번호 없으면 리드 가치가 없으므로 저장 생략
+    if (!phone.trim()) return;
+    await supabase.rpc("save_partial_lead", {
+      p_user_id: userId,
+      p_profile: profile,
+      p_name: name,
+      p_phone: phone,
+      p_email: (profile.email as string) || null,
+    });
+  } catch {
+    /* 부분저장 실패는 조용히 무시 (진단 흐름 방해 금지) */
+  }
+}
+
+// ────────────────────────────────────────────────────────────────
+//  진단 완료 저장 — 같은 전화번호의 partial 레코드가 있으면 completed 로
+//  승격(중복 방지), 없으면 새로 저장. 비회원/회원 모두 사용.
+// ────────────────────────────────────────────────────────────────
+export async function saveCompletedDiagnosis(
+  profile: Record<string, unknown>,
+  userId: string | null
+): Promise<void> {
+  try {
+    await supabase.rpc("save_completed_diagnosis", {
+      p_user_id: userId,
+      p_profile: profile,
+      p_name: (profile.name as string) || null,
+      p_phone: (profile.phone as string) || null,
+      p_email: (profile.email as string) || null,
+    });
+  } catch {
+    /* 실패해도 결과 화면 진입은 계속 진행 */
+  }
+}

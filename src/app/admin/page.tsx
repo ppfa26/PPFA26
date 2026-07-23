@@ -59,6 +59,7 @@ type AdminDiagnosis = {
   phone: string | null;
   profile: Record<string, unknown>;
   matched_programs: unknown;
+  status?: string | null; // 'completed'(완료) | 'partial'(미완료·중간이탈)
   created_at: string;
 };
 type DailyRow = { day: string; revenue: number; cnt: number };
@@ -253,6 +254,7 @@ export default function AdminPage() {
       name: d.name,
       phone: d.phone,
       profile: (d.profile || {}) as Record<string, unknown>,
+      status: d.status,
       created_at: d.created_at,
       dupIndex: dupIndexMap.get(d.id),
     }));
@@ -1228,6 +1230,27 @@ export default function AdminPage() {
           {/* ------- 고객 진단서 (질문지 + 결과) ------- */}
           {tab === "diagnoses" && (
             <div className="space-y-3">
+              {/* ★ 완료 / 미완료(중간이탈) 요약 — 대표님이 전화 돌릴 리드 한눈에 파악 ★ */}
+              {diagnoses.length > 0 && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="rounded-2xl border border-green-100 bg-green-50 px-4 py-3">
+                    <p className="text-xs font-semibold text-green-700">✅ 진단 완료</p>
+                    <p className="text-2xl font-extrabold text-green-800">
+                      {diagnoses.filter((d) => d.status !== "partial").length}
+                      <span className="ml-1 text-sm font-bold">명</span>
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3">
+                    <p className="text-xs font-semibold text-orange-700">
+                      ⏳ 미완료(중간이탈) · 전화 추천
+                    </p>
+                    <p className="text-2xl font-extrabold text-orange-800">
+                      {diagnoses.filter((d) => d.status === "partial").length}
+                      <span className="ml-1 text-sm font-bold">명</span>
+                    </p>
+                  </div>
+                </div>
+              )}
               {/* 🔍 진단서 검색 — 이름·이메일·연락처·업종·사업자번호로 즉시 검색 */}
               {diagnoses.length > 0 && (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -1334,6 +1357,18 @@ export default function AdminPage() {
                           <span className="font-bold text-gray-800">
                             {(p as any)?.name || d.name || "이름 미입력"}
                           </span>
+                          {/* ★ 완료 / 미완료(중간이탈) 상태 뱃지 ★
+                              partial = 사업자번호·연락처는 남겼지만 진단을 끝까지 안 함
+                              → 이 고객에게 전화해서 진단 이어서 도와주면 계약 확률↑ */}
+                          {d.status === "partial" ? (
+                            <span className="ml-2 inline-block rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-bold text-orange-700">
+                              ⏳ 미완료(중간이탈)
+                            </span>
+                          ) : (
+                            <span className="ml-2 inline-block rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-bold text-green-700">
+                              ✅ 완료
+                            </span>
+                          )}
                           <span className="ml-2 text-sm text-gray-500">
                             {(p as any)?.businessType || ""}
                           </span>

@@ -66,6 +66,7 @@ export type DiagnosisRecord = {
   name: string | null;
   phone: string | null;
   profile: Record<string, unknown>;
+  status?: string | null; // 'completed'(완료) | 'partial'(미완료·중간이탈)
   created_at: string;
   dupIndex?: number; // 몇 번째 신청인지 (중복 감지 결과)
 };
@@ -106,9 +107,11 @@ export function diagnosesToCsv(records: DiagnosisRecord[]): string {
     const bnoText = valueToText((rec.profile as any)?.bno);
     const dupNote =
       rec.dupIndex && rec.dupIndex > 1 ? ` · ${rec.dupIndex}번째 신청(중복)` : "";
+    // 완료/미완료 상태 — 엑셀에서도 전화 돌릴 미완료 리드를 바로 구분
+    const statusNote = rec.status === "partial" ? "[미완료-중간이탈]" : "[완료]";
 
-    // ── 사람 구분 제목 줄 (이름 · 사업자유형 · 연락처 · 사업자번호 · 접수일시) ──
-    const headerParts = [applicant];
+    // ── 사람 구분 제목 줄 (상태 · 이름 · 사업자유형 · 연락처 · 사업자번호 · 접수일시) ──
+    const headerParts = [statusNote, applicant];
     if (bizType !== "-") headerParts.push(bizType);
     if (phoneText !== "-") headerParts.push(phoneText);
     if (bnoText !== "-") headerParts.push(bnoText);
