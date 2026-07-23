@@ -320,7 +320,33 @@ export default function Diagnosis() {
     })();
   };
 
-  const progress = (step / 3) * 100;
+  // ── 진행률(%) 계산 (대표님 요청) ──────────────────────────────
+  //   스텝(1/3·2/3) 기준이 아니라 "실제 답한 질문 수 / 전체 질문 수"로 계산해
+  //   질문 하나를 답할 때마다 상단 %가 조금씩 올라가게 한다. (소수점은 반올림 정수)
+  //   ※ 목록에 있는 필드 = 진행률 계산 대상 질문. 답이 채워지면 1칸 오른다.
+  //     - 단일선택/텍스트: 값이 있으면 답한 것
+  //     - 복수선택(배열): 1개 이상 고르면 답한 것
+  const PROGRESS_FIELDS: { key: string; multi?: boolean }[] = [
+    // 1단계 (사업장 기본정보 + 대표자 연락)
+    { key: "bno" }, { key: "name" }, { key: "phone" },
+    { key: "businessType" }, { key: "industries", multi: true },
+    { key: "revenue" }, { key: "years" }, { key: "age" }, { key: "region" },
+    // 2단계 (필요한 지원 + 자금 여건 + 강점)
+    { key: "purposes", multi: true }, { key: "credit" }, { key: "employees" },
+    { key: "collateral" }, { key: "currentInstitutions", multi: true },
+    { key: "certifications", multi: true }, { key: "innovation", multi: true },
+    // 3단계 (맞춤 매칭 + 결격 + 전화상담)
+    { key: "revenueGrowth2y" }, { key: "smartDevice" }, { key: "wantsRefinance" },
+    { key: "reFounder" }, { key: "govSelected" }, { key: "privateInvestment" },
+    { key: "phoneConsult" },
+  ];
+  const answeredCount = PROGRESS_FIELDS.reduce((n, f) => {
+    const v = form[f.key];
+    if (f.multi) return n + (Array.isArray(v) && v.length > 0 ? 1 : 0);
+    return n + (v !== undefined && v !== null && String(v).trim() !== "" ? 1 : 0);
+  }, 0);
+  // 답한 질문 수 ÷ 전체 질문 수 → 반올림 정수 %. (최소 진행 표시를 위해 아직 0개여도 바는 0%)
+  const progress = Math.round((answeredCount / PROGRESS_FIELDS.length) * 100);
 
   // ── 선택 버튼 공통 스타일 (Radio·Multi 완전 통일 · 모바일/PC 최적화) ──
   //   모바일: 살짝 큰 터치영역(py-2) · PC: 여유있게(sm:py-2). 글자·모서리·색 전부 동일.
