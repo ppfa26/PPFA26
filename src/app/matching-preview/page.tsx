@@ -476,30 +476,6 @@ export default function MatchingPreview() {
           )}
           {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 — 화면 간결화 ── */}
           <div className="relative mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-            {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
-            <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-3">
-              <p className="mb-2 break-keep text-[13px] font-bold text-brand-dark/60">
-                📑 이 결과에 담긴 내용
-              </p>
-              {/* 한 줄 유지 — 좁은 화면에서는 가로 스크롤(스크롤바 숨김) */}
-              <div className="flex flex-nowrap gap-1.5 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                {[
-                  "🏅 정부지원제도",
-                  "💳 정책금융기관",
-                  "💎 추가 감면 혜택",
-                  "📊 기관별 상품",
-                  "🌐 신청처 · 콜센터",
-                ].map((t) => (
-                  <span
-                    key={t}
-                    className="shrink-0 rounded-full border border-brand-orange/30 bg-white px-2.5 py-1 text-[12px] font-bold text-brand-dark"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-
             {/* 실제 대시보드 결과창 — 내용은 열고 이름/버튼만 부분 잠금(previewLock).
                 관리자 열람 모드 또는 오픈 베타(무료) 모드에서는 previewLock을 꺼서
                 전체 결과를 그대로 보여준다. (베타: 결제 없이 전부 무료 공개) */}
