@@ -53,7 +53,8 @@ function keepBrackets(text: string): string {
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
-    <div className="mb-5 last:mb-0 sm:mb-6">
+    // data-question: 답을 고르면 '다음 질문'을 화면 중앙으로 스크롤하기 위한 마커(대표님 요청)
+    <div data-question className="mb-5 scroll-mt-24 last:mb-0 sm:mb-6">
       {label && <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(label)}</p>}
       {hint && <p className="mb-2 break-keep text-xs leading-snug text-brand-gray">{hint}</p>}
       {children}
@@ -237,7 +238,29 @@ export default function Diagnosis() {
     saveDiagnosisDraft(form, step);
   }, [form, step]);
 
-  const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
+  // 답을 고르면 '다음 질문'을 화면 중앙으로 부드럽게 이동(대표님 요청) — 스크롤 내리는 수고 제거.
+  //  · 단일 선택(Radio)에서만 자동 이동 (복수 선택은 여러 개 고르므로 자동 이동 제외 → 화면 튐 방지)
+  //  · 이벤트가 발생한 버튼이 속한 [data-question] 블록의 '다음 [data-question]'으로 이동
+  const scrollToNextQuestion = (e?: any) => {
+    try {
+      if (typeof window === "undefined") return;
+      const target = e?.currentTarget as HTMLElement | undefined;
+      const cur = target?.closest("[data-question]");
+      const all = Array.from(document.querySelectorAll("[data-question]"));
+      const idx = cur ? all.indexOf(cur) : -1;
+      const next = idx >= 0 ? (all[idx + 1] as HTMLElement | undefined) : undefined;
+      // 다음 질문이 있으면 중앙으로, 없으면(마지막 질문) '다음 단계' 버튼이 보이게 살짝 아래로
+      window.requestAnimationFrame(() => {
+        if (next) next.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    } catch {
+      /* noop */
+    }
+  };
+  const set = (k: string, v: any, e?: any) => {
+    setForm((f: any) => ({ ...f, [k]: v }));
+    scrollToNextQuestion(e);
+  };
   const toggle = (k: string, v: string) =>
     setForm((f: any) => {
       const arr = f[k] || [];
@@ -292,6 +315,8 @@ export default function Diagnosis() {
       })();
     }
     setStep(step + 1);
+    // 다음 단계로 넘어가면 항상 상단부터 보이도록(대표님 요청)
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const submit = () => {
@@ -407,7 +432,7 @@ export default function Diagnosis() {
         {opts.map((o) => (
           <button
             key={o}
-            onClick={() => set(k, o)}
+            onClick={(e) => set(k, o, e)}
             className={`${pillCls(form[k] === o)} w-full break-keep text-center sm:w-auto`}
           >
             {o}
@@ -417,25 +442,50 @@ export default function Diagnosis() {
     ) : (
       <div className="flex flex-wrap gap-2">
         {opts.map((o) => (
-          <button key={o} onClick={() => set(k, o)} className={pillCls(form[k] === o)}>
+          <button key={o} onClick={(e) => set(k, o, e)} className={pillCls(form[k] === o)}>
             {o}
           </button>
         ))}
       </div>
     );
   // breakBefore: 해당 라벨 앞에서 강제 줄바꿈(PC에서 원하는 줄 배치 — 대표님 요청)
-  const Multi = ({ k, opts, breakBefore }: { k: string; opts: string[]; breakBefore?: string[] }) => (
-    <div className="flex flex-wrap gap-2">
-      {opts.map((o) => (
-        <Fragment key={o}>
-          {breakBefore?.includes(o) && <div className="hidden w-full sm:block" aria-hidden />}
-          <button onClick={() => toggle(k, o)} className={pillCls((form[k] || []).includes(o))}>
+  // grid: 모바일에서 균등 2열 그리드로 정렬(정책기관 등) → flex-wrap 특유의 들쭉날쭉/마지막 1개 어색함 제거.
+  //       PC(sm 이상)는 자동 줄바꿈 유지.
+  const Multi = ({
+    k,
+    opts,
+    breakBefore,
+    grid,
+  }: {
+    k: string;
+    opts: string[];
+    breakBefore?: string[];
+    grid?: boolean;
+  }) =>
+    grid ? (
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+        {opts.map((o) => (
+          <button
+            key={o}
+            onClick={() => toggle(k, o)}
+            className={`${pillCls((form[k] || []).includes(o))} w-full break-keep text-center sm:w-auto`}
+          >
             {o}
           </button>
-        </Fragment>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    ) : (
+      <div className="flex flex-wrap gap-2">
+        {opts.map((o) => (
+          <Fragment key={o}>
+            {breakBefore?.includes(o) && <div className="hidden w-full sm:block" aria-hidden />}
+            <button onClick={() => toggle(k, o)} className={pillCls((form[k] || []).includes(o))}>
+              {o}
+            </button>
+          </Fragment>
+        ))}
+      </div>
+    );
   // 혁신성장 테마처럼 항목이 많은 다중선택 → 반응형 그리드
   //  모바일: 2열 (글자 안 잘리게) / 작은태블릿: 3열 / 큰화면: 5열(2줄)
   const MultiGrid = ({ k, opts }: { k: string; opts: string[] }) => (
@@ -720,7 +770,7 @@ export default function Diagnosis() {
               <GroupBox title={STEP2_GROUP_FINANCE}>
                 <Field label={STEP3_FIELDS.credit.label} hint={STEP3_FIELDS.credit.hint}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} grid /></Field>
                 <Field label={STEP2_FIELDS.employees.label} hint={STEP2_FIELDS.employees.hint}><Radio k="employees" opts={STEP2_FIELDS.employees.opts} grid /></Field>
-                <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
+                <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} grid /></Field>
               </GroupBox>
 
               {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) — 있으면 자격이 열려 더 유리한 문맥으로 묶음 */}
@@ -796,7 +846,13 @@ export default function Diagnosis() {
           {/* 네비 버튼 */}
           <div className="mt-6 flex gap-3">
             {step > 1 && (
-              <button onClick={() => setStep(step - 1)} className="btn-outline flex-1 rounded-full py-3">
+              <button
+                onClick={() => {
+                  setStep(step - 1);
+                  if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="btn-outline flex-1 rounded-full py-3"
+              >
                 {DIAGNOSIS_TEXT.prevButton}
               </button>
             )}
