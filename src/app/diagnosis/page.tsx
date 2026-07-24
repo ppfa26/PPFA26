@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -390,12 +390,16 @@ export default function Diagnosis() {
       ))}
     </div>
   );
-  const Multi = ({ k, opts }: { k: string; opts: string[] }) => (
+  // breakBefore: 해당 라벨 앞에서 강제 줄바꿈(PC에서 원하는 줄 배치 — 대표님 요청)
+  const Multi = ({ k, opts, breakBefore }: { k: string; opts: string[]; breakBefore?: string[] }) => (
     <div className="flex flex-wrap gap-2">
       {opts.map((o) => (
-        <button key={o} onClick={() => toggle(k, o)} className={pillCls((form[k] || []).includes(o))}>
-          {o}
-        </button>
+        <Fragment key={o}>
+          {breakBefore?.includes(o) && <div className="hidden w-full sm:block" aria-hidden />}
+          <button onClick={() => toggle(k, o)} className={pillCls((form[k] || []).includes(o))}>
+            {o}
+          </button>
+        </Fragment>
       ))}
     </div>
   );
@@ -674,7 +678,7 @@ export default function Diagnosis() {
 
               {/* ① 어떤 지원이 필요한가 — 3단계처럼 라벨+짧은 힌트로 간결화(대표님 요청). 희망금액 질문 제거 */}
               <GroupBox title={STEP2_GROUP_NEED} tone="orange">
-                <Field label={STEP2_FIELDS.purposes.label} hint={STEP2_FIELDS.purposes.hint}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} /></Field>
+                <Field label={STEP2_FIELDS.purposes.label} hint={STEP2_FIELDS.purposes.hint}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} breakBefore={["수출자금"]} /></Field>
               </GroupBox>
 
               {/* ② 자금 여건·현재 이용 현황 — 순서(대표님 요청): 신용점수 → 직원수 → 이용 중인 정책기관
