@@ -518,8 +518,8 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
         title="챙기면 좋은 추가 감면 혜택"
         subtitle="세금을 아낄 수 있는 혜택이에요"
       >
-        {/* 가능성 높은 순 상위 6개 — 기관 박스처럼 구분선(divide)으로 정리 */}
-        <div className="mt-4 divide-y divide-gray-200">
+        {/* 가능성 높은 순 상위 6개 — 항목마다 연한 박스 + 간격으로 시원하게(금융기관 카드와 동일 감각) */}
+        <div className="mt-4 space-y-3">
           {judged.map(({ b, v }) => {
             const isYes = v.status === "yes";
             const isCondition = v.status === "condition";
@@ -527,7 +527,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
             return (
               <div
                 key={b.id}
-                className="group origin-left py-4 transition-transform duration-150 first:pt-0 last:pb-0 hover:scale-[1.01]"
+                className="group origin-left rounded-xl border border-gray-200 bg-white p-4 transition-transform duration-150 hover:scale-[1.01]"
               >
                 {/* 상단: 아이콘 + 제목 + 절감액 알약 + 대상 뱃지
                     (융자 상품 카드와 동일한 정보 구조 — 제목 옆에 '핵심 혜택'을 알약으로) */}
