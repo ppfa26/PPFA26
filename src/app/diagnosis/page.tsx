@@ -382,14 +382,33 @@ export default function Diagnosis() {
         : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
     }`;
   // cols2: 글자가 긴 2지선다(결격사유 등)를 모바일에서 균등 2열로 정렬 → 너비 들쭉날쭉 방지
-  const Radio = ({ k, opts, cols2 }: { k: string; opts: string[]; cols2?: boolean }) =>
-    cols2 ? (
-      <div className="grid grid-cols-2 gap-2">
+  // grid: 선택지가 여러 개인 항목(업력·직원수 등)을 모바일에서 균등 2열 그리드로 정렬해
+  //       'flex-wrap' 특유의 마지막 줄 1개만 남는(2/2/1) 어색함을 없앤다. PC(sm)에서는 자동 줄바꿈 유지.
+  const Radio = ({
+    k,
+    opts,
+    cols2,
+    grid,
+  }: {
+    k: string;
+    opts: string[];
+    cols2?: boolean;
+    grid?: boolean;
+  }) =>
+    cols2 || grid ? (
+      <div
+        className={
+          cols2
+            ? "grid grid-cols-2 gap-2"
+            : // grid: 모바일 균등 2열 → PC(sm 이상)는 내용 폭에 맞춰 자동 흐름
+              "grid grid-cols-2 gap-2 sm:flex sm:flex-wrap"
+        }
+      >
         {opts.map((o) => (
           <button
             key={o}
             onClick={() => set(k, o)}
-            className={`${pillCls(form[k] === o)} w-full break-keep text-center`}
+            className={`${pillCls(form[k] === o)} w-full break-keep text-center sm:w-auto`}
           >
             {o}
           </button>
@@ -638,8 +657,8 @@ export default function Diagnosis() {
               <GroupBox title={STEP1_GROUP}>
                 <Field label={STEP1_FIELDS.businessType.label}><Radio k="businessType" opts={STEP1_FIELDS.businessType.opts} /></Field>
                 <Field label={STEP1_FIELDS.industries.label}><Multi k="industries" opts={STEP1_FIELDS.industries.opts} /></Field>
-                <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} /></Field>
-                <Field label={STEP1_FIELDS.revenue.label}><Radio k="revenue" opts={STEP1_FIELDS.revenue.opts} /></Field>
+                <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} grid /></Field>
+                <Field label={STEP1_FIELDS.revenue.label}><Radio k="revenue" opts={STEP1_FIELDS.revenue.opts} grid /></Field>
                 <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} /></Field>
                 {/* 지역 — '기타' 클릭 시 직접 입력창 노출(대표님 요청) */}
                 <Field label={STEP1_FIELDS.region.label}>
@@ -699,8 +718,8 @@ export default function Diagnosis() {
                   ※ '담보 보유 여부' 질문은 제거(대표님 요청). 매칭은 '담보없음' 기준(대부분 소상공인)으로
                      제출 시 자동 세팅되므로 보증서·정책자금 매칭 정확도는 그대로 유지됨. */}
               <GroupBox title={STEP2_GROUP_FINANCE}>
-                <Field label={STEP3_FIELDS.credit.label} hint={STEP3_FIELDS.credit.hint}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} /></Field>
-                <Field label={STEP2_FIELDS.employees.label} hint={STEP2_FIELDS.employees.hint}><Radio k="employees" opts={STEP2_FIELDS.employees.opts} /></Field>
+                <Field label={STEP3_FIELDS.credit.label} hint={STEP3_FIELDS.credit.hint}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} grid /></Field>
+                <Field label={STEP2_FIELDS.employees.label} hint={STEP2_FIELDS.employees.hint}><Radio k="employees" opts={STEP2_FIELDS.employees.opts} grid /></Field>
                 <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} /></Field>
               </GroupBox>
 
