@@ -170,9 +170,18 @@ function SignupInner() {
         typeof window !== "undefined"
           ? `${window.location.origin}/signup${qs}`
           : undefined;
+      // 카카오싱크: 로그인 시 '모두의사업친구' 채널(_VxfWxan) 추가 동의 화면을 함께 노출
+      // (구글 등 다른 provider에는 영향 없음 — 카카오일 때만 queryParams 부여)
+      const options =
+        provider === "kakao"
+          ? {
+              redirectTo,
+              queryParams: { channel_public_id: "_VxfWxan" },
+            }
+          : { redirectTo };
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
-        options: { redirectTo },
+        options,
       });
       if (error) {
         setMsg(
