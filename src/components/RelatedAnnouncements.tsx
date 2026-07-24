@@ -60,8 +60,7 @@ export default function RelatedAnnouncements({
       title="지금 열려있는 관련 정부지원사업"
       subtitle={
         <>
-          지역·업종·규모에 맞춰 ·
-          <b className="text-brand-orange"> 🟢 공고 중인 실제 사업</b>을 가능성 높은 순으로 안내합니다.
+          <b className="text-brand-green">🟢 공고 중인 실제 사업</b>을 가능성 높은 순으로 안내합니다.
         </>
       }
     >
@@ -74,8 +73,8 @@ export default function RelatedAnnouncements({
             {(items || []).map((it, i) => {
               const inner = (
                 <>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="break-keep text-sm font-extrabold text-brand-dark">
+                  <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                    <span className="break-keep text-[14px] font-extrabold text-brand-dark sm:text-sm">
                       {it.title}
                     </span>
                     {it.support_scale && (
@@ -89,7 +88,7 @@ export default function RelatedAnnouncements({
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
+                  <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray sm:mt-1 sm:text-xs">
                     {it.site_name && <>🏛️ {it.site_name}</>}
                     {it.target && <>{it.site_name ? " · " : ""}대상: {it.target}</>}
                   </p>

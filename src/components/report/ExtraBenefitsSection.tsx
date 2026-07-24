@@ -518,8 +518,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
         title="챙기면 좋은 추가 감면 혜택"
         subtitle={
           <>
-            업종·규모에 맞춰 ·
-            <b className="text-brand-green"> ✅ 신청 대상</b>을 가능성 높은 순으로 안내합니다.
+            <b className="text-brand-green">✅ 신청 대상</b>을 가능성 높은 순으로 안내합니다.
           </>
         }
       >
@@ -535,18 +534,18 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 className="group origin-left py-4 transition-transform duration-150 first:pt-0 last:pb-0 hover:scale-[1.01]"
               >
                 {/* 상단: 아이콘 + 제목 + 대상 뱃지 (정부지원제도 항목과 동일 구조) */}
-                <div className="flex flex-wrap items-center gap-1.5">
+                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                   <span className="text-base">{b.icon}</span>
-                  <span className={`break-keep text-sm font-extrabold text-brand-dark ${lockText}`}>
+                  <span className={`break-keep text-[14px] font-extrabold text-brand-dark sm:text-sm ${lockText}`}>
                     {b.title}
                   </span>
                   {isYes ? (
                     <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                      ✅ 신청 가능
+                      신청 가능
                     </span>
                   ) : (
-                    <span className="shrink-0 break-keep rounded-full bg-brand-orange px-2 py-0.5 text-[10px] font-bold text-white">
-                      🟡 조건 충족 시 신청 가능
+                    <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                      조건 충족 시 가능
                     </span>
                   )}
                 </div>
@@ -554,7 +553,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 {/* 예상 절감·수령액 — 정부지원제도의 초록 안내 자리처럼 강조 */}
                 {v.savingText && (
                   <p
-                    className={`mt-1 break-keep text-sm font-extrabold ${
+                    className={`mt-1.5 break-keep text-[13px] font-extrabold sm:mt-1 sm:text-sm ${
                       isYes ? "text-brand-orange" : "text-brand-dark/70"
                     } ${lockText}`}
                   >
@@ -563,14 +562,14 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 )}
 
                 {/* 설명 (제목 아래 목차성 문구라 노출 유지) */}
-                <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
+                <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray sm:text-xs">
                   {b.description}
                 </p>
 
                 {/* 조건 충족 시 안내 (대표님 방침: "조건 충족 시 신청 가능") */}
                 {isCondition && v.conditionText && (
-                  <p className="mt-1 break-keep rounded-lg bg-brand-orange/10 px-2.5 py-1.5 text-[11px] font-semibold text-brand-orange">
-                    🟡 {v.conditionText}
+                  <p className="mt-1.5 break-keep rounded-lg bg-brand-orange/10 px-2.5 py-1.5 text-[11px] font-semibold leading-relaxed text-brand-orange">
+                    {v.conditionText}
                   </p>
                 )}
 
@@ -581,7 +580,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
 
                 {/* 혜택 — 이걸 챙기면 무엇을 얻는지 (대표님 요청) */}
                 {b.benefit && (
-                  <p className="mt-2 break-keep rounded-lg border-l-2 border-brand-orange bg-brand-yellow/15 px-3 py-2 text-xs font-semibold leading-relaxed text-brand-dark">
+                  <p className="mt-2 break-keep rounded-lg border-l-2 border-brand-orange/60 bg-brand-yellow/15 px-3 py-2 text-[12px] font-semibold leading-relaxed text-brand-dark sm:border-brand-orange sm:text-xs">
                     <span className="font-extrabold text-brand-orange">혜택 </span>
                     {b.benefit}
                   </p>
@@ -607,15 +606,15 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 )}
 
                 {/* 신청 방법 + 필요 서류 + 처리시간 + 소요기간 — 회색 박스로 묶음 (알맹이라 잠금) */}
-                <div className={`mt-2 rounded-lg bg-gray-50 px-3 py-2 ${lockText}`}>
+                <div className={`mt-2 rounded-lg bg-gray-50 px-3 py-2.5 sm:py-2 ${lockText}`}>
                   {/* 신청 방법 (대표님 요청 — 간단하게라도) */}
                   {b.applyHow && (
-                    <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
+                    <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80 sm:text-xs">
                       <span className="font-bold text-brand-dark">📝 신청 방법 </span>
                       {b.applyHow}
                     </p>
                   )}
-                  <div className={`flex flex-wrap items-center gap-1.5 ${b.applyHow ? "mt-1.5" : ""}`}>
+                  <div className={`flex flex-wrap items-center gap-1.5 ${b.applyHow ? "mt-2 sm:mt-1.5" : ""}`}>
                     <span className="break-keep text-[11px] font-bold text-brand-dark/70">
                       📄 필요 서류
                     </span>
@@ -628,7 +627,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                       </span>
                     ))}
                   </div>
-                  <p className="mt-1 break-keep text-[11px] text-brand-dark/60">
+                  <p className="mt-1.5 break-keep text-[11px] text-brand-dark/60 sm:mt-1">
                     ⏱️ 서류 작성 · <b className="text-brand-dark/80">{b.processingTime}</b>
                   </p>
                   {/* 승인·반영 소요기간 (대표님 요청 — 대략적으로) */}
@@ -642,7 +641,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 {/* 데드라인 경고 (빨강) — 목차성 경고라 노출 유지 */}
                 {b.warning && (
                   <p
-                    className="mt-2 break-keep rounded-lg px-3 py-2 text-xs font-semibold leading-relaxed"
+                    className="mt-2 break-keep rounded-lg px-3 py-2 text-[12px] font-semibold leading-relaxed sm:text-xs"
                     style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
                   >
                     ⚠️ {b.deadline} · {b.warning}
@@ -665,7 +664,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
 
         {/* 하단 하이라이트 — 카드 안 소형 배너 */}
         <div className="mt-4 rounded-xl bg-brand-yellow/30 px-4 py-3 text-center">
-          <p className="break-keep text-sm font-black leading-snug text-brand-dark">
+          <p className="break-keep text-[13px] font-black leading-snug text-brand-dark sm:text-sm">
             💡 요건에 맞게 챙기면 첫 해 <span className="whitespace-nowrap">연 최대 700만원 절감</span> 가능
           </p>
           <p className="mt-1 break-keep text-xs font-semibold leading-relaxed text-brand-dark/70">

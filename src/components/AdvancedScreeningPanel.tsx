@@ -836,8 +836,8 @@ function AdvancedResult({
       {/* ★ 사용 안내 배너 — 숫자 요약은 상단 히어로(matching-preview)와 중복이라 제거하고
           '어떻게 보는지' 안내 문구만 남김 (대표님 요청: 결과창 중복 정리) */}
       {autoRun && (
-        <div className="rounded-2xl border-2 border-brand-orange bg-brand-grad p-4 shadow-card">
-          <p className="break-keep text-xs font-semibold leading-relaxed text-brand-dark/80 sm:whitespace-nowrap">
+        <div className="rounded-2xl border border-brand-orange/70 bg-brand-grad p-3.5 shadow-card sm:border-2 sm:border-brand-orange sm:p-4">
+          <p className="break-keep text-[12px] font-semibold leading-relaxed text-brand-dark/80 sm:whitespace-nowrap sm:text-xs">
             👇 <b>✅ 표시</b>된 곳이 <b>지금 바로 신청 가능한 곳</b>입니다.{" "}
             <b>&ldquo;상품 보기&rdquo;</b>를 누르면 신청 상품과 방법을 순서대로 안내드려요.
           </p>
@@ -852,8 +852,7 @@ function AdvancedResult({
           title="신청 가능한 정부지원제도"
           subtitle={
             <>
-              업종·규모에 맞춰 ·
-              <b className="text-brand-green"> ✅ 신청 대상</b>을 가능성 높은 순으로 안내합니다.
+              <b className="text-brand-green">✅ 신청 대상</b>을 가능성 높은 순으로 안내합니다.
             </>
           }
         >
@@ -862,17 +861,17 @@ function AdvancedResult({
             <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
               ✅ 표시된 곳, 이렇게 신청하시면 됩니다
             </p>
-            <ol className="space-y-1">
-              <li className="flex items-start gap-1.5 break-keep text-xs leading-relaxed text-brand-dark/80">
-                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">1</span>
+            <ol className="space-y-1.5 sm:space-y-1">
+              <li className="flex items-start gap-1.5 break-keep text-[12px] leading-relaxed text-brand-dark/80 sm:text-xs">
+                <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">1</span>
                 <span><b>✅ 신청 대상</b>인 제도의 카드를 눌러 상세 페이지로 들어가세요.</span>
               </li>
-              <li className="flex items-start gap-1.5 break-keep text-xs leading-relaxed text-brand-dark/80">
-                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">2</span>
+              <li className="flex items-start gap-1.5 break-keep text-[12px] leading-relaxed text-brand-dark/80 sm:text-xs">
+                <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">2</span>
                 <span>상세 페이지의 <b>필요서류·소요기간</b>을 확인하고 서류를 준비하세요.</span>
               </li>
-              <li className="flex items-start gap-1.5 break-keep text-xs leading-relaxed text-brand-dark/80">
-                <span className="shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
+              <li className="flex items-start gap-1.5 break-keep text-[12px] leading-relaxed text-brand-dark/80 sm:text-xs">
+                <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
                 <span><b>공식 신청 사이트/연락처</b>로 접수하시면 됩니다. 헷갈리시면 담당 부처에 문의하시면 쉽게 진행 가능합니다.</span>
               </li>
             </ol>
@@ -887,27 +886,27 @@ function AdvancedResult({
                   className={`group block py-3 first:pt-0 last:pb-0 origin-left transition-transform duration-150 hover:scale-[1.01] ${lockNoClick}`}
                 >
                   {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
-                  <div className="flex flex-wrap items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                     <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
-                    <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
+                    <span className={`text-[14px] font-extrabold text-brand-dark sm:text-sm ${lockTextSoft}`}>{prog.title}</span>
                     {isEligible ? (
                       <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                        ✅ 신청 가능
+                        신청 가능
                       </span>
                     ) : (
-                      <span className="shrink-0 break-keep rounded-full bg-brand-orange px-2 py-0.5 text-[10px] font-bold text-white">
-                        🟡 조건 충족 시 신청 가능
+                      <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                        조건 충족 시 가능
                       </span>
                     )}
                   </div>
                   <p
-                    className={`mt-1 break-keep text-xs font-semibold leading-relaxed ${
+                    className={`mt-1.5 break-keep text-[12px] font-semibold leading-relaxed sm:text-xs ${
                       isEligible ? "text-brand-green" : "text-brand-dark/50"
                     }`}
                   >
                     {isEligible ? prog.eligibleNote : prog.ineligibleNote}
                   </p>
-                  <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
+                  <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray sm:text-xs">
                     {prog.desc}
                   </p>
                   {/* 간단 신청방법 + 모르면 전화 — 모든 카드 통일 (대표님 요청) */}
@@ -963,8 +962,7 @@ function AdvancedResult({
         title="이용 가능한 정책금융기관"
         subtitle={
           <>
-            업종·규모에 맞춰 ·
-            <b className="text-brand-green"> ✅ 신청 대상</b>을 가능성 높은 순으로 안내합니다.
+            <b className="text-brand-green">✅ 신청 대상</b>을 가능성 높은 순으로 안내합니다.
           </>
         }
       >
@@ -992,8 +990,8 @@ function AdvancedResult({
                 key={i}
                 className="border-t border-brand-dark/10 py-4 first:border-t-0 first:pt-0"
               >
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className={`text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
+                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                  <span className={`text-[14px] font-extrabold text-brand-dark sm:text-sm ${lockTextSoft}`}>{m.institution}</span>
                   {m.loan_type && (
                     <span
                       className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
@@ -1012,7 +1010,7 @@ function AdvancedResult({
                     </span>
                   )}
                 </div>
-                <p className="mt-1 whitespace-pre-line break-keep text-xs leading-relaxed text-brand-gray">{m.criteria}</p>
+                <p className="mt-1.5 whitespace-pre-line break-keep text-[12px] leading-relaxed text-brand-gray sm:mt-1 sm:text-xs">{m.criteria}</p>
 
                 {/* 신보·기보 둘 다 자격일 때 → 중복 신청 불가 안내 (대표님 요청) */}
                 {m.exclusiveNote && (
@@ -1026,9 +1024,9 @@ function AdvancedResult({
                   <div className="mt-2.5">
                     <button
                       onClick={() => toggleProducts(i)}
-                      className={`inline-flex max-w-full items-center gap-2 rounded-xl border-2 border-brand-orange bg-brand-orange/10 px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockNoClick}`}
+                      className={`inline-flex max-w-full items-center gap-2 rounded-xl border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2 text-left transition hover:bg-brand-orange/20 sm:border-2 sm:border-brand-orange sm:bg-brand-orange/10 ${lockNoClick}`}
                     >
-                      <span className="break-keep text-xs font-extrabold text-brand-orange">
+                      <span className="break-keep text-[12px] font-extrabold text-brand-orange sm:text-xs">
                         💳 {previewLock ? "신청 가능 상품" : `${m.institution} 신청 가능 상품 ${products.length}개`} 보기
                       </span>
                       <span
@@ -1046,20 +1044,20 @@ function AdvancedResult({
                           return (
                           <div
                             key={pi}
-                            className={`rounded-xl p-3 ${
+                            className={`rounded-xl p-2.5 sm:p-3 ${
                               isTop
-                                ? "border-2 border-brand-green bg-brand-green/5"
+                                ? "border border-brand-green/70 bg-brand-green/5 sm:border-2 sm:border-brand-green"
                                 : "border border-gray-200 bg-gray-50"
                             }`}
                           >
                             {/* ★ 이 기관에서 가장 먼저 신청하면 좋은 상품 — 체크 포인트 (대표님 요청) */}
                             {isTop && (
                               <p className={`mb-1.5 inline-flex items-center gap-1 break-keep rounded-full bg-brand-green px-2.5 py-0.5 text-[10px] font-extrabold text-white ${lockTextSoft}`}>
-                                ✅ 승인 가능성 높음 · 먼저 신청 추천
+                                승인 가능성 높음 · 먼저 신청 추천
                               </p>
                             )}
-                            <div className="flex flex-wrap items-center gap-1.5">
-                              <span className={`break-keep text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>
+                            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                              <span className={`break-keep text-[14px] font-extrabold text-brand-dark sm:text-sm ${lockTextSoft}`}>
                                 {prod.name}
                               </span>
                               {prod.amount && (
@@ -1086,12 +1084,12 @@ function AdvancedResult({
                               )}
                             </div>
                             {prod.desc && (
-                              <p className="mt-1 whitespace-pre-line break-keep text-xs leading-relaxed text-brand-gray">
+                              <p className="mt-1 whitespace-pre-line break-keep text-[12px] leading-relaxed text-brand-gray sm:text-xs">
                                 {prod.desc}
                               </p>
                             )}
                             {prod.approvalNote && (
-                              <p className="mt-1 whitespace-pre-line break-keep text-xs font-semibold leading-relaxed text-brand-dark/70">
+                              <p className="mt-1 whitespace-pre-line break-keep text-[12px] font-semibold leading-relaxed text-brand-dark/70 sm:text-xs">
                                 {prod.approvalNote}
                               </p>
                             )}
@@ -1127,7 +1125,7 @@ function AdvancedResult({
                           href={previewLock ? undefined : link.manualUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClickSoft}`}
+                          className={`inline-block rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 sm:border-2 sm:border-brand-orange sm:bg-brand-orange/10 ${lockClickSoft}`}
                         >
                           📄 신청 매뉴얼
                         </a>
@@ -1145,7 +1143,7 @@ function AdvancedResult({
                           href={previewLock ? undefined : link.pdfUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClickSoft}`}
+                          className={`inline-block rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 sm:border-2 sm:border-brand-orange sm:bg-brand-orange/10 ${lockClickSoft}`}
                         >
                           📑 {link.pdfLabel}
                         </a>
@@ -1182,7 +1180,7 @@ function AdvancedResult({
                             href={previewLock ? undefined : j.manualUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClickSoft}`}
+                            className={`inline-block rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 sm:border-2 sm:border-brand-orange sm:bg-brand-orange/10 ${lockClickSoft}`}
                           >
                             📄 신청 매뉴얼
                           </a>
@@ -1200,7 +1198,7 @@ function AdvancedResult({
                             href={previewLock ? undefined : j.productUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`inline-block rounded-lg border-2 border-brand-orange bg-brand-orange/10 px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 ${lockClickSoft}`}
+                            className={`inline-block rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-1.5 text-[11px] font-bold text-brand-orange hover:bg-brand-orange/20 sm:border-2 sm:border-brand-orange sm:bg-brand-orange/10 ${lockClickSoft}`}
                           >
                             📑 {j.productLabel}
                           </a>

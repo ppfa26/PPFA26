@@ -26,36 +26,36 @@ export default function AccordionCard({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="overflow-hidden rounded-2xl border-2 border-brand-dark/10 bg-white shadow-card">
+    <div className="overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card sm:border-2">
       {/* 헤더 (토글 버튼) */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-2 px-4 py-3 text-left transition hover:bg-brand-orange/5 sm:gap-3 sm:px-5 sm:py-3.5"
+        className="flex w-full items-center gap-2.5 px-4 py-3.5 text-left transition hover:bg-brand-orange/5 sm:gap-3 sm:px-5 sm:py-3.5"
       >
         <span className="min-w-0 flex-1">
-          <span className="flex items-start gap-1.5 text-[14px] font-extrabold leading-snug text-brand-dark sm:text-lg">
+          <span className="flex items-start gap-1.5 text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">
             {emoji && <span className="shrink-0">{emoji}</span>}
             {/* 모바일: 폭이 좁으면 단어 단위로 자연스럽게 줄바꿈(break-keep)해 글자가 잘리지 않게 */}
             <span className="min-w-0 break-keep">{title}</span>
           </span>
           {subtitle && (
-            <span className="mt-0.5 block break-keep text-[11px] leading-snug text-brand-dark/60 sm:text-xs">
+            <span className="mt-1 block break-keep text-[11px] leading-relaxed text-brand-dark/55 sm:mt-0.5 sm:leading-snug sm:text-xs">
               {subtitle}
             </span>
           )}
         </span>
-        {/* 클릭 유도 라벨 + 펼침/접힘 화살표 */}
+        {/* 펼침/접힘 화살표 (모바일: 👆 이모지 제거해 노이즈 감소 · '클릭' 라벨은 PC에서만) */}
         <span className="flex shrink-0 items-center gap-1.5">
-          {/* 닫혀 있을 때만 '클릭해서 펼쳐보기' 유도 (열리면 숨김) */}
+          {/* 닫혀 있을 때만 '클릭' 유도 — PC에서만 노출(모바일은 화살표만으로 충분히 인지) */}
           {!open && (
-            <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-extrabold text-brand-orange sm:text-xs">
-              👆<span className="hidden sm:inline"> 클릭</span>
+            <span className="hidden shrink-0 whitespace-nowrap rounded-full bg-brand-orange/10 px-2 py-0.5 text-xs font-extrabold text-brand-orange sm:inline">
+              👆 클릭
             </span>
           )}
           <span
-            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 ${
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 sm:h-7 sm:w-7 ${
               open ? "rotate-180" : ""
             }`}
             aria-hidden
@@ -68,7 +68,7 @@ export default function AccordionCard({
       </button>
 
       {/* 내용 */}
-      {open && <div className="px-5 pb-4 pt-0">{children}</div>}
+      {open && <div className="px-4 pb-4 pt-0 sm:px-5">{children}</div>}
     </div>
   );
 }
