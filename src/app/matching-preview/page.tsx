@@ -477,22 +477,22 @@ export default function MatchingPreview() {
           {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 — 화면 간결화 ── */}
           <div className="relative mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
-            <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-2.5">
-              <p className="mb-1.5 break-keep text-[11px] font-bold text-brand-dark/50">
-                📑 아래 결과에는 다음과 같은 항목들이 담겨 있습니다.
+            <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-3">
+              <p className="mb-2 break-keep text-[13px] font-bold text-brand-dark/60 sm:text-[11px] sm:text-brand-dark/50">
+                📑 이 결과에 담긴 내용
               </p>
               {/* 한 줄 유지 — 좁은 화면에서는 가로 스크롤(스크롤바 숨김) */}
               <div className="flex flex-nowrap gap-1.5 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
-                  "🏅 신청 가능한 정부지원제도",
-                  "💳 이용 가능한 정책금융기관",
-                  "💎 챙기면 좋은 추가 감면 혜택",
-                  "📊 기관별 상품 한눈에 보기",
-                  "🌐 신청 사이트 · 콜센터",
+                  "🏅 정부지원제도",
+                  "💳 정책금융기관",
+                  "💎 추가 감면 혜택",
+                  "📊 기관별 상품",
+                  "🌐 신청처 · 콜센터",
                 ].map((t) => (
                   <span
                     key={t}
-                    className="shrink-0 rounded-full border border-brand-orange/30 bg-white px-2 py-1 text-[10px] font-bold text-brand-dark"
+                    className="shrink-0 rounded-full border border-brand-orange/30 bg-white px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:px-2 sm:text-[10px]"
                   >
                     {t}
                   </span>

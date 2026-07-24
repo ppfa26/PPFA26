@@ -533,12 +533,18 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 key={b.id}
                 className="group origin-left py-4 transition-transform duration-150 first:pt-0 last:pb-0 hover:scale-[1.01]"
               >
-                {/* 상단: 아이콘 + 제목 + 대상 뱃지 (정부지원제도 항목과 동일 구조) */}
+                {/* 상단: 아이콘 + 제목 + 절감액 알약 + 대상 뱃지
+                    (융자 상품 카드와 동일한 정보 구조 — 제목 옆에 '핵심 혜택'을 알약으로) */}
                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                   <span className="text-base">{b.icon}</span>
                   <span className={`break-keep text-[14px] font-extrabold text-brand-dark sm:text-sm ${lockText}`}>
                     {b.title}
                   </span>
+                  {v.savingText && (
+                    <span className={`break-keep rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-bold text-brand-orange ${lockText}`}>
+                      {v.savingText}
+                    </span>
+                  )}
                   {isYes ? (
                     <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
                       신청 가능
@@ -550,19 +556,8 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                   )}
                 </div>
 
-                {/* 예상 절감·수령액 — 정부지원제도의 초록 안내 자리처럼 강조 */}
-                {v.savingText && (
-                  <p
-                    className={`mt-1.5 break-keep text-[13px] font-extrabold sm:mt-1 sm:text-sm ${
-                      isYes ? "text-brand-orange" : "text-brand-dark/70"
-                    } ${lockText}`}
-                  >
-                    {v.savingText}
-                  </p>
-                )}
-
-                {/* 설명 (제목 아래 목차성 문구라 노출 유지) */}
-                <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray sm:text-xs">
+                {/* 설명 — 누가/무엇 (융자 카드의 desc 자리와 동일 역할) */}
+                <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray sm:mt-1 sm:text-xs">
                   {b.description}
                 </p>
 
@@ -578,10 +573,10 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                   <p className="mt-1 break-keep text-[11px] text-brand-dark/50">ℹ️ {v.note}</p>
                 )}
 
-                {/* 혜택 — 이걸 챙기면 무엇을 얻는지 (대표님 요청) */}
+                {/* 이걸 챙기면 왜 좋은지 — 융자 카드의 💡 노랑박스와 동일 포맷으로 통일 */}
                 {b.benefit && (
-                  <p className="mt-2 break-keep rounded-lg border-l-2 border-brand-orange/60 bg-brand-yellow/15 px-3 py-2 text-[12px] font-semibold leading-relaxed text-brand-dark sm:border-brand-orange sm:text-xs">
-                    <span className="font-extrabold text-brand-orange">혜택 </span>
+                  <p className="mt-2 break-keep rounded-lg bg-brand-yellow/10 px-2.5 py-2 text-[11px] leading-relaxed text-brand-dark/70">
+                    <span className="font-extrabold text-brand-dark/80">💡 </span>
                     {b.benefit}
                   </p>
                 )}
@@ -610,7 +605,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                   {/* 신청 방법 (대표님 요청 — 간단하게라도) */}
                   {b.applyHow && (
                     <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80 sm:text-xs">
-                      <span className="font-bold text-brand-dark">📝 신청 방법 </span>
+                      <span className="font-bold text-brand-dark">📝 신청방법 </span>
                       {b.applyHow}
                     </p>
                   )}
@@ -648,14 +643,14 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                   </p>
                 )}
 
-                {/* 신청하러 가기 버튼 — 왼쪽 하단 소형 버튼(정책금융기관 카드와 동일 디자인) · 결제 전 클릭 차단 */}
+                {/* 신청하러 가기 버튼 — 정책금융기관 카드와 동일 위치·크기 (색은 감면 카드 포인트색 유지) */}
                 <a
                   href={previewLock ? undefined : b.applyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`mt-3 inline-block break-keep rounded-lg bg-brand-orange px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClick}`}
+                  className={`mt-2.5 inline-block break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white hover:opacity-90 ${lockClick}`}
                 >
-                  🔗 {b.applyName}에서 신청하러 가기 →
+                  🔗 {b.applyName} 신청하러 가기 →
                 </a>
               </div>
             );

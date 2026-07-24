@@ -73,29 +73,39 @@ export default function RelatedAnnouncements({
             {(items || []).map((it, i) => {
               const inner = (
                 <>
+                  {/* 제목 + 핵심 배지 (지원규모·마감) — 다른 결과 카드와 동일 구조 */}
                   <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                     <span className="break-keep text-[14px] font-extrabold text-brand-dark sm:text-sm">
                       {it.title}
                     </span>
                     {it.support_scale && (
-                      <span className="shrink-0 rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
+                      <span className="shrink-0 break-keep rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
                         {it.support_scale}
                       </span>
                     )}
                     {it.deadline && (
-                      <span className="shrink-0 rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                      <span className="shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                         🗓️ {it.deadline}
                       </span>
                     )}
                   </div>
-                  <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray sm:mt-1 sm:text-xs">
-                    {it.site_name && <>🏛️ {it.site_name}</>}
-                    {it.target && <>{it.site_name ? " · " : ""}대상: {it.target}</>}
-                  </p>
-                  {it.detail_url && (
-                    <p className="mt-1.5 text-[11px] font-bold text-brand-orange">
-                      공고 원문 보기 →
+                  {/* 소관기관 · 대상 — 한 줄씩 깔끔하게 */}
+                  {it.site_name && (
+                    <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray sm:mt-1 sm:text-xs">
+                      🏛️ {it.site_name}
                     </p>
+                  )}
+                  {it.target && (
+                    <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray sm:text-xs">
+                      <span className="font-bold text-brand-dark/70">대상 </span>
+                      {it.target}
+                    </p>
+                  )}
+                  {/* 신청 버튼 — 다른 카드(주황 버튼)와 동일 위치·크기로 통일 */}
+                  {it.detail_url && (
+                    <span className="mt-2.5 inline-block break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white transition group-hover:opacity-90">
+                      공고 원문 보러 가기 →
+                    </span>
                   )}
                 </>
               );
@@ -109,7 +119,7 @@ export default function RelatedAnnouncements({
                       href={it.detail_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block transition hover:opacity-80"
+                      className="group block origin-left transition-transform duration-150 hover:scale-[1.01]"
                     >
                       {inner}
                     </a>

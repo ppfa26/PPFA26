@@ -40,8 +40,10 @@ export default function AccordionCard({
             {/* 모바일: 폭이 좁으면 단어 단위로 자연스럽게 줄바꿈(break-keep)해 글자가 잘리지 않게 */}
             <span className="min-w-0 break-keep">{title}</span>
           </span>
+          {/* 부제(예: "✅ 신청 대상 …")는 모바일에서 제목과 겹쳐 지저분해 보여 숨김.
+              PC(sm 이상)에서만 노출 (대표님 요청). */}
           {subtitle && (
-            <span className="mt-1 block break-keep text-[11px] leading-relaxed text-brand-dark/55 sm:mt-0.5 sm:leading-snug sm:text-xs">
+            <span className="mt-1 hidden break-keep text-[11px] leading-relaxed text-brand-dark/55 sm:mt-0.5 sm:block sm:leading-snug sm:text-xs">
               {subtitle}
             </span>
           )}

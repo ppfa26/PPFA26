@@ -909,18 +909,18 @@ function AdvancedResult({
                   <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray sm:text-xs">
                     {prog.desc}
                   </p>
-                  {/* 간단 신청방법 + 모르면 전화 — 모든 카드 통일 (대표님 요청) */}
+                  {/* 신청방법 + 문의 전화 — 회색 박스 (모든 카드 통일 위치) */}
                   {(prog.applyHow || prog.applyTel) && (
-                    <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
+                    <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2.5 sm:py-2">
                       {prog.applyHow && (
-                        <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
-                          <span className="font-bold text-brand-dark">신청방법 </span>
+                        <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80 sm:text-xs">
+                          <span className="font-bold text-brand-dark">📝 신청방법 </span>
                           <span className={lockTextSoft}>{prog.applyHow}</span>
                         </p>
                       )}
                       {prog.applyTel && (
-                        <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
-                          잘 모르시겠으면 <span className={`font-bold text-brand-orange ${lockTextSoft}`}>☎ {prog.applyTel}</span> 로 문의하시면 쉽게 진행 가능합니다.
+                        <p className="mt-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/60 sm:mt-1">
+                          ☎ 문의 <span className={`font-bold text-brand-orange ${lockTextSoft}`}>{prog.applyTel}</span>
                         </p>
                       )}
                     </div>
@@ -942,7 +942,7 @@ function AdvancedResult({
                       </a>
                     )}
                     <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange transition group-hover:border-brand-orange/60 group-hover:bg-brand-orange/15">
-                      상세 · 승인 소요기간 · 연락처 보기
+                      상세 · 소요기간 · 연락처
                       <span className="transition group-hover:translate-x-0.5">→</span>
                     </span>
                   </div>
@@ -1094,8 +1094,8 @@ function AdvancedResult({
                               </p>
                             )}
                             {prod.hookNote && (
-                              <p className="mt-1.5 whitespace-pre-line break-keep rounded-lg bg-brand-yellow/10 px-2 py-1.5 text-[11px] leading-relaxed text-brand-dark/70">
-                                💡 {prod.hookNote}
+                              <p className="mt-1.5 whitespace-pre-line break-keep rounded-lg bg-brand-yellow/10 px-2.5 py-2 text-[11px] leading-relaxed text-brand-dark/70">
+                                <span className="font-extrabold text-brand-dark/80">💡 </span>{prod.hookNote}
                               </p>
                             )}
                             {prod.applyUrl && (
@@ -1103,7 +1103,7 @@ function AdvancedResult({
                                 href={previewLock ? undefined : prod.applyUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`mt-2 inline-block rounded-lg bg-brand-dark px-3 py-1.5 text-[11px] font-bold text-white hover:opacity-90 ${lockClickSoft}`}
+                                className={`mt-2.5 inline-block rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white hover:opacity-90 ${lockClickSoft}`}
                               >
                                 이 상품 신청하러 가기 →
                               </a>
