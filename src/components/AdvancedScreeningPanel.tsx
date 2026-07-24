@@ -836,7 +836,7 @@ function AdvancedResult({
       {/* ★ 사용 안내 배너 — 숫자 요약은 상단 히어로(matching-preview)와 중복이라 제거하고
           '어떻게 보는지' 안내 문구만 남김 (대표님 요청: 결과창 중복 정리) */}
       {autoRun && (
-        <div className="rounded-2xl border border-brand-orange/70 bg-brand-grad p-4 shadow-card">
+        <div className="rounded-2xl border border-brand-orange/70 bg-brand-grad px-4 py-5 shadow-card">
           <p className="break-keep text-[13px] font-semibold leading-relaxed text-brand-dark/80">
             👇 <b>✅ 표시</b>된 곳이 <b>지금 바로 신청 가능한 곳</b>입니다.{" "}
             <b>&ldquo;상품 보기&rdquo;</b>를 누르면 신청 상품과 방법을 순서대로 안내드려요.
