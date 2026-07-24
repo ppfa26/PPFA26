@@ -26,51 +26,43 @@ export default function AccordionCard({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card sm:border-2">
-      {/* 헤더 (토글 버튼) */}
+    // 세련화: 테두리 얇고 은은하게(PC·모바일 동일), 부드러운 그림자로 카드 입체감.
+    <div className="overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+      {/* 헤더 (토글 버튼) — PC·모바일 동일 스타일 */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-2.5 px-4 py-3.5 text-left transition hover:bg-brand-orange/5 sm:gap-3 sm:px-5 sm:py-3.5"
+        className="flex w-full items-center gap-3 px-5 py-4 text-left transition hover:bg-brand-orange/5"
       >
         <span className="min-w-0 flex-1">
-          <span className="flex items-start gap-1.5 text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">
+          {/* 제목 — 16px, 아이콘·글자 세로 중앙 정렬로 깔끔하게 */}
+          <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
             {emoji && <span className="shrink-0">{emoji}</span>}
-            {/* 모바일: 폭이 좁으면 단어 단위로 자연스럽게 줄바꿈(break-keep)해 글자가 잘리지 않게 */}
             <span className="min-w-0 break-keep">{title}</span>
           </span>
-          {/* 부제(예: "✅ 신청 대상 …")는 모바일에서 제목과 겹쳐 지저분해 보여 숨김.
-              PC(sm 이상)에서만 노출 (대표님 요청). */}
+          {/* 부제 — 짧은 한 줄 안내(모든 카드 통일). PC·모바일 동일 노출 */}
           {subtitle && (
-            <span className="mt-1 hidden break-keep text-[11px] leading-relaxed text-brand-dark/55 sm:mt-0.5 sm:block sm:leading-snug sm:text-xs">
+            <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
               {subtitle}
             </span>
           )}
         </span>
-        {/* 펼침/접힘 화살표 (모바일: 👆 이모지 제거해 노이즈 감소 · '클릭' 라벨은 PC에서만) */}
-        <span className="flex shrink-0 items-center gap-1.5">
-          {/* 닫혀 있을 때만 '클릭' 유도 — PC에서만 노출(모바일은 화살표만으로 충분히 인지) */}
-          {!open && (
-            <span className="hidden shrink-0 whitespace-nowrap rounded-full bg-brand-orange/10 px-2 py-0.5 text-xs font-extrabold text-brand-orange sm:inline">
-              👆 클릭
-            </span>
-          )}
-          <span
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 sm:h-7 sm:w-7 ${
-              open ? "rotate-180" : ""
-            }`}
-            aria-hidden
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </span>
+        {/* 펼침/접힘 화살표만 (👆 클릭 라벨 제거 — 화살표로 충분히 인지) */}
+        <span
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+          aria-hidden
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
         </span>
       </button>
 
-      {/* 내용 */}
-      {open && <div className="px-4 pb-4 pt-0 sm:px-5">{children}</div>}
+      {/* 내용 — PC·모바일 동일 좌우 여백 */}
+      {open && <div className="px-5 pb-5 pt-0">{children}</div>}
     </div>
   );
 }

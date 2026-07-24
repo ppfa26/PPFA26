@@ -478,7 +478,7 @@ export default function MatchingPreview() {
           <div className="relative mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {/* 선명한 섹션 목차 바 — '무엇을 알려주는지' 제목만 열어둠 */}
             <div className="border-b border-gray-100 bg-brand-orange/5 px-4 py-3">
-              <p className="mb-2 break-keep text-[13px] font-bold text-brand-dark/60 sm:text-[11px] sm:text-brand-dark/50">
+              <p className="mb-2 break-keep text-[13px] font-bold text-brand-dark/60">
                 📑 이 결과에 담긴 내용
               </p>
               {/* 한 줄 유지 — 좁은 화면에서는 가로 스크롤(스크롤바 숨김) */}
@@ -492,7 +492,7 @@ export default function MatchingPreview() {
                 ].map((t) => (
                   <span
                     key={t}
-                    className="shrink-0 rounded-full border border-brand-orange/30 bg-white px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:px-2 sm:text-[10px]"
+                    className="shrink-0 rounded-full border border-brand-orange/30 bg-white px-2.5 py-1 text-[12px] font-bold text-brand-dark"
                   >
                     {t}
                   </span>

@@ -58,11 +58,7 @@ export default function RelatedAnnouncements({
     <AccordionCard
       emoji="📢"
       title="지금 열려있는 관련 정부지원사업"
-      subtitle={
-        <>
-          <b className="text-brand-green">🟢 공고 중인 실제 사업</b>을 가능성 높은 순으로 안내합니다.
-        </>
-      }
+      subtitle="지금 열려있는 실제 공고예요"
     >
       {loading ? (
         <p className="mt-4 text-sm text-brand-dark/50">📢 관련 공고를 불러오는 중…</p>
@@ -75,7 +71,7 @@ export default function RelatedAnnouncements({
                 <>
                   {/* 제목 + 핵심 배지 (지원규모·마감) — 다른 결과 카드와 동일 구조 */}
                   <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                    <span className="break-keep text-[14px] font-extrabold text-brand-dark sm:text-sm">
+                    <span className="break-keep text-[14px] font-extrabold leading-snug text-brand-dark">
                       {it.title}
                     </span>
                     {it.support_scale && (
@@ -91,12 +87,12 @@ export default function RelatedAnnouncements({
                   </div>
                   {/* 소관기관 · 대상 — 한 줄씩 깔끔하게 */}
                   {it.site_name && (
-                    <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray sm:mt-1 sm:text-xs">
+                    <p className="mt-2 break-keep text-[12px] leading-relaxed text-brand-gray">
                       🏛️ {it.site_name}
                     </p>
                   )}
                   {it.target && (
-                    <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray sm:text-xs">
+                    <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray">
                       <span className="font-bold text-brand-dark/70">대상 </span>
                       {it.target}
                     </p>
