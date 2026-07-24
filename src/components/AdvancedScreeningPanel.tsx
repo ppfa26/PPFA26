@@ -824,7 +824,7 @@ function AdvancedResult({
     v ? `${(v / 100000000).toFixed(v % 100000000 === 0 ? 0 : 2)}억` : "";
 
   return (
-    <div id="advanced-result" className="mt-5 space-y-3">
+    <div id="advanced-result" className="mt-3 space-y-3">
       {/* autoRun(결제 후 대시보드)에서는 상단 dashboard-hero 제목과 중복되므로 h2를 숨긴다.
           정밀 추가진단(수동 실행) 화면에서만 제목을 표기. */}
       {!autoRun && (
@@ -1303,11 +1303,11 @@ function AdvancedResult({
             🔖 대표님들이 알아두면 좋은 정부 사이트
           </span>
           <span className="mt-1 block break-keep text-[12px] leading-relaxed text-white/60">
-            알아두면 좋은 공식 사이트예요
+            알아두면 좋은 정부 기관 공식 사이트예요
           </span>
         </span>
         <span className={`shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark ${lockClick}`}>
-          모음 보기
+          사이트 바로가기
         </span>
       </a>
     </div>
