@@ -1296,7 +1296,7 @@ function AdvancedResult({
       {/* 대표님들이 알아두면 좋은 정부 사이트 모음으로 이동 — 아코디언과 톤 통일(둥근 모서리·부드러운 그림자) */}
       <a
         href={previewLock ? undefined : "/sites"}
-        className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-4 shadow-card transition hover:opacity-90 ${previewLock ? "pointer-events-none" : ""}`}
+        className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-3.5 shadow-card transition hover:opacity-90 ${previewLock ? "pointer-events-none" : ""}`}
       >
         <span className="min-w-0">
           <span className="flex items-center gap-2 break-keep text-[16px] font-extrabold leading-snug text-white">

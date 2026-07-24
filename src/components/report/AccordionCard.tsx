@@ -33,7 +33,7 @@ export default function AccordionCard({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-3 px-5 py-4 text-left transition hover:bg-brand-orange/5"
+        className="flex w-full items-center gap-3 px-5 py-3.5 text-left transition hover:bg-brand-orange/5"
       >
         <span className="min-w-0 flex-1">
           {/* 제목 — 16px, 아이콘·글자 세로 중앙 정렬로 깔끔하게 */}

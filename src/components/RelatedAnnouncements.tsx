@@ -86,24 +86,24 @@ export default function RelatedAnnouncements({
                       🗓️ {it.deadline}
                     </span>
                   )}
-                  {/* 소관기관 · 대상 — 한 줄씩 깔끔하게 */}
-                  {it.site_name && (
-                    <p className="mt-2 break-keep text-[12px] leading-relaxed text-brand-gray">
-                      🏛️ {it.site_name}
+                  {/* 지역 · 대상 · 버튼 — 한 줄로 압축 (왼쪽 정보 / 오른쪽 버튼) */}
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    <p className="min-w-0 flex-1 truncate text-[12px] leading-relaxed text-brand-gray">
+                      {it.site_name && <span>🏛️ {it.site_name}</span>}
+                      {it.site_name && it.target && <span className="mx-1.5 text-brand-dark/25">·</span>}
+                      {it.target && (
+                        <>
+                          <span className="font-bold text-brand-dark/70">대상 </span>
+                          {it.target}
+                        </>
+                      )}
                     </p>
-                  )}
-                  {it.target && (
-                    <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray">
-                      <span className="font-bold text-brand-dark/70">대상 </span>
-                      {it.target}
-                    </p>
-                  )}
-                  {/* 신청 버튼 — 다른 카드(주황 버튼)와 동일 위치·크기로 통일 */}
-                  {it.detail_url && (
-                    <span className="mt-2.5 inline-block break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white transition group-hover:opacity-90">
-                      공고 원문 보러 가기 →
-                    </span>
-                  )}
+                    {it.detail_url && (
+                      <span className="shrink-0 break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white transition group-hover:opacity-90">
+                        공고 원문 보러 가기 →
+                      </span>
+                    )}
+                  </div>
                 </>
               );
               return (
