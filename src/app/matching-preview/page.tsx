@@ -621,8 +621,8 @@ export default function MatchingPreview() {
       </div>
       )}
 
-      {/* (대표님 요청) 결과창 하단 CTA와 푸터 사이 세로 빈 공간 축소 → 푸터 상단 여백 줄임 */}
-      <Footer topGap="mt-3" />
+      {/* (대표님 요청) 결과창 하단 CTA와 푸터 사이 세로 빈 공간 축소 → 푸터 상단 여백 줄임 (너무 좁아 아주 살짝 넓힘) */}
+      <Footer topGap="mt-5" />
     </PageShell>
   );
 }
