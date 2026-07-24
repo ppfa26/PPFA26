@@ -2,6 +2,16 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // ── (성능) 응답 gzip 압축 명시 — 전송 바이트 축소 (화면 결과 무영향) ──
+  compress: true,
+
+  // ── (성능) 무거운 패키지의 tree-shaking 개선 ─────────────────
+  //  아이콘/유틸 성격의 큰 패키지에서 '실제로 쓰는 것만' 번들에 포함시켜
+  //  First Load JS 를 줄인다. 렌더 결과는 동일. (Next 14 안정 기능)
+  experimental: {
+    optimizePackageImports: ["@supabase/supabase-js", "@supabase/ssr"],
+  },
+
   // ── 복제/도용 방어 ──────────────────────────────────────────
   // 1) 프로덕션 소스맵 비활성화: 브라우저에서 원본 소스 코드를 복원하기 어렵게 한다.
   productionBrowserSourceMaps: false,
