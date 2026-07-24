@@ -460,15 +460,15 @@ export default function Diagnosis() {
       <div
         className={
           cols2
-            ? "grid grid-cols-2 gap-2"
+            ? "grid w-full grid-cols-2 gap-2"
             : cols3
-            ? // cols3: 짧은 3지선다(사업자 유형 등)를 모바일에서도 한 줄 3열로 정렬
-              "grid grid-cols-3 gap-2"
+            ? // cols3: 짧은 3지선다(사업자 유형 등)를 모바일에서도 한 줄 3열로 꽉 차게 정렬
+              "grid w-full grid-cols-3 gap-2"
             : cols4
-            ? // cols4: 짧은 4지선다(지역 등)를 모바일에서도 한 줄 4열로 정렬
-              "grid grid-cols-4 gap-2"
+            ? // cols4: 짧은 4지선다(지역 등)를 모바일에서도 한 줄 4열로 꽉 차게 정렬
+              "grid w-full grid-cols-4 gap-2"
             : // grid: 모바일 균등 2열 → PC(sm 이상)는 내용 폭에 맞춰 자동 흐름
-              "grid grid-cols-2 gap-2 sm:flex sm:flex-wrap"
+              "grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap"
         }
       >
         {opts.map((o) => (
