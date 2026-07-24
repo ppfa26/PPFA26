@@ -11,19 +11,15 @@ export default function SitesPage() {
       updatedAt="2026년 7월 8일"
     >
       <p className="text-sm leading-relaxed text-brand-gray">
-        창업·지원금·정책자금·인증·감면제도 등 실제 업무에 자주 쓰이는 공식
-        사이트를 분야별로 모았습니다. 모든 링크는 새 창에서 열리며, 사용이
-        어려우시다면 <strong className="text-brand-dark">카카오톡</strong>으로
-        문의주시기 바랍니다.
+        창업·지원금·정책자금·인증·감면제도 등 실제 업무에 자주 쓰이는 공식 사이트를 분야별로 모았습니다.
+        <br className="hidden sm:block" />
+        모든 링크는 새 창에서 열리며, 사용이 어려우시다면 <strong className="text-brand-dark">카카오톡</strong>으로 문의주시기 바랍니다.
       </p>
 
       {USEFUL_SITE_CATEGORIES.map((cat) => (
         <section key={cat.key} id={`sites-${cat.key}`} className="mt-2">
           <h2 className="text-lg font-extrabold text-brand-dark">
-            {cat.emoji} {cat.label}{" "}
-            <span className="text-sm font-medium text-brand-gray">
-              ({cat.sites.length}개)
-            </span>
+            {cat.emoji} {cat.label}
           </h2>
           <div className="mt-3 overflow-hidden rounded-2xl border border-gray-200">
             <table className="w-full table-fixed text-left text-sm">
@@ -53,9 +49,7 @@ export default function SitesPage() {
 
       <section id="sites-notice" className="mt-2">
         <p className="rounded-2xl bg-gray-50 px-4 py-4 text-xs leading-relaxed text-brand-gray">
-          ※ 각 기관 사정에 따라 URL이 변경될 수 있습니다.
-          <br />
-          링크가 열리지 않는 경우 문의해주시기 바랍니다.
+          ※ 각 기관 사정에 따라 연결된 URL이 변경될 수 있습니다.
         </p>
       </section>
     </LegalLayout>
