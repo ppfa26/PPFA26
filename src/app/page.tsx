@@ -148,11 +148,11 @@ export default function Home() {
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-5 max-w-xl break-keep text-sm leading-loose text-brand-gray sm:text-base sm:leading-relaxed"
+              className="mx-auto mt-5 max-w-xl break-keep text-[13px] leading-relaxed text-brand-gray sm:text-base sm:leading-relaxed"
             >
-              복잡한 정부지원사업, 이제 대표님이 직접 찾지 마세요.
+              복잡한 정부지원사업, 이제 직접 찾지 마세요.
               <br />
-              지원 가능한 사업만 AI가 찾아 신청 방법까지 안내합니다.
+              AI가 찾아서 신청까지 안내해 드립니다.
             </Editable>
 
             {/* 오픈 베타 무료 앵커링 — 오픈 베타 기간 전부 0원으로 통일 (대표님 요청: '원래 9,900원' 삭제) */}
