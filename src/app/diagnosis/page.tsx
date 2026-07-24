@@ -272,7 +272,7 @@ export default function Diagnosis() {
     if (step === 1) {
       // ★ 대표님 요청 ★ 사업자등록번호 필수 — 없는 사업자는 신청 불가.
       //   단, '예비창업자'는 아직 사업자번호가 없으므로 예외로 통과시킨다.
-      const isPreStartup = form.businessType === "예비창업자";
+      const isPreStartup = typeof form.businessType === "string" && form.businessType.startsWith("예비");
       if (!isPreStartup) {
         // 정상 조회 성공 OR 국세청 서버 장애 시 수동입력 확정(bnoManual) → 통과 허용
         const bnoOk =
@@ -413,18 +413,23 @@ export default function Diagnosis() {
     k,
     opts,
     cols2,
+    cols3,
     grid,
   }: {
     k: string;
     opts: string[];
     cols2?: boolean;
+    cols3?: boolean;
     grid?: boolean;
   }) =>
-    cols2 || grid ? (
+    cols2 || cols3 || grid ? (
       <div
         className={
           cols2
             ? "grid grid-cols-2 gap-2"
+            : cols3
+            ? // cols3: 짧은 3지선다(사업자 유형 등)를 모바일에서도 한 줄 3열로 정렬
+              "grid grid-cols-3 gap-2"
             : // grid: 모바일 균등 2열 → PC(sm 이상)는 내용 폭에 맞춰 자동 흐름
               "grid grid-cols-2 gap-2 sm:flex sm:flex-wrap"
         }
@@ -433,7 +438,12 @@ export default function Diagnosis() {
           <button
             key={o}
             onClick={(e) => set(k, o, e)}
-            className={`${pillCls(form[k] === o)} w-full break-keep text-center sm:w-auto`}
+            className={`${pillCls(form[k] === o)} w-full break-keep text-center sm:w-auto ${
+              cols3
+                ? // cols3: 3열이라 폭이 좁음 → 모바일에서 폰트·패딩 축소 + 한 줄 유지(줄바꿈 방지)
+                  "whitespace-nowrap px-1 text-[12px] sm:px-4 sm:text-sm"
+                : ""
+            }`}
           >
             {o}
           </button>
@@ -705,11 +715,11 @@ export default function Diagnosis() {
 
               {/* 사업장 정보 — 문맥별 한 박스로 묶어 깔끔하게 (유형→업종→업력→매출→연령→지역 자연스러운 순서) */}
               <GroupBox title={STEP1_GROUP}>
-                <Field label={STEP1_FIELDS.businessType.label}><Radio k="businessType" opts={STEP1_FIELDS.businessType.opts} /></Field>
+                <Field label={STEP1_FIELDS.businessType.label}><Radio k="businessType" opts={STEP1_FIELDS.businessType.opts} cols3 /></Field>
                 <Field label={STEP1_FIELDS.industries.label}><Multi k="industries" opts={STEP1_FIELDS.industries.opts} /></Field>
                 <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} grid /></Field>
                 <Field label={STEP1_FIELDS.revenue.label}><Radio k="revenue" opts={STEP1_FIELDS.revenue.opts} grid /></Field>
-                <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} /></Field>
+                <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} grid /></Field>
                 {/* 지역 — '기타' 클릭 시 직접 입력창 노출(대표님 요청) */}
                 <Field label={STEP1_FIELDS.region.label}>
                   <div className="flex flex-wrap gap-2">
@@ -812,7 +822,7 @@ export default function Diagnosis() {
                 <p className="mb-3 break-keep text-xs leading-relaxed text-brand-gray">
                   {PHONE_CONSULT_FIELD.hint}
                 </p>
-                <Radio k="phoneConsult" opts={PHONE_CONSULT_FIELD.opts} />
+                <Radio k="phoneConsult" opts={PHONE_CONSULT_FIELD.opts} cols2 />
               </div>
               {/* ※ 결격사유(회생·파산/세금체납/자본잠식) 확인은 1단계로 이동했습니다(대표님 요청). */}
             </div>

@@ -41,7 +41,7 @@ export const BNO_TEXT = {
   // 필수화 (대표님 요청) — 사업자번호 조회를 완료해야 다음 단계로 진행 가능
   errorRequired: "사업자등록번호를 조회해 주세요. (정상 사업자만 신청 가능합니다)",
   errorNotFound: "국세청에 등록되지 않은 사업자등록번호입니다. 정확한 번호로 다시 조회해 주세요.",
-  errorPreStartupHint: "아직 사업자 등록전이라면 아래 구분에서 \"예비창업자\"를 클릭하세요.",
+  errorPreStartupHint: "아직 사업자 등록전이라면 아래 사업자 유형에서 \"예비\"를 클릭하세요.",
 };
 
 // ── 1단계 · 기본 정보 ─────────────────────────────────────────
@@ -63,7 +63,7 @@ export const CONTACT_TEXT = {
 export const STEP1_FIELDS = {
   businessType: {
     label: "사업자 유형",
-    opts: ["예비창업자", "개인사업자", "법인사업자"],
+    opts: ["예비", "개인사업자", "법인사업자"],
   },
   industries: {
     label: "업종 [복수 선택 가능]",
@@ -87,7 +87,7 @@ export const STEP1_FIELDS = {
   //   ※ 매칭은 "34세/39세/40세" 숫자만 검사하므로 뒤 괄호 표기는 결과에 영향 없음.
   age: {
     label: "대표자 연령",
-    opts: ["만 34세 이하 [청년창업]", "만 39세 이하 [청년]", "만 40세 이상"],
+    opts: ["만 34세 이하", "만 39세 이하", "만 40세 이상"],
   },
   region: {
     label: "지역",
@@ -216,7 +216,7 @@ export const STEP3_CONDITIONAL_FIELDS = {
 export const PHONE_CONSULT_FIELD = {
   label: "📞 전화 무료 상담을 원하시나요?",
   hint: "원하시면 진단 결과를 바탕으로 담당자가 직접 전화드려 맞춤 상담을 도와드립니다.",
-  opts: ["예, 전화 상담 원해요", "아니요, 결과만 볼게요"],
+  opts: ["예, 상담 원함", "아니요, 결과만 원함"],
 };
 
 // ── 3단계 · 현재 이용 현황 및 특이사항 ──────────────────────────
@@ -256,12 +256,12 @@ export const STEP3_FIELDS = {
   bankruptcy: {
     label: "대표자 회생·파산 상태",
     hint: "면책·인가 완료 3년 후 정부지원사업 신청이 가능합니다.",
-    opts: ["해당 없음 [신청 가능]", "파산·회생 진행 중 [신청 불가]"],
+    opts: ["해당 없음 [신청 가능]", "파산·회생 중 [신청 불가]"],
   },
   // ★ 세금 체납 여부 — 체납 중이면 정책자금·정부지원 전체 신청 불가 → 결제 차단 ★
   taxDelinquent: {
-    label: "국세 및 지방세 [미납/체납 여부]",
-    opts: ["완납 상태 [신청 가능]", "미납/체납 중 [신청 불가]"],
+    label: "국세 및 지방세 [완납 여부]",
+    opts: ["완납 상태 [신청 가능]", "미납/체납 [신청 불가]"],
   },
   // ★ 자본잠식 여부 (법인만 해당) — 자본잠식이면 정책자금·정부지원 신청 불가 → 결제 차단 ★
   //   개인사업자는 자본잠식 개념이 없어 이 질문은 표시하지 않습니다(파산·회생으로 판정).
@@ -283,9 +283,9 @@ export type PaymentBlockReason = "bankruptcy" | "tax" | "capital";
 export function getPaymentBlockReasons(p: any): PaymentBlockReason[] {
   const reasons: PaymentBlockReason[] = [];
   // 옵션 문구 뒤에 부가설명(예: " (6회차 경과)")이 붙어도 판정되도록 startsWith 사용
-  if (typeof p?.bankruptcy === "string" && p.bankruptcy.startsWith("파산·회생 진행 중")) reasons.push("bankruptcy");
-  // 세금 체납 판정 — 새 문구("미납/체납 중 …")와 구 문구("체납 있음 …") 모두 대응
-  if (typeof p?.taxDelinquent === "string" && (p.taxDelinquent.startsWith("미납/체납 중") || p.taxDelinquent.startsWith("체납 있음"))) reasons.push("tax");
+  if (typeof p?.bankruptcy === "string" && (p.bankruptcy.startsWith("파산·회생 중") || p.bankruptcy.startsWith("파산·회생 진행 중"))) reasons.push("bankruptcy");
+  // 세금 체납 판정 — 새 문구("미납/체납 …")·구 문구("미납/체납 중 …"·"체납 있음 …") 모두 대응
+  if (typeof p?.taxDelinquent === "string" && (p.taxDelinquent.startsWith("미납/체납") || p.taxDelinquent.startsWith("체납 있음"))) reasons.push("tax");
   // 자본잠식은 법인만 판정 (개인사업자·예비창업자는 해당 없음)
   if (p?.businessType === "법인사업자" && p?.capitalImpairment === "예(자본잠식)") reasons.push("capital");
   return reasons;

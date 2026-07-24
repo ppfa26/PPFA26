@@ -269,7 +269,7 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
     //     예비창업자(등록 전)는 아직 가입 불가 → 조건부로만 안내. (오안내 방지)
     case "noransanggong": {
       const bt = u.businessType;
-      if (bt === "예비창업자")
+      if (typeof bt === "string" && bt.startsWith("예비"))
         return {
           status: "condition",
           score: 46,

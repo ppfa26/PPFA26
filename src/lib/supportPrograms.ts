@@ -485,16 +485,18 @@ export function profileToCompany(p: DiagnosisProfile): Company {
         (p.bankruptcy.includes("면책") ||
           p.bankruptcy.includes("인가") ||
           p.bankruptcy.includes("진행") ||
+          p.bankruptcy.includes("파산·회생 중") ||
           p.bankruptcy === "있음"))
     ),
-    bankruptcy_status: p.bankruptcy?.includes("진행")
+    // "파산·회생 중"(신문구)·"파산·회생 진행 중"(구문구) 모두 ongoing 처리
+    bankruptcy_status: (p.bankruptcy?.includes("진행") || p.bankruptcy?.startsWith?.("파산·회생 중"))
       ? "ongoing"
       : p.bankruptcy?.includes("면책") || p.bankruptcy?.includes("인가") || p.bankruptcy === "있음"
         ? "discharged"
         : "none",
     tax_delinquent:
       typeof p.taxDelinquent === "string" &&
-      (p.taxDelinquent.startsWith("미납/체납 중") || p.taxDelinquent.startsWith("체납 있음")),
+      (p.taxDelinquent.startsWith("미납/체납") || p.taxDelinquent.startsWith("체납 있음")),
     full_capital_impairment:
       p.businessType === "법인사업자" && p.capitalImpairment === "예(자본잠식)",
     // ── 인증·기술 신호 (전부 전달) ──
