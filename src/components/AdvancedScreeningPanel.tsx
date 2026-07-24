@@ -1262,6 +1262,29 @@ function AdvancedResult({
             </p>
           </div>
         )}
+
+        {/* 기관별 상품 한눈에 보기 — 같은 맥락(정책금융기관 상품)이라 이 박스 '안' 하단으로 통합 (대표님 요청, 구분선으로 구획) */}
+        <div className="mt-4 border-t border-brand-dark/10 pt-4">
+          <p className="text-base font-extrabold text-brand-dark">
+            📊 기관별 상품 한눈에 보기
+          </p>
+          <p className="mt-0.5 break-keep text-xs leading-relaxed text-brand-dark/60">
+            기관별 상품을 한눈에 볼 수 있어요
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            {INSTITUTION_PRODUCT_LINKS.map((p) => (
+              <a
+                key={p.label}
+                href={previewLock ? undefined : p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center justify-center rounded-xl bg-brand-dark px-3 py-3 text-center transition hover:opacity-90 ${lockClick}`}
+              >
+                <span className={`break-keep text-xs font-bold text-white ${lockText}`}>{p.label}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </AccordionCard>
 
       {/* ③ 챙기면 좋은 추가 감면 혜택 — 정책금융기관 바로 아래 (읽기 순서: 🏅→💳→💎→📢) */}
@@ -1272,26 +1295,7 @@ function AdvancedResult({
              AI 해설 없이 공고명·신청기간·기관만 보여주고 기업마당 원문으로 링크. */}
       {autoRun && !previewLock && <RelatedAnnouncements profile={relatedProfile} />}
 
-      {/* ⑤ 기관별 상품 한눈에 보기 — 별도 박스로 배치 (대표님 요청) */}
-      <AccordionCard
-        emoji="📊"
-        title="기관별 상품 한눈에 보기"
-        subtitle="기관별 상품을 한눈에 볼 수 있어요"
-      >
-        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-          {INSTITUTION_PRODUCT_LINKS.map((p) => (
-            <a
-              key={p.label}
-              href={previewLock ? undefined : p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center justify-center rounded-xl bg-brand-dark px-3 py-3 text-center transition hover:opacity-90 ${lockClick}`}
-            >
-              <span className={`break-keep text-xs font-bold text-white ${lockText}`}>{p.label}</span>
-            </a>
-          ))}
-        </div>
-      </AccordionCard>
+      {/* (기관별 상품 한눈에 보기는 '이용 가능한 정책금융기관' 아코디언 안 하단으로 통합됨 — 대표님 요청) */}
 
       {/* 대표님들이 알아두면 좋은 정부 사이트 모음으로 이동 — 아코디언과 톤 통일(둥근 모서리·부드러운 그림자) */}
       <a
