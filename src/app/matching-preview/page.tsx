@@ -506,12 +506,7 @@ export default function MatchingPreview() {
             />
           </div>
 
-          {/* ── 오픈 베타(무료) 안내 — 최하단 작은 한 줄만 (알림 버튼 제거) ── */}
-          {!adminView && BETA_FREE && (
-          <p className="mt-5 break-keep text-center text-xs text-brand-dark/50">
-            🎉 지금 보신 모든 내용이 무료 베타 오픈 기간 혜택입니다 · 안내·추천 서비스 · 승인 보장 없음
-          </p>
-          )}
+          {/* ── (대표님 요청) 오픈 베타(무료) 안내 한 줄 문구 삭제 ── */}
 
           {/* ── 결과창 맨 하단 CTA — 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
           <section className="mt-4 px-0 pb-0">
