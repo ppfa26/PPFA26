@@ -87,7 +87,7 @@ export const metadata: Metadata = {
     siteName: "모두의사업친구",
     images: [
       {
-        url: "/og-image-v3.png",
+        url: "/og-image-v3.jpg",
         width: 1200,
         height: 630,
         alt: "모두의사업친구 — 정부지원사업 AI 통합 매칭 플랫폼",
@@ -98,7 +98,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
     description: "AI가 내 사업장에 알맞은 정부지원사업을 전부 찾아드립니다.",
-    images: ["/og-image-v3.png"],
+    images: ["/og-image-v3.jpg"],
   },
 };
 
@@ -196,7 +196,7 @@ const structuredData = {
       "@type": "LocalBusiness",
       "@id": `${SITE_URL}/#localbusiness`,
       name: "모두의사업친구",
-      image: `${SITE_URL}/og-image-v3.png`,
+      image: `${SITE_URL}/og-image-v3.jpg`,
       url: SITE_URL,
       telephone: "+82-1551-7886",
       email: "biospartners@naver.com",
