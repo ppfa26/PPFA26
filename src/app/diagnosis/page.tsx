@@ -52,10 +52,23 @@ function keepBrackets(text: string): string {
 }
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  // 라벨 끝의 대괄호 표기(예: "[완납 여부]")는 살짝 작은 글씨로 분리 표시(대표님 요청).
+  const lm = label.match(/^(.*?)\s*(\[[^\]]*\])\s*$/);
+  const labelMain = lm ? lm[1] : label;
+  const labelBadge = lm ? lm[2] : "";
   return (
     // data-question: 답을 고르면 '다음 질문'을 화면 중앙으로 스크롤하기 위한 마커(대표님 요청)
     <div data-question className="mb-5 scroll-mt-24 last:mb-0 sm:mb-6">
-      {label && <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(label)}</p>}
+      {label && (
+        <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">
+          {keepBrackets(labelMain)}
+          {labelBadge && (
+            <span className="ml-1 whitespace-nowrap align-middle text-[11px] font-semibold text-brand-gray sm:text-xs">
+              {labelBadge}
+            </span>
+          )}
+        </p>
+      )}
       {hint && <p className="mb-2 break-keep text-xs leading-snug text-brand-gray">{hint}</p>}
       {children}
     </div>
@@ -409,20 +422,41 @@ export default function Diagnosis() {
   // cols2: 글자가 긴 2지선다(결격사유 등)를 모바일에서 균등 2열로 정렬 → 너비 들쭉날쭉 방지
   // grid: 선택지가 여러 개인 항목(업력·직원수 등)을 모바일에서 균등 2열 그리드로 정렬해
   //       'flex-wrap' 특유의 마지막 줄 1개만 남는(2/2/1) 어색함을 없앤다. PC(sm)에서는 자동 줄바꿈 유지.
+  // 옵션 문구를 "라벨 [상태]" 형태로 분리해 모바일에서만 2줄로 표시(대표님 요청).
+  //   예) "해당 없음 [신청 가능]" → 모바일: '해당 없음' / '[신청 가능]' 2줄 · PC: 한 줄 그대로.
+  //   대괄호가 없는 옵션은 그냥 그대로 표시.
+  const renderOptLabel = (o: string, twoLine?: boolean) => {
+    if (!twoLine) return o;
+    const m = o.match(/^(.*?)\s*(\[[^\]]*\])\s*$/);
+    if (!m) return o;
+    return (
+      <>
+        {m[1]}
+        {/* 모바일: 줄바꿈 · PC(sm 이상): 공백 한 칸으로 한 줄 유지 */}
+        <br className="sm:hidden" />
+        <span className="hidden sm:inline"> </span>
+        {m[2]}
+      </>
+    );
+  };
   const Radio = ({
     k,
     opts,
     cols2,
     cols3,
+    cols4,
     grid,
+    twoLine,
   }: {
     k: string;
     opts: string[];
     cols2?: boolean;
     cols3?: boolean;
+    cols4?: boolean;
     grid?: boolean;
+    twoLine?: boolean; // 모바일에서 옵션을 "라벨/[상태]" 2줄로 표시
   }) =>
-    cols2 || cols3 || grid ? (
+    cols2 || cols3 || cols4 || grid ? (
       <div
         className={
           cols2
@@ -430,6 +464,9 @@ export default function Diagnosis() {
             : cols3
             ? // cols3: 짧은 3지선다(사업자 유형 등)를 모바일에서도 한 줄 3열로 정렬
               "grid grid-cols-3 gap-2"
+            : cols4
+            ? // cols4: 짧은 4지선다(지역 등)를 모바일에서도 한 줄 4열로 정렬
+              "grid grid-cols-4 gap-2"
             : // grid: 모바일 균등 2열 → PC(sm 이상)는 내용 폭에 맞춰 자동 흐름
               "grid grid-cols-2 gap-2 sm:flex sm:flex-wrap"
         }
@@ -442,10 +479,16 @@ export default function Diagnosis() {
               cols3
                 ? // cols3: 3열이라 폭이 좁음 → 모바일에서 폰트·패딩 축소 + 한 줄 유지(줄바꿈 방지)
                   "whitespace-nowrap px-1 text-[12px] sm:px-4 sm:text-sm"
+                : cols4
+                ? // cols4: 4열이라 더 좁음 → 모바일 폰트·패딩 더 축소 + 한 줄 유지
+                  "whitespace-nowrap px-0.5 text-[13px] sm:px-4 sm:text-sm"
+                : twoLine
+                ? // twoLine: 모바일 2줄 표시 → 줄간격 살짝 좁게(leading-tight)
+                  "leading-tight sm:leading-normal"
                 : ""
             }`}
           >
-            {o}
+            {renderOptLabel(o, twoLine)}
           </button>
         ))}
       </div>
@@ -695,11 +738,10 @@ export default function Diagnosis() {
                   </span>
                 </div>
                 <div className="p-4 sm:p-5">
-                  <Field label={STEP3_FIELDS.bankruptcy.label} hint={STEP3_FIELDS.bankruptcy.hint}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 /></Field>
-                  <div className="mb-0">
-                    <p className="mb-2 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.taxDelinquent.label)}</p>
-                    <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 />
-                  </div>
+                  <Field label={STEP3_FIELDS.bankruptcy.label} hint={STEP3_FIELDS.bankruptcy.hint}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 twoLine /></Field>
+                  <Field label={STEP3_FIELDS.taxDelinquent.label}>
+                    <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 twoLine />
+                  </Field>
                   {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
                   {form.businessType === "법인사업자" && (
                     <div className="mt-5">
@@ -722,7 +764,8 @@ export default function Diagnosis() {
                 <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} grid /></Field>
                 {/* 지역 — '기타' 클릭 시 직접 입력창 노출(대표님 요청) */}
                 <Field label={STEP1_FIELDS.region.label}>
-                  <div className="flex flex-wrap gap-2">
+                  {/* 지역 4개(서울·경기·인천·기타)를 모바일에서도 한 줄 4열로 정렬(대표님 요청) */}
+                  <div className="grid grid-cols-4 gap-2 sm:flex sm:flex-wrap">
                     {STEP1_FIELDS.region.opts.map((o) => {
                       const active = o === "기타" ? regionEtc : !regionEtc && form.region === o;
                       return (
@@ -737,7 +780,7 @@ export default function Diagnosis() {
                               set("region", o);
                             }
                           }}
-                          className={`rounded-full border px-4 py-2 text-sm font-semibold transition hover:scale-[1.03] ${
+                          className={`w-full whitespace-nowrap rounded-full border px-0.5 py-2 text-[13px] font-semibold transition hover:scale-[1.03] sm:w-auto sm:px-4 sm:text-sm ${
                             active
                               ? "border-brand-orange bg-brand-grad text-brand-dark"
                               : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
