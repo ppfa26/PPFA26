@@ -57,8 +57,8 @@ export default function RelatedAnnouncements({
   return (
     <AccordionCard
       emoji="📢"
-      title="지금 신청 가능한 그외 정부지원사업"
-      subtitle="바로 신청 가능한 그외 정부지원사업이에요"
+      title="추가적인 그 외 정부지원사업"
+      subtitle="그 외 정부지원사업이에요"
     >
       {loading ? (
         <p className="mt-4 text-sm text-brand-dark/50">📢 관련 공고를 불러오는 중…</p>
