@@ -872,14 +872,14 @@ function AdvancedResult({
               </li>
             </ol>
           </div>
-          <div className="mt-4 divide-y divide-gray-200">
+          <div className="mt-4 space-y-3">
             {eligibleSupport.map(({ prog, status }) => {
               const isEligible = status === "eligible";
               return (
                 <Link
                   key={prog.id}
                   href={`/support/${prog.id}`}
-                  className={`group block py-3 first:pt-0 last:pb-0 origin-left transition-transform duration-150 hover:scale-[1.01] ${lockNoClick}`}
+                  className={`group block origin-left rounded-xl border border-gray-200 bg-white p-4 transition-transform duration-150 hover:scale-[1.01] ${lockNoClick}`}
                 >
                   {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
                   <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">

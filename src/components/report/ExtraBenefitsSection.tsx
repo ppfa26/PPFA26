@@ -632,7 +632,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
                 {/* 데드라인 경고 (빨강) — 목차성 경고라 노출 유지 */}
                 {b.warning && (
                   <p
-                    className="mt-3 inline-block max-w-full break-keep rounded-lg px-3 py-2 text-[12px] font-semibold leading-relaxed"
+                    className="mr-2 mt-3 inline-block max-w-full break-keep rounded-lg px-3 py-2 text-[12px] font-semibold leading-relaxed"
                     style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
                   >
                     ⚠️ {b.deadline} · {b.warning}

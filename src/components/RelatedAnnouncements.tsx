@@ -64,8 +64,8 @@ export default function RelatedAnnouncements({
         <p className="mt-4 text-sm text-brand-dark/50">📢 관련 공고를 불러오는 중…</p>
       ) : (
         <>
-          {/* 정책금융기관 카드와 동일한 divide-y 목록 스타일 */}
-          <div className="mt-4 divide-y divide-gray-200">
+          {/* 감면 카드와 동일한 투명(흰) 박스 목록 스타일 */}
+          <div className="mt-4 space-y-3">
             {(items || []).map((it, i) => {
               const inner = (
                 <>
@@ -109,7 +109,7 @@ export default function RelatedAnnouncements({
               return (
                 <div
                   key={i}
-                  className="border-t border-brand-dark/10 py-4 first:border-t-0 first:pt-0"
+                  className="rounded-xl border border-gray-200 bg-white p-4"
                 >
                   {it.detail_url ? (
                     <a
