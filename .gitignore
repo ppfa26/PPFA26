@@ -43,3 +43,7 @@ logs/
 *.zip
 *.bak
 _diag*.png
+
+# 모바일 점검 임시파일
+mobile-shots/
+mobile-capture*.mjs

@@ -381,15 +381,29 @@ export default function Diagnosis() {
         ? "border-brand-orange bg-brand-grad text-brand-dark"
         : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
     }`;
-  const Radio = ({ k, opts }: { k: string; opts: string[] }) => (
-    <div className="flex flex-wrap gap-2">
-      {opts.map((o) => (
-        <button key={o} onClick={() => set(k, o)} className={pillCls(form[k] === o)}>
-          {o}
-        </button>
-      ))}
-    </div>
-  );
+  // cols2: 글자가 긴 2지선다(결격사유 등)를 모바일에서 균등 2열로 정렬 → 너비 들쭉날쭉 방지
+  const Radio = ({ k, opts, cols2 }: { k: string; opts: string[]; cols2?: boolean }) =>
+    cols2 ? (
+      <div className="grid grid-cols-2 gap-2">
+        {opts.map((o) => (
+          <button
+            key={o}
+            onClick={() => set(k, o)}
+            className={`${pillCls(form[k] === o)} w-full break-keep text-center`}
+          >
+            {o}
+          </button>
+        ))}
+      </div>
+    ) : (
+      <div className="flex flex-wrap gap-2">
+        {opts.map((o) => (
+          <button key={o} onClick={() => set(k, o)} className={pillCls(form[k] === o)}>
+            {o}
+          </button>
+        ))}
+      </div>
+    );
   // breakBefore: 해당 라벨 앞에서 강제 줄바꿈(PC에서 원하는 줄 배치 — 대표님 요청)
   const Multi = ({ k, opts, breakBefore }: { k: string; opts: string[]; breakBefore?: string[] }) => (
     <div className="flex flex-wrap gap-2">
@@ -462,7 +476,7 @@ export default function Diagnosis() {
 
           {step === 1 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
-              <h1 className="mb-1 break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP1_TITLE}</h1>
+              <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP1_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP1_SUBTITLE}</p>
 
               {/* 사업자번호 자동 조회 (국세청 연동) — 박스 틀 색상 빨간색으로 통일(대표님 요청) */}
@@ -557,7 +571,7 @@ export default function Diagnosis() {
                   </div>
                 )}
                 <p className="mt-2 text-xs text-brand-gray">{BNO_TEXT.note}</p>
-                <p className="mt-1 text-xs font-semibold text-brand-red/80">{BNO_TEXT.errorPreStartupHint}</p>
+                <p className="mt-1 break-keep text-xs font-semibold text-brand-red/80">{BNO_TEXT.errorPreStartupHint}</p>
               </div>
 
               {/* 대표자 성함 및 연락처 — 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 · 박스 틀 색상 빨간색으로 통일 */}
@@ -602,10 +616,10 @@ export default function Diagnosis() {
                   </span>
                 </div>
                 <div className="p-4 sm:p-5">
-                  <Field label={STEP3_FIELDS.bankruptcy.label} hint={STEP3_FIELDS.bankruptcy.hint}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} /></Field>
+                  <Field label={STEP3_FIELDS.bankruptcy.label} hint={STEP3_FIELDS.bankruptcy.hint}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 /></Field>
                   <div className="mb-0">
                     <p className="mb-2 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.taxDelinquent.label)}</p>
-                    <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} />
+                    <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 />
                   </div>
                   {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
                   {form.businessType === "법인사업자" && (
@@ -673,7 +687,7 @@ export default function Diagnosis() {
 
           {step === 2 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
-              <h1 className="mb-1 break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP2_TITLE}</h1>
+              <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP2_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP2_SUBTITLE}</p>
 
               {/* ① 어떤 지원이 필요한가 — 3단계처럼 라벨+짧은 힌트로 간결화(대표님 요청). 희망금액 질문 제거 */}
@@ -700,7 +714,7 @@ export default function Diagnosis() {
 
           {step === 3 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
-              <h1 className="mb-1 break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP3_TITLE}</h1>
+              <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP3_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP3_SUBTITLE}</p>
 
               {/* ── 정밀 매칭 질문 (소진공 혁신형 상품 정확히 골라내기) ── */}
