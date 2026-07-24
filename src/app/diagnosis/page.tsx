@@ -413,12 +413,17 @@ export default function Diagnosis() {
 
   // ── 선택 버튼 공통 스타일 (Radio·Multi 완전 통일 · 모바일/PC 최적화) ──
   //   모바일: 살짝 큰 터치영역(py-2) · PC: 여유있게(sm:py-2). 글자·모서리·색 전부 동일.
+  // ★ px(좌우 패딩)는 pillCls에 넣지 않는다 ★
+  //   여기에 px-4를 박아두면 cols3처럼 뒤에서 px-0으로 덮어써도 Tailwind 빌드 CSS 순서상
+  //   px-4가 이겨 좌측 패딩이 남고, 긴 글자("개인사업자")가 오른쪽으로 밀려 보이는 버그가 생김.
+  //   → 기본 패딩은 pillPad에서 주고, cols3/cols4는 각자 좁은 패딩을 명시(충돌 없음).
   const pillCls = (active: boolean) =>
-    `rounded-full border px-4 py-2 text-sm font-semibold transition hover:scale-[1.03] ${
+    `rounded-full border py-2 text-sm font-semibold transition hover:scale-[1.03] ${
       active
         ? "border-brand-orange bg-brand-grad text-brand-dark"
         : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
     }`;
+  const pillPad = "px-4"; // 기본 좌우 패딩 (cols3/cols4 이외에 사용)
   // cols2: 글자가 긴 2지선다(결격사유 등)를 모바일에서 균등 2열로 정렬 → 너비 들쭉날쭉 방지
   // grid: 선택지가 여러 개인 항목(업력·직원수 등)을 모바일에서 균등 2열 그리드로 정렬해
   //       'flex-wrap' 특유의 마지막 줄 1개만 남는(2/2/1) 어색함을 없앤다. PC(sm)에서는 자동 줄바꿈 유지.
@@ -477,15 +482,16 @@ export default function Diagnosis() {
             onClick={(e) => set(k, o, e)}
             className={`${pillCls(form[k] === o)} w-full break-keep text-center sm:w-auto ${
               cols3
-                ? // cols3: 3열이라 폭이 좁음 → 모바일에서 폰트·패딩 축소 + 한 줄 유지(줄바꿈 방지)
-                  "whitespace-nowrap px-1 text-[12px] sm:px-4 sm:text-sm"
+                ? // cols3: 3열이라 폭이 좁음 → 좌우 패딩 제거·폰트 축소해 긴 글자("개인사업자")도
+                  //         pill 안에 오버플로우 없이 '정중앙' 정렬되게 함(대표님 요청). PC는 원래대로.
+                  "whitespace-nowrap px-0 text-[11px] sm:px-4 sm:text-sm"
                 : cols4
                 ? // cols4: 4열이라 더 좁음 → 모바일 폰트·패딩 더 축소 + 한 줄 유지
                   "whitespace-nowrap px-0.5 text-[13px] sm:px-4 sm:text-sm"
                 : twoLine
-                ? // twoLine: 모바일 2줄 표시 → 줄간격 살짝 좁게(leading-tight)
-                  "leading-tight sm:leading-normal"
-                : ""
+                ? // twoLine: 모바일 2줄 표시 → 줄간격 살짝 좁게(leading-tight) + 기본 패딩
+                  `${pillPad} leading-tight sm:leading-normal`
+                : pillPad
             }`}
           >
             {renderOptLabel(o, twoLine)}
@@ -495,7 +501,7 @@ export default function Diagnosis() {
     ) : (
       <div className="flex flex-wrap gap-2">
         {opts.map((o) => (
-          <button key={o} onClick={(e) => set(k, o, e)} className={pillCls(form[k] === o)}>
+          <button key={o} onClick={(e) => set(k, o, e)} className={`${pillCls(form[k] === o)} ${pillPad}`}>
             {o}
           </button>
         ))}
@@ -521,7 +527,7 @@ export default function Diagnosis() {
           <button
             key={o}
             onClick={() => toggle(k, o)}
-            className={`${pillCls((form[k] || []).includes(o))} w-full break-keep text-center sm:w-auto`}
+            className={`${pillCls((form[k] || []).includes(o))} ${pillPad} w-full break-keep text-center sm:w-auto`}
           >
             {o}
           </button>
@@ -532,7 +538,7 @@ export default function Diagnosis() {
         {opts.map((o) => (
           <Fragment key={o}>
             {breakBefore?.includes(o) && <div className="hidden w-full sm:block" aria-hidden />}
-            <button onClick={() => toggle(k, o)} className={pillCls((form[k] || []).includes(o))}>
+            <button onClick={() => toggle(k, o)} className={`${pillCls((form[k] || []).includes(o))} ${pillPad}`}>
               {o}
             </button>
           </Fragment>
