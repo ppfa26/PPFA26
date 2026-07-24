@@ -23,8 +23,11 @@ type Item = {
 
 export default function RelatedAnnouncements({
   profile,
+  onCount,
 }: {
   profile: Record<string, unknown> | null;
+  // ★ 실제 매칭돼 화면에 표시된 공고 '실측 갯수'를 부모(요약 배너)로 올려 숫자 100% 일치 (대표님 요청) ★
+  onCount?: (n: number) => void;
 }) {
   const [items, setItems] = useState<Item[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,6 +53,11 @@ export default function RelatedAnnouncements({
       alive = false;
     };
   }, [profile]);
+
+  // ★ 로딩이 끝나 실제 표시할 공고 수가 확정되면 부모(요약 배너)로 갯수 전달 ★
+  useEffect(() => {
+    if (items) onCount?.(items.length);
+  }, [items, onCount]);
 
   // 표시할 공고가 없으면(로딩 완료 후 0건) 섹션 자체를 숨겨 빈 카드 방지
   if (!loading && (!items || items.length === 0)) return null;

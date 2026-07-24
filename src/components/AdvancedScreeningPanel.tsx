@@ -70,11 +70,15 @@ export default function AdvancedScreeningPanel({
   autoRun = false,
   previewLock = false,
   relatedProfile = null,
+  onCounts,
 }: {
   autoRun?: boolean;
   previewLock?: boolean;
   // '지금 열려있는 관련 정부지원사업'(기업마당 실공고) 매칭용 진단 프로필
   relatedProfile?: Record<string, unknown> | null;
+  // ★ 실제 화면에 그린 4개 카테고리의 '실측 갯수'를 부모(요약 배너)로 올려 배너와 화면 숫자 100% 일치 (대표님 요청)
+  //   supports=정부지원제도, products=정책금융상품, benefits=추가 감면, announcements=그 외 정부지원사업
+  onCounts?: (c: { supports: number; products: number; benefits: number; announcements: number }) => void;
 }) {
   const [report, setReport] = useState<AdvancedScreeningReport | null>(null);
 
@@ -746,7 +750,7 @@ export default function AdvancedScreeningPanel({
       {/* 판정 결과 */}
       {report && (
         <>
-          <AdvancedResult report={report} autoRun={autoRun} eligibleSupport={eligibleSupport} previewLock={previewLock} relatedProfile={relatedProfile} />
+          <AdvancedResult report={report} autoRun={autoRun} eligibleSupport={eligibleSupport} previewLock={previewLock} relatedProfile={relatedProfile} onCounts={onCounts} />
           {!autoRun && (
             <button
               type="button"
@@ -769,13 +773,24 @@ function AdvancedResult({
   eligibleSupport = [],
   previewLock = false,
   relatedProfile = null,
+  onCounts,
 }: {
   report: AdvancedScreeningReport;
   autoRun?: boolean;
   eligibleSupport?: SupportItem[];
   previewLock?: boolean;
   relatedProfile?: Record<string, unknown> | null;
+  // ★ 실제 화면에 그린 4개 카테고리 실측 갯수를 부모(요약 배너)로 올려 숫자 100% 일치 (대표님 요청)
+  onCounts?: (c: { supports: number; products: number; benefits: number; announcements: number }) => void;
 }) {
+  // ★ 요약 배너 숫자 100% 일치용 — 비동기로 그려지는 두 카드(감면·그외공고)의 실측 갯수를 자식에서 받아 보관 ★
+  const [benefitsCount, setBenefitsCount] = useState<number | null>(null);
+  const [announcementsCount, setAnnouncementsCount] = useState<number | null>(null);
+  // 미리보기(previewLock)에서는 '그 외 정부지원사업'(RelatedAnnouncements)이 렌더되지 않으므로 0으로 확정
+  useEffect(() => {
+    if (previewLock) setAnnouncementsCount(0);
+  }, [previewLock]);
+
   // 미리보기 잠금용 클래스 헬퍼 (기관명·상품명 텍스트 / 클릭요소)
   const lockText = previewLock ? "preview-lock-text" : "";
   const lockClick = previewLock ? "preview-lock-click" : "";
@@ -818,6 +833,29 @@ function AdvancedResult({
   // 대리대출/직접대출 추천 여부 → 진행절차 안내 노출 조건
   const hasDae = creditMatches.some((m) => m.loan_type === "대리대출");
   const hasDirect = creditMatches.some((m) => m.loan_type === "직접대출");
+
+  // ★ 정책금융상품 '실측 갯수' — 아래 아코디언 렌더(959행~)와 100% 동일한 filterProducts 결과를 그대로 합산 ★
+  //   (Math.max(1,...) 같은 보정 없이, 화면에 실제로 그려지는 상품 카드 수와 정확히 일치시킨다 — 대표님 요청)
+  const productsShownCount = creditMatches.reduce((sum, m) => {
+    const link = findInstitutionLink(m.institution);
+    const isJaedan = m.institution.includes("재단");
+    const filtered = filterProducts(isJaedan ? JAEDAN_PRODUCTS : link?.products, company);
+    return sum + (filtered?.length || 0);
+  }, 0);
+
+  // ★ 4개 카테고리 실측 갯수가 모두 준비되면 부모(요약 배너)로 올려 숫자 100% 일치 ★
+  //   감면·그외공고는 비동기(자식 콜백)라 아직 null일 수 있음 → 둘 다 확정된 뒤에만 전달.
+  useEffect(() => {
+    if (!onCounts) return;
+    if (benefitsCount === null || announcementsCount === null) return;
+    onCounts({
+      supports: eligibleSupport.length,
+      products: productsShownCount,
+      benefits: benefitsCount,
+      announcements: announcementsCount,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eligibleSupport.length, productsShownCount, benefitsCount, announcementsCount]);
 
   // 신청 가능 지원사업 억원 표기 도우미
   const won억 = (v?: number) =>
@@ -949,10 +987,11 @@ function AdvancedResult({
         </AccordionCard>
       )}
 
-      {/* ② 이용 가능한 정책금융기관 — 정부지원제도 바로 아래 (읽기 순서: 🏅→💳→💎→📢) */}
+      {/* ② 이용 가능한 정책금융상품 — 정부지원제도 바로 아래 (읽기 순서: 🏅→💳→💎→📢)
+             (대표님 요청: '정책금융기관'보다 '정책금융상품'이 더 정확한 표현) */}
       <AccordionCard
         emoji="💳"
-        title="이용 가능한 정책금융기관"
+        title="이용 가능한 정책금융상품"
         subtitle="낮은 금리로 받을 수 있는 자금이에요"
       >
         <div className="mt-4 divide-y divide-gray-200">
@@ -1288,12 +1327,14 @@ function AdvancedResult({
       </AccordionCard>
 
       {/* ③ 챙기면 좋은 추가 감면 혜택 — 정책금융기관 바로 아래 (읽기 순서: 🏅→💳→💎→📢) */}
-      {autoRun && <ExtraBenefitsSection previewLock={previewLock} />}
+      {autoRun && <ExtraBenefitsSection previewLock={previewLock} onCount={setBenefitsCount} />}
 
       {/* ④ 지금 열려있는 관련 정부지원사업(기업마당 실공고) — 감면 혜택 바로 아래
              진단 프로필의 지역·업종·관심분야로 실제 공고를 추려 아코디언으로 노출.
              AI 해설 없이 공고명·신청기간·기관만 보여주고 기업마당 원문으로 링크. */}
-      {autoRun && !previewLock && <RelatedAnnouncements profile={relatedProfile} />}
+      {autoRun && !previewLock && (
+        <RelatedAnnouncements profile={relatedProfile} onCount={setAnnouncementsCount} />
+      )}
 
       {/* (기관별 상품 한눈에 보기는 '이용 가능한 정책금융기관' 아코디언 안 하단으로 통합됨 — 대표님 요청) */}
 

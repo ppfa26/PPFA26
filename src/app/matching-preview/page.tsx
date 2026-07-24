@@ -40,6 +40,15 @@ export default function MatchingPreview() {
     supports: number;
     benefits: number;
   } | null>(null);
+  // ★ 실제 결과 화면(AdvancedScreeningPanel)이 '실제로 그린' 4개 카테고리 실측 갯수 ★
+  //   요약 배너 숫자를 화면 아코디언과 100% 일치시키기 위해, 도착하면 이 값으로 배너를 갱신한다.
+  //   supports=정부지원제도, products=정책금융상품, benefits=추가 감면, announcements=그 외 정부지원사업
+  const [liveCounts, setLiveCounts] = useState<{
+    supports: number;
+    products: number;
+    benefits: number;
+    announcements: number;
+  } | null>(null);
   // 관련 실공고(기업마당) 매칭용 — 진단 프로필 원본을 보관
   const [profileData, setProfileData] = useState<Record<string, unknown> | null>(null);
 
@@ -134,7 +143,11 @@ export default function MatchingPreview() {
     })();
   }, []);
 
-  const total = counts?.total ?? 0;
+  // ★ 총 매칭 수 — 실측 콜백(liveCounts)이 도착하면 그 4개 합계를 쓰고(화면과 100% 일치),
+  //   아직 안 왔으면 초기 계산값(counts.total)으로 즉시 숫자를 보여준다(깜빡임 방지). ★
+  const total = liveCounts
+    ? liveCounts.supports + liveCounts.products + liveCounts.benefits + liveCounts.announcements
+    : counts?.total ?? 0;
   const isBlocked = blockReasons.length > 0;
 
   // ── 'AI 분석 중' 연출 진행 (analyzing → 약 2.2초 후 ready) ──
@@ -415,21 +428,27 @@ export default function MatchingPreview() {
                 </span>
               </div>
 
-              {/* 오른쪽: 매칭 요약 (세로로 쌓아 가로 공간 절약 → 모바일에서도 안 짤림) */}
+              {/* 오른쪽: 매칭 요약 (세로로 쌓아 가로 공간 절약 → 모바일에서도 안 짤림)
+                  ★ 화면 아코디언 순서·갯수와 100% 일치: 🏅제도 → 💳정책금융상품 → 💎감면 → 📢그외사업
+                  ★ 실측 콜백(liveCounts)이 도착하면 그 값을, 아직이면 초기 계산값을 표시. */}
               <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 text-left">
                 {counts && total > 0 ? (
                   <>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
-                      💰 <span className="whitespace-nowrap text-brand-dark/70">정책자금 상품</span>
-                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{counts.products}종</b>
+                      🏅 <span className="whitespace-nowrap text-brand-dark/70">정부지원제도</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.supports ?? counts.supports}건</b>
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
-                      🏅 <span className="whitespace-nowrap text-brand-dark/70">정부지원제도</span>
-                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{counts.supports}건</b>
+                      💳 <span className="whitespace-nowrap text-brand-dark/70">정책금융상품</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.products ?? counts.products}건</b>
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
                       💎 <span className="whitespace-nowrap text-brand-dark/70">추가 감면 혜택</span>
-                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{counts.benefits}건</b>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.benefits ?? counts.benefits}건</b>
+                    </span>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
+                      📢 <span className="whitespace-nowrap text-brand-dark/70">그 외 지원사업</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.announcements ?? 0}건</b>
                     </span>
                   </>
                 ) : (
@@ -483,6 +502,7 @@ export default function MatchingPreview() {
               autoRun
               previewLock={!adminView && !BETA_FREE}
               relatedProfile={profileData}
+              onCounts={setLiveCounts}
             />
           </div>
 

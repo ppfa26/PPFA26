@@ -36,6 +36,8 @@ type Props = {
   userInput?: ExtraBenefitsUserInput;
   // ★ 미리보기 잠금 (대표님 요청) — 제목·목차는 보이고, 알맹이(신청방법·서류·소요기간·링크)만 흐리게 ★
   previewLock?: boolean;
+  // ★ 실제 화면에 표시된 감면 혜택 '실측 갯수'를 부모(요약 배너)로 올려 숫자 100% 일치 (대표님 요청) ★
+  onCount?: (n: number) => void;
 };
 
 // ── 데이터 타입 ─────────────────────────────────────────────────
@@ -472,7 +474,7 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
   }
 }
 
-export default function ExtraBenefitsSection({ userInput, previewLock = false }: Props) {
+export default function ExtraBenefitsSection({ userInput, previewLock = false, onCount }: Props) {
   const [input, setInput] = useState<ExtraBenefitsUserInput | null>(
     userInput ?? null
   );
@@ -509,6 +511,13 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false }:
     .filter(({ v }) => v.status !== "no")
     .sort((a, z) => z.v.score - a.v.score)
     .slice(0, 6);
+
+  // ★ 실제 화면에 그린 감면 혜택 갯수를 부모(요약 배너)로 전달 → 배너 숫자와 화면 100% 일치 ★
+  useEffect(() => {
+    onCount?.(judged.length);
+    // judged.length 가 바뀔 때만 알림 (input 변동 시 재계산됨)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [judged.length]);
 
   return (
     <>
