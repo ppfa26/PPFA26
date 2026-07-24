@@ -30,6 +30,7 @@ type Stats = {
 type AdminUser = {
   user_id: string;
   email: string;
+  full_name?: string | null; // 소셜 로그인 메타데이터에서 온 회원 이름(카카오 닉네임 등)
   joined_at: string;
   last_sign_in: string | null;
   paid_count: number;
@@ -537,7 +538,7 @@ export default function AdminPage() {
     const q = userSearch.trim().toLowerCase();
     if (!q) return true;
     const info = userInfoByEmail(u.email);
-    const hay = [u.email, info.name, info.phone]
+    const hay = [u.email, u.full_name, info.name, info.phone]
       .filter(Boolean)
       .join(" ")
       .toLowerCase();
@@ -653,10 +654,12 @@ export default function AdminPage() {
     // 2차(폴백): 이메일로 못 찾으면, 이 회원의 이름/연락처로 진단서를 찾는다.
     if (matched.length === 0) {
       const info = userInfoByEmail(email); // { name, phone } (진단서에서 역추적)
+      // 회원 계정 자체의 이름(소셜 로그인 닉네임)도 매칭 후보에 넣는다 (진단서 이메일이 안 붙은 경우 대비).
+      const acctName = (users.find((x) => x.email === email)?.full_name || "").trim();
       const onlyDigits = (v: string | null | undefined) =>
         (v || "").replace(/[^0-9]/g, "");
       const phoneKey = onlyDigits(info.phone);
-      const nameKey = (info.name || "").trim();
+      const nameKey = (info.name || acctName || "").trim();
       if (phoneKey.length >= 8 || nameKey) {
         matched = diagnoses
           .filter((d) => {
@@ -1040,7 +1043,8 @@ export default function AdminPage() {
                         <td className="whitespace-nowrap px-4 py-3">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-gray-800">
-                              {info.name || "이름 미입력"}
+                              {/* ① 계정 자체 이름(소셜 로그인 닉네임) → ② 진단서 역추적 이름 → ③ 미입력 순 */}
+                              {(u.full_name && u.full_name.trim()) || info.name || "이름 미입력"}
                             </span>
                             <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${badge.cls}`}>
                               {badge.label}
