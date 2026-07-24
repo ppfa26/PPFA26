@@ -4,9 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import Editable from "./Editable";
 
-export default function Footer() {
+export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
   return (
-    <footer className="mt-8 border-t border-gray-100 bg-brand-dark px-4 py-8 text-gray-300">
+    <footer className={`${topGap} border-t border-gray-100 bg-brand-dark px-4 py-8 text-gray-300`}>
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
           {/* 브랜드 */}
