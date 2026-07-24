@@ -69,7 +69,7 @@ export default function RelatedAnnouncements({
             {(items || []).map((it, i) => {
               const inner = (
                 <>
-                  {/* 제목 + 핵심 배지 (지원규모·마감) — 다른 결과 카드와 동일 구조 */}
+                  {/* 제목 + 카테고리 태그만 한 줄에 — 기간 배지는 아래로 내려 통일 */}
                   <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                     <span className="break-keep text-[14px] font-extrabold leading-snug text-brand-dark">
                       {it.title}
@@ -79,12 +79,13 @@ export default function RelatedAnnouncements({
                         {it.support_scale}
                       </span>
                     )}
-                    {it.deadline && (
-                      <span className="shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
-                        🗓️ {it.deadline}
-                      </span>
-                    )}
                   </div>
+                  {/* 신청기간 — 공고명 길이와 무관하게 항상 제목 아래 별도 줄로 통일 */}
+                  {it.deadline && (
+                    <span className="mt-2 inline-block shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                      🗓️ {it.deadline}
+                    </span>
+                  )}
                   {/* 소관기관 · 대상 — 한 줄씩 깔끔하게 */}
                   {it.site_name && (
                     <p className="mt-2 break-keep text-[12px] leading-relaxed text-brand-gray">
