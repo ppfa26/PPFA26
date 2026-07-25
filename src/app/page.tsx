@@ -604,13 +604,13 @@ export default function Home() {
                     className="select-none rounded-2xl border border-brand-orange/30 bg-gradient-to-r from-amber-50 to-orange-50 p-5 text-center sm:p-6"
                   >
                     <p className="break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-[16px]">
-                      🔓 위 <span className="text-brand-orange">🔒 잠긴 부분</span>은 결제하면 전부 열려요
+                      <span className="text-brand-orange">🔒 잠긴 부분</span>은 결제하면 전부 공개됩니다.
                     </p>
                     <ul className="mx-auto mt-3 flex max-w-md flex-col gap-1.5 text-left text-[12px] leading-relaxed text-brand-dark/80 sm:text-[13px]">
                       {[
                         "제도별 신청 사이트 주소 · 접수 페이지 링크",
                         "필요 서류 목록 · 신청 순서 · 마감일",
-                        "담당 기관 · 상담 연락처",
+                        "담당 기관 및 고객센터 연락처",
                         "「이 상품 신청하러 가기」 등 모든 버튼 활성화",
                       ].map((t, i) => (
                         <li key={i} className="flex items-start gap-2 break-keep">
@@ -619,9 +619,6 @@ export default function Home() {
                         </li>
                       ))}
                     </ul>
-                    <p className="mt-3 break-keep text-[12px] font-semibold text-brand-orange sm:text-[13px]">
-                      결제 후 모든 버튼이 열려 바로 신청까지 진행할 수 있어요
-                    </p>
                   </div>
                 </div>
 
