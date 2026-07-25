@@ -37,7 +37,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             >
               ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며,
               <br />
-              당사는 정부지원사업 승인을 보장하지 않습니다.
+              정부지원사업 승인을 보장하지 않습니다.
             </Editable>
           </div>
 

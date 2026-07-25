@@ -15,12 +15,12 @@ import { BETA_FREE } from "@/lib/betaConfig";
 const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 크롤링" },
   { icon: "📚", text: "정부 부처 공문 팩트체크" },
-  { icon: "🎯", text: "내 사업장에 가능한 것만 매칭" },
   { icon: "🗂️", text: "정책자금·지원금·바우처·인증" },
+  { icon: "🎯", text: "내 사업장에 가능한 것만 매칭" },
+  { icon: "💬", text: "채널톡 상담 운영" },
   { icon: "📝", text: "신청 방법·필요 서류·순서까지" },
   { icon: "🚫", text: "안내 및 추천 · 행정 대행 없음" },
   { icon: "💳", text: "부담 없는 1회성 결제" },
-  { icon: "💬", text: "채널톡 상담 운영" },
 ];
 
 const VALUES = [
@@ -61,7 +61,7 @@ const FAQS = [
         <br />
         승인 여부는 정부 기관 심사로 결정되며,
         <br />
-        당사는 정부지원사업 승인을 보장하지 않습니다.
+        정부지원사업 승인을 보장하지 않습니다.
       </>
     ),
   },
@@ -204,7 +204,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-5 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:text-xs"
             >
-              본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 당사는 정부지원사업 승인을 보장하지 않습니다.
+              본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
             </Editable>
           </div>
         </section>
@@ -245,8 +245,8 @@ export default function Home() {
               </Editable>
             </div>
 
-            {/* 소제목 ① — 무엇을 알려주는지 */}
-            <div className="mt-8 flex items-center justify-center gap-2">
+            {/* 소제목 ① — 무엇을 알려주는지 (상·하 여백 동일하게 mt-4) */}
+            <div className="mt-4 flex items-center justify-center gap-2">
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
               <Editable
                 id="home-value-step1"
@@ -279,15 +279,15 @@ export default function Home() {
               ))}
             </div>
 
-            {/* 소제목 ② — 어떻게 찾아드리는지 */}
-            <div className="mt-8 flex items-center justify-center gap-2">
+            {/* 소제목 ② — 어떻게 찾아드리는지 (상·하 여백 동일하게 mt-4) */}
+            <div className="mt-4 flex items-center justify-center gap-2">
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
               <Editable
                 id="home-value-step2"
                 as="span"
                 className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
               >
-                이렇게 찾아드려요
+                이렇게 알려드려요
               </Editable>
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
             </div>
@@ -301,7 +301,7 @@ export default function Home() {
                 '서비스 안내'와 '결과 예시본'을 하나의 카테고리처럼 연결) */}
             <div
               id="result-sample-section"
-              className="mt-10 flex scroll-mt-20 items-center justify-center gap-2 sm:scroll-mt-24"
+              className="mt-4 flex scroll-mt-20 items-center justify-center gap-2 sm:scroll-mt-24"
             >
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
               <Editable

@@ -54,20 +54,19 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <div className="mt-2">
               {BETA_FREE ? (
                 <>
-                  {/* 베타: '오픈 베타 기간 0원'만 강조 (대표님 요청: '원래 9,900원' 삭제) */}
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-brand-red px-2 py-0.5 text-[11px] font-bold text-white">
+                  {/* 베타: '오픈 베타 기간 0원'만 강조 (대표님 요청: '원래 9,900원' 삭제)
+                      — 하나의 유리 박스에 세로로 정돈 (문구 동일) */}
+                  <div className="pricing-beta-box mt-1 flex flex-col items-center gap-1.5 rounded-2xl px-4 py-4 text-center">
+                    <span className="rounded-full bg-brand-red px-2.5 py-0.5 text-[11px] font-bold tracking-tight text-white">
                       오픈 베타 100% 무료
                     </span>
-                  </div>
-                  <div className="mt-0.5 flex items-end gap-1">
-                    <span className="text-[26px] font-black leading-none text-brand-red">
+                    <span className="text-[28px] font-black leading-none text-brand-red">
                       오픈 베타 기간 0원
                     </span>
+                    <p className="text-[11px] text-brand-gray">
+                      * {tier.period} 이용
+                    </p>
                   </div>
-                  <p className="mt-1 text-[11px] text-brand-gray">
-                    * {tier.period} 이용
-                  </p>
                 </>
               ) : (
                 <>

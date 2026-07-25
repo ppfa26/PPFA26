@@ -293,7 +293,7 @@ export default function MatchingPreview() {
               <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-dark/50">
                 ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며,
                 <br />
-                당사는 정부지원사업 승인을 보장하지 않습니다.
+                정부지원사업 승인을 보장하지 않습니다.
               </p>
             </div>
           </div>
