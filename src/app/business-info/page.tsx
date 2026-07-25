@@ -63,6 +63,21 @@ export default function BusinessInfoPage() {
         </Editable>
       </section>
 
+      <section id="business-opendata">
+        <h2 className="text-lg font-extrabold text-brand-dark">
+          공공데이터 출처 표시
+        </h2>
+        <Editable id="business-opendata-body" as="p" className="mt-2">
+          본 서비스가 제공하는 일부 정부지원사업 공고 정보는 아래 공공데이터를
+          활용하며, 「공공데이터의 제공 및 이용 활성화에 관한 법률」 및 공공데이터
+          이용약관(출처 표시)에 따라 출처를 밝힙니다.
+        </Editable>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5">
+          <li>기업마당(bizinfo.go.kr) · 중소벤처기업부</li>
+          <li>공공데이터포털(data.go.kr)</li>
+        </ul>
+      </section>
+
       <section id="business-links">
         <h2 className="text-lg font-extrabold text-brand-dark">관련 안내</h2>
         <Editable id="business-links-body" as="p" className="mt-2">

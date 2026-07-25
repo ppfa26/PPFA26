@@ -110,8 +110,27 @@ export default function TermsPage() {
       </section>
 
       <section id="terms-9">
-        <h2 className="text-lg font-extrabold text-brand-dark">제9조 (문의)</h2>
+        <h2 className="text-lg font-extrabold text-brand-dark">
+          제9조 (공공데이터 출처 표시)
+        </h2>
         <Editable id="terms-9-body" as="p" className="mt-2">
+          본 서비스가 제공하는 일부 정부지원사업 공고 정보는 아래 공공데이터를
+          활용하며, 「공공데이터의 제공 및 이용 활성화에 관한 법률」 및
+          공공데이터 이용약관(제1유형·제3유형: 출처 표시)에 따라 출처를 표시합니다.
+        </Editable>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5">
+          <li>기업마당(bizinfo.go.kr) · 중소벤처기업부</li>
+          <li>공공데이터포털(data.go.kr)</li>
+        </ul>
+        <Editable id="terms-9-note" as="p" className="mt-2 text-brand-gray">
+          공고 정보는 실시간 수집·가공되어 제공되며, 원문과 차이가 있을 수
+          있으므로 최종 신청 전 반드시 각 기관의 공식 공고를 확인하시기 바랍니다.
+        </Editable>
+      </section>
+
+      <section id="terms-10">
+        <h2 className="text-lg font-extrabold text-brand-dark">제10조 (문의)</h2>
+        <Editable id="terms-10-body" as="p" className="mt-2">
           본 약관과 관련한 문의는 아래 연락처로 해주시기 바랍니다.
           <br />
           상호: 모두의사업친구 · 이메일: biospartners@naver.com
