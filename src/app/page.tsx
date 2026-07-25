@@ -212,7 +212,7 @@ export default function Home() {
         {/* 가치 제안 4단계 — (대표님 요청) 7네모칸 섹션보다 위로 배치 */}
         {/* 구간 구분 — 얇은 회색 가로줄 */}
         <div className="section-divider" aria-hidden="true" />
-        <section className="bg-gray-50 px-4 py-7 sm:py-11">
+        <section className="bg-gray-50 px-4 py-7 sm:py-10">
           <div className="reveal mx-auto max-w-4xl text-center">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
@@ -297,7 +297,7 @@ export default function Home() {
         </section>
 
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
-        <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-11">
+        <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-10">
           <div className="reveal mx-auto max-w-3xl">
             {/* (대표님 요청) 상단 '실제 결과 화면 예시 / 진단 한 번으로… / 절감 4칸' 통합 박스 삭제 */}
 
@@ -610,23 +610,24 @@ export default function Home() {
                   </details>
                 </div>
 
-                {/* 🔖 대표님들이 알아두면 좋은 정부 사이트 배너 — 목업 카드 안 최하단(실제 결과창과 동일, 대표님 요청) */}
-                <a
-                  href="/sites"
-                  className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-3.5 shadow-card transition hover:opacity-90"
+                {/* 🔖 정부 사이트 안내 — 예시본이라 클릭 비활성(후킹용: '이런 것도 알려주는구나').
+                    실제 이동은 결과창에서만. 목업 안 다른 카드와 톤 통일(밝은 카드 + 부드러운 테두리, 대표님 요청) */}
+                <div
+                  aria-hidden="true"
+                  className="mt-4 flex select-none flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3.5"
                 >
                   <span className="min-w-0">
-                    <span className="flex items-center gap-2 break-keep text-[16px] font-extrabold leading-snug text-white">
+                    <span className="flex items-center gap-2 break-keep text-[14px] font-extrabold leading-snug text-brand-dark sm:text-[15px]">
                       🔖 대표님들이 알아두면 좋은 정부 사이트
                     </span>
-                    <span className="mt-1 block break-keep text-[12px] leading-relaxed text-white/60">
-                      알아두면 좋은 정부 기관 공식 사이트예요
+                    <span className="mt-0.5 block break-keep text-[12px] leading-relaxed text-brand-gray">
+                      공식 정부 기관 사이트 모음도 함께 알려드려요
                     </span>
                   </span>
-                  <span className="shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark">
-                    사이트 바로가기
+                  <span className="shrink-0 rounded-full border border-brand-orange/40 bg-white px-3.5 py-1.5 text-[12px] font-bold text-brand-orange">
+                    🔒 결과에서 열기
                   </span>
-                </a>
+                </div>
 
               </div>
             </div>
@@ -680,7 +681,7 @@ export default function Home() {
         {/* 가격표 */}
         <section
           id="pricing-section"
-          className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-11"
+          className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-10"
         >
           <div className="reveal mx-auto max-w-5xl">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
@@ -716,7 +717,7 @@ export default function Home() {
         {/* 구간 구분 — 얇은 회색 가로줄 */}
         <div className="section-divider" aria-hidden="true" />
         {/* 섹션 상하 여백 — 하단 여백 축소(대표님 요청) */}
-        <section className="bg-gray-50 px-4 py-6 sm:py-8">
+        <section className="bg-gray-50 px-4 py-7 sm:py-10">
           <div className="reveal mx-auto max-w-3xl">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
@@ -769,7 +770,7 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) */}
-        <section className="px-4 py-6 sm:py-8">
+        <section className="px-4 py-6 sm:py-9">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
