@@ -135,11 +135,6 @@ export default function RelatedAnnouncements({
               );
             })}
           </div>
-
-          {/* 출처 표시 — 공공데이터 라이선스(제3유형: 출처표시) 준수 */}
-          <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-dark/45">
-            출처: 기업마당(bizinfo.go.kr) · 공공데이터포털 · 실시간 수집 공고 · 안내 목적이며 승인·선정을 보장하지 않습니다.
-          </p>
         </>
       )}
     </AccordionCard>
