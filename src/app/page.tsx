@@ -302,8 +302,10 @@ export default function Home() {
             {/* (대표님 요청) 상단 '실제 결과 화면 예시 / 진단 한 번으로… / 절감 4칸' 통합 박스 삭제 */}
 
             {/* 상단 안내 블록 — 하단과 문구·구성 완전 통일 (대표님 요청: 상단이 너무 짧아 하단처럼 길게)
-                🔒 안내 → CTA → 오픈베타 안내 → * 예시 주석 순서 */}
-            <div className="mb-6 flex flex-col items-center px-4">
+                🔒 안내 → CTA → 오픈베타 안내 → * 예시 주석 순서.
+                (대표님 요청) '서비스 안내' 박스처럼 블록 전체를 반투명 유리 박스(section-title-glass)로 감싸
+                야경 배경 위에서도 문구가 또렷하게 읽히도록 함 */}
+            <div className="section-title-glass mb-6 flex flex-col items-center px-4">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
                 🔒
               </span>
@@ -315,33 +317,33 @@ export default function Home() {
                 진단을 마치면 <b className="text-brand-orange">내 사업장에 맞는 기관·제도·감면 전체와
                 신청 방법</b>을 한 번에 확인할 수 있습니다.
               </p>
+              {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 */}
+              <Editable
+                id="home-sample-cta-top"
+                as="a"
+                href="/diagnosis"
+                className="mx-auto mt-4 block w-full rounded-full border-2 border-brand-orange bg-brand-orange/5 py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/15 sm:text-lg animate-pulseGlow"
+              >
+                {BETA_FREE
+                  ? "🎁 지금 무료로 내 결과 전부 확인하기"
+                  : "내 결과 전체 확인하기"}
+              </Editable>
+              <p className="mx-auto mt-2.5 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
+                {BETA_FREE ? (
+                  <>
+                    🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
+                  </>
+                ) : (
+                  <>
+                    🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
+                  </>
+                )}
+              </p>
+              <p className="mt-2 text-center text-xs text-brand-gray/70">
+                * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
+                실제 결과는 사업장 정보에 따라 달라집니다.
+              </p>
             </div>
-            {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (상·하단 문구·스타일 통일: 투명 박스 + 주황 테두리, 대표님 요청) */}
-            <Editable
-              id="home-sample-cta-top"
-              as="a"
-              href="/diagnosis"
-              className="mx-auto block w-full rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
-            >
-              {BETA_FREE
-                ? "🎁 지금 무료로 내 결과 전부 확인하기"
-                : "내 결과 전체 확인하기"}
-            </Editable>
-            <p className="mx-auto mt-2.5 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
-              {BETA_FREE ? (
-                <>
-                  🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
-                </>
-              ) : (
-                <>
-                  🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
-                </>
-              )}
-            </p>
-            <p className="mb-6 mt-2 text-center text-xs text-brand-gray/70">
-              * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
-              실제 결과는 사업장 정보에 따라 달라집니다.
-            </p>
 
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
             <div className="relative">
@@ -626,50 +628,50 @@ export default function Home() {
                 </a>
 
               </div>
-
-              {/* 하단 안내 — '핵심 상세는 결과 페이지에서 전부' 유도 (4개 모두 펼침이라 잠금 페이드는 제거) */}
-              <div className="mt-6 flex flex-col items-center px-4 pb-2">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
-                  🔒
-                </span>
-                <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
-                  신청 사이트·필요 서류·승인 전략은 결과 페이지에서 전부 열립니다
-                </p>
-                <p className="mt-1.5 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                  위 목록은 <b className="text-brand-dark">맛보기</b>입니다.
-                  진단을 마치면 <b className="text-brand-orange">내 사업장에 맞는 기관·제도·감면 전체와
-                  신청 방법</b>을 한 번에 확인할 수 있습니다.
-                </p>
-              </div>
             </div>
 
-            {/* 하단 CTA (상단 CTA와 쌍 · 투명 박스 + 주황 테두리로 통일) */}
-            <Editable
-              id="home-sample-cta"
-              as="a"
-              href="/diagnosis"
-              className="mx-auto mt-5 block w-full rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
-            >
-              {BETA_FREE
-                ? "🎁 지금 무료로 내 결과 전부 확인하기"
-                : "내 결과 전체 확인하기"}
-            </Editable>
-            {/* 결제 유도 안내 — 대표님 요청: '결제 시 모든 정보를 확인할 수 있습니다' */}
-            <p className="mx-auto mt-2.5 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
-              {BETA_FREE ? (
-                <>
-                  🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
-                </>
-              ) : (
-                <>
-                  🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
-                </>
-              )}
-            </p>
-            <p className="mt-2 text-center text-xs text-brand-gray/70">
-              * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
-              실제 결과는 사업장 정보에 따라 달라집니다.
-            </p>
+            {/* 하단 안내 블록 — 상단과 완전 통일 (대표님 요청: '서비스 안내' 박스처럼
+                🔒 안내 + CTA + 오픈베타 + 주석 전체를 반투명 유리 박스로 감싸 야경 위에서도 또렷하게) */}
+            <div className="section-title-glass mt-6 flex flex-col items-center px-4">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
+                🔒
+              </span>
+              <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
+                신청 사이트·필요 서류·승인 전략은 결과 페이지에서 전부 열립니다
+              </p>
+              <p className="mt-1.5 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
+                위 목록은 <b className="text-brand-dark">맛보기</b>입니다.
+                진단을 마치면 <b className="text-brand-orange">내 사업장에 맞는 기관·제도·감면 전체와
+                신청 방법</b>을 한 번에 확인할 수 있습니다.
+              </p>
+              {/* 하단 CTA (상단 CTA와 쌍) */}
+              <Editable
+                id="home-sample-cta"
+                as="a"
+                href="/diagnosis"
+                className="mx-auto mt-4 block w-full rounded-full border-2 border-brand-orange bg-brand-orange/5 py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/15 sm:text-lg animate-pulseGlow"
+              >
+                {BETA_FREE
+                  ? "🎁 지금 무료로 내 결과 전부 확인하기"
+                  : "내 결과 전체 확인하기"}
+              </Editable>
+              {/* 결제 유도 안내 — 대표님 요청: '결제 시 모든 정보를 확인할 수 있습니다' */}
+              <p className="mx-auto mt-2.5 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
+                {BETA_FREE ? (
+                  <>
+                    🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
+                  </>
+                ) : (
+                  <>
+                    🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
+                  </>
+                )}
+              </p>
+              <p className="mt-2 text-center text-xs text-brand-gray/70">
+                * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
+                실제 결과는 사업장 정보에 따라 달라집니다.
+              </p>
+            </div>
           </div>
         </section>
 
