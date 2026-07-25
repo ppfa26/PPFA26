@@ -208,94 +208,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 신뢰 배지 + 핵심 강점 (7칸 통합) */}
-        {/* 가치 제안 4단계 — (대표님 요청) 7네모칸 섹션보다 위로 배치 */}
-        {/* 구간 구분 — 얇은 회색 가로줄 */}
-        <div className="section-divider" aria-hidden="true" />
-        <section className="bg-gray-50 px-4 py-7 sm:py-10">
-          <div className="reveal mx-auto max-w-4xl text-center">
-            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
-                🎯 서비스 안내
-              </span>
-              <Editable
-                id="home-value-title-v2"
-                as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
-              >
-                {BETA_FREE ? (
-                  <>오픈 베타 기간 전부 무료로 알려드립니다.</>
-                ) : (
-                  <>
-                    <span className="text-brand-red">{OFFICIAL_PRICE_LABEL}</span>으로 이 모든 걸 알려드립니다.
-                  </>
-                )}
-              </Editable>
-              <Editable
-                id="home-value-sub"
-                as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
-              >
-                {BETA_FREE ? (
-                  <>
-                    복잡한 정부지원사업을 정리해 드립니다.
-                    <br />
-                    오픈 베타 기간 동안 무엇을·어디서·어떻게까지 <b className="text-brand-dark">한 푼도 안 받고</b> 전부 알려드립니다.
-                  </>
-                ) : (
-                  <>
-                    복잡한 정부지원사업을 정리해 드립니다.
-                    <br />
-                    무엇을·어디서·어떻게까지 한 번에 알려드립니다.
-                  </>
-                )}
-              </Editable>
-            </div>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {VALUES.map((v, i) => (
-                <div
-                  key={i}
-                  className="hover-lift flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-card"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange text-sm font-bold text-white">
-                    ✓
-                  </span>
-                  <Editable
-                    id={`home-value-${i}`}
-                    as="span"
-                    className="break-keep text-sm font-semibold text-brand-dark sm:text-base"
-                  >
-                    {v}
-                  </Editable>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 신뢰 배지 7칸 — (대표님 요청) 서비스 안내 섹션보다 아래로 배치 */}
-        <section className="border-y border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
-          <div className="reveal mx-auto max-w-4xl">
-            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
-              <Editable
-                id="home-compare-title"
-                as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
-              >
-                아직 몰라서 못 받고 있는 정부지원사업
-              </Editable>
-              <Editable
-                id="home-compare-sub"
-                as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
-              >
-                내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
-              </Editable>
-            </div>
-            <TrustBadges badges={TRUST_BADGES} />
-          </div>
-        </section>
-
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
         <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-10">
           <div className="reveal mx-auto max-w-3xl">
@@ -674,6 +586,94 @@ export default function Home() {
                 <br className="sm:hidden" /> 실제 결과는 사업장 사정에 따라 달라집니다.
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* 신뢰 배지 + 핵심 강점 (7칸 통합) */}
+        {/* 가치 제안 4단계 — (대표님 요청) 7네모칸 섹션보다 위로 배치 */}
+        {/* 구간 구분 — 얇은 회색 가로줄 */}
+        <div className="section-divider" aria-hidden="true" />
+        <section className="bg-gray-50 px-4 py-7 sm:py-10">
+          <div className="reveal mx-auto max-w-4xl text-center">
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+                🎯 서비스 안내
+              </span>
+              <Editable
+                id="home-value-title-v2"
+                as="h2"
+                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+              >
+                {BETA_FREE ? (
+                  <>오픈 베타 기간 전부 무료로 알려드립니다.</>
+                ) : (
+                  <>
+                    <span className="text-brand-red">{OFFICIAL_PRICE_LABEL}</span>으로 이 모든 걸 알려드립니다.
+                  </>
+                )}
+              </Editable>
+              <Editable
+                id="home-value-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+              >
+                {BETA_FREE ? (
+                  <>
+                    복잡한 정부지원사업을 정리해 드립니다.
+                    <br />
+                    오픈 베타 기간 동안 무엇을·어디서·어떻게까지 <b className="text-brand-dark">한 푼도 안 받고</b> 전부 알려드립니다.
+                  </>
+                ) : (
+                  <>
+                    복잡한 정부지원사업을 정리해 드립니다.
+                    <br />
+                    무엇을·어디서·어떻게까지 한 번에 알려드립니다.
+                  </>
+                )}
+              </Editable>
+            </div>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {VALUES.map((v, i) => (
+                <div
+                  key={i}
+                  className="hover-lift flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-card"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange text-sm font-bold text-white">
+                    ✓
+                  </span>
+                  <Editable
+                    id={`home-value-${i}`}
+                    as="span"
+                    className="break-keep text-sm font-semibold text-brand-dark sm:text-base"
+                  >
+                    {v}
+                  </Editable>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 신뢰 배지 7칸 — (대표님 요청) 서비스 안내 섹션보다 아래로 배치 */}
+        <section className="border-y border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
+          <div className="reveal mx-auto max-w-4xl">
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
+              <Editable
+                id="home-compare-title"
+                as="h2"
+                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+              >
+                아직 몰라서 못 받고 있는 정부지원사업
+              </Editable>
+              <Editable
+                id="home-compare-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
+              >
+                내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
+              </Editable>
+            </div>
+            <TrustBadges badges={TRUST_BADGES} />
           </div>
         </section>
 
