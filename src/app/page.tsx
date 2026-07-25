@@ -56,11 +56,11 @@ const FAQS = [
     q: "Q3. 승인을 보장하나요?",
     a: (
       <>
-        아닙니다. 저희는 추천·안내 서비스입니다.
+        아닙니다. 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스입니다.
         <br />
-        승인 여부는 정부 기관 심사로 결정됩니다.
+        승인 여부는 정부 기관 심사로 결정되며,
         <br />
-        승인을 보장하지 않습니다.
+        당사는 정부지원사업 승인을 보장하지 않습니다.
       </>
     ),
   },
@@ -203,7 +203,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-5 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:text-xs"
             >
-              본 서비스는 정부지원사업을 안내·추천하는 AI 통합 매칭 서비스이며, 당사는 이용자의 정부지원사업 승인을 보장하지 않습니다.
+              본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 당사는 정부지원사업 승인을 보장하지 않습니다.
             </Editable>
           </div>
         </section>
@@ -541,8 +541,21 @@ export default function Home() {
               </Editable>
             </div>
 
+            {/* 소제목 ① — 무엇을 알려주는지 */}
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+              <Editable
+                id="home-value-step1"
+                as="span"
+                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
+              >
+                이런 걸 알려드려요
+              </Editable>
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+            </div>
+
             {/* 해드리는 것 4칸 (VALUES) */}
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {VALUES.map((v, i) => (
                 <div
                   key={i}
@@ -562,8 +575,21 @@ export default function Home() {
               ))}
             </div>
 
+            {/* 소제목 ② — 어떻게 찾아드리는지 */}
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+              <Editable
+                id="home-value-step2"
+                as="span"
+                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
+              >
+                이렇게 찾아드려요
+              </Editable>
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+            </div>
+
             {/* 어떻게 찾아드리는지 7칸 배지 (TRUST_BADGES) */}
-            <div className="mt-6">
+            <div className="mt-4">
               <TrustBadges badges={TRUST_BADGES} />
             </div>
           </div>

@@ -291,9 +291,9 @@ export default function MatchingPreview() {
                 열립니다.
               </div>
               <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-dark/50">
-                ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 AI 통합 매칭 서비스이며
+                ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며,
                 <br />
-                당사는 이용자의 정부지원사업 승인을 보장하지 않습니다.
+                당사는 정부지원사업 승인을 보장하지 않습니다.
               </p>
             </div>
           </div>
@@ -582,7 +582,7 @@ export default function MatchingPreview() {
               as="p"
               className="mt-2.5 break-keep text-[11px] text-brand-dark/50"
             >
-              ⚠️ 안내·추천 서비스 · 승인 보장 없음
+              ⚠️ 안내·추천·매칭 서비스 · 승인 보장 없음
             </Editable>
           </div>
           )}

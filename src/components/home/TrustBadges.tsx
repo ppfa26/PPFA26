@@ -21,7 +21,7 @@ export default function TrustBadges({ badges }: { badges: Badge[] }) {
 
   return (
     <>
-      <div className="mt-6 flex flex-wrap justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-3">
         {badges.map((b, i) => {
           // 모바일에서 접힘 상태이고, 핵심 개수를 넘어가는 배지는 숨김.
           // (PC=sm 이상에서는 항상 보이도록 sm:flex 로 되돌림)

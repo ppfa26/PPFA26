@@ -447,7 +447,7 @@ export default function MyPage() {
               </section>
 
               <p className="mt-5 break-keep text-center text-xs leading-relaxed text-brand-gray">
-                ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 매칭 서비스이며 정부지원사업
+                ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 당사는 정부지원사업
                 승인을 보장하지 않습니다.
               </p>
             </>

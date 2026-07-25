@@ -182,7 +182,7 @@ export default function FundDetailPage({
               💬 1:1 채팅 상담 열기
             </a>
             <p className="mt-4 text-xs text-brand-dark/60">
-              ⚠️ 안내·추천 서비스 · 승인 보장 없음 · 대행 없음 · 승인 수수료 없음
+              ⚠️ 안내·추천·매칭 서비스 · 승인 보장 없음 · 대행 없음 · 승인 수수료 없음
             </p>
           </section>
         </div>
