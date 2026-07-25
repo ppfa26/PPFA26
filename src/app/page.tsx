@@ -10,7 +10,6 @@ import ScrollReveal from "@/components/ScrollReveal";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
 import TrustBadges from "@/components/home/TrustBadges";
-import MobileCollapsibleDetails from "@/components/home/MobileCollapsibleDetails";
 import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
@@ -317,7 +316,9 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* 진단 완료 배너 — 실제 결과창 상단 배너와 동일한 톤(가로형·다크글래스 자동변환) */}
+                {/* 진단 완료 배너 — 실제 결과창 상단 히어로와 동일한 구조·문구·순서로 재현.
+                    ★ 배지 4종·순서(🏅정부지원제도 → 💳정책금융상품 → 💎추가 감면 혜택 → 📢그 외 지원사업)를
+                      실제 matching-preview 히어로와 100% 일치시킴 · 합계 24 = 5+6+8+5 */}
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
                   <div className="rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3.5 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:p-4">
                     <p className="break-keep text-center text-[12px] font-bold leading-snug text-brand-dark/80 sm:text-sm">
@@ -333,19 +334,20 @@ export default function Home() {
                           지원사업
                         </span>
                         <span className="mt-0.5 flex items-end gap-0.5">
-                          <b className="text-4xl font-black leading-none text-brand-orange sm:text-5xl">14</b>
+                          <b className="text-4xl font-black leading-none text-brand-orange sm:text-5xl">24</b>
                           <b className="pb-0.5 text-lg font-extrabold text-brand-orange sm:text-xl">개</b>
                         </span>
                         <span className="mt-0.5 break-keep text-[9px] font-bold text-brand-dark/50 sm:text-[10px]">
                           매칭 완료 🎉
                         </span>
                       </div>
-                      {/* 오른쪽: 세로 요약 배지 */}
+                      {/* 오른쪽: 세로 요약 배지 4종 — 실제 결과창 순서와 동일 */}
                       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                         {[
-                          { icon: "💰", l: "정책자금 상품", n: "6종" },
-                          { icon: "🏅", l: "지원금·바우처", n: "8건" },
-                          { icon: "✅", l: "지금 신청 대상", n: "5건" },
+                          { icon: "🏅", l: "정부지원제도", n: "5건" },
+                          { icon: "💳", l: "정책금융상품", n: "6건" },
+                          { icon: "💎", l: "추가 감면 혜택", n: "8건" },
+                          { icon: "📢", l: "그 외 지원사업", n: "5건" },
                         ].map((s) => (
                           <span
                             key={s.l}
@@ -361,87 +363,72 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* 결과 본문 — 아코디언(접기/펼치기) 구조: 한눈에 목차처럼, 클릭하면 상세 (대표님 요청: A안) */}
+                {/* 결과 본문 — 실제 결과창 AccordionCard(흰 배경·얇은 테두리·검정 제목·부제·우측 원형 화살표)와
+                    동일한 겉모양으로 재현. 순서도 실제와 100% 일치: 🏅정부지원제도 → 💳정책금융상품 → 💎추가 감면 혜택.
+                    (홈은 정적 목업이라 details/summary로 접기 구현 — 겉보기만 실제 카드와 동일하게 맞춤) */}
                 <div className="space-y-3 p-4 text-left sm:p-6">
-                  {/* 정책금융기관 섹션 (기본 펼침) */}
-                  <details open className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-dark/10 bg-white shadow-card">
-                    <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
-                      <div className="min-w-0 flex-1">
-                        {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청: 검정으로 통일) */}
-                        <p className="flex flex-wrap items-center gap-1.5">
-                          <span className="inline-block whitespace-nowrap rounded-lg bg-brand-dark px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
-                            🏦 대표님이 이용할 수 있는 정책금융기관
-                          </span>
-                          <span className="shrink-0 rounded-full bg-brand-dark px-2 py-0.5 text-[10px] font-bold text-white">몰라서 못 받은 융자</span>
-                        </p>
-                        <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
-                          업종·직원수·매출 등 대표님 조건을 봅니다.
-                          실제 신청 자격이 열리는 정책자금을 한 번에 안내합니다.
-                        </p>
-                      </div>
-                      <span className="mt-0.5 shrink-0 text-lg text-brand-dark/40 transition-transform group-open:rotate-180">⌄</span>
+
+                  {/* ① 🏅 신청 가능한 정부지원제도 (실제 결과창 최상단 카드) — 기본 펼침 */}
+                  <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                    <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
+                          <span className="shrink-0">🏅</span>
+                          <span className="min-w-0 break-keep">신청 가능한 정부지원제도</span>
+                        </span>
+                        <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
+                          지금 신청할 수 있는 제도예요
+                        </span>
+                      </span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 group-open:rotate-180">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                      </span>
                     </summary>
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5">
-                    {/* 개별 상품·기관명 — 베타 기간엔 블러 없이 공개, 정식 땐 블러 */}
-                    <div className={`divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className="px-5 pb-5 pt-0">
+                    {/* ✅ 신청 3스텝 미니 가이드 — 실제 결과창과 동일 */}
+                    <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">
+                      <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
+                        ✅ 표시된 곳, 이렇게 신청하시면 됩니다
+                      </p>
+                      <ol className="space-y-1.5">
+                        {[
+                          "✅ 신청 대상인 제도의 카드를 눌러 상세 페이지로 들어가세요.",
+                          "상세 페이지의 필요서류·소요기간을 확인하고 서류를 준비하세요.",
+                          "공식 신청 사이트/연락처로 접수하시면 됩니다.",
+                        ].map((t, i) => (
+                          <li key={i} className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
+                            <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">{i + 1}</span>
+                            <span>{t}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                    {/* 개별 제도 카드 — 실제 결과창 카드(흰 배경·얇은 테두리·제목+뱃지→안내→설명→회색 신청방법→버튼 2종) */}
+                    <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        {
-                          inst: "중소벤처기업진흥공단",
-                          cat: "정책자금",
-                          catCls: "bg-blue-100 text-blue-700",
-                          prod: "신성장기반자금 · 신시장진출지원자금",
-                          hook: "직접대출 최대 60억, 금리 2%대 · 시설/운전자금 모두 가능",
-                        },
-                        {
-                          inst: "소상공인시장진흥공단",
-                          cat: "정책자금",
-                          catCls: "bg-blue-100 text-blue-700",
-                          prod: "성장가속화자금 · 강한소상공인자금 · 대환대출자금",
-                          hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상",
-                        },
-                        {
-                          inst: "신용보증기금 / 기술보증기금 / 무역보험공사 / 신용보증재단",
-                          cat: "보증서",
-                          catCls: "bg-indigo-100 text-indigo-700",
-                          prod: "보증서 발급 → 은행 대리대출 연계",
-                          hook: "담보 없이 보증서로 은행 대출 실행 가능",
-                        },
-                      ].map((m, i) => (
-                        <div key={i} className="py-3 first:pt-0">
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="text-sm font-extrabold text-brand-dark">
-                              {m.inst}
-                            </span>
-                            <span
-                              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${m.catCls}`}
-                            >
-                              {m.cat}
-                            </span>
-                            <span className="shrink-0 rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                              ✅ 신청 가능
-                            </span>
+                        { icon: "💳", t: "소상공인 경영안정 바우처", d: "사업체당 25만원. 공과금·4대보험료·연료비 등 9개 항목에 사용 가능.", hook: "연매출 약 1억400만원 미만이면 온라인 신청만으로 지급됩니다." },
+                        { icon: "💳", t: "소상공인 부담경감 크레딧", d: "50만원 상당. 공공요금(전기·가스·수도)과 4대보험료 납부에 사용.", hook: "연매출 3억원 이하면 카드 연동으로 간편 신청됩니다." },
+                        { icon: "🧑‍💼", t: "두루누리 사회보험료 지원", d: "신규 채용 근로자·사업주의 국민연금·고용보험료 최대 80% 지원.", hook: "근로자 10명 미만 사업장은 4대보험 신고 시 함께 신청돼 사실상 자동입니다." },
+                      ].map((g, i) => (
+                        <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <span className="text-base">{g.icon}</span>
+                            <span className="text-[14px] font-extrabold text-brand-dark">{g.t}</span>
+                            <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">신청 가능</span>
                           </div>
-                          <p className="mt-1.5 break-keep text-[11px] text-brand-gray">
-                            {m.prod}
+                          <p className="mt-1.5 break-keep text-[12px] font-semibold leading-relaxed text-brand-green">
+                            💡 {g.hook}
                           </p>
-                          <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
-                            💡 {m.hook}
-                          </p>
-                          {/* 신청 방법 안내 박스 (실제 결과창의 bg-gray-50 신청방법 박스와 동일 톤) — 내용은 잠금 */}
-                          <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
-                            <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
-                              <span className="font-bold text-brand-dark">신청방법 </span>
+                          <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray">{g.d}</p>
+                          <div className="mt-3 rounded-lg bg-gray-50 px-3 py-2.5">
+                            <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
+                              <span className="font-bold text-brand-dark">📝 신청방법 </span>
                               <span className="align-middle">🔒 ●●●●●●● 결과 페이지에서 공개</span>
                             </p>
                           </div>
-                          {/* 실제 결과창과 동일한 버튼 2종: 검정 CTA + 주황 아웃라인 (잠금 표시) */}
                           <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white">
-                              🔒 이 상품 신청하러 가기 →
-                            </span>
-                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange">
-                              🔒 상세 · 승인 소요기간 · 연락처 →
-                            </span>
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white">🔒 이 상품 신청하러 가기 →</span>
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange">상세 · 소요기간 · 연락처 →</span>
                           </div>
                         </div>
                       ))}
@@ -449,151 +436,92 @@ export default function Home() {
                     </div>
                   </details>
 
-                  {/* 정부지원제도 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언
-                      모바일에선 접힌 상태로 시작(정보 압축), PC는 펼침 그대로 */}
-                  <MobileCollapsibleDetails
-                    collapseOnMobile={false}
-                    className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-orange/25 bg-brand-orange/5 shadow-card"
-                    summary={
-                    <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
-                      <div className="min-w-0 flex-1">
-                        {/* 제목 — 포인트색 배경 바 + 흰 글자 (대표님 요청) */}
-                        <p className="flex flex-wrap items-center gap-1.5">
-                          <span className="inline-block whitespace-nowrap rounded-lg bg-brand-orange px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
-                            🎁 대표님이 신청할 수 있는 정부지원제도
-                          </span>
-                          <span className="shrink-0 rounded-full bg-brand-orange px-2 py-0.5 text-[10px] font-bold text-white">놓치면 아까운 혜택</span>
-                        </p>
-                        <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
-                          대출이 아닙니다. 지원금·바우처·인증·교육까지 챙깁니다.
-                          받을 수 있는 제도를 모두 찾아 신청 방법과 함께 안내합니다.
-                        </p>
-                      </div>
-                      <span className="mt-0.5 shrink-0 text-lg text-brand-orange/50 transition-transform group-open:rotate-180">⌄</span>
+                  {/* ② 💳 이용 가능한 정책금융상품 (실제 결과창 두 번째 카드) — 기본 접힘 */}
+                  <details className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                    <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
+                          <span className="shrink-0">💳</span>
+                          <span className="min-w-0 break-keep">이용 가능한 정책금융상품</span>
+                        </span>
+                        <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
+                          낮은 금리로 받을 수 있는 자금이에요
+                        </span>
+                      </span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 group-open:rotate-180">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                      </span>
                     </summary>
-                    }
-                  >
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5">
-                    {/* 개별 제도 — 상세 박스(둥근 카드) 형태 (대표님 요청: 정책금융기관처럼) */}
-                    <div className={`space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className="px-5 pb-5 pt-0">
+                    <div className={`mt-4 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { t: "소상공인 경영안정 바우처", c: "바우처", cls: "bg-purple-100 text-purple-700", easy: true, d: "사업체당 25만원. 공과금·4대보험료·연료비 등 9개 항목에 사용 가능.", hook: "연매출 약 1억400만원 미만이면 온라인 신청만으로 지급됩니다." },
-                        { t: "소상공인 부담경감 크레딧", c: "지원금", cls: "bg-green-100 text-green-700", easy: true, d: "50만원 상당. 공공요금(전기·가스·수도)과 4대보험료 납부에 사용.", hook: "연매출 3억원 이하면 카드 연동으로 간편 신청됩니다." },
-                        { t: "두루누리 사회보험료 지원", c: "고용", cls: "bg-teal-100 text-teal-700", easy: true, d: "신규 채용 근로자·사업주의 국민연금·고용보험료 최대 80% 지원.", hook: "근로자 10명 미만 사업장은 4대보험 신고 시 함께 신청돼 사실상 자동입니다." },
-                      ].map((g, i) => (
-                        <div
-                          key={i}
-                          className={`rounded-2xl border p-3.5 sm:p-4 ${g.easy ? "border-brand-green/40 bg-brand-green/5" : "border-gray-200 bg-white"}`}
-                        >
-                          {g.easy && (
-                            <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                              ✅ 받기 쉬움 · 먼저 신청 추천
-                            </span>
-                          )}
+                        { inst: "중소벤처기업진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "신성장기반자금 · 신시장진출지원자금", hook: "직접대출 최대 60억, 금리 2%대 · 시설/운전자금 모두 가능" },
+                        { inst: "소상공인시장진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "성장가속화자금 · 강한소상공인자금 · 대환대출자금", hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상" },
+                        { inst: "신용보증기금 / 기술보증기금 / 무역보험공사 / 신용보증재단", cat: "보증서", catCls: "bg-indigo-100 text-indigo-700", prod: "보증서 발급 → 은행 대리대출 연계", hook: "담보 없이 보증서로 은행 대출 실행 가능" },
+                      ].map((m, i) => (
+                        <div key={i} className="py-3 first:pt-0">
                           <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="break-keep text-sm font-extrabold text-brand-dark">
-                              {g.t}
-                            </span>
-                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${g.cls}`}>
-                              {g.c}
-                            </span>
-                            <span className="shrink-0 text-xs font-bold text-brand-green">
-                              ✅ 신청 가능
-                            </span>
+                            <span className="text-sm font-extrabold text-brand-dark">{m.inst}</span>
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${m.catCls}`}>{m.cat}</span>
+                            <span className="shrink-0 rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">✅ 신청 가능</span>
                           </div>
-                          <p className="mt-1.5 break-keep text-[11px] text-brand-gray">
-                            {g.d}
-                          </p>
-                          <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
-                            💡 {g.hook}
-                          </p>
-                          {/* 신청방법 안내 박스 (잠금) */}
+                          <p className="mt-1.5 break-keep text-[11px] text-brand-gray">{m.prod}</p>
+                          <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">💡 {m.hook}</p>
                           <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
                             <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
                               <span className="font-bold text-brand-dark">신청방법 </span>
                               <span className="align-middle">🔒 ●●●●●●● 결과 페이지에서 공개</span>
                             </p>
                           </div>
-                          {/* 실제 결과창과 동일한 버튼 2종 (잠금 표시) */}
                           <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white">
-                              🔒 이 지원사업 신청하러 가기 →
-                            </span>
-                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange">
-                              🔒 상세 · 지원 내용 · 문의처 →
-                            </span>
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white">🔒 이 상품 신청하러 가기 →</span>
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange">🔒 상세 · 승인 소요기간 · 연락처 →</span>
                           </div>
                         </div>
                       ))}
                     </div>
                     </div>
-                  </MobileCollapsibleDetails>
+                  </details>
 
-                  {/* 추가 감면 혜택 섹션 — 구간 구별용 불투명 포인트 박스 (대표님 요청) / 아코디언
-                      모바일에선 접힌 상태로 시작(정보 압축), PC는 펼침 그대로 */}
-                  <MobileCollapsibleDetails
-                    collapseOnMobile={false}
-                    className="result-accordion group overflow-hidden rounded-2xl border-2 border-brand-red/25 bg-brand-red/5 shadow-card"
-                    summary={
-                    <summary className="flex cursor-pointer list-none items-start gap-2 p-4 sm:p-5">
-                      <div className="min-w-0 flex-1">
-                        <p className="flex flex-wrap items-center gap-1.5 text-base font-extrabold sm:text-lg">
-                          <span className="inline-block whitespace-nowrap rounded-lg bg-brand-red px-2.5 py-1.5 text-[13px] font-extrabold text-white sm:px-3 sm:text-lg">
-                            🎁 지원사업 말고 이런 것까지 챙겨드려요
-                          </span>
-                          <span className="rounded-full bg-brand-red px-2 py-0.5 text-[10px] font-bold text-white">
-                            놓치기 쉬운 절세·감면
-                          </span>
-                        </p>
-                        <p className="mt-1.5 break-keep text-xs text-brand-dark/60">
-                          대부분 몰라서 못 챙기는 세금·수수료 감면 혜택.
-                          대표님 조건에 맞는 것만 골라 신청 방법과 함께 알려드립니다.
-                        </p>
-                      </div>
-                      <span className="mt-0.5 shrink-0 text-lg text-brand-red/50 transition-transform group-open:rotate-180">⌄</span>
+                  {/* ③ 💎 챙기면 좋은 추가 감면 혜택 (실제 결과창 세 번째 카드) — 기본 접힘 */}
+                  <details className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                    <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
+                          <span className="shrink-0">💎</span>
+                          <span className="min-w-0 break-keep">챙기면 좋은 추가 감면 혜택</span>
+                        </span>
+                        <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
+                          세금을 아낄 수 있는 혜택이에요
+                        </span>
+                      </span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 group-open:rotate-180">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                      </span>
                     </summary>
-                    }
-                  >
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5">
-                    {/* 개별 감면 — 상세 박스(둥근 카드) 형태 (대표님 요청: 정책금융기관처럼) */}
-                    <div className={`space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className="px-5 pb-5 pt-0">
+                    <div className={`mt-4 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { t: "노란우산공제 소득공제", c: "소득공제", cls: "bg-rose-100 text-rose-700", easy: true, d: "납입액을 연 최대 600만원까지 소득공제. 폐업 시 퇴직금처럼 목돈 회수.", hook: "가입만 하면 자동 적용돼 심사 탈락이 없습니다. 자영업자 필수." },
-                        { t: "창업중소기업 세액감면", c: "세액감면", cls: "bg-rose-100 text-rose-700", easy: true, d: "창업 후 5년간 소득세·법인세를 50~100% 감면(청년·수도권 외 100%).", hook: "요건만 맞으면 세무신고 때 자동 적용, 별도 경쟁이 없습니다." },
-                        { t: "중소기업 특별세액감면", c: "세액감면", cls: "bg-rose-100 text-rose-700", easy: true, d: "업종·지역·규모별로 소득세·법인세를 5~30% 감면하는 상시형 감면.", hook: "창업감면 기간이 끝난 사업자도 계속 받을 수 있습니다." },
-                        { t: "카드수수료 우대·감면", c: "수수료", cls: "bg-rose-100 text-rose-700", easy: true, d: "연매출 30억원 이하 영세·중소가맹점 우대수수료율 적용.", hook: "매출 구간만 맞으면 별도 신청 없이 자동 적용됩니다." },
+                        { t: "노란우산공제 소득공제", c: "소득공제", d: "납입액을 연 최대 600만원까지 소득공제. 폐업 시 퇴직금처럼 목돈 회수.", hook: "가입만 하면 자동 적용돼 심사 탈락이 없습니다. 자영업자 필수." },
+                        { t: "창업중소기업 세액감면", c: "세액감면", d: "창업 후 5년간 소득세·법인세를 50~100% 감면(청년·수도권 외 100%).", hook: "요건만 맞으면 세무신고 때 자동 적용, 별도 경쟁이 없습니다." },
+                        { t: "중소기업 특별세액감면", c: "세액감면", d: "업종·지역·규모별로 소득세·법인세를 5~30% 감면하는 상시형 감면.", hook: "창업감면 기간이 끝난 사업자도 계속 받을 수 있습니다." },
+                        { t: "카드수수료 우대·감면", c: "수수료", d: "연매출 30억원 이하 영세·중소가맹점 우대수수료율 적용.", hook: "매출 구간만 맞으면 별도 신청 없이 자동 적용됩니다." },
                       ].map((b, i) => (
-                        <div
-                          key={i}
-                          className={`rounded-2xl border p-3.5 sm:p-4 ${b.easy ? "border-brand-green/40 bg-brand-green/5" : "border-brand-red/20 bg-white"}`}
-                        >
-                          {b.easy && (
-                            <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                              ✅ 받기 쉬움 · 먼저 챙기기 추천
-                            </span>
-                          )}
+                        <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                           <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="break-keep text-sm font-extrabold text-brand-dark">
-                              💰 {b.t}
-                            </span>
-                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${b.cls}`}>
-                              {b.c}
-                            </span>
+                            <span className="break-keep text-sm font-extrabold text-brand-dark">💰 {b.t}</span>
+                            <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">{b.c}</span>
                           </div>
-                          <p className="mt-1.5 break-keep text-[11px] text-brand-gray">
-                            {b.d}
-                          </p>
-                          <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">
-                            💡 {b.hook}
-                          </p>
+                          <p className="mt-1.5 break-keep text-[11px] text-brand-gray">{b.d}</p>
+                          <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">💡 {b.hook}</p>
                         </div>
                       ))}
                     </div>
                     <p className="mt-3 break-keep rounded-xl bg-brand-yellow/40 px-3 py-2 text-center text-[12px] font-bold text-brand-dark">
-                      ✨ 요건에 맞게 챙기면 세액감면만으로 수백~수천만원 절감도 가능
+                      ✨ 요건에 맞게 챙기면 첫 해 연 최대 700만원 절감 가능
                     </p>
                     </div>
-                  </MobileCollapsibleDetails>
+                  </details>
                 </div>
 
                 {/* 하단 잠금 페이드 — 미리보기는 '맛보기', 상세는 가려서 '더 있다'는 느낌 강조 */}
