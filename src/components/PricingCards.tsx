@@ -12,7 +12,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
       <div
         className={
           single
-            ? "mx-auto flex max-w-lg justify-center"
+            ? "mx-auto flex max-w-xl justify-center"
             : "mx-auto grid max-w-3xl gap-4 sm:grid-cols-3"
         }
       >
@@ -131,14 +131,33 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
         ))}
       </div>
 
-      {/* 공통 안내 — (대표님 요청) 위 가격 카드와 비슷한 가로폭으로 축소 + 가운데 배치 */}
-      <div className="mx-auto mt-5 max-w-lg rounded-2xl bg-gray-50 p-4">
-        <ul className="space-y-1.5 text-[11px] text-brand-dark sm:text-xs">
-          {COMMON_NOTES.map((n, i) => (
-            <li key={i} className="break-keep leading-relaxed">
-              {n}
-            </li>
-          ))}
+      {/* 공통 안내 — (대표님 요청) 위 가격 카드와 가로폭 통일(max-w-xl) +
+         홈페이지 다크 유리 톤과 어울리도록 아이콘/문구 정렬을 정돈.
+         이모지(✅/⚠️)는 앞부분을 아이콘 컬럼으로 분리해 문구를 가지런히,
+         마지막 ⚠️ 안내는 상단 구분선으로 시각적으로 떼어 세련되게. */}
+      <div className="mx-auto mt-5 max-w-xl rounded-2xl bg-gray-50 p-5 sm:p-6">
+        <ul className="space-y-2.5 text-[12px] text-brand-dark sm:text-[13px]">
+          {COMMON_NOTES.map((n, i) => {
+            const isNotice = n.trimStart().startsWith("⚠️");
+            const iconChar = isNotice ? "⚠️" : "✅";
+            const body = n.replace(/^\s*(✅|⚠️)\s*/, "");
+            const icon = iconChar;
+            return (
+              <li
+                key={i}
+                className={`flex items-start gap-2.5 break-keep leading-relaxed ${
+                  isNotice
+                    ? "mt-3 border-t border-gray-200/70 pt-3 text-brand-gray"
+                    : ""
+                }`}
+              >
+                <span className="mt-px shrink-0 text-[13px] leading-none">
+                  {icon}
+                </span>
+                <span className="flex-1">{body}</span>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

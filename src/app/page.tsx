@@ -13,11 +13,11 @@ import TrustBadges from "@/components/home/TrustBadges";
 import { BETA_FREE } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
-  { icon: "🏛️", text: "공식 정부 사이트 매일 새벽 크롤링" },
+  { icon: "🏛️", text: "공식 정부 사이트 매일 크롤링" },
   { icon: "📚", text: "정부 부처 공문 팩트체크" },
   { icon: "🎯", text: "내 사업장에 가능한 것만 매칭" },
   { icon: "🗂️", text: "정책자금·지원금·바우처·인증" },
-  { icon: "📝", text: "신청 방법·필요 서류·순서까지 안내" },
+  { icon: "📝", text: "신청 방법·필요 서류·순서까지" },
   { icon: "🚫", text: "안내 및 추천 · 행정 대행 없음" },
   { icon: "💳", text: "부담 없는 1회성 결제" },
 ];
@@ -309,7 +309,7 @@ export default function Home() {
                 as="span"
                 className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
               >
-                실제로 이런 결과가 나와요
+                결과는 이렇게 나와요
               </Editable>
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
             </div>
