@@ -301,18 +301,33 @@ export default function Home() {
           <div className="reveal mx-auto max-w-3xl">
             {/* (대표님 요청) 상단 '실제 결과 화면 예시 / 진단 한 번으로… / 절감 4칸' 통합 박스 삭제 */}
 
+            {/* 상단 안내 블록 — 하단과 문구·구성 완전 통일 (대표님 요청: 상단이 너무 짧아 하단처럼 길게)
+                🔒 안내 → CTA → 오픈베타 안내 → * 예시 주석 순서 */}
+            <div className="mb-6 flex flex-col items-center px-4">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
+                🔒
+              </span>
+              <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
+                신청 사이트·필요 서류·승인 전략은 결과 페이지에서 전부 열립니다
+              </p>
+              <p className="mt-1.5 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
+                위 목록은 <b className="text-brand-dark">맛보기</b>입니다.
+                진단을 마치면 <b className="text-brand-orange">내 사업장에 맞는 기관·제도·감면 전체와
+                신청 방법</b>을 한 번에 확인할 수 있습니다.
+              </p>
+            </div>
             {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (상·하단 문구·스타일 통일: 투명 박스 + 주황 테두리, 대표님 요청) */}
             <Editable
               id="home-sample-cta-top"
               as="a"
               href="/diagnosis"
-              className="mx-auto mb-5 block w-full rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
+              className="mx-auto block w-full rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
             >
               {BETA_FREE
                 ? "🎁 지금 무료로 내 결과 전부 확인하기"
                 : "내 결과 전체 확인하기"}
             </Editable>
-            <p className="mx-auto -mt-2.5 mb-6 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
+            <p className="mx-auto mt-2.5 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
               {BETA_FREE ? (
                 <>
                   🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
@@ -322,6 +337,10 @@ export default function Home() {
                   🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
                 </>
               )}
+            </p>
+            <p className="mb-6 mt-2 text-center text-xs text-brand-gray/70">
+              * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
+              실제 결과는 사업장 정보에 따라 달라집니다.
             </p>
 
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
@@ -634,6 +653,24 @@ export default function Home() {
               실제 결과는 사업장 정보에 따라 달라집니다.
             </p>
           </div>
+
+          {/* 🔖 대표님들이 알아두면 좋은 정부 사이트 배너 — 결과창 최하단과 동일(대표님 요청) */}
+          <a
+            href="/sites"
+            className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-3.5 shadow-card transition hover:opacity-90"
+          >
+            <span className="min-w-0">
+              <span className="flex items-center gap-2 break-keep text-[16px] font-extrabold leading-snug text-white">
+                🔖 대표님들이 알아두면 좋은 정부 사이트
+              </span>
+              <span className="mt-1 block break-keep text-[12px] leading-relaxed text-white/60">
+                알아두면 좋은 정부 기관 공식 사이트예요
+              </span>
+            </span>
+            <span className="shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark">
+              사이트 바로가기
+            </span>
+          </a>
         </section>
 
         {/* 가격표 */}
