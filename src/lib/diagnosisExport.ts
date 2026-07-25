@@ -24,17 +24,49 @@ function buildLabelMap(): Record<string, string> {
     bno: "사업자등록번호",
     bnoStatus: "사업자 상태",
     bnoTaxType: "과세유형",
+    // ★ 관리자 진단서 표시용 한글 라벨 보강 (대표님 요청 — 영어로 뜨던 항목 한글 통일) ★
+    //   질문 설정에 라벨이 비어있거나(purposes) 설정 파일에 없어서(interests·bnoVerified·phoneConsult)
+    //   영어 key 그대로 노출되던 것을, 원 질문을 짧게 요약한 한글 라벨로 덮어쓴다.
+    //   ※ 표시 라벨만 바꾸는 것 — 진단/매칭 로직에는 전혀 영향 없음.
+    purposes: "필요한 지원 항목",
+    interests: "관심 분야",
+    bnoVerified: "사업자번호 국세청 검증",
   };
   const collect = (fields: Record<string, { label: string }>) => {
     Object.entries(fields).forEach(([k, v]) => {
       // 라벨에서 괄호 안 부가설명 제거 → 표 헤더로 깔끔하게
-      map[k] = (v.label || k).replace(/\s*\(.*?\)\s*/g, "").trim();
+      const cleaned = (v.label || "").replace(/\s*\(.*?\)\s*/g, "").trim();
+      // 라벨이 비어있으면(예: purposes) 위에서 지정한 보강 라벨을 유지 — 빈 값으로 덮어쓰지 않음
+      if (cleaned) map[k] = cleaned;
     });
   };
   collect(STEP1_FIELDS as any);
   collect(STEP2_FIELDS as any);
   collect(STEP3_FIELDS as any);
   collect(STEP3_CONDITIONAL_FIELDS as any);
+
+  // ★ 관리자 표 가독성용 — 긴 질문형 라벨을 짧은 명사형으로 요약 (대표님 요청) ★
+  //   진단/결과 화면에는 원문 질문이 그대로 노출되고, 여기(관리자 진단서 표·엑셀)에서만 축약해 보인다.
+  //   collect 이후에 덮어써야 요약본이 최종 적용된다.
+  const shortLabels: Record<string, string> = {
+    revenueGrowth2y: "최근 2년 매출 매년 10%↑",
+    smartFactory: "스마트공장 구축·도입",
+    smartDevice: "매장 스마트기기 사용",
+    govSelected: "정부 선정 프로그램 이력",
+    reFounder: "재창업[재도전] 여부",
+    wantsRefinance: "저금리 대환 희망",
+    privateInvestment: "민간 투자(엔젤·VC) 여부",
+    innovation: "혁신성장 분야 해당",
+    bankruptcy: "대표자 회생·파산 상태",
+    taxDelinquent: "국세·지방세 완납 여부",
+    capitalImpairment: "자본잠식 상태[법인]",
+    credit: "대표자 개인 신용점수",
+    certifications: "특허·인증 보유",
+    currentInstitutions: "현재 이용 정책기관",
+    phoneConsult: "전화 무료 상담 희망",
+  };
+  Object.assign(map, shortLabels);
+
   return map;
 }
 

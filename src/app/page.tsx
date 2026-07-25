@@ -149,7 +149,7 @@ export default function Home() {
             >
               복잡한 정부지원사업, 이제 직접 찾지 마세요.
               <br />
-              AI가 찾아서 신청까지 안내해 드립니다.
+              AI가 찾아서 신청 방법까지 안내해 드립니다.
             </Editable>
 
             {/* 오픈 베타 무료 앵커링 — 오픈 베타 기간 전부 0원으로 통일 (대표님 요청: '원래 9,900원' 삭제) */}
@@ -305,7 +305,7 @@ export default function Home() {
                 🔒 안내 → CTA → 오픈베타 안내 → * 예시 주석 순서.
                 (대표님 요청) '서비스 안내' 박스처럼 블록 전체를 반투명 유리 박스(section-title-glass)로 감싸
                 야경 배경 위에서도 문구가 또렷하게 읽히도록 함 */}
-            <div className="section-title-glass mb-6 flex w-full max-w-xl flex-col items-center px-6 sm:px-8" style={{ width: "100%" }}>
+            <div className="section-title-glass mb-6 flex w-full max-w-lg flex-col items-center px-6 sm:px-8">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
                 🔒
               </span>
@@ -633,7 +633,7 @@ export default function Home() {
 
             {/* 하단 안내 블록 — 상단과 완전 통일 (대표님 요청: '서비스 안내' 박스처럼
                 🔒 안내 + CTA + 오픈베타 + 주석 전체를 반투명 유리 박스로 감싸 야경 위에서도 또렷하게) */}
-            <div className="section-title-glass mt-6 flex w-full max-w-xl flex-col items-center px-6 sm:px-8" style={{ width: "100%" }}>
+            <div className="section-title-glass mt-6 flex w-full max-w-lg flex-col items-center px-6 sm:px-8">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
                 🔒
               </span>
@@ -767,8 +767,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) */}
-        <section className="px-4 py-6 sm:py-9">
+        {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
+            위·아래 세로 공백을 조금 줄이고 동일하게 맞춤 (대표님 요청) */}
+        <section className="px-4 py-5 sm:py-7">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
