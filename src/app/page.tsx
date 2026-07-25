@@ -362,28 +362,29 @@ export default function Home() {
                     ★ 배지 4종·순서(🏅정부지원제도 → 💳정책금융상품 → 💎추가 감면 혜택 → 📢그 외 지원사업)를
                       실제 matching-preview 히어로와 100% 일치시킴 · 합계 24 = 5+6+8+5 */}
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
-                  <div className="rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3.5 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:p-4">
-                    <p className="break-keep text-center text-[12px] font-bold leading-snug text-brand-dark/80 sm:text-sm">
+                  <div className="rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:p-3.5">
+                    <p className="break-keep text-center text-[13px] font-bold leading-snug text-brand-dark/80 sm:text-[15px]">
                       🎉 진단 완료! <b className="font-black text-brand-orange">지금 신청해볼 수 있는 것들</b>이에요.
                     </p>
-                    {/* 가로형: 왼쪽 큰 숫자 + 오른쪽 세로 요약 (실제 결과창 히어로와 동일 구조) */}
-                    <div className="mt-2.5 flex flex-row items-stretch gap-2.5 sm:gap-4">
-                      {/* 왼쪽: 총 개수 큰 숫자 */}
-                      <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-2.5 sm:pr-4">
-                        <span className="break-keep text-[10px] font-bold leading-tight text-brand-dark/70 sm:text-xs">
+                    {/* 가로형: 왼쪽 큰 숫자 + 오른쪽 세로 요약 (실제 결과창 히어로와 동일 구조).
+                        (대표님 요청) 왼쪽 '24개' 강조 확대 + 오른쪽 배지 가로 공백 축소 */}
+                    <div className="mt-3 flex flex-row items-stretch gap-2 sm:gap-3">
+                      {/* 왼쪽: 총 개수 큰 숫자 — 첫 화면 최대 후킹 포인트라 크게 강조(대표님 요청) */}
+                      <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-2.5 sm:pr-3.5">
+                        <span className="break-keep text-[11px] font-bold leading-tight text-brand-dark/70 sm:text-[13px]">
                           받을 수 있는
                           <br />
                           지원사업
                         </span>
                         <span className="mt-0.5 flex items-end gap-0.5">
-                          <b className="text-4xl font-black leading-none text-brand-orange sm:text-5xl">24</b>
-                          <b className="pb-0.5 text-lg font-extrabold text-brand-orange sm:text-xl">개</b>
+                          <b className="text-5xl font-black leading-none text-brand-orange sm:text-6xl">24</b>
+                          <b className="pb-0.5 text-xl font-extrabold text-brand-orange sm:text-2xl">개</b>
                         </span>
-                        <span className="mt-0.5 break-keep text-[9px] font-bold text-brand-dark/50 sm:text-[10px]">
+                        <span className="mt-1 break-keep text-[10px] font-bold text-brand-dark/50 sm:text-[11px]">
                           매칭 완료 🎉
                         </span>
                       </div>
-                      {/* 오른쪽: 세로 요약 배지 4종 — 실제 결과창 순서와 동일 */}
+                      {/* 오른쪽: 세로 요약 배지 4종 — 실제 결과창 순서와 동일. 좌우 공백 축소(대표님 요청) */}
                       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                         {[
                           { icon: "🏅", l: "정부지원제도", n: "5건" },
@@ -393,11 +394,11 @@ export default function Home() {
                         ].map((s) => (
                           <span
                             key={s.l}
-                            className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[11px] font-bold text-brand-dark sm:text-sm"
+                            className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2 py-1.5 text-[12px] font-bold text-brand-dark sm:text-[15px]"
                           >
                             {s.icon}{" "}
                             <span className="whitespace-nowrap text-brand-dark/70">{s.l}</span>
-                            <b className="ml-auto text-[13px] text-brand-orange sm:text-base">{s.n}</b>
+                            <b className="ml-auto text-[14px] text-brand-orange sm:text-lg">{s.n}</b>
                           </span>
                         ))}
                       </div>
@@ -768,8 +769,8 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
-            위·아래 세로 공백을 조금 줄이고 동일하게 맞춤 (대표님 요청) */}
-        <section className="px-4 py-5 sm:py-7">
+            위·아래 세로 공백을 조금 더 줄이고 동일하게 맞춤 (대표님 요청 2차 축소) */}
+        <section className="px-4 py-3.5 sm:py-5">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
