@@ -19,11 +19,11 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
         {TIERS.map((tier) => (
           <div
             key={tier.id}
-            className={`relative flex flex-col overflow-hidden rounded-2xl border px-6 py-4 shadow-card transition hover:shadow-cardHover ${
+            className={`pricing-card relative flex flex-col overflow-hidden rounded-2xl border px-6 py-5 shadow-card transition hover:shadow-cardHover ${
               single ? "w-full" : ""
             } ${
               tier.popular
-                ? "border-brand-orange bg-brand-grad"
+                ? "pricing-card-popular border-brand-orange bg-brand-grad"
                 : "border-gray-200 bg-white"
             }`}
           >
@@ -37,14 +37,14 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <Editable
               id={`${prefix}-tier-${tier.id}-name`}
               as="h3"
-              className="mt-1 text-lg font-extrabold text-brand-dark"
+              className="pricing-title mt-1 text-lg font-extrabold text-brand-dark"
             >
               {tier.name}
             </Editable>
             <Editable
               id={`${prefix}-tier-${tier.id}-subtitle`}
               as="p"
-              className={`text-[13px] font-semibold ${
+              className={`pricing-sub text-[13px] font-semibold ${
                 tier.popular ? "text-brand-dark/70" : "text-brand-gray"
               }`}
             >
@@ -104,11 +104,11 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <ul className="mt-3 flex-1 space-y-1.5">
               {tier.features.map((f, i) => (
                 <li key={i} className="flex items-start gap-2 text-[13px]">
-                  <span className="mt-0.5 text-brand-green">✓</span>
+                  <span className="pricing-check mt-0.5 text-brand-green">✓</span>
                   <Editable
                     id={`${prefix}-tier-${tier.id}-feat-${i}`}
                     as="span"
-                    className="break-keep text-brand-dark"
+                    className="pricing-feat break-keep text-brand-dark"
                   >
                     {f}
                   </Editable>
@@ -116,12 +116,13 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               ))}
             </ul>
 
-            {/* 버튼 — 원래 디자인 그대로. 베타 기간엔 결제 대신 무료 진단으로 연결 */}
+            {/* 버튼 — A안(다크 유리) 재디자인: popular 카드는 다크 유리 배경이 되므로
+                버튼을 골드(brand-grad)로 바꿔 유리 위에서 또렷하게 강조 */}
             <Link
               href={BETA_FREE ? "/diagnosis" : `/signup?tier=${tier.id}`}
-              className={`mt-4 block rounded-full py-2.5 text-center text-sm font-bold ${
+              className={`pricing-cta mt-4 block rounded-full py-2.5 text-center text-sm font-bold ${
                 tier.popular
-                  ? "bg-brand-dark text-white hover:opacity-90"
+                  ? "bg-brand-grad text-brand-dark hover:opacity-90"
                   : "btn-brand"
               }`}
             >

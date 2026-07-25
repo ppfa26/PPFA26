@@ -361,6 +361,31 @@ body.theme-dark {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
   }
 
+  /* ─────────────────────────────────────────────────────────
+     이용료 카드 A안(대표님 요청) — 기존 쨍한 노랑(bg-brand-grad)이
+     다크 홈과 안 어울린다 → popular 카드를 '다크 유리 + 골드 포인트'로
+     재디자인. 배경은 section-title-glass 톤과 통일, 강조는 골드 테두리와
+     은은한 골드 글로우로만. (골드 CTA 버튼·빨강 0원 강조는 그대로 살림)
+     ───────────────────────────────────────────────────────── */
+  .pricing-card-popular {
+    background: rgba(20, 25, 38, 0.62) !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 159, 69, 0.55) !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45),
+                0 0 0 1px rgba(255, 159, 69, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  }
+  /* 카드 안 제목/부제/기능 문구는 유리 위에서 밝게 (전역 규칙이 대부분
+     커버하지만, popular 카드는 원래 '노랑 위 검정'이라 명시적으로 재지정) */
+  .pricing-card-popular .pricing-title { color: #f6f8fc !important; }
+  .pricing-card-popular .pricing-sub { color: rgba(226, 232, 240, 0.8) !important; }
+  .pricing-card-popular .pricing-feat { color: #e6eaf2 !important; }
+  .pricing-card-popular .pricing-check { color: #34e39b !important; }
+  /* '오픈 베타 기간 0원' 빨강 강조는 유리 위에서 더 밝은 코랄로 */
+  .pricing-card-popular .text-brand-red { color: #ff7a6e !important; }
+
   /* CTA 반투명 글래스 — 주황 테두리는 유지하되, 글자 뒤에 어두운 유리
      패널을 깔아 야경 배경 위에서도 문구가 또렷하게 읽히도록 한다. */
   .cta-glass {
@@ -561,15 +586,22 @@ body.theme-dark {
     background-color: rgba(25, 25, 25, 0.1) !important;
   }
 
-  /* 7-c) 브랜드 그라데이션(인기 가격카드 등) → 그라데이션 복원 + 검은 글자 */
-  .bg-brand-grad {
+  /* 7-c) 브랜드 그라데이션(인기 가격카드 등) → 그라데이션 복원 + 검은 글자.
+     단, A안으로 다크 유리가 된 이용료 popular 카드 본체(.pricing-card-popular)는
+     제외한다. (카드 안의 골드 CTA 버튼 .pricing-cta 는 그대로 노랑 유지) */
+  .bg-brand-grad:not(.pricing-card-popular) {
     background-image: linear-gradient(135deg, #FFD500 0%, #FF9500 100%) !important;
     background-color: transparent !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
-  .bg-brand-grad,
-  .bg-brand-grad * { color: #191919 !important; }
+  /* 노랑 그라데이션 '위'의 글자는 검정으로. 단 popular 카드 본체 내부 글자는
+     내 pricing-* 규칙(밝은 글자)이 살아야 하므로 카드 본체는 제외.
+     골드 CTA 버튼(.pricing-cta) 안 글자는 노랑 위 검정이라 별도로 유지. */
+  .bg-brand-grad:not(.pricing-card-popular),
+  .bg-brand-grad:not(.pricing-card-popular) * { color: #191919 !important; }
+  .pricing-card-popular .pricing-cta,
+  .pricing-card-popular .pricing-cta * { color: #191919 !important; }
   /* 노란 CTA(그라데이션/노랑) 박스 '안'에 놓인 검정 알약 버튼(bg-brand-dark)은
      배경이 검정이므로 글자를 다시 흰색으로 되돌린다. (대표님: 오른쪽 버튼 안 보임)
      bg-brand-grad * 규칙이 자식 검정 버튼 글자까지 검정으로 덮어버리던 문제 해결. */

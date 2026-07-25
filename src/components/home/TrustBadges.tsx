@@ -39,7 +39,7 @@ export default function TrustBadges({ badges }: { badges: Badge[] }) {
               <Editable
                 id={`home-trust-${i}`}
                 as="span"
-                className="flex min-h-[2.4rem] items-center break-keep text-[13px] font-semibold leading-tight text-brand-dark"
+                className="flex min-h-[2.4rem] w-full items-center justify-center break-keep text-center text-[13px] font-semibold leading-tight text-brand-dark"
               >
                 {b.text}
               </Editable>

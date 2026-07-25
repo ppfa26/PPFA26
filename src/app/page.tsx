@@ -20,6 +20,7 @@ const TRUST_BADGES = [
   { icon: "📝", text: "신청 방법·필요 서류·순서까지" },
   { icon: "🚫", text: "안내 및 추천 · 행정 대행 없음" },
   { icon: "💳", text: "부담 없는 1회성 결제" },
+  { icon: "💬", text: "채널톡 상담 운영" },
 ];
 
 const VALUES = [
@@ -233,8 +234,6 @@ export default function Home() {
                 {BETA_FREE ? (
                   <>
                     내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
-                    <br />
-                    오픈 베타 기간 동안 무엇을·어디서·어떻게까지 <b className="text-brand-dark">한 푼도 안 받고</b> 전부 알려드립니다.
                   </>
                 ) : (
                   <>
@@ -333,7 +332,7 @@ export default function Home() {
                       실제 matching-preview 히어로와 100% 일치시킴 · 합계 24 = 5+6+8+5 */}
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
                   <div className="rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:p-3.5">
-                    <p className="break-keep text-center text-[13px] font-bold leading-snug text-brand-dark/80 sm:text-[15px]">
+                    <p className="break-keep text-center text-[15px] font-bold leading-snug text-brand-dark/80 sm:text-[17px]">
                       🎉 진단 완료! <b className="font-black text-brand-orange">지금 신청해볼 수 있는 것들</b>이에요.
                     </p>
                     {/* 가로형: 왼쪽 큰 숫자 + 오른쪽 세로 요약 (실제 결과창 히어로와 동일 구조).
