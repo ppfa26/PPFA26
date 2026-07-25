@@ -301,12 +301,12 @@ export default function Home() {
           <div className="reveal mx-auto max-w-3xl">
             {/* (대표님 요청) 상단 '실제 결과 화면 예시 / 진단 한 번으로… / 절감 4칸' 통합 박스 삭제 */}
 
-            {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (상단 1개 + 하단 1개 배치, 대표님 요청) */}
+            {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (상·하단 문구·스타일 통일: 투명 박스 + 주황 테두리, 대표님 요청) */}
             <Editable
               id="home-sample-cta-top"
               as="a"
               href="/diagnosis"
-              className="btn-brand mx-auto mb-5 block max-w-md rounded-full py-4 text-center text-base font-bold sm:text-lg animate-pulseGlow"
+              className="mx-auto mb-5 block max-w-md rounded-full border-2 border-brand-orange bg-transparent py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
             >
               {BETA_FREE
                 ? "🎁 지금 무료로 내 결과 전부 확인하기"
@@ -315,11 +315,11 @@ export default function Home() {
             <p className="mx-auto -mt-2.5 mb-6 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
               {BETA_FREE ? (
                 <>
-                  🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b> · 아래는 <b className="text-brand-dark">실제 결과 화면 예시</b>입니다.
+                  🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
                 </>
               ) : (
                 <>
-                  🔓 결제 시 <b className="text-brand-red">모든 정보</b>가 열립니다 · 아래는 <b className="text-brand-dark">실제 결과 화면 예시</b>입니다.
+                  🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
                 </>
               )}
             </p>
@@ -584,9 +584,6 @@ export default function Home() {
                         </div>
                       ))}
                     </div>
-                    <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-dark/45">
-                      출처: 기업마당(bizinfo.go.kr) · 공공데이터포털 · 실시간 수집 공고 · 안내 목적이며 승인·선정을 보장하지 않습니다.
-                    </p>
                     </div>
                   </details>
                 </div>
@@ -609,12 +606,12 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 하단 CTA (상단 CTA와 쌍) */}
+            {/* 하단 CTA (상단 CTA와 쌍 · 투명 박스 + 주황 테두리로 통일) */}
             <Editable
               id="home-sample-cta"
               as="a"
               href="/diagnosis"
-              className="btn-brand mx-auto mt-5 block max-w-md rounded-full py-4 text-center text-base font-bold sm:text-lg animate-pulseGlow"
+              className="mx-auto mt-5 block max-w-md rounded-full border-2 border-brand-orange bg-transparent py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
             >
               {BETA_FREE
                 ? "🎁 지금 무료로 내 결과 전부 확인하기"
