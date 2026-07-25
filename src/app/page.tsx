@@ -418,9 +418,9 @@ export default function Home() {
                     {/* 개별 제도 카드 — 실제 결과창 카드(흰 배경·얇은 테두리·제목+뱃지→안내→설명→회색 신청방법→버튼 2종) */}
                     <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { icon: "💳", t: "소상공인 경영안정 바우처", d: "사업체당 25만원. 공과금·4대보험료·연료비 등 9개 항목에 사용 가능.", hook: "연매출 약 1억400만원 미만이면 온라인 신청만으로 지급됩니다." },
-                        { icon: "💳", t: "소상공인 부담경감 크레딧", d: "50만원 상당. 공공요금(전기·가스·수도)과 4대보험료 납부에 사용.", hook: "연매출 3억원 이하면 카드 연동으로 간편 신청됩니다." },
-                        { icon: "🧑‍💼", t: "두루누리 사회보험료 지원", d: "신규 채용 근로자·사업주의 국민연금·고용보험료 최대 80% 지원.", hook: "근로자 10명 미만 사업장은 4대보험 신고 시 함께 신청돼 사실상 자동입니다." },
+                        { icon: "💳", t: "소상공인 경영안정 바우처", d: "사업체당 25만원. 공과금·4대보험료·연료비 등 9개 항목에 사용 가능.", hook: "연매출 약 1억400만원 미만이면 온라인 신청만으로 지급됩니다.", locked: "🔒 신청 사이트 주소 · 제출 서류 목록 · 신청 순서 · 마감일까지 결제 후 공개" },
+                        { icon: "💳", t: "소상공인 부담경감 크레딧", d: "50만원 상당. 공공요금(전기·가스·수도)과 4대보험료 납부에 사용.", hook: "연매출 3억원 이하면 카드 연동으로 간편 신청됩니다.", locked: "🔒 카드 연동 방법 · 신청 페이지 링크 · 지급 시기까지 결제 후 공개" },
+                        { icon: "🧑‍💼", t: "두루누리 사회보험료 지원", d: "신규 채용 근로자·사업주의 국민연금·고용보험료 최대 80% 지원.", hook: "근로자 10명 미만 사업장은 4대보험 신고 시 함께 신청돼 사실상 자동입니다.", locked: "🔒 지원 대상 요건 체크 · 신고 시 신청 방법 · 담당 기관 연락처까지 결제 후 공개" },
                       ].map((g, i) => (
                         <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
@@ -432,15 +432,15 @@ export default function Home() {
                             💡 {g.hook}
                           </p>
                           <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray">{g.d}</p>
-                          <div className="mt-3 rounded-lg bg-gray-50 px-3 py-2.5">
+                          <div className="mt-3 rounded-lg border border-brand-orange/20 bg-brand-orange/5 px-3 py-2.5">
                             <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
                               <span className="font-bold text-brand-dark">📝 신청방법 </span>
-                              <span className="align-middle">🔒 ●●●●●●● 결과 페이지에서 공개</span>
+                              <span className="align-middle text-brand-dark/70">{g.locked}</span>
                             </p>
                           </div>
                           <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                             <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white">🔒 이 상품 신청하러 가기 →</span>
-                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange">상세 · 소요기간 · 연락처 →</span>
+                            <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange">🔒 상세 · 소요기간 · 연락처 →</span>
                           </div>
                         </div>
                       ))}
@@ -467,9 +467,9 @@ export default function Home() {
                     <div className="px-5 pb-5 pt-0">
                     <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { inst: "중소벤처기업진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "신성장기반자금 · 신시장진출자금", hook: "직접대출 최대 60억, 금리 2%대 · 시설/운전자금 모두 가능" },
-                        { inst: "소상공인시장진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "혁신성장촉진자금 · 강한소상공인 · 대환대출", hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상" },
-                        { inst: "신용보증기금 / 기술보증기금 / 무역보험공사 / 신용보증재단", cat: "보증서", catCls: "bg-indigo-100 text-indigo-700", prod: "보증서 발급 → 은행 대리대출", hook: "담보 없이 보증서로 은행 대출 실행 가능" },
+                        { inst: "중소벤처기업진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "신성장기반자금 · 신시장진출자금", hook: "직접대출 최대 60억, 금리 2%대 · 시설/운전자금 모두 가능", locked: "🔒 자금별 한도·금리·신청 창구 · 접수 시기 · 준비 서류까지 결제 후 공개" },
+                        { inst: "소상공인시장진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "혁신성장촉진자금 · 강한소상공인 · 대환대출", hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상", locked: "🔒 대환 가능 조건 · 신청 절차 · 필요 서류 · 담당 센터까지 결제 후 공개" },
+                        { inst: "신용보증기금 / 기술보증기금 / 무역보험공사 / 신용보증재단", cat: "보증서", catCls: "bg-indigo-100 text-indigo-700", prod: "보증서 발급 → 은행 대리대출", hook: "담보 없이 보증서로 은행 대출 실행 가능", locked: "🔒 보증 한도 산정 · 발급 신청 순서 · 연계 은행 · 상담 연락처까지 결제 후 공개" },
                       ].map((m, i) => (
                         <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                           <div className="flex flex-wrap items-center gap-1.5">
@@ -479,10 +479,10 @@ export default function Home() {
                           </div>
                           <p className="mt-1.5 break-keep text-[11px] text-brand-gray">{m.prod}</p>
                           <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">💡 {m.hook}</p>
-                          <div className="mt-2 rounded-lg bg-gray-50 px-3 py-2">
+                          <div className="mt-2 rounded-lg border border-brand-orange/20 bg-brand-orange/5 px-3 py-2">
                             <p className="break-keep text-[11px] leading-relaxed text-brand-dark/80">
                               <span className="font-bold text-brand-dark">신청방법 </span>
-                              <span className="align-middle">🔒 ●●●●●●● 결과 페이지에서 공개</span>
+                              <span className="align-middle text-brand-dark/70">{m.locked}</span>
                             </p>
                           </div>
                           <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
@@ -596,6 +596,33 @@ export default function Home() {
                     </div>
                     </div>
                   </details>
+
+                  {/* 결제 유도 배너 — 예시본 하단(대표님 요청: '이 정도로 상세하게 알려주는구나 → 결제해봐야겠다'
+                      마음이 들도록). 지금 가려진 신청 방법·서류·연락처·버튼이 결제 후 전부 열린다는 안내 */}
+                  <div
+                    aria-hidden="true"
+                    className="select-none rounded-2xl border border-brand-orange/30 bg-gradient-to-r from-amber-50 to-orange-50 p-5 text-center sm:p-6"
+                  >
+                    <p className="break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-[16px]">
+                      🔓 위 <span className="text-brand-orange">🔒 잠긴 부분</span>은 결제하면 전부 열려요
+                    </p>
+                    <ul className="mx-auto mt-3 flex max-w-md flex-col gap-1.5 text-left text-[12px] leading-relaxed text-brand-dark/80 sm:text-[13px]">
+                      {[
+                        "제도별 신청 사이트 주소 · 접수 페이지 링크",
+                        "필요 서류 목록 · 신청 순서 · 마감일",
+                        "담당 기관 · 상담 연락처",
+                        "「이 상품 신청하러 가기」 등 모든 버튼 활성화",
+                      ].map((t, i) => (
+                        <li key={i} className="flex items-start gap-2 break-keep">
+                          <span className="mt-px shrink-0 text-brand-green">✅</span>
+                          <span>{t}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-3 break-keep text-[12px] font-semibold text-brand-orange sm:text-[13px]">
+                      결제 후 모든 버튼이 열려 바로 신청까지 진행할 수 있어요
+                    </p>
+                  </div>
                 </div>
 
               </div>
@@ -612,16 +639,16 @@ export default function Home() {
           className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-10"
         >
           <div className="reveal mx-auto max-w-5xl">
-            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
+            <div className="section-title-glass mx-auto flex max-w-md flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
-                💳 서비스 이용료
+                💳 서비스 이용 플랜
               </span>
               <Editable
                 id="home-pricing-title"
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                AI 진단 리포트
+                PRO AI 진단 리포트
               </Editable>
               <Editable
                 id="home-pricing-sub"
@@ -698,8 +725,9 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
-            위·아래 세로 공백을 조금 더 줄이고 동일하게 맞춤 (대표님 요청 2차 축소) */}
-        <section className="px-4 py-3.5 sm:py-5">
+            카드 아래(Footer 사이) 공백이 위보다 좁아 보여, 하단만 세로로 조금 더
+            늘려 위·아래 여백을 시각적으로 동일하게 맞춤 (대표님 요청) */}
+        <section className="px-4 pt-3.5 pb-8 sm:pt-5 sm:pb-12">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
