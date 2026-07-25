@@ -47,7 +47,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               id={`${prefix}-tier-${tier.id}-subtitle`}
               as="p"
               className={`pricing-sub text-[13px] font-semibold ${
-                tier.popular ? "text-brand-dark/70" : "text-brand-gray"
+                tier.popular ? "text-white" : "text-brand-gray"
               }`}
             >
               {tier.subtitle}

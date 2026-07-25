@@ -604,17 +604,17 @@ export default function Home() {
                     className="select-none rounded-2xl border border-brand-orange/30 bg-gradient-to-r from-amber-50 to-orange-50 p-5 text-center sm:p-6"
                   >
                     <p className="break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-[16px]">
-                      <span className="text-brand-orange">🔒 잠긴 부분</span>은 결제하면 전부 공개됩니다.
+                      <span className="text-brand-orange">🔒 잠긴 부분</span>은 무료 진단하시면 전부 공개됩니다.
                     </p>
-                    <ul className="mx-auto mt-3 flex max-w-md flex-col gap-1.5 text-left text-[12px] leading-relaxed text-brand-dark/80 sm:text-[13px]">
+                    <ul className="mx-auto mt-3 flex max-w-md flex-col items-center gap-1.5 text-center text-[12px] leading-relaxed text-brand-dark/80 sm:text-[13px]">
                       {[
                         "제도별 신청 사이트 주소 · 접수 페이지 링크",
                         "필요 서류 목록 · 신청 순서 · 마감일",
                         "담당 기관 및 고객센터 연락처",
                         "「이 상품 신청하러 가기」 등 모든 버튼 활성화",
                       ].map((t, i) => (
-                        <li key={i} className="flex items-start gap-2 break-keep">
-                          <span className="mt-px shrink-0 text-brand-green">✅</span>
+                        <li key={i} className="flex items-center justify-center gap-2 break-keep">
+                          <span className="shrink-0 text-brand-green">✅</span>
                           <span>{t}</span>
                         </li>
                       ))}
@@ -636,9 +636,8 @@ export default function Home() {
           className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-10"
         >
           <div className="reveal mx-auto max-w-5xl">
-            {/* (대표님 요청) 상단 헤더 박스 복원 + 가로폭 확대 — max-w-md 제거해
-                '🎯 서비스 안내' 박스처럼 내용 폭(fit-content)에 맞게 넓게 */}
-            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
+            {/* (대표님 요청) 상단 헤더 박스 복원 + FAQ 박스와 동일 가로폭(is-wide) */}
+            <div className="section-title-glass is-wide mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
                 💳 서비스 이용 플랜
               </span>
@@ -673,7 +672,7 @@ export default function Home() {
         {/* 섹션 상하 여백 — 하단 여백 축소(대표님 요청) */}
         <section className="bg-gray-50 px-4 py-7 sm:py-10">
           <div className="reveal mx-auto max-w-4xl">
-            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
+            <div className="section-title-glass is-wide mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 💬 자주 묻는 질문
               </span>
@@ -692,7 +691,8 @@ export default function Home() {
                 결제 전 가장 많이 묻는 질문들을 모았습니다.
               </Editable>
             </div>
-            <div className="mt-6 space-y-3">
+            {/* (대표님 요청) 아코디언 목록 가로폭 축소 — 제목 박스(is-wide=max-w-2xl)와 통일 */}
+            <div className="mx-auto mt-6 max-w-2xl space-y-3">
               {FAQS.map((f, i) => (
                 <details
                   key={i}
