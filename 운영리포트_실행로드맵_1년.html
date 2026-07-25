@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모두의사업친구 사업 운영 리포트 — 1년 실행 로드맵 (프린트용)</title>
+<style>
+  :root{
+    --navy:#0f1e3d; --navy2:#16264a; --gold:#c8a24a; --gold-l:#e5c877;
+    --ink:#1a2233; --gray:#5b6472; --line:#e3e7ee; --bg:#f6f8fc;
+    --red:#d34a3a; --green:#2e8b57; --blue:#2b6cb0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.65;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:940px;margin:0 auto;padding:0 20px 70px;}
+  .cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+    padding:52px 40px 42px;border-radius:0 0 22px 22px;margin-bottom:32px;}
+  .cover .badge{display:inline-block;border:1px solid var(--gold);color:var(--gold-l);
+    padding:5px 14px;border-radius:20px;font-size:13px;letter-spacing:1px;margin-bottom:18px;}
+  .cover h1{font-size:30px;line-height:1.35;margin:0 0 12px;font-weight:800;}
+  .cover h1 span{color:var(--gold-l);}
+  .cover .sub{font-size:15.5px;color:#c3ccdd;max-width:680px;}
+  .cover .meta{margin-top:22px;font-size:12.5px;color:#8fa0bd;border-top:1px solid #2a3a5e;padding-top:14px;}
+  section{background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:30px 32px;margin-bottom:22px;box-shadow:0 2px 12px rgba(15,30,61,.04);}
+  .kicker{display:inline-block;background:var(--navy);color:#fff;font-size:12px;font-weight:700;
+    padding:4px 12px;border-radius:6px;letter-spacing:.5px;margin-bottom:12px;}
+  h2{font-size:23px;font-weight:800;margin:0 0 6px;color:var(--navy);}
+  h2 .num{color:var(--gold);}
+  h3{font-size:17.5px;font-weight:700;margin:24px 0 8px;color:var(--navy2);
+    border-left:4px solid var(--gold);padding-left:12px;}
+  h4{font-size:15px;font-weight:700;margin:14px 0 6px;color:var(--ink);}
+  p{margin:7px 0;color:#2c3444;}
+  .lead{font-size:16px;color:var(--gray);margin-bottom:8px;}
+  strong{color:var(--navy);font-weight:700;}
+  .hl{background:linear-gradient(transparent 60%,#f6e6b8 60%);font-weight:700;color:var(--ink);}
+  ul,ol{padding-left:22px;margin:9px 0;} li{margin:5px 0;}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+  th{background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  td .up{color:var(--green);font-weight:700;} td .dn{color:var(--red);font-weight:700;}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin:16px 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:16px 0;}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
+  .card{border:1px solid var(--line);border-radius:11px;padding:15px 17px;background:#fbfcfe;}
+  .card.navy{background:var(--navy);color:#fff;border:none;}
+  .card.navy h4{color:var(--gold-l);} .card.navy p,.card.navy li{color:#d5ddec;}
+  .card h4{margin-top:0;}
+  .stat{font-size:24px;font-weight:800;color:var(--gold);line-height:1.1;}
+  .stat .u{font-size:13px;color:var(--gray);font-weight:600;}
+  .callout{border-radius:11px;padding:15px 19px;margin:16px 0;font-size:14px;}
+  .callout.gold{background:#fdf6e3;border:1px solid #ecd9a0;}
+  .callout.red{background:#fdeeeb;border:1px solid #f0c4bb;}
+  .callout.blue{background:#eaf2fb;border:1px solid #bcd6f0;}
+  .callout .t{font-weight:800;display:block;margin-bottom:5px;font-size:14px;}
+  .callout.gold .t{color:#a67c1a;} .callout.red .t{color:var(--red);} .callout.blue .t{color:var(--blue);}
+  blockquote{margin:12px 0;padding:11px 16px;background:#f4f6fb;border-left:4px solid var(--navy2);
+    color:#3a4557;border-radius:0 8px 8px 0;font-size:14px;}
+  .src{font-size:11.5px;color:#9aa3b2;}
+  .footer{text-align:center;color:var(--gray);font-size:12px;margin-top:36px;padding-top:22px;border-top:1px solid var(--line);}
+  /* Roadmap phase blocks */
+  .phase{border:2px solid var(--line);border-radius:14px;padding:0;margin:18px 0;overflow:hidden;}
+  .phase .head{padding:14px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .phase.p30 .head{background:linear-gradient(135deg,#2b6cb0,#1e4f85);}
+  .phase.p90 .head{background:linear-gradient(135deg,#2e8b57,#1f6b40);}
+  .phase.p180 .head{background:linear-gradient(135deg,#a67c1a,#8a6612);}
+  .phase.p360 .head{background:linear-gradient(135deg,#0f1e3d,#16264a);}
+  .phase .head .ttl{font-size:18px;font-weight:800;}
+  .phase .head .goal{font-size:13px;background:rgba(255,255,255,.18);padding:4px 12px;border-radius:16px;font-weight:700;}
+  .phase .body{padding:18px 22px;}
+  .chk{list-style:none;padding-left:0;margin:8px 0;}
+  .chk li{position:relative;padding-left:26px;margin:8px 0;}
+  .chk li:before{content:'☐';position:absolute;left:0;top:0;font-size:16px;color:var(--gold);}
+  .kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0;}
+  .kpi{background:#f4f6fb;border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-size:13px;}
+  .kpi b{color:var(--navy);font-size:15px;}
+  /* Stair diagram */
+  .stair{margin:16px 0;}
+  .step{border-radius:10px;padding:12px 16px;margin:4px 0;color:#fff;font-weight:600;font-size:14px;position:relative;}
+  .step .price{float:right;font-weight:800;}
+  .s1{background:#7d8aa0;margin-left:0;} .s2{background:#4a90d9;margin-left:5%;}
+  .s3{background:#2e8b57;margin-left:10%;} .s4{background:#c8a24a;margin-left:15%;}
+  .s5{background:#0f1e3d;margin-left:20%;}
+  @media(max-width:640px){
+    .cover{padding:38px 20px 30px;} .cover h1{font-size:23px;}
+    section{padding:20px 16px;} h2{font-size:19px;}
+    .grid,.grid2,.grid4{grid-template-columns:1fr;}
+    .step{margin-left:0 !important;}
+  }
+  @media print{
+    body{background:#fff;} .wrap{padding:0 8px;}
+    section,.phase{box-shadow:none;break-inside:avoid;page-break-inside:avoid;}
+    .cover{border-radius:0;}
+    .chk li:before{content:'☐';}
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+  <div class="wrap" style="padding-bottom:0;">
+    <span class="badge">BUSINESS OPS · 1-YEAR ROADMAP</span>
+    <h1>모두의사업친구 사업 운영 리포트<br><span>롤모델 유닛이코노믹스 + 1년 실행 로드맵</span></h1>
+    <p class="sub">고이·삼쩜삼·아정당의 수익구조를 벤치마크로, <b style="color:#fff;">사업자 DB 확보 → 1회성 결제 → 전문가 연결 → 1:1 자문</b>으로 매출을 키우는 30·90·180·360일 실행 계획. 책상 옆에 붙여두고 매주 체크하세요.</p>
+    <div class="meta">작성: 모두의사업친구(신주엽 대표) · 기준 2026년 · 매출 수치는 목표(가정)이며 실제 시장 반응에 따라 조정</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- 전략 요약 -->
+<section>
+  <span class="kicker">전략 한 장</span>
+  <h2>우리가 벌 돈은 "29,900원"이 아니라 "DB"에서 나온다</h2>
+  <p class="lead">소액 단건 결제만으로는 매출이 안 터진다. 세 롤모델의 공통 공식 = <b>무료/저가 유입 → 가치 확정 시 과금 → DB 위에 고단가 상품 얹기</b>.</p>
+  <div class="grid">
+    <div class="card"><h4>① 캐시카우 (~2026년)</h4><p>1억↑ 기보/신보 <b>대행·컨설팅</b>으로 현금 유지. <span class="hl">단, 내년 법 개정 시 대행 금지 예정 → 여기 더 투자 금지, 유지선까지만.</span></p></div>
+    <div class="card"><h4>② 씨앗 (지금부터)</h4><p>매칭 SaaS 1회성 결제(29,900원)로 <b>사업자 DB 최대 확보</b>. 결제는 손익분기·DB 정제 용도.</p></div>
+    <div class="card navy"><h4>③ 폭발 엔진 (대행 종료 후)</h4><p>확보한 DB로 <b>세무·노무·관세사 연결 수수료</b> + <b>대표님 직접 1:1 자문·원데이 세미나(고단가)</b>.</p></div>
+  </div>
+  <div class="callout red"><span class="t">가장 큰 리스크 — 대행은 시한부다</span>
+    내년 대행 금지 시 현재 매출의 큰 축이 사라진다. <b>대행 수요를 "그럼 어떻게 직접 하나요?" = 교육·자문 수요로 전환</b>시키는 계단을 지금 미리 깔아야 절벽이 아니라 연결이 된다.</div>
+</section>
+
+<!-- 수익 계단 -->
+<section>
+  <span class="kicker">REVENUE STAIRCASE</span>
+  <h2><span class="num">01.</span> 매출 계단 — 한 명의 고객을 위로 올린다</h2>
+  <p class="lead">DB에 들어온 한 명을 아래 계단으로 계속 올리는 게 이 사업의 전부입니다.</p>
+  <div class="stair">
+    <div class="step s1">무료 진단 <span class="price">0원 · DB 확보</span></div>
+    <div class="step s2">AI 매칭 리포트 + 신청방법 교육 <span class="price">29,900원 · 1회성</span></div>
+    <div class="step s3">전문가 연결 (세무 → 노무·관세 순차) <span class="price">건당 수수료</span></div>
+    <div class="step s4">1:1 자문 / 원데이·줌 세미나 (대표님 직접) <span class="price">회당 고단가</span></div>
+    <div class="step s5">1억↑ 기보/신보 컨설팅 <span class="price">~2026 성공보수</span></div>
+  </div>
+  <div class="callout gold"><span class="t">핵심 — 올라갈수록 객단가가 폭증한다</span>
+    29,900원짜리 고객 100명보다, 그중 <b>1:1 자문(회당 수십만원)으로 올라온 5명</b>이 매출을 만든다. 리포트는 미끼, 자문이 본체.</div>
+</section>
+
+<!-- 롤모델 유닛이코노믹스 (요약본) -->
+<section>
+  <span class="kicker">BENCHMARK</span>
+  <h2><span class="num">02.</span> 롤모델은 고객 1명당 얼마 버나 (요약)</h2>
+  <table>
+    <tr><th>구분</th><th>삼쩜삼</th><th>아정당</th><th>고이</th><th>→ 우리</th></tr>
+    <tr><td><b>과금 방식</b></td><td>성공수수료(환급 10~20%)</td><td>중개 리베이트</td><td>정찰 마진+상조 lock-in</td><td>1회 결제→연결→자문</td></tr>
+    <tr><td><b>1명당 매출</b></td><td>2~4만원</td><td>20~30만원대</td><td>장례1건 마진</td><td class="up">29,900원→↑자문</td></tr>
+    <tr><td><b>진짜 자산</b></td><td>2,400만 DB</td><td>반복고객</td><td>미래고객 선점</td><td><b>사업자 DB</b></td></tr>
+    <tr><td><b>영업이익률</b></td><td>12%('24)</td><td>19%('24)</td><td>성장투자</td><td>SW형 고마진 목표</td></tr>
+  </table>
+  <p class="src">근거: theBell·비즈니스포스트·다음·조선·etnews 등 2024~2025 공개자료 기반 추정. 상세는 별도 '유닛이코노믹스 간단버전' 리포트 참조.</p>
+  <div class="callout blue"><span class="t">통찰</span> 셋 다 "돈 낼 이유가 눈에 보일 때만 청구"한다. 우리도 진단 결과에 <b>"예상 수혜 지원금 규모"</b>를 숫자로 보여줘 과금 명분을 만든다. <span class="src">(매칭 로직 자체는 변경하지 않고 결과 표기만)</span></div>
+</section>
+
+<!-- 파트너/자문 방향 -->
+<section>
+  <span class="kicker">PARTNER · ADVISORY</span>
+  <h2><span class="num">03.</span> 전문가 연결 & 자문 — 지금 결정된 사실</h2>
+  <div class="grid2">
+    <div class="card"><h4>✅ 세무 파트너 — 확보됨</h4><p>가장 먼저 "세무사 연결" 기능부터 오픈. <b>수요·전환율·수수료 구조를 세무로 먼저 검증</b>한 뒤 노무·관세로 확장.</p></div>
+    <div class="card"><h4>⬜ 노무·관세 — 미확보</h4><p>아직 파트너 없음 → <b>기능부터 만들지 말 것.</b> 파트너 확보 후 오픈(껍데기 기능은 신뢰를 깎음).</p></div>
+    <div class="card navy"><h4>🎤 1:1 자문·세미나 — 대표님 직접</h4><p>직업군인·경영컨설턴트 출신, 승인 100건·100억 이력이 <b>그 자체로 상품</b>. "신주엽 대표에게 직접 배우는 정부지원사업"으로 브랜딩.</p></div>
+    <div class="card"><h4>⚖️ 개인정보 제3자 제공 동의</h4><p>대표님 결정대로 <b>가입 단계에서 미리 동의 확보</b>(하든 안 하든 나중에 편함). 30일 내 약관·동의 UI 정비.</p></div>
+  </div>
+  <div class="callout gold"><span class="t">주의 — 대표님이 병목이 될 수 있음</span>
+    자문·세미나를 대표님이 직접 하면 <b>시간이 곧 매출 상한</b>. 그래서 ①회당 단가를 충분히 높이고 ②1:多 세미나(줌/원데이)로 시간당 매출을 키우고 ③반복 콘텐츠(녹화 강의)로 나중에 레버리지.</div>
+</section>
+
+<!-- 30일 -->
+<section>
+  <span class="kicker">PHASE 1</span>
+  <h2><span class="num">04.</span> 월단위 1년 실행 로드맵</h2>
+  <p class="lead">각 단계는 앞 단계 위에 쌓입니다. 매주 금요일 체크박스로 진척 확인하세요.</p>
+
+  <div class="phase p30">
+    <div class="head"><span class="ttl">D+30일 · 기반 다지기</span><span class="goal">목표매출 유지: 대행/컨설팅 현금 + 베타 DB 확보</span></div>
+    <div class="body">
+      <div class="kpi-row">
+        <div class="kpi">신규 DB <b>300~500명</b></div>
+        <div class="kpi">무료진단 완료율 <b>측정 시작</b></div>
+        <div class="kpi">SaaS 매출 <b>0원(베타)</b></div>
+        <div class="kpi">대행 파이프 <b>유지</b></div>
+      </div>
+      <h4>해야 할 일</h4>
+      <ul class="chk">
+        <li><b>개인정보 제3자 제공 동의</b> 약관·가입 UI 정비 (세무사 연결 대비, 최우선)</li>
+        <li>진단 리포트에 <b>"예상 수혜 지원금 규모"</b> 숫자 노출 (과금 명분 · 로직 불변)</li>
+        <li>업종별 유입 콘텐츠 <b>4~5개</b> 발행 (블로그/인스타 — "인천 소상공인 지원사업 총정리" 등)</li>
+        <li>토스 심사 진행상황 점검 → 통과 시 즉시 29,900원 결제 오픈 준비</li>
+        <li>대행 파이프라인은 <b>유지선까지만</b> (신규 확장 X, 기존 승인건 마무리)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="phase p90">
+    <div class="head"><span class="ttl">D+90일 · 유료 전환 시작</span><span class="goal">목표매출: SaaS 결제 개시 + 세무 연결 첫 매출</span></div>
+    <div class="body">
+      <div class="kpi-row">
+        <div class="kpi">누적 DB <b>1,500~2,000명</b></div>
+        <div class="kpi">리포트 결제 <b>월 50~100건</b></div>
+        <div class="kpi">SaaS 매출 <b>월 150~300만</b></div>
+        <div class="kpi">세무 연결 <b>첫 성사</b></div>
+      </div>
+      <h4>해야 할 일</h4>
+      <ul class="chk">
+        <li><b>29,900원 결제 정식 오픈</b> (토스 통과 후) → 베타 유입의 유료 전환율 측정</li>
+        <li><b>세무사 연결 기능 오픈</b> — 수수료 구조/전환율 검증(계단 3단계 첫 가동)</li>
+        <li>콘텐츠 누적 <b>15개+</b>, 유튜브/릴스 1채널 시작 (아정당식 저비용 유입)</li>
+        <li>무료 <b>"맞춤 신규공고 알림 구독"</b> 도입 → 미결제 방문자 lock-in(고이식)</li>
+        <li>1:1 자문 <b>파일럿 3~5건</b> 테스트(지인·기존 고객) → 적정 단가 탐색</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="phase p180">
+    <div class="head"><span class="ttl">D+180일 · 고단가 상품 장착</span><span class="goal">목표매출: 자문/세미나 정식 상품화</span></div>
+    <div class="body">
+      <div class="kpi-row">
+        <div class="kpi">누적 DB <b>4,000~6,000명</b></div>
+        <div class="kpi">리포트 <b>월 150~250건</b></div>
+        <div class="kpi">SaaS+연결 <b>월 500~800만</b></div>
+        <div class="kpi">자문·세미나 <b>월 300만+</b></div>
+      </div>
+      <h4>해야 할 일</h4>
+      <ul class="chk">
+        <li><b>원데이/줌 세미나 정식 오픈</b> — 대표님 직접, 1:多로 시간당 매출 극대화</li>
+        <li>1:1 자문 <b>정식 상품화</b>(회당 단가 확정) — 리포트→연결→자문 계단 완성</li>
+        <li>세무 연결 데이터 좋으면 <b>노무·관세 파트너 확보 착수</b></li>
+        <li>세미나 <b>녹화강의</b> 1개 제작 → 반복 판매(대표님 시간 레버리지)</li>
+        <li>대행 종료 대비: 기존 대행 고객에게 <b>"직접 신청 교육"으로 전환</b> 제안</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="phase p360">
+    <div class="head"><span class="ttl">D+360일 · SaaS가 메인, 대행 졸업</span><span class="goal">목표매출: 월 1,500만+ / DB 1만+</span></div>
+    <div class="body">
+      <div class="kpi-row">
+        <div class="kpi">누적 DB <b>10,000명+</b></div>
+        <div class="kpi">리포트 <b>월 300건+</b></div>
+        <div class="kpi">연결+자문 <b>월 1,000만+</b></div>
+        <div class="kpi">총매출 <b>월 1,500만+</b></div>
+      </div>
+      <h4>해야 할 일</h4>
+      <ul class="chk">
+        <li><b>매칭 SaaS를 메인 매출원으로 전환</b> — 대행 의존도 최소화(법 개정 대응 완료)</li>
+        <li>노무·관세 연결 정식 가동 → <b>DB당 복수 수익원</b>(아정당식 반복판매)</li>
+        <li>세미나 <b>정기 개최(월 1~2회)</b> + 녹화강의 상시 판매</li>
+        <li>"초기창업자·정부지원 초보 사장" 타깃 브랜딩 확립 → <b>안내·추천·매칭 대표 플랫폼</b> 포지셔닝</li>
+        <li>단위경제 점검: 고객 1명당 LTV(리포트+연결+자문) vs CAC → 광고 확대 판단</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 목표 매출 요약표 -->
+<section>
+  <span class="kicker">TARGET</span>
+  <h2><span class="num">05.</span> 목표 매출 요약 (한눈에)</h2>
+  <table>
+    <tr><th>시점</th><th>누적 DB</th><th>리포트 결제</th><th>SaaS+연결</th><th>자문·세미나</th><th>월 총매출 목표</th></tr>
+    <tr><td><b>D+30</b></td><td>300~500</td><td>베타(0원)</td><td>-</td><td>파일럿</td><td>대행 현금 유지</td></tr>
+    <tr><td><b>D+90</b></td><td>1,500~2,000</td><td>월 50~100건</td><td>월 150~300만</td><td>테스트</td><td class="up">200~400만 + 대행</td></tr>
+    <tr><td><b>D+180</b></td><td>4,000~6,000</td><td>월 150~250건</td><td>월 500~800만</td><td>월 300만+</td><td class="up">800~1,200만</td></tr>
+    <tr><td><b>D+360</b></td><td>10,000+</td><td>월 300건+</td><td>월 1,000만+</td><td>월 500만+</td><td class="up">1,500만+</td></tr>
+  </table>
+  <div class="callout blue"><span class="t">※ 이 숫자는 "목표(가정)"입니다</span>
+    실제 전환율은 90일 베타 데이터로 확정됩니다. <b>D+90 시점에 이 표를 실제 수치로 업데이트</b>하세요. 중요한 건 절대금액이 아니라 <b>"계단을 올라가는 고객 비율"</b>이 오르는지입니다.</div>
+</section>
+
+<!-- 하지 말 것 -->
+<section>
+  <span class="kicker">DON'T</span>
+  <h2><span class="num">06.</span> 지금 하지 말아야 할 것 (에너지 낭비 방지)</h2>
+  <ul>
+    <li><b>❌ 대행 사업 신규 확장</b> — 내년 법 개정으로 사라질 매출에 인력·시간 추가 투입 금지(유지선까지만).</li>
+    <li><b>❌ 노무·관세 연결 기능 선제작</b> — 파트너 없이 껍데기 기능은 신뢰만 깎음. 세무로 먼저 검증.</li>
+    <li><b>❌ 매칭 로직 수정</b> — 핵심 자산. 결과 "표기"만 개선하고 로직은 절대 손대지 않음.</li>
+    <li><b>❌ 검증 안 된 가격 실험</b> — 29,900원 유지, 90일 데이터 확인 후 조정.</li>
+    <li><b>❌ 결제 시스템 선구축</b> — 토스 심사 통과 후 오픈.</li>
+  </ul>
+</section>
+
+<div class="footer">
+  모두의사업친구 · 신주엽 대표 · 1년 실행 로드맵 (프린트용)<br>
+  매출 수치는 목표 가정치이며 D+90 베타 데이터로 갱신 필요 · 롤모델 유닛이코노믹스는 2024~2025 공개자료 기반 추정
+</div>
+
+</div>
+</body>
+</html>
