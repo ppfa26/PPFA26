@@ -302,59 +302,10 @@ export default function Home() {
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
         <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-11">
           <div className="reveal mx-auto max-w-3xl">
-            {/* 제목 + 절세 임팩트를 1개 박스로 통합 (대표님 요청).
-                ★ 홈 전체 다크 톤과 자연스럽게 잇기 위해 그라데이션·흰배경을 쓰지 않고
-                  bg-white + rounded-3xl 기반으로 둔다 → theme-dark 전역 규칙이 자동으로
-                  다크 글래스로 변환해 주변 카드와 동일한 유리 톤이 된다. 강조는 글자색만. */}
-            <div className="mx-auto max-w-2xl overflow-hidden rounded-3xl bg-white p-5 shadow-card sm:p-6">
-              {/* 상단 — 제목·부제 */}
-              <div className="text-center">
-                <span className="inline-block rounded-full bg-brand-orange/10 px-3 py-1 text-[11px] font-bold text-brand-orange sm:text-xs">
-                  🔍 실제 결과 화면 예시
-                </span>
-                <Editable
-                  id="home-sample-title"
-                  as="h2"
-                  className="mt-2.5 break-keep text-xl font-black leading-tight text-brand-dark sm:text-2xl"
-                >
-                  진단 한 번으로, 이 모든 걸 한눈에
-                </Editable>
-                <Editable
-                  id="home-sample-sub"
-                  as="p"
-                  className="mx-auto mt-2 max-w-xl break-keep text-[12px] font-medium leading-relaxed text-brand-gray sm:text-[13px]"
-                >
-                  신청 가능한 정부지원사업은 물론, 대부분 몰라서 놓치는 <b className="text-brand-dark">절세·감면</b>까지 함께 안내해드립니다.
-                </Editable>
-              </div>
-              {/* 대표 절감 항목 4칸 — 혹하는 실제 금액/비율 (투명 칸 + 은은한 구분선 → 자동 다크화) */}
-              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {[
-                  { n: "최대 100%", l: "창업 세액감면", d: "5년간 소득·법인세" },
-                  { n: "연 최대 600만원", l: "노란우산 소득공제", d: "가입만 하면 자동" },
-                  { n: "최대 30%", l: "중기 특별세액감면", d: "매년 반복 적용" },
-                  { n: "매년 자동", l: "카드수수료 우대", d: "영세·중소 가맹점" },
-                ].map((s) => (
-                  <div
-                    key={s.l}
-                    className="rounded-xl border border-gray-100 px-2.5 py-3 text-center"
-                  >
-                    <p className="text-[15px] font-black leading-tight text-brand-red sm:text-base">
-                      {s.n}
-                    </p>
-                    <p className="mt-1.5 break-keep text-[11px] font-extrabold text-brand-dark">
-                      {s.l}
-                    </p>
-                    <p className="mt-0.5 break-keep text-[10px] text-brand-gray">
-                      {s.d}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* (대표님 요청) 상단 '실제 결과 화면 예시 / 진단 한 번으로… / 절감 4칸' 통합 박스 삭제 */}
 
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
-            <div className="relative mt-7">
+            <div className="relative">
               <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-[0_16px_40px_rgba(0,0,0,0.10)]">
                 {/* 브라우저 상단 바 */}
                 <div className="flex items-center gap-1.5 border-b border-gray-100 bg-gray-50 px-4 py-2.5">
