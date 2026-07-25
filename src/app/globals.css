@@ -137,17 +137,18 @@ h4 {
   font-weight: 800;
   font-size: 13px;
   letter-spacing: -0.01em;
-  padding: 7px 12px;
-  /* 문구를 비워도(대표님 요청: 빈 띠 유지) 높이가 무너지지 않도록 최소 높이 확보 */
-  min-height: 34px;
+  padding: 4px 12px;
+  /* 문구를 비워도(대표님 요청: 빈 띠 유지) 높이가 무너지지 않도록 최소 높이 확보
+     (대표님 요청: 세로 길이 조금 축소) */
+  min-height: 24px;
   box-shadow: 0 2px 10px rgba(255, 59, 48, 0.35);
   z-index: 5;
 }
 @media (max-width: 640px) {
   .ribbon {
     font-size: 12px;
-    padding: 6px 10px;
-    min-height: 30px;
+    padding: 4px 10px;
+    min-height: 20px;
   }
 }
 
