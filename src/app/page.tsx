@@ -309,39 +309,40 @@ export default function Home() {
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
                 🔒
               </span>
-              <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
-                신청 사이트·필요 서류·승인 전략은 결과 페이지에서 전부 열립니다
+              <p className="mt-3 break-keep text-center text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">
+                신청 사이트·필요 서류·승인 전략은
+                <br className="sm:hidden" /> 결과 페이지에서 전부 공개
               </p>
-              <p className="mt-1.5 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                위 목록은 <b className="text-brand-dark">맛보기</b>입니다.
-                진단을 마치면 <b className="text-brand-orange">내 사업장에 맞는 기관·제도·감면 전체와
-                신청 방법</b>을 한 번에 확인할 수 있습니다.
+              <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
+                위 <b className="text-brand-dark">내용</b>은 맛보기입니다. 진단을 마치면
+                <b className="text-brand-orange"> 내 사업장에 맞는 상품·제도·감면 제도 전체와
+                신청 방법까지</b> 한 번에 확인할 수 있습니다.
               </p>
-              {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 */}
+              {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (글자수에 맞게 폭 축소, 대표님 요청) */}
               <Editable
                 id="home-sample-cta-top"
                 as="a"
                 href="/diagnosis"
-                className="mx-auto mt-4 block w-full rounded-full border-2 border-brand-orange bg-brand-orange/5 py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/15 sm:text-lg animate-pulseGlow"
+                className="mx-auto mt-4 inline-block rounded-full border-2 border-brand-orange bg-brand-orange/5 px-6 py-3 text-center text-[15px] font-bold text-brand-orange transition hover:bg-brand-orange/15 sm:text-base animate-pulseGlow"
               >
                 {BETA_FREE
                   ? "🎁 지금 무료로 내 결과 전부 확인하기"
                   : "내 결과 전체 확인하기"}
               </Editable>
-              <p className="mx-auto mt-2.5 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
+              <p className="mx-auto mt-2.5 break-keep text-center text-[12px] font-semibold text-brand-dark">
                 {BETA_FREE ? (
                   <>
-                    🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
+                    🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료 공개</b>
                   </>
                 ) : (
                   <>
-                    🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
+                    🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b> 공개
                   </>
                 )}
               </p>
-              <p className="mt-2 text-center text-xs text-brand-gray/70">
+              <p className="mt-2 max-w-md break-keep text-center text-[11px] leading-relaxed text-brand-gray/70">
                 * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
-                실제 결과는 사업장 정보에 따라 달라집니다.
+                실제 결과는 사업장 사정에 따라 달라집니다.
               </p>
             </div>
 
@@ -636,40 +637,41 @@ export default function Home() {
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
                 🔒
               </span>
-              <p className="mt-3 break-keep text-center text-base font-extrabold text-brand-dark sm:text-lg">
-                신청 사이트·필요 서류·승인 전략은 결과 페이지에서 전부 열립니다
+              <p className="mt-3 break-keep text-center text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">
+                신청 사이트·필요 서류·승인 전략은
+                <br className="sm:hidden" /> 결과 페이지에서 전부 공개
               </p>
-              <p className="mt-1.5 break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                위 목록은 <b className="text-brand-dark">맛보기</b>입니다.
-                진단을 마치면 <b className="text-brand-orange">내 사업장에 맞는 기관·제도·감면 전체와
-                신청 방법</b>을 한 번에 확인할 수 있습니다.
+              <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
+                위 <b className="text-brand-dark">내용</b>은 맛보기입니다. 진단을 마치면
+                <b className="text-brand-orange"> 내 사업장에 맞는 상품·제도·감면 제도 전체와
+                신청 방법까지</b> 한 번에 확인할 수 있습니다.
               </p>
-              {/* 하단 CTA (상단 CTA와 쌍) */}
+              {/* 하단 CTA (상단 CTA와 쌍 · 글자수에 맞게 폭 축소, 대표님 요청) */}
               <Editable
                 id="home-sample-cta"
                 as="a"
                 href="/diagnosis"
-                className="mx-auto mt-4 block w-full rounded-full border-2 border-brand-orange bg-brand-orange/5 py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/15 sm:text-lg animate-pulseGlow"
+                className="mx-auto mt-4 inline-block rounded-full border-2 border-brand-orange bg-brand-orange/5 px-6 py-3 text-center text-[15px] font-bold text-brand-orange transition hover:bg-brand-orange/15 sm:text-base animate-pulseGlow"
               >
                 {BETA_FREE
                   ? "🎁 지금 무료로 내 결과 전부 확인하기"
                   : "내 결과 전체 확인하기"}
               </Editable>
-              {/* 결제 유도 안내 — 대표님 요청: '결제 시 모든 정보를 확인할 수 있습니다' */}
-              <p className="mx-auto mt-2.5 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
+              {/* 오픈베타/결제 유도 안내 */}
+              <p className="mx-auto mt-2.5 break-keep text-center text-[12px] font-semibold text-brand-dark">
                 {BETA_FREE ? (
                   <>
-                    🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b>로 모든 정보를 확인할 수 있습니다.
+                    🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료 공개</b>
                   </>
                 ) : (
                   <>
-                    🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b>를 확인할 수 있습니다.
+                    🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b> 공개
                   </>
                 )}
               </p>
-              <p className="mt-2 text-center text-xs text-brand-gray/70">
+              <p className="mt-2 max-w-md break-keep text-center text-[11px] leading-relaxed text-brand-gray/70">
                 * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
-                실제 결과는 사업장 정보에 따라 달라집니다.
+                실제 결과는 사업장 사정에 따라 달라집니다.
               </p>
             </div>
           </div>
