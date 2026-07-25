@@ -208,6 +208,97 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 서비스 안내 (통합) — (대표님 요청) 기존 '🎯 서비스 안내' 박스 + '아직 몰라서 못 받고 있는 정부지원사업' 7칸 배지를
+            하나의 설명 섹션으로 통합. 순서: 제목/서브문구 → 4칸 체크리스트(VALUES) → 7칸 배지(TrustBadges)
+            (대표님 요청) 히어로 바로 아래로 이동 — 히어로와 맞닿아 상단 구분선 제거 */}
+        <section className="border-b border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
+          <div className="reveal mx-auto max-w-4xl text-center">
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+                🎯 서비스 안내
+              </span>
+              <Editable
+                id="home-value-title-v2"
+                as="h2"
+                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+              >
+                아직 몰라서 못 받고 있는 정부지원사업
+              </Editable>
+              <Editable
+                id="home-value-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
+              >
+                {BETA_FREE ? (
+                  <>
+                    내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
+                    <br />
+                    오픈 베타 기간 동안 무엇을·어디서·어떻게까지 <b className="text-brand-dark">한 푼도 안 받고</b> 전부 알려드립니다.
+                  </>
+                ) : (
+                  <>
+                    내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
+                    <br />
+                    무엇을·어디서·어떻게까지 한 번에 알려드립니다.
+                  </>
+                )}
+              </Editable>
+            </div>
+
+            {/* 소제목 ① — 무엇을 알려주는지 */}
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+              <Editable
+                id="home-value-step1"
+                as="span"
+                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
+              >
+                이런 걸 알려드려요
+              </Editable>
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+            </div>
+
+            {/* 해드리는 것 4칸 (VALUES) */}
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {VALUES.map((v, i) => (
+                <div
+                  key={i}
+                  className="hover-lift flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-card"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange text-sm font-bold text-white">
+                    ✓
+                  </span>
+                  <Editable
+                    id={`home-value-${i}`}
+                    as="span"
+                    className="break-keep text-sm font-semibold text-brand-dark sm:text-base"
+                  >
+                    {v}
+                  </Editable>
+                </div>
+              ))}
+            </div>
+
+            {/* 소제목 ② — 어떻게 찾아드리는지 */}
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+              <Editable
+                id="home-value-step2"
+                as="span"
+                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
+              >
+                이렇게 찾아드려요
+              </Editable>
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+            </div>
+
+            {/* 어떻게 찾아드리는지 7칸 배지 (TRUST_BADGES) */}
+            <div className="mt-4">
+              <TrustBadges badges={TRUST_BADGES} />
+            </div>
+          </div>
+        </section>
+
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
         <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-10">
           <div className="reveal mx-auto max-w-3xl">
@@ -500,98 +591,6 @@ export default function Home() {
               </div>
             </div>
 
-          </div>
-        </section>
-
-        {/* 서비스 안내 (통합) — (대표님 요청) 기존 '🎯 서비스 안내' 박스 + '아직 몰라서 못 받고 있는 정부지원사업' 7칸 배지를
-            하나의 설명 섹션으로 통합. 순서: 제목/서브문구 → 4칸 체크리스트(VALUES) → 7칸 배지(TrustBadges) */}
-        {/* 구간 구분 — 얇은 회색 가로줄 */}
-        <div className="section-divider" aria-hidden="true" />
-        <section className="border-b border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
-          <div className="reveal mx-auto max-w-4xl text-center">
-            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
-                🎯 서비스 안내
-              </span>
-              <Editable
-                id="home-value-title-v2"
-                as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
-              >
-                아직 몰라서 못 받고 있는 정부지원사업
-              </Editable>
-              <Editable
-                id="home-value-sub"
-                as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
-              >
-                {BETA_FREE ? (
-                  <>
-                    내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
-                    <br />
-                    오픈 베타 기간 동안 무엇을·어디서·어떻게까지 <b className="text-brand-dark">한 푼도 안 받고</b> 전부 알려드립니다.
-                  </>
-                ) : (
-                  <>
-                    내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
-                    <br />
-                    무엇을·어디서·어떻게까지 한 번에 알려드립니다.
-                  </>
-                )}
-              </Editable>
-            </div>
-
-            {/* 소제목 ① — 무엇을 알려주는지 */}
-            <div className="mt-8 flex items-center justify-center gap-2">
-              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
-              <Editable
-                id="home-value-step1"
-                as="span"
-                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
-              >
-                이런 걸 알려드려요
-              </Editable>
-              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
-            </div>
-
-            {/* 해드리는 것 4칸 (VALUES) */}
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {VALUES.map((v, i) => (
-                <div
-                  key={i}
-                  className="hover-lift flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-card"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange text-sm font-bold text-white">
-                    ✓
-                  </span>
-                  <Editable
-                    id={`home-value-${i}`}
-                    as="span"
-                    className="break-keep text-sm font-semibold text-brand-dark sm:text-base"
-                  >
-                    {v}
-                  </Editable>
-                </div>
-              ))}
-            </div>
-
-            {/* 소제목 ② — 어떻게 찾아드리는지 */}
-            <div className="mt-8 flex items-center justify-center gap-2">
-              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
-              <Editable
-                id="home-value-step2"
-                as="span"
-                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
-              >
-                이렇게 찾아드려요
-              </Editable>
-              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
-            </div>
-
-            {/* 어떻게 찾아드리는지 7칸 배지 (TRUST_BADGES) */}
-            <div className="mt-4">
-              <TrustBadges badges={TRUST_BADGES} />
-            </div>
           </div>
         </section>
 
