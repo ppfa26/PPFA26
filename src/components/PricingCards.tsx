@@ -70,9 +70,6 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                     <span className="text-[28px] font-black leading-none text-brand-red sm:text-[30px]">
                       오픈 베타 기간 0원
                     </span>
-                    <p className="text-[11px] text-brand-gray">
-                      * {tier.period} 이용
-                    </p>
                     <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-brand-orange">
                       지금 무료로 진단받기
                       <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>

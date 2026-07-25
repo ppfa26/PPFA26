@@ -334,7 +334,7 @@ export default function Home() {
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
                   <div className="rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:p-3.5">
                     <p className="break-keep text-center text-[15px] font-bold leading-snug text-brand-dark/80 sm:text-[17px]">
-                      🎉 진단 완료! <b className="font-black text-brand-orange">지금 신청해볼 수 있는 것들</b>이에요.
+                      🎉 진단 완료! <b className="font-black text-brand-orange">지금 신청해볼 수 있는 정부지원사업</b>이에요.
                     </p>
                     {/* 가로형: 왼쪽 큰 숫자 + 오른쪽 세로 요약 (실제 결과창 히어로와 동일 구조).
                         (대표님 요청) 왼쪽 '24개' 강조 확대 + 오른쪽 배지 가로 공백 축소 */}
