@@ -23,7 +23,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               single ? "w-full" : ""
             } ${
               tier.popular
-                ? "pricing-card-popular border-brand-orange bg-brand-grad pt-12 sm:pt-14"
+                ? "pricing-card-popular border-brand-orange bg-brand-grad pt-9 sm:pt-10"
                 : "border-gray-200 bg-white"
             }`}
           >
@@ -53,7 +53,8 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               {tier.subtitle}
             </Editable>
 
-            <div className="mt-2">
+            {/* (대표님 요청) 제목/부제와 0원 박스 사이 하단 여백 조금 확대(mt-2→mt-4) */}
+            <div className="mt-4">
               {BETA_FREE ? (
                 <>
                   {/* 베타: '오픈 베타 기간 0원' 강조 박스 — 대표님 요청으로 박스 자체를
