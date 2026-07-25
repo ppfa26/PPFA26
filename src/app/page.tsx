@@ -211,8 +211,8 @@ export default function Home() {
         {/* 서비스 안내 (통합) — (대표님 요청) 기존 '🎯 서비스 안내' 박스 + '아직 몰라서 못 받고 있는 정부지원사업' 7칸 배지를
             하나의 설명 섹션으로 통합. 순서: 제목/서브문구 → 4칸 체크리스트(VALUES) → 7칸 배지(TrustBadges)
             (대표님 요청) 히어로 바로 아래로 이동 — 히어로와 맞닿아 상단 구분선 제거 */}
-        <section className="border-b border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
-          <div className="reveal mx-auto max-w-4xl text-center">
+        <section className="bg-gray-50 px-4 py-7 sm:py-10">
+          <div className="reveal mx-auto max-w-3xl text-center">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 🎯 서비스 안내
@@ -296,16 +296,26 @@ export default function Home() {
             <div className="mt-4">
               <TrustBadges badges={TRUST_BADGES} />
             </div>
-          </div>
-        </section>
 
-        {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
-        <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-10">
-          <div className="reveal mx-auto max-w-3xl">
-            {/* (대표님 요청) 상단·하단 🔒 잠금 안내 박스(문구·CTA·주석) 모두 삭제 — 결과 예시본(목업)만 노출 */}
+            {/* 소제목 ③ — 실제 결과 예시 (대표님 요청: 위 소제목과 동일한 주황 라인으로
+                '서비스 안내'와 '결과 예시본'을 하나의 카테고리처럼 연결) */}
+            <div
+              id="result-sample-section"
+              className="mt-10 flex scroll-mt-20 items-center justify-center gap-2 sm:scroll-mt-24"
+            >
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+              <Editable
+                id="home-value-step3"
+                as="span"
+                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
+              >
+                실제로 이런 결과가 나와요
+              </Editable>
+              <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
+            </div>
 
-            {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
-            <div className="relative">
+            {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 · 목업은 max-w-3xl로 좁게 유지 */}
+            <div className="relative mx-auto mt-4 max-w-3xl text-left">
               <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-[0_16px_40px_rgba(0,0,0,0.10)]">
                 {/* 브라우저 상단 바 */}
                 <div className="flex items-center gap-1.5 border-b border-gray-100 bg-gray-50 px-4 py-2.5">
