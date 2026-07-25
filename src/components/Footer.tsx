@@ -35,9 +35,9 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
               as="p"
               className="mt-3 break-keep rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
             >
-              ⚠️ 본 서비스는 정부지원사업 승인을 보장하지 않습니다.
+              ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 AI 통합 매칭 서비스이며
               <br />
-              정부지원사업을 안내·추천하는 매칭 플랫폼입니다.
+              당사는 이용자의 정부지원사업 승인을 보장하지 않습니다.
             </Editable>
           </div>
 

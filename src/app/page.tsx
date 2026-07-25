@@ -203,7 +203,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-5 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:text-xs"
             >
-              본 서비스는 정부지원사업을 안내·매칭하는 플랫폼이며, 지원사업의 승인·선정·수령을 보장하지 않습니다.
+              본 서비스는 정부지원사업을 안내·추천하는 AI 통합 매칭 서비스이며, 당사는 이용자의 정부지원사업 승인을 보장하지 않습니다.
             </Editable>
           </div>
         </section>

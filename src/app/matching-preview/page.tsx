@@ -290,8 +290,10 @@ export default function MatchingPreview() {
                 💡 진단 결과는 안전하게 보관되어 있습니다. 로그인하시면 방금 분석한 결과가 그대로
                 열립니다.
               </div>
-              <p className="mt-4 break-keep text-[11px] text-brand-dark/50">
-                ⚠️ 본 서비스는 정부지원사업 안내·추천 서비스이며 승인을 보장하지 않습니다.
+              <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-dark/50">
+                ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 AI 통합 매칭 서비스이며
+                <br />
+                당사는 이용자의 정부지원사업 승인을 보장하지 않습니다.
               </p>
             </div>
           </div>

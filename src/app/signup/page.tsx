@@ -633,10 +633,6 @@ function SignupInner() {
                 </span>
               </label>
             </div>
-
-            <p className="mt-3 break-keep rounded-lg bg-brand-yellow/30 px-3 py-2 text-[11px] leading-relaxed text-brand-dark">
-              💡 가입(또는 소셜 로그인) 버튼을 누르면 필수 항목에 자동으로 동의 처리됩니다.
-            </p>
           </div>
         )}
 
@@ -648,8 +644,9 @@ function SignupInner() {
           </p>
         )}
         <p className="mt-3 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
-          ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 매칭 서비스이며 정부지원사업 승인을
-          보장하지 않습니다.
+          ⚠️ 본 서비스는 정부지원사업을 안내·추천하는 AI 통합 매칭 서비스이며
+          <br />
+          당사는 이용자의 정부지원사업 승인을 보장하지 않습니다.
         </p>
         </main>
         </div>
