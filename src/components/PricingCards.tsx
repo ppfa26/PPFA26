@@ -27,19 +27,21 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                 : "border-gray-200 bg-white"
             }`}
           >
+            {/* (대표님 요청) 빨간 띠는 남기고 안의 문구만 삭제 → 빈 띠(장식용)만 상단에 유지 */}
             {tier.popular && (
-              <div className="ribbon">
-                {BETA_FREE ? "🎉 오픈 베타 무료" : `🔥 ${single ? "런칭 특가" : "가장 인기"}`}
+              <div className="ribbon" aria-hidden="true">
+                {BETA_FREE ? "" : `🔥 ${single ? "런칭 특가" : "가장 인기"}`}
               </div>
             )}
 
-            <div className="text-2xl">{tier.icon}</div>
+            {/* (대표님 요청) 🎯 아이콘 + 제목을 한 줄로 왼쪽 상단 배치 */}
             <Editable
               id={`${prefix}-tier-${tier.id}-name`}
               as="h3"
-              className="pricing-title mt-2 text-2xl font-extrabold text-brand-dark sm:text-[26px]"
+              className="pricing-title flex items-center gap-2 text-2xl font-extrabold text-brand-dark sm:text-[26px]"
             >
-              {tier.name}
+              <span aria-hidden="true">{tier.icon}</span>
+              <span>{tier.name}</span>
             </Editable>
             <Editable
               id={`${prefix}-tier-${tier.id}-subtitle`}

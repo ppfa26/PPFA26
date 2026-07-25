@@ -17,10 +17,10 @@ const TRUST_BADGES = [
   { icon: "📚", text: "정부 부처 공문 팩트체크" },
   { icon: "🗂️", text: "정책자금·지원금·바우처·인증" },
   { icon: "🎯", text: "내 사업장에 가능한 것만 매칭" },
-  { icon: "💬", text: "채널톡 상담 운영" },
   { icon: "📝", text: "신청 방법·필요 서류·순서까지" },
   { icon: "🚫", text: "안내 및 추천 · 행정 대행 없음" },
   { icon: "💳", text: "부담 없는 1회성 결제" },
+  { icon: "💬", text: "채널톡 상담 운영" },
 ];
 
 const VALUES = [
@@ -636,7 +636,9 @@ export default function Home() {
           className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-10"
         >
           <div className="reveal mx-auto max-w-5xl">
-            <div className="section-title-glass mx-auto flex max-w-md flex-col items-center text-center">
+            {/* (대표님 요청) 상단 헤더 박스 복원 + 가로폭 확대 — max-w-md 제거해
+                '🎯 서비스 안내' 박스처럼 내용 폭(fit-content)에 맞게 넓게 */}
+            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
                 💳 서비스 이용 플랜
               </span>
@@ -670,7 +672,7 @@ export default function Home() {
         <div className="section-divider" aria-hidden="true" />
         {/* 섹션 상하 여백 — 하단 여백 축소(대표님 요청) */}
         <section className="bg-gray-50 px-4 py-7 sm:py-10">
-          <div className="reveal mx-auto max-w-3xl">
+          <div className="reveal mx-auto max-w-4xl">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 💬 자주 묻는 질문
