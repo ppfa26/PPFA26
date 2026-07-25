@@ -607,6 +607,24 @@ export default function Home() {
                   </details>
                 </div>
 
+                {/* 🔖 대표님들이 알아두면 좋은 정부 사이트 배너 — 목업 카드 안 최하단(실제 결과창과 동일, 대표님 요청) */}
+                <a
+                  href="/sites"
+                  className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-3.5 shadow-card transition hover:opacity-90"
+                >
+                  <span className="min-w-0">
+                    <span className="flex items-center gap-2 break-keep text-[16px] font-extrabold leading-snug text-white">
+                      🔖 대표님들이 알아두면 좋은 정부 사이트
+                    </span>
+                    <span className="mt-1 block break-keep text-[12px] leading-relaxed text-white/60">
+                      알아두면 좋은 정부 기관 공식 사이트예요
+                    </span>
+                  </span>
+                  <span className="shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark">
+                    사이트 바로가기
+                  </span>
+                </a>
+
               </div>
 
               {/* 하단 안내 — '핵심 상세는 결과 페이지에서 전부' 유도 (4개 모두 펼침이라 잠금 페이드는 제거) */}
@@ -653,24 +671,6 @@ export default function Home() {
               실제 결과는 사업장 정보에 따라 달라집니다.
             </p>
           </div>
-
-          {/* 🔖 대표님들이 알아두면 좋은 정부 사이트 배너 — 결과창 최하단과 동일(대표님 요청) */}
-          <a
-            href="/sites"
-            className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-3.5 shadow-card transition hover:opacity-90"
-          >
-            <span className="min-w-0">
-              <span className="flex items-center gap-2 break-keep text-[16px] font-extrabold leading-snug text-white">
-                🔖 대표님들이 알아두면 좋은 정부 사이트
-              </span>
-              <span className="mt-1 block break-keep text-[12px] leading-relaxed text-white/60">
-                알아두면 좋은 정부 기관 공식 사이트예요
-              </span>
-            </span>
-            <span className="shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark">
-              사이트 바로가기
-            </span>
-          </a>
         </section>
 
         {/* 가격표 */}
