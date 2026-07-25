@@ -305,7 +305,7 @@ export default function Home() {
                 🔒 안내 → CTA → 오픈베타 안내 → * 예시 주석 순서.
                 (대표님 요청) '서비스 안내' 박스처럼 블록 전체를 반투명 유리 박스(section-title-glass)로 감싸
                 야경 배경 위에서도 문구가 또렷하게 읽히도록 함 */}
-            <div className="section-title-glass mb-6 flex flex-col items-center px-4">
+            <div className="section-title-glass mb-6 flex w-full max-w-xl flex-col items-center px-6 sm:px-8" style={{ width: "100%" }}>
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
                 🔒
               </span>
@@ -314,9 +314,9 @@ export default function Home() {
                 <br className="sm:hidden" /> 결과 페이지에서 전부 공개
               </p>
               <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                위 <b className="text-brand-dark">내용</b>은 맛보기입니다. 진단을 마치면
+                진단을 마치면
                 <b className="text-brand-orange"> 내 사업장에 맞는 상품·제도·감면 제도 전체와
-                신청 방법까지</b> 한 번에 확인할 수 있습니다.
+                신청 방법까지</b> 한 번에 공개
               </p>
               {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (글자수에 맞게 폭 축소, 대표님 요청) */}
               <Editable
@@ -634,7 +634,7 @@ export default function Home() {
 
             {/* 하단 안내 블록 — 상단과 완전 통일 (대표님 요청: '서비스 안내' 박스처럼
                 🔒 안내 + CTA + 오픈베타 + 주석 전체를 반투명 유리 박스로 감싸 야경 위에서도 또렷하게) */}
-            <div className="section-title-glass mt-6 flex flex-col items-center px-4">
+            <div className="section-title-glass mt-6 flex w-full max-w-xl flex-col items-center px-6 sm:px-8" style={{ width: "100%" }}>
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
                 🔒
               </span>
@@ -643,9 +643,9 @@ export default function Home() {
                 <br className="sm:hidden" /> 결과 페이지에서 전부 공개
               </p>
               <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                위 <b className="text-brand-dark">내용</b>은 맛보기입니다. 진단을 마치면
+                진단을 마치면
                 <b className="text-brand-orange"> 내 사업장에 맞는 상품·제도·감면 제도 전체와
-                신청 방법까지</b> 한 번에 확인할 수 있습니다.
+                신청 방법까지</b> 한 번에 공개
               </p>
               {/* 하단 CTA (상단 CTA와 쌍 · 글자수에 맞게 폭 축소, 대표님 요청) */}
               <Editable
