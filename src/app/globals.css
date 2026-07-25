@@ -342,10 +342,11 @@ h4 {
   max-width: 42rem; /* = max-w-2xl, FAQ 제목 박스 */
 }
 
-/* (대표님 요청) 이용료 헤더 박스만 가로폭 조금 축소 */
+/* (대표님 요청) 이용료 헤더 박스 폭을 카드/안내문(max-w-xl=36rem)과 동일하게
+   맞춰 세 박스의 좌우 라인이 일치하도록 */
 .section-title-glass.is-wide-pricing {
   width: 100%;
-  max-width: 38rem;
+  max-width: 36rem;
 }
 
 /* (대표님 요청) '🎯 서비스 안내' 박스 가로폭 조금 확대 */
