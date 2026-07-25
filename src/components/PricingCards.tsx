@@ -23,7 +23,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               single ? "w-full" : ""
             } ${
               tier.popular
-                ? "pricing-card-popular border-brand-orange bg-brand-grad"
+                ? "pricing-card-popular border-brand-orange bg-brand-grad pt-12 sm:pt-14"
                 : "border-gray-200 bg-white"
             }`}
           >
@@ -37,7 +37,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <Editable
               id={`${prefix}-tier-${tier.id}-name`}
               as="h3"
-              className="pricing-title mt-1 text-lg font-extrabold text-brand-dark"
+              className="pricing-title mt-2 text-2xl font-extrabold text-brand-dark sm:text-[26px]"
             >
               {tier.name}
             </Editable>
@@ -54,19 +54,27 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <div className="mt-2">
               {BETA_FREE ? (
                 <>
-                  {/* 베타: '오픈 베타 기간 0원'만 강조 (대표님 요청: '원래 9,900원' 삭제)
-                      — 하나의 유리 박스에 세로로 정돈 (문구 동일) */}
-                  <div className="pricing-beta-box mt-1 flex flex-col items-center gap-1.5 rounded-2xl px-4 py-4 text-center">
+                  {/* 베타: '오픈 베타 기간 0원' 강조 박스 — 대표님 요청으로 박스 자체를
+                      무료 진단으로 넘어가는 CTA 버튼(Link)으로 전환 (문구 동일) */}
+                  <Link
+                    href="/diagnosis"
+                    aria-label="무료 진단 시작하기"
+                    className="pricing-beta-box group mt-1 flex flex-col items-center gap-1.5 rounded-2xl px-4 py-4 text-center transition hover:brightness-110 active:scale-[0.99]"
+                  >
                     <span className="rounded-full bg-brand-red px-2.5 py-0.5 text-[11px] font-bold tracking-tight text-white">
                       오픈 베타 100% 무료
                     </span>
-                    <span className="text-[28px] font-black leading-none text-brand-red">
+                    <span className="text-[28px] font-black leading-none text-brand-red sm:text-[30px]">
                       오픈 베타 기간 0원
                     </span>
                     <p className="text-[11px] text-brand-gray">
                       * {tier.period} 이용
                     </p>
-                  </div>
+                    <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-brand-orange">
+                      지금 무료로 진단받기
+                      <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
+                    </span>
+                  </Link>
                 </>
               ) : (
                 <>
