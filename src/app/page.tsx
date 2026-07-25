@@ -306,7 +306,7 @@ export default function Home() {
               id="home-sample-cta-top"
               as="a"
               href="/diagnosis"
-              className="mx-auto mb-5 block max-w-md rounded-full border-2 border-brand-orange bg-transparent py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
+              className="mx-auto mb-5 block max-w-md rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
             >
               {BETA_FREE
                 ? "🎁 지금 무료로 내 결과 전부 확인하기"
@@ -564,9 +564,9 @@ export default function Home() {
                     {/* 실제 결과창 공고 카드(제목+지원규모 태그 → 🗓️신청기간 배지 → 🏛️기관·대상 + 원문 버튼)와 동일 */}
                     <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { title: "2025 스마트공장 구축·고도화 지원사업", scale: "최대 6천만원", deadline: "상시(예산 소진 시 마감)", org: "중소벤처기업부", target: "제조 중소기업" },
-                        { title: "지역 소상공인 경영환경 개선 지원", scale: "최대 300만원", deadline: "~ 예산 소진 시", org: "인천광역시", target: "인천 소상공인" },
-                        { title: "중소기업 수출 바우처 사업", scale: "최대 1억원", deadline: "연중 수시 공고", org: "산업통상자원부", target: "수출 희망 중소기업" },
+                        { title: "2026년 스마트 제조혁신 지원사업(스마트공장 구축)", scale: "최대 6천만원", deadline: "2026년 통합공고 진행", org: "중소벤처기업부", target: "제조 중소기업" },
+                        { title: "2026년 인천 소상공인 경영환경개선 지원사업", scale: "항목별 최대 250만원", deadline: "예산 소진 시 마감", org: "인천광역시", target: "인천 소상공인" },
+                        { title: "2026년 수출바우처 사업(수출지원기반활용)", scale: "최대 1억원", deadline: "연중 차수별 모집", org: "산업통상자원부", target: "수출 희망 중소기업" },
                       ].map((it, i) => (
                         <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
@@ -611,7 +611,7 @@ export default function Home() {
               id="home-sample-cta"
               as="a"
               href="/diagnosis"
-              className="mx-auto mt-5 block max-w-md rounded-full border-2 border-brand-orange bg-transparent py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
+              className="mx-auto mt-5 block max-w-md rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
             >
               {BETA_FREE
                 ? "🎁 지금 무료로 내 결과 전부 확인하기"
