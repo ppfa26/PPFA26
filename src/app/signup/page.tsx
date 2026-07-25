@@ -55,14 +55,15 @@ function SignupInner() {
     setMarketingAgree(v);
   };
 
-  // 가입/로그인 버튼 클릭 시 필수 동의 자동 체크 (대표님 요청 — 버튼 누르면 자동 클릭)
-  const ensureRequiredAgreed = () => {
+  // 가입 시 필수 동의 검사 — 개인정보보호법상 동의는 이용자가 '직접' 체크해야 유효하므로
+  // 자동 체크(예전 방식)를 제거하고, 필수 항목 미동의 시 진행을 차단한다.
+  //  · 반환 true = 통과 / false = 미동의(차단, 안내 메시지 표시)
+  const requireAgreementOrBlock = (): boolean => {
     if (!allRequiredChecked) {
-      setAgreeAge(true);
-      setAgreeTerms(true);
-      setAgreePrivacy(true);
-      setAgreeThird(true);
+      setMsg("필수 약관에 동의해 주세요. (만 14세 이상 · 이용약관 · 개인정보 수집·이용)");
+      return false;
     }
+    return true;
   };
 
   // 이미 로그인된 경우 이동:
@@ -137,18 +138,18 @@ function SignupInner() {
   // 소셜 로그인 (카카오 / 구글) — Supabase OAuth
   const handleOAuth = async (provider: "kakao" | "google", label = "") => {
     setMsg(null);
-    // 소셜 로그인도 가입 절차 → 필수 동의 자동 체크 후 진행 (대표님 요청)
-    ensureRequiredAgreed();
-    // 동의 시각을 기록해 두었다가 콜백 후 가입 완료 시점에 사용 (근거 보관)
+    // 소셜 로그인도 '가입' 절차이므로 필수 동의를 이용자가 직접 체크했는지 검사 (미동의 시 차단)
+    if (!requireAgreementOrBlock()) return;
+    // 동의 시각·실제 체크 상태를 기록해 두었다가 콜백 후 가입 완료 시점에 사용 (근거 보관)
     try {
       if (typeof window !== "undefined") {
         localStorage.setItem(
           "mpp_consent",
           JSON.stringify({
-            age: true,
-            terms: true,
-            privacy: true,
-            third_party: true,
+            age: agreeAge,
+            terms: agreeTerms,
+            privacy: agreePrivacy,
+            third_party: agreeThird,
             marketing: marketingAgree,
             at: new Date().toISOString(),
             method: provider,
@@ -208,8 +209,8 @@ function SignupInner() {
       setMsg("비밀번호는 6자 이상으로 입력해 주세요.");
       return;
     }
-    // 회원가입 시 필수 동의 자동 체크 후 진행 (대표님 요청 — 버튼 누르면 자동 클릭)
-    if (mode === "signup") ensureRequiredAgreed();
+    // 회원가입 시 필수 동의를 이용자가 직접 체크했는지 검사 (미동의 시 차단 — 로그인 모드는 불필요)
+    if (mode === "signup" && !requireAgreementOrBlock()) return;
 
     setLoading(true);
     try {
@@ -225,11 +226,11 @@ function SignupInner() {
               phone,
               tier: tier || "",
               utm_source,
-              // ── 약관 동의 기록 (가입 시 필수 동의 근거 보관, 대표님 요청) ──
-              agree_age: true,             // [필수] 만 14세 이상
-              agree_terms: true,           // [필수] 이용약관
-              agree_privacy: true,         // [필수] 개인정보 수집·이용
-              agree_third_party: true,     // [필수] 개인정보 제3자 제공
+              // ── 약관 동의 기록 (이용자가 실제 체크한 상태를 그대로 보관 — 동의 근거) ──
+              agree_age: agreeAge,             // [필수] 만 14세 이상
+              agree_terms: agreeTerms,         // [필수] 이용약관
+              agree_privacy: agreePrivacy,     // [필수] 개인정보 수집·이용
+              agree_third_party: agreeThird,   // 개인정보 제3자 제공
               consent_at: new Date().toISOString(),
               // 마케팅 수신 동의 (동의 시각 함께 기록 — 향후 정식 오픈 안내 발송 근거)
               marketing_agree: marketingAgree,
@@ -381,11 +382,19 @@ function SignupInner() {
 
         {/* 소셜 로그인 (간편 가입) */}
         <div className="mb-5 space-y-2">
+          {/* 미동의 안내 — 개인정보보호법상 동의는 이용자가 직접 체크해야 유효하므로,
+              버튼은 살려 두되(클릭 시 안내 메시지 노출) 미동의 상태를 명확히 알려 준다. */}
+          {!allRequiredChecked && (
+            <p className="mb-1 rounded-lg bg-amber-50 px-3 py-2 text-center text-xs font-medium text-amber-700">
+              아래 필수 약관에 동의하시면 간편 가입이 진행됩니다.
+            </p>
+          )}
           <button
             type="button"
             disabled={loading}
+            aria-disabled={!allRequiredChecked}
             onClick={() => handleOAuth("kakao", "카카오")}
-            className="relative flex w-full items-center justify-center rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95 disabled:opacity-60"
+            className={`relative flex w-full items-center justify-center rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95 disabled:opacity-60 ${!allRequiredChecked ? "opacity-70" : ""}`}
           >
             <svg className="absolute left-4 h-5 w-5" viewBox="0 0 24 24" fill="#191600" aria-hidden="true">
               <path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.9 5.33 4.76 6.74-.16.57-.86 3.09-.9 3.29 0 0-.02.15.08.21.1.06.22.01.22.01.28-.04 3.23-2.12 3.74-2.48.68.1 1.38.15 2.1.15 5.52 0 10-3.58 10-8S17.52 3 12 3z" />
@@ -395,8 +404,9 @@ function SignupInner() {
           <button
             type="button"
             disabled={loading}
+            aria-disabled={!allRequiredChecked}
             onClick={() => handleOAuth("google", "구글")}
-            className="relative flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50 disabled:opacity-60"
+            className={`relative flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50 disabled:opacity-60 ${!allRequiredChecked ? "opacity-70" : ""}`}
           >
             <svg className="absolute left-4 h-5 w-5" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z" />
