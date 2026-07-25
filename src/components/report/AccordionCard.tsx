@@ -48,7 +48,13 @@ export default function AccordionCard({
             </span>
           )}
         </span>
-        {/* 펼침/접힘 화살표만 (👆 클릭 라벨 제거 — 화살표로 충분히 인지) */}
+        {/* 닫혀 있을 때만 '클릭 👆' 라벨 노출 (대표님 요청: 결과창 닫힌 아코디언 화살표 옆에 귀엽게). 펼치면 사라짐 */}
+        {!open && (
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-orange/10 px-2 py-0.5 text-[11px] font-bold text-brand-orange animate-pulse">
+            클릭 👆
+          </span>
+        )}
+        {/* 펼침/접힘 화살표 */}
         <span
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 ${
             open ? "rotate-180" : ""

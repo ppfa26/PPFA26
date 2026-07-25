@@ -306,7 +306,7 @@ export default function Home() {
               id="home-sample-cta-top"
               as="a"
               href="/diagnosis"
-              className="mx-auto mb-5 block max-w-md rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
+              className="mx-auto mb-5 block w-full rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
             >
               {BETA_FREE
                 ? "🎁 지금 무료로 내 결과 전부 확인하기"
@@ -474,13 +474,13 @@ export default function Home() {
                       </span>
                     </summary>
                     <div className="px-5 pb-5 pt-0">
-                    <div className={`mt-4 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
                         { inst: "중소벤처기업진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "신성장기반자금 · 신시장진출자금", hook: "직접대출 최대 60억, 금리 2%대 · 시설/운전자금 모두 가능" },
                         { inst: "소상공인시장진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "혁신성장촉진자금 · 강한소상공인 · 대환대출", hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상" },
                         { inst: "신용보증기금 / 기술보증기금 / 무역보험공사 / 신용보증재단", cat: "보증서", catCls: "bg-indigo-100 text-indigo-700", prod: "보증서 발급 → 은행 대리대출", hook: "담보 없이 보증서로 은행 대출 실행 가능" },
                       ].map((m, i) => (
-                        <div key={i} className="py-3 first:pt-0">
+                        <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                           <div className="flex flex-wrap items-center gap-1.5">
                             <span className="text-sm font-extrabold text-brand-dark">{m.inst}</span>
                             <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${m.catCls}`}>{m.cat}</span>
@@ -611,7 +611,7 @@ export default function Home() {
               id="home-sample-cta"
               as="a"
               href="/diagnosis"
-              className="mx-auto mt-5 block max-w-md rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
+              className="mx-auto mt-5 block w-full rounded-full border-2 border-brand-orange cta-glass py-4 text-center text-base font-bold text-brand-orange transition hover:bg-brand-orange/10 sm:text-lg animate-pulseGlow"
             >
               {BETA_FREE
                 ? "🎁 지금 무료로 내 결과 전부 확인하기"
