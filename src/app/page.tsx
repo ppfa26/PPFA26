@@ -13,12 +13,12 @@ import TrustBadges from "@/components/home/TrustBadges";
 import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
-  { icon: "🏛️", text: "공식 정부 사이트 매일 자동 크롤링" },
+  { icon: "🏛️", text: "공식 정부 사이트 매일 새벽 크롤링" },
   { icon: "📚", text: "정부 부처 공문 팩트체크" },
-  { icon: "🎯", text: "내 사업장에 진짜 되는 것만 매칭" },
+  { icon: "🎯", text: "내 사업장에 가능한 것만 매칭" },
   { icon: "🗂️", text: "정책자금·지원금·바우처·인증" },
   { icon: "📝", text: "신청 방법·필요 서류·순서까지 안내" },
-  { icon: "🚫", text: "행정 대행 없음 · 승인 수수료 0원" },
+  { icon: "🚫", text: "안내 및 추천 · 행정 대행 없음" },
   { icon: "💳", text: "부담 없는 1회성 결제" },
 ];
 
@@ -37,8 +37,6 @@ const FAQS = [
         아닙니다. 1회성 결제입니다.
         <br />
         자동으로 재결제되지 않습니다.
-        <br />
-        만족하시면 1개월 단위로 연장하실 수 있습니다.
       </>
     ),
   },
@@ -478,9 +476,9 @@ export default function Home() {
                     <div className="px-5 pb-5 pt-0">
                     <div className={`mt-4 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { inst: "중소벤처기업진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "신성장기반자금 · 신시장진출지원자금", hook: "직접대출 최대 60억, 금리 2%대 · 시설/운전자금 모두 가능" },
-                        { inst: "소상공인시장진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "성장가속화자금 · 강한소상공인자금 · 대환대출자금", hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상" },
-                        { inst: "신용보증기금 / 기술보증기금 / 무역보험공사 / 신용보증재단", cat: "보증서", catCls: "bg-indigo-100 text-indigo-700", prod: "보증서 발급 → 은행 대리대출 연계", hook: "담보 없이 보증서로 은행 대출 실행 가능" },
+                        { inst: "중소벤처기업진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "신성장기반자금 · 신시장진출자금", hook: "직접대출 최대 60억, 금리 2%대 · 시설/운전자금 모두 가능" },
+                        { inst: "소상공인시장진흥공단", cat: "정책자금", catCls: "bg-blue-100 text-blue-700", prod: "혁신성장촉진자금 · 강한소상공인 · 대환대출", hook: "저금리 정책자금으로 고금리 대출 갈아타기(대환) 대상" },
+                        { inst: "신용보증기금 / 기술보증기금 / 무역보험공사 / 신용보증재단", cat: "보증서", catCls: "bg-indigo-100 text-indigo-700", prod: "보증서 발급 → 은행 대리대출", hook: "담보 없이 보증서로 은행 대출 실행 가능" },
                       ].map((m, i) => (
                         <div key={i} className="py-3 first:pt-0">
                           <div className="flex flex-wrap items-center gap-1.5">

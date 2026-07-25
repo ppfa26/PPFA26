@@ -9,7 +9,7 @@ import PricingCards from "@/components/PricingCards";
 const PRICING_FAQ = [
   {
     q: "Q1. 자동결제인가요?",
-    a: "아닙니다. 1회성 결제입니다.\n자동으로 재결제되지 않습니다.\n만족하시면 1개월 단위로 연장하실 수 있습니다.",
+    a: "아닙니다. 1회성 결제입니다.\n자동으로 재결제되지 않습니다.",
   },
   {
     q: "Q2. 행정대행 신청해주시나요?",
