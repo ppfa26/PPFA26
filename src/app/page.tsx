@@ -10,7 +10,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
 import TrustBadges from "@/components/home/TrustBadges";
-import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
+import { BETA_FREE } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 새벽 크롤링" },
@@ -211,51 +211,7 @@ export default function Home() {
         {/* AI 매칭 결과 예시본 — 실제 결과 화면(대시보드)과 동일한 구조로 재현 */}
         <section id="result-sample-section" className="scroll-mt-20 border-y border-gray-100 bg-white px-4 py-7 sm:scroll-mt-24 sm:py-10">
           <div className="reveal mx-auto max-w-3xl">
-            {/* (대표님 요청) 상단 '실제 결과 화면 예시 / 진단 한 번으로… / 절감 4칸' 통합 박스 삭제 */}
-
-            {/* 상단 안내 블록 — 하단과 문구·구성 완전 통일 (대표님 요청: 상단이 너무 짧아 하단처럼 길게)
-                🔒 안내 → CTA → 오픈베타 안내 → * 예시 주석 순서.
-                (대표님 요청) '서비스 안내' 박스처럼 블록 전체를 반투명 유리 박스(section-title-glass)로 감싸
-                야경 배경 위에서도 문구가 또렷하게 읽히도록 함 */}
-            <div className="section-title-glass mb-6 flex w-full max-w-lg flex-col items-center px-6 sm:px-8">
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
-                🔒
-              </span>
-              <p className="mt-3 break-keep text-center text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">
-                신청 사이트·필요 서류·승인 전략은
-                <br className="sm:hidden" /> 결과 페이지에서 전부 공개
-              </p>
-              <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-orange">
-                진단을 마치면 내 사업장에 맞는 상품·제도·감면 제도 전체와
-                신청 방법까지 한 번에 공개
-              </p>
-              {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (글자수에 맞게 폭 축소, 대표님 요청) */}
-              <Editable
-                id="home-sample-cta-top"
-                as="a"
-                href="/diagnosis"
-                className="mx-auto mt-4 inline-block rounded-full border-2 border-brand-orange bg-brand-orange/5 px-6 py-3 text-center text-[15px] font-bold text-brand-orange transition hover:bg-brand-orange/15 sm:text-base animate-pulseGlow"
-              >
-                {BETA_FREE
-                  ? "🎁 지금 무료로 내 결과 전부 확인하기"
-                  : "내 결과 전체 확인하기"}
-              </Editable>
-              <p className="mx-auto mt-2.5 break-keep text-center text-[12px] font-semibold text-brand-dark">
-                {BETA_FREE ? (
-                  <>
-                    🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료 공개</b>
-                  </>
-                ) : (
-                  <>
-                    🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b> 공개
-                  </>
-                )}
-              </p>
-              <p className="mt-2 max-w-md break-keep text-center text-[11px] leading-relaxed text-brand-gray/70">
-                * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
-                <br className="sm:hidden" /> 실제 결과는 사업장 사정에 따라 달라집니다.
-              </p>
-            </div>
+            {/* (대표님 요청) 상단·하단 🔒 잠금 안내 박스(문구·CTA·주석) 모두 삭제 — 결과 예시본(목업)만 노출 */}
 
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
             <div className="relative">
@@ -544,56 +500,14 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 하단 안내 블록 — 상단과 완전 통일 (대표님 요청: '서비스 안내' 박스처럼
-                🔒 안내 + CTA + 오픈베타 + 주석 전체를 반투명 유리 박스로 감싸 야경 위에서도 또렷하게) */}
-            <div className="section-title-glass mt-6 flex w-full max-w-lg flex-col items-center px-6 sm:px-8">
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
-                🔒
-              </span>
-              <p className="mt-3 break-keep text-center text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">
-                신청 사이트·필요 서류·승인 전략은
-                <br className="sm:hidden" /> 결과 페이지에서 전부 공개
-              </p>
-              <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-orange">
-                진단을 마치면 내 사업장에 맞는 상품·제도·감면 제도 전체와
-                신청 방법까지 한 번에 공개
-              </p>
-              {/* 하단 CTA (상단 CTA와 쌍 · 글자수에 맞게 폭 축소, 대표님 요청) */}
-              <Editable
-                id="home-sample-cta"
-                as="a"
-                href="/diagnosis"
-                className="mx-auto mt-4 inline-block rounded-full border-2 border-brand-orange bg-brand-orange/5 px-6 py-3 text-center text-[15px] font-bold text-brand-orange transition hover:bg-brand-orange/15 sm:text-base animate-pulseGlow"
-              >
-                {BETA_FREE
-                  ? "🎁 지금 무료로 내 결과 전부 확인하기"
-                  : "내 결과 전체 확인하기"}
-              </Editable>
-              {/* 오픈베타/결제 유도 안내 */}
-              <p className="mx-auto mt-2.5 break-keep text-center text-[12px] font-semibold text-brand-dark">
-                {BETA_FREE ? (
-                  <>
-                    🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료 공개</b>
-                  </>
-                ) : (
-                  <>
-                    🔓 결제 시 <b className="text-brand-red">모든 정보(신청 사이트·서류·전략)</b> 공개
-                  </>
-                )}
-              </p>
-              <p className="mt-2 max-w-md break-keep text-center text-[11px] leading-relaxed text-brand-gray/70">
-                * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
-                <br className="sm:hidden" /> 실제 결과는 사업장 사정에 따라 달라집니다.
-              </p>
-            </div>
           </div>
         </section>
 
-        {/* 신뢰 배지 + 핵심 강점 (7칸 통합) */}
-        {/* 가치 제안 4단계 — (대표님 요청) 7네모칸 섹션보다 위로 배치 */}
+        {/* 서비스 안내 (통합) — (대표님 요청) 기존 '🎯 서비스 안내' 박스 + '아직 몰라서 못 받고 있는 정부지원사업' 7칸 배지를
+            하나의 설명 섹션으로 통합. 순서: 제목/서브문구 → 4칸 체크리스트(VALUES) → 7칸 배지(TrustBadges) */}
         {/* 구간 구분 — 얇은 회색 가로줄 */}
         <div className="section-divider" aria-hidden="true" />
-        <section className="bg-gray-50 px-4 py-7 sm:py-10">
+        <section className="border-b border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
           <div className="reveal mx-auto max-w-4xl text-center">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
@@ -604,34 +518,30 @@ export default function Home() {
                 as="h2"
                 className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
               >
-                {BETA_FREE ? (
-                  <>오픈 베타 기간 전부 무료로 알려드립니다.</>
-                ) : (
-                  <>
-                    <span className="text-brand-red">{OFFICIAL_PRICE_LABEL}</span>으로 이 모든 걸 알려드립니다.
-                  </>
-                )}
+                아직 몰라서 못 받고 있는 정부지원사업
               </Editable>
               <Editable
                 id="home-value-sub"
                 as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
               >
                 {BETA_FREE ? (
                   <>
-                    복잡한 정부지원사업을 정리해 드립니다.
+                    내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
                     <br />
                     오픈 베타 기간 동안 무엇을·어디서·어떻게까지 <b className="text-brand-dark">한 푼도 안 받고</b> 전부 알려드립니다.
                   </>
                 ) : (
                   <>
-                    복잡한 정부지원사업을 정리해 드립니다.
+                    내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
                     <br />
                     무엇을·어디서·어떻게까지 한 번에 알려드립니다.
                   </>
                 )}
               </Editable>
             </div>
+
+            {/* 해드리는 것 4칸 (VALUES) */}
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {VALUES.map((v, i) => (
                 <div
@@ -651,29 +561,11 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
 
-        {/* 신뢰 배지 7칸 — (대표님 요청) 서비스 안내 섹션보다 아래로 배치 */}
-        <section className="border-y border-gray-100 bg-gray-50 px-4 py-7 sm:py-10">
-          <div className="reveal mx-auto max-w-4xl">
-            <div className="section-title-glass mx-auto flex flex-col items-center text-center">
-              <Editable
-                id="home-compare-title"
-                as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
-              >
-                아직 몰라서 못 받고 있는 정부지원사업
-              </Editable>
-              <Editable
-                id="home-compare-sub"
-                as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
-              >
-                내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
-              </Editable>
+            {/* 어떻게 찾아드리는지 7칸 배지 (TRUST_BADGES) */}
+            <div className="mt-6">
+              <TrustBadges badges={TRUST_BADGES} />
             </div>
-            <TrustBadges badges={TRUST_BADGES} />
           </div>
         </section>
 
