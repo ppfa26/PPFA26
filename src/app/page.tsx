@@ -208,9 +208,10 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 구간 구분 — 얇은 회색 가로줄 (대표님 요청: 히어로↔서비스안내 사이에도 구분선 추가) */}
+        <div className="section-divider" aria-hidden="true" />
         {/* 서비스 안내 (통합) — (대표님 요청) 기존 '🎯 서비스 안내' 박스 + '아직 몰라서 못 받고 있는 정부지원사업' 7칸 배지를
-            하나의 설명 섹션으로 통합. 순서: 제목/서브문구 → 4칸 체크리스트(VALUES) → 7칸 배지(TrustBadges)
-            (대표님 요청) 히어로 바로 아래로 이동 — 히어로와 맞닿아 상단 구분선 제거 */}
+            하나의 설명 섹션으로 통합. 순서: 제목/서브문구 → 4칸 체크리스트(VALUES) → 7칸 배지(TrustBadges) */}
         <section className="bg-gray-50 px-4 py-7 sm:py-10">
           <div className="reveal mx-auto max-w-3xl text-center">
             <div className="section-title-glass mx-auto flex flex-col items-center text-center">
@@ -604,6 +605,8 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 구간 구분 — 얇은 회색 가로줄 (대표님 요청: 결과예시↔이용료 사이에도 구분선 추가) */}
+        <div className="section-divider" aria-hidden="true" />
         {/* 가격표 */}
         <section
           id="pricing-section"
