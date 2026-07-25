@@ -313,10 +313,9 @@ export default function Home() {
                 신청 사이트·필요 서류·승인 전략은
                 <br className="sm:hidden" /> 결과 페이지에서 전부 공개
               </p>
-              <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                진단을 마치면
-                <b className="text-brand-orange"> 내 사업장에 맞는 상품·제도·감면 제도 전체와
-                신청 방법까지</b> 한 번에 공개
+              <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-orange">
+                진단을 마치면 내 사업장에 맞는 상품·제도·감면 제도 전체와
+                신청 방법까지 한 번에 공개
               </p>
               {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (글자수에 맞게 폭 축소, 대표님 요청) */}
               <Editable
@@ -342,7 +341,7 @@ export default function Home() {
               </p>
               <p className="mt-2 max-w-md break-keep text-center text-[11px] leading-relaxed text-brand-gray/70">
                 * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
-                실제 결과는 사업장 사정에 따라 달라집니다.
+                <br className="sm:hidden" /> 실제 결과는 사업장 사정에 따라 달라집니다.
               </p>
             </div>
 
@@ -606,27 +605,27 @@ export default function Home() {
                         </div>
                       ))}
                     </div>
+
+                    {/* 🔖 정부 사이트 안내 — '추가적인 그 외 정부지원사업' 목차 최하단에 포함(대표님 요청).
+                        예시본이라 클릭 비활성(후킹용: '이런 것도 알려주는구나'). 실제 이동은 결과창에서만. */}
+                    <div
+                      aria-hidden="true"
+                      className="mt-3 flex select-none flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3.5"
+                    >
+                      <span className="min-w-0">
+                        <span className="flex items-center gap-2 break-keep text-[14px] font-extrabold leading-snug text-brand-dark sm:text-[15px]">
+                          🔖 대표님들이 알아두면 좋은 정부 사이트
+                        </span>
+                        <span className="mt-0.5 block break-keep text-[12px] leading-relaxed text-brand-gray">
+                          알아두면 좋은 정부 기관 공식 사이트예요
+                        </span>
+                      </span>
+                      <span className="shrink-0 rounded-full border border-brand-orange/40 bg-white px-3.5 py-1.5 text-[12px] font-bold text-brand-orange">
+                        사이트 바로가기
+                      </span>
+                    </div>
                     </div>
                   </details>
-                </div>
-
-                {/* 🔖 정부 사이트 안내 — 예시본이라 클릭 비활성(후킹용: '이런 것도 알려주는구나').
-                    실제 이동은 결과창에서만. 목업 안 다른 카드와 톤 통일(밝은 카드 + 부드러운 테두리, 대표님 요청) */}
-                <div
-                  aria-hidden="true"
-                  className="mt-4 flex select-none flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3.5"
-                >
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-2 break-keep text-[14px] font-extrabold leading-snug text-brand-dark sm:text-[15px]">
-                      🔖 대표님들이 알아두면 좋은 정부 사이트
-                    </span>
-                    <span className="mt-0.5 block break-keep text-[12px] leading-relaxed text-brand-gray">
-                      공식 정부 기관 사이트 모음도 함께 알려드려요
-                    </span>
-                  </span>
-                  <span className="shrink-0 rounded-full border border-brand-orange/40 bg-white px-3.5 py-1.5 text-[12px] font-bold text-brand-orange">
-                    🔒 결과에서 열기
-                  </span>
                 </div>
 
               </div>
@@ -642,10 +641,9 @@ export default function Home() {
                 신청 사이트·필요 서류·승인 전략은
                 <br className="sm:hidden" /> 결과 페이지에서 전부 공개
               </p>
-              <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-gray">
-                진단을 마치면
-                <b className="text-brand-orange"> 내 사업장에 맞는 상품·제도·감면 제도 전체와
-                신청 방법까지</b> 한 번에 공개
+              <p className="mt-1.5 max-w-md break-keep text-center text-[13px] font-semibold leading-relaxed text-brand-orange">
+                진단을 마치면 내 사업장에 맞는 상품·제도·감면 제도 전체와
+                신청 방법까지 한 번에 공개
               </p>
               {/* 하단 CTA (상단 CTA와 쌍 · 글자수에 맞게 폭 축소, 대표님 요청) */}
               <Editable
@@ -672,7 +670,7 @@ export default function Home() {
               </p>
               <p className="mt-2 max-w-md break-keep text-center text-[11px] leading-relaxed text-brand-gray/70">
                 * 위 화면은 실제 결과 화면을 재구성한 예시입니다.
-                실제 결과는 사업장 사정에 따라 달라집니다.
+                <br className="sm:hidden" /> 실제 결과는 사업장 사정에 따라 달라집니다.
               </p>
             </div>
           </div>
