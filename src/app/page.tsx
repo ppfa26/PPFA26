@@ -303,6 +303,29 @@ export default function Home() {
           <div className="reveal mx-auto max-w-3xl">
             {/* (대표님 요청) 상단 '실제 결과 화면 예시 / 진단 한 번으로… / 절감 4칸' 통합 박스 삭제 */}
 
+            {/* 상단 CTA — 예시를 보기 '전'에도 바로 진단으로 유도 (상단 1개 + 하단 1개 배치, 대표님 요청) */}
+            <Editable
+              id="home-sample-cta-top"
+              as="a"
+              href="/diagnosis"
+              className="btn-brand mx-auto mb-5 block max-w-md rounded-full py-4 text-center text-base font-bold sm:text-lg animate-pulseGlow"
+            >
+              {BETA_FREE
+                ? "🎁 지금 무료로 내 결과 전부 확인하기"
+                : "내 결과 전체 확인하기"}
+            </Editable>
+            <p className="mx-auto -mt-2.5 mb-6 max-w-md break-keep text-center text-[12px] font-semibold text-brand-dark">
+              {BETA_FREE ? (
+                <>
+                  🔓 오픈 베타 기간 <b className="text-brand-red">전부 무료</b> · 아래는 <b className="text-brand-dark">실제 결과 화면 예시</b>입니다.
+                </>
+              ) : (
+                <>
+                  🔓 결제 시 <b className="text-brand-red">모든 정보</b>가 열립니다 · 아래는 <b className="text-brand-dark">실제 결과 화면 예시</b>입니다.
+                </>
+              )}
+            </p>
+
             {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 */}
             <div className="relative">
               <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-[0_16px_40px_rgba(0,0,0,0.10)]">
@@ -436,8 +459,8 @@ export default function Home() {
                     </div>
                   </details>
 
-                  {/* ② 💳 이용 가능한 정책금융상품 (실제 결과창 두 번째 카드) — 기본 접힘 */}
-                  <details className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                  {/* ② 💳 이용 가능한 정책금융상품 (실제 결과창 두 번째 카드) — 예시라 펼침 */}
+                  <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
@@ -483,8 +506,8 @@ export default function Home() {
                     </div>
                   </details>
 
-                  {/* ③ 💎 챙기면 좋은 추가 감면 혜택 (실제 결과창 세 번째 카드) — 기본 접힘 */}
-                  <details className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                  {/* ③ 💎 챙기면 좋은 추가 감면 혜택 (실제 결과창 세 번째 카드) — 예시라 펼침 */}
+                  <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
@@ -522,14 +545,58 @@ export default function Home() {
                     </p>
                     </div>
                   </details>
+
+                  {/* ④ 📢 추가적인 그 외 정부지원사업 (실제 결과창 네 번째 카드 · 기업마당 실공고) — 예시라 펼침 */}
+                  <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                    <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
+                          <span className="shrink-0">📢</span>
+                          <span className="min-w-0 break-keep">추가적인 그 외 정부지원사업</span>
+                        </span>
+                        <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
+                          그 외 정부지원사업이에요
+                        </span>
+                      </span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 group-open:rotate-180">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                      </span>
+                    </summary>
+                    <div className="px-5 pb-5 pt-0">
+                    {/* 실제 결과창 공고 카드(제목+지원규모 태그 → 🗓️신청기간 배지 → 🏛️기관·대상 + 원문 버튼)와 동일 */}
+                    <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                      {[
+                        { title: "2025 스마트공장 구축·고도화 지원사업", scale: "최대 6천만원", deadline: "상시(예산 소진 시 마감)", org: "중소벤처기업부", target: "제조 중소기업" },
+                        { title: "지역 소상공인 경영환경 개선 지원", scale: "최대 300만원", deadline: "~ 예산 소진 시", org: "인천광역시", target: "인천 소상공인" },
+                        { title: "중소기업 수출 바우처 사업", scale: "최대 1억원", deadline: "연중 수시 공고", org: "산업통상자원부", target: "수출 희망 중소기업" },
+                      ].map((it, i) => (
+                        <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <span className="break-keep text-[14px] font-extrabold leading-snug text-brand-dark">{it.title}</span>
+                            <span className="shrink-0 break-keep rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">{it.scale}</span>
+                          </div>
+                          <span className="mt-2 inline-block shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">🗓️ {it.deadline}</span>
+                          <div className="mt-2 flex items-center justify-between gap-2">
+                            <p className="min-w-0 flex-1 truncate text-[12px] leading-relaxed text-brand-gray">
+                              🏛️ {it.org}<span className="mx-1.5 text-brand-dark/25">·</span>
+                              <span className="font-bold text-brand-dark/70">대상 </span>{it.target}
+                            </p>
+                            <span className="shrink-0 break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white">공고 원문 보러 가기 →</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-dark/45">
+                      출처: 기업마당(bizinfo.go.kr) · 공공데이터포털 · 실시간 수집 공고 · 안내 목적이며 승인·선정을 보장하지 않습니다.
+                    </p>
+                    </div>
+                  </details>
                 </div>
 
-                {/* 하단 잠금 페이드 — 미리보기는 '맛보기', 상세는 가려서 '더 있다'는 느낌 강조 */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white via-white/95 to-transparent" />
               </div>
 
-              {/* 잠금 오버레이 — '핵심 상세는 결과 페이지에서 전부' 유도 */}
-              <div className="relative -mt-28 flex flex-col items-center px-4 pb-2">
+              {/* 하단 안내 — '핵심 상세는 결과 페이지에서 전부' 유도 (4개 모두 펼침이라 잠금 페이드는 제거) */}
+              <div className="mt-6 flex flex-col items-center px-4 pb-2">
                 <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-red text-2xl text-white shadow-xl animate-pulseGlow">
                   🔒
                 </span>
@@ -544,6 +611,7 @@ export default function Home() {
               </div>
             </div>
 
+            {/* 하단 CTA (상단 CTA와 쌍) */}
             <Editable
               id="home-sample-cta"
               as="a"
