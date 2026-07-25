@@ -121,6 +121,8 @@ export function diagnosesToCsv(records: DiagnosisRecord[]): string {
   records.forEach((rec) => {
     Object.keys(rec.profile || {}).forEach((k) => {
       if (["name", "phone", "email"].includes(k)) return; // 기본 항목으로 따로 처리
+      // 예전 질문지에만 있던 항목(과세유형·관심 분야) — 지금 질문지엔 없으므로 엑셀에서도 제외 (대표님 요청)
+      if (["bnoTaxType", "interests"].includes(k)) return;
       if (!seen.has(k)) {
         seen.add(k);
         profileKeys.push(k);

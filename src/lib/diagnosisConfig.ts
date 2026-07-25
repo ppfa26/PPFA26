@@ -103,13 +103,13 @@ export const STEP1_FIELDS = {
 export const STEP2_TITLE = "2단계 · 필요한 지원과 기업 역량 · [2/3]";
 export const STEP2_SUBTITLE = "어떤 자금·지원이 필요하신지와 사업장의 강점을 확인합니다.";
 // 2단계 문맥별 그룹 소제목
-export const STEP2_GROUP_NEED = "💰 어떤 지원이 필요하세요?";
+export const STEP2_GROUP_NEED = "💰 어떤 정부지원사업이 필요하세요?";
 export const STEP2_GROUP_FINANCE = "🏦 자금 여건 · 현재 이용 현황";
 export const STEP2_GROUP_STRENGTH = "🏅 우리 기업의 강점";
 // ★ 2단계 간결화 (대표님 요청) — 각 질문에 짧은 힌트 1줄을 붙여 3단계처럼 깔끔하게 정리 ★
 export const STEP2_FIELDS = {
   purposes: {
-    // 라벨은 비움 — 그룹 제목("💰 어떤 지원이 필요하세요?")과 중복이라 제거(대표님 요청). 힌트만 표시.
+    // 라벨은 비움 — 그룹 제목("💰 어떤 정부지원사업이 필요하세요?")과 중복이라 제거(대표님 요청). 힌트만 표시.
     label: "",
     hint: "필요한 항목을 모두 선택하세요 [복수 선택 가능]",
     // ★ 선택지 축소 (대표님 요청) 9개→7개 ★ 세무·관세 + 노무·행정을 "세무·노무·행정"으로 병합.
@@ -201,7 +201,7 @@ export const STEP3_CONDITIONAL_FIELDS = {
   // 대환대출 — 고금리 대출을 저금리 정책자금으로 전환 희망
   wantsRefinance: {
     label: "고금리 대출을 저금리로 갈아타고[대환] 싶으신가요?",
-    hint: "카드론·2금융권 등 7% 이상 대출을 저금리 정책자금으로 전환",
+    hint: "카드론·2금융권 등 7% 이상 대출을 저금리 정책자금으로 전환 희망",
     opts: ["예", "아니요"],
   },
   // 민간투자매칭 — 민간 투자유치 이력/진행

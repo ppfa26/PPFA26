@@ -1399,7 +1399,10 @@ export default function AdminPage() {
                           📝 작성한 질문지 전체
                         </p>
                         <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
-                          {Object.entries(p).map(([k, v]) => (
+                          {Object.entries(p)
+                            // 예전 질문지에만 있던 항목(과세유형·관심 분야) — 지금 질문지엔 없으므로 관리자 진단서에서도 숨김 (대표님 요청)
+                            .filter(([k]) => !["bnoTaxType", "interests"].includes(k))
+                            .map(([k, v]) => (
                             <div
                               key={k}
                               className="flex gap-2 border-b border-slate-700/60 py-1 text-sm"
