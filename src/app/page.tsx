@@ -122,7 +122,7 @@ export default function Home() {
           id="hero-section"
           className="relative overflow-hidden px-4 pb-5 pt-6 sm:pb-9 sm:pt-12"
         >
-          <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-5 py-8 text-center animate-fadeUp sm:px-10 sm:py-12">
+          <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-5 py-6 text-center animate-fadeUp sm:px-10 sm:py-12">
             {/* 상단 배지 (노란색 서비스 소개 배지) */}
             <div className="mb-5 flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
               <Editable
@@ -146,7 +146,7 @@ export default function Home() {
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-5 max-w-xl break-keep text-[13px] leading-relaxed text-brand-gray sm:text-base sm:leading-relaxed"
+              className="mx-auto mt-4 max-w-xl break-keep text-[13px] leading-relaxed text-brand-gray sm:mt-5 sm:text-base sm:leading-relaxed"
             >
               복잡한 정부지원사업, 이제 직접 찾지 마세요.
               <br />
@@ -155,7 +155,7 @@ export default function Home() {
 
             {/* 오픈 베타 무료 앵커링 — 오픈 베타 기간 전부 0원으로 통일 (대표님 요청: '원래 9,900원' 삭제) */}
             {BETA_FREE && (
-              <div className="mx-auto mt-5 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border-2 border-brand-red/30 bg-brand-red/5 px-5 py-3">
+              <div className="mx-auto mt-4 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border-2 border-brand-red/30 bg-brand-red/5 px-5 py-2.5 sm:mt-5 sm:py-3">
                 <span className="text-base font-black text-brand-red sm:text-lg">
                   오픈 베타 기간 전부 0원
                 </span>
@@ -163,7 +163,7 @@ export default function Home() {
             )}
 
             {/* 핵심 혜택 — 가로 컴팩트 배지 */}
-            <ul className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:gap-x-3">
+            <ul className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-6 sm:gap-x-3">
               {["맞춤 AI 매칭", "신청 가능 사업만", "서류·신청까지 안내"].map(
                 (t, i) => (
                   <li
@@ -179,7 +179,7 @@ export default function Home() {
               )}
             </ul>
 
-            <div className="mt-7 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
+            <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:mt-7 sm:flex-row sm:gap-3">
               <Editable
                 id="hero-cta-primary"
                 as="a"
@@ -202,7 +202,7 @@ export default function Home() {
             <Editable
               id="hero-disclaimer"
               as="p"
-              className="mx-auto mt-5 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:text-xs"
+              className="mx-auto mt-4 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:mt-5 sm:text-xs"
             >
               본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
             </Editable>
@@ -213,7 +213,7 @@ export default function Home() {
         <div className="section-divider" aria-hidden="true" />
         {/* 서비스 안내 (통합) — (대표님 요청) 기존 '🎯 서비스 안내' 박스 + '아직 몰라서 못 받고 있는 정부지원사업' 7칸 배지를
             하나의 설명 섹션으로 통합. 순서: 제목/서브문구 → 4칸 체크리스트(VALUES) → 7칸 배지(TrustBadges) */}
-        <section className="bg-gray-50 px-4 py-7 sm:py-10">
+        <section className="bg-gray-50 px-4 py-6 sm:py-10">
           <div className="reveal mx-auto max-w-3xl text-center">
             {/* (대표님 요청) 가로폭 조금 확대(is-wide-value=40rem) */}
             <div className="section-title-glass is-wide-value mx-auto flex flex-col items-center text-center">
@@ -260,13 +260,13 @@ export default function Home() {
             </div>
 
             {/* 해드리는 것 4칸 (VALUES) */}
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 sm:gap-4">
               {VALUES.map((v, i) => (
                 <div
                   key={i}
-                  className="hover-lift flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-card"
+                  className="hover-lift flex items-center gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-3.5 text-left shadow-card sm:p-5"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange text-sm font-bold text-white">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-orange text-sm font-bold text-white sm:h-8 sm:w-8">
                     ✓
                   </span>
                   <Editable
@@ -634,7 +634,7 @@ export default function Home() {
         {/* 가격표 */}
         <section
           id="pricing-section"
-          className="scroll-mt-20 px-4 py-7 sm:scroll-mt-24 sm:py-10"
+          className="scroll-mt-20 px-4 py-6 sm:scroll-mt-24 sm:py-10"
         >
           <div className="reveal mx-auto max-w-5xl">
             {/* (대표님 요청) 상단 헤더 박스 — 가로폭 조금 축소(is-wide-pricing=38rem) */}
@@ -671,7 +671,7 @@ export default function Home() {
         {/* 구간 구분 — 얇은 회색 가로줄 */}
         <div className="section-divider" aria-hidden="true" />
         {/* 섹션 상하 여백 — 하단 여백 축소(대표님 요청) */}
-        <section className="bg-gray-50 px-4 py-7 sm:py-10">
+        <section className="bg-gray-50 px-4 py-6 sm:py-10">
           <div className="reveal mx-auto max-w-4xl">
             <div className="section-title-glass is-wide mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
