@@ -36,6 +36,11 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
+- `f614ed6` 어드민 탭줄 빈자리에 **📊 요약 리포트 버튼**(모달). 오늘/이번주(월요일시작)/이번달/전체 × 신규가입·진단접수·결제·매출 표. state showReport, reportData=useMemo([users,diagnoses,payments]). 모달 위치=admin container 최상단(mx-auto max-w-6xl 직후).
+- `c0e9a41` 어드민 회원검색창 폭 max-w-sm→max-w-md.
+- `82359eb` 어드민 회원검색줄 정돈: 검색창 max-w 제한, 전체N명 반투명배지(bg-white/5 ring-white/10), flex-wrap+min-w-0로 가로 오버플로 방지. 회원표는 min-w-[920px]+overflow-x-auto라 세로로만 늘어남.
+- `7734b26` 메뉴판: 정책자금 전화자문(10만원) 제거 → 8개(정부지원사업 러닝메이트 자문 포함).
+- `800bc28` 메뉴판 문구정리(러닝메이트 자문 추가, 예비·초기창업패키지/세무조사·기장/수출 관세 상담/사업자 보험 상담).
 - `802204f` **회원 CSV 전화번호 버그 수정**: downloadUsersCsv(admin L335)가 userInfoByEmail(이메일 정확매칭만) 써서 소셜로그인 이메일≠진단서 이메일이면 phone 못 찾음 → findUserDiagnosis(이름/연락처 폴백) 병용. + **메뉴판 글자 14px·1줄 고정**(mypage L300, text-[13px]→text-[14px]+truncate+whitespace-nowrap+min-w-0 flex-1).
 - `d3ec934` 메뉴판 안내문구 2개 제거("필요하신 항목 눌러~" / "원하시는 서비스 버튼 누르면 카톡~").
 - `87737cf` mypage 메뉴판 8개로 정리(POS·사업용자동차 제거). 어드민 탭줄 우측에 빠른실행 2버튼(🔗 진단링크 복사 → /diagnosis, 📋 진단서 엑셀). 메뉴판 위치=src/app/mypage/page.tsx L280~, 카톡링크 http://pf.kakao.com/_VxfWxan/chat.
