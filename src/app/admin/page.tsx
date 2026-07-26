@@ -569,41 +569,52 @@ export default function AdminPage() {
   });
 
   // 회원 목록 → 그 회원의 고객 진단서로 바로 이동
-  //  소셜 로그인(카카오/구글) 이메일과 진단서 작성 이메일이 다를 수 있어
-  //  ① 이메일  ② 이름(full_name)  순으로 폭넓게 매칭한다(대표님 요청).
+  //  소셜 로그인(카카오/구글) 이메일과 진단서 작성 이메일/표기가 다를 수 있어
+  //  ① 이메일 정확일치 → ② 이름 정확일치 → ③ 이름 부분일치 순으로 매칭하고,
+  //  그래도 못 찾으면 무조건 '고객 진단서' 탭으로 이동하고 검색창에 이름을 넣어
+  //  버튼이 '아무 반응 없는' 느낌을 없앤다(대표님 요청).
   const goToUserDiag = (email: string | null, fullName?: string | null) => {
-    const norm = (v: unknown) => String(v ?? "").trim().toLowerCase();
+    // 공백 제거 + 소문자로 통일(표기 차이 흡수)
+    const norm = (v: unknown) =>
+      String(v ?? "").replace(/\s+/g, "").toLowerCase();
     const emailKey = norm(email);
     const nameKey = norm(fullName);
 
     const byCreatedDesc = (a: AdminDiagnosis, b: AdminDiagnosis) =>
       a.created_at < b.created_at ? 1 : -1;
+    const dEmail = (d: AdminDiagnosis) =>
+      norm(d.email || (d.profile as any)?.email);
+    const dName = (d: AdminDiagnosis) =>
+      norm(d.name || (d.profile as any)?.name);
 
     // ① 이메일 정확 일치
     let matched = emailKey
-      ? diagnoses
-          .filter(
-            (d) => norm(d.email || (d.profile as any)?.email) === emailKey
-          )
-          .sort(byCreatedDesc)
+      ? diagnoses.filter((d) => dEmail(d) === emailKey).sort(byCreatedDesc)
       : [];
 
-    // ② 이메일로 못 찾으면 이름으로 재매칭
+    // ② 이름 정확 일치
     if (matched.length === 0 && nameKey) {
+      matched = diagnoses.filter((d) => dName(d) === nameKey).sort(byCreatedDesc);
+    }
+
+    // ③ 이름 부분 일치(표기·오타·공백 차이까지 흡수)
+    if (matched.length === 0 && nameKey.length >= 2) {
       matched = diagnoses
-        .filter(
-          (d) => norm(d.name || (d.profile as any)?.name) === nameKey
-        )
+        .filter((d) => dName(d).includes(nameKey) || nameKey.includes(dName(d)))
         .sort(byCreatedDesc);
     }
 
+    // ④ 그래도 못 찾으면 진단서 탭으로 이동 + 검색창에 이름 자동 입력
     if (matched.length === 0) {
+      setTab("diagnoses");
+      setDiagSearch(fullName?.trim() || "");
       setMsg(
-        "이 회원과 연결된 진단서를 찾지 못했습니다. (가입 이메일·이름이 진단서와 다를 수 있어요 — 상단 '고객 진단서' 탭에서 확인해 주세요)"
+        "정확히 일치하는 진단서를 못 찾아 '고객 진단서' 탭으로 이동했어요. 검색창에 이름을 넣어뒀으니 직접 확인해 주세요."
       );
       setTimeout(() => setMsg(null), 4000);
       return;
     }
+
     const target = matched[0];
     setTab("diagnoses");
     setOpenDiag(target.id);
