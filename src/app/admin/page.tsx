@@ -1130,7 +1130,7 @@ export default function AdminPage() {
 
           {/* 상단 헤더 */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <div>
+            <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
               <h1 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
                 🛠️ 관리자 대시보드
               </h1>
@@ -2150,10 +2150,6 @@ export default function AdminPage() {
               </div>
             </div>
           )}
-
-          <p className="mt-6 text-center text-xs text-gray-400">
-            🔒 이 페이지는 관리자 계정(대표님)만 접근할 수 있습니다.
-          </p>
         </div>
       </main>
       <Footer />
