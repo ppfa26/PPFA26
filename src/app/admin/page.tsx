@@ -212,6 +212,12 @@ export default function AdminPage() {
   // 데이터 로딩 진단 — RPC가 실패하면 (권한/함수누락 등) 원인을 화면에 그대로 표시한다.
   const [loadDebug, setLoadDebug] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState(""); // 회원 검색어(이름·이메일·연락처)
+  const [userSourceFilter, setUserSourceFilter] = useState("all"); // 유입경로 필터(all=전체)
+  // 회원 목록 정렬: 키 + 방향(desc=내림차순 기본). 기본은 가입일 최신순.
+  const [userSort, setUserSort] = useState<{
+    key: "joined_at" | "last_sign_in" | "paid_count" | "total_amount";
+    dir: "asc" | "desc";
+  }>({ key: "joined_at", dir: "desc" });
   const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
   const [showReport, setShowReport] = useState(false); // 요약 리포트 모달 열림 여부
 
@@ -689,6 +695,47 @@ export default function AdminPage() {
     const digitsQ = q.replace(/[^0-9]/g, "");
     return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
   });
+
+  // 유입경로별 회원 수 집계 — 드롭다운에 "인스타 (3)"처럼 개수 표시용
+  const userSourceCounts = users.reduce<Record<string, number>>((acc, u) => {
+    const key = (u.utm_source || "direct").toLowerCase();
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  // 검색 결과에 유입경로 필터 + 정렬을 순서대로 얹는다. (원본 검색 로직은 그대로 유지)
+  const sortedUsers = filteredUsers
+    .filter((u) =>
+      userSourceFilter === "all"
+        ? true
+        : (u.utm_source || "direct").toLowerCase() === userSourceFilter
+    )
+    .slice() // 원본 배열 훼손 방지
+    .sort((a, b) => {
+      const k = userSort.key;
+      let av: number;
+      let bv: number;
+      if (k === "joined_at" || k === "last_sign_in") {
+        av = a[k] ? new Date(a[k] as string).getTime() : 0;
+        bv = b[k] ? new Date(b[k] as string).getTime() : 0;
+      } else {
+        av = (a[k] as number) || 0;
+        bv = (b[k] as number) || 0;
+      }
+      return userSort.dir === "asc" ? av - bv : bv - av;
+    });
+
+  // 헤더 클릭 시 정렬 토글: 같은 키면 방향 반전, 다른 키면 그 키로 내림차순 시작
+  const toggleUserSort = (key: typeof userSort.key) => {
+    setUserSort((prev) =>
+      prev.key === key
+        ? { key, dir: prev.dir === "asc" ? "desc" : "asc" }
+        : { key, dir: "desc" }
+    );
+  };
+  // 정렬 화살표 표시(현재 정렬 중인 열에만)
+  const sortArrow = (key: typeof userSort.key) =>
+    userSort.key === key ? (userSort.dir === "asc" ? " ▲" : " ▼") : "";
 
   // 진단서 검색 필터 — 이름·이메일·연락처·업종·사업자번호 어디에 걸려도 검색됨
   const filteredDiagnoses = diagnoses.filter((d) => {
@@ -1277,8 +1324,24 @@ export default function AdminPage() {
                     ✕ 초기화
                   </button>
                 )}
-                {/* 오른쪽 정렬: 엑셀 다운 + 전체 N명 배지 */}
+                {/* 오른쪽 정렬: 유입경로 필터 + 엑셀 다운 + N명 배지 */}
                 <div className="ml-auto flex shrink-0 items-center gap-2">
+                  {/* 유입경로 필터 — 채널별로 걸러보기(어느 채널이 돈이 되는지 판단) */}
+                  <select
+                    value={userSourceFilter}
+                    onChange={(e) => setUserSourceFilter(e.target.value)}
+                    className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-[13px] font-semibold text-gray-700 outline-none focus:border-brand-orange"
+                    title="유입경로(광고 채널)별로 회원을 걸러 봅니다"
+                  >
+                    <option value="all">🌐 전체 유입경로</option>
+                    {Object.entries(userSourceCounts)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([key, cnt]) => (
+                        <option key={key} value={key}>
+                          {utmBadge(key).label} ({cnt})
+                        </option>
+                      ))}
+                  </select>
                   {/* 회원 목록 CSV 다운로드 — 세무·백업·문자발송 명단용 */}
                   <button
                     onClick={downloadUsersCsv}
@@ -1289,7 +1352,9 @@ export default function AdminPage() {
                     ⬇️ 회원 엑셀 다운
                   </button>
                   <span className="whitespace-nowrap rounded-xl bg-white/5 px-3 py-2.5 text-[13px] font-semibold text-gray-400 ring-1 ring-white/10">
-                    {userSearch ? `검색결과 ${filteredUsers.length}명` : `전체 ${users.length}명`}
+                    {userSearch || userSourceFilter !== "all"
+                      ? `결과 ${sortedUsers.length}명`
+                      : `전체 ${users.length}명`}
                   </span>
                 </div>
               </div>
@@ -1299,24 +1364,50 @@ export default function AdminPage() {
                 <thead className="whitespace-nowrap border-b border-gray-100 bg-gray-50 text-[13px] text-gray-500">
                   <tr>
                     <th className="px-4 py-3 font-semibold">회원 (이름·유입경로)</th>
-                    <th className="px-4 py-3 font-semibold">가입일</th>
-                    <th className="px-4 py-3 font-semibold">최근접속</th>
-                    <th className="px-4 py-3 font-semibold text-center">결제</th>
-                    <th className="px-4 py-3 font-semibold text-right">누적금액</th>
+                    <th
+                      onClick={() => toggleUserSort("joined_at")}
+                      className="cursor-pointer select-none px-4 py-3 font-semibold hover:text-brand-orange"
+                      title="클릭 시 가입일 기준 정렬"
+                    >
+                      가입일{sortArrow("joined_at")}
+                    </th>
+                    <th
+                      onClick={() => toggleUserSort("last_sign_in")}
+                      className="cursor-pointer select-none px-4 py-3 font-semibold hover:text-brand-orange"
+                      title="클릭 시 최근접속 기준 정렬"
+                    >
+                      최근접속{sortArrow("last_sign_in")}
+                    </th>
+                    <th
+                      onClick={() => toggleUserSort("paid_count")}
+                      className="cursor-pointer select-none px-4 py-3 text-center font-semibold hover:text-brand-orange"
+                      title="클릭 시 결제 건수 기준 정렬"
+                    >
+                      결제{sortArrow("paid_count")}
+                    </th>
+                    <th
+                      onClick={() => toggleUserSort("total_amount")}
+                      className="cursor-pointer select-none px-4 py-3 text-right font-semibold hover:text-brand-orange"
+                      title="클릭 시 누적금액 기준 정렬"
+                    >
+                      누적금액{sortArrow("total_amount")}
+                    </th>
                     <th className="px-4 py-3 font-semibold text-center">조회권</th>
                     <th className="px-4 py-3 font-semibold">열람기한</th>
                     <th className="px-4 py-3 font-semibold text-center">관리</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {filteredUsers.length === 0 && (
+                  {sortedUsers.length === 0 && (
                     <tr>
                       <td colSpan={8} className="px-4 py-10 text-center text-gray-400">
-                        {userSearch ? "검색 결과가 없습니다." : "회원이 없습니다."}
+                        {userSearch || userSourceFilter !== "all"
+                          ? "조건에 맞는 회원이 없습니다."
+                          : "회원이 없습니다."}
                       </td>
                     </tr>
                   )}
-                  {filteredUsers.map((u) => {
+                  {sortedUsers.map((u) => {
                     const dl = daysLeft(u.latest_expiry);
                     const active = dl !== null && dl > 0;
                     const info = userInfoByEmail(u.email);
