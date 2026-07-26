@@ -1,0 +1,54 @@
+# 모두의사업친구 — 프로젝트 핵심 메모리 (항상 최신화)
+
+> 대표님 요청: "대화 핵심은 항상 여기에 저장해서 최신화" · 크레딧 절약 원칙
+
+## 사업 정체성
+- **대표**: 신주엽 (인천 서구 청라). 직업군인·경영컨설턴트 출신, 정부지원사업 경력 약 3년.
+- **실적**: 승인 컨설팅 100여 건, 지원금 100억+ (바우처 포함).
+- **사업**: 정부지원사업 AI 통합 매칭 플랫폼.
+- **회사가 크는 핵심(대표님 말)**: "그 사람한테 해당되는 정부지원사업/감면제도/정책자금을 얼마나 정확하게, 상품명 맞게, 보증서만 나오는지·재단 거쳐야 하는지·대출까지 한 번에 되는지를 잘 안내해야 CS 줄고 회사가 성공."
+- **매출 경로**: 388→603→1,979→목표 3,000만/월. 컨설팅+대행 수수료로 3,000만 사정권. 자문·세미나는 추가매출(조급 금지).
+
+## 기술 스택
+- Next.js 14 App Router + TypeScript + TailwindCSS + Supabase Auth + Vercel(자동배포).
+- GitHub: `ppfa26/PPFA26`, 항상 **main** 브랜치, 코드 `/home/user/webapp`.
+- 도메인: `모두의사업친구.kr` = 퓨니코드 `xn--2e0br4kgyfb0gp4gbrcj9s.kr` (HTTP 200 확인).
+- Supabase: URL `https://akjlulfbhoukbhuyaybo.supabase.co`, Callback `.../auth/v1/callback`. "Allow users without an email"=OFF.
+- 카카오/구글 로그인 실제 작동 확인됨. 카카오싱크 이름·전화번호 동의항목 검수 중(3~5영업일).
+
+## 절대 규칙
+- **매칭 스코어링 로직(matching.ts)은 절대 안 건드림** — 표시 단계 후처리만 추가.
+- 리포트는 **팩트 기반**.
+- 이해 안 되면 실행 전 대표님께 다시 질문.
+- 크레딧 많이 쓰는 작업 지양.
+
+## 배포/작업 명령
+- 타입체크: `npx tsc --noEmit -p tsconfig.json`
+- 빌드: `npm run build` (300s)
+- 푸시: `GHTOK=$(gh auth token) && git -c credential.helper= push "https://x-access-token:${GHTOK}@github.com/ppfa26/PPFA26.git" HEAD:main`
+- PDF: Playwright Chromium (`~/.cache/ms-playwright/chromium-1228`).
+
+## 주요 파일
+- `src/lib/advancedScreening.ts` — INSTITUTION_LINKS(신보/기보/중진공/소진공/재단), JAEDAN_PRODUCTS, filterProducts(low 제거), InstitutionProduct 타입.
+- `src/components/AdvancedScreeningPanel.tsx` — 결과리포트 렌더(기관 아코디언, approvalRank 정렬, 배지).
+- `src/app/admin/page.tsx` — 관리자 대시보드(회원/결제/진단서/매출/접속 5탭).
+- `src/lib/leadNotes.ts` — 리드 통화상태·메모(localStorage, DB 불필요).
+- `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
+
+## 진행 이력(최근순)
+- `0fb7439` 어드민: 리드관리(통화상태·메모)+오늘할일 요약+회원CSV+연결성(이름클릭→진단서) / 벽걸이 가로버전.
+- `c193723` 신청 안내 3단계 문구 통일("담당 부처에 문의시 간편하게 신청 가능").
+- `486d5a2` 결과리포트 low 상품 제거 + desk-summary(세로) 생성.
+- `c362256`/`8fe7ace` 고객진단서 버튼 4단계 매칭 + 관리버튼 3×2 정렬.
+- `9106b06` 개인정보처리방침 논리 정합(회원가입 시 이름·연락처 수집 명시).
+
+## ⚠️ 미완료 (다음 우선작업) — 결과리포트 정확도 개선 (advancedScreening.ts)
+1. 소진공/중진공 = **직접대출 먼저, 대리대출(확인서) 그 밑에** 정렬.
+2. 설명란에 상품 성격 추가: 확인서형=보증(신보/기보/신보재단) 받아 은행 대출 / 직접대출=공단과 직접 약정 후 대출실행.
+3. 상품명 괄호() 내용 제거 (예: 혁신성장촉진자금 (일반형)(혁신형)).
+4. `ㅡ`(긴 대시) → `-`(짧은 하이픈) 전역 교체.
+5. 상품 성격 태그 신설(보증서형/재단경유형/직접대출형/지원금형) — 대표님 승인됨.
+
+## 산출물 URL
+- 벽걸이 가로 PDF: https://www.genspark.ai/api/files/s/jhBNlbEy
+- 벽걸이 세로 PDF: https://www.genspark.ai/api/files/s/NK8Ppece
