@@ -44,6 +44,14 @@ import { loadDiagnosisRaw, saveDiagnosis, getDiagnosisOwner } from "@/lib/diagno
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
 type SupportItem = { prog: SupportProgram; status: SupportStatus };
 
+// ★ 상품 성격 배지 색상 (대표님 기준: 직접대출=블루 / 대리대출=보라 / 보험=오렌지) ★
+//   위험 액션이 아니므로 레드 미사용. '보험'은 대출·보증과 구분되게 오렌지 톤.
+function natureBadgeCls(nature: string): string {
+  if (nature === "직접대출") return "bg-blue-100 text-blue-700";
+  if (nature === "보험") return "bg-orange-100 text-orange-700";
+  return "bg-purple-100 text-purple-700"; // 대리대출
+}
+
 // 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
 const INDUSTRY_OPTIONS: { value: string; label: string; emoji: string }[] = [
   { value: "manufacturing", label: "제조업", emoji: "🏭" },
@@ -1024,11 +1032,7 @@ function AdvancedResult({
                   <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
                   {m.loan_type && (
                     <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                        m.loan_type === "직접대출"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-purple-100 text-purple-700"
-                      }`}
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${natureBadgeCls(m.loan_type)}`}
                     >
                       {m.loan_type}
                     </span>
@@ -1100,11 +1104,7 @@ function AdvancedResult({
                                 return natures.map((nature) => (
                                   <span
                                     key={nature}
-                                    className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                                      nature === "직접대출"
-                                        ? "bg-blue-100 text-blue-700"
-                                        : "bg-purple-100 text-purple-700"
-                                    }`}
+                                    className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${natureBadgeCls(nature)}`}
                                   >
                                     {nature}
                                   </span>
@@ -1274,7 +1274,7 @@ function AdvancedResult({
         </div>
         <div className="mt-3 space-y-2">
           <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-xs leading-relaxed text-brand-dark">
-            💡 대출은 보통 <b>직접대출 1곳(공단 직접) + 대리대출 1곳(보증서→은행), 총 2곳</b>에서 동시에 진행할 수 있습니다.
+            💡 대출은 보통 <b>직접대출 1곳(공단이 직접 실행) + 대리대출 1곳(보증서를 받아 은행에서 실행)</b>, 즉 <b>총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>
           {/* 신용점수 안내 — 알맹이라 결제 전 잠금 */}
           <p
@@ -1299,29 +1299,32 @@ function AdvancedResult({
             {hasDae && (
               <div className="mt-3">
                 <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
-                  대리대출기관 (보증서 → 은행) (재단/신보/기보/무보)
+                  대리대출 (보증서 → 은행 · 재단/신보/기보/무보)
                 </span>
-                <p className={`mt-1 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
-                  신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행 ·{" "}
+                <p className={`mt-1.5 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
+                  신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행
+                </p>
+                <p className={`mt-0.5 break-keep text-xs leading-relaxed ${lockText}`}>
                   <b className="text-brand-orange">통상 3~6주 소요</b>
                 </p>
               </div>
             )}
             {hasDirect && (
-              <div className="mt-2.5">
+              <div className="mt-3">
                 <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                  직접대출기관 (공단 직접) (소진공/중진공)
+                  직접대출 (공단이 직접 실행 · 소진공/중진공)
                 </span>
-                <p className={`mt-1 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
-                  신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행 ·{" "}
+                <p className={`mt-1.5 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
+                  신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행
+                </p>
+                <p className={`mt-0.5 break-keep text-xs leading-relaxed ${lockText}`}>
                   <b className="text-brand-orange">통상 약 8주 소요</b>
                 </p>
               </div>
             )}
-            <p className={`mt-2.5 break-keep text-xs leading-relaxed text-brand-dark/60 ${lockText}`}>
-              ※ 소액 건(재단)은 비대면(모바일) 실사로 진행되는 경우가 많으며,
-              <br />
-              직접대출 기관 및 기술보증기금·신용보증기금 등 진행 규모가 큰 건은 대부분 방문 실사로 진행됩니다.
+            <p className={`mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/55 ${lockText}`}>
+              ※ 소액 건(재단)은 비대면(모바일) 실사로 진행되는 경우가 많습니다.
+              반면 직접대출 기관과 신용보증기금·기술보증기금처럼 규모가 큰 건은 대부분 방문 실사로 진행됩니다.
             </p>
           </div>
         )}
