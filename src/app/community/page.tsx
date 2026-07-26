@@ -117,8 +117,8 @@ const APPROVALS: Approval[] = [
     kind: "정책자금",
     business: "문화콘텐츠 제조",
     region: "인천 서해구",
-    program: "문화산업보증 · 신용보증한도",
-    agency: "한국무역보험공사(K-SURE)",
+    program: "문화산업보증",
+    agency: "한국무역보험공사",
     amount: "5억원",
     note: "신보/무보/중진공/소진공 총 9억 5천만원 승인 사례",
   },
@@ -253,7 +253,7 @@ export default function Page() {
             <span className="font-semibold text-brand-dark">모두의사업친구</span>
             은 지난 2년간 약 300여 기업의 고민을 함께 해결해왔습니다.
             <br className="hidden sm:block" />
-            당근마켓·네이버 블로그·카카오 채널에서 만난 대표님들의 실제 이야기입니다.
+            당근 · 블로그 · 카카오 · 인스타 · 스레드에서 만난 대표님들의 실제 이야기입니다.
           </p>
         </section>
 
