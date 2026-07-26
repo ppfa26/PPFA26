@@ -90,6 +90,16 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
+- **(이번 세션) 접속(IP) 로깅 전면 확장 - 회원가입/진단 안 한 '염탐꾼'까지 IP 다 잡히게 (A안)** [대표님 요청]
+  - **문제(팩트)**: 기존 `logAccess`는 ①결과화면(/matching-preview) 한 곳에서만, ②그것도 '로그인한 사람'만 IP를 기록 → 회원가입도 진단도 안 하고 둘러보다 나가는 방문자는 관리자에 흔적 0. (홍길동처럼 가짜정보로 진단만 하고 이탈하는 애도, 순수 염탐꾼도 안 잡힘)
+  - **대표님 요청**: "회원가입 안 해도 들어오는 모든 사람 IP 다 뜨게. 자주 오는데 진단·가입 안 하고 염탐만 하는 애들 조이게. 내가 어드민 보고 의심되는 IP 직접 차단할게." → **A안**(관리자에 다 뜨게 + 대표님이 직접 차단).
+  - **수정1**: `deviceGuard.ts logAccess`에서 "로그인 세션 없으면 return" 조건 제거 → 비회원도 IP 기록. (IP는 `_cachedIp` 메모리 캐싱으로 페이지마다 ipify 재호출 방지)
+  - **수정2**: `components/AccessLogger.tsx` 신설 → 루트 레이아웃(layout.tsx)에 심어 **모든 페이지**에서 경로 바뀔 때마다 `logAccess(pathname)` 실행. 관리자(/admin)·내부경로(_next/api/favicon) 제외, 같은 경로 연속 중복기록 방지.
+  - **수정3(정리)**: `/matching-preview`의 개별 logAccess 호출 제거(AccessLogger가 커버 → 중복 제거).
+  - **DB는 이미 준비됨(SQL 수정 없음)**: `access_logs.user_id`는 null 허용, RLS insert 정책이 `auth.uid()=user_id OR user_id IS NULL`이라 비회원 insert 허용, `log_access` RPC는 auth.uid()=null이면 email null로 저장. 관리자 '최근 접속 로그' 표는 이메일칸에 비회원 "-"로 표시(컬럼 그대로 재사용).
+  - **관리자 UI 무변경**: IP별 집계·최근 접속 로그·차단목록·IP차단 버튼 전부 기존 그대로. 이제 비회원 로그가 채워지기만 함. 대표님이 자주 오는 IP 눈으로 보고 직접 '차단' 누르면 됨.
+  - **파일**: `src/lib/deviceGuard.ts`, `src/components/AccessLogger.tsx`(신규), `src/app/layout.tsx`, `src/app/matching-preview/page.tsx`. tsc+build EXIT 0. CopyGuard 임시 화이트리스트 검증용으로만 쓰고 커밋 전 제거 완료.
+  - ⚠️**IP 특정 한계(대표님께 고지함)**: KT 모바일 등 통신사 IP는 수천~수만명 공유 → 통째 차단 시 무관한 사람도 막힐 수 있음. IP는 ipify(클라이언트) 방식이라 우회 가능. '확실한 차단'이 더 필요하면 향후 서버 미들웨어(실 IP) 방식(B안)으로 승격 가능.
 - **(이번 세션) 진단 3단계 톤 통일 + 결과창 예비창업 아코디언 상단이동/문구 + 모바일 줄바꿈 + 안내문구 수정** [대표님 4건 요청, 커밋 60e01ed→f99066e→209f834→(톤통일)]
   - **[톤 통일 - 질문지 1·2·3페이지 느낌 통일, 눈에 거슬리는 것 없이]** 대표님: "질문지 느낌이 1.2.3페이지 다 다른데 디자인이랑 질문지 느낌을 통일할수없을까 눈에 거슬리는거 없이" → **B안 확정**(옵션 UI는 유지: 1·2페이지 pill, 3페이지 카드 / 그룹박스 톤·색·여백만 통일).
     - `diagnosis/page.tsx`: 사업자조회 박스(빨강→회색)·대표자정보 GroupBox(tone="red"제거)·필요한지원 GroupBox(tone="orange"제거)·기업강점 GroupBox(tone="green"제거)·심층질문 박스(노랑→회색)·전화상담 박스(오렌지→회색) 전부 `border-gray-200 bg-gray-50/70` 1톤으로 통일.

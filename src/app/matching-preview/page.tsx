@@ -16,7 +16,6 @@ import {
 import { BETA_FREE } from "@/lib/betaConfig";
 import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
 import { supabase } from "@/lib/supabaseClient";
-import { logAccess } from "@/lib/deviceGuard";
 
 export default function MatchingPreview() {
   const [name, setName] = useState("");
@@ -131,12 +130,8 @@ export default function MatchingPreview() {
           /* sessionStorage 접근 불가 시 무시 */
         }
         setGate(forceAnalyze || !seen ? "analyzing" : "ready");
-        // 로그인 사용자의 접속 기록(IP·기기) 남기기 → 관리자 접속 로그/IP 집계에 반영
-        try {
-          await logAccess("/matching-preview");
-        } catch {
-          /* 로그 실패해도 결과 열람은 계속 */
-        }
+        // 접속 기록(IP·기기)은 이제 루트 레이아웃의 <AccessLogger />가 모든
+        // 페이지에서 자동으로 남기므로(회원/비회원 공통), 여기서 개별 호출은 제거했다.
       } else {
         setGate("guest");
       }

@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import CopyGuard from "@/components/CopyGuard";
 import UtmCapture from "@/components/UtmCapture";
 import ScrollToTop from "@/components/ScrollToTop";
+import AccessLogger from "@/components/AccessLogger";
 import FontLoader from "@/components/FontLoader";
 import KarrotPixel from "@/components/KarrotPixel";
 
@@ -342,6 +343,8 @@ export default function RootLayout({
       </head>
       <body className="theme-dark">
         <ScrollToTop />
+        {/* 접속(IP) 로거 - 회원/비회원 모든 방문자 IP를 관리자에 기록(대표님 요청 A안) */}
+        <AccessLogger />
         <CopyGuard />
         <UtmCapture />
         {children}

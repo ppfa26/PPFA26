@@ -57,14 +57,20 @@ export function getDeviceFingerprint(): string {
 }
 
 // 공개 IP 조회 (실패 시 null)
+//   ★성능★ 한 방문(탭) 동안 IP는 거의 바뀌지 않으므로, 매 페이지마다
+//   외부 API를 때리지 않도록 한 번 받은 IP를 메모리에 캐싱한다.
+//   (AccessLogger가 페이지 이동마다 호출하기 때문에 캐싱이 중요)
+let _cachedIp: string | null = null;
 async function getPublicIp(): Promise<string | null> {
+  if (_cachedIp) return _cachedIp;
   try {
     const res = await fetch("https://api.ipify.org?format=json", {
       cache: "no-store",
     });
     if (!res.ok) return null;
     const j = await res.json();
-    return j?.ip ?? null;
+    _cachedIp = j?.ip ?? null;
+    return _cachedIp;
   } catch {
     return null;
   }
@@ -98,12 +104,17 @@ export async function registerViewDevice(): Promise<{
 }
 
 // 접속 로그 기록 + 차단 여부 반환
+//   ★대표님 요청(A안)★ 회원가입/로그인 안 한 방문자(=염탐꾼 포함)도 IP를
+//   전부 남긴다. 예전엔 로그인 세션이 없으면 여기서 그냥 return 해버려서
+//   비회원 접속이 하나도 안 찍혔다 → 그 조건을 제거한다.
+//   · DB(log_access RPC)는 auth.uid()가 null(비회원)이면 user_id/email 을
+//     null 로 저장하도록 이미 설계돼 있어 SQL 수정 없이 동작한다.
+//   · 관리자 '최근 접속 로그' 표에서 비회원은 이메일 칸에 "-" 로 뜬다.
 export async function logAccess(
   path: string
 ): Promise<{ blocked: boolean; reason: string | null }> {
   try {
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (!sessionData.session?.user) return { blocked: false, reason: null };
+    // (로그인 여부와 무관하게 무조건 IP를 조회해 기록한다)
     const ip = await getPublicIp();
     const { data, error } = await supabase.rpc("log_access", {
       p_ip: ip,
