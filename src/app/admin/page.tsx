@@ -1201,7 +1201,7 @@ export default function AdminPage() {
             />
           </section>
 
-          {/* 탭 + 오른쪽 빠른 실행 버튼 (진단서 엑셀 · 무료진단 링크복사) */}
+          {/* 탭 + 빠른 실행 버튼 — 한 줄에 균등 분배해 빈 공간 없이 꽉 채운다 */}
           <div className="mb-4 flex flex-wrap items-center gap-2">
             {(
               [
@@ -1215,7 +1215,7 @@ export default function AdminPage() {
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`whitespace-nowrap rounded-xl px-3 py-2 text-[13px] font-bold transition ${
+                className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-center text-[13px] font-bold transition ${
                   tab === key
                     ? "bg-brand-dark text-white"
                     : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
@@ -1225,31 +1225,31 @@ export default function AdminPage() {
               </button>
             ))}
 
-            {/* 오른쪽 정렬 빠른 실행 — 매일 자주 쓰는 것들 (한 덩어리로 붙여 1줄 유지) */}
-            <div className="ml-auto flex flex-nowrap gap-2">
-              <button
-                onClick={() => setShowReport(true)}
-                className="whitespace-nowrap rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-[13px] font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
-                title="오늘·이번주·이번달 신규가입·진단접수·결제·매출을 한눈에 봅니다"
-              >
-                📊 요약 리포트
-              </button>
-              <button
-                onClick={copyDiagnosisLink}
-                className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-[13px] font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
-                title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
-              >
-                🔗 진단링크 복사
-              </button>
-              <button
-                onClick={downloadAllDiag}
-                disabled={diagnoses.length === 0}
-                className="whitespace-nowrap rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-[13px] font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:opacity-40"
-                title="접수된 모든 고객 진단서를 엑셀(CSV)로 내려받습니다"
-              >
-                📋 진단서 엑셀
-              </button>
-            </div>
+            {/* 구분선 — 탭(보기)과 실행 버튼을 시각적으로 나눔 */}
+            <span className="hidden h-6 w-px shrink-0 bg-white/20 lg:block" aria-hidden />
+
+            <button
+              onClick={() => setShowReport(true)}
+              className="flex-1 whitespace-nowrap rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-center text-[13px] font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
+              title="오늘·이번주·이번달 신규가입·진단접수·결제·매출을 한눈에 봅니다"
+            >
+              📊 요약 매출 리포트
+            </button>
+            <button
+              onClick={copyDiagnosisLink}
+              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[13px] font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
+              title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
+            >
+              🔗 진단링크 복사
+            </button>
+            <button
+              onClick={downloadAllDiag}
+              disabled={diagnoses.length === 0}
+              className="flex-1 whitespace-nowrap rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-[13px] font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:opacity-40"
+              title="접수된 모든 고객 진단서를 엑셀(CSV)로 내려받습니다"
+            >
+              📋 진단서 엑셀
+            </button>
           </div>
 
           {/* ------- 회원 목록 ------- */}
