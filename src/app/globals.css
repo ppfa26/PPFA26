@@ -32,7 +32,14 @@ body {
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* [A안] 높이를 JS로 못 박은 --app-vh 로 고정.
+     모바일 주소창이 접혔다 펴져도 이 높이는 안 바뀌므로 배경이 스크롤 중 흔들리지 않는다.
+     --app-vh 미설정(초기 순간/JS 실패) 시엔 100vh 로 안전 폴백. */
+  height: var(--app-vh, 100vh);
+  min-height: 100vh;
   z-index: -1;
   background-color: #0b1020;
   background-image:

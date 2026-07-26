@@ -90,6 +90,14 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
+- **(이번 세션) 모바일 배경(야경) 스크롤 시 흔들림 → 고정 (A안)** [대표님 요청]
+  - **요청**: "모바일로 보면 뒷 배경이 스크롤할 때 바뀐다(밀린다). PC는 고정되던데 모바일도 고정 못 하나?"
+  - **원인(팩트)**: 배경은 `body::before{position:fixed;inset:0}`로 뷰포트 고정이나, 모바일 브라우저는 스크롤 시 주소창 UI가 접혔다 펴지며 visual viewport 높이가 계속 변함 → fixed 배경이 그 변화를 따라가 스크롤 중 위아래로 밀려 보임. (PC는 주소창 변화 없어 완벽 고정) + PC뷰 강제(viewport 900 축소)와 겹쳐 더 도드라짐.
+  - **해법(A안, 표시 전용 — 스코어링/데이터 무관)**: ① `layout.tsx`에 `BG_LOCK_SCRIPT` 추가(head, 뷰포트 스크립트 바로 뒤). 최초 로드 시 `window.innerHeight`와 `screen.height` 중 큰 값으로 `--app-vh`를 '못 박고', **스크롤 중 발생하는 주소창 높이 변화는 무시**(orientationchange 때만 재계산). ② `globals.css` `body::before`를 `inset:0` → `top/left/right:0 + height:var(--app-vh,100vh) + min-height:100vh`로 변경 → 배경 레이어 높이가 스크롤과 무관하게 고정.
+  - **검증(390×844 모바일 렌더, Playwright)**: `--app-vh=1948px`. `body::before` 계산값이 스크롤 0px→`top:0,height:1948px`, 스크롤 1500px→`top:0,height:1948px`로 **완전 동일**. 실제 캡처로도 스크롤 전/후 야경 배경 위치·밝기 동일(흔들림·컷팅 0) 확인.
+  - **한계 고지(대표님께 사전 안내함)**: 모바일 브라우저 주소창 특성상 100% 완벽 고정은 물리적으로 불가하나, A안으로 '거의 안 흔들리는' 수준까지 개선됨.
+  - **파일**: `src/app/layout.tsx`(BG_LOCK_SCRIPT + head 삽입), `src/app/globals.css`(body::before 높이 고정). tsc+build EXIT 0. CopyGuard 임시 화이트리스트 검증용으로만 쓰고 제거 완료.
+  - ⚠️**되돌리기 쉬움**: head의 `<script ...BG_LOCK_SCRIPT>` 삭제 + `body::before`를 `inset:0`으로 원복하면 즉시 복귀.
 - **(이번 세션) 상단(헤더)·하단(푸터) 여백 안쪽 정리 + 전체 살짝 확대 (A안)** [대표님 요청]
   - **요청**: "우리 상단이랑 하단 조금만 안쪽으로 땡기고 전체적으로 살짝만 확대하면 더 보기 좋을 거 같다"(모바일 PC뷰 스샷 4장 제시, 헤더/푸터가 화면 좌우 끝에 딱 붙어 있고 콘텐츠가 좀 작게 눌려 보임).
   - **원인(팩트)**: 헤더 컨테이너 좌우 패딩 `pl-2 pr-2`(8px), 푸터 `px-4`(16px)로 얕아서 로고·메뉴가 화면 끝에 붙음. + PC뷰 강제(viewport 980) 때문에 콘텐츠가 다소 작게 축소돼 보임.

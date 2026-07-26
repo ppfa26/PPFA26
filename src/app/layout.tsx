@@ -161,6 +161,34 @@ const DESKTOP_VIEWPORT_SCRIPT = `
 `;
 
 // ─────────────────────────────────────────────────────────────
+//  [A안] 모바일 배경 고정 스크립트
+//  문제: 모바일 브라우저는 스크롤 시 주소창 UI가 접혔다 펴지며
+//        visual viewport 높이가 계속 바뀐다. body::before(position:fixed)
+//        배경이 이 변화를 따라가면서 스크롤 중 배경이 위아래로 밀려 보인다.
+//  해법: 최초 로드(가장 큰 화면 높이)를 기준으로 --app-vh 를 '못 박아' 두고,
+//        배경 레이어 높이를 그 고정값으로 강제 → 주소창이 접혀도 배경 안 흔들림.
+//        스크롤 중 발생하는 작은 높이 변화(주소창)는 무시하고,
+//        회전(orientationchange)처럼 진짜 화면이 바뀔 때만 다시 계산한다.
+const BG_LOCK_SCRIPT = `
+(function () {
+  function setLockedVh() {
+    try {
+      // 가장 큰 안정 높이(주소창 접힌 상태 = 진짜 화면 높이)를 우선 사용
+      var h = window.innerHeight;
+      if (window.screen && window.screen.height && window.screen.height > h) {
+        // screen.height 는 주소창과 무관한 물리 화면 높이 → 배경이 빈틈없이 덮이게
+        h = Math.max(h, Math.round(window.screen.height));
+      }
+      document.documentElement.style.setProperty('--app-vh', h + 'px');
+    } catch (e) {}
+  }
+  setLockedVh();
+  // 회전할 때만 재계산(스크롤 중 주소창 변화는 무시 → 배경 고정 유지)
+  window.addEventListener('orientationchange', function () { setTimeout(setLockedVh, 300); });
+})();
+`;
+
+// ─────────────────────────────────────────────────────────────
 //  검색엔진 구조화 데이터(JSON-LD)
 //  네이버/구글이 사이트 구조를 인식해 검색결과에 '사이트링크(메뉴)'를
 //  만들 수 있도록 조직·사이트·주요 메뉴 정보를 제공한다.
@@ -351,6 +379,9 @@ export default function RootLayout({
         {/* ★ 데스크톱(PC) 화면 강제 - 첫 페인트 전에 즉시 실행되도록 head 최상단 배치 (대표님 요청) ★ */}
         {/* eslint-disable-next-line react/no-danger */}
         <script dangerouslySetInnerHTML={{ __html: DESKTOP_VIEWPORT_SCRIPT }} />
+        {/* ★ [A안] 모바일 배경 고정 - --app-vh 못 박기 (스크롤 시 배경 흔들림 방지) ★ */}
+        {/* eslint-disable-next-line react/no-danger */}
+        <script dangerouslySetInnerHTML={{ __html: BG_LOCK_SCRIPT }} />
         {/* eslint-disable-next-line react/no-danger */}
         <meta name="copyright" content="© 모두의사업친구 (biospartners). All rights reserved. 무단 복제·도용 금지" />
         <meta name="author" content="모두의사업친구" />
