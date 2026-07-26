@@ -240,7 +240,7 @@ export default function Page() {
       <main className="mx-auto w-full max-w-5xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8">
         {/* ── 상단 히어로 ── */}
         <section className="text-center">
-          <span className="inline-block rounded-full border border-brand-yellow/50 bg-brand-yellow/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-orange break-keep sm:text-xs">
+          <span className="inline-block rounded-full border border-gray-200 bg-brand-yellow/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-orange break-keep sm:text-xs">
             Customer Stories · 고객 성공 사례
           </span>
           <h1 className="mt-4 break-keep text-2xl font-extrabold leading-tight tracking-tight text-brand-dark xs:text-3xl sm:text-[2.6rem]">
@@ -257,7 +257,7 @@ export default function Page() {
 
         {/* ── 통계 바 (구분선형 미니멀) ── */}
         <section className="mx-auto mt-6 max-w-3xl">
-          <div className="grid grid-cols-2 divide-x divide-y divide-gray-100 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm sm:grid-cols-4 sm:divide-y-0">
+          <div className="grid grid-cols-2 divide-x divide-y divide-gray-200 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm sm:grid-cols-4 sm:divide-y-0">
             {STATS.map((s) => (
               <div key={s.label} className="px-2 py-4 text-center sm:px-3">
                 <p className="whitespace-nowrap text-lg font-extrabold leading-none text-brand-dark xs:text-xl sm:text-2xl">
@@ -277,7 +277,7 @@ export default function Page() {
             {APPROVALS.map((a, i) => (
               <article
                 key={i}
-                className="flex flex-col rounded-3xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-yellow/40 hover:shadow-lg sm:p-6"
+                className="flex flex-col rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-lg sm:p-6"
               >
                 <div className="flex items-center justify-between gap-2">
                   <span
@@ -302,7 +302,7 @@ export default function Page() {
                     {a.note}
                   </p>
                 )}
-                <div className="mt-auto flex items-center gap-2 border-t border-gray-100 pt-4">
+                <div className="mt-auto flex items-center gap-2 border-t border-gray-200 pt-4">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-xs">
                     🏢
                   </span>
@@ -327,7 +327,7 @@ export default function Page() {
 
           {/* 검색어가 있을 때 안내 배너 (SearchAction으로 넘어온 경우) */}
           {query && (
-            <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-brand-yellow/40 bg-brand-yellow/5 px-4 py-3 text-center text-[13px] text-brand-dark">
+            <div className="mx-auto mt-6 max-w-2xl rounded-2xl border border-gray-200 bg-brand-yellow/5 px-4 py-3 text-center text-[13px] text-brand-dark">
               <span className="font-semibold">&lsquo;{query}&rsquo;</span> 검색 결과 ·{" "}
               <span className="font-semibold">{filteredReviews.length}건</span>의 후기
               {filteredReviews.length === 0 && (
@@ -343,7 +343,7 @@ export default function Page() {
             {(filteredReviews.length > 0 ? filteredReviews : REVIEWS).map((r, i) => (
               <article
                 key={i}
-                className="flex flex-col rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-yellow/40 hover:shadow-lg sm:p-7"
+                className="flex flex-col rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-lg sm:p-7"
               >
                 <div className="flex items-center justify-between gap-2">
                   <Stars n={r.rating} />
@@ -364,7 +364,7 @@ export default function Page() {
                     ✅ {r.result}
                   </p>
                 )}
-                <div className="mt-5 flex items-center gap-2.5 border-t border-gray-100 pt-4">
+                <div className="mt-5 flex items-center gap-2.5 border-t border-gray-200 pt-4">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-sm font-bold text-brand-dark">
                     {r.name.slice(0, 1)}
                   </span>
@@ -494,7 +494,7 @@ function LiveReviews() {
           {[0, 1].map((i) => (
             <div
               key={i}
-              className="h-40 animate-pulse rounded-2xl border border-gray-100 bg-gray-50"
+              className="h-40 animate-pulse rounded-2xl border border-gray-200 bg-gray-50"
             />
           ))}
         </div>
@@ -503,7 +503,7 @@ function LiveReviews() {
           {rows.map((r) => (
             <article
               key={r.id}
-              className="flex flex-col rounded-3xl border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-yellow/40 hover:shadow-lg sm:p-7"
+              className="flex flex-col rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-lg sm:p-7"
             >
               <div className="flex items-center justify-between gap-2">
                 <Stars n={r.rating} />
@@ -522,7 +522,7 @@ function LiveReviews() {
                   ✅ {r.result}
                 </p>
               )}
-              <div className="mt-5 flex items-center gap-2.5 border-t border-gray-100 pt-4">
+              <div className="mt-5 flex items-center gap-2.5 border-t border-gray-200 pt-4">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-yellow/30 text-sm font-bold text-brand-dark">
                   {(r.author_name || "?").slice(0, 1)}
                 </span>
@@ -620,7 +620,7 @@ function ReviewWriteSection() {
   };
 
   return (
-    <section className="mt-8 rounded-3xl border border-brand-yellow/40 bg-brand-yellow/10 px-5 py-6 sm:px-8">
+    <section className="mt-8 rounded-3xl border border-gray-200 bg-brand-yellow/10 px-5 py-6 sm:px-8">
       <div className="text-center">
         <span className="inline-block rounded-full bg-brand-orange/10 px-3 py-1 text-[11px] font-bold text-brand-orange sm:text-xs">
           🎁 후기 작성 이벤트 진행 중

@@ -251,7 +251,7 @@ export default function MyPage() {
                       <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </Link>
                     {diagExpiry && (
-                      <p className="mt-2.5 break-keep text-xs leading-snug text-brand-dark/50">
+                      <p className="mt-5 break-keep text-xs leading-snug text-brand-dark/50">
                         📅 이 진단 결과는{" "}
                         <b className="text-brand-dark/70">
                           {diagExpiry.getFullYear()}년 {diagExpiry.getMonth() + 1}월{" "}
