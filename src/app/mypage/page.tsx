@@ -274,7 +274,7 @@ export default function MyPage() {
                 </h2>
                 <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
                   직접 하기 어려운 부분을 아래 항목과 같이 구분하고{" "}
-                  <b className="text-brand-dark">신청을 원하시는 분에 한해</b> 별도로 상담을 진행합니다. 필요하신 항목을 눌러 편하게 문의해 주세요.
+                  <b className="text-brand-dark">신청을 원하시는 분에 한해</b> 별도로 상담을 진행합니다.
                 </p>
 
                 <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
@@ -319,8 +319,6 @@ export default function MyPage() {
 
                 <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
                   ※ 위 서비스는 AI 진단 리포트에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
-                  <br />
-                  원하시는 서비스 버튼을 누르면 공식 카카오톡 채널톡 상담원으로 연결됩니다.
                 </p>
               </section>
 
