@@ -803,7 +803,7 @@ export default function Diagnosis() {
                   </span>
                 </div>
                 <div className="p-4 sm:p-5">
-                  <Field label={STEP3_FIELDS.bankruptcy.label} hint={STEP3_FIELDS.bankruptcy.hint}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 twoLine /></Field>
+                  <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 twoLine /></Field>
                   <Field label={STEP3_FIELDS.taxDelinquent.label}>
                     <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 twoLine />
                   </Field>

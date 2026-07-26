@@ -41,7 +41,7 @@ function SignupInner() {
   const [agreeTerms, setAgreeTerms] = useState(false);    // [필수] 이용약관
   const [agreePrivacy, setAgreePrivacy] = useState(false);// [필수] 개인정보 수집·이용
   const [agreeThird, setAgreeThird] = useState(false);    // [필수] 개인정보 제3자 제공
-  const [marketingAgree, setMarketingAgree] = useState(true); // [선택] 마케팅·홍보 수신
+  const [marketingAgree, setMarketingAgree] = useState(false); // [선택] 마케팅·홍보 수신 (개인정보보호법상 선택 동의는 기본 해제)
 
   const allRequiredChecked = agreeAge && agreeTerms && agreePrivacy && agreeThird;
   const allChecked = allRequiredChecked && marketingAgree;
