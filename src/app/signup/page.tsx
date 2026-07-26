@@ -375,20 +375,13 @@ function SignupInner() {
           </Editable>
           <Editable id="signup-desc" as="p" className="mt-2 text-sm text-brand-gray">
             {mode === "signup"
-              ? "이메일로 간편하게 가입하고 나만의 매칭 리포트를 받아보세요."
+              ? "이메일로 간편하게 가입하고 나만의 AI 매칭 리포트를 받아보세요."
               : "가입하신 이메일로 로그인해 주세요."}
           </Editable>
         </div>
 
         {/* 소셜 로그인 (간편 가입) */}
         <div className="mb-5 space-y-2">
-          {/* 미동의 안내 — 개인정보보호법상 동의는 이용자가 직접 체크해야 유효하므로,
-              버튼은 살려 두되(클릭 시 안내 메시지 노출) 미동의 상태를 명확히 알려 준다. */}
-          {!allRequiredChecked && (
-            <p className="mb-1 rounded-lg bg-amber-50 px-3 py-2 text-center text-xs font-medium text-amber-700">
-              아래 필수 약관에 동의하시면 간편 가입이 진행됩니다.
-            </p>
-          )}
           <button
             type="button"
             disabled={loading}
@@ -597,7 +590,10 @@ function SignupInner() {
                   <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
                     개인정보 수집·이용
                   </Link>
-                  에 동의합니다. (이름·연락처·이메일·사업장 정보)
+                  에 동의합니다.
+                  <span className="mt-0.5 block text-[11px] text-brand-gray">
+                    (이름·연락처·이메일·사업장 정보)
+                  </span>
                 </span>
               </label>
 
