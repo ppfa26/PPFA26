@@ -453,14 +453,37 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       step: 1,
       alreadyUsing: usingKodit,
     });
-  } else if (isJaedanPriorityIndustry(jaedanIndustryInput)) {
-    // ── 재단 우선 취급업종(소매·생계형운송·음식숙박·가계서비스) → 재단 우선 ──
-    //   대표님 기준: 신용보증기금이 '가계 유지 목적 생계형 업종'은 재단으로 이관하므로,
-    //   매출 규모가 5억을 넘어도 신보가 아니라 지역신용보증재단을 우선 안내한다.
+  } else if (qualifiesSinbo && isJaedanPriorityIndustry(jaedanIndustryInput)) {
+    // ── 재단 우선 취급업종 + 매출 5억↑(신보 자격 있음) → 신보 먼저 도전 → 부결 시 재단 ──
+    //   대표님 실무 기준(중요): 재단을 먼저 받아버리면 중복 제한으로 신보는 심사조차 못 본다.
+    //    → 한도 큰 신보를 '먼저' 두드려 승인되면 이득, 부결되면 재단으로 내려간다.
+    //   ★ 생계형 업종이라 재단으로 이관될 여지는 있으나, 5억 이상 규모면
+    //     신보 승인 가능성이 실재하므로 '신보 우선 + 재단 백업' 순서로 안내한다.
+    matches.push({
+      institution: "신용보증기금",
+      criteria:
+        "연매출 5억원 이상이면 생계형 업종이어도 신용보증기금 신청 자격이 됩니다.\n신용보증기금이 한도가 더 크므로 '먼저' 신청해 보는 것이 유리합니다.\n※ 재단을 먼저 받으면 중복 제한(신보·재단 동시 불가)으로 신보는 심사조차 못 볼 수 있으니, 큰 곳(신보)부터 두드리는 것이 순서입니다.",
+      priority: "HIGH",
+      loan_type: "대리대출",
+      step: 1,
+      alreadyUsing: usingKodit,
+    });
     matches.push({
       institution: "지역신용보증재단",
       criteria:
-        "소매·생계형운송·음식·숙박·가계서비스 등은 지역신용보증재단 우선 취급대상입니다.\n신용보증기금도 신청 자격은 되지만, 생계형 업종은 신보가 재단으로 안내하는 경우가 많아 처음부터 재단으로 접근하는 것이 승인·속도 면에서 유리합니다(신보·기보와 중복 불가).\n창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
+        "신용보증기금이 부결되면(생계형 업종은 재단으로 안내되는 경우가 많음) 지역신용보증재단으로 진행하세요.\n신보→재단은 '큰 곳 먼저, 안 되면 안전망' 순서입니다(신보·재단 중복 불가).\n창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
+      priority: "MEDIUM",
+      loan_type: "대리대출",
+      step: 2,
+      alreadyUsing: usingJaedan,
+    });
+  } else if (isJaedanPriorityIndustry(jaedanIndustryInput)) {
+    // ── 재단 우선 취급업종 + 매출 5억↓(신보 자격 없음) → 재단 단독 ──
+    //   신보 규모 요건 미달이므로 처음부터 재단이 맞다.
+    matches.push({
+      institution: "지역신용보증재단",
+      criteria:
+        "소매·생계형운송·음식·숙박·가계서비스 등은 지역신용보증재단 우선 취급대상입니다.\n연매출 5억원 미만 소상공인은 신보 규모 요건에 못 미치므로 처음부터 재단이 맞습니다(신보·기보와 중복 불가).\n창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -545,7 +568,15 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     const idx = INSTITUTION_ORDER.findIndex((k) => name.includes(k));
     return idx === -1 ? 99 : idx;
   };
-  matches.sort((a, b) => orderIdx(a.institution) - orderIdx(b.institution));
+  // 1차: step(신청 순서) 오름차순 → '신보 먼저 → 재단 백업'처럼 step으로 지정한 순서를 존중.
+  //      (재단 우선 취급업종 + 매출 5억↑ 케이스에서 신보 step1 이 재단 step2 보다 위로 온다)
+  // 2차: 같은 step 내에서는 기존 기관 고정 순서(INSTITUTION_ORDER) 유지.
+  matches.sort((a, b) => {
+    const sa = a.step ?? 50;
+    const sb = b.step ?? 50;
+    if (sa !== sb) return sa - sb;
+    return orderIdx(a.institution) - orderIdx(b.institution);
+  });
   return matches;
 }
 
