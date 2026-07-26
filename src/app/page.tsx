@@ -112,7 +112,7 @@ export default function Home() {
         {/* 히어로 */}
         <section
           id="hero-section"
-          className="relative overflow-hidden px-4 pb-5 pt-6 sm:pb-9 sm:pt-12"
+          className="relative overflow-hidden px-4 pb-5 pt-5 sm:pb-9 sm:pt-10"
         >
           <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-5 py-6 text-center animate-fadeUp sm:px-10 sm:py-12">
             {/* 상단 배지 (노란색 서비스 소개 배지) */}
@@ -718,7 +718,7 @@ export default function Home() {
 
         {/* 하단 CTA - 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
             카드 아래(Footer 사이) 세로 공백을 조금 줄여 답답하지 않게 조정 (대표님 요청) */}
-        <section className="px-4 pt-3.5 pb-5 sm:pt-5 sm:pb-8">
+        <section className="px-4 pt-3.5 pb-4 sm:pt-5 sm:pb-7">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
