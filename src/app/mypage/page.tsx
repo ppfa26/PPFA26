@@ -282,7 +282,6 @@ export default function MyPage() {
                     { icon: "📊", name: "회사 IR 자료 제작", price: "50만원", accent: true },
                     { icon: "📝", name: "사업계획서 첨삭", price: "50만원", accent: true },
                     { icon: "📑", name: "IR + 사업계획서 첨삭", price: "90만원", accent: true },
-                    { icon: "💰", name: "정책자금 전화자문", price: "10만원", accent: true },
                     { icon: "💰", name: "정부지원사업 러닝메이트 자문", price: "문의", accent: false },
                     { icon: "🚀", name: "예비 · 초기창업패키지", price: "문의", accent: false },
                     { icon: "🧾", name: "세무조사 · 기장", price: "문의", accent: false },
