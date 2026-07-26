@@ -1063,7 +1063,7 @@ export default function AdminPage() {
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-lg font-extrabold text-gray-900">📊 요약 리포트</h2>
+                  <h2 className="text-lg font-extrabold text-gray-900">📊 요약 매출 리포트</h2>
                   <button
                     onClick={() => setShowReport(false)}
                     className="rounded-lg px-2 py-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
@@ -1073,7 +1073,7 @@ export default function AdminPage() {
                   </button>
                 </div>
                 <p className="mb-4 text-xs text-gray-500">
-                  기준 시각: {new Date().toLocaleString("ko-KR")} · 주(週)는 월요일 시작
+                  기준 시각: {new Date().toLocaleString("ko-KR")}
                 </p>
                 <div className="overflow-hidden rounded-xl border border-gray-100">
                   <table className="w-full text-sm">
@@ -1215,7 +1215,7 @@ export default function AdminPage() {
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+                className={`whitespace-nowrap rounded-xl px-3 py-2 text-[13px] font-bold transition ${
                   tab === key
                     ? "bg-brand-dark text-white"
                     : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
@@ -1225,18 +1225,18 @@ export default function AdminPage() {
               </button>
             ))}
 
-            {/* 오른쪽 정렬 빠른 실행 — 매일 자주 쓰는 것들 */}
-            <div className="ml-auto flex flex-wrap gap-2">
+            {/* 오른쪽 정렬 빠른 실행 — 매일 자주 쓰는 것들 (한 덩어리로 붙여 1줄 유지) */}
+            <div className="ml-auto flex flex-nowrap gap-2">
               <button
                 onClick={() => setShowReport(true)}
-                className="rounded-xl border border-indigo-200 bg-indigo-50 px-3.5 py-2 text-sm font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
+                className="whitespace-nowrap rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-[13px] font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
                 title="오늘·이번주·이번달 신규가입·진단접수·결제·매출을 한눈에 봅니다"
               >
                 📊 요약 리포트
               </button>
               <button
                 onClick={copyDiagnosisLink}
-                className="rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
+                className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-[13px] font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
                 title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
               >
                 🔗 진단링크 복사
@@ -1244,7 +1244,7 @@ export default function AdminPage() {
               <button
                 onClick={downloadAllDiag}
                 disabled={diagnoses.length === 0}
-                className="rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2 text-sm font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:opacity-40"
+                className="whitespace-nowrap rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-[13px] font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:opacity-40"
                 title="접수된 모든 고객 진단서를 엑셀(CSV)로 내려받습니다"
               >
                 📋 진단서 엑셀
@@ -1257,7 +1257,7 @@ export default function AdminPage() {
             <div>
               {/* 🔍 회원 검색 — 이름·이메일·연락처로 즉시 검색 */}
               <div className="mb-4 flex w-full flex-wrap items-center gap-2">
-                <div className="relative w-full min-w-0 sm:w-auto sm:max-w-md sm:flex-1">
+                <div className="relative w-full min-w-0 sm:w-auto sm:flex-1">
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                     🔍
                   </span>
