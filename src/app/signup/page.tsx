@@ -612,7 +612,7 @@ function SignupInner() {
                 <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
                   <b className="text-brand-red">[필수]</b> 개인정보 제3자 제공에 동의합니다.
                   <span className="mt-0.5 block text-[11px] text-brand-gray">
-                    매칭된 정책금융기관·제휴 컨설팅 상담 연계를 위해 필요한 범위에서 제공됩니다.
+                    매칭된 정책금융기관 및 제휴 세무·행정·노무·관세·경영 파트너의 상담·연계 서비스 제공을 위해 필요한 범위에서 제공됩니다. (자세한 사항은 개인정보처리방침 참조)
                   </span>
                 </span>
               </label>

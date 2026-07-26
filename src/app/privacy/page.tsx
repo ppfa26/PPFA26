@@ -8,7 +8,7 @@ export default function PrivacyPage() {
     <LegalLayout
       pageKey="privacy"
       title="개인정보처리방침"
-      updatedAt="2026년 7월 15일"
+      updatedAt="2026년 7월 26일"
     >
       <section id="privacy-intro">
         <Editable id="privacy-intro-body" as="p">
@@ -83,21 +83,52 @@ export default function PrivacyPage() {
 
       <section id="privacy-4">
         <h2 className="text-lg font-extrabold text-brand-dark">
-          4. 개인정보의 제3자 제공 및 처리 위탁
+          4. 개인정보의 제3자 제공
         </h2>
         <Editable id="privacy-4-body" as="p" className="mt-2">
           회사는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만,
-          원활한 서비스 제공을 위해 아래와 같이 처리를 위탁할 수 있습니다.
+          이용자가 <b>사전에 동의한 경우</b>에 한하여, 매칭·상담·연계 서비스 제공을
+          위해 아래와 같이 제3자에게 제공할 수 있습니다. 이용자는 제3자 제공 동의를
+          거부할 수 있으며, 거부 시 연계 서비스 이용이 제한될 수 있습니다.
+        </Editable>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5">
+          <li>
+            <b>제공받는 자</b>: 매칭된 정책금융기관 및 제휴{" "}
+            <b>세무·행정·노무·관세·경영 파트너</b>
+          </li>
+          <li>
+            <b>제공 항목</b>: 사업 형태·업종·매출 규모·소재지 등 진단 응답 정보,
+            연계 상담에 필요한 연락처(동의 시)
+          </li>
+          <li>
+            <b>제공 목적</b>: 맞춤형 지원사업 매칭 결과 안내, 세무·행정·노무·관세·경영
+            분야 전문 상담 및 서비스 연계
+          </li>
+          <li>
+            <b>보유·이용 기간</b>: 제공 목적 달성 시 또는 이용자의 동의 철회 시까지
+          </li>
+        </ul>
+      </section>
+
+      <section id="privacy-4b">
+        <h2 className="text-lg font-extrabold text-brand-dark">
+          5. 개인정보 처리의 위탁
+        </h2>
+        <Editable id="privacy-4b-body" as="p" className="mt-2">
+          회사는 원활한 서비스 제공을 위해 아래와 같이 개인정보 처리를 위탁할 수
+          있으며, 위탁계약 시 개인정보가 안전하게 관리되도록 필요한 사항을
+          규정합니다.
         </Editable>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
           <li>결제 처리: 결제대행사(PG)</li>
           <li>회원 인증·데이터 보관: 클라우드 인프라 제공사</li>
+          <li>알림·메시지 발송: 카카오(알림톡·메시지) 등 메시지 발송 대행사</li>
         </ul>
       </section>
 
       <section id="privacy-5">
         <h2 className="text-lg font-extrabold text-brand-dark">
-          5. 이용자의 권리
+          6. 이용자의 권리
         </h2>
         <Editable id="privacy-5-body" as="p" className="mt-2">
           이용자는 언제든지 본인의 개인정보에 대한 열람·정정·삭제·처리정지를
@@ -108,7 +139,7 @@ export default function PrivacyPage() {
 
       <section id="privacy-consent">
         <h2 className="text-lg font-extrabold text-brand-dark">
-          6. 마케팅·알림 수신 및 소셜 로그인 동의
+          7. 마케팅·알림 수신 및 소셜 로그인 동의
         </h2>
         <Editable id="privacy-consent-body" as="p" className="mt-2">
           회사는 원활한 서비스 제공과 안내를 위해 아래 사항에 대한 이용자의
@@ -139,7 +170,7 @@ export default function PrivacyPage() {
 
       <section id="privacy-6">
         <h2 className="text-lg font-extrabold text-brand-dark">
-          7. 개인정보 보호책임자
+          8. 개인정보 보호책임자
         </h2>
         <Editable id="privacy-6-body" as="p" className="mt-2">
           상호: 모두의사업친구

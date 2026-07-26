@@ -149,6 +149,37 @@ export default function Diagnosis() {
   const [bnoServerDown, setBnoServerDown] = useState(false); // 국세청 서버 오류 감지 여부
   const [bnoManual, setBnoManual] = useState(false); // 사용자가 수동입력을 택했는지
 
+  // 국세청 조회 1회 시도 — 결과를 { kind } 로 반환 (재시도 판단용)
+  //   kind: "found"(성공) | "serverDown"(국세청 장애→재시도 후보) | "answered"(미등록·형식오류 등 확정응답)
+  const tryFetchBno = async (
+    digits: string
+  ): Promise<{ kind: "found" | "serverDown" | "answered"; data: any }> => {
+    // 재시도를 감안해 개별 시도는 4.5초로 짧게 끊는다 (총 대기 과도하지 않게)
+    const TIMEOUT_MS = 4500;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    try {
+      const res = await fetch("/api/business-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bno: digits }),
+        signal: controller.signal,
+      });
+      const data = await res.json();
+      if (data.ok && data.found) return { kind: "found", data };
+      if (data.serverError) return { kind: "serverDown", data };
+      return { kind: "answered", data }; // 미등록·형식오류 등 국세청이 '정상 응답'한 경우
+    } catch {
+      // 타임아웃/네트워크 오류 → 국세청 연결 문제로 간주(재시도 후보)
+      return {
+        kind: "serverDown",
+        data: { ok: false, serverError: true, message: BNO_TEXT.errorServer },
+      };
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+
   const checkBno = async () => {
     setBnoResult(null);
     setBnoServerDown(false);
@@ -160,46 +191,37 @@ export default function Diagnosis() {
     }
     setBnoLoading(true);
 
-    // ★ 대표님 요청 ★ 고객은 오래 못 기다린다.
-    //   조회는 '한 번'만 시도하고, 6초 안에 응답이 없거나(느림) 서버 오류면
-    //   바로 수동입력 우회를 열어준다. (재시도로 시간 끌지 않음)
-    const TIMEOUT_MS = 6000;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    // ★ 대표님 요청 반영 ★ 고객은 오래 못 기다린다.
+    //   단, 국세청 503은 '순간 장애'인 경우가 많으므로 자동으로 딱 1회만 짧게(1.2초 텀) 재시도한다.
+    //   그래도 안 되면 즉시 수동입력 우회를 연다. (무한 재시도로 시간 끌지 않음)
     try {
-      const res = await fetch("/api/business-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bno: digits }),
-        signal: controller.signal,
-      });
-      const data = await res.json();
+      let r = await tryFetchBno(digits);
 
-      if (data.ok && data.found) {
-        // 정상 조회 성공 → 진단 데이터에 저장
-        setBnoResult(data);
+      // 국세청 장애면 1.2초 뒤 자동 1회 재시도 (순간 혼잡이면 두 번째에 성공)
+      if (r.kind === "serverDown") {
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+        r = await tryFetchBno(digits);
+      }
+
+      if (r.kind === "found") {
+        setBnoResult(r.data);
         set("bno", digits);
-        set("bnoStatus", data.status);
-        set("bnoTaxType", data.taxType);
+        set("bnoStatus", r.data.status);
+        set("bnoTaxType", r.data.taxType);
         set("bnoVerified", true); // 국세청 검증됨
         return;
       }
 
-      if (data.serverError) {
-        // 국세청 서버 오류 → 즉시 수동입력 우회 열기
-        setBnoResult(data);
+      if (r.kind === "serverDown") {
+        // 재시도까지 실패 → 수동입력 우회 열기
+        setBnoResult(r.data);
         setBnoServerDown(true);
         return;
       }
 
       // 정상 응답이지만 미등록/형식오류 → 그대로 안내(수동입력 안 열림)
-      setBnoResult(data);
-    } catch {
-      // 타임아웃(6초 초과) 또는 네트워크 오류 → 느린 것으로 보고 즉시 수동입력 열기
-      setBnoResult({ ok: false, serverError: true, message: BNO_TEXT.errorServer });
-      setBnoServerDown(true);
+      setBnoResult(r.data);
     } finally {
-      clearTimeout(timer);
       setBnoLoading(false);
     }
   };
@@ -305,6 +327,15 @@ export default function Diagnosis() {
       }
       if (phoneDigits.length < 10) {
         setContactErr(CONTACT_TEXT.errorPhone);
+        return;
+      }
+      // ★ 제3자 제공 동의(필수) 검사 — 개인정보보호법상 동의는 이용자가 직접 체크해야 유효 ★
+      //   연락처가 붙는 이 지점에서만 받는다(익명 진단 단계에선 요구하지 않음).
+      if (!form.agreeThirdParty) {
+        setContactErr(
+          "개인정보 제3자 제공에 동의해 주세요. (매칭·상담 연계를 위해 필요합니다)"
+        );
+        if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
       setContactErr("");
@@ -646,27 +677,28 @@ export default function Diagnosis() {
                       </div>
                     ) : bnoServerDown ? (
                       /* 국세청 서버 오류 → 수동입력 우회 제공 */
-                      <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-4 py-3">
-                        <p className="font-semibold text-brand-red">
-                          ⚠️ 국세청 서버가 일시적으로 혼잡합니다.
+                      <div className="rounded-xl border border-brand-orange/40 bg-brand-orange/10 px-4 py-3">
+                        <p className="font-semibold text-brand-dark">
+                          🛠️ 지금은 국세청 조회 서버 점검 시간일 수 있어요.
                         </p>
                         <p className="mt-1 text-xs leading-relaxed text-brand-gray">
-                          잠시 후 다시 <b>조회</b>를 눌러주시거나, 신청을 놓치지 않도록 아래 버튼으로
-                          사업자등록번호를 <b>직접 입력하여 접수</b>하실 수 있습니다.
+                          국세청 사업자 조회는 <b>주말·심야에 정기 점검</b>이 잦아 일시적으로 연결이 안 될 수 있습니다.
+                          <b className="text-brand-dark"> 대표님 잘못이 아니며</b>, 아래 <b>직접 입력하고 계속하기</b>로
+                          진행하시면 신청이 정상 접수되고 자동확인은 추후 처리됩니다.
                         </p>
-                        <div className="mt-2 flex flex-wrap gap-2">
+                        <div className="mt-2.5 flex flex-wrap gap-2">
+                          <button
+                            onClick={confirmManualBno}
+                            className="btn-brand rounded-full px-4 py-1.5 text-xs font-bold"
+                          >
+                            직접 입력하고 계속하기 →
+                          </button>
                           <button
                             onClick={checkBno}
                             disabled={bnoLoading}
-                            className="rounded-full border border-brand-red/40 bg-white px-3 py-1.5 text-xs font-semibold text-brand-red disabled:opacity-60"
+                            className="rounded-full border border-brand-gray/40 bg-white px-3 py-1.5 text-xs font-semibold text-brand-gray disabled:opacity-60"
                           >
                             {bnoLoading ? "재시도 중…" : "다시 조회"}
-                          </button>
-                          <button
-                            onClick={confirmManualBno}
-                            className="btn-brand rounded-full px-3 py-1.5 text-xs font-semibold"
-                          >
-                            직접 입력하고 계속하기
                           </button>
                         </div>
                       </div>
@@ -728,6 +760,33 @@ export default function Diagnosis() {
                     className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
                   />
                 </Field>
+
+                {/* ★ 제3자 제공 동의 (필수) — 연락처를 받는 이 지점에서만 받는다 (대표님 절충안) ★
+                    진단 응답만 하는 익명 단계에선 동의를 요구하지 않고,
+                    '연락처가 붙는 순간'(=실제 연계 가능한 리드)에만 동의를 받아 이탈을 최소화한다. */}
+                <label className="mt-3 flex cursor-pointer items-start gap-2.5 rounded-xl border border-brand-orange/25 bg-brand-orange/5 px-3.5 py-3">
+                  <input
+                    type="checkbox"
+                    checked={!!form.agreeThirdParty}
+                    onChange={(e) => {
+                      set("agreeThirdParty", e.target.checked);
+                      set(
+                        "agreeThirdPartyAt",
+                        e.target.checked ? new Date().toISOString() : ""
+                      );
+                      if (e.target.checked) setContactErr("");
+                    }}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+                  />
+                  <span className="break-keep text-[13px] leading-relaxed text-brand-dark/85">
+                    <b className="text-brand-red">[필수]</b> 개인정보 제3자 제공에 동의합니다.
+                    <span className="mt-0.5 block text-[11px] text-brand-gray">
+                      매칭된 정책금융기관 및 제휴 <b>세무·행정·노무·관세·경영 파트너</b>의 상담·연계 서비스 제공을 위해
+                      성함·연락처·진단 응답 정보가 필요한 범위에서 제공됩니다.{" "}
+                      <a href="/privacy" target="_blank" className="underline hover:text-brand-dark">개인정보처리방침</a> 참조.
+                    </span>
+                  </span>
+                </label>
               </GroupBox>
 
               {/* ★ 대표님 요청 ★ 신청 결격사유 확인을 1단계 성함 아래로 이동.
