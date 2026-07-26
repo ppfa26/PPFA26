@@ -36,6 +36,8 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
+- `802204f` **회원 CSV 전화번호 버그 수정**: downloadUsersCsv(admin L335)가 userInfoByEmail(이메일 정확매칭만) 써서 소셜로그인 이메일≠진단서 이메일이면 phone 못 찾음 → findUserDiagnosis(이름/연락처 폴백) 병용. + **메뉴판 글자 14px·1줄 고정**(mypage L300, text-[13px]→text-[14px]+truncate+whitespace-nowrap+min-w-0 flex-1).
+- `d3ec934` 메뉴판 안내문구 2개 제거("필요하신 항목 눌러~" / "원하시는 서비스 버튼 누르면 카톡~").
 - `87737cf` mypage 메뉴판 8개로 정리(POS·사업용자동차 제거). 어드민 탭줄 우측에 빠른실행 2버튼(🔗 진단링크 복사 → /diagnosis, 📋 진단서 엑셀). 메뉴판 위치=src/app/mypage/page.tsx L280~, 카톡링크 http://pf.kakao.com/_VxfWxan/chat.
 - `46efef0` 어드민: '오늘 할 일' 요약 배너 제거(대표님 "안 씀" — 통화 미요청인데 카운트돼서 별로). 통화상태·메모·회원CSV·연결성은 유지.
 - `0fb7439` 어드민: 리드관리(통화상태·메모)+오늘할일 요약+회원CSV+연결성(이름클릭→진단서) / 벽걸이 가로버전.
