@@ -232,11 +232,9 @@ export default function AdminPage() {
   }, []);
 
   // 무료진단 링크 복사 — 고객에게 카톡으로 진단 링크 보낼 때 원클릭
+  // ※ 항상 한글 도메인으로 복사 (window.location.origin 은 퓨니코드 xn--... 로 나올 수 있어 고정)
   const copyDiagnosisLink = async () => {
-    const url =
-      typeof window !== "undefined"
-        ? `${window.location.origin}/diagnosis`
-        : "https://모두의사업친구.kr/diagnosis";
+    const url = "https://모두의사업친구.kr/diagnosis";
     try {
       await navigator.clipboard.writeText(url);
       setMsg("무료진단 링크를 복사했어요. 고객에게 붙여넣기 하세요.");
