@@ -836,34 +836,26 @@ export default function Diagnosis() {
 
               {/* ★ 대표님 요청 ★ 신청 결격사유 확인을 1단계 성함 아래로 이동.
                   어렵게 다 작성했는데 결격사유면 신청도 못 하므로, 처음에 먼저 확인.
-                  (회생·파산 / 세금 체납 - 승인 자체가 막히는 핵심 항목만) */}
-              <div className="mb-5 overflow-hidden rounded-2xl border border-brand-red/20 bg-brand-red/5">
-                {/* 제목 바 - 진한 빨강 배경에 흰 글자로 강조 (대표님 요청) */}
-                <div className="flex flex-wrap items-center gap-x-1.5 bg-brand-red px-4 py-2.5 sm:px-5">
-                  <p className="break-keep text-sm font-extrabold leading-snug text-white">
-                    ⚠️ 신청 결격사유 확인
-                  </p>
-                  <span className="break-keep text-xs font-bold leading-snug text-brand-yellow">
-                    (해당 시 신청이 불가)
-                  </span>
-                </div>
-                <div className="p-4 sm:p-5">
-                  <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 twoLine /></Field>
-                  <Field label={STEP3_FIELDS.taxDelinquent.label}>
-                    <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 twoLine />
-                  </Field>
-                  {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
-                  {form.businessType === "법인사업자" && (
-                    <div className="mt-5">
-                      <p className="mb-1 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.capitalImpairment.label)}</p>
-                      <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
-                        {STEP3_FIELDS.capitalImpairment.hint}
-                      </p>
-                      <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
-                    </div>
-                  )}
-                </div>
-              </div>
+                  (회생·파산 / 세금 체납 - 승인 자체가 막히는 핵심 항목만)
+                  ★톤 통일(대표님 요청)★ 위쪽 빨간 띠(제목 바)를 없애고 '대표자 기본정보'
+                  박스와 동일한 GroupBox(회색 1톤)로 통일. "(해당 시 신청이 불가)"는
+                  제목 괄호로 넣어 자동으로 포인트색 뱃지 처리됨. */}
+              <GroupBox title="⚠️ 신청 결격사유 확인 (해당 시 신청이 불가)">
+                <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 twoLine /></Field>
+                <Field label={STEP3_FIELDS.taxDelinquent.label}>
+                  <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 twoLine />
+                </Field>
+                {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
+                {form.businessType === "법인사업자" && (
+                  <div className="mt-5">
+                    <p className="mb-1 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.capitalImpairment.label)}</p>
+                    <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                      {STEP3_FIELDS.capitalImpairment.hint}
+                    </p>
+                    <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
+                  </div>
+                )}
+              </GroupBox>
 
               {/* 사업장 정보 - 문맥별 한 박스로 묶어 깔끔하게 (유형→업종→업력→매출→연령→지역 자연스러운 순서) */}
               <GroupBox title={STEP1_GROUP}>
