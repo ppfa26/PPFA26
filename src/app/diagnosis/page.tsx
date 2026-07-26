@@ -329,15 +329,7 @@ export default function Diagnosis() {
         setContactErr(CONTACT_TEXT.errorPhone);
         return;
       }
-      // ★ 제3자 제공 동의(필수) 검사 — 개인정보보호법상 동의는 이용자가 직접 체크해야 유효 ★
-      //   연락처가 붙는 이 지점에서만 받는다(익명 진단 단계에선 요구하지 않음).
-      if (!form.agreeThirdParty) {
-        setContactErr(
-          "개인정보 제3자 제공에 동의해 주세요. (매칭·상담 연계를 위해 필요합니다)"
-        );
-        if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-      }
+      // 제3자 제공 동의는 회원가입 단계에서 받으므로 진단 질문지에서는 검사하지 않는다(대표님 요청).
       setContactErr("");
 
       // ★ 부분완료 리드 저장 (대표님 전략) ★
@@ -761,32 +753,8 @@ export default function Diagnosis() {
                   />
                 </Field>
 
-                {/* ★ 제3자 제공 동의 (필수) — 연락처를 받는 이 지점에서만 받는다 (대표님 절충안) ★
-                    진단 응답만 하는 익명 단계에선 동의를 요구하지 않고,
-                    '연락처가 붙는 순간'(=실제 연계 가능한 리드)에만 동의를 받아 이탈을 최소화한다. */}
-                <label className="mt-3 flex cursor-pointer items-start gap-2.5 rounded-xl border border-brand-orange/25 bg-brand-orange/5 px-3.5 py-3">
-                  <input
-                    type="checkbox"
-                    checked={!!form.agreeThirdParty}
-                    onChange={(e) => {
-                      set("agreeThirdParty", e.target.checked);
-                      set(
-                        "agreeThirdPartyAt",
-                        e.target.checked ? new Date().toISOString() : ""
-                      );
-                      if (e.target.checked) setContactErr("");
-                    }}
-                    className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
-                  />
-                  <span className="break-keep text-[13px] leading-relaxed text-brand-dark/85">
-                    <b className="text-brand-red">[필수]</b> 개인정보 제3자 제공에 동의합니다.
-                    <span className="mt-0.5 block text-[11px] text-brand-gray">
-                      매칭된 정책금융기관 및 제휴 <b>세무·행정·노무·관세·경영 파트너</b>의 상담·연계 서비스 제공을 위해
-                      성함·연락처·진단 응답 정보가 필요한 범위에서 제공됩니다.{" "}
-                      <a href="/privacy" target="_blank" className="underline hover:text-brand-dark">개인정보처리방침</a> 참조.
-                    </span>
-                  </span>
-                </label>
+                {/* 제3자 제공 동의는 회원가입 단계에서 1회만 받는다(중복 제거·거부감 완화, 대표님 요청).
+                    비회원은 진단 결과를 볼 수 없어 반드시 가입을 거치므로 동의 근거는 가입 시점에 확보된다. */}
               </GroupBox>
 
               {/* ★ 대표님 요청 ★ 신청 결격사유 확인을 1단계 성함 아래로 이동.

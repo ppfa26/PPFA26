@@ -42,6 +42,8 @@ function SignupInner() {
   const [agreePrivacy, setAgreePrivacy] = useState(false);// [필수] 개인정보 수집·이용
   const [agreeThird, setAgreeThird] = useState(false);    // [필수] 개인정보 제3자 제공
   const [marketingAgree, setMarketingAgree] = useState(false); // [선택] 마케팅·홍보 수신 (개인정보보호법상 선택 동의는 기본 해제)
+  // 미동의 상태에서 소셜/가입 버튼을 눌렀을 때 동의 영역을 잠깐 강조(주황 테두리)해 시선을 유도
+  const [highlightConsent, setHighlightConsent] = useState(false);
 
   const allRequiredChecked = agreeAge && agreeTerms && agreePrivacy && agreeThird;
   const allChecked = allRequiredChecked && marketingAgree;
@@ -58,9 +60,25 @@ function SignupInner() {
   // 가입 시 필수 동의 검사 — 개인정보보호법상 동의는 이용자가 '직접' 체크해야 유효하므로
   // 자동 체크(예전 방식)를 제거하고, 필수 항목 미동의 시 진행을 차단한다.
   //  · 반환 true = 통과 / false = 미동의(차단, 안내 메시지 표시)
+  //   ★ 카카오/구글 버튼 UX (대표님 요청) ★
+  //   버튼 클릭만으로 필수 동의를 자동 체크하는 것은 개인정보보호법상 '이용자가 직접 동의' 요건
+  //   위반이라 불가하다. 대신, 미동의 상태에서 버튼을 누르면 동의 영역으로 부드럽게 스크롤하고
+  //   주황 테두리로 잠깐 강조해, 한 번의 '전체 동의' 클릭으로 바로 진행할 수 있게 시선을 유도한다.
   const requireAgreementOrBlock = (): boolean => {
     if (!allRequiredChecked) {
-      setMsg("필수 약관에 동의해 주세요. (만 14세 이상 · 이용약관 · 개인정보 수집·이용)");
+      setMsg("아래 필수 약관에 동의하시면 바로 시작할 수 있어요.");
+      // 동의 박스로 스크롤 + 강조 (모드가 signup일 때만 박스가 렌더됨 — 안전하게 signup으로 전환)
+      if (mode !== "signup") setMode("signup");
+      if (typeof window !== "undefined") {
+        // 렌더 반영 후 스크롤되도록 다음 틱에 실행
+        setTimeout(() => {
+          document
+            .getElementById("signup-consent-box")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 60);
+      }
+      setHighlightConsent(true);
+      setTimeout(() => setHighlightConsent(false), 2200);
       return false;
     }
     return true;
@@ -532,7 +550,14 @@ function SignupInner() {
         {/* ── 약관 동의 영역 (삼쩜삼式, 회원가입 시 노출) ──
             소셜/이메일 공통. 가입 버튼을 누르면 필수 항목이 자동 체크되어 진행됩니다. */}
         {mode === "signup" && (
-          <div className="mt-5 rounded-2xl border border-gray-200 bg-gray-50/70 p-4">
+          <div
+            id="signup-consent-box"
+            className={`mt-5 rounded-2xl border bg-gray-50/70 p-4 transition ${
+              highlightConsent
+                ? "border-brand-orange ring-2 ring-brand-orange/40"
+                : "border-gray-200"
+            }`}
+          >
             {/* 전체 동의 */}
             <label className="flex cursor-pointer items-center gap-2.5 border-b border-gray-200 pb-3">
               <input
@@ -596,9 +621,6 @@ function SignupInner() {
                     개인정보 수집·이용
                   </Link>
                   에 동의합니다.
-                  <span className="mt-0.5 block text-[11px] text-brand-gray">
-                    (이름·연락처·이메일·사업장 정보)
-                  </span>
                 </span>
               </label>
 
@@ -611,10 +633,11 @@ function SignupInner() {
                   className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
                 />
                 <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
-                  <b className="text-brand-red">[필수]</b> 개인정보 제3자 제공에 동의합니다.
-                  <span className="mt-0.5 block text-[11px] text-brand-gray">
-                    매칭된 정책금융기관 및 제휴 세무·행정·노무·관세·경영 파트너의 상담·연계 서비스 제공을 위해 필요한 범위에서 제공됩니다. (자세한 사항은 개인정보처리방침 참조)
-                  </span>
+                  <b className="text-brand-red">[필수]</b>{" "}
+                  <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                    개인정보 제3자 제공
+                  </Link>
+                  에 동의합니다.
                 </span>
               </label>
 
@@ -628,9 +651,6 @@ function SignupInner() {
                 />
                 <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
                   <b className="text-brand-gray">[선택]</b> 마케팅·홍보 정보 수신에 동의합니다.
-                  <span className="mt-0.5 block text-[11px] text-brand-gray">
-                    정식 오픈 안내·신규 지원사업·이벤트 소식을 문자·카카오톡·이메일로 받아보실 수 있습니다.
-                  </span>
                 </span>
               </label>
             </div>
@@ -644,11 +664,6 @@ function SignupInner() {
             <Link href="/privacy" className="underline">개인정보처리방침</Link>에 동의하게 됩니다.
           </p>
         )}
-        <p className="mt-3 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
-          ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며,
-          <br />
-          정부지원사업 승인을 보장하지 않습니다.
-        </p>
         </main>
         </div>
       </div>
