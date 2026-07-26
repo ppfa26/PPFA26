@@ -399,7 +399,7 @@ export default function Home() {
                         {[
                           "✅ 신청 대상인 제도의 카드를 눌러 상세 페이지로 들어가세요.",
                           "상세 페이지의 필요서류·소요기간을 확인하고 서류를 준비하세요.",
-                          "공식 신청 사이트/연락처로 접수하시면 됩니다.",
+                          "공식 신청 사이트/연락처로 접수하시면 됩니다. 담당 부처에 문의시 간편하게 신청 가능합니다.",
                         ].map((t, i) => (
                           <li key={i} className="flex items-start gap-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/80">
                             <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">{i + 1}</span>

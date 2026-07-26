@@ -906,7 +906,7 @@ function AdvancedResult({
               </li>
               <li className="flex items-start gap-1.5 break-keep text-[12px] leading-relaxed text-brand-dark/80">
                 <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
-                <span><b>공식 신청 사이트/연락처</b>로 접수하시면 됩니다. 헷갈리시면 담당 부처에 문의하시면 쉽게 진행 가능합니다.</span>
+                <span><b>공식 신청 사이트/연락처</b>로 접수하시면 됩니다. 담당 부처에 문의시 간편하게 신청 가능합니다.</span>
               </li>
             </ol>
           </div>
