@@ -640,39 +640,6 @@ export default function AdminPage() {
     return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
   });
 
-  /* --------------------------------------------------------------- */
-  /*  🎯 오늘 할 일 요약 — 대표님이 오늘 손댈 곳을 자동으로 뽑아준다  */
-  /* --------------------------------------------------------------- */
-  const isSameDay = (s: string | null) => {
-    if (!s) return false;
-    const d = new Date(s);
-    const now = new Date();
-    return (
-      d.getFullYear() === now.getFullYear() &&
-      d.getMonth() === now.getMonth() &&
-      d.getDate() === now.getDate()
-    );
-  };
-
-  // ① 아직 통화 안 한 완료 진단(=리드) — 전화 돌릴 대상
-  const todoUncontacted = diagnoses.filter(
-    (d) => d.status !== "partial" && (leadNotes[d.id]?.status ?? "none") === "none"
-  );
-  // ② 미완료(중간이탈) 진단 — 전화로 진단 이어가기 유도
-  const todoPartial = diagnoses.filter((d) => d.status === "partial");
-  // ③ 오늘 새로 들어온 진단
-  const todoNewToday = diagnoses.filter((d) => isSameDay(d.created_at));
-  // ④ 열람기한 3일 이내 남은 유효회원 — 재구매 유도 타이밍
-  const todoExpiring = users.filter((u) => {
-    const dl = daysLeft(u.latest_expiry);
-    return dl !== null && dl >= 0 && dl <= 3;
-  });
-  const hasTodo =
-    todoUncontacted.length > 0 ||
-    todoPartial.length > 0 ||
-    todoNewToday.length > 0 ||
-    todoExpiring.length > 0;
-
   // 회원 목록 → 그 회원의 고객 진단서로 바로 이동
   //  소셜 로그인(카카오/구글) 이메일과 진단서 작성 이메일/표기가 다를 수 있어
   //  ① 이메일 정확일치 → ② 이름 정확일치 → ③ 이름 부분일치 순으로 매칭하고,
@@ -1055,83 +1022,6 @@ export default function AdminPage() {
             <div className="mb-4 break-keep rounded-xl border border-red-400/60 bg-red-50 px-4 py-3 text-xs font-semibold leading-relaxed text-red-900 sm:text-sm">
               {loadDebug}
             </div>
-          )}
-
-          {/* ------- 🎯 오늘 할 일 (자동 요약) — 클릭하면 해당 탭으로 이동 ------- */}
-          {hasTodo && (
-            <section className="mb-6 rounded-2xl border border-brand-primary/25 bg-gradient-to-br from-brand-primary/5 to-white p-4 shadow-sm sm:p-5">
-              <div className="mb-3 flex items-center gap-2">
-                <span className="text-lg">🎯</span>
-                <h2 className="text-sm font-extrabold text-gray-900 sm:text-base">
-                  오늘 대표님이 할 일
-                </h2>
-                <span className="ml-1 text-xs text-gray-400">
-                  · 카드를 누르면 바로 그 목록으로 이동해요
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-                {/* ① 전화 돌릴 리드 (미접촉) */}
-                <button
-                  onClick={() => setTab("diagnoses")}
-                  disabled={todoUncontacted.length === 0}
-                  className="group flex flex-col items-start rounded-xl border border-sky-100 bg-sky-50 px-3.5 py-3 text-left transition hover:border-sky-300 hover:shadow-md disabled:opacity-45 disabled:hover:border-sky-100 disabled:hover:shadow-none"
-                >
-                  <span className="text-[11px] font-bold text-sky-600">☎️ 전화 돌릴 리드</span>
-                  <span className="mt-0.5 text-2xl font-extrabold text-sky-700">
-                    {todoUncontacted.length}
-                    <span className="ml-0.5 text-xs font-bold">명</span>
-                  </span>
-                  <span className="mt-0.5 text-[11px] text-sky-500/80 group-hover:underline">
-                    아직 통화 안 한 완료 진단 →
-                  </span>
-                </button>
-                {/* ② 미완료(중간이탈) */}
-                <button
-                  onClick={() => setTab("diagnoses")}
-                  disabled={todoPartial.length === 0}
-                  className="group flex flex-col items-start rounded-xl border border-orange-100 bg-orange-50 px-3.5 py-3 text-left transition hover:border-orange-300 hover:shadow-md disabled:opacity-45 disabled:hover:border-orange-100 disabled:hover:shadow-none"
-                >
-                  <span className="text-[11px] font-bold text-orange-600">⏳ 중간이탈 리드</span>
-                  <span className="mt-0.5 text-2xl font-extrabold text-orange-700">
-                    {todoPartial.length}
-                    <span className="ml-0.5 text-xs font-bold">명</span>
-                  </span>
-                  <span className="mt-0.5 text-[11px] text-orange-500/80 group-hover:underline">
-                    진단 이어가게 도와주기 →
-                  </span>
-                </button>
-                {/* ③ 오늘 신규 진단 */}
-                <button
-                  onClick={() => setTab("diagnoses")}
-                  disabled={todoNewToday.length === 0}
-                  className="group flex flex-col items-start rounded-xl border border-emerald-100 bg-emerald-50 px-3.5 py-3 text-left transition hover:border-emerald-300 hover:shadow-md disabled:opacity-45 disabled:hover:border-emerald-100 disabled:hover:shadow-none"
-                >
-                  <span className="text-[11px] font-bold text-emerald-600">🆕 오늘 신규 진단</span>
-                  <span className="mt-0.5 text-2xl font-extrabold text-emerald-700">
-                    {todoNewToday.length}
-                    <span className="ml-0.5 text-xs font-bold">건</span>
-                  </span>
-                  <span className="mt-0.5 text-[11px] text-emerald-500/80 group-hover:underline">
-                    오늘 새로 들어온 상담 →
-                  </span>
-                </button>
-                {/* ④ 열람기한 임박 (재구매 타이밍) */}
-                <button
-                  onClick={() => setTab("users")}
-                  disabled={todoExpiring.length === 0}
-                  className="group flex flex-col items-start rounded-xl border border-purple-100 bg-purple-50 px-3.5 py-3 text-left transition hover:border-purple-300 hover:shadow-md disabled:opacity-45 disabled:hover:border-purple-100 disabled:hover:shadow-none"
-                >
-                  <span className="text-[11px] font-bold text-purple-600">⏰ 열람기한 임박</span>
-                  <span className="mt-0.5 text-2xl font-extrabold text-purple-700">
-                    {todoExpiring.length}
-                    <span className="ml-0.5 text-xs font-bold">명</span>
-                  </span>
-                  <span className="mt-0.5 text-[11px] text-purple-500/80 group-hover:underline">
-                    3일 이내 · 재구매 유도 →
-                  </span>
-                </button>
-              </div>
-            </section>
           )}
 
           {/* 통계 카드 */}
