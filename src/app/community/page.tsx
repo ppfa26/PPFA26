@@ -396,7 +396,7 @@ export default function Page() {
             다음 후기의 주인공은 대표님입니다
           </h2>
           <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-gray-300 sm:text-base">
-            내 사업장에 정부지원사업, 지금 무료로 진단받아 보세요.
+            내 사업장에 알맞은 정부지원사업, 지금 무료로 진단받아 보세요.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
