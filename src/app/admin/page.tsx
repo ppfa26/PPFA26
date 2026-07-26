@@ -1248,15 +1248,16 @@ export default function AdminPage() {
             />
           </section>
 
-          {/* 탭 + 빠른 실행 버튼 — 한 줄에 균등 분배해 빈 공간 없이 꽉 채운다 */}
+          {/* 탭 + 빠른 실행 버튼 — 한 줄에 균등 분배해 빈 공간 없이 꽉 채운다
+              순서: 회원목록 · 고객진단서 · 결제조회권 · 매출통계 · [요약매출리포트] · 접속기기차단 · 진단서엑셀 · 진단링크복사 */}
           <div className="mb-4 flex flex-wrap items-center gap-2">
+            {/* 1~4: 앞쪽 탭 4개(map) */}
             {(
               [
                 ["users", `👥 회원 목록 (${users.length})`],
-                ["payments", `💳 결제·조회권 (${payments.length})`],
                 ["diagnoses", `📋 고객 진단서 (${diagnoses.length})`],
+                ["payments", `💳 결제 조회권 (${payments.length})`],
                 ["revenue", "📈 매출 통계"],
-                ["access", `🛡️ 접속·기기·차단`],
               ] as [Tab, string][]
             ).map(([key, label]) => (
               <button
@@ -1272,9 +1273,7 @@ export default function AdminPage() {
               </button>
             ))}
 
-            {/* 구분선 — 탭(보기)과 실행 버튼을 시각적으로 나눔 */}
-            <span className="hidden h-6 w-px shrink-0 bg-white/20 lg:block" aria-hidden />
-
+            {/* 5: 요약 매출 리포트(실행) */}
             <button
               onClick={() => setShowReport(true)}
               className="flex-1 whitespace-nowrap rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-center text-[14px] font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
@@ -1282,13 +1281,20 @@ export default function AdminPage() {
             >
               📊 요약 매출 리포트
             </button>
+
+            {/* 6: 접속 기기 차단(탭) */}
             <button
-              onClick={copyDiagnosisLink}
-              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
-              title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
+              onClick={() => setTab("access")}
+              className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-center text-[14px] font-bold transition ${
+                tab === "access"
+                  ? "bg-brand-dark text-white"
+                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+              }`}
             >
-              🔗 진단링크 복사
+              🛡️ 접속 기기 차단
             </button>
+
+            {/* 7: 진단서 엑셀(실행) */}
             <button
               onClick={downloadAllDiag}
               disabled={diagnoses.length === 0}
@@ -1296,6 +1302,15 @@ export default function AdminPage() {
               title="접수된 모든 고객 진단서를 엑셀(CSV)로 내려받습니다"
             >
               📋 진단서 엑셀
+            </button>
+
+            {/* 8: 진단링크 복사(실행) */}
+            <button
+              onClick={copyDiagnosisLink}
+              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
+              title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
+            >
+              🔗 진단링크 복사
             </button>
           </div>
 
