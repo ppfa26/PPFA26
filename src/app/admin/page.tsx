@@ -219,7 +219,6 @@ export default function AdminPage() {
     dir: "asc" | "desc";
   }>({ key: "joined_at", dir: "desc" });
   const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
-  const [showReport, setShowReport] = useState(false); // 요약 리포트 모달 열림 여부
 
   // 리드(상담 대상) 메모·통화 상태 — 브라우저 localStorage 기반 (DB 불필요)
   const [leadNotes, setLeadNotes] = useState<Record<string, LeadNote>>({});
@@ -1097,82 +1096,6 @@ export default function AdminPage() {
       <Header />
       <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-8">
         <div className="mx-auto max-w-6xl">
-          {/* 📊 요약 리포트 모달 — 오늘·이번주·이번달·전체 집계 */}
-          {showReport && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-              onClick={() => setShowReport(false)}
-            >
-              <div
-                className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-2xl sm:p-6"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-lg font-extrabold text-gray-900">📊 요약 매출 리포트</h2>
-                  <button
-                    onClick={() => setShowReport(false)}
-                    className="rounded-lg px-2 py-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-                    aria-label="닫기"
-                  >
-                    ✕
-                  </button>
-                </div>
-                <p className="mb-4 text-xs text-gray-500">
-                  기준 시각: {new Date().toLocaleString("ko-KR")}
-                </p>
-                <div className="overflow-hidden rounded-xl border border-gray-100">
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50 text-xs text-gray-500">
-                      <tr>
-                        <th className="px-3 py-2.5 text-left font-semibold">구분</th>
-                        <th className="px-3 py-2.5 text-center font-semibold">오늘</th>
-                        <th className="px-3 py-2.5 text-center font-semibold">이번 주</th>
-                        <th className="px-3 py-2.5 text-center font-semibold">이번 달</th>
-                        <th className="px-3 py-2.5 text-center font-semibold">전체</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      <tr>
-                        <td className="px-3 py-2.5 font-semibold text-gray-700">🙋 신규 가입</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.today.users}명</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.week.users}명</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.month.users}명</td>
-                        <td className="px-3 py-2.5 text-center font-bold text-gray-900">{reportData.total.users}명</td>
-                      </tr>
-                      <tr>
-                        <td className="px-3 py-2.5 font-semibold text-gray-700">📋 진단 접수</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.today.diag}건</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.week.diag}건</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.month.diag}건</td>
-                        <td className="px-3 py-2.5 text-center font-bold text-gray-900">{reportData.total.diag}건</td>
-                      </tr>
-                      <tr>
-                        <td className="px-3 py-2.5 font-semibold text-gray-700">💳 결제</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.today.pay}건</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.week.pay}건</td>
-                        <td className="px-3 py-2.5 text-center">{reportData.month.pay}건</td>
-                        <td className="px-3 py-2.5 text-center font-bold text-gray-900">{reportData.total.pay}건</td>
-                      </tr>
-                      <tr className="bg-brand-orange/5">
-                        <td className="px-3 py-2.5 font-bold text-brand-dark">💰 매출</td>
-                        <td className="px-3 py-2.5 text-center text-xs font-semibold text-brand-primary">{won(reportData.today.revenue)}</td>
-                        <td className="px-3 py-2.5 text-center text-xs font-semibold text-brand-primary">{won(reportData.week.revenue)}</td>
-                        <td className="px-3 py-2.5 text-center text-xs font-semibold text-brand-primary">{won(reportData.month.revenue)}</td>
-                        <td className="px-3 py-2.5 text-center text-xs font-extrabold text-brand-primary">{won(reportData.total.revenue)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <button
-                  onClick={() => setShowReport(false)}
-                  className="mt-4 w-full rounded-xl bg-brand-dark py-2.5 text-sm font-bold text-white transition hover:opacity-90"
-                >
-                  닫기
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* 상단 헤더 */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
@@ -1255,7 +1178,7 @@ export default function AdminPage() {
                 ["users", `👥 회원 목록 (${users.length})`],
                 ["diagnoses", `📋 고객 진단서 (${diagnoses.length})`],
                 ["payments", `💳 결제 조회권 (${payments.length})`],
-                ["revenue", "📈 매출 통계"],
+                ["revenue", "📊 일주월 매출 리포트"],
               ] as [Tab, string][]
             ).map(([key, label]) => (
               <button
@@ -1271,16 +1194,7 @@ export default function AdminPage() {
               </button>
             ))}
 
-            {/* 5: 요약 매출 리포트(실행) */}
-            <button
-              onClick={() => setShowReport(true)}
-              className="flex-1 whitespace-nowrap rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-center text-[14px] font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
-              title="오늘·이번주·이번달 신규가입·진단접수·결제·매출을 한눈에 봅니다"
-            >
-              📊 요약 매출 리포트
-            </button>
-
-            {/* 6: 접속 기기 차단(탭) */}
+            {/* 5: 접속 기기 차단(탭) */}
             <button
               onClick={() => setTab("access")}
               className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-center text-[14px] font-bold transition ${
@@ -1292,7 +1206,7 @@ export default function AdminPage() {
               🛡️ 접속 기기 차단
             </button>
 
-            {/* 7: 진단서 엑셀(실행) */}
+            {/* 6: 진단서 엑셀(실행) — 그린 계열 */}
             <button
               onClick={downloadAllDiag}
               disabled={diagnoses.length === 0}
@@ -1302,10 +1216,10 @@ export default function AdminPage() {
               📋 진단서 엑셀
             </button>
 
-            {/* 8: 진단링크 복사(실행) */}
+            {/* 7: 진단링크 복사(실행) — 블루 계열 */}
             <button
               onClick={copyDiagnosisLink}
-              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
+              className="flex-1 whitespace-nowrap rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-center text-[14px] font-bold text-blue-700 shadow-sm transition hover:bg-blue-100"
               title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
             >
               🔗 진단링크 복사
@@ -1498,14 +1412,14 @@ export default function AdminPage() {
                           <div className="grid w-[280px] grid-cols-3 gap-1.5">
                             <button
                               onClick={() => goToUserDiag(u.email, u.full_name)}
-                              className="whitespace-nowrap rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 hover:bg-sky-100"
+                              className="whitespace-nowrap rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100"
                             >
                               📇 고객진단서
                             </button>
                             {hasDiag ? (
                               <button
                                 onClick={() => viewUserResult(u.email)}
-                                className="whitespace-nowrap rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
+                                className="whitespace-nowrap rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100"
                               >
                                 📊 결과보기
                               </button>
@@ -1519,7 +1433,7 @@ export default function AdminPage() {
                             )}
                             <button
                               onClick={() => u.email && resetDevice(u.email)}
-                              className="whitespace-nowrap rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100"
+                              className="whitespace-nowrap rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-700 hover:bg-orange-100"
                             >
                               기기초기화
                             </button>
@@ -1540,7 +1454,7 @@ export default function AdminPage() {
                             )}
                             <button
                               onClick={() => u.email && doBlock("email", u.email)}
-                              className="whitespace-nowrap rounded-lg bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                              className="whitespace-nowrap rounded-lg bg-red-50 px-2.5 py-1 text-xs font-bold text-red-600 hover:bg-red-100"
                             >
                               계정차단
                             </button>
@@ -1920,11 +1834,64 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* ------- 매출 통계 (일별 / 월별) — 행 클릭 시 개별 결제 건 펼침 + 삭제 ------- */}
+          {/* ------- 일주월 매출 리포트 = 요약표(오늘/주/달/전체) + 일별·월별 상세 ------- */}
           {tab === "revenue" && (
             <div className="space-y-4">
+              {/* ===== 요약표: 오늘 · 이번주 · 이번달 · 전체 ===== */}
+              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-bold text-gray-800">📊 요약 (신규가입 · 진단 · 결제 · 매출)</h3>
+                  <span className="text-xs text-gray-400">
+                    기준: {new Date().toLocaleString("ko-KR")}
+                  </span>
+                </div>
+                <div className="overflow-x-auto rounded-xl border border-gray-100">
+                  <table className="w-full min-w-[520px] text-sm">
+                    <thead className="bg-gray-50 text-xs text-gray-500">
+                      <tr>
+                        <th className="px-3 py-2.5 text-left font-semibold">구분</th>
+                        <th className="px-3 py-2.5 text-center font-semibold">오늘</th>
+                        <th className="px-3 py-2.5 text-center font-semibold">이번 주</th>
+                        <th className="px-3 py-2.5 text-center font-semibold">이번 달</th>
+                        <th className="px-3 py-2.5 text-center font-semibold">전체</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      <tr>
+                        <td className="px-3 py-2.5 font-semibold text-gray-700">🙋 신규 가입</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.today.users}명</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.week.users}명</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.month.users}명</td>
+                        <td className="px-3 py-2.5 text-center font-bold text-gray-900">{reportData.total.users}명</td>
+                      </tr>
+                      <tr>
+                        <td className="px-3 py-2.5 font-semibold text-gray-700">📋 진단 접수</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.today.diag}건</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.week.diag}건</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.month.diag}건</td>
+                        <td className="px-3 py-2.5 text-center font-bold text-gray-900">{reportData.total.diag}건</td>
+                      </tr>
+                      <tr>
+                        <td className="px-3 py-2.5 font-semibold text-gray-700">💳 결제</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.today.pay}건</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.week.pay}건</td>
+                        <td className="px-3 py-2.5 text-center">{reportData.month.pay}건</td>
+                        <td className="px-3 py-2.5 text-center font-bold text-gray-900">{reportData.total.pay}건</td>
+                      </tr>
+                      <tr className="bg-brand-orange/5">
+                        <td className="px-3 py-2.5 font-bold text-brand-dark">💰 매출</td>
+                        <td className="px-3 py-2.5 text-center text-xs font-semibold text-brand-primary">{won(reportData.today.revenue)}</td>
+                        <td className="px-3 py-2.5 text-center text-xs font-semibold text-brand-primary">{won(reportData.week.revenue)}</td>
+                        <td className="px-3 py-2.5 text-center text-xs font-semibold text-brand-primary">{won(reportData.month.revenue)}</td>
+                        <td className="px-3 py-2.5 text-center text-xs font-extrabold text-brand-primary">{won(reportData.total.revenue)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
               <p className="rounded-xl bg-brand-yellow/10 px-4 py-2.5 text-xs text-gray-500">
-                💡 날짜(또는 월)를 <b className="text-gray-700">클릭</b>하면 그날 결제 내역이 1건씩 펼쳐집니다. 각 건의{" "}
+                💡 아래 날짜(또는 월)를 <b className="text-gray-700">클릭</b>하면 그날 결제 내역이 1건씩 펼쳐집니다. 각 건의{" "}
                 <b className="text-rose-600">🗑️ 삭제</b> 버튼으로 잘못된/테스트 결제를 정리할 수 있어요.
               </p>
               <div className="grid gap-4 lg:grid-cols-2">
