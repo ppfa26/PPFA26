@@ -1215,7 +1215,7 @@ export default function AdminPage() {
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-center text-[13px] font-bold transition ${
+                className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-center text-[14px] font-bold transition ${
                   tab === key
                     ? "bg-brand-dark text-white"
                     : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
@@ -1230,14 +1230,14 @@ export default function AdminPage() {
 
             <button
               onClick={() => setShowReport(true)}
-              className="flex-1 whitespace-nowrap rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-center text-[13px] font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
+              className="flex-1 whitespace-nowrap rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-center text-[14px] font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
               title="오늘·이번주·이번달 신규가입·진단접수·결제·매출을 한눈에 봅니다"
             >
               📊 요약 매출 리포트
             </button>
             <button
               onClick={copyDiagnosisLink}
-              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[13px] font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
+              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
               title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
             >
               🔗 진단링크 복사
@@ -1245,7 +1245,7 @@ export default function AdminPage() {
             <button
               onClick={downloadAllDiag}
               disabled={diagnoses.length === 0}
-              className="flex-1 whitespace-nowrap rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-[13px] font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:opacity-40"
+              className="flex-1 whitespace-nowrap rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-[14px] font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:opacity-40"
               title="접수된 모든 고객 진단서를 엑셀(CSV)로 내려받습니다"
             >
               📋 진단서 엑셀
@@ -1288,7 +1288,7 @@ export default function AdminPage() {
                   >
                     ⬇️ 회원 엑셀 다운
                   </button>
-                  <span className="whitespace-nowrap rounded-xl bg-white/5 px-3 py-2.5 text-xs font-semibold text-gray-400 ring-1 ring-white/10">
+                  <span className="whitespace-nowrap rounded-xl bg-white/5 px-3 py-2.5 text-[13px] font-semibold text-gray-400 ring-1 ring-white/10">
                     {userSearch ? `검색결과 ${filteredUsers.length}명` : `전체 ${users.length}명`}
                   </span>
                 </div>
@@ -1296,7 +1296,7 @@ export default function AdminPage() {
 
               <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
               <table className="w-full min-w-[920px] text-left text-sm">
-                <thead className="whitespace-nowrap border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
+                <thead className="whitespace-nowrap border-b border-gray-100 bg-gray-50 text-[13px] text-gray-500">
                   <tr>
                     <th className="px-4 py-3 font-semibold">회원 (이름·유입경로)</th>
                     <th className="px-4 py-3 font-semibold">가입일</th>
