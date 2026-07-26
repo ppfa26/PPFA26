@@ -286,8 +286,6 @@ export default function MyPage() {
                     { icon: "🚀", name: "예비창업패키지 · 초기창업패키지", price: "문의", accent: false },
                     { icon: "🧾", name: "세무조사 · 조정계산 · 기장", price: "문의", accent: false },
                     { icon: "🌏", name: "수출 관련 관세사 상담", price: "문의", accent: false },
-                    { icon: "🖥️", name: "사업장 POS", price: "문의", accent: false },
-                    { icon: "🚗", name: "사업용 자동차 문의", price: "문의", accent: false },
                     { icon: "🛡️", name: "보험 관련 문의", price: "문의", accent: false },
                   ].map((s) => (
                     <a

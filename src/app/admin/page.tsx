@@ -224,6 +224,22 @@ export default function AdminPage() {
     setLeadNotes(loadAllLeadNotes());
   }, []);
 
+  // 무료진단 링크 복사 — 고객에게 카톡으로 진단 링크 보낼 때 원클릭
+  const copyDiagnosisLink = async () => {
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/diagnosis`
+        : "https://모두의사업친구.kr/diagnosis";
+    try {
+      await navigator.clipboard.writeText(url);
+      setMsg("무료진단 링크를 복사했어요. 고객에게 붙여넣기 하세요.");
+    } catch {
+      // 클립보드 권한이 없을 때는 링크를 그대로 보여준다.
+      setMsg(`복사 실패 — 이 링크를 직접 복사하세요: ${url}`);
+    }
+    setTimeout(() => setMsg(null), 3500);
+  };
+
   // 통화 상태 변경
   const setCallStatus = (id: string, status: CallStatus) => {
     setLeadNotes(saveLeadNote(id, { status }));
@@ -1055,8 +1071,8 @@ export default function AdminPage() {
             />
           </section>
 
-          {/* 탭 */}
-          <div className="mb-4 flex flex-wrap gap-2">
+          {/* 탭 + 오른쪽 빠른 실행 버튼 (진단서 엑셀 · 무료진단 링크복사) */}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
             {(
               [
                 ["users", `👥 회원 목록 (${users.length})`],
@@ -1078,6 +1094,25 @@ export default function AdminPage() {
                 {label}
               </button>
             ))}
+
+            {/* 오른쪽 정렬 빠른 실행 — 매일 자주 쓰는 2가지 */}
+            <div className="ml-auto flex flex-wrap gap-2">
+              <button
+                onClick={copyDiagnosisLink}
+                className="rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm font-bold text-gray-700 shadow-sm transition hover:border-brand-orange hover:bg-brand-orange/5"
+                title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
+              >
+                🔗 진단링크 복사
+              </button>
+              <button
+                onClick={downloadAllDiag}
+                disabled={diagnoses.length === 0}
+                className="rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2 text-sm font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:opacity-40"
+                title="접수된 모든 고객 진단서를 엑셀(CSV)로 내려받습니다"
+              >
+                📋 진단서 엑셀
+              </button>
+            </div>
           </div>
 
           {/* ------- 회원 목록 ------- */}
