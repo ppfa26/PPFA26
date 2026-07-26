@@ -26,6 +26,7 @@ import {
   INSTITUTION_PRODUCT_LINKS,
   filterProducts,
   resolveJaedanLinks,
+  loanNatureOf,
 } from "@/lib/advancedScreening";
 import {
   SUPPORT_PROGRAMS,
@@ -1088,6 +1089,23 @@ function AdvancedResult({
                               <span className={`break-keep text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>
                                 {prod.name}
                               </span>
+                              {/* ★ 상품 성격 배지 (대표님 기준: 직접대출/보증서/재단) — 자금이 어떻게 나오는지 한눈에 */}
+                              {(() => {
+                                const nature = loanNatureOf(m.institution);
+                                const natureStyle =
+                                  nature === "직접대출"
+                                    ? "bg-blue-100 text-blue-700"
+                                    : nature === "재단"
+                                    ? "bg-emerald-100 text-emerald-700"
+                                    : "bg-purple-100 text-purple-700";
+                                return (
+                                  <span
+                                    className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${natureStyle}`}
+                                  >
+                                    {nature}
+                                  </span>
+                                );
+                              })()}
                               {prod.amount && (
                                 <span className="break-keep rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                                   {prod.amount}

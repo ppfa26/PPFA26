@@ -1185,6 +1185,23 @@ export function findInstitutionLink(institution: string): InstitutionLink | null
   return INSTITUTION_LINKS.find((x) => institution.includes(x.match)) ?? null;
 }
 
+// ── 상품 성격 배지 (대표님 기준) ─────────────────────────────────
+//  기관 성격에 따라 자금이 어떻게 나오는지 한눈에 안내한다.
+//   · 직접대출 : 공단(소진공·중진공)과 직접 약정 후 대출 실행 → 보증서 불필요
+//   · 보증서   : 보증기관(신보·기보·무보)이 보증서를 발급하면 은행에서 대출 실행
+//   · 재단     : 지역신용보증재단 보증서를 받아 은행에서 대출 실행
+//  ※ 이 판정은 결과 '표시' 단계 후처리이며 매칭 스코어링 로직과 무관하다.
+export type LoanNature = "직접대출" | "보증서" | "재단";
+
+export function loanNatureOf(institution: string): LoanNature {
+  const s = (institution || "").replace(/\s/g, "");
+  if (s.includes("재단")) return "재단";
+  if (s.includes("소상공인시장진흥공단") || s.includes("중소벤처기업진흥공단"))
+    return "직접대출";
+  // 신용보증기금·기술보증기금·무역보험공사 등 보증기관
+  return "보증서";
+}
+
 // ── 지역신용보증재단 대표 사이트(검정 버튼용) ──────────────────────
 //  재단 카드 밑에 신보·기보처럼 검정색 사이트 버튼으로 동일하게 노출.
 //  세부 지역은 아래 지역 드롭다운(REGION_SINBO)으로 안내.
