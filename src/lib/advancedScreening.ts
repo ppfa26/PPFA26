@@ -816,6 +816,30 @@ export const REGION_SINBO: RegionSinbo[] = [
 // ── 기관 내 개별 상품(아코디언으로 펼쳐지는 상품 카드) ─────────────
 //  대표님 요청: 같은 기관 안에서 여러 상품을 신청할 수 있으면
 //  신용보증재단 '상품 바로보기'처럼 클릭 시 쭈르륵 펼쳐지고 각 상품별로 신청.
+// ── 상품 성격 배지 (대표님 기준) ─────────────────────────────────
+//  자금이 어떻게 나오는지 한눈에 안내(직접대출 / 대리대출 2종).
+//   · 직접대출 = 공단(소진공·중진공)과 직접 약정 후 공단이 직접 대출 실행(보증 불필요)
+//   · 대리대출 = 확인서/보증서 받고 재단·신보·기보·무보 약정 → 은행 가서 대출 실행
+//               (=보증부대출=보증서=확인서, 대표님 현장 용어로 '대리대출'로 통일)
+//  ※ 이 판정은 결과 '표시' 단계 후처리이며 매칭 스코어링 로직과 무관하다.
+export type LoanNature = "직접대출" | "대리대출";
+
+// 기관 기본 성격 — 상품에 nature가 지정되지 않았을 때의 폴백.
+//   중진공 = 직접대출(2026 융자사업 안내 팩트: 창업기반·청년전용·개발기술·신시장·
+//            신성장·제조현장스마트화·Net-Zero·재도약·일시적경영애로 모두 직접대출)
+//   신보·기보·무보 = 대리대출(보증서/연대보증서 발급 → 은행 대출), 재단 = 대리대출(보증부)
+export function loanNatureOf(institution: string): LoanNature {
+  const s = (institution || "").replace(/\s/g, "");
+  if (s.includes("중소벤처기업진흥공단")) return "직접대출";
+  // 소진공은 상품마다 성격이 갈린다(SMAN018M 공식표):
+  //   직접대출표 = 혁신성장촉진·민간투자연계·상생성장·일시적경영애로·신용취약·재도전
+  //   대리대출표 = 소공인특화·일반경영안정·긴급경영안정·장애인기업·청년고용연계·대환
+  // 기관 기본값은 '직접대출'(직접대출표가 더 많음)로 두고, 대리 상품은 상품별 nature로 개별 지정.
+  if (s.includes("소상공인시장진흥공단")) return "직접대출";
+  // 신용보증기금·기술보증기금·무역보험공사(연대보증)·지역신용보증재단 → 대리대출(보증부)
+  return "대리대출";
+}
+
 export type InstitutionProduct = {
   name: string; // 상품명 (예: 혁신성장촉진자금)
   amount?: string; // 한도 (예: "운전 1억 · 시설 5억")
@@ -824,6 +848,11 @@ export type InstitutionProduct = {
   approvalNote?: string; // 승인율 관련 솔직한 안내
   applyUrl?: string; // 이 상품 신청·안내 페이지
   hookNote?: string; // 후킹/주의 안내 (예: 대상 많지만 승인율 낮음)
+  // ★ 상품 성격 배지 (대표님 기준) — 같은 기관 안에서도 상품마다 다를 수 있어 상품 단위로 지정 ★
+  //   직접대출 = 공단과 직접 약정 후 공단이 직접 대출 실행(보증 불필요)
+  //   대리대출 = 확인서/보증서 받고 재단·신보·기보·무보 약정 → 은행 가서 대출 실행(=보증부대출)
+  //   미지정 시 loanNatureOf(기관명)로 기관 기본 성격 판별.
+  nature?: LoanNature | LoanNature[]; // 둘 다 가능하면 배열(예: 민간투자연계형)
   // ★ 상품별 노출 조건 (대표님 요청: 해당 안 되는 상품은 아예 숨김) ★
   //   함수가 있으면 true를 반환하는 상품만 결과창에 노출.
   //   없으면(=조건 미지정) 그 기관에 해당되는 모든 고객에게 항상 노출(기본 상품).
@@ -883,6 +912,55 @@ export const INSTITUTION_PRODUCT_LINKS: ProductLink[] = [
   { label: "무역보험공사 상품 바로보기", url: "https://www.ksure.or.kr/rh-kr/cntnts/i-104/web.do" },
 ];
 
+// ── 예비창업자 전용 지원사업 (아직 사업자등록 전) ─────────────────
+//  대표님 요청(Q5): '예비창업자' 체크한 고객에게만 결과 하단(사이트 바로가기 위)에
+//  별도 아코디언으로 노출. 정책자금(대출)이 아니라 '사업화 자금(무상·바우처)' 중심이라
+//  기관별 대출상품 아코디언과 분리해 안내한다.
+//  ※ 명칭·지원금·신청URL은 2026 공식 공고(K-Startup·중진공·소진공) 기준.
+export type PreFounderProgram = {
+  name: string; // 정확 명칭
+  amount: string; // 지원금(최대·평균)
+  target: string; // 지원대상(연령·업력 조건)
+  detail: string; // 지원내용 한 줄
+  applyUrl: string; // 공식 신청·안내 페이지
+  applyLabel: string; // 신청 버튼 라벨
+};
+
+export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
+  {
+    name: "예비창업패키지",
+    amount: "최대 1억원 (평균 약 4,000만원 · 100% 무상)",
+    target: "사업자등록 전 예비창업자 (만 19세 이상, 연령 상한 없음)",
+    detail: "사업화 자금 + 창업교육 + 멘토링. 매년 2월경 공고, K-Startup에서 온라인 신청.",
+    applyUrl: "https://www.k-startup.go.kr",
+    applyLabel: "K-Startup에서 신청",
+  },
+  {
+    name: "생애최초 청년창업 지원",
+    amount: "최대 1억원 (사업화자금 5천만원 내외)",
+    target: "만 29세 이하 생애최초 청년 예비창업자",
+    detail: "청년 최초 창업자 대상 사업화자금·창업 프로그램. K-Startup 공고 확인.",
+    applyUrl: "https://www.k-startup.go.kr",
+    applyLabel: "K-Startup에서 신청",
+  },
+  {
+    name: "청년창업사관학교",
+    amount: "최대 1억원 (총사업비의 70% 이내 · 평균 약 7,000만원)",
+    target: "만 39세 이하 예비창업자 및 창업 3년 이내 대표자 (경험창업자 7년 이내)",
+    detail: "중소벤처기업진흥공단 운영. 사업화자금 + 입교(집중보육) + 정책자금 연계.",
+    applyUrl: "https://start.kosmes.or.kr",
+    applyLabel: "청년창업사관학교 신청",
+  },
+  {
+    name: "신사업창업사관학교",
+    amount: "최대 4,000만원 (사업화 자금)",
+    target: "생활밀착형 신사업 아이템 예비 소상공인 (음식·도소매·서비스 등)",
+    detail: "소상공인시장진흥공단 운영. 창업교육 + 점포경영체험 + 사업화 자금.",
+    applyUrl: "https://edu.sbiz.or.kr",
+    applyLabel: "신사업창업사관학교 신청",
+  },
+];
+
 export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "신용보증기금",
@@ -895,31 +973,49 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     productUrl: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2806&bbsId=1002&ps=417",
     products: [
       {
-        name: "일반운전자금보증",
+        name: "일반보증 (운전자금)",
         amount: "매출·신용도 기반 산정",
-        desc: "연매출 5억원 이상 기업의 운전자금 보증서 (은행 대출 연계)",
+        desc: "담보력이 부족한 중소기업의 운전자금 보증서\n(보증서 발급 → 은행 대출)",
         approval: "mid",
         approvalNote: "매출·신용도가 높을수록 승인에 유리합니다.",
         applyUrl: "https://www.kodit.or.kr/apps/index.do",
       },
       {
-        name: "시설자금보증",
+        name: "일반보증 (시설자금)",
         amount: "시설투자액 기준",
-        desc: "공장·설비 등 시설투자 자금 보증",
+        desc: "공장·설비 등 시설투자 자금 보증서",
         approval: "mid",
         applyUrl: "https://www.kodit.or.kr/apps/index.do",
       },
       {
-        name: "수출성장자금보증",
-        amount: "수출실적 기준",
-        desc: "수출 실적을 보유한 기업에 대한 우대 보증\n(무역보험과 별개)",
+        name: "퍼스트펭귄보증 (유망 창업기업)",
+        amount: "최대 30억원",
+        desc: "창업 후 7년 이내 유망창업기업 중\n미래 성장성이 높은 핵심 창업기업 (보증비율 우대)",
+        approval: "mid",
+        approvalNote: "성장성·기술성 심사를 통과하면 대규모 보증이 가능합니다.",
+        applyUrl: "https://www.kodit.or.kr/apps/index.do",
+        eligibleWhen: (c) =>
+          typeof c.years_in_business === "number" && c.years_in_business < 7,
+      },
+      {
+        name: "스마트보증 (창업·소기업 간편보증)",
+        amount: "최대 2억원 · 보증비율 100% · 고정보증료 0.7%",
+        desc: "스코어보드 평가로 간편하게 심사하는 소액 보증\n(창업기업 등 우대)",
         approval: "mid",
         applyUrl: "https://www.kodit.or.kr/apps/index.do",
+      },
+      {
+        name: "수출기업 우대보증",
+        amount: "수출실적 기준",
+        desc: "수출 실적을 보유한 기업에 대한 우대 보증\n(K-SURE 무역보험과 별개)",
+        approval: "mid",
+        applyUrl: "https://www.kodit.or.kr/apps/index.do",
+        eligibleWhen: (c) => Boolean(c.is_exporter),
       },
     ],
     tel: "1588-6565",
     telNote: "신용·매출 기반 보증은 신보로 문의하면 상담이 빠릅니다.",
-    note: "신용보증기금 디지털지점(모바일)·영업점 방문으로 보증 신청이 가능합니다.",
+    note: "신용보증기금 디지털지점(모바일)·영업점 방문으로 보증 신청이 가능합니다. 보증서 발급 후 은행에서 대출이 실행됩니다.",
   },
   {
     match: "기술보증기금",
@@ -932,33 +1028,51 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     productUrl: "https://www.kibo.or.kr/main/board/boardType08.do",
     products: [
       {
-        name: "기술보증 (신진기업·첫거래)",
-        amount: "첫거래 1억원 · 최대 2억원",
-        desc: "제조업·기술기업의 첫 거래 보증\n(매출이 낮아도 기술력으로 심사)",
+        name: "청년창업기업보증",
+        amount: "일반한도 기업당 30억원 · 보증비율 95~100%",
+        desc: "경영주 만 17~39세, 창업 후 7년 이내 기술창업기업\n(보증료 0.3%p 감면 등 청년 우대)",
         approval: "mid",
-        approvalNote: "제조업은 신용보증기금보다 먼저 접근하는 것이 유리하며, 인증이 없어도 우선 신청해 볼 만합니다.",
+        approvalNote: "청년·기술창업이면 우대 폭이 커 접근할 만합니다. 인증이 없어도 우선 신청해 볼 만합니다.",
+        hookNote:
+          "특허·벤처·이노비즈·연구소 인증이 없어도 우선 신청해 보세요.\n부결 시 인증을 하나씩 보완해 재신청하면 승인 가능성이 높아집니다.",
+        applyUrl: "https://www.kibo.or.kr/portal",
+        eligibleWhen: (c) =>
+          typeof c.ceo_age === "number" &&
+          c.ceo_age <= 39 &&
+          typeof c.years_in_business === "number" &&
+          c.years_in_business < 7,
+      },
+      {
+        name: "기술창업보증 (맞춤형 창업기업 보증)",
+        amount: "일반한도 기업당 30억원 · 보증비율 90~100%",
+        desc: "창업 후 7년 이내 맞춤형 창업성장분야 기업\n(지식문화·이공계 챌린저·숙련형 제조창업 등)",
+        approval: "mid",
+        approvalNote: "제조·기술 창업기업은 신용보증기금보다 먼저 접근하는 것이 유리합니다.",
+        applyUrl: "https://www.kibo.or.kr/portal",
+        eligibleWhen: (c) =>
+          typeof c.years_in_business === "number" && c.years_in_business < 7,
+      },
+      {
+        name: "기술보증 (운전자금)",
+        amount: "기술평가 기준",
+        desc: "기술력 기반 운전자금 보증서\n(매출이 낮아도 기술력으로 심사)",
+        approval: "mid",
+        approvalNote: "제조업·기술기업은 인증이 없어도 우선 신청해 볼 만합니다.",
         hookNote:
           "특허·벤처·이노비즈·연구소 인증이 없어도 우선 신청해 보세요.\n부결 시 인증을 하나씩 보완해 재신청하면 승인 가능성이 높아집니다.",
         applyUrl: "https://www.kibo.or.kr/portal",
       },
       {
-        name: "기술운전자금보증",
-        amount: "기술평가 기준",
-        desc: "기술력 기반 운전자금 보증",
-        approval: "mid",
-        applyUrl: "https://www.kibo.or.kr/portal",
-      },
-      {
-        name: "기술시설자금보증",
+        name: "기술보증 (시설자금)",
         amount: "시설투자액 기준",
-        desc: "R&D·생산설비 등 시설투자 보증",
+        desc: "R&D·생산설비 등 시설투자 보증서",
         approval: "mid",
         applyUrl: "https://www.kibo.or.kr/portal",
       },
     ],
     tel: "1544-1120",
     telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다.",
-    note: "기술보증기금 디지털지점(kibo.or.kr)에서 온라인 신청 후 기술평가를 받습니다.",
+    note: "기술보증기금 디지털지점(kibo.or.kr)에서 온라인 신청 후 기술평가를 받습니다. 보증서 발급 후 은행에서 대출이 실행됩니다.",
   },
   {
     match: "소상공인시장진흥공단",
@@ -973,15 +1087,16 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     products: [
       {
         name: "일반경영안정자금",
-        amount: "최대 7,000만원",
-        desc: "소상공인 운전자금 (확인서 발급 상품)",
+        amount: "최대 7,000만원 (기준금리+0.6%p)",
+        desc: "업력 무관 소상공인 운전자금\n(확인서 발급 → 은행 대출, 대출기간 5년·거치 2년)",
         approval: "high",
         approvalNote: "확인서 발급 기반 상품이라 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
+        nature: "대리대출", // 소진공 공식(SMAN018M): 대리대출 세부지원요건 표에 등재
       },
       {
         name: "혁신성장촉진자금 (일반형) — 스마트기술 도입 소상공인",
-        amount: "운전 1억원 · 시설 5억원",
+        amount: "운전 1억원 · 시설 5억원 (기준금리+0.4%p)",
         desc: "키오스크·무인판매기·서빙로봇·스마트 POS·재고관리 S/W 등\n스마트기술을 도입한 소상공인",
         approval: "low",
         approvalNote: "대상 범위는 넓지만 승인율은 낮은 편입니다.",
@@ -989,78 +1104,87 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
           "스마트기술 도입만으로 '대상'은 되지만, 실제 승인은\n'기업현황 및 사업계획서'를 통해 스마트기술 활용→매출 시현이 증명되어야 이루어집니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.uses_smart_tech),
+        nature: "직접대출", // 공식(SMAN018M): 직접대출 세부지원요건 표에 등재
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 2년 연속 매출 10% 성장 소상공인",
-        amount: "운전 2억원 · 시설 10억원",
+        amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "최근 2년 연속 매출액이 각각 10% 이상 성장한 소상공인",
         approval: "mid",
         approvalNote: "성장 요건을 충족하면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.revenue_growth_2y),
+        nature: "직접대출",
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 수출 소상공인",
-        amount: "운전 2억원 · 시설 10억원",
+        amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "직수출 실적(1천 달러 이상)을 보유한 소상공인",
         approval: "mid",
         approvalNote: "수출 실적이 확인되면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.is_exporter),
+        nature: "직접대출",
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 스마트공장 도입 소상공인",
-        amount: "운전 2억원 · 시설 10억원",
+        amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "스마트공장을 구축·운영 중인 소상공인",
         approval: "mid",
         approvalNote: "스마트공장 확인 시 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.has_smart_factory),
+        nature: "직접대출",
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 강한소상공인·로컬크리에이터",
-        amount: "운전 2억원 · 시설 10억원",
+        amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "중기부 '강한소상공인 성장지원' 또는\n'로컬크리에이터' 선정 기업",
         approval: "mid",
         approvalNote: "선정 이력이 있으면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.gov_selected_program),
+        nature: "직접대출",
       },
       {
         name: "혁신성장촉진자금 (혁신형) — 성실상환자",
-        amount: "운전 2억원 · 시설 10억원",
+        amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "소진공·중진공 등 정책자금 직접대출을\n연체 없이 성실히 상환 중인 소상공인",
         approval: "mid",
         approvalNote: "요건을 충족하면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.policy_fund_good_standing),
+        nature: "직접대출",
       },
       {
         name: "재도전특별자금",
-        amount: "최대 1억원",
-        desc: "폐업 후 재창업하거나 채무조정을 성실히 상환 중인\n소상공인 (재도전자 전용)",
+        amount: "일반형 7천만원 · 희망형 1억원 · 도약형 2억원",
+        desc: "폐업 후 재창업하거나 채무조정을 성실히 상환 중인 소상공인\n(일반형/희망형/도약형, 유형별 가산금리 상이)",
         approval: "mid",
         approvalNote: "재도전자 요건을 갖추면 승인율이 높은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.is_re_founder),
+        nature: "직접대출", // 공식(SMAN018M): 직접대출 세부지원요건 표에 등재
       },
       {
         name: "대환대출 (저금리 전환)",
-        amount: "최대 7,000만원",
-        desc: "고금리 대출을 저금리 정책자금으로 전환하는 상품",
+        amount: "최대 5,000만원 · 고정금리 4.5% · 최장 10년",
+        desc: "중·저신용 소상공인의 고금리(은행·비은행) 사업자 대출을\n저금리 정책자금으로 전환하는 상품",
         approval: "high",
         approvalNote: "승인율이 높은 편입니다.",
         eligibleWhen: (c) => Boolean(c.wants_refinance),
         applyUrl: "https://ols.sbiz.or.kr",
+        nature: "대리대출", // 공식(SMAN018M): 대리대출 세부지원요건 표에 등재
       },
       {
-        name: "민간투자연계형 매칭융자 (TIPS 연계)",
-        amount: "상품별 상이",
-        desc: "민간 투자를 유치한 기업 대상 (투자 매칭 필요)",
+        name: "민간투자연계형 매칭융자",
+        amount: "최대 5억원 (시설 포함 10억원)",
+        desc: "민간투자연계형 매칭융자 주관기관으로부터 투자금을 지원받고\n'소상공인 선투자 추천서'를 발급받은 소상공인 (기준금리+0.4%p)",
         approval: "low",
-        approvalNote: "민간투자 유치가 전제라 승인율은 낮은 편입니다.",
+        approvalNote: "민간투자 유치·선투자 추천서가 전제라 승인율은 낮은 편입니다.",
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.has_private_investment || c.gov_selected_program),
+        nature: "직접대출", // 소진공 공식(SMAN018M): 직접대출 세부지원요건 표에 등재 → 직접대출 단독
       },
     ],
     tel: "1533-0100",
@@ -1146,29 +1270,39 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     pdfUrl: "https://www.ksure.or.kr/rh-kr/cntnts/i-104/web.do",
     pdfLabel: "수출신용보증 상품안내 확인하기",
     manualUrl: "/manuals/ksure-guide.pdf",
-    productName: "선적전 수출신용보증",
+    productName: "수출신용보증(선적전)",
     productUrl: "https://www.ksure.or.kr/rh-kr/cntnts/i-104/web.do",
     products: [
       {
-        name: "선적전 수출신용보증",
+        name: "수출신용보증(선적전)",
         amount: "수출실적 기준",
-        desc: "수출 계약 후 생산·조달 자금 보증\n(수출실적증명원 발급 기업)",
+        desc: "수출물품 제조·가공·조달 자금을 은행에서 대출받을 때\nK-SURE가 연대보증 (수출실적증명원 발급 기업)",
         approval: "mid",
         approvalNote: "기업등급 BB+ 이상이면 승인율이 높은 편이며, 그 이하도 신청 가능합니다.",
         hookNote: "법인을 선호하지만 개인사업자도 가능합니다. 심사~실행까지 약 1.5개월 소요됩니다.",
         applyUrl: "https://www.ksure.or.kr",
       },
       {
-        name: "선적후 수출신용보증",
+        name: "수출신용보증(선적후)",
         amount: "수출채권 기준",
-        desc: "수출 후 대금 회수 전 자금 보증",
+        desc: "선적 후 은행이 수출채권을 매입할 때 K-SURE가 연대보증\n(단기수출보험 연계 가입 필요)",
         approval: "mid",
         applyUrl: "https://www.ksure.or.kr",
+        eligibleWhen: (c) => Boolean(c.is_exporter),
       },
       {
-        name: "단기수출보험 (수출대금 미결제 대비)",
-        amount: "수출금액 기준",
-        desc: "수입자 미결제 위험 대비 보험",
+        name: "단기수출보험(중소중견Plus+)",
+        amount: "연간 보상한도 기준 · 신용조사 생략 간편",
+        desc: "연간 수출 U$50백만 이하 중소·중견기업 대상\n수입자 미결제·비상위험 손실을 1년간 일괄 보상",
+        approval: "mid",
+        approvalNote: "중소·중견 수출기업이 가장 간편하게 이용하는 대표 상품입니다.",
+        applyUrl: "https://www.ksure.or.kr",
+        eligibleWhen: (c) => Boolean(c.is_exporter),
+      },
+      {
+        name: "문화산업보증 (수출신용보증-문화산업)",
+        amount: "수출계약 기준",
+        desc: "영화·게임·만화·캐릭터·애니메이션 등 문화상품\n수출자금을 은행에서 대출받을 때 K-SURE가 연대보증",
         approval: "mid",
         applyUrl: "https://www.ksure.or.kr",
       },
@@ -1185,22 +1319,7 @@ export function findInstitutionLink(institution: string): InstitutionLink | null
   return INSTITUTION_LINKS.find((x) => institution.includes(x.match)) ?? null;
 }
 
-// ── 상품 성격 배지 (대표님 기준) ─────────────────────────────────
-//  기관 성격에 따라 자금이 어떻게 나오는지 한눈에 안내한다.
-//   · 직접대출 : 공단(소진공·중진공)과 직접 약정 후 대출 실행 → 보증서 불필요
-//   · 보증서   : 보증기관(신보·기보·무보)이 보증서를 발급하면 은행에서 대출 실행
-//   · 재단     : 지역신용보증재단 보증서를 받아 은행에서 대출 실행
-//  ※ 이 판정은 결과 '표시' 단계 후처리이며 매칭 스코어링 로직과 무관하다.
-export type LoanNature = "직접대출" | "보증서" | "재단";
-
-export function loanNatureOf(institution: string): LoanNature {
-  const s = (institution || "").replace(/\s/g, "");
-  if (s.includes("재단")) return "재단";
-  if (s.includes("소상공인시장진흥공단") || s.includes("중소벤처기업진흥공단"))
-    return "직접대출";
-  // 신용보증기금·기술보증기금·무역보험공사 등 보증기관
-  return "보증서";
-}
+// (성격 판별 함수는 파일 상단 loanNatureOf / natureOfProduct 로 이동)
 
 // ── 지역신용보증재단 대표 사이트(검정 버튼용) ──────────────────────
 //  재단 카드 밑에 신보·기보처럼 검정색 사이트 버튼으로 동일하게 노출.

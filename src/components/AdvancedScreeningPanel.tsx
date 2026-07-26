@@ -27,6 +27,7 @@ import {
   filterProducts,
   resolveJaedanLinks,
   loanNatureOf,
+  PRE_FOUNDER_PROGRAMS,
 } from "@/lib/advancedScreening";
 import {
   SUPPORT_PROGRAMS,
@@ -1089,22 +1090,25 @@ function AdvancedResult({
                               <span className={`break-keep text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>
                                 {prod.name}
                               </span>
-                              {/* ★ 상품 성격 배지 (대표님 기준: 직접대출/보증서/재단) — 자금이 어떻게 나오는지 한눈에 */}
+                              {/* ★ 상품 성격 배지 (대표님 기준: 직접대출/대리대출) — 자금이 어떻게 나오는지 한눈에.
+                                   상품에 nature가 지정돼 있으면 상품 단위로(소진공은 상품마다 갈림),
+                                   없으면 기관 기본값(loanNatureOf)으로 판별. 둘 다 가능하면 배지 2개. */}
                               {(() => {
-                                const nature = loanNatureOf(m.institution);
-                                const natureStyle =
-                                  nature === "직접대출"
-                                    ? "bg-blue-100 text-blue-700"
-                                    : nature === "재단"
-                                    ? "bg-emerald-100 text-emerald-700"
-                                    : "bg-purple-100 text-purple-700";
-                                return (
+                                const natures = prod.nature
+                                  ? (Array.isArray(prod.nature) ? prod.nature : [prod.nature])
+                                  : [loanNatureOf(m.institution)];
+                                return natures.map((nature) => (
                                   <span
-                                    className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${natureStyle}`}
+                                    key={nature}
+                                    className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                      nature === "직접대출"
+                                        ? "bg-blue-100 text-blue-700"
+                                        : "bg-purple-100 text-purple-700"
+                                    }`}
                                   >
                                     {nature}
                                   </span>
-                                );
+                                ));
                               })()}
                               {prod.amount && (
                                 <span className="break-keep rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
@@ -1357,6 +1361,58 @@ function AdvancedResult({
       )}
 
       {/* (기관별 상품 한눈에 보기는 '이용 가능한 정책금융기관' 아코디언 안 하단으로 통합됨 — 대표님 요청) */}
+
+      {/* ⑤ 예비창업자 전용 지원사업 (대표님 요청 Q5) — '예비창업자' 체크한 고객에게만,
+             '사이트 바로가기' 바로 위에 별도 아코디언으로 노출. 대출이 아닌 사업화 자금(무상) 중심. */}
+      {report.company.is_pre_founder && (
+        <AccordionCard
+          emoji="🌱"
+          title="예비창업자를 위한 창업 지원사업"
+          subtitle="아직 사업자등록 전이신 대표님만 볼 수 있는 창업 사업화 지원사업이에요"
+        >
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
+            <p className="break-keep text-xs leading-relaxed text-emerald-800">
+              아래는 <b>사업자등록 전 예비창업자</b>가 신청할 수 있는 대표적인 <b>사업화 자금(무상·바우처)</b> 지원사업이에요.
+              정책자금(대출)과 달리 갚지 않아도 되는 지원금 중심이라, 창업 준비 단계에서 먼저 챙겨보시길 권합니다.
+            </p>
+          </div>
+          <div className="mt-3 space-y-2.5">
+            {PRE_FOUNDER_PROGRAMS.map((p) => (
+              <div
+                key={p.name}
+                className="rounded-xl border border-emerald-100 bg-white px-4 py-3 shadow-sm"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark">
+                    <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                      사업화 자금
+                    </span>
+                    {p.name}
+                  </span>
+                  <span className="break-keep text-xs font-bold text-emerald-700">{p.amount}</span>
+                </div>
+                <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70">
+                  <b className="text-brand-dark/80">대상</b> · {p.target}
+                </p>
+                <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
+                  {p.detail}
+                </p>
+                <a
+                  href={previewLock ? undefined : p.applyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-extrabold text-white transition hover:bg-emerald-700 ${lockClick}`}
+                >
+                  {p.applyLabel} <span aria-hidden>→</span>
+                </a>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/45">
+            ※ 공고 시기·지원금·자격은 매년 달라질 수 있어요. 신청 전 각 기관 공식 공고를 꼭 확인하세요.
+          </p>
+        </AccordionCard>
+      )}
 
       {/* 대표님들이 알아두면 좋은 정부 사이트 모음으로 이동 — 아코디언과 톤 통일(둥근 모서리·부드러운 그림자) */}
       <a
