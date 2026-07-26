@@ -119,7 +119,7 @@ const APPROVALS: Approval[] = [
     program: "문화산업보증 · 신용보증한도",
     agency: "한국무역보험공사(K-SURE)",
     amount: "5억원",
-    note: "최대 승인 사례",
+    note: "신보/무보/중진공/소진공 총 9억 5천만원 승인 사례",
   },
   {
     kind: "정책자금",
@@ -257,7 +257,7 @@ export default function Page() {
 
         {/* ── 통계 바 (구분선형 미니멀) ── */}
         <section className="mx-auto mt-6 max-w-3xl">
-          <div className="grid grid-cols-2 divide-x divide-y divide-gray-200 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm sm:grid-cols-4 sm:divide-y-0">
+          <div className="grid grid-cols-2 divide-x divide-y divide-white/10 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm sm:grid-cols-4 sm:divide-y-0">
             {STATS.map((s) => (
               <div key={s.label} className="px-2 py-4 text-center sm:px-3">
                 <p className="whitespace-nowrap text-lg font-extrabold leading-none text-brand-dark xs:text-xl sm:text-2xl">
