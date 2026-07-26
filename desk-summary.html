@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모두의사업친구 · 벽걸이 1장 요약</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { font-family:'Pretendard',sans-serif; color:#1a1a1a; background:#e9edf2; }
+  .page {
+    width:210mm; min-height:297mm; margin:0 auto; background:#fff; padding:14mm 13mm;
+    display:flex; flex-direction:column; gap:6mm;
+  }
+  /* 헤더 */
+  .hd { display:flex; align-items:center; justify-content:space-between;
+        border-bottom:3px solid #ff6a00; padding-bottom:4mm; }
+  .hd .logo { display:flex; align-items:center; gap:9px; }
+  .hd .logo .m { width:34px; height:34px; border-radius:9px; background:#ffd400;
+        display:flex; align-items:center; justify-content:center; font-weight:900; font-size:20px; color:#1a1a1a; }
+  .hd .logo .t b { font-size:17px; font-weight:900; display:block; }
+  .hd .logo .t span { font-size:10px; color:#6b7280; }
+  .hd .meta { text-align:right; font-size:9.5px; color:#6b7280; line-height:1.5; }
+  .hd .meta b { color:#ff6a00; }
+
+  /* 섹션 공통 */
+  .sec { border:1.5px solid #e5e7eb; border-radius:12px; overflow:hidden; }
+  .sec > .cap { font-size:12.5px; font-weight:900; color:#fff; padding:6px 12px;
+        display:flex; align-items:center; gap:7px; }
+  .sec > .body { padding:9px 13px; }
+  .cap-goal { background:#111827; }
+  .cap-routine { background:#0ea5e9; }
+  .cap-todo { background:#ff6a00; }
+  .cap-rule { background:#16a34a; }
+
+  /* 목표 숫자 */
+  .goals { display:flex; gap:8px; }
+  .goal { flex:1; text-align:center; border-radius:10px; padding:9px 4px; background:#f8fafc; border:1px solid #eef2f7; }
+  .goal .n { font-size:23px; font-weight:900; line-height:1; }
+  .goal .u { font-size:9px; color:#6b7280; margin-top:3px; }
+  .goal .l { font-size:10px; color:#374151; margin-top:5px; font-weight:700; }
+  .goal.now .n { color:#0ea5e9; }
+  .goal.tgt { background:#fff7ed; border-color:#ffddb0; }
+  .goal.tgt .n { color:#ff6a00; }
+  .goal-note { font-size:10px; color:#6b7280; margin-top:7px; line-height:1.55; }
+  .goal-note b { color:#111827; }
+
+  /* 리스트 */
+  ul.chk { list-style:none; display:flex; flex-direction:column; gap:5px; }
+  ul.chk li { font-size:11.5px; line-height:1.5; padding-left:22px; position:relative; }
+  ul.chk li::before {
+    content:''; position:absolute; left:0; top:2px; width:14px; height:14px;
+    border:2px solid #cbd5e1; border-radius:4px; }
+  ul.chk.r li::before { border-color:#ff6a00; }
+  ul.chk li b { color:#111827; }
+  .day { font-size:9.5px; font-weight:900; color:#0ea5e9; display:inline-block;
+    background:#e0f2fe; border-radius:5px; padding:1px 7px; margin-right:5px; }
+
+  /* 원칙 */
+  ol.rule { list-style:none; counter-reset:r; display:flex; flex-direction:column; gap:5px; }
+  ol.rule li { font-size:11.5px; line-height:1.5; padding-left:26px; position:relative; counter-increment:r; }
+  ol.rule li::before {
+    content:counter(r); position:absolute; left:0; top:0; width:18px; height:18px;
+    background:#16a34a; color:#fff; border-radius:50%; font-size:10px; font-weight:900;
+    display:flex; align-items:center; justify-content:center; }
+  ol.rule li b { color:#166534; }
+
+  .foot { margin-top:auto; text-align:center; font-size:8.5px; color:#9ca3af;
+    border-top:1px dashed #e5e7eb; padding-top:5px; line-height:1.5; }
+  @media print { html,body{background:#fff;} .page{margin:0;} }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 헤더 -->
+  <div class="hd">
+    <div class="logo">
+      <div class="m">m</div>
+      <div class="t"><b>모두의사업친구</b><span>정부지원사업 AI 통합 매칭 · 신주엽 대표</span></div>
+    </div>
+    <div class="meta">
+      벽걸이 1장 요약 · 책상 옆 부착용<br>
+      실매출 = <b>부가세 과세표준증명원</b> 기준<br>
+      현재 월 약 <b>2,000만</b> → 목표 월 <b>3,000만</b>
+    </div>
+  </div>
+
+  <!-- 목표 -->
+  <div class="sec">
+    <div class="cap cap-goal">🎯 목표 — 숫자로만</div>
+    <div class="body">
+      <div class="goals">
+        <div class="goal"><div class="n">388</div><div class="u">만/월</div><div class="l">'25 상반기</div></div>
+        <div class="goal"><div class="n">603</div><div class="u">만/월</div><div class="l">'25 하반기</div></div>
+        <div class="goal now"><div class="n">1,979</div><div class="u">만/월</div><div class="l">'26 상반기 (현재)</div></div>
+        <div class="goal tgt"><div class="n">3,000</div><div class="u">만/월</div><div class="l">목표</div></div>
+      </div>
+      <p class="goal-note">
+        개업 1년 4개월, 월 환산 <b>5배 성장</b>. 목표 3,000만은 <b>자문·교육 없이 컨설팅+대행 수수료만으로 도달 가능한 사정권</b>.
+        자문·세미나는 그 위에 얹는 추가매출 — <b>필수 아님, 조급 금지.</b>
+      </p>
+    </div>
+  </div>
+
+  <!-- 루틴 -->
+  <div class="sec">
+    <div class="cap cap-routine">🔁 루틴 — 매일/매주 반복</div>
+    <div class="body">
+      <ul class="chk">
+        <li><span class="day">매일</span>상담·문의 온 사람 <b>전원 DB화</b> (이름·연락처·업종·니즈 기록)</li>
+        <li><span class="day">매일</span>돈 되는 <b>컨설팅·자문에 내 시간</b> 우선 배치 (잡무는 뒤로)</li>
+        <li><span class="day">매일</span>사모님 — SNS 5채널 콘텐츠 발행 (링크인포크 ppfa25)</li>
+        <li><span class="day">매주</span>이번 주 신규 상담·전환·매출 숫자 1줄 점검</li>
+        <li><span class="day">매주</span>대행 의존도 체크 — "대행 빠지면 남는 매출은?" 자문</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 내가 해야 될 것 -->
+  <div class="sec">
+    <div class="cap cap-todo">✅ 내가 해야 될 것 — 시기별</div>
+    <div class="body">
+      <ul class="chk r">
+        <li><b>지금~3개월</b> · 컨설팅·대행으로 <b>월 3,000만 도전</b> / 상담고객 전부 DB화 / 제3자제공 동의 미리 확보</li>
+        <li><b>3~6개월</b> · <b>1:1 자문 정식 판매(20→30만)</b> / 세무연결 오픈 / 결제 오픈(토스 후) / 알바 검토</li>
+        <li><b>6~12개월</b> · 줌·원데이 세미나 오픈 / <b>녹화강의(VOD) 1개 제작</b>(만들면 무한판매) / 정직원 검토</li>
+        <li><b>1년 후</b> · 컨설팅+자문+세미나+연결수수료 = <b>매출 다각화</b> (대행 축소 대비 완료)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 원칙 -->
+  <div class="sec">
+    <div class="cap cap-rule">🧭 흔들릴 때 원칙 5</div>
+    <div class="body">
+      <ol class="rule">
+        <li><b>돈 되는 컨설팅에 대표님 시간을 쓴다</b> — 채용 신호는 매출 아닌 '내 시간이 없을 때'</li>
+        <li><b>상담 온 사람은 무조건 DB로</b> — DB가 다음 매출(SaaS·자문·세미나)의 씨앗</li>
+        <li><b>대행은 시한부</b> — 잘 될 때 다음 매출을 미리 준비</li>
+        <li><b>매칭 로직은 안 건드린다</b> — 검증된 핵심 자산</li>
+        <li><b>검증 전엔 크게 안 벌린다</b> — 알바→검증→정직원 순서</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="foot">
+    가격은 시장시세 + 대표 경력(승인 100여 건·지원금 100억+) 근거 제안치이며 반응 보며 조정 ·
+    이 한 장은 "매일 보는 나침반"용 — 상세 전략은 통합 리포트 참조
+  </div>
+
+</div>
+</body>
+</html>

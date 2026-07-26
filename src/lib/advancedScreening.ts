@@ -837,7 +837,18 @@ export function filterProducts(
   company: Company
 ): InstitutionProduct[] {
   if (!products) return [];
-  return products.filter((p) => (p.eligibleWhen ? p.eligibleWhen(company) : true));
+  // 1) 자격 조건(eligibleWhen)에 맞는 상품만 남긴다.
+  const eligible = products.filter((p) =>
+    p.eligibleWhen ? p.eligibleWhen(company) : true
+  );
+  // 2) ★ 승인율 낮은(low) 상품은 결과에서 제거한다 (대표님 방침:
+  //    "안 될 것 같은 공고는 지워서, 고객이 잘못된 선택을 하지 않게").
+  //    ※ 매칭 스코어링 로직은 건드리지 않고, '표시 단계'에서만 걸러낸다.
+  const withoutLow = eligible.filter((p) => p.approval !== "low");
+  // 3) 안전장치 — low를 걷어내 남는 상품이 하나도 없으면(그 기관에
+  //    high/mid가 전무한 경우) 원래 자격 상품은 유지해 '빈 기관'이 되지
+  //    않게 한다. (기관 자체가 사라져 보이는 부작용 방지)
+  return withoutLow.length > 0 ? withoutLow : eligible;
 }
 
 export type InstitutionLink = {
