@@ -236,7 +236,7 @@ export default function MyPage() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="mt-3 rounded-3xl border border-brand-red/10 bg-gradient-to-br from-brand-yellow/25 to-brand-orange/10 p-4 text-center sm:p-5">
+                  <div className="mt-3 rounded-3xl border border-gray-200 bg-gradient-to-br from-brand-yellow/25 to-brand-orange/10 p-4 text-center sm:p-5">
                     <p className="break-keep text-sm leading-snug text-brand-dark/70 sm:text-base">
                       {diagName ? `${diagName} 대표님 ` : "대표님 "}사업장에 딱 맞는 지원사업
                     </p>
