@@ -28,6 +28,7 @@ import {
   resolveJaedanLinks,
   loanNatureOf,
   PRE_FOUNDER_PROGRAMS,
+  type InstitutionProduct,
 } from "@/lib/advancedScreening";
 import {
   SUPPORT_PROGRAMS,
@@ -1016,13 +1017,36 @@ function AdvancedResult({
             //   같은 등급 안에서는 원래 순서를 유지(안정 정렬).
             const approvalRank = (a?: "high" | "mid" | "low") =>
               a === "high" ? 0 : a === "mid" ? 1 : a === "low" ? 2 : 3;
+            // ★ 소진공 한정: '직접대출' 상품을 맨 앞으로 (대표님 요청 "소진공은 직접대출 먼저 추천")
+            //   상품 nature가 배열이면 하나라도 '직접대출'이면 직접대출로 간주. 그 다음 승인율 순.
+            //   다른 기관은 기존(승인율만) 정렬 그대로 유지.
+            const isSbiz = m.institution.includes("소상공인시장진흥공단");
+            const directFirstRank = (p: InstitutionProduct) => {
+              const natures = p.nature
+                ? (Array.isArray(p.nature) ? p.nature : [p.nature])
+                : [loanNatureOf(m.institution)];
+              return natures.includes("직접대출") ? 0 : 1;
+            };
             const products = filteredProducts
-              ? [...filteredProducts].sort(
-                  (x, y) => approvalRank(x.approval) - approvalRank(y.approval)
-                )
+              ? [...filteredProducts].sort((x, y) => {
+                  if (isSbiz) {
+                    const d = directFirstRank(x) - directFirstRank(y);
+                    if (d !== 0) return d; // 1차: 직접대출 먼저
+                  }
+                  return approvalRank(x.approval) - approvalRank(y.approval); // 2차(또는 기본): 승인율
+                })
               : filteredProducts;
-            // 정렬 후에는 가장 앞(0번)이 승인 가능성이 가장 높은 상품 → 강조 뱃지 대상
-            const topProductIdx = products && products.length > 0 ? 0 : -1;
+            // '승인 가능성 높음 · 먼저 신청 추천' 강조 배지는 표시 순서와 무관하게
+            //  승인율(approval)이 가장 높은 상품에 붙인다. (소진공은 직접대출을 위로 올려
+            //  표시하지만, 강조는 여전히 승인율 최상위 상품 기준 — 문구 정확도 유지)
+            const topProductIdx =
+              products && products.length > 0
+                ? products.reduce(
+                    (best, p, idx) =>
+                      approvalRank(p.approval) < approvalRank(products[best].approval) ? idx : best,
+                    0
+                  )
+                : -1;
             return (
               <div
                 key={i}
