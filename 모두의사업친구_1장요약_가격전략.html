@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모두의사업친구 · 1장 요약 & 가격 전략</title>
+<style>
+  :root{
+    --navy:#0f1e3d; --navy2:#16264a; --gold:#c8a24a; --gold-l:#e5c877;
+    --ink:#1a2233; --gray:#5b6472; --line:#e3e7ee; --bg:#f6f8fc;
+    --red:#d34a3a; --green:#2e8b57; --blue:#2b6cb0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .page{max-width:920px;margin:0 auto;background:#fff;padding:0 0 34px;}
+  .cover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:30px 34px 24px;}
+  .cover .badge{display:inline-block;border:1px solid var(--gold);color:var(--gold-l);
+    padding:3px 12px;border-radius:16px;font-size:11px;letter-spacing:1px;margin-bottom:10px;}
+  .cover h1{font-size:23px;line-height:1.3;margin:0 0 6px;font-weight:800;}
+  .cover h1 span{color:var(--gold-l);}
+  .cover .sub{font-size:13px;color:#c3ccdd;}
+  .cover .meta{margin-top:11px;font-size:11px;color:#8fa0bd;border-top:1px solid #2a3a5e;padding-top:8px;}
+  .body{padding:22px 34px 0;}
+  .block{border:1px solid var(--line);border-radius:11px;padding:15px 18px;margin-bottom:14px;
+    box-shadow:0 1px 6px rgba(15,30,61,.04);}
+  .kicker{display:inline-block;background:var(--navy);color:#fff;font-size:10.5px;font-weight:700;
+    padding:2px 9px;border-radius:5px;letter-spacing:.5px;margin-bottom:7px;}
+  h2{font-size:16.5px;font-weight:800;margin:0 0 8px;color:var(--navy);}
+  h2 .num{color:var(--gold);}
+  h3{font-size:13.5px;font-weight:700;margin:12px 0 5px;color:var(--navy2);border-left:3px solid var(--gold);padding-left:9px;}
+  p{margin:4px 0;color:#2c3444;font-size:13px;}
+  strong{color:var(--navy);font-weight:700;}
+  .hl{background:linear-gradient(transparent 60%,#f6e6b8 60%);font-weight:700;}
+  ul{padding-left:18px;margin:5px 0;} li{margin:3px 0;font-size:12.7px;}
+  table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.3px;}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top;}
+  th{background:var(--navy);color:#fff;font-weight:600;font-size:11.5px;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  .up{color:var(--green);font-weight:700;} .big{color:var(--gold);font-weight:800;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .mini{border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:#fbfcfe;}
+  .mini.navy{background:var(--navy);color:#fff;border:none;}
+  .mini.navy h4{color:var(--gold-l);} .mini.navy p,.mini.navy li{color:#d5ddec;}
+  .mini h4{margin:0 0 4px;font-size:12.5px;font-weight:700;color:var(--navy);}
+  .price{font-size:20px;font-weight:800;color:var(--gold);line-height:1.1;}
+  .price .u{font-size:11px;color:var(--gray);font-weight:600;}
+  .callout{border-radius:9px;padding:10px 14px;margin:10px 0;font-size:12.3px;}
+  .callout.gold{background:#fdf6e3;border:1px solid #ecd9a0;}
+  .callout.red{background:#fdeeeb;border:1px solid #f0c4bb;}
+  .callout.blue{background:#eaf2fb;border:1px solid #bcd6f0;}
+  .callout .t{font-weight:800;display:block;margin-bottom:3px;}
+  .callout.gold .t{color:#a67c1a;} .callout.red .t{color:var(--red);} .callout.blue .t{color:var(--blue);}
+  /* mini bar */
+  .bars{display:flex;align-items:flex-end;gap:14px;height:92px;margin:6px 4px;padding-bottom:2px;border-bottom:2px solid var(--line);}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .bar .col{width:100%;max-width:60px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--gold-l),var(--gold));}
+  .bar .val{font-size:11px;font-weight:800;color:var(--navy);margin-bottom:3px;}
+  .bar .lb{font-size:9.5px;color:var(--gray);margin-top:4px;text-align:center;line-height:1.2;}
+  .bar.target .col{background:repeating-linear-gradient(45deg,#0f1e3d,#0f1e3d 5px,#16264a 5px,#16264a 10px);}
+  .footer{text-align:center;color:var(--gray);font-size:10.5px;margin-top:18px;padding-top:12px;border-top:1px solid var(--line);}
+  @media(max-width:640px){
+    .cover{padding:22px 18px;} .cover h1{font-size:18px;} .body{padding:16px 16px 0;}
+    .grid2,.grid3{grid-template-columns:1fr;} .bars{gap:8px;}
+  }
+  @media print{
+    body{background:#fff;} .page{max-width:100%;}
+    .block{box-shadow:none;break-inside:avoid;page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="cover">
+  <span class="badge">모두의사업친구 · 1장 요약 (벽걸이용)</span>
+  <h1>신주엽 대표 <span>한 장 요약 &amp; 가격 전략</span></h1>
+  <p class="sub">통합 리포트를 한 장으로. + <b style="color:#fff;">1:1 자문·세미나 얼마 받고, 어디까지 가르칠지.</b></p>
+  <div class="meta">사업자 597-12-02897 · 개업 2025.03.01 · 실매출: 부가세 과세표준증명원 기준 · 목표 월 3,000만(컨설팅+대행)</div>
+</div>
+
+<div class="body">
+
+<!-- 1. 지금 위치 -->
+<div class="block">
+  <span class="kicker">FACT · 한눈에</span>
+  <h2><span class="num">01.</span> 지금 위치 &amp; 목표</h2>
+  <div class="grid2" style="align-items:center;">
+    <div class="bars">
+      <div class="bar"><span class="val">388</span><div class="col" style="height:19%"></div><span class="lb">'25상<br>(월)</span></div>
+      <div class="bar"><span class="val">603</span><div class="col" style="height:30%"></div><span class="lb">'25하<br>(월)</span></div>
+      <div class="bar"><span class="val">1,979</span><div class="col" style="height:66%"></div><span class="lb">'26상<br>(월)</span></div>
+      <div class="bar target"><span class="val">3,000</span><div class="col" style="height:100%"></div><span class="lb"><b>목표</b><br>(월)</span></div>
+    </div>
+    <div>
+      <p>개업 1년 4개월, 월 환산 <b class="up">5배 성장</b>. 이미 <span class="hl">월 약 2,000만</span> 수준(국세청 증명).</p>
+      <p><b>목표 월 3,000만</b>은 자문·교육 없이 <b>컨설팅+대행 수수료</b>만으로 도달 가능한 사정권.</p>
+      <p style="font-size:12px;color:var(--gray);">▸ 자문·세미나 = 그 위에 얹는 <b>추가매출</b> (필수 아님·조급 금지)</p>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 큰 그림 + 팀 -->
+<div class="block">
+  <span class="kicker">STRATEGY · 요약</span>
+  <h2><span class="num">02.</span> 큰 그림 &amp; 2인 체제</h2>
+  <div class="grid3">
+    <div class="mini"><h4>💰 지금 매출</h4><p style="font-size:11.8px;">컨설팅 + 대행 수수료 → 월 3,000만. <span class="hl">단, 내년 대행 축소 리스크.</span></p></div>
+    <div class="mini navy"><h4>🌱 다음 매출</h4><p style="font-size:11.8px;">DB 위에 → SaaS·세무연결·자문·세미나. 대행 줄어도 안 꺾이게.</p></div>
+    <div class="mini"><h4>👥 2인 체제</h4><p style="font-size:11.8px;">대표=컨설팅·영업·자문 / 사모님=SNS 5채널·링크인포크(ppfa25).</p></div>
+  </div>
+  <div class="callout blue"><span class="t">채용 신호 딱 하나</span>
+    "이 일 때문에 <b>돈 되는 컨설팅을 못 받는다</b>" 싶을 때 = 뽑을 때. 매출 숫자보다 <b>대표님 시간이 기준.</b> 알바→검증→정직원.</div>
+</div>
+
+<!-- 3. ★ 1:1 자문 가격 -->
+<div class="block">
+  <span class="kicker">PRICE · 1:1 자문</span>
+  <h2><span class="num">03.</span> 1:1 자문 — 얼마 받나</h2>
+  <p class="lead" style="font-size:12.5px;color:var(--gray);">근거: 승인 100여 건·지원금 100억+ 이력 = 이미 "검증된 전문가". 싸게 받으면 싸구려 인식 + 시간 손해.</p>
+  <div class="grid3">
+    <div class="mini"><h4>🟢 시작가 (검증기)</h4><p class="price">20만원<span class="u"> / 60분</span></p><p style="font-size:11.5px;">기존 상담 고객부터. "제대로 짚어준다"는 후기 쌓기용.</p></div>
+    <div class="mini navy"><h4>🔵 정착가 (표준)</h4><p class="price" style="color:var(--gold-l);">30만원<span class="u" style="color:#b9c4d8;"> / 60분</span></p><p style="font-size:11.5px;">후기·전환 확인되면 인상. 대표님 경력엔 적정선.</p></div>
+    <div class="mini"><h4>🟡 프리미엄 (심화)</h4><p class="price">50만원<span class="u"> / 90분+서류검토</span></p><p style="font-size:11.5px;">사업계획서·서류 실제 첨삭까지. 고액 지원사업 준비 고객.</p></div>
+  </div>
+  <div class="callout gold"><span class="t">운영 팁</span>
+    ① <b>패키지로 묶어라</b>: "단발 30만" vs "3회 75만(회당 25만)" → 3회권이 이득처럼 보이게. ②<b>무료진단 → 유료자문</b> 자연 연결: 진단은 미끼, 자문이 상품. ③처음엔 <b>주 3~5건 한정</b>으로 "예약 마감" 희소성 연출.</div>
+</div>
+
+<!-- 4. ★ 세미나 가격 & 범위 -->
+<div class="block">
+  <span class="kicker">PRICE · 세미나 &amp; 교육</span>
+  <h2><span class="num">04.</span> 세미나 — 얼마 받고, 어디까지 가르치나</h2>
+
+  <h3>가격 (형태별)</h3>
+  <table>
+    <tr><th>형태</th><th>시간</th><th>1인 가격</th><th>정원</th><th>회당 매출(예)</th></tr>
+    <tr><td><b>줌 라이브</b> (입문)</td><td>2시간</td><td class="big">3만~5만</td><td>20~50명</td><td>60만~250만</td></tr>
+    <tr><td><b>원데이 오프라인</b></td><td>3~4시간</td><td class="big">5만~10만</td><td>10~20명</td><td>50만~200만</td></tr>
+    <tr><td><b>녹화강의(VOD)</b> ★</td><td>-</td><td class="big">3만~9.9만</td><td>무제한</td><td class="up">한번 만들고 무한판매</td></tr>
+  </table>
+  <div class="callout gold"><span class="t">핵심 전략 (고이·삼쩜삼 방식)</span>
+    ① <b>줌 3만원(저가)으로 사람 모아라</b> → 진입장벽 낮춰 DB 대량 확보 → 여기서 <b>1:1 자문·컨설팅으로 업셀.</b> ② 원데이 1회를 <b>녹화</b>해서 VOD로 → 시간 안 들이고 <b>계속 팔리는 자산</b>(대표님 몸값 = 시간인데, VOD는 시간 복제).</div>
+
+  <h3>어디까지 가르치나 (범위 = 이게 제일 중요)</h3>
+  <div class="grid2">
+    <div class="mini"><h4>✅ 가르쳐라 (미끼·신뢰)</h4>
+      <ul style="margin:2px 0;">
+        <li>정부지원사업 <b>종류·일정·자격</b> 큰 그림</li>
+        <li>내 업종에 <b>맞는 사업 찾는 법</b>(진단 로직 개념)</li>
+        <li>사업계획서 <b>기본 뼈대·흔한 탈락 사유</b></li>
+        <li>서류 준비 체크리스트·용어 정리</li>
+      </ul></div>
+    <div class="mini navy"><h4>🔒 남겨둬라 (유료의 이유)</h4>
+      <ul style="margin:2px 0;">
+        <li><b>내 사업에 딱 맞는</b> 사업 매칭·전략 → 1:1 자문</li>
+        <li>사업계획서 <b>실제 첨삭·대필 수준</b> → 컨설팅·대행</li>
+        <li>심사위원 관점 <b>디테일 코칭</b> → 프리미엄 자문</li>
+        <li>승인까지 <b>실무 대행</b> → 본업(수수료)</li>
+      </ul></div>
+  </div>
+  <div class="callout red"><span class="t">절대 원칙</span>
+    세미나에서 <b>"방법"은 다 알려주되, "내 케이스 적용"은 유료</b>로 남겨라. 다 가르치면 고객이 자문·컨설팅 살 이유가 사라짐. <span class="hl">세미나=신뢰 쌓기+DB 확보용 미끼, 돈은 1:1과 대행에서.</span></div>
+</div>
+
+<!-- 5. 시점표 압축 + 원칙 -->
+<div class="block">
+  <span class="kicker">TIMELINE · 원칙</span>
+  <h2><span class="num">05.</span> 언제 무엇을 &amp; 흔들릴 때 원칙</h2>
+  <table>
+    <tr><th>시기</th><th>할 일</th></tr>
+    <tr><td><b>지금~3개월</b></td><td>컨설팅·대행으로 월 3,000만 도전 · 상담고객 <b>전부 DB화</b> · 제3자제공 동의 미리 받기</td></tr>
+    <tr><td><b>3~6개월</b></td><td><b>1:1 자문 정식 판매(20→30만)</b> · 세무연결 오픈 · 결제 오픈(토스 후) · 알바 검토</td></tr>
+    <tr><td><b>6~12개월</b></td><td><b>줌·원데이 세미나 오픈</b> · <b>녹화강의 1개 제작</b>(무한판매) · 정직원 검토</td></tr>
+    <tr><td><b>1년 후</b></td><td>컨설팅+자문+세미나+연결수수료 = <b>매출 다각화</b>(대행 축소 대비 완료)</td></tr>
+  </table>
+  <div class="callout gold"><span class="t">흔들릴 때 원칙 5</span>
+    ①돈 되는 컨설팅에 <b>대표님 시간</b>을 쓴다 ②상담 온 사람은 무조건 <b>DB</b>로 ③대행은 시한부 → 잘 될 때 다음 매출 준비 ④<b>매칭 로직은 안 건드린다</b> ⑤검증 전엔 크게 안 벌린다(알바→정직원).</div>
+</div>
+
+<div class="footer">
+  모두의사업친구 · 신주엽 대표 · 1장 요약 &amp; 가격 전략 (벽걸이용)<br>
+  실매출은 부가세 과세표준증명원 기준 · 가격은 시장시세+대표 경력 근거 제안치이며 반응 보며 조정
+</div>
+
+</div>
+</div>
+</body>
+</html>
