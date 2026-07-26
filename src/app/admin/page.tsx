@@ -568,20 +568,40 @@ export default function AdminPage() {
     return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
   });
 
-  // 회원 목록 → 그 회원의 고객 진단서로 바로 이동 (이메일로 매칭)
-  const goToUserDiag = (email: string | null) => {
-    if (!email) {
-      setMsg("이 회원은 이메일 정보가 없어 진단서를 찾을 수 없습니다.");
-      setTimeout(() => setMsg(null), 3000);
-      return;
+  // 회원 목록 → 그 회원의 고객 진단서로 바로 이동
+  //  소셜 로그인(카카오/구글) 이메일과 진단서 작성 이메일이 다를 수 있어
+  //  ① 이메일  ② 이름(full_name)  순으로 폭넓게 매칭한다(대표님 요청).
+  const goToUserDiag = (email: string | null, fullName?: string | null) => {
+    const norm = (v: unknown) => String(v ?? "").trim().toLowerCase();
+    const emailKey = norm(email);
+    const nameKey = norm(fullName);
+
+    const byCreatedDesc = (a: AdminDiagnosis, b: AdminDiagnosis) =>
+      a.created_at < b.created_at ? 1 : -1;
+
+    // ① 이메일 정확 일치
+    let matched = emailKey
+      ? diagnoses
+          .filter(
+            (d) => norm(d.email || (d.profile as any)?.email) === emailKey
+          )
+          .sort(byCreatedDesc)
+      : [];
+
+    // ② 이메일로 못 찾으면 이름으로 재매칭
+    if (matched.length === 0 && nameKey) {
+      matched = diagnoses
+        .filter(
+          (d) => norm(d.name || (d.profile as any)?.name) === nameKey
+        )
+        .sort(byCreatedDesc);
     }
-    // 같은 이메일의 진단서 중 가장 최근 것을 찾는다.
-    const matched = diagnoses
-      .filter((d) => (d.email || (d.profile as any)?.email) === email)
-      .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+
     if (matched.length === 0) {
-      setMsg("이 회원이 작성한 진단서가 아직 없습니다.");
-      setTimeout(() => setMsg(null), 3000);
+      setMsg(
+        "이 회원과 연결된 진단서를 찾지 못했습니다. (가입 이메일·이름이 진단서와 다를 수 있어요 — 상단 '고객 진단서' 탭에서 확인해 주세요)"
+      );
+      setTimeout(() => setMsg(null), 4000);
       return;
     }
     const target = matched[0];
@@ -1083,9 +1103,9 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex flex-row flex-wrap gap-1.5">
+                          <div className="grid w-[280px] grid-cols-3 gap-1.5">
                             <button
-                              onClick={() => goToUserDiag(u.email)}
+                              onClick={() => goToUserDiag(u.email, u.full_name)}
                               className="whitespace-nowrap rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 hover:bg-sky-100"
                             >
                               📇 고객진단서
