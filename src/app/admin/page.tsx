@@ -1127,7 +1127,7 @@ export default function AdminPage() {
             <div>
               {/* 🔍 회원 검색 — 이름·이메일·연락처로 즉시 검색 */}
               <div className="mb-4 flex w-full flex-wrap items-center gap-2">
-                <div className="relative w-full min-w-0 sm:w-auto sm:max-w-sm sm:flex-1">
+                <div className="relative w-full min-w-0 sm:w-auto sm:max-w-md sm:flex-1">
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                     🔍
                   </span>
