@@ -524,7 +524,16 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
       {/* ========== 🎁 추가 감면 혜택 - 아코디언(접기) 카드 (대표님 요청) ========== */}
       <AccordionCard
         emoji="💎"
-        title="챙기면 좋은 추가 감면 혜택"
+        title={
+          // 모바일: '챙기면 좋은' / '추가 감면 혜택' 2줄로 자연스럽게 끊음(대표님 요청).
+          //   PC(sm 이상)는 공백 한 칸으로 한 줄 유지.
+          <>
+            챙기면 좋은
+            <br className="sm:hidden" />
+            <span className="hidden sm:inline"> </span>
+            추가 감면 혜택
+          </>
+        }
         subtitle="세금을 아낄 수 있는 혜택이에요"
       >
         {/* 가능성 높은 순 상위 6개 - 항목마다 연한 박스 + 간격으로 시원하게(금융기관 카드와 동일 감각) */}

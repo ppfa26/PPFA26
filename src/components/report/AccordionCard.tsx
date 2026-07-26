@@ -18,7 +18,7 @@ export default function AccordionCard({
   children,
 }: {
   emoji?: string;
-  title: string;
+  title: ReactNode;
   subtitle?: ReactNode;
   defaultOpen?: boolean;
   children: ReactNode;
