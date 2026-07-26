@@ -109,6 +109,7 @@ type Approval = {
   agency: string; // 기관
   amount?: string; // 금액 (인증은 생략 가능)
   note?: string; // 한 줄 코멘트
+  badge?: string; // 하단 상태 배지 (미지정 시 "지급완료")
 };
 
 const APPROVALS: Approval[] = [
@@ -179,12 +180,13 @@ const APPROVALS: Approval[] = [
     amount: "5,000만원",
   },
   {
-    kind: "지원금",
+    kind: "정책자금",
     business: "일반 중소기업",
     region: "인천 부평구",
-    program: "일반경영안정자금 (운전)",
+    program: "일반경영안정자금 (대리)",
     agency: "소상공인시장진흥공단",
     amount: "7,000만원",
+    badge: "확인서 발급완료",
   },
 ];
 
@@ -311,7 +313,7 @@ export default function Page() {
                   </p>
                   {a.amount && (
                     <span className="ml-auto shrink-0 rounded-md bg-brand-green/10 px-2 py-0.5 text-[11px] font-bold text-brand-green">
-                      지급완료
+                      {a.badge ?? "지급완료"}
                     </span>
                   )}
                 </div>
