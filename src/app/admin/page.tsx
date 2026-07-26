@@ -1110,7 +1110,7 @@ export default function AdminPage() {
               <button
                 onClick={runCrawl}
                 disabled={crawling}
-                className="rounded-xl border border-brand-primary/40 bg-brand-primary/10 px-4 py-2 text-sm font-semibold text-brand-dark shadow-sm hover:bg-brand-primary/20 disabled:opacity-50"
+                className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
                 title="기업마당에서 최신 정부지원사업 공고를 지금 수집합니다"
               >
                 {crawling ? "공고 수집 중…" : "📡 공고 수집"}
@@ -1178,7 +1178,7 @@ export default function AdminPage() {
                 ["users", `👥 회원 목록 (${users.length})`],
                 ["diagnoses", `📋 고객 진단서 (${diagnoses.length})`],
                 ["payments", `💳 결제 조회권 (${payments.length})`],
-                ["revenue", "📊 일주월 매출 리포트"],
+                ["revenue", "📊 요약 매출 리포트"],
               ] as [Tab, string][]
             ).map(([key, label]) => (
               <button
@@ -1206,20 +1206,20 @@ export default function AdminPage() {
               🛡️ 접속 기기 차단
             </button>
 
-            {/* 6: 진단서 엑셀(실행) — 그린 계열 */}
+            {/* 6: 진단서 엑셀(실행) — 흰/회색 통일 */}
             <button
               onClick={downloadAllDiag}
               disabled={diagnoses.length === 0}
-              className="flex-1 whitespace-nowrap rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-[14px] font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:opacity-40"
+              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-40"
               title="접수된 모든 고객 진단서를 엑셀(CSV)로 내려받습니다"
             >
               📋 진단서 엑셀
             </button>
 
-            {/* 7: 진단링크 복사(실행) — 블루 계열 */}
+            {/* 7: 진단링크 복사(실행) — 흰/회색 통일 */}
             <button
               onClick={copyDiagnosisLink}
-              className="flex-1 whitespace-nowrap rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-center text-[14px] font-bold text-blue-700 shadow-sm transition hover:bg-blue-100"
+              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:bg-gray-50"
               title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
             >
               🔗 진단링크 복사
@@ -1273,7 +1273,7 @@ export default function AdminPage() {
                   <button
                     onClick={downloadUsersCsv}
                     disabled={users.length === 0}
-                    className="whitespace-nowrap rounded-xl bg-emerald-50 px-3 py-2.5 text-sm font-bold text-emerald-700 hover:bg-emerald-100 disabled:opacity-40"
+                    className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-40"
                     title="회원 명단을 엑셀(CSV)로 내려받습니다 — 이름·연락처·유입경로 포함"
                   >
                     ⬇️ 회원 엑셀 다운
@@ -1412,14 +1412,14 @@ export default function AdminPage() {
                           <div className="grid w-[280px] grid-cols-3 gap-1.5">
                             <button
                               onClick={() => goToUserDiag(u.email, u.full_name)}
-                              className="whitespace-nowrap rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100"
+                              className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
                             >
                               📇 고객진단서
                             </button>
                             {hasDiag ? (
                               <button
                                 onClick={() => viewUserResult(u.email)}
-                                className="whitespace-nowrap rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100"
+                                className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
                               >
                                 📊 결과보기
                               </button>
@@ -1433,21 +1433,21 @@ export default function AdminPage() {
                             )}
                             <button
                               onClick={() => u.email && resetDevice(u.email)}
-                              className="whitespace-nowrap rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-700 hover:bg-orange-100"
+                              className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
                             >
                               기기초기화
                             </button>
                             {isRefunded ? (
                               <button
                                 onClick={() => restoreCredits(u.email)}
-                                className="whitespace-nowrap rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
+                                className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
                               >
                                 ↩️ 조회권 복구
                               </button>
                             ) : (
                               <button
                                 onClick={() => refundCredits(u.email)}
-                                className="whitespace-nowrap rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-orange-700 hover:bg-orange-100"
+                                className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
                               >
                                 💸 조회권 환불
                               </button>
@@ -1543,7 +1543,7 @@ export default function AdminPage() {
                             </button>
                             <button
                               onClick={() => extendExpiry(p.order_id)}
-                              className="whitespace-nowrap rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600 hover:bg-emerald-100"
+                              className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 hover:bg-gray-50"
                             >
                               기한연장
                             </button>
@@ -1629,13 +1629,13 @@ export default function AdminPage() {
                   <div className="ml-auto flex flex-wrap gap-2">
                     <button
                       onClick={downloadSelectedDiag}
-                      className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
+                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50"
                     >
                       ⬇️ 선택 진단서 엑셀 다운
                     </button>
                     <button
                       onClick={downloadAllDiag}
-                      className="rounded-lg bg-brand-primary/10 px-3 py-1.5 text-xs font-bold text-brand-primary hover:bg-brand-primary/20"
+                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50"
                     >
                       ⬇️ 전체 진단서 엑셀 다운
                     </button>
@@ -1809,13 +1809,13 @@ export default function AdminPage() {
                         <div className="mt-4 flex flex-wrap gap-2">
                           <button
                             onClick={() => openResultForDiag(d)}
-                            className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100"
+                            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50"
                           >
                             📊 결과보기 (새 창)
                           </button>
                           <button
                             onClick={() => downloadOneDiag(d)}
-                            className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
+                            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 hover:bg-gray-50"
                           >
                             ⬇️ 이 진단서 엑셀 다운
                           </button>
