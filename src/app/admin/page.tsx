@@ -15,6 +15,14 @@ import {
   computeDuplicateIndex,
   type DiagnosisRecord,
 } from "@/lib/diagnosisExport";
+import {
+  loadAllLeadNotes,
+  saveLeadNote,
+  CALL_STATUS_META,
+  CALL_STATUS_ORDER,
+  type CallStatus,
+  type LeadNote,
+} from "@/lib/leadNotes";
 
 /* ------------------------------------------------------------------ */
 /*  타입                                                               */
@@ -206,6 +214,28 @@ export default function AdminPage() {
   const [userSearch, setUserSearch] = useState(""); // 회원 검색어(이름·이메일·연락처)
   const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
 
+  // 리드(상담 대상) 메모·통화 상태 — 브라우저 localStorage 기반 (DB 불필요)
+  const [leadNotes, setLeadNotes] = useState<Record<string, LeadNote>>({});
+  // 메모 입력창 임시 상태 (진단서 id → 입력중인 메모 텍스트)
+  const [memoDraft, setMemoDraft] = useState<Record<string, string>>({});
+
+  // 마운트 시 저장된 리드 메모 로드
+  useEffect(() => {
+    setLeadNotes(loadAllLeadNotes());
+  }, []);
+
+  // 통화 상태 변경
+  const setCallStatus = (id: string, status: CallStatus) => {
+    setLeadNotes(saveLeadNote(id, { status }));
+  };
+  // 메모 저장
+  const saveMemo = (id: string) => {
+    const memo = memoDraft[id] ?? leadNotes[id]?.memo ?? "";
+    setLeadNotes(saveLeadNote(id, { memo }));
+    setMsg("메모를 저장했어요.");
+    setTimeout(() => setMsg(null), 2000);
+  };
+
   // 중복 신청 순번 (같은 연락처/이메일 기준 몇 번째 신청인지)
   const dupIndexMap = computeDuplicateIndex(diagnoses as unknown as DiagnosisRecord[]);
 
@@ -283,6 +313,48 @@ export default function AdminPage() {
     const tail = rawPhone.length >= 4 ? `_${rawPhone.slice(-4)}` : "";
     const stamp = new Date(d.created_at).toISOString().slice(0, 10);
     downloadCsv(`고객진단서_${applicant}${tail}_${stamp}`, diagnosesToCsv(toRecords([d])));
+  };
+
+  // 회원 목록 CSV 다운로드 — 세무·백업·문자발송 명단용 (진단서에서 이름·연락처 역추적 포함)
+  const downloadUsersCsv = () => {
+    if (users.length === 0) return;
+    const headers = [
+      "이름",
+      "이메일",
+      "연락처",
+      "유입경로",
+      "가입일",
+      "최근접속",
+      "결제건수",
+      "누적금액",
+      "조회권(사용/전체)",
+      "열람기한",
+    ];
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const rows = users.map((u) => {
+      const info = userInfoByEmail(u.email);
+      const name = (u.full_name && u.full_name.trim()) || info.name || "";
+      return [
+        name,
+        u.email || "",
+        info.phone || "",
+        u.utm_source || "direct",
+        fmtDate(u.joined_at),
+        fmtDate(u.last_sign_in),
+        `${u.paid_count}건`,
+        u.total_amount || 0,
+        `${u.credits_used}/${u.credits_total}`,
+        u.latest_expiry ? fmtDate(u.latest_expiry) : "",
+      ]
+        .map(esc)
+        .join(",");
+    });
+    const csv = "\uFEFF" + [headers.join(","), ...rows].join("\n");
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`회원목록_${users.length}명_${stamp}`, csv);
   };
 
   // 진단서 삭제 (관리자) — 관리자 전용 RPC 사용
@@ -567,6 +639,39 @@ export default function AdminPage() {
     const digitsQ = q.replace(/[^0-9]/g, "");
     return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
   });
+
+  /* --------------------------------------------------------------- */
+  /*  🎯 오늘 할 일 요약 — 대표님이 오늘 손댈 곳을 자동으로 뽑아준다  */
+  /* --------------------------------------------------------------- */
+  const isSameDay = (s: string | null) => {
+    if (!s) return false;
+    const d = new Date(s);
+    const now = new Date();
+    return (
+      d.getFullYear() === now.getFullYear() &&
+      d.getMonth() === now.getMonth() &&
+      d.getDate() === now.getDate()
+    );
+  };
+
+  // ① 아직 통화 안 한 완료 진단(=리드) — 전화 돌릴 대상
+  const todoUncontacted = diagnoses.filter(
+    (d) => d.status !== "partial" && (leadNotes[d.id]?.status ?? "none") === "none"
+  );
+  // ② 미완료(중간이탈) 진단 — 전화로 진단 이어가기 유도
+  const todoPartial = diagnoses.filter((d) => d.status === "partial");
+  // ③ 오늘 새로 들어온 진단
+  const todoNewToday = diagnoses.filter((d) => isSameDay(d.created_at));
+  // ④ 열람기한 3일 이내 남은 유효회원 — 재구매 유도 타이밍
+  const todoExpiring = users.filter((u) => {
+    const dl = daysLeft(u.latest_expiry);
+    return dl !== null && dl >= 0 && dl <= 3;
+  });
+  const hasTodo =
+    todoUncontacted.length > 0 ||
+    todoPartial.length > 0 ||
+    todoNewToday.length > 0 ||
+    todoExpiring.length > 0;
 
   // 회원 목록 → 그 회원의 고객 진단서로 바로 이동
   //  소셜 로그인(카카오/구글) 이메일과 진단서 작성 이메일/표기가 다를 수 있어
@@ -952,6 +1057,83 @@ export default function AdminPage() {
             </div>
           )}
 
+          {/* ------- 🎯 오늘 할 일 (자동 요약) — 클릭하면 해당 탭으로 이동 ------- */}
+          {hasTodo && (
+            <section className="mb-6 rounded-2xl border border-brand-primary/25 bg-gradient-to-br from-brand-primary/5 to-white p-4 shadow-sm sm:p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-lg">🎯</span>
+                <h2 className="text-sm font-extrabold text-gray-900 sm:text-base">
+                  오늘 대표님이 할 일
+                </h2>
+                <span className="ml-1 text-xs text-gray-400">
+                  · 카드를 누르면 바로 그 목록으로 이동해요
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                {/* ① 전화 돌릴 리드 (미접촉) */}
+                <button
+                  onClick={() => setTab("diagnoses")}
+                  disabled={todoUncontacted.length === 0}
+                  className="group flex flex-col items-start rounded-xl border border-sky-100 bg-sky-50 px-3.5 py-3 text-left transition hover:border-sky-300 hover:shadow-md disabled:opacity-45 disabled:hover:border-sky-100 disabled:hover:shadow-none"
+                >
+                  <span className="text-[11px] font-bold text-sky-600">☎️ 전화 돌릴 리드</span>
+                  <span className="mt-0.5 text-2xl font-extrabold text-sky-700">
+                    {todoUncontacted.length}
+                    <span className="ml-0.5 text-xs font-bold">명</span>
+                  </span>
+                  <span className="mt-0.5 text-[11px] text-sky-500/80 group-hover:underline">
+                    아직 통화 안 한 완료 진단 →
+                  </span>
+                </button>
+                {/* ② 미완료(중간이탈) */}
+                <button
+                  onClick={() => setTab("diagnoses")}
+                  disabled={todoPartial.length === 0}
+                  className="group flex flex-col items-start rounded-xl border border-orange-100 bg-orange-50 px-3.5 py-3 text-left transition hover:border-orange-300 hover:shadow-md disabled:opacity-45 disabled:hover:border-orange-100 disabled:hover:shadow-none"
+                >
+                  <span className="text-[11px] font-bold text-orange-600">⏳ 중간이탈 리드</span>
+                  <span className="mt-0.5 text-2xl font-extrabold text-orange-700">
+                    {todoPartial.length}
+                    <span className="ml-0.5 text-xs font-bold">명</span>
+                  </span>
+                  <span className="mt-0.5 text-[11px] text-orange-500/80 group-hover:underline">
+                    진단 이어가게 도와주기 →
+                  </span>
+                </button>
+                {/* ③ 오늘 신규 진단 */}
+                <button
+                  onClick={() => setTab("diagnoses")}
+                  disabled={todoNewToday.length === 0}
+                  className="group flex flex-col items-start rounded-xl border border-emerald-100 bg-emerald-50 px-3.5 py-3 text-left transition hover:border-emerald-300 hover:shadow-md disabled:opacity-45 disabled:hover:border-emerald-100 disabled:hover:shadow-none"
+                >
+                  <span className="text-[11px] font-bold text-emerald-600">🆕 오늘 신규 진단</span>
+                  <span className="mt-0.5 text-2xl font-extrabold text-emerald-700">
+                    {todoNewToday.length}
+                    <span className="ml-0.5 text-xs font-bold">건</span>
+                  </span>
+                  <span className="mt-0.5 text-[11px] text-emerald-500/80 group-hover:underline">
+                    오늘 새로 들어온 상담 →
+                  </span>
+                </button>
+                {/* ④ 열람기한 임박 (재구매 타이밍) */}
+                <button
+                  onClick={() => setTab("users")}
+                  disabled={todoExpiring.length === 0}
+                  className="group flex flex-col items-start rounded-xl border border-purple-100 bg-purple-50 px-3.5 py-3 text-left transition hover:border-purple-300 hover:shadow-md disabled:opacity-45 disabled:hover:border-purple-100 disabled:hover:shadow-none"
+                >
+                  <span className="text-[11px] font-bold text-purple-600">⏰ 열람기한 임박</span>
+                  <span className="mt-0.5 text-2xl font-extrabold text-purple-700">
+                    {todoExpiring.length}
+                    <span className="ml-0.5 text-xs font-bold">명</span>
+                  </span>
+                  <span className="mt-0.5 text-[11px] text-purple-500/80 group-hover:underline">
+                    3일 이내 · 재구매 유도 →
+                  </span>
+                </button>
+              </div>
+            </section>
+          )}
+
           {/* 통계 카드 */}
           <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             <StatCard
@@ -1033,6 +1215,15 @@ export default function AdminPage() {
                     ✕ 초기화
                   </button>
                 )}
+                {/* 회원 목록 CSV 다운로드 — 세무·백업·문자발송 명단용 */}
+                <button
+                  onClick={downloadUsersCsv}
+                  disabled={users.length === 0}
+                  className="whitespace-nowrap rounded-xl bg-emerald-50 px-3 py-2.5 text-sm font-bold text-emerald-700 hover:bg-emerald-100 disabled:opacity-40"
+                  title="회원 명단을 엑셀(CSV)로 내려받습니다 — 이름·연락처·유입경로 포함"
+                >
+                  ⬇️ 회원 엑셀 다운
+                </button>
                 <span className="whitespace-nowrap text-xs text-gray-400">
                   {userSearch ? `검색결과 ${filteredUsers.length}명` : `전체 ${users.length}명`}
                 </span>
@@ -1073,10 +1264,31 @@ export default function AdminPage() {
                       <tr key={u.user_id} className="hover:bg-gray-50/60">
                         <td className="whitespace-nowrap px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-gray-800">
+                            {/* 회원 이름 = 클릭하면 그 회원의 진단서로 바로 이동 (연결성) */}
+                            <button
+                              onClick={() => goToUserDiag(u.email, u.full_name)}
+                              className={`font-bold text-gray-800 ${
+                                hasDiag
+                                  ? "cursor-pointer hover:text-brand-primary hover:underline"
+                                  : "cursor-default"
+                              }`}
+                              title={hasDiag ? "클릭하면 이 회원의 진단서로 이동합니다" : undefined}
+                            >
                               {/* ① 계정 자체 이름(소셜 로그인 닉네임) → ② 진단서 역추적 이름 → ③ 미입력 순 */}
                               {(u.full_name && u.full_name.trim()) || info.name || "이름 미입력"}
-                            </span>
+                            </button>
+                            {/* 진단 완료 여부 미니 점 — 회원↔진단서 연결 상태 한눈에 */}
+                            {hasDiag ? (
+                              <span
+                                title="진단 완료 — 클릭 가능"
+                                className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
+                              />
+                            ) : (
+                              <span
+                                title="아직 진단(설문) 전"
+                                className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-gray-300"
+                              />
+                            )}
                             <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${badge.cls}`}>
                               {badge.label}
                             </span>
@@ -1404,6 +1616,20 @@ export default function AdminPage() {
                               ✅ 완료
                             </span>
                           )}
+                          {/* ☎️ 통화 상태 뱃지 — 미접촉이 아닐 때만 표시 (전화 진행상황 한눈에) */}
+                          {(() => {
+                            const st = leadNotes[d.id]?.status ?? "none";
+                            if (st === "none") return null;
+                            const m = CALL_STATUS_META[st];
+                            return (
+                              <span
+                                className={`ml-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold ${m.cls}`}
+                              >
+                                <span className={`inline-block h-1.5 w-1.5 rounded-full ${m.dot}`} />
+                                {m.label}
+                              </span>
+                            );
+                          })()}
                           <span className="ml-2 text-sm text-gray-500">
                             {(p as any)?.businessType || ""}
                           </span>
@@ -1447,6 +1673,55 @@ export default function AdminPage() {
                             </div>
                           ))}
                         </div>
+                        {/* ☎️ 상담 관리 — 통화 상태 + 메모 (localStorage 저장, DB 불필요) */}
+                        <div className="mt-4 rounded-xl border border-slate-700 bg-slate-800/60 p-3">
+                          <p className="mb-2 text-xs font-bold text-slate-300">☎️ 상담 관리</p>
+                          {/* 통화 상태 선택 */}
+                          <div className="mb-3 flex flex-wrap gap-1.5">
+                            {CALL_STATUS_ORDER.map((st) => {
+                              const m = CALL_STATUS_META[st];
+                              const cur = (leadNotes[d.id]?.status ?? "none") === st;
+                              return (
+                                <button
+                                  key={st}
+                                  onClick={() => setCallStatus(d.id, st)}
+                                  className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-bold transition ${
+                                    cur
+                                      ? m.cls + " ring-2 ring-offset-1 ring-offset-slate-800"
+                                      : "border-slate-600 bg-slate-700 text-slate-300 hover:bg-slate-600"
+                                  }`}
+                                >
+                                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${m.dot}`} />
+                                  {m.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          {/* 상담 메모 */}
+                          <div className="flex flex-col gap-2 sm:flex-row">
+                            <textarea
+                              value={memoDraft[d.id] ?? leadNotes[d.id]?.memo ?? ""}
+                              onChange={(e) =>
+                                setMemoDraft((prev) => ({ ...prev, [d.id]: e.target.value }))
+                              }
+                              placeholder="상담 메모 — 예: 5천만 필요, 소진공 직접대출 안내함 / 다음 주 재통화"
+                              rows={2}
+                              className="flex-1 resize-none rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-brand-orange"
+                            />
+                            <button
+                              onClick={() => saveMemo(d.id)}
+                              className="shrink-0 self-start rounded-lg bg-brand-primary/20 px-3 py-2 text-xs font-bold text-brand-primary hover:bg-brand-primary/30 sm:self-stretch"
+                            >
+                              💾 저장
+                            </button>
+                          </div>
+                          {leadNotes[d.id]?.updatedAt && (
+                            <p className="mt-1.5 text-[10px] text-slate-500">
+                              마지막 수정 {fmtDateTime(leadNotes[d.id].updatedAt)}
+                            </p>
+                          )}
+                        </div>
+
                         {/* 결과보기 + 개별 다운로드 + 삭제 버튼 */}
                         <div className="mt-4 flex flex-wrap gap-2">
                           <button
