@@ -26,7 +26,61 @@
 - 타입체크: `npx tsc --noEmit -p tsconfig.json`
 - 빌드: `npm run build` (300s)
 - 푸시: `GHTOK=$(gh auth token) && git -c credential.helper= push "https://x-access-token:${GHTOK}@github.com/ppfa26/PPFA26.git" HEAD:main`
-- PDF: Playwright Chromium (`~/.cache/ms-playwright/chromium-1228`).
+  - 토큰 만료 시("Invalid username or token") → `setup_github_environment` 재호출 후 다시 위 명령.
+- 실서버 검증(선택): `pm2 start ecosystem.config.cjs`(next start -p 3000) → `curl localhost:3000` → 끝나면 `pm2 delete all`.
+- PDF/스샷: Playwright Chromium (`~/.cache/ms-playwright/chromium-1228`), 모듈 `NODE_PATH=/opt/npm-cache/_npx/e41f203b7505f1fb/node_modules`. 모바일 390×844 / PC 1280×900.
+
+---
+
+# 🔁 재현 플레이북 — 아이템(사업)만 바뀌어도 이 수준 홈페이지 재현
+> "다음에 아이템만 바뀌어도 이 정도 홈페이지를 만들 수 있게" — 대표님 요청으로 핵심 노하우 총정리. 새 프로젝트 시 이 섹션만 보고 그대로 재현 가능.
+
+## A. 기술 스택 & 초기 셋업
+- **Next.js 14 App Router + TypeScript + TailwindCSS + Supabase Auth + Vercel(자동배포)**. 코드는 `src/app/`.
+- GitHub push → Vercel 자동 배포. 항상 **main** 브랜치.
+- 실서버 검증은 PM2로 `next start -p 3000`(`ecosystem.config.cjs`).
+- 한글 도메인 쓸 땐 링크를 `window.location.origin`(퓨니코드 xn-- 노출) 대신 **한글 URL 하드코딩**.
+
+## B. 브랜드 색상 팔레트 (tailwind.config.ts)
+- brand.yellow `#FEE500` / gradFrom `#FFD500` / gradTo `#FF9500` / orange `#FF6F0F`
+- brand.dark `#191919` / gray `#6B7280` / green(emerald) `#00C471` / red `#FF3B30`
+- 폰트: Pretendard → Noto Sans KR → system-ui. 그라데이션: `brand-grad`(135deg #FFD500→#FF9500). 그림자: `card`/`cardHover`. 반응형 `xs:400px`.
+- **색상 사용 규칙(절대)**: 기본 UI/버튼 = **흰색·회색·반투명(white)**. 상태 배지 = **초록/오렌지**. **위험 액션(삭제·계정차단·환불)만 레드 유지**. 브랜드 강조(CTA·핵심포인트)만 옐로/오렌지 그라데이션. 그 외 남발 금지(indigo/sky/rose/amber 등 → blue/orange/red/green으로 통일).
+
+## C. 다크 야경 테마 구조 (globals.css)
+- 몰입형 페이지(home/community/admin 등)는 `<body class="theme-dark">`. 밝은 페이지 코드(bg-white/text-brand-dark)를 전역 CSS가 자동으로 **반투명 글래스 + 밝은 글자**로 변환.
+- `body { color:#f4f5f7; background-color:#0b1020; overflow-x:hidden; }`
+- **배경 고정 레이어(핵심)**: `body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background-image: linear-gradient(오버레이) , url(야경); background-size:cover; background-position:center top; }`
+  - ⚠️ `body`에 직접 `background-attachment:fixed`를 주면 **iOS 사파리 스크롤 떨림/튐 버그**. 반드시 `body::before` 고정레이어로 분리해야 PC·모바일 모두 100% 고정.
+  - `body.theme-dark`는 **배경색 미지정**이어야 ::before가 정상 노출됨.
+- **오버레이 어둡기**(야경 위 가독성): `linear-gradient(rgba(8,12,24,A1), rgba(8,12,24,A2))`. 현재값 PC `0.78~0.90`, 모바일(`@media max-width:640px`) `0.82~0.94`. 글씨 안 보이면 ↑, 너무 답답하면 ↓.
+- 글래스 컴포넌트: `.hero-glass`(rgba(18,23,36,0.55)+blur18+border rgba(255,255,255,0.14)), `.section-title-glass`(rgba(18,23,36,0.5)+blur14), `.pricing-card-popular`(rgba(20,25,38,0.62)+골드테두리).
+- 다크배경이라 테두리는 **`border-white/10`**(반투명 흰). `border-gray-200`은 라이트 잔재지만 다크테마 CSS가 커버하므로 강제 통일 불필요.
+
+## D. 배경 이미지 생성·최적화 워크플로
+1. 기존/원하는 색감 참조 → **nano-banana-pro, image-to-image**(`image_urls`에 기존 배경 넣어 색조 유지). 여러 안 생성 후 실제 오버레이+히어로 얹은 스샷 비교로 채택.
+2. genspark file URL은 **curl 받으면 59바이트 JSON 인증에러** → 반드시 **DownloadFileWrapper 도구**로 다운로드.
+3. ImageMagick 최적화(crop-to-fill):
+   - PC: `convert src.jpg -resize 1920x1072^ -gravity center -extent 1920x1072 -quality 82 -strip public/images/city-night-bg.jpg`
+   - 모바일 세로: `-resize 900x1613^ -extent 900x1613 -quality 82` → `city-night-bg-mobile.jpg`
+4. `understand_images`로 글리치(건물 뭉개짐 등) 검증 후 image-to-image 재수정.
+
+## E. 베타/유료 스위치 (src/lib/betaConfig.ts)
+- `BETA_FREE = true` → 오픈베타 무료모드(가격·결제 UI 숨김). 결제 코드는 **지우지 않고 숨김만** → 심사 통과 후 `false`로 한 번에 유료 복구.
+- `OFFICIAL_PRICE = 29900` / `OFFICIAL_PRICE_LABEL = "29,900원"`.
+
+## F. 페이지 구성 (src/app/)
+- `page.tsx`(홈 히어로: hero-glass 카드+배지+h1+CTA "지금 무료로 진단 시작하기", BETA_FREE 조건부) / `diagnosis`(진단 폼, 국세청 조회 폴백 안내) / `community`(승인 사례+통계바+CTA) / `mypage`(메뉴판·매칭결과) / `admin`(회원/결제/진단서/매출/접속 탭) / `pricing` / `privacy`.
+- 자동화: `vercel.json` cron `/api/crawl` 매일 20시(공고 크롤링).
+
+## G. 검증·배포 순서(항상)
+`npx tsc --noEmit -p tsconfig.json` → `npm run build`(300s) → (필요시 PM2 실서버 curl) → 토큰주입 git push main → Vercel 자동배포.
+
+## H. 절대 규칙(재확인)
+- **matching.ts 스코어링 로직 불가침** — 표시 후처리만.
+- 팩트 근거·솔직·미래지향. 이해 안 되면 실행 전 재질문. 크레딧 절약.
+
+---
 
 ## 주요 파일
 - `src/lib/advancedScreening.ts` — INSTITUTION_LINKS(신보/기보/중진공/소진공/재단), JAEDAN_PRODUCTS, filterProducts(low 제거), InstitutionProduct 타입.
@@ -36,6 +90,7 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
+- (문서) **재현 플레이북 추가**: "아이템만 바뀌어도 이 수준 홈페이지 재현" 섹션 신설(A~H: 스택·브랜드색·다크테마·배경고정기법·이미지워크플로·베타스위치·페이지구성·배포순서·절대규칙). 지금까지 세션 노하우 총정리.
 - `6af2366` **배경 완전 고정 + 살짝 어둡게**: 모바일 스크롤 시 배경이 콘텐츠 따라 밀려 바뀌던 현상 해결. body 직접 배경(attachment:fixed는 iOS 사파리 떨림버그)→**`body::before` 고정레이어**(position:fixed·inset:0·z-index:-1·pointer-events:none)로 분리. PC·모바일 모두 스크롤해도 배경 100% 고정. 오버레이 살짝 어둡게: PC 0.72~0.86→**0.78~0.90**, 모바일 0.74~0.90→**0.82~0.94**. (globals.css L19~46. body.theme-dark는 배경색 미지정이라 ::before 정상노출.)
 - `25b1727` **홈 배경 야경 업그레이드**: 기존 도시야경(딥네이비#0B1325+골드불빛+수면반사) 정체성 유지하며 화질·디테일 업그레이드. nano-banana-pro로 3안(v1 수면반사스파클/v2 광원글로우Bloom/v3 지평선보라광운) 생성→실제 오버레이+히어로카드 얹은 스샷 비교→**v1 채택**(신뢰+활력·브랜드색조화·오버레이뚫는디테일). 상단 건물꼭대기 글리치 image-to-image로 수정. PC 1920×1072(363KB)·모바일 900×1613(134KB) JPG 최적화 교체. 파일: `public/images/city-night-bg.jpg`·`city-night-bg-mobile.jpg`. (globals.css 오버레이 rgba(8,12,24,0.72~0.86) 그대로.)
 - `88168ff` 후기 CTA 문구 `내 사업장에 정부지원사업…`→`내 사업장에 **알맞은** 정부지원사업, 지금 무료로 진단받아 보세요.`
