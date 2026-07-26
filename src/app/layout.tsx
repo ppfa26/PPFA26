@@ -126,14 +126,15 @@ export const viewport: Viewport = {
 //  '데스크톱 사이트' 체크를 켠 것처럼 넓은 PC 화면이 잘림 없이 축소돼 보이게 한다.
 //
 //  동작:
-//   1) 화면 폭이 DESKTOP_WIDTH(980px) 이상인 진짜 PC/태블릿 → 아무것도 안 함(원본 그대로).
-//   2) 그보다 좁은 모바일 → viewport 를 width=980 + initial-scale=(기기폭/980) 로 교체.
-//      → 브라우저가 980px PC 페이지를 딱 화면폭에 맞게 축소해서 통째로 보여준다(잘림 0).
+//   1) 화면 폭이 DESKTOP_WIDTH(900px) 이상인 진짜 PC/태블릿 → 아무것도 안 함(원본 그대로).
+//   2) 그보다 좁은 모바일 → viewport 를 width=900 + initial-scale=(기기폭/900) 로 교체.
+//      → 브라우저가 900px PC 페이지를 딱 화면폭에 맞게 축소해서 통째로 보여준다(잘림 0).
+//      ※ 기준폭 900 = 980 대비 콘텐츠가 약 9% 크게 보인다(대표님 요청: 전체 살짝 확대).
 //   3) 가로/세로 회전 시 폭이 바뀌므로 resize·orientationchange 때 다시 계산.
 //  ※ <head> 안에서 즉시 실행(dangerouslySetInnerHTML) → 첫 페인트 전에 적용돼 깜빡임 최소화.
 const DESKTOP_VIEWPORT_SCRIPT = `
 (function () {
-  var DESKTOP_WIDTH = 980;
+  var DESKTOP_WIDTH = 900;
   function apply() {
     try {
       var vp = document.querySelector('meta[name=viewport]');

@@ -46,7 +46,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0b1020]/80 backdrop-blur-lg">
-      <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-1.5 pl-2 pr-2 xs:gap-2 xs:pl-4 xs:pr-3.5 sm:h-16 sm:gap-4 sm:px-6">
+      <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-1.5 pl-4 pr-4 xs:gap-2 xs:pl-6 xs:pr-5 sm:h-16 sm:gap-4 sm:px-8">
         {/* 로고 + 상호명 */}
         <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Image
