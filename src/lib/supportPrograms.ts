@@ -449,6 +449,7 @@ export function profileToCompany(p: DiagnosisProfile): Company {
 
   return {
     industry: industryVal,
+    industries_all: p.industries || [], // 재단 우선 취급업종 판정용(복수선택 전체)
     annual_revenue: revenueVal,
     biz_type: bizVal,
     employee_count: empCount,

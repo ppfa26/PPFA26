@@ -1,4 +1,5 @@
 import { PROGRAMS, Program } from "./programs";
+import { checkExcludedIndustry } from "./excludedIndustries";
 
 export type DiagnosisProfile = {
   // 1단계
@@ -423,6 +424,18 @@ export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
     //  → 11점 이상, 즉 자격이 뚜렷한 상위 사업만 노출한다.
     .filter((r) => r.score > 10)
     .sort((a, b) => b.score - a.score);
+
+  // ══ 공통 제외업종 안전망 (대표님 기준: 향락·사행·도박·대부·부동산투기·비영리 등) ══
+  //  매칭 점수 계산은 위에서 그대로 끝났고, 마지막에 "이 사업자 업종 자체가
+  //  정부지원 공통 제외업종이면 어떤 사업도 추천하지 않는다"는 안전망만 얹는다.
+  //  (matching 점수 로직은 건드리지 않음)
+  const industryCheck = checkExcludedIndustry([
+    p.industry,
+    ...(p.industries || []),
+  ]);
+  if (industryCheck.excluded) {
+    return []; // 제외업종 사업자 → 추천 결과를 비운다
+  }
 
   return results;
 }

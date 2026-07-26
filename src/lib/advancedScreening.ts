@@ -24,7 +24,8 @@
 // 기존 진단(DiagnosisProfile)과 별개로, 사용자가 "정밀 추가진단(선택)"에서
 // 직접 입력하는 정밀 수치 데이터. 입력하지 않으면 추가 판정은 표시하지 않는다.
 export type Company = {
-  industry?: string; // 업종 (제조업/도소매업/음식점업/서비스업/수출업/기타)
+  industry?: string; // 업종 (제조업/도소매업/음식점업/서비스업/수출업/기타) — 복수선택 시 첫 번째
+  industries_all?: string[]; // 진단에서 고른 업종 전체(재단 우선 취급업종 판정용, 선택)
   years_in_business?: number; // 업력(년)
   annual_revenue?: number; // 연매출(원)
   total_debt?: number; // 총차입금(원)
@@ -235,6 +236,47 @@ function normalizeIndustry(
   return "etc";
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  【지역신용보증재단 우선 취급대상 업종】 (대표님 기준 — 신보→재단 이관 업종)
+//   신용보증기금이 "가계 유지 목적 생계형 업종"은 재단으로 내려보내므로,
+//   이 업종에 해당하면 매출 규모가 커도 신보가 아니라 '재단 우선'으로 안내한다.
+//   출처: 지역신용보증재단 우선 취급대상 업종 안내
+//    ① 소매 관련(슈퍼마켓·편의점·의류·화장품·문구·서점·반려동물용품·자동판매기 등)
+//    ② 생계형 운송(택시·전세버스·개인화물차·늘찬배달)
+//    ③ 음식·숙박(음식점·주점·치킨·떡집·커피전문점·고시원·민박·여관 등)
+//    ④ 기타 가계 서비스(부동산중개·당구장·PC방·노래방·세탁·미용·목욕·기원 등)
+//   ⚠️ 이 판정은 '신보 vs 재단' 우선순위만 바꾸는 후처리이며,
+//      기술기업(기보 우선)·수출·중진공·소진공 병행 로직은 건드리지 않는다.
+const JAEDAN_PRIORITY_KEYWORDS: string[] = [
+  // ① 소매 관련
+  "소매", "도소매", "슈퍼", "편의점", "마트", "의류", "화장품", "잡화", "문구", "서점",
+  "반려", "애견", "펫", "자동판매기", "판매업", "판매점", "유통",
+  // ② 생계형 운송
+  "택시", "전세버스", "화물", "배달", "퀵", "대리운전", "운송", "운수",
+  // ③ 음식·숙박
+  "음식", "외식", "식당", "치킨", "떡집", "빵집", "제과", "카페", "커피", "주점", "호프",
+  "포차", "술집", "고시원", "민박", "여관", "숙박", "펜션", "모텔", "게스트",
+  // ④ 기타 가계 서비스
+  "부동산중개", "공인중개", "중개", "당구", "노래방", "노래연습", "pc방", "피시방",
+  "게임방", "오락", "세탁", "미용", "네일", "피부", "이용원", "목욕", "사우나", "찜질",
+  "기원", "무도장", "체력단련", "헬스", "요가", "필라테스", "스터디카페", "만화방",
+];
+
+// 재단 우선 취급업종인지 판정 (업종 문자열 substring 매칭)
+//  ※ '제조'·'수출'·'기술/혁신'이 포함되면 재단 우선에서 제외(그쪽 트랙이 우선).
+//  ※ 복수 업종을 넘기면(문자열|배열) 하나라도 재단 우선 업종이면 true.
+export function isJaedanPriorityIndustry(industry?: string | string[]): boolean {
+  const list = Array.isArray(industry) ? industry : [industry];
+  return list.some((raw) => {
+    const s = (raw || "").replace(/\s/g, "").toLowerCase();
+    if (!s) return false;
+    // 제조·기술·수출 성격이 명시되면 그 업종은 재단 우선 판정에서 빠진다(오분류 방지)
+    if (s.includes("제조") || s.includes("수출") || s.includes("기술") || s.includes("혁신"))
+      return false;
+    return JAEDAN_PRIORITY_KEYWORDS.some((kw) => s.includes(kw.toLowerCase()));
+  });
+}
+
 // 큐레이션용 업종 대분류(IndustryKind) 산정 — 수출 여부를 최우선으로 반영.
 //  대표님 기준: "수출업"은 별도 트랙이므로 수출 실적이 있으면 export로 본다.
 //  그 외엔 업종 문자열로 food/retail/manufacturing/service/etc 분류.
@@ -305,6 +347,11 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   const isBizCorp = company.biz_type === "corp";
   const isManufacturingCore = cat === "manufacturing" || cat === "tech_innov"; // 업종 자체가 제조·기술
   const isTech = isTechCompany(company);
+  // 재단 우선 취급업종 판정 입력: 복수 업종 전체(있으면) 아니면 단일 업종
+  const jaedanIndustryInput =
+    (company.industries_all && company.industries_all.length > 0)
+      ? company.industries_all
+      : company.industry;
   // 신보 자격(비기술): 연매출 5억↑ (대표님: 직원 5명은 선호일 뿐 필수 아님, 1명도 승인)
   const qualifiesSinbo = revenue >= 500000000 || segment === "sme";
   // 청년(만39세 이하)
@@ -396,8 +443,8 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       step: 1,
       alreadyUsing: usingKibo,
     });
-  } else if (qualifiesSinbo) {
-    // ── 비기술 + 매출 5억↑ → 신보 우선 (기보·재단 X) ──
+  } else if (qualifiesSinbo && !isJaedanPriorityIndustry(jaedanIndustryInput)) {
+    // ── 비기술 + 매출 5억↑ + (재단 우선 취급업종 아님) → 신보 우선 (기보·재단 X) ──
     matches.push({
       institution: "신용보증기금",
       criteria: "연매출 5억원 이상·신용점수 양호하면 신용보증기금이 우선입니다(재단과 중복 불가).\n매출 기반 보증이라 한도가 큰 편이며, 직원 수가 많을수록 유리합니다(필수는 아님).",
@@ -405,6 +452,19 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       loan_type: "대리대출",
       step: 1,
       alreadyUsing: usingKodit,
+    });
+  } else if (isJaedanPriorityIndustry(jaedanIndustryInput)) {
+    // ── 재단 우선 취급업종(소매·생계형운송·음식숙박·가계서비스) → 재단 우선 ──
+    //   대표님 기준: 신용보증기금이 '가계 유지 목적 생계형 업종'은 재단으로 이관하므로,
+    //   매출 규모가 5억을 넘어도 신보가 아니라 지역신용보증재단을 우선 안내한다.
+    matches.push({
+      institution: "지역신용보증재단",
+      criteria:
+        "소매·생계형운송·음식·숙박·가계서비스 등은 지역신용보증재단 우선 취급대상입니다.\n신용보증기금도 신청 자격은 되지만, 생계형 업종은 신보가 재단으로 안내하는 경우가 많아 처음부터 재단으로 접근하는 것이 승인·속도 면에서 유리합니다(신보·기보와 중복 불가).\n창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
+      priority: "HIGH",
+      loan_type: "대리대출",
+      step: 1,
+      alreadyUsing: usingJaedan,
     });
   } else {
     // ── 소상공인·소액 → 재단 우선 (신보·기보 X) ──
