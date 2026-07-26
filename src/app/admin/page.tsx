@@ -351,12 +351,19 @@ export default function AdminPage() {
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const rows = users.map((u) => {
+      // 연락처·이름은 ① 이메일 정확매칭(userInfoByEmail) → ② 이름/연락처 폴백(findUserDiagnosis)
+      //   순으로 진단서에서 역추적한다. (소셜 로그인 이메일 ≠ 진단서 이메일인 경우 대비)
       const info = userInfoByEmail(u.email);
-      const name = (u.full_name && u.full_name.trim()) || info.name || "";
+      const diag = findUserDiagnosis(u.email); // 폴백까지 포함된 진단서
+      const diagPhone =
+        info.phone || diag?.phone || (diag?.profile as any)?.phone || "";
+      const diagName =
+        info.name || diag?.name || (diag?.profile as any)?.name || "";
+      const name = (u.full_name && u.full_name.trim()) || diagName || "";
       return [
         name,
         u.email || "",
-        info.phone || "",
+        diagPhone,
         u.utm_source || "direct",
         fmtDate(u.joined_at),
         fmtDate(u.last_sign_in),

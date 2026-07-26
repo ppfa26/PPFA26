@@ -297,7 +297,7 @@ export default function MyPage() {
                     >
                       <span className="flex min-w-0 flex-1 items-center gap-2">
                         <span className="shrink-0 text-base">{s.icon}</span>
-                        <span className="break-keep text-[13px] font-bold leading-snug text-brand-dark">
+                        <span className="min-w-0 flex-1 truncate whitespace-nowrap text-[14px] font-bold leading-snug text-brand-dark">
                           {s.name}
                         </span>
                       </span>
