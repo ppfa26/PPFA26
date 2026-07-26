@@ -597,7 +597,7 @@ export default function Home() {
                     className="select-none rounded-2xl border border-brand-orange/30 bg-gradient-to-r from-amber-50 to-orange-50 p-5 text-center sm:p-6"
                   >
                     <p className="break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-[16px]">
-                      <span className="text-brand-orange">🔒 잠긴 부분</span>은 무료 진단하시면 전부 공개됩니다.
+                      <span className="text-brand-orange">🔒 잠긴 부분</span>은 진단 완료시 전부 공개됩니다.
                     </p>
                     <ul className="mx-auto mt-3 flex w-fit max-w-full flex-col items-start gap-1.5 text-left text-[12px] leading-relaxed text-brand-dark/80 sm:text-[13px]">
                       {[
