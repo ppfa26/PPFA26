@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP } from "@/lib/products";
+import { classifyIp } from "@/lib/ipClassify";
 import {
   labelForKey,
   valueToText,
@@ -2122,6 +2123,11 @@ export default function AdminPage() {
                   <p className="mt-0.5 text-xs text-gray-400">
                     접속수가 유난히 많거나, 한 IP에 여러 계정이 붙으면 의심해 보세요.
                   </p>
+                  <p className="mt-1 text-xs text-rose-500">
+                    🤖 <b>봇 의심</b> 뱃지 = 텐센트·AWS 같은 데이터센터 서버 대역입니다. 실제
+                    사람이 아니라 자동 봇/스캐너일 가능성이 높아요. 접속수가 많으면 &lsquo;IP차단&rsquo;을
+                    고려하세요. <span className="text-gray-400">(자동 차단 아님 · 표시만 됩니다)</span>
+                  </p>
                 </div>
                 <table className="w-full min-w-[560px] text-left text-sm">
                   <thead className="whitespace-nowrap bg-gray-50 text-xs text-gray-500">
@@ -2141,12 +2147,32 @@ export default function AdminPage() {
                         </td>
                       </tr>
                     )}
-                    {ipSummary.map((r) => (
+                    {ipSummary.map((r) => {
+                      // ★대표님 요청★ 데이터센터/클라우드 서버(봇 의심) IP는 뱃지로 "표시만" 한다.
+                      //   실제 차단은 대표님이 아래 'IP차단' 버튼으로 직접 판단. (자동 차단 아님)
+                      const cls = classifyIp(r.ip);
+                      return (
                       <tr
                         key={r.ip}
-                        className={r.users > 3 || r.hits > 30 ? "bg-amber-50/60" : ""}
+                        className={
+                          cls.isDataCenter
+                            ? "bg-rose-50/60"
+                            : r.users > 3 || r.hits > 30
+                              ? "bg-amber-50/60"
+                              : ""
+                        }
                       >
-                        <td className="px-4 py-2 font-mono text-xs text-gray-700">{r.ip}</td>
+                        <td className="px-4 py-2 font-mono text-xs text-gray-700">
+                          <span>{r.ip}</span>
+                          {cls.isDataCenter && (
+                            <span
+                              className="ml-1.5 inline-flex items-center gap-0.5 whitespace-nowrap rounded-md bg-rose-100 px-1.5 py-0.5 align-middle text-[10px] font-bold text-rose-600"
+                              title={`${cls.provider ?? "데이터센터"} 서버 대역입니다. 실제 사람이 아니라 자동 봇/스캐너일 가능성이 높습니다. 접속수가 많으면 차단을 고려하세요.`}
+                            >
+                              🤖 봇 의심{cls.provider ? ` · ${cls.provider}` : ""}
+                            </span>
+                          )}
+                        </td>
                         <td className="px-4 py-2 text-center text-gray-600">{r.hits}</td>
                         <td className="px-4 py-2 text-center font-semibold text-gray-800">
                           {r.users}
@@ -2170,7 +2196,8 @@ export default function AdminPage() {
                           </div>
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -2204,18 +2231,29 @@ export default function AdminPage() {
                         </td>
                       </tr>
                     )}
-                    {access.map((a, i) => (
-                      <tr key={i}>
+                    {access.map((a, i) => {
+                      const cls = classifyIp(a.ip);
+                      return (
+                      <tr key={i} className={cls.isDataCenter ? "bg-rose-50/40" : ""}>
                         <td className="px-4 py-2 text-gray-500">{fmtDateTime(a.created_at)}</td>
                         <td className="px-4 py-2 text-gray-800">{a.email || "-"}</td>
                         <td className="px-4 py-2 font-mono text-xs text-gray-600">
-                          {a.ip || "-"}
+                          <span>{a.ip || "-"}</span>
+                          {cls.isDataCenter && (
+                            <span
+                              className="ml-1 inline-block rounded bg-rose-100 px-1 py-0.5 text-[10px] font-bold text-rose-600"
+                              title={`${cls.provider ?? "데이터센터"} 서버 대역 · 봇 의심`}
+                            >
+                              🤖
+                            </span>
+                          )}
                         </td>
                         <td className="px-4 py-2 text-center">
                           {a.device_kind === "mobile" ? "📱 모바일" : "💻 PC"}
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
