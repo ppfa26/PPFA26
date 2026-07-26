@@ -949,7 +949,7 @@ export default function Diagnosis() {
                   🎯 맞춤 매칭을 위한 추가 질문
                 </p>
                 <p className="mb-3 break-keep text-xs leading-relaxed text-brand-gray sm:mb-4">
-                  해당되는 항목만 눌러 주세요. 안 눌러도 &lsquo;아니요&rsquo;로 넘어갑니다.
+                  해당되는 항목만 눌러 주세요. 안 눌러면 &lsquo;아니요&rsquo;로 체크됩니다.
                 </p>
                 {/* ★ 대표님 요청 순서 ★ 연매출성장 → 스마트기기 → 대환 → 재도전 → 정부선정 → 민간투자 */}
                 <div className="grid grid-cols-1 gap-3">
