@@ -717,9 +717,8 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
-            카드 아래(Footer 사이) 공백이 위보다 좁아 보여, 하단만 세로로 조금 더
-            늘려 위·아래 여백을 시각적으로 동일하게 맞춤 (대표님 요청) */}
-        <section className="px-4 pt-3.5 pb-8 sm:pt-5 sm:pb-12">
+            카드 아래(Footer 사이) 세로 공백을 조금 줄여 답답하지 않게 조정 (대표님 요청) */}
+        <section className="px-4 pt-3.5 pb-5 sm:pt-5 sm:pb-8">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
