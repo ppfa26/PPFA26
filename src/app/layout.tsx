@@ -104,20 +104,60 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // ★ 정상 반응형(모바일=모바일 화면) ★
-  //  instagram·threads 인앱 브라우저에서 화면이 잘리지 않도록,
-  //  기기 화면 폭을 그대로 따르는 표준 반응형으로 되돌린다.
-  //  → 모바일에서는 콘텐츠가 세로로 쌓여 '스크롤'로 전부 보이고(잘림 없음),
-  //    PC에서는 넓은 데스크톱 레이아웃이 그대로 보인다.
+  // ★ 정상 반응형 (viewport 자체는 기기폭을 따른다) ★
+  //  데스크톱(PC) 화면 강제는 viewport width 고정이 아니라, 아래 <head> 의
+  //  런타임 스크립트(DESKTOP_VIEWPORT_SCRIPT)로 처리한다.
+  //  · 이유: width:980 만 주고 initialScale 을 비우면 브라우저마다 자동 축소
+  //    동작이 달라(일부 폰에서 화면이 오른쪽으로 잘림) 안정적이지 않다.
+  //  · 스크립트는 '현재 기기 화면폭 ÷ 980' 으로 initial-scale 을 정확히 계산해
+  //    넣으므로 어떤 폰에서도 잘림 없이 PC 화면 전체가 한눈에 축소돼 보인다.
   width: "device-width",
   initialScale: 1,
-  // 화면 확대(핀치 줌)를 막지 않습니다.
-  //  → 시력이 약하신 중장년 고객도 글자를 크게 키워 볼 수 있도록 접근성 보장.
+  // 화면 확대/축소(핀치 줌)를 막지 않습니다.
+  //  → 글씨가 작게 느껴지는 중장년 고객이 손가락으로 크게 키워 볼 수 있도록 접근성 보장.
   maximumScale: 5,
   userScalable: true,
   // PWA: 앱 실행 시 상단 상태바/브라우저 UI 색상 (다크 테마에 맞춘 어두운 색)
   themeColor: "#0b0b0f",
 };
+
+// ★ 데스크톱(PC) 화면 강제 스크립트 (대표님 요청) ★
+//  모바일 세로 레이아웃이 정보가 많아 버거워 보이므로, 핸드폰으로 접속해도
+//  '데스크톱 사이트' 체크를 켠 것처럼 넓은 PC 화면이 잘림 없이 축소돼 보이게 한다.
+//
+//  동작:
+//   1) 화면 폭이 DESKTOP_WIDTH(980px) 이상인 진짜 PC/태블릿 → 아무것도 안 함(원본 그대로).
+//   2) 그보다 좁은 모바일 → viewport 를 width=980 + initial-scale=(기기폭/980) 로 교체.
+//      → 브라우저가 980px PC 페이지를 딱 화면폭에 맞게 축소해서 통째로 보여준다(잘림 0).
+//   3) 가로/세로 회전 시 폭이 바뀌므로 resize·orientationchange 때 다시 계산.
+//  ※ <head> 안에서 즉시 실행(dangerouslySetInnerHTML) → 첫 페인트 전에 적용돼 깜빡임 최소화.
+const DESKTOP_VIEWPORT_SCRIPT = `
+(function () {
+  var DESKTOP_WIDTH = 980;
+  function apply() {
+    try {
+      var vp = document.querySelector('meta[name=viewport]');
+      if (!vp) {
+        vp = document.createElement('meta');
+        vp.setAttribute('name', 'viewport');
+        document.head.appendChild(vp);
+      }
+      var w = window.screen && window.screen.width ? window.screen.width : window.innerWidth;
+      if (w >= DESKTOP_WIDTH) {
+        // 진짜 넓은 화면(PC/태블릿) → 표준 반응형 유지
+        vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
+      } else {
+        // 모바일 → 980px PC 화면을 기기폭에 맞춰 축소
+        var scale = w / DESKTOP_WIDTH;
+        vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', initial-scale=' + scale + ', maximum-scale=5, user-scalable=yes');
+      }
+    } catch (e) { /* 실패해도 기본 반응형으로 그대로 노출 */ }
+  }
+  apply();
+  window.addEventListener('orientationchange', function () { setTimeout(apply, 200); });
+  window.addEventListener('resize', apply);
+})();
+`;
 
 // ─────────────────────────────────────────────────────────────
 //  검색엔진 구조화 데이터(JSON-LD)
@@ -307,6 +347,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* ★ 데스크톱(PC) 화면 강제 - 첫 페인트 전에 즉시 실행되도록 head 최상단 배치 (대표님 요청) ★ */}
+        {/* eslint-disable-next-line react/no-danger */}
+        <script dangerouslySetInnerHTML={{ __html: DESKTOP_VIEWPORT_SCRIPT }} />
         {/* eslint-disable-next-line react/no-danger */}
         <meta name="copyright" content="© 모두의사업친구 (biospartners). All rights reserved. 무단 복제·도용 금지" />
         <meta name="author" content="모두의사업친구" />
