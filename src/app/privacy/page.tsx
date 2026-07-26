@@ -163,8 +163,20 @@ export default function PrivacyPage() {
           </li>
         </ul>
         <Editable id="privacy-consent-note" as="p" className="mt-3 text-sm text-brand-gray">
-          ※ 이용자는 언제든지 마케팅·알림 수신 동의를 철회할 수 있으며, 철회
-          요청은 아래 개인정보 보호책임자 연락처로 해주시기 바랍니다.
+          ※ 이용자는 언제든지 마케팅 정보 수신 동의를 철회할 수 있으며, 아래 방법을
+          통해 변경하실 수 있습니다.
+        </Editable>
+        <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm text-brand-gray">
+          <li>문자(SMS): 수신한 메시지에 포함된 [수신거부] 안내에 따라 처리</li>
+          <li>카카오톡: 카카오톡 앱 &gt; 채널 관리 &gt; 모두의사업친구 &gt; 채널 차단</li>
+          <li>
+            이메일 요청: 개인정보 보호책임자(biospartners@naver.com)에게 철회 요청
+          </li>
+        </ul>
+        <Editable id="privacy-consent-renotice" as="p" className="mt-3 text-sm text-brand-gray">
+          ※ 회사는 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」에 따라 마케팅
+          정보 수신 동의를 유지하는 경우 <b>2년마다</b> 수신 동의 유지 여부를
+          이용자에게 알려드립니다.
         </Editable>
       </section>
 

@@ -5,7 +5,7 @@ import Editable from "@/components/Editable";
 
 export default function TermsPage() {
   return (
-    <LegalLayout pageKey="terms" title="이용약관" updatedAt="2026년 7월 15일">
+    <LegalLayout pageKey="terms" title="이용약관" updatedAt="2026년 7월 26일">
       <section id="terms-1">
         <h2 className="text-lg font-extrabold text-brand-dark">제1조 (목적)</h2>
         <Editable id="terms-1-body" as="p" className="mt-2">
@@ -129,8 +129,36 @@ export default function TermsPage() {
       </section>
 
       <section id="terms-10">
-        <h2 className="text-lg font-extrabold text-brand-dark">제10조 (문의)</h2>
+        <h2 className="text-lg font-extrabold text-brand-dark">
+          제10조 (제휴사 서비스)
+        </h2>
         <Editable id="terms-10-body" as="p" className="mt-2">
+          회사는 서비스 제공을 위해 정책금융기관 및 세무·행정·노무·관세·경영
+          분야의 전문 파트너(이하 &ldquo;제휴사&rdquo;)와 제휴할 수 있으며,
+          이용자가 <b>사전에 동의한 경우</b>에 한하여 상담·연계에 필요한 범위에서
+          이용자의 정보가 제휴사와 공유될 수 있습니다.
+        </Editable>
+        <ul className="mt-3 list-disc space-y-1.5 pl-5">
+          <li>
+            회사는 제휴사 서비스와 관련하여 이용자와 제휴사를{" "}
+            <b>연결·중개하는 지위</b>에 있을 뿐이며, 제휴사와 이용자 간
+            거래(상담·계약·수수료 등)의 당사자가 아닙니다.
+          </li>
+          <li>
+            <b>제휴사 서비스 이용과 관련한 분쟁의 책임소재는 제휴사에 있으며,</b>{" "}
+            회사는 회사의 고의 또는 중과실이 없는 한 이에 대한 책임을 부담하지
+            않습니다.
+          </li>
+          <li>
+            회사는 제휴사가 제공하는 정보·상담 내용의 정확성을 보장하지 않으며,
+            제휴사의 사정으로 연계 서비스의 전부 또는 일부가 중단될 수 있습니다.
+          </li>
+        </ul>
+      </section>
+
+      <section id="terms-11">
+        <h2 className="text-lg font-extrabold text-brand-dark">제11조 (문의)</h2>
+        <Editable id="terms-11-body" as="p" className="mt-2">
           본 약관과 관련한 문의는 아래 연락처로 해주시기 바랍니다.
           <br />
           상호: 모두의사업친구 · 이메일: biospartners@naver.com

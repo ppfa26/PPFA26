@@ -545,6 +545,11 @@ function SignupInner() {
                 아래 약관에 모두 동의합니다
               </span>
             </label>
+            {/* 개인정보보호법·정보통신망법 준수 — 선택 동의는 강요 금지, 미동의해도 이용 가능함을 명시 */}
+            <p className="mt-2 break-keep text-[11px] leading-relaxed text-brand-gray">
+              전체 동의는 선택 항목(마케팅 정보 수신)을 포함하고 있으며,
+              선택 항목에 동의하지 않아도 서비스를 이용하실 수 있습니다.
+            </p>
 
             <div className="mt-3 space-y-2.5">
               {/* [필수] 만 14세 이상 */}
