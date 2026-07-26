@@ -254,7 +254,7 @@ export default function Home() {
                 as="span"
                 className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
               >
-                이런 걸 알려드려요
+                이런걸 알려드려요
               </Editable>
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
             </div>
