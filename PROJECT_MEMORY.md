@@ -36,6 +36,10 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
+- `43f85e8` 어드민 회원목록 기능추가(디자인 유지): ①표 헤더 클릭 정렬(가입일/최근접속/결제/누적금액, ▲▼) — state userSort{key,dir}, toggleUserSort, sortArrow. ②유입경로 필터 드롭다운(utmBadge 라벨+채널별 개수) — state userSourceFilter, userSourceCounts. 원본 검색(filteredUsers)·CSV 로직 그대로 두고 sortedUsers=filteredUsers→필터→정렬 후처리. 표 바디는 sortedUsers 사용.
+- `037e870` 글자크기 통일: 탭줄 8버튼 13→14px, 전체N명 배지·회원표 헤더 12→13px.
+- `2e9f94d` 탭줄 8버튼 flex-1 균등분배(빈공간 제거+구분선), 버튼명 '요약 리포트'→'요약 매출 리포트'.
+- `171120c` 어드민 헤더 반투명박스, 하단 '관리자만 접근' 문구 제거.
 - `f614ed6` 어드민 탭줄 빈자리에 **📊 요약 리포트 버튼**(모달). 오늘/이번주(월요일시작)/이번달/전체 × 신규가입·진단접수·결제·매출 표. state showReport, reportData=useMemo([users,diagnoses,payments]). 모달 위치=admin container 최상단(mx-auto max-w-6xl 직후).
 - `c0e9a41` 어드민 회원검색창 폭 max-w-sm→max-w-md.
 - `82359eb` 어드민 회원검색줄 정돈: 검색창 max-w 제한, 전체N명 반투명배지(bg-white/5 ring-white/10), flex-wrap+min-w-0로 가로 오버플로 방지. 회원표는 min-w-[920px]+overflow-x-auto라 세로로만 늘어남.
