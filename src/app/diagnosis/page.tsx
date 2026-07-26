@@ -671,12 +671,11 @@ export default function Diagnosis() {
                       /* 국세청 서버 오류 → 수동입력 우회 제공 */
                       <div className="rounded-xl border border-brand-orange/40 bg-brand-orange/10 px-4 py-3">
                         <p className="font-semibold text-brand-dark">
-                          🛠️ 지금은 국세청 조회 서버 점검 시간일 수 있어요.
+                          🛠️ 지금은 국세청 조회 서버 점검 시간입니다.
                         </p>
                         <p className="mt-1 text-xs leading-relaxed text-brand-gray">
-                          국세청 사업자 조회는 <b>주말·심야에 정기 점검</b>이 잦아 일시적으로 연결이 안 될 수 있습니다.
-                          <b className="text-brand-dark"> 대표님 잘못이 아니며</b>, 아래 <b>직접 입력하고 계속하기</b>로
-                          진행하시면 신청이 정상 접수되고 자동확인은 추후 처리됩니다.
+                          국세청 사업자 조회는 <b>정기 점검</b>이 잦아 일시적으로 연결이 안 될 수 있습니다.
+                          아래 <b>직접 입력하고 계속하기</b>를 클릭하시면 신청이 정상 접수됩니다.
                         </p>
                         <div className="mt-2.5 flex flex-wrap gap-2">
                           <button
