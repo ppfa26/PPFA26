@@ -1126,8 +1126,8 @@ export default function AdminPage() {
           {tab === "users" && (
             <div>
               {/* 🔍 회원 검색 — 이름·이메일·연락처로 즉시 검색 */}
-              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-                <div className="relative flex-1">
+              <div className="mb-4 flex w-full flex-wrap items-center gap-2">
+                <div className="relative w-full min-w-0 sm:w-auto sm:max-w-sm sm:flex-1">
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                     🔍
                   </span>
@@ -1135,30 +1135,33 @@ export default function AdminPage() {
                     type="text"
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
-                    placeholder="회원 검색 — 이름 · 이메일 · 연락처로 찾기 (예: 홍길동 / 010 / hong@)"
+                    placeholder="회원 검색 — 이름 · 이메일 · 연락처 (예: 홍길동 / 010 / hong@)"
                     className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 outline-none focus:border-brand-orange"
                   />
                 </div>
                 {userSearch && (
                   <button
                     onClick={() => setUserSearch("")}
-                    className="rounded-xl bg-gray-100 px-3 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-200"
+                    className="shrink-0 rounded-xl bg-gray-100 px-3 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-200"
                   >
                     ✕ 초기화
                   </button>
                 )}
-                {/* 회원 목록 CSV 다운로드 — 세무·백업·문자발송 명단용 */}
-                <button
-                  onClick={downloadUsersCsv}
-                  disabled={users.length === 0}
-                  className="whitespace-nowrap rounded-xl bg-emerald-50 px-3 py-2.5 text-sm font-bold text-emerald-700 hover:bg-emerald-100 disabled:opacity-40"
-                  title="회원 명단을 엑셀(CSV)로 내려받습니다 — 이름·연락처·유입경로 포함"
-                >
-                  ⬇️ 회원 엑셀 다운
-                </button>
-                <span className="whitespace-nowrap text-xs text-gray-400">
-                  {userSearch ? `검색결과 ${filteredUsers.length}명` : `전체 ${users.length}명`}
-                </span>
+                {/* 오른쪽 정렬: 엑셀 다운 + 전체 N명 배지 */}
+                <div className="ml-auto flex shrink-0 items-center gap-2">
+                  {/* 회원 목록 CSV 다운로드 — 세무·백업·문자발송 명단용 */}
+                  <button
+                    onClick={downloadUsersCsv}
+                    disabled={users.length === 0}
+                    className="whitespace-nowrap rounded-xl bg-emerald-50 px-3 py-2.5 text-sm font-bold text-emerald-700 hover:bg-emerald-100 disabled:opacity-40"
+                    title="회원 명단을 엑셀(CSV)로 내려받습니다 — 이름·연락처·유입경로 포함"
+                  >
+                    ⬇️ 회원 엑셀 다운
+                  </button>
+                  <span className="whitespace-nowrap rounded-xl bg-white/5 px-3 py-2.5 text-xs font-semibold text-gray-400 ring-1 ring-white/10">
+                    {userSearch ? `검색결과 ${filteredUsers.length}명` : `전체 ${users.length}명`}
+                  </span>
+                </div>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
