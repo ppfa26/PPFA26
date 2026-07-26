@@ -132,7 +132,7 @@ export default function Diagnosis() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<any>({ purposes: [], interests: [], industries: [], certifications: [], innovation: [], currentInstitutions: [] });
-  // 지역 '기타'(직접 입력) 모드 여부 — true면 아래에 직접 입력창을 띄웁니다.
+  // 지역 '기타'(직접 입력) 모드 여부 - true면 아래에 직접 입력창을 띄웁니다.
   const [regionEtc, setRegionEtc] = useState(false);
   // ── 진단 시작 전 로그인(회원가입) 게이트 (대표님 요청) ──
   //   "checking" = 세션 확인 중 · "guest" = 비로그인(진단 시작 차단) · "ready" = 로그인 완료
@@ -149,7 +149,7 @@ export default function Diagnosis() {
   const [bnoServerDown, setBnoServerDown] = useState(false); // 국세청 서버 오류 감지 여부
   const [bnoManual, setBnoManual] = useState(false); // 사용자가 수동입력을 택했는지
 
-  // 국세청 조회 1회 시도 — 결과를 { kind } 로 반환 (재시도 판단용)
+  // 국세청 조회 1회 시도 - 결과를 { kind } 로 반환 (재시도 판단용)
   //   kind: "found"(성공) | "serverDown"(국세청 장애→재시도 후보) | "answered"(미등록·형식오류 등 확정응답)
   const tryFetchBno = async (
     digits: string
@@ -226,7 +226,7 @@ export default function Diagnosis() {
     }
   };
 
-  // ★ 국세청 서버 장애 시 수동입력 확정 — 검증 없이 사업자번호를 접수한다(신청 누락 방지) ★
+  // ★ 국세청 서버 장애 시 수동입력 확정 - 검증 없이 사업자번호를 접수한다(신청 누락 방지) ★
   const confirmManualBno = () => {
     const digits = bno.replace(/[^0-9]/g, "");
     if (digits.length !== 10) {
@@ -273,7 +273,7 @@ export default function Diagnosis() {
     saveDiagnosisDraft(form, step);
   }, [form, step]);
 
-  // 답을 고르면 '다음 질문'을 화면 중앙으로 부드럽게 이동(대표님 요청) — 스크롤 내리는 수고 제거.
+  // 답을 고르면 '다음 질문'을 화면 중앙으로 부드럽게 이동(대표님 요청) - 스크롤 내리는 수고 제거.
   //  · 단일 선택(Radio)에서만 자동 이동 (복수 선택은 여러 개 고르므로 자동 이동 제외 → 화면 튐 방지)
   //  · 이벤트가 발생한 버튼이 속한 [data-question] 블록의 '다음 [data-question]'으로 이동
   const scrollToNextQuestion = (e?: any) => {
@@ -302,10 +302,10 @@ export default function Diagnosis() {
       return { ...f, [k]: arr.includes(v) ? arr.filter((x: string) => x !== v) : [...arr, v] };
     });
 
-  // 다음 단계로 이동 — 1단계에서는 사업자등록번호(필수)·성함·연락처를 검증한다.
+  // 다음 단계로 이동 - 1단계에서는 사업자등록번호(필수)·성함·연락처를 검증한다.
   const goNext = () => {
     if (step === 1) {
-      // ★ 대표님 요청 ★ 사업자등록번호 필수 — 없는 사업자는 신청 불가.
+      // ★ 대표님 요청 ★ 사업자등록번호 필수 - 없는 사업자는 신청 불가.
       //   단, '예비창업자'는 아직 사업자번호가 없으므로 예외로 통과시킨다.
       const isPreStartup = typeof form.businessType === "string" && form.businessType.startsWith("예비");
       if (!isPreStartup) {
@@ -365,13 +365,13 @@ export default function Diagnosis() {
     // ★ 어느 로그인 계정의 진단인지 '소유자'를 함께 저장 → 다른 계정으로 로그인하면
     //    이 진단이 따라오지 않도록 한다. (계정별 데이터 분리)
     (async () => {
-      // 결과 화면 목적지 — ?analyze=1 로 'AI 분석 중' 연출을 보여준다.
+      // 결과 화면 목적지 - ?analyze=1 로 'AI 분석 중' 연출을 보여준다.
       const RESULT_URL = "/matching-preview?analyze=1";
       try {
         const { data: sessionData } = await supabase.auth.getSession();
         const user = sessionData.session?.user ?? null;
 
-        // 소유자(user.id)를 붙여 저장 — 비회원이면 null(나중에 로그인 시 자동 연결)
+        // 소유자(user.id)를 붙여 저장 - 비회원이면 null(나중에 로그인 시 자동 연결)
         saveDiagnosis(form, user?.id ?? null);
         // 진단이 완료됐으니 진행중 초안은 정리
         clearDiagnosisDraft();
@@ -530,7 +530,7 @@ export default function Diagnosis() {
         ))}
       </div>
     );
-  // breakBefore: 해당 라벨 앞에서 강제 줄바꿈(PC에서 원하는 줄 배치 — 대표님 요청)
+  // breakBefore: 해당 라벨 앞에서 강제 줄바꿈(PC에서 원하는 줄 배치 - 대표님 요청)
   // grid: 모바일에서 균등 2열 그리드로 정렬(정책기관 등) → flex-wrap 특유의 들쭉날쭉/마지막 1개 어색함 제거.
   //       PC(sm 이상)는 자동 줄바꿈 유지.
   const Multi = ({
@@ -587,7 +587,7 @@ export default function Diagnosis() {
       ))}
     </div>
   );
-  // 조건부 질문(라벨+설명힌트+단일선택) — 소진공 혁신형 상품 정밀 매칭용
+  // 조건부 질문(라벨+설명힌트+단일선택) - 소진공 혁신형 상품 정밀 매칭용
   const CondQ = ({ k, field }: { k: string; field: { label: string; hint: string; opts: string[] } }) => (
     <div className="mb-5 last:mb-0">
       <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(field.label)}</p>
@@ -630,7 +630,7 @@ export default function Diagnosis() {
               <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP1_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP1_SUBTITLE}</p>
 
-              {/* 사업자번호 자동 조회 (국세청 연동) — 박스 틀 색상 빨간색으로 통일(대표님 요청) */}
+              {/* 사업자번호 자동 조회 (국세청 연동) - 박스 틀 색상 빨간색으로 통일(대표님 요청) */}
               <div className="mb-6 overflow-hidden rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4">
                 <p className="mb-2 break-keep text-[13px] font-bold text-brand-dark xs:text-sm sm:text-base">
                   {BNO_TEXT.title}{" "}
@@ -725,7 +725,7 @@ export default function Diagnosis() {
                 <p className="mt-1 break-keep text-xs font-semibold text-brand-red/80">{BNO_TEXT.errorPreStartupHint}</p>
               </div>
 
-              {/* 대표자 성함 및 연락처 — 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 · 박스 틀 색상 빨간색으로 통일 */}
+              {/* 대표자 성함 및 연락처 - 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 · 박스 틀 색상 빨간색으로 통일 */}
               <GroupBox title={CONTACT_TEXT.groupTitle} tone="red" matchBno>
                 {CONTACT_TEXT.groupNote && (
                   <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
@@ -758,9 +758,9 @@ export default function Diagnosis() {
 
               {/* ★ 대표님 요청 ★ 신청 결격사유 확인을 1단계 성함 아래로 이동.
                   어렵게 다 작성했는데 결격사유면 신청도 못 하므로, 처음에 먼저 확인.
-                  (회생·파산 / 세금 체납 — 승인 자체가 막히는 핵심 항목만) */}
+                  (회생·파산 / 세금 체납 - 승인 자체가 막히는 핵심 항목만) */}
               <div className="mb-5 overflow-hidden rounded-2xl border border-brand-red/20 bg-brand-red/5">
-                {/* 제목 바 — 진한 빨강 배경에 흰 글자로 강조 (대표님 요청) */}
+                {/* 제목 바 - 진한 빨강 배경에 흰 글자로 강조 (대표님 요청) */}
                 <div className="flex flex-wrap items-center gap-x-1.5 bg-brand-red px-4 py-2.5 sm:px-5">
                   <p className="break-keep text-sm font-extrabold leading-snug text-white">
                     ⚠️ 신청 결격사유 확인
@@ -787,14 +787,14 @@ export default function Diagnosis() {
                 </div>
               </div>
 
-              {/* 사업장 정보 — 문맥별 한 박스로 묶어 깔끔하게 (유형→업종→업력→매출→연령→지역 자연스러운 순서) */}
+              {/* 사업장 정보 - 문맥별 한 박스로 묶어 깔끔하게 (유형→업종→업력→매출→연령→지역 자연스러운 순서) */}
               <GroupBox title={STEP1_GROUP}>
                 <Field label={STEP1_FIELDS.businessType.label}><Radio k="businessType" opts={STEP1_FIELDS.businessType.opts} cols3 /></Field>
                 <Field label={STEP1_FIELDS.industries.label}><Multi k="industries" opts={STEP1_FIELDS.industries.opts} /></Field>
                 <Field label={STEP1_FIELDS.years.label}><Radio k="years" opts={STEP1_FIELDS.years.opts} grid /></Field>
                 <Field label={STEP1_FIELDS.revenue.label}><Radio k="revenue" opts={STEP1_FIELDS.revenue.opts} grid /></Field>
                 <Field label={STEP1_FIELDS.age.label}><Radio k="age" opts={STEP1_FIELDS.age.opts} grid /></Field>
-                {/* 지역 — '기타' 클릭 시 직접 입력창 노출(대표님 요청) */}
+                {/* 지역 - '기타' 클릭 시 직접 입력창 노출(대표님 요청) */}
                 <Field label={STEP1_FIELDS.region.label}>
                   {/* 지역 4개(서울·경기·인천·기타)를 모바일에서도 한 줄 4열로 정렬(대표님 요청) */}
                   <div className="grid grid-cols-4 gap-2 sm:flex sm:flex-wrap">
@@ -835,7 +835,7 @@ export default function Diagnosis() {
                 </Field>
               </GroupBox>
 
-              {/* ※ 1단계 스마트기기 질문 제거(대표님 요청) — 동일 취지 질문이 3단계 'smartDevice'에 있어 매칭은 그대로 유지됨 */}
+              {/* ※ 1단계 스마트기기 질문 제거(대표님 요청) - 동일 취지 질문이 3단계 'smartDevice'에 있어 매칭은 그대로 유지됨 */}
             </div>
           )}
 
@@ -844,12 +844,12 @@ export default function Diagnosis() {
               <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP2_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP2_SUBTITLE}</p>
 
-              {/* ① 어떤 지원이 필요한가 — 3단계처럼 라벨+짧은 힌트로 간결화(대표님 요청). 희망금액 질문 제거 */}
+              {/* ① 어떤 지원이 필요한가 - 3단계처럼 라벨+짧은 힌트로 간결화(대표님 요청). 희망금액 질문 제거 */}
               <GroupBox title={STEP2_GROUP_NEED} tone="orange">
                 <Field label={STEP2_FIELDS.purposes.label} hint={STEP2_FIELDS.purposes.hint}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} breakBefore={["수출자금"]} /></Field>
               </GroupBox>
 
-              {/* ② 자금 여건·현재 이용 현황 — 순서(대표님 요청): 신용점수 → 직원수 → 이용 중인 정책기관
+              {/* ② 자금 여건·현재 이용 현황 - 순서(대표님 요청): 신용점수 → 직원수 → 이용 중인 정책기관
                   ※ '담보 보유 여부' 질문은 제거(대표님 요청). 매칭은 '담보없음' 기준(대부분 소상공인)으로
                      제출 시 자동 세팅되므로 보증서·정책자금 매칭 정확도는 그대로 유지됨. */}
               <GroupBox title={STEP2_GROUP_FINANCE}>
@@ -858,7 +858,7 @@ export default function Diagnosis() {
                 <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} grid /></Field>
               </GroupBox>
 
-              {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) — 있으면 자격이 열려 더 유리한 문맥으로 묶음 */}
+              {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) - 있으면 자격이 열려 더 유리한 문맥으로 묶음 */}
               <GroupBox title={STEP2_GROUP_STRENGTH} tone="green">
                 <Field label={STEP3_FIELDS.certifications.label} hint={STEP3_FIELDS.certifications.hint}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
                 <Field label={STEP3_FIELDS.innovation.label} hint={STEP3_FIELDS.innovation.hint}><Multi k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
@@ -889,7 +889,7 @@ export default function Diagnosis() {
                 <CondQ k="privateInvestment" field={STEP3_CONDITIONAL_FIELDS.privateInvestment} />
               </div>
 
-              {/* ── 전화 상담 희망 여부 (대표님 요청 — 마지막 질문 1개) ── */}
+              {/* ── 전화 상담 희망 여부 (대표님 요청 - 마지막 질문 1개) ── */}
               <div className="mb-5 rounded-2xl border border-brand-orange/40 bg-brand-orange/5 p-4 sm:p-5">
                 <p className="mb-1 break-keep text-sm font-extrabold leading-snug text-brand-dark">
                   {PHONE_CONSULT_FIELD.label}

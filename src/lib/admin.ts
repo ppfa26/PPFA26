@@ -34,7 +34,7 @@ export function isAdminEmail(email?: string | null): boolean {
 //  예) const STATS_EXCLUDED_EMAILS = ["biospartners@naver.com"];
 // ════════════════════════════════════════════════════════════════
 export const STATS_EXCLUDED_EMAILS: string[] = [
-  // (비어 있음) — 관리자 계정도 테스트 데이터가 일반 고객처럼 기록됩니다.
+  // (비어 있음) - 관리자 계정도 테스트 데이터가 일반 고객처럼 기록됩니다.
 ];
 
 // 주어진 이메일이 통계/DB 집계에서 제외되는 계정인지 판정

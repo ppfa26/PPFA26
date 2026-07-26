@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 
 // ============================================================
-// 조회권(열람 권한) 관리 — 서버(Supabase RPC) 기준
+// 조회권(열람 권한) 관리 - 서버(Supabase RPC) 기준
 //   · 1개 결제당 "새 사업자 조회" 2회 제한
 //   · 결제 후 1개월간 결과 열람 가능, 이후 만료
 //   모든 판정은 Supabase 함수(security definer)에서 이루어지므로

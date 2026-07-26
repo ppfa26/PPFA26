@@ -28,7 +28,7 @@ export default function AccordionCard({
   return (
     // 세련화: 테두리 얇고 은은하게(PC·모바일 동일), 부드러운 그림자로 카드 입체감.
     <div className="overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
-      {/* 헤더 (토글 버튼) — PC·모바일 동일 스타일 */}
+      {/* 헤더 (토글 버튼) - PC·모바일 동일 스타일 */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -36,12 +36,12 @@ export default function AccordionCard({
         className="flex w-full items-center gap-3 px-5 py-3.5 text-left transition hover:bg-brand-orange/5"
       >
         <span className="min-w-0 flex-1">
-          {/* 제목 — 16px, 아이콘·글자 세로 중앙 정렬로 깔끔하게 */}
+          {/* 제목 - 16px, 아이콘·글자 세로 중앙 정렬로 깔끔하게 */}
           <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
             {emoji && <span className="shrink-0">{emoji}</span>}
             <span className="min-w-0 break-keep">{title}</span>
           </span>
-          {/* 부제 — 짧은 한 줄 안내(모든 카드 통일). PC·모바일 동일 노출 */}
+          {/* 부제 - 짧은 한 줄 안내(모든 카드 통일). PC·모바일 동일 노출 */}
           {subtitle && (
             <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
               {subtitle}
@@ -67,7 +67,7 @@ export default function AccordionCard({
         </span>
       </button>
 
-      {/* 내용 — PC·모바일 동일 좌우 여백 */}
+      {/* 내용 - PC·모바일 동일 좌우 여백 */}
       {open && <div className="px-5 pb-5 pt-0">{children}</div>}
     </div>
   );

@@ -18,7 +18,7 @@ export default function TermsPage() {
 
       <section id="terms-2">
         <h2 className="text-lg font-extrabold text-brand-dark">
-          제2조 (서비스의 성격 — 중요)
+          제2조 (서비스의 성격 - 중요)
         </h2>
         <Editable id="terms-2-body" as="p" className="mt-2">
           본 서비스는 정부지원사업의 <b>정보 제공 및 신청 방법에 대한 매칭 및 자문

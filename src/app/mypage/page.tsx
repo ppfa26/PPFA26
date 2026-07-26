@@ -30,7 +30,7 @@ export default function MyPage() {
   const [matchCount, setMatchCount] = useState<number | null>(null);
   const [diagName, setDiagName] = useState("");
   const [diagExpiry, setDiagExpiry] = useState<Date | null>(null);
-  // ★ 관리자(대표님) 여부 — 결제 내역 삭제 버튼은 관리자에게만 노출 ★
+  // ★ 관리자(대표님) 여부 - 결제 내역 삭제 버튼은 관리자에게만 노출 ★
   const [isAdmin, setIsAdmin] = useState(false);
   const [deletingOrder, setDeletingOrder] = useState<string | null>(null);
 
@@ -60,7 +60,7 @@ export default function MyPage() {
           /* RLS/네트워크 실패 시 무시 */
         }
 
-        // 2-1) 유효 이용기간(결제 후 1개월 이내) 여부 확인 — 서버(RPC) 기준
+        // 2-1) 유효 이용기간(결제 후 1개월 이내) 여부 확인 - 서버(RPC) 기준
         //      커뮤니티 노출은 "현재 유효한 결제자"에게만 하기 위함.
         try {
           const st = await fetchViewStatus();
@@ -264,7 +264,7 @@ export default function MyPage() {
                 )}
               </section>
 
-              {/* 추가 신청 (전문가 도움 요청) — 결제 내역 '위'로 배치 (대표님 요청) */}
+              {/* 추가 신청 (전문가 도움 요청) - 결제 내역 '위'로 배치 (대표님 요청) */}
               <section
                 id="mypage-extra-services"
                 className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
@@ -322,7 +322,7 @@ export default function MyPage() {
                 </p>
               </section>
 
-              {/* 결제완료 회원 전용 — 1:1 채널톡 상담 (오픈채팅방 운영 중단, 대표님 요청)
+              {/* 결제완료 회원 전용 - 1:1 채널톡 상담 (오픈채팅방 운영 중단, 대표님 요청)
                   (현재 유효한 이용기간(결제 후 1개월 이내)인 회원에게만 노출.
                    결제했더라도 1개월이 지나 만료된 회원에게는 보이지 않음) */}
               {viewStatus?.isActive && (
@@ -359,7 +359,7 @@ export default function MyPage() {
                 </section>
               )}
 
-              {/* 결제 내역 — 커뮤니티 '아래'로 배치 (대표님 요청) */}
+              {/* 결제 내역 - 커뮤니티 '아래'로 배치 (대표님 요청) */}
               <section
                 id="mypage-payments"
                 className="mt-4 rounded-3xl border border-gray-200 bg-white p-4 shadow-card sm:p-5"

@@ -5,7 +5,7 @@ import AccordionCard from "@/components/report/AccordionCard";
 
 // ────────────────────────────────────────────────────────────────
 // 진단 결과 화면에 "지금 열려있는 관련 정부지원사업" 실제 공고를 보여준다.
-//   · 출처: 기업마당(crawled_announcements) — 매일 자동 수집되는 실공고
+//   · 출처: 기업마당(crawled_announcements) - 매일 자동 수집되는 실공고
 //   · 매칭: 프로필의 지역·업종·직원수·매출규모·관심분야 (서버 /api/announcements/match)
 //   · AI 해설 없음. 공고명·신청기간·소관기관만 노출하고 원문(기업마당)으로 링크.
 //   · 디자인: 다른 결과 카드(정책금융기관 등)와 동일한 아코디언 + divide-y 목록.
@@ -77,7 +77,7 @@ export default function RelatedAnnouncements({
             {(items || []).map((it, i) => {
               const inner = (
                 <>
-                  {/* 제목 + 카테고리 태그만 한 줄에 — 기간 배지는 아래로 내려 통일 */}
+                  {/* 제목 + 카테고리 태그만 한 줄에 - 기간 배지는 아래로 내려 통일 */}
                   <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                     <span className="break-keep text-[14px] font-extrabold leading-snug text-brand-dark">
                       {it.title}
@@ -88,13 +88,13 @@ export default function RelatedAnnouncements({
                       </span>
                     )}
                   </div>
-                  {/* 신청기간 — 공고명 길이와 무관하게 항상 제목 아래 별도 줄로 통일 */}
+                  {/* 신청기간 - 공고명 길이와 무관하게 항상 제목 아래 별도 줄로 통일 */}
                   {it.deadline && (
                     <span className="mt-2 inline-block shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                       🗓️ {it.deadline}
                     </span>
                   )}
-                  {/* 지역 · 대상 · 버튼 — 한 줄로 압축 (왼쪽 정보 / 오른쪽 버튼) */}
+                  {/* 지역 · 대상 · 버튼 - 한 줄로 압축 (왼쪽 정보 / 오른쪽 버튼) */}
                   <div className="mt-2 flex items-center justify-between gap-2">
                     <p className="min-w-0 flex-1 truncate text-[12px] leading-relaxed text-brand-gray">
                       {it.site_name && <span>🏛️ {it.site_name}</span>}

@@ -48,7 +48,7 @@ export default function TrustBadges({ badges }: { badges: Badge[] }) {
         })}
       </div>
 
-      {/* 더보기/접기 버튼 — 모바일에서만 노출(sm:hidden). PC엔 영향 없음. */}
+      {/* 더보기/접기 버튼 - 모바일에서만 노출(sm:hidden). PC엔 영향 없음. */}
       {badges.length > MOBILE_VISIBLE && (
         <button
           type="button"

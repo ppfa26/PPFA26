@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 /**
- * 복제/도용 방어 + 억지력 장치 (대표님 요청 — "복사해서 다른 데 올리면 오류나게").
+ * 복제/도용 방어 + 억지력 장치 (대표님 요청 - "복사해서 다른 데 올리면 오류나게").
  *
  * ⚠️ 현실 안내: 웹 프론트엔드는 소스가 브라우저로 전달되어야 화면이 뜨므로
  *    기술적으로 100% 복제 차단은 불가능하다. 다만 아래 여러 겹의 방어로
@@ -50,7 +50,7 @@ function isAllowedHost(host: string): boolean {
 
 export default function CopyGuard() {
   useEffect(() => {
-    // ── (1) 도메인 잠금 — 복제본이면 원본으로 튕겨낸다 ──
+    // ── (1) 도메인 잠금 - 복제본이면 원본으로 튕겨낸다 ──
     try {
       const host = window.location.hostname;
       if (!isAllowedHost(host)) {
@@ -63,7 +63,7 @@ export default function CopyGuard() {
         return;
       }
     } catch {
-      /* noop — 오탐 방지: 판별 실패 시 그냥 진행 */
+      /* noop - 오탐 방지: 판별 실패 시 그냥 진행 */
     }
 
     // ── (5) 콘솔 경고 ──
@@ -127,7 +127,7 @@ export default function CopyGuard() {
           e.clipboardData.setData(
             "text/plain",
             sel +
-              "\n\n— 출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지"
+              "\n\n- 출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지"
           );
         }
       } catch {

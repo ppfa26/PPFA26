@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════
-//  고객 진단서 — 한글 라벨 매핑 + 엑셀(CSV) 다운로드 유틸
+//  고객 진단서 - 한글 라벨 매핑 + 엑셀(CSV) 다운로드 유틸
 //
 //  ★ 대표님 안내 ★
 //  어드민 '고객 진단서' 탭에서 쓰이는 도우미입니다.
@@ -24,10 +24,10 @@ function buildLabelMap(): Record<string, string> {
     bno: "사업자등록번호",
     bnoStatus: "사업자 상태",
     bnoTaxType: "과세유형",
-    // ★ 관리자 진단서 표시용 한글 라벨 보강 (대표님 요청 — 영어로 뜨던 항목 한글 통일) ★
+    // ★ 관리자 진단서 표시용 한글 라벨 보강 (대표님 요청 - 영어로 뜨던 항목 한글 통일) ★
     //   질문 설정에 라벨이 비어있거나(purposes) 설정 파일에 없어서(interests·bnoVerified·phoneConsult)
     //   영어 key 그대로 노출되던 것을, 원 질문을 짧게 요약한 한글 라벨로 덮어쓴다.
-    //   ※ 표시 라벨만 바꾸는 것 — 진단/매칭 로직에는 전혀 영향 없음.
+    //   ※ 표시 라벨만 바꾸는 것 - 진단/매칭 로직에는 전혀 영향 없음.
     purposes: "필요한 지원 항목",
     interests: "관심 분야",
     bnoVerified: "사업자번호 국세청 검증",
@@ -36,7 +36,7 @@ function buildLabelMap(): Record<string, string> {
     Object.entries(fields).forEach(([k, v]) => {
       // 라벨에서 괄호 안 부가설명 제거 → 표 헤더로 깔끔하게
       const cleaned = (v.label || "").replace(/\s*\(.*?\)\s*/g, "").trim();
-      // 라벨이 비어있으면(예: purposes) 위에서 지정한 보강 라벨을 유지 — 빈 값으로 덮어쓰지 않음
+      // 라벨이 비어있으면(예: purposes) 위에서 지정한 보강 라벨을 유지 - 빈 값으로 덮어쓰지 않음
       if (cleaned) map[k] = cleaned;
     });
   };
@@ -45,7 +45,7 @@ function buildLabelMap(): Record<string, string> {
   collect(STEP3_FIELDS as any);
   collect(STEP3_CONDITIONAL_FIELDS as any);
 
-  // ★ 관리자 표 가독성용 — 긴 질문형 라벨을 짧은 명사형으로 요약 (대표님 요청) ★
+  // ★ 관리자 표 가독성용 - 긴 질문형 라벨을 짧은 명사형으로 요약 (대표님 요청) ★
   //   진단/결과 화면에는 원문 질문이 그대로 노출되고, 여기(관리자 진단서 표·엑셀)에서만 축약해 보인다.
   //   collect 이후에 덮어써야 요약본이 최종 적용된다.
   const shortLabels: Record<string, string> = {
@@ -103,7 +103,7 @@ export type DiagnosisRecord = {
   dupIndex?: number; // 몇 번째 신청인지 (중복 감지 결과)
 };
 
-// 여러 진단서를 하나의 CSV(엑셀)로 변환 — ★세로 방식★ (대표님 요청)
+// 여러 진단서를 하나의 CSV(엑셀)로 변환 - ★세로 방식★ (대표님 요청)
 //  화면 질문지처럼 A열=질문 / B열=답변 이 세로로 쭉 나열됩니다.
 //    (제목 줄)  ■ 신주엽 개인사업자 · 01030329388 · 5971202897 · 2026-07-16 …
 //    질문        | 답변
@@ -121,7 +121,7 @@ export function diagnosesToCsv(records: DiagnosisRecord[]): string {
   records.forEach((rec) => {
     Object.keys(rec.profile || {}).forEach((k) => {
       if (["name", "phone", "email"].includes(k)) return; // 기본 항목으로 따로 처리
-      // 예전 질문지에만 있던 항목(과세유형·관심 분야) — 지금 질문지엔 없으므로 엑셀에서도 제외 (대표님 요청)
+      // 예전 질문지에만 있던 항목(과세유형·관심 분야) - 지금 질문지엔 없으므로 엑셀에서도 제외 (대표님 요청)
       if (["bnoTaxType", "interests"].includes(k)) return;
       if (!seen.has(k)) {
         seen.add(k);
@@ -141,7 +141,7 @@ export function diagnosesToCsv(records: DiagnosisRecord[]): string {
     const bnoText = valueToText((rec.profile as any)?.bno);
     const dupNote =
       rec.dupIndex && rec.dupIndex > 1 ? ` · ${rec.dupIndex}번째 신청(중복)` : "";
-    // 완료/미완료 상태 — 엑셀에서도 전화 돌릴 미완료 리드를 바로 구분
+    // 완료/미완료 상태 - 엑셀에서도 전화 돌릴 미완료 리드를 바로 구분
     const statusNote = rec.status === "partial" ? "[미완료-중간이탈]" : "[완료]";
 
     // ── 사람 구분 제목 줄 (상태 · 이름 · 사업자유형 · 연락처 · 사업자번호 · 접수일시) ──

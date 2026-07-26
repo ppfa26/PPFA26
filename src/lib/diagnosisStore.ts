@@ -31,13 +31,13 @@ const ADMIN_KEY = "mpp_diagnosis_admin";
 //   진단을 다 끝내기 전이라도, 입력 도중의 폼과 진행 단계를 계속 저장해 둔다.
 //   → 진단 중간에 로그인/회원가입을 하러 페이지를 떠났다 돌아와도,
 //     처음(1단계)으로 튕기지 않고 "하던 그대로" 이어서 진단할 수 있게 한다.
-//   (이게 없으면 로그인 왕복 시 form 이 메모리에서 사라져 진단이 초기화됨 — 예전 버그의 원인)
+//   (이게 없으면 로그인 왕복 시 form 이 메모리에서 사라져 진단이 초기화됨 - 예전 버그의 원인)
 const DRAFT_KEY = "mpp_diagnosis_draft";
 const DRAFT_STAMP_KEY = "mpp_diagnosis_draft_savedAt";
-// 초안 유지 시간 — 로그인 왕복은 몇 분이면 끝나므로 24시간이면 충분(그 이상은 폐기)
+// 초안 유지 시간 - 로그인 왕복은 몇 분이면 끝나므로 24시간이면 충분(그 이상은 폐기)
 const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
 
-// 진단 결과 유지 기간 (일) — 여기 숫자만 바꾸면 됩니다.
+// 진단 결과 유지 기간 (일) - 여기 숫자만 바꾸면 됩니다.
 export const DIAGNOSIS_TTL_DAYS = 30;
 const TTL_MS = DIAGNOSIS_TTL_DAYS * 24 * 60 * 60 * 1000;
 
@@ -94,7 +94,7 @@ export function saveDiagnosis(profile: unknown, ownerId?: string | null): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
     localStorage.setItem(STAMP_KEY, String(Date.now()));
-    // 소유자 기록 — 나중에 다른 계정으로 로그인하면 이 값과 달라 무시된다.
+    // 소유자 기록 - 나중에 다른 계정으로 로그인하면 이 값과 달라 무시된다.
     if (ownerId) {
       localStorage.setItem(OWNER_KEY, ownerId);
     } else {
@@ -365,7 +365,7 @@ export async function loadDiagnosisFromServer(
 //  진단 도중 이탈하더라도 연락처를 놓치지 않도록, 1단계 통과 시점에 즉시
 //  Supabase 에 status='partial' 로 저장한다. (전화번호 기준 중복 방지)
 //
-//  · 실패해도 조용히 무시 — 진단 진행에는 절대 영향 주지 않는다.
+//  · 실패해도 조용히 무시 - 진단 진행에는 절대 영향 주지 않는다.
 // ════════════════════════════════════════════════════════════════
 export async function savePartialLead(
   profile: Record<string, unknown>,
@@ -389,7 +389,7 @@ export async function savePartialLead(
 }
 
 // ────────────────────────────────────────────────────────────────
-//  진단 완료 저장 — 같은 전화번호의 partial 레코드가 있으면 completed 로
+//  진단 완료 저장 - 같은 전화번호의 partial 레코드가 있으면 completed 로
 //  승격(중복 방지), 없으면 새로 저장. 비회원/회원 모두 사용.
 // ────────────────────────────────────────────────────────────────
 export async function saveCompletedDiagnosis(

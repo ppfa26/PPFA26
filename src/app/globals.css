@@ -184,7 +184,7 @@ h4 {
   pointer-events: none;
 }
 
-/* 사생활 보호 필름 느낌의 미리보기 블러 — 실제 결과 전체를 덮되,
+/* 사생활 보호 필름 느낌의 미리보기 블러 - 실제 결과 전체를 덮되,
    '내용이 빼곡히 많다'는 느낌은 살리고 글자는 못 읽게 한다. */
 .preview-film {
   filter: blur(4px) saturate(0.95);
@@ -209,7 +209,7 @@ h4 {
   user-select: none;
   -webkit-user-select: none;
 }
-/* 미리보기 잠금(약하게): 텍스트가 밀집된 카테고리 전용 — 모자이크가 과하게
+/* 미리보기 잠금(약하게): 텍스트가 밀집된 카테고리 전용 - 모자이크가 과하게
    보이지 않도록 블러를 낮춤. (정부지원제도·정책금융기관·추가혜택 카드) */
 .preview-lock-text-soft {
   filter: blur(3px);
@@ -255,7 +255,7 @@ h4 {
   animation: pulseGlow 2s infinite;
 }
 
-/* 스크롤 등장 모션 (reveal-on-scroll) — 거슬리지 않게 살짝만 */
+/* 스크롤 등장 모션 (reveal-on-scroll) - 거슬리지 않게 살짝만 */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -277,13 +277,13 @@ h4 {
 }
 
 /* ============================================================
-   다크 야경 테마 — 글래스(반투명 유리) 카드 & 헬퍼
+   다크 야경 테마 - 글래스(반투명 유리) 카드 & 헬퍼
    ------------------------------------------------------------
    밝은 배경(bg-white / bg-gray-50)을 대신할 반투명 어두운 카드.
    야경 배경이 은은하게 비쳐 보이면서도 안의 글자는 또렷하게 읽힌다.
    ============================================================ */
 
-/* 기본 글래스 카드 — 흰 카드(bg-white, shadow-card) 대체용 */
+/* 기본 글래스 카드 - 흰 카드(bg-white, shadow-card) 대체용 */
 .glass-card {
   background: rgba(23, 28, 42, 0.55);
   backdrop-filter: blur(14px);
@@ -292,7 +292,7 @@ h4 {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
-/* 조금 더 진한 글래스 — 폼/입력 영역처럼 대비가 더 필요한 곳 */
+/* 조금 더 진한 글래스 - 폼/입력 영역처럼 대비가 더 필요한 곳 */
 .glass-card-strong {
   background: rgba(15, 19, 32, 0.72);
   backdrop-filter: blur(16px);
@@ -301,7 +301,7 @@ h4 {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
 }
 
-/* 아주 옅은 글래스 — 배지/작은 칩 등 */
+/* 아주 옅은 글래스 - 배지/작은 칩 등 */
 .glass-chip {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(8px);
@@ -309,7 +309,7 @@ h4 {
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* 히어로 글래스 박스 — 목업처럼 야경 위에 반투명 유리 패널 + 문구 */
+/* 히어로 글래스 박스 - 목업처럼 야경 위에 반투명 유리 패널 + 문구 */
 .hero-glass {
   background: rgba(18, 23, 36, 0.55);
   backdrop-filter: blur(18px);
@@ -374,7 +374,7 @@ h4 {
   background: transparent;
 }
 
-/* 다크 테마용 입력 필드 — 어두운 배경 위에서 잘 보이게 */
+/* 다크 테마용 입력 필드 - 어두운 배경 위에서 잘 보이게 */
 .dark-input {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -399,7 +399,7 @@ h4 {
    ============================================================ */
 body.theme-dark {
 
-  /* 섹션 제목/설명 글래스 패널 — 다크 테마에서만 유리 배경이 살아난다.
+  /* 섹션 제목/설명 글래스 패널 - 다크 테마에서만 유리 배경이 살아난다.
      (목업처럼 야경 위에 반투명 유리 네모칸을 깔고 그 위에 문구) */
   .section-title-glass {
     background: rgba(18, 23, 36, 0.5) !important;
@@ -410,7 +410,7 @@ body.theme-dark {
   }
 
   /* ─────────────────────────────────────────────────────────
-     이용료 카드 A안(대표님 요청) — 기존 쨍한 노랑(bg-brand-grad)이
+     이용료 카드 A안(대표님 요청) - 기존 쨍한 노랑(bg-brand-grad)이
      다크 홈과 안 어울린다 → popular 카드를 '다크 유리 + 골드 포인트'로
      재디자인. 배경은 section-title-glass 톤과 통일, 강조는 골드 테두리와
      은은한 골드 글로우로만. (골드 CTA 버튼·빨강 0원 강조는 그대로 살림)
@@ -434,7 +434,7 @@ body.theme-dark {
   /* '오픈 베타 기간 0원' 빨강 강조는 유리 위에서 더 밝은 코랄로 */
   .pricing-card-popular .text-brand-red { color: #ff7a6e !important; }
 
-  /* 오픈 베타 0원 블록 — 코랄/골드 톤으로 은은하게 감싼 정돈된 박스(클릭 시 무료 진단 CTA) */
+  /* 오픈 베타 0원 블록 - 코랄/골드 톤으로 은은하게 감싼 정돈된 박스(클릭 시 무료 진단 CTA) */
   .pricing-beta-box {
     background: rgba(255, 122, 110, 0.08) !important;
     border: 1px solid rgba(255, 122, 110, 0.28) !important;
@@ -448,7 +448,7 @@ body.theme-dark {
   }
   .pricing-card-popular .pricing-beta-box .text-brand-gray { color: rgba(226, 232, 240, 0.72) !important; }
 
-  /* CTA 반투명 글래스 — 주황 테두리는 유지하되, 글자 뒤에 어두운 유리
+  /* CTA 반투명 글래스 - 주황 테두리는 유지하되, 글자 뒤에 어두운 유리
      패널을 깔아 야경 배경 위에서도 문구가 또렷하게 읽히도록 한다. */
   .cta-glass {
     background: rgba(18, 23, 36, 0.55) !important;
@@ -610,7 +610,8 @@ body.theme-dark {
   /* 6-c) 반투명 어두운 글자(text-brand-dark/40~80)는 글래스(어두움) 위에서
      묻힌다 → 밝은 반투명으로. (단 노랑/그라데이션 배경 위는 아래 예외에서 되돌림) */
   .text-brand-dark\/40, .text-brand-dark\/45, .text-brand-dark\/50,
-  .text-brand-dark\/60, .text-brand-dark\/70, .text-brand-dark\/80 {
+  .text-brand-dark\/55, .text-brand-dark\/60, .text-brand-dark\/70,
+  .text-brand-dark\/80 {
     color: rgba(244, 245, 247, 0.75) !important;
   }
 
@@ -775,7 +776,7 @@ body.theme-dark {
   }
 }
 
-/* 결과화면 아코디언(접기/펼치기) — 대표님 요청 A안 */
+/* 결과화면 아코디언(접기/펼치기) - 대표님 요청 A안 */
 .result-accordion > summary {
   list-style: none;
   -webkit-tap-highlight-color: transparent;
@@ -794,7 +795,7 @@ body.theme-dark {
 }
 
 /* ============================================================
-   (성능) 모바일 스크롤 부드럽게 — backdrop-filter blur 경량화
+   (성능) 모바일 스크롤 부드럽게 - backdrop-filter blur 경량화
    ------------------------------------------------------------
    backdrop-filter의 blur는 모바일 GPU에서 프레임당 비용이 커서
    글래스 카드가 많은 화면(랜딩·결과창)에서 스크롤이 버벅이는
@@ -817,7 +818,7 @@ body.theme-dark {
   }
 }
 
-/* (성능) 터치 반응 즉시성 — 모바일 탭 하이라이트/지연 제거 */
+/* (성능) 터치 반응 즉시성 - 모바일 탭 하이라이트/지연 제거 */
 @media (hover: none) and (pointer: coarse) {
   a,
   button,

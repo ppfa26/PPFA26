@@ -68,7 +68,7 @@ export function computeSupportStatus(p: DiagnosisProfile): Record<string, Suppor
   const emp = String(p.employees || "").replace(/\s/g, "");
   const hasEmployees = Boolean(p.employees) && emp !== "0명";
 
-  // 예정대상(potential) 규칙 — 억지 매칭 금지(대표님 지적).
+  // 예정대상(potential) 규칙 - 억지 매칭 금지(대표님 지적).
   //  · 고용지원금/청년도약: 직원이 없을 때만 '채용 시 대상'으로 안내 (있으면 이미 eligible)
   //  · 두루누리: 10명 미만 채용 여지 → 직원 없거나 소규모일 때만
   //  · 수출바우처: '수출업' 업종을 선택했을 때만 (음식점 등에 수출바우처 노출 금지)
@@ -105,7 +105,7 @@ export function computeSupportEligibility(p: DiagnosisProfile): Record<string, b
   // 수출바우처는 '업종=수출업'인 경우에만 신청 대상으로 본다.
   //  (음식점 등 비수출 업종에 수출바우처가 뜨던 오매칭 수정)
   const isExport = inds.some((s) => s.includes("수출"));
-  // 두루누리: 직원 10명 미만(0명 제외) — 진단 구간 "5명 이하"(1~5명)가 확실히 해당.
+  // 두루누리: 직원 10명 미만(0명 제외) - 진단 구간 "5명 이하"(1~5명)가 확실히 해당.
   //   "5명 이상"(5~50)은 10명 초과일 수 있어 불확실 → 확정 대상에서는 제외.
   const isDuruEligible = hasEmployees && (emp.includes("5명미만") || emp.includes("5명이하"));
   // 소상공인 경영안정 바우처(팩트체크 반영):
@@ -372,13 +372,13 @@ export function profileToCompany(p: DiagnosisProfile): Company {
     "창업 예정": 0, "창업예정": 0, "1년 미만": 0.5, "1년미만": 0.5,
     "3년 미만": 2, "3년미만": 2,
     "5년 미만": 4, "5년미만": 4,   // ★ 창업 5년 이내 감면 확정 판정용(대표값 4년)
-    "7년 미만": 6, "7년미만": 6,   // ★ 5~7년 구간(대표값 6년) — 창업 5년 초과로 확정
+    "7년 미만": 6, "7년미만": 6,   // ★ 5~7년 구간(대표값 6년) - 창업 5년 초과로 확정
     "7년 이상": 10, "7년이상": 10,
   };
   const yearsStr = (p.years as string | undefined)?.trim?.() || (p.years as string | undefined);
   const yearsVal = yearsStr ? yMapNum[yearsStr] : undefined;
 
-  // ⚠️ 직원수 판정 (2026 개정 라벨) — "0명" substring 오판 방지가 핵심.
+  // ⚠️ 직원수 판정 (2026 개정 라벨) - "0명" substring 오판 방지가 핵심.
   //    옵션: ["0명","5명 이하","5명 이상","50명 이상","300명 이상","기타"]
   //    "50명 이상"·"300명 이상"에도 문자열 "0명"이 들어 있으므로,
   //    반드시 큰 규모부터(긴/큰 값 우선) 순서대로 검사한다.
@@ -575,7 +575,7 @@ export function countMatchedItems(p: DiagnosisProfile): {
 // ── 미리보기 '목차'용: 매칭된 실제 항목 제목 리스트 ──────────────────
 //  대표님 요청: 미리보기에서 "제목(목차)은 선명하게 오픈"해 내용이 풍부함을 보여준다.
 //  실제 결과에 등장하는 기관·정책자금 상품·정부지원제도의 '이름'만 뽑아 반환한다.
-//  (구체적 신청방법·서류·전략 등 본문은 결제 후 공개 — 여기선 제목만)
+//  (구체적 신청방법·서류·전략 등 본문은 결제 후 공개 - 여기선 제목만)
 export type MatchedTitle = {
   kind: "기관" | "정책자금" | "정부지원제도";
   icon: string;

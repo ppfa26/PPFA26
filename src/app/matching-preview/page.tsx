@@ -31,7 +31,7 @@ export default function MatchingPreview() {
   //   "checking" = 세션 확인 중 · "guest" = 비로그인(결과 잠금) · "ready" = 로그인 완료(결과 공개)
   //   ※ 관리자 열람 모드(?admin=1)는 게이트를 통과시켜 항상 "ready".
   const [gate, setGate] = useState<"checking" | "guest" | "analyzing" | "ready">("checking");
-  // 분석 연출 진행 단계(0~3) — "AI가 실제로 판독 중"이라는 신뢰감을 주기 위한 짧은 연출
+  // 분석 연출 진행 단계(0~3) - "AI가 실제로 판독 중"이라는 신뢰감을 주기 위한 짧은 연출
   const [analyzeStep, setAnalyzeStep] = useState(0);
   const [counts, setCounts] = useState<{
     total: number;
@@ -49,7 +49,7 @@ export default function MatchingPreview() {
     benefits: number;
     announcements: number;
   } | null>(null);
-  // 관련 실공고(기업마당) 매칭용 — 진단 프로필 원본을 보관
+  // 관련 실공고(기업마당) 매칭용 - 진단 프로필 원본을 보관
   const [profileData, setProfileData] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function MatchingPreview() {
     })();
   }, []);
 
-  // ★ 총 매칭 수 — 실측 콜백(liveCounts)이 도착하면 그 4개 합계를 쓰고(화면과 100% 일치),
+  // ★ 총 매칭 수 - 실측 콜백(liveCounts)이 도착하면 그 4개 합계를 쓰고(화면과 100% 일치),
   //   아직 안 왔으면 초기 계산값(counts.total)으로 즉시 숫자를 보여준다(깜빡임 방지). ★
   const total = liveCounts
     ? liveCounts.supports + liveCounts.products + liveCounts.benefits + liveCounts.announcements
@@ -379,7 +379,7 @@ export default function MatchingPreview() {
           {adminView && (
             <div className="mb-6 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-4 text-center">
               <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
-                🔓 관리자 열람 모드 —{" "}
+                🔓 관리자 열람 모드 -{" "}
                 <span className="text-brand-orange">
                   {adminLabel
                     ? name
@@ -462,9 +462,9 @@ export default function MatchingPreview() {
             </div>
           </div>
 
-          {/* ── (대표님 요청) '이런 내용을 알려드립니다' 목차 박스 삭제 — 세로 길이 축소 ── */}
+          {/* ── (대표님 요청) '이런 내용을 알려드립니다' 목차 박스 삭제 - 세로 길이 축소 ── */}
 
-          {/* ── (대표님 요청) '무료 베타 오픈중' 안내 문구 삭제 — 화면 간결화 ── */}
+          {/* ── (대표님 요청) '무료 베타 오픈중' 안내 문구 삭제 - 화면 간결화 ── */}
 
           {/* ── 중간 결제 유도 박스 (정식 유료 모드 전용) ──
                결과를 스크롤하기 전, 화면 중간에서 바로 '어디서 결제하는지' 찾을 수 있게 배치.
@@ -495,9 +495,9 @@ export default function MatchingPreview() {
             <b className="text-brand-orange"> 기관명·상품명·신청 방법</b>만 결제 후 공개됩니다.
           </p>
           )}
-          {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 — 화면 간결화 ── */}
+          {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 - 화면 간결화 ── */}
           <div className="relative mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-            {/* 실제 대시보드 결과창 — 내용은 열고 이름/버튼만 부분 잠금(previewLock).
+            {/* 실제 대시보드 결과창 - 내용은 열고 이름/버튼만 부분 잠금(previewLock).
                 관리자 열람 모드 또는 오픈 베타(무료) 모드에서는 previewLock을 꺼서
                 전체 결과를 그대로 보여준다. (베타: 결제 없이 전부 무료 공개) */}
             <AdvancedScreeningPanel
@@ -510,7 +510,7 @@ export default function MatchingPreview() {
 
           {/* ── (대표님 요청) 오픈 베타(무료) 안내 한 줄 문구 삭제 ── */}
 
-          {/* ── 결과창 맨 하단 CTA — 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
+          {/* ── 결과창 맨 하단 CTA - 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
           <section className="mt-4 px-0 pb-0">
             <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
               <Editable
@@ -528,7 +528,7 @@ export default function MatchingPreview() {
                 서비스 이용에 어려움을 겪고 있으시다면 1:1 채널톡 상담하기를 클릭하세요.
               </Editable>
               <div className="mt-4 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
-                {/* 왼쪽 — 다시 진단하기 (보조 버튼, 흰색 아웃라인) */}
+                {/* 왼쪽 - 다시 진단하기 (보조 버튼, 흰색 아웃라인) */}
                 <a
                   id="preview-bottom-cta-button"
                   href="/diagnosis"
@@ -536,7 +536,7 @@ export default function MatchingPreview() {
                 >
                   다시 진단하기
                 </a>
-                {/* 오른쪽 — 1:1 채널톡 상담하기 (주 버튼, 빨간색) */}
+                {/* 오른쪽 - 1:1 채널톡 상담하기 (주 버튼, 빨간색) */}
                 <a
                   id="preview-bottom-cta-kakao"
                   href="http://pf.kakao.com/_VxfWxan/chat"

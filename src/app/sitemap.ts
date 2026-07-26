@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/refund", priority: 0.4, freq: "monthly" },
   ];
 
-  // 정부지원사업(지원제도) 상세 페이지 — 검색 유입 가치가 높아 개별 색인 대상에 포함
+  // 정부지원사업(지원제도) 상세 페이지 - 검색 유입 가치가 높아 개별 색인 대상에 포함
   const supportPages: MetadataRoute.Sitemap = SUPPORT_PROGRAMS.map((p) => ({
     url: `${SITE_URL}/support/${p.id}`,
     lastModified: now,

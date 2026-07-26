@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-// 최대 실행 시간(초) — 여러 페이지 수집 대비 넉넉히
+// 최대 실행 시간(초) - 여러 페이지 수집 대비 넉넉히
 export const maxDuration = 60;
 
 // ────────────────────────────────────────────────────────────────
@@ -20,7 +20,7 @@ export const maxDuration = 60;
 const DATA_KEY = process.env.DATA_GO_KR_API_KEY || process.env.NTS_BUSINESS_API_KEY || "";
 const CRAWL_SECRET = process.env.CRAWL_SECRET || "";
 
-// HTML 태그/공백 정리(기업마당 사업개요가 HTML 로 옴 — 지금은 미저장이지만 유틸로 둠)
+// HTML 태그/공백 정리(기업마당 사업개요가 HTML 로 옴 - 지금은 미저장이지만 유틸로 둠)
 function stripHtml(s: string | null | undefined): string {
   if (!s) return "";
   return s
@@ -43,7 +43,7 @@ async function fetchBizinfoPage(pageNo: number, numOfRows: number) {
     `&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=json`;
 
   const res = await fetch(url, {
-    // 공공데이터포털은 가끔 느림 — 캐시 없이 매번 새로
+    // 공공데이터포털은 가끔 느림 - 캐시 없이 매번 새로
     cache: "no-store",
     signal: AbortSignal.timeout(20000),
   });
@@ -125,9 +125,9 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const started = Date.now();
   try {
-    // 1) 인증 — 다음 중 하나면 통과
+    // 1) 인증 - 다음 중 하나면 통과
     //    (a) Vercel Cron 자동 호출(x-vercel-cron 헤더)
-    //    (b) 서버 시크릿(CRAWL_SECRET) — 수동/디버그용
+    //    (b) 서버 시크릿(CRAWL_SECRET) - 수동/디버그용
     //    (c) 로그인한 관리자 세션 토큰(관리자 페이지 버튼) → is_admin() 검증
     const url = new URL(req.url);
     const givenSecret =
@@ -168,7 +168,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2) Supabase(서비스 롤 우선 — 없으면 anon)
+    // 2) Supabase(서비스 롤 우선 - 없으면 anon)
     const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceKey =
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -202,7 +202,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // 4) UPSERT — (source, source_id) 기준 중복 방지 & 최신화
+    // 4) UPSERT - (source, source_id) 기준 중복 방지 & 최신화
     let upserted = 0;
     const withId = rows.filter((r) => r.source_id);
     const withoutId = rows.filter((r) => !r.source_id);

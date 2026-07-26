@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     // ── 브랜드 ──
     "모두의사업친구",
   ],
-  // 홈(대표 페이지) 표준 주소 지정 — 검색엔진 중복 색인 방지
+  // 홈(대표 페이지) 표준 주소 지정 - 검색엔진 중복 색인 방지
   alternates: { canonical: "/" },
   // PWA: 홈 화면 설치용 매니페스트 연결
   manifest: "/manifest.webmanifest",
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
         url: "/og-image-v3.jpg",
         width: 1200,
         height: 630,
-        alt: "모두의사업친구 — 정부지원사업 AI 통합 매칭 플랫폼",
+        alt: "모두의사업친구 - 정부지원사업 AI 통합 매칭 플랫폼",
       },
     ],
   },
@@ -141,7 +141,7 @@ const structuredData = {
         "정부지원사업 AI 통합 매칭 플랫폼",
         "모두의사업친구 (biospartners)",
       ],
-      // 브랜드 검색 대표 키워드 — 지원제도·정책자금 검색과 브랜드를 연결
+      // 브랜드 검색 대표 키워드 - 지원제도·정책자금 검색과 브랜드를 연결
       slogan: "내 사업장에 딱 맞는 정부지원사업, AI가 한 번에 찾아드립니다",
       knowsAbout: [
         "정부지원사업",
@@ -160,7 +160,7 @@ const structuredData = {
         "중소기업 지원",
         "정부지원사업 무료진단",
       ],
-      // 서비스 제공 지역 — 로컬 검색 신호
+      // 서비스 제공 지역 - 로컬 검색 신호
       //  ※ 2026.7.1 인천 행정개편으로 '서구'가 '서해구'로 명칭 변경(청라=서해구).
       //    검색 과도기이므로 '서해구'·'서구' 둘 다 신호로 유지한다.
       areaServed: [
@@ -185,14 +185,14 @@ const structuredData = {
         addressRegion: "인천광역시",
         addressCountry: "KR",
       },
-      // 동일 사업체 신호(NAP 통일) — 검색엔진이 여러 채널을 한 회사로 묶습니다.
+      // 동일 사업체 신호(NAP 통일) - 검색엔진이 여러 채널을 한 회사로 묶습니다.
       sameAs: [
         "https://www.daangn.com/kr/business/모두의사업친구",
         "http://pf.kakao.com/_VxfWxan",
       ] as string[],
     },
     {
-      // 지역 사업체 정보 — 네이버 지역검색·지식카드에 주소·전화·평점이 깔끔하게 노출되도록 제공
+      // 지역 사업체 정보 - 네이버 지역검색·지식카드에 주소·전화·평점이 깔끔하게 노출되도록 제공
       "@type": "LocalBusiness",
       "@id": `${SITE_URL}/#localbusiness`,
       name: "모두의사업친구",
@@ -345,9 +345,9 @@ export default function RootLayout({
         <CopyGuard />
         <UtmCapture />
         {children}
-        {/* Vercel 방문자 분석 — 화면에 보이지 않으며, 방문자 수·페이지·기기 통계를 수집합니다. */}
+        {/* Vercel 방문자 분석 - 화면에 보이지 않으며, 방문자 수·페이지·기기 통계를 수집합니다. */}
         <Analytics />
-        {/* 당근마켓 전환 추적 픽셀 — 당근 광고 성과(조회·전환) 측정용. 화면에 보이지 않음. */}
+        {/* 당근마켓 전환 추적 픽셀 - 당근 광고 성과(조회·전환) 측정용. 화면에 보이지 않음. */}
         <KarrotPixel />
       </body>
     </html>

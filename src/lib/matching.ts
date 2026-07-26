@@ -10,21 +10,21 @@ export type DiagnosisProfile = {
   years?: string; // 창업예정/1년미만/3년미만/7년미만/7년이상
   age?: string; // 39세이하/39세이상
   region?: string;
-  smartTech?: string; // (구) 1단계 스마트기기 질문 — 제거됨. 하위호환 위해 타입만 유지
+  smartTech?: string; // (구) 1단계 스마트기기 질문 - 제거됨. 하위호환 위해 타입만 유지
   smartDevice?: string; // 스마트기기 사용 여부 (3단계) → 혁신성장촉진자금·스마트상점 매칭용
   // 2단계 (상담 목적)
   purposes?: string[]; // 창업자금/운전자금/시설자금/수출자금/정부지원금/인증및특허
-  desiredAmount?: string; // (구) 희망 금액 질문 — 제거됨. 매칭 미사용. 하위호환 위해 타입만 유지
+  desiredAmount?: string; // (구) 희망 금액 질문 - 제거됨. 매칭 미사용. 하위호환 위해 타입만 유지
   interests?: string[]; // 정책자금/정부지원금/창업지원/바우처/인증/교육
   // 3단계
   credit?: string;
   certifications?: string[]; // 벤처인증/이노비즈/메인비즈/연구소/특허/기타
-  innovation?: string[]; // 혁신성장 테마(9개) 중 선택 — 있으면 혁신성장분야 기업
+  innovation?: string[]; // 혁신성장 테마(9개) 중 선택 - 있으면 혁신성장분야 기업
   currentInstitutions?: string[]; // 현재 이용 중인 기관(소진공/중진공/재단/신보/기보/무역보험/기타)
   collateral?: string;
   bankruptcy?: string; // 해당 없음 / 파산·회생 진행 중 / 면책·인가 완료
   taxDelinquent?: string; // 없음 / 체납 있음
-  capitalImpairment?: string; // 아니오 / 예(자본잠식) — 법인만
+  capitalImpairment?: string; // 아니오 / 예(자본잠식) - 법인만
   insurance?: string;
   employees?: string; // 0명/5명이하/10명이하/10명이상
   // 소진공 혁신형/특별 상품 정밀 매칭용 조건부 응답 (3단계 추가질문 · "예..."면 해당)
@@ -35,7 +35,7 @@ export type DiagnosisProfile = {
   reFounder?: string; // 폐업 후 재창업(재도전) → 재도전특별자금
   wantsRefinance?: string; // 고금리→저금리 대환 희망 → 대환대출자금
   privateInvestment?: string; // 민간투자 유치 이력 → 민간투자연계매칭융자
-  // 연락처(이름·휴대폰은 회원가입 단계에서 수집 — 진단에서는 미수집)
+  // 연락처(이름·휴대폰은 회원가입 단계에서 수집 - 진단에서는 미수집)
   name?: string;
   phone?: string;
   email?: string;
@@ -74,7 +74,7 @@ function profileTags(p: DiagnosisProfile): Set<string> {
   if (p.age?.includes("39세 이하") || p.age?.includes("39세이하") || p.age?.includes("청년")) tags.add("청년");
   if (p.years?.includes("1년")) tags.add("1년미만");
 
-  // 업력 태그 (창업지원사업 자격 필터용) — 3년 이내 / 7년 이내 여부
+  // 업력 태그 (창업지원사업 자격 필터용) - 3년 이내 / 7년 이내 여부
   //  창업예정=예비, 1년미만·3년미만=3년이내, 7년미만=7년이내
   if (p.years) {
     const y = p.years.replace(/\s/g, "");

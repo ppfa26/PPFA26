@@ -273,7 +273,7 @@ export default function Page() {
           </div>
         </section>
 
-        {/* ── 이용자 정부지원사업 승인후기 (소제목 블록 제거 — 상단 대제목과 중복, 대표님 요청) ── */}
+        {/* ── 이용자 정부지원사업 승인후기 (소제목 블록 제거 - 상단 대제목과 중복, 대표님 요청) ── */}
         <section className="mt-8">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {APPROVALS.map((a, i) => (

@@ -11,17 +11,17 @@ export type ExtraBenefitsUserInput = {
   businessType?: string;
   industry?: string;
   yearsInBusiness?: number;
-  // 업력 구간 원문 라벨(예: "7년 미만") — 창업 5년 경계처럼 진단표 구간만으로는
+  // 업력 구간 원문 라벨(예: "7년 미만") - 창업 5년 경계처럼 진단표 구간만으로는
   // 정확히 알 수 없는 경우 확정 대신 조건부로 안내하기 위한 필드
   yearsLabel?: string;
   annualRevenue?: number;
-  // 매출 구간 원문 라벨(예: "2억 미만") — 간이과세처럼 경계가 민감한 판정에서
+  // 매출 구간 원문 라벨(예: "2억 미만") - 간이과세처럼 경계가 민감한 판정에서
   // 대략 매핑 숫자만으로 오판하지 않도록 원문을 함께 검사하기 위한 필드
   revenueLabel?: string;
   workerCount?: number;
   region?: string;
   representativeAge?: number;
-  // 대표자가 '만 39세 이하(청년)' 구간인지 — 청년창업감면(만 34세 이하) 경계 판정용.
+  // 대표자가 '만 39세 이하(청년)' 구간인지 - 청년창업감면(만 34세 이하) 경계 판정용.
   // true라도 34세 이하 확정은 아니므로 확정 대상으로 단정하지 않는다.
   ageIsYouthBand?: boolean;
   // 추가 신호 (조건별 차등 추천용)
@@ -34,7 +34,7 @@ type Props = {
   // userInput 을 직접 넘길 수도 있고(명세), 안 넘기면 컴포넌트가
   // sessionStorage("mpp_diagnosis")에서 스스로 읽어 매핑한다.
   userInput?: ExtraBenefitsUserInput;
-  // ★ 미리보기 잠금 (대표님 요청) — 제목·목차는 보이고, 알맹이(신청방법·서류·소요기간·링크)만 흐리게 ★
+  // ★ 미리보기 잠금 (대표님 요청) - 제목·목차는 보이고, 알맹이(신청방법·서류·소요기간·링크)만 흐리게 ★
   previewLock?: boolean;
   // ★ 실제 화면에 표시된 감면 혜택 '실측 갯수'를 부모(요약 배너)로 올려 숫자 100% 일치 (대표님 요청) ★
   onCount?: (n: number) => void;
@@ -74,7 +74,7 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
   //   현재 옵션: [매출 없음 / 1억 미만 / 3억 미만 / 10억 미만 / 10억 이상]
   //   "1억 미만"은 간이과세 기준선(1억 400만원)을 안전하게 커버 → 8천만으로 매핑해
   //   간이과세를 '확정(yes)'으로 안내할 수 있게 함.
-  //   (구 "2억 미만/5억 미만/5억 이상"도 하위호환 유지 — 단 구 "2억 미만"은 간이 초과로 취급)
+  //   (구 "2억 미만/5억 미만/5억 이상"도 하위호환 유지 - 단 구 "2억 미만"은 간이 초과로 취급)
   const revenueStr = (get("revenue") || "").replace(/\s/g, "");
   let annualRevenue: number | undefined;
   if (revenueStr.includes("매출없음")) annualRevenue = 0;
@@ -100,7 +100,7 @@ function mapProfileToUserInput(profile: Record<string, unknown>): ExtraBenefitsU
   else if (yearsStr.includes("7년미만")) yearsInBusiness = 6;   // 5~7년 → 5년 초과 확정
   else if (yearsStr.includes("7년이상")) yearsInBusiness = 8;
 
-  // 업력 라벨 원문 — 경계(창업 5년) 판정 시 "정확히 5년 이내"인지 알 수 없는 구간을
+  // 업력 라벨 원문 - 경계(창업 5년) 판정 시 "정확히 5년 이내"인지 알 수 없는 구간을
   // 확정 대상으로 안내하지 않기 위해 함께 검사한다.
   const yearsLabel = yearsStr || undefined;
 
@@ -178,7 +178,7 @@ function formatKRW(won: number): string {
 //  status: "yes"       → 지금 바로 신청 대상 (초록 ✅ 신청 가능)
 //          "condition" → 조건 충족 시 신청 가능 (주황 🟡)  ← 대표님 방침
 //          "no"        → 대상 아님 (노출하지 않음 = 상위 6개에서 밀려남)
-//  score : 가능성 점수 (높을수록 위로 정렬) — 대표님 방침 "가능성 높은 것 위로"
+//  score : 가능성 점수 (높을수록 위로 정렬) - 대표님 방침 "가능성 높은 것 위로"
 type Verdict = {
   status: "yes" | "condition" | "no";
   score: number; // 0~100 (정렬용)
@@ -202,7 +202,7 @@ function isExcluded(b: ExtraBenefit, u: ExtraBenefitsUserInput): boolean {
   return (b.excludedIndustries ?? []).some((ex) => (u.industry ?? "").includes(ex));
 }
 
-// ★ 조건별 차등 판정 — 대표님 방침 ★
+// ★ 조건별 차등 판정 - 대표님 방침 ★
 //  · 확실히 되면 status:"yes" (초록 · 높은 점수)
 //  · 조건 맞으면 되면 status:"condition" (주황 · 중간 점수) → "조건 충족 시 신청 가능"
 //  · 명백히 아니면 status:"no" (노출 제외 → 상위 6개에서 밀림)
@@ -249,7 +249,7 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
           conditionText: "창업 후 5년 이내 사업자라면 신청 가능합니다.",
         };
       // ★ 정밀화 후 "7년 미만"(5~7년)은 위 years>5 에서 이미 no로 확정 배제됨.
-      //    (구 데이터 안전상 조건부 분기는 유지 — 구 "7년 미만"=3~7년 불확정 대응)
+      //    (구 데이터 안전상 조건부 분기는 유지 - 구 "7년 미만"=3~7년 불확정 대응)
       if (u.yearsLabel && u.yearsLabel.includes("7년미만"))
         return {
           status: "condition",
@@ -439,7 +439,7 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
       // 1) 매출 정보가 아예 없으면(미입력·"기타") 간이과세는 노출하지 않는다.
       //    → 매출을 확인할 수 없는데 "혜택 대상"으로 오안내하는 것을 방지.
       if (rev === undefined && !label) {
-        return { status: "no", score: 0, note: "매출 미입력 — 간이과세 여부 확인 불가" };
+        return { status: "no", score: 0, note: "매출 미입력 - 간이과세 여부 확인 불가" };
       }
 
       // 2) 구간 라벨로 명확히 '초과'가 확정되는 경우는 배제.
@@ -478,7 +478,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
   const [input, setInput] = useState<ExtraBenefitsUserInput | null>(
     userInput ?? null
   );
-  // 미리보기 잠금 클래스 — 제목은 그대로, 알맹이만 흐리게+클릭차단
+  // 미리보기 잠금 클래스 - 제목은 그대로, 알맹이만 흐리게+클릭차단
   // 이 카드(🎁 추가 혜택)는 텍스트가 밀집돼 모자이크가 과해 보여 약한 블러 적용 (대표님 요청)
   const lockText = previewLock ? "preview-lock-text-soft" : "";
   const lockClick = previewLock ? "preview-lock-click-soft" : "";
@@ -521,13 +521,13 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
 
   return (
     <>
-      {/* ========== 🎁 추가 감면 혜택 — 아코디언(접기) 카드 (대표님 요청) ========== */}
+      {/* ========== 🎁 추가 감면 혜택 - 아코디언(접기) 카드 (대표님 요청) ========== */}
       <AccordionCard
         emoji="💎"
         title="챙기면 좋은 추가 감면 혜택"
         subtitle="세금을 아낄 수 있는 혜택이에요"
       >
-        {/* 가능성 높은 순 상위 6개 — 항목마다 연한 박스 + 간격으로 시원하게(금융기관 카드와 동일 감각) */}
+        {/* 가능성 높은 순 상위 6개 - 항목마다 연한 박스 + 간격으로 시원하게(금융기관 카드와 동일 감각) */}
         <div className="mt-4 space-y-3">
           {judged.map(({ b, v }) => {
             const isYes = v.status === "yes";
@@ -539,7 +539,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                 className="group origin-left rounded-xl border border-gray-200 bg-white p-4 transition-transform duration-150 hover:scale-[1.01]"
               >
                 {/* 상단: 아이콘 + 제목 + 절감액 알약 + 대상 뱃지
-                    (융자 상품 카드와 동일한 정보 구조 — 제목 옆에 '핵심 혜택'을 알약으로) */}
+                    (융자 상품 카드와 동일한 정보 구조 - 제목 옆에 '핵심 혜택'을 알약으로) */}
                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                   <span className="text-base">{b.icon}</span>
                   <span className={`break-keep text-[14px] font-extrabold text-brand-dark ${lockText}`}>
@@ -561,7 +561,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                   )}
                 </div>
 
-                {/* 설명 — 누가/무엇 (융자 카드의 desc 자리와 동일 역할) */}
+                {/* 설명 - 누가/무엇 (융자 카드의 desc 자리와 동일 역할) */}
                 <p className="mt-2 break-keep text-[12px] leading-relaxed text-brand-gray">
                   {b.description}
                 </p>
@@ -578,7 +578,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                   <p className="mt-1 break-keep text-[11px] text-brand-dark/50">ℹ️ {v.note}</p>
                 )}
 
-                {/* 이걸 챙기면 왜 좋은지 — 융자 카드의 💡 노랑박스와 동일 포맷으로 통일 */}
+                {/* 이걸 챙기면 왜 좋은지 - 융자 카드의 💡 노랑박스와 동일 포맷으로 통일 */}
                 {b.benefit && (
                   <p className="mt-2 break-keep rounded-lg bg-brand-yellow/10 px-2.5 py-2 text-[11px] leading-relaxed text-brand-dark/70">
                     <span className="font-extrabold text-brand-dark/80">💡 </span>
@@ -605,9 +605,9 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                   </div>
                 )}
 
-                {/* 신청 방법 + 필요 서류 + 처리시간 + 소요기간 — 회색 박스로 묶음 (알맹이라 잠금) */}
+                {/* 신청 방법 + 필요 서류 + 처리시간 + 소요기간 - 회색 박스로 묶음 (알맹이라 잠금) */}
                 <div className={`mt-3 rounded-lg bg-gray-50 px-3 py-2.5 ${lockText}`}>
-                  {/* 신청 방법 (대표님 요청 — 간단하게라도) */}
+                  {/* 신청 방법 (대표님 요청 - 간단하게라도) */}
                   {b.applyHow && (
                     <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
                       <span className="font-bold text-brand-dark">📝 신청방법 </span>
@@ -630,7 +630,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                   <p className="mt-2 break-keep text-[11px] text-brand-dark/60">
                     ⏱️ 서류 작성 · <b className="text-brand-dark/80">{b.processingTime}</b>
                   </p>
-                  {/* 승인·반영 소요기간 (대표님 요청 — 대략적으로) */}
+                  {/* 승인·반영 소요기간 (대표님 요청 - 대략적으로) */}
                   {b.duration && (
                     <p className="mt-1 break-keep text-[11px] text-brand-dark/60">
                       🗓️ 소요 기간 · <b className="text-brand-orange">{b.duration}</b>
@@ -638,7 +638,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                   )}
                 </div>
 
-                {/* 데드라인 경고 (빨강) — 목차성 경고라 노출 유지 */}
+                {/* 데드라인 경고 (빨강) - 목차성 경고라 노출 유지 */}
                 {b.warning && (
                   <p
                     className="mr-2 mt-3 inline-block max-w-full break-keep rounded-lg px-3 py-2 text-[12px] font-semibold leading-relaxed"
@@ -648,7 +648,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                   </p>
                 )}
 
-                {/* 신청하러 가기 버튼 — 정책금융기관 카드와 동일 위치·크기 (색은 감면 카드 포인트색 유지) */}
+                {/* 신청하러 가기 버튼 - 정책금융기관 카드와 동일 위치·크기 (색은 감면 카드 포인트색 유지) */}
                 <a
                   href={previewLock ? undefined : b.applyUrl}
                   target="_blank"
@@ -662,7 +662,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
           })}
         </div>
 
-        {/* 하단 하이라이트 — 카드 안 소형 배너 */}
+        {/* 하단 하이라이트 - 카드 안 소형 배너 */}
         <div className="mt-4 rounded-xl bg-brand-yellow/30 px-4 py-3 text-center">
           <p className="break-keep text-[13px] font-black leading-snug text-brand-dark">
             💡 요건에 맞게 챙기면 첫 해 <span className="whitespace-nowrap">연 최대 700만원 절감</span> 가능
@@ -673,7 +673,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
           </p>
         </div>
       </AccordionCard>
-      {/* ※ 🗓️ '이 순서대로만 챙기세요' 타임라인 블록 제거(대표님 요청) — 위 4가지 혜택 카드로 충분 */}
+      {/* ※ 🗓️ '이 순서대로만 챙기세요' 타임라인 블록 제거(대표님 요청) - 위 4가지 혜택 카드로 충분 */}
     </>
   );
 }

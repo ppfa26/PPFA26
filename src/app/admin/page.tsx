@@ -209,7 +209,7 @@ export default function AdminPage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [crawling, setCrawling] = useState(false); // 정부공고 수집 진행중
-  // 데이터 로딩 진단 — RPC가 실패하면 (권한/함수누락 등) 원인을 화면에 그대로 표시한다.
+  // 데이터 로딩 진단 - RPC가 실패하면 (권한/함수누락 등) 원인을 화면에 그대로 표시한다.
   const [loadDebug, setLoadDebug] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState(""); // 회원 검색어(이름·이메일·연락처)
   const [userSourceFilter, setUserSourceFilter] = useState("all"); // 유입경로 필터(all=전체)
@@ -220,7 +220,7 @@ export default function AdminPage() {
   }>({ key: "joined_at", dir: "desc" });
   const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
 
-  // 리드(상담 대상) 메모·통화 상태 — 브라우저 localStorage 기반 (DB 불필요)
+  // 리드(상담 대상) 메모·통화 상태 - 브라우저 localStorage 기반 (DB 불필요)
   const [leadNotes, setLeadNotes] = useState<Record<string, LeadNote>>({});
   // 메모 입력창 임시 상태 (진단서 id → 입력중인 메모 텍스트)
   const [memoDraft, setMemoDraft] = useState<Record<string, string>>({});
@@ -230,7 +230,7 @@ export default function AdminPage() {
     setLeadNotes(loadAllLeadNotes());
   }, []);
 
-  // 무료진단 링크 복사 — 고객에게 카톡으로 진단 링크 보낼 때 원클릭
+  // 무료진단 링크 복사 - 고객에게 카톡으로 진단 링크 보낼 때 원클릭
   // ※ 항상 한글 도메인으로 복사 (window.location.origin 은 퓨니코드 xn--... 로 나올 수 있어 고정)
   const copyDiagnosisLink = async () => {
     const url = "https://모두의사업친구.kr";
@@ -239,12 +239,12 @@ export default function AdminPage() {
       setMsg("무료진단 링크를 복사했어요. 고객에게 붙여넣기 하세요.");
     } catch {
       // 클립보드 권한이 없을 때는 링크를 그대로 보여준다.
-      setMsg(`복사 실패 — 이 링크를 직접 복사하세요: ${url}`);
+      setMsg(`복사 실패 - 이 링크를 직접 복사하세요: ${url}`);
     }
     setTimeout(() => setMsg(null), 3500);
   };
 
-  // 📊 요약 리포트 — 오늘/이번주/이번달 신규가입·진단접수·결제·매출을 집계한다.
+  // 📊 요약 리포트 - 오늘/이번주/이번달 신규가입·진단접수·결제·매출을 집계한다.
   //  (관리자 계정은 회원 수에서 제외하지 않고, 실제 유입 판단은 대표님이 직접 확인)
   const reportData = useMemo(() => {
     const now = new Date();
@@ -356,7 +356,7 @@ export default function AdminPage() {
       dupIndex: dupIndexMap.get(d.id),
     }));
 
-  // 엑셀(CSV) 다운로드 — 전체 / 선택 / 개별
+  // 엑셀(CSV) 다운로드 - 전체 / 선택 / 개별
   const downloadAllDiag = () => {
     if (diagnoses.length === 0) return;
     const stamp = new Date().toISOString().slice(0, 10);
@@ -381,7 +381,7 @@ export default function AdminPage() {
     downloadCsv(`고객진단서_${applicant}${tail}_${stamp}`, diagnosesToCsv(toRecords([d])));
   };
 
-  // 회원 목록 CSV 다운로드 — 세무·백업·문자발송 명단용 (진단서에서 이름·연락처 역추적 포함)
+  // 회원 목록 CSV 다운로드 - 세무·백업·문자발송 명단용 (진단서에서 이름·연락처 역추적 포함)
   const downloadUsersCsv = () => {
     if (users.length === 0) return;
     const headers = [
@@ -430,7 +430,7 @@ export default function AdminPage() {
     downloadCsv(`회원목록_${users.length}명_${stamp}`, csv);
   };
 
-  // 진단서 삭제 (관리자) — 관리자 전용 RPC 사용
+  // 진단서 삭제 (관리자) - 관리자 전용 RPC 사용
   //  ※ diagnoses 테이블은 RLS(행 보안)로 직접 DELETE가 막혀 있어,
   //    is_admin() 검사를 통과한 관리자만 실행되는 서버 함수로 삭제한다.
   const deleteDiag = async (d: AdminDiagnosis) => {
@@ -453,7 +453,7 @@ export default function AdminPage() {
     setTimeout(() => setMsg(null), 4000);
   };
 
-  // 진단서 선택 삭제 (여러 건 한 번에) — 관리자 전용 RPC 사용
+  // 진단서 선택 삭제 (여러 건 한 번에) - 관리자 전용 RPC 사용
   const deleteSelectedDiag = async () => {
     const ids = Array.from(selectedDiag);
     if (ids.length === 0) {
@@ -514,9 +514,9 @@ export default function AdminPage() {
     // ★ 매출 통계(일별/월별)를 프론트에서 직접 재계산 (관리자 포함 전체 결제 기준) ★
     const paidRows = payList.filter((r) => r.status === "paid" && r.paid_at);
 
-    // 일별 매출 (최근 30일) — YYYY-MM-DD 로 묶어 집계
+    // 일별 매출 (최근 30일) - YYYY-MM-DD 로 묶어 집계
     const dailyMap = new Map<string, { revenue: number; cnt: number }>();
-    // 월별 매출 (최근 12개월) — YYYY-MM 로 묶어 집계
+    // 월별 매출 (최근 12개월) - YYYY-MM 로 묶어 집계
     const monthlyMap = new Map<string, { revenue: number; cnt: number }>();
     for (const r of paidRows) {
       const dt = new Date(r.paid_at as string);
@@ -602,7 +602,7 @@ export default function AdminPage() {
     setMsg(error ? `오류: ${error.message}` : String(data));
     setTimeout(() => setMsg(null), 4000);
   };
-  // 정부지원사업 공고 수집(기업마당 OpenAPI) — 관리자 세션 토큰으로 서버 호출
+  // 정부지원사업 공고 수집(기업마당 OpenAPI) - 관리자 세션 토큰으로 서버 호출
   const runCrawl = async () => {
     if (crawling) return;
     if (
@@ -631,7 +631,7 @@ export default function AdminPage() {
         setMsg(`수집 실패: ${j?.note || "오류"}${detail}`);
       } else {
         setMsg(
-          `✅ 공고 수집 완료 — 조회 ${j.fetched ?? 0}건 / 저장·갱신 ${j.saved ?? 0}건 (출처: ${j.source || "기업마당"})`
+          `✅ 공고 수집 완료 - 조회 ${j.fetched ?? 0}건 / 저장·갱신 ${j.saved ?? 0}건 (출처: ${j.source || "기업마당"})`
         );
       }
     } catch (e: any) {
@@ -678,7 +678,7 @@ export default function AdminPage() {
     };
   };
 
-  // 회원 검색 필터 — 이메일·이름·연락처 어디에 걸려도 검색됨
+  // 회원 검색 필터 - 이메일·이름·연락처 어디에 걸려도 검색됨
   const filteredUsers = users.filter((u) => {
     const q = userSearch.trim().toLowerCase();
     if (!q) return true;
@@ -693,7 +693,7 @@ export default function AdminPage() {
     return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
   });
 
-  // 유입경로별 회원 수 집계 — 드롭다운에 "인스타 (3)"처럼 개수 표시용
+  // 유입경로별 회원 수 집계 - 드롭다운에 "인스타 (3)"처럼 개수 표시용
   const userSourceCounts = users.reduce<Record<string, number>>((acc, u) => {
     const key = (u.utm_source || "direct").toLowerCase();
     acc[key] = (acc[key] || 0) + 1;
@@ -734,7 +734,7 @@ export default function AdminPage() {
   const sortArrow = (key: typeof userSort.key) =>
     userSort.key === key ? (userSort.dir === "asc" ? " ▲" : " ▼") : "";
 
-  // 진단서 검색 필터 — 이름·이메일·연락처·업종·사업자번호 어디에 걸려도 검색됨
+  // 진단서 검색 필터 - 이름·이메일·연락처·업종·사업자번호 어디에 걸려도 검색됨
   const filteredDiagnoses = diagnoses.filter((d) => {
     const q = diagSearch.trim().toLowerCase();
     if (!q) return true;
@@ -909,7 +909,7 @@ export default function AdminPage() {
     openResultForDiag(target);
   };
 
-  // 조회권 환불(열람 차단) — 실제 결제 환불은 대표님이 PG사에서 처리하고,
+  // 조회권 환불(열람 차단) - 실제 결제 환불은 대표님이 PG사에서 처리하고,
   //   이 버튼은 '사이트에서 더 이상 정보를 못 보게' 조회권을 0으로 만들어 열람을 즉시 차단한다.
   //   (환불만 받고 정보를 계속 빼가는 것을 방지)
   const refundCredits = async (email: string | null) => {
@@ -935,7 +935,7 @@ export default function AdminPage() {
     setTimeout(() => setMsg(null), 4000);
   };
 
-  // 조회권 환불 취소(열람 복구) — 환불 처리했던 조회권을 되돌려 다시 볼 수 있게 한다.
+  // 조회권 환불 취소(열람 복구) - 환불 처리했던 조회권을 되돌려 다시 볼 수 있게 한다.
   const restoreCredits = async (email: string | null) => {
     if (!email) return;
     if (
@@ -957,7 +957,7 @@ export default function AdminPage() {
     setTimeout(() => setMsg(null), 4000);
   };
 
-  // 회원 계정 삭제 — 관련 데이터(진단서·결제·기기)와 로그인 계정까지 제거. 되돌릴 수 없음.
+  // 회원 계정 삭제 - 관련 데이터(진단서·결제·기기)와 로그인 계정까지 제거. 되돌릴 수 없음.
   const deleteUser = async (email: string | null) => {
     if (!email) {
       setMsg("이 회원은 이메일 정보가 없어 삭제할 수 없습니다.");
@@ -1169,7 +1169,7 @@ export default function AdminPage() {
             />
           </section>
 
-          {/* 탭 + 빠른 실행 버튼 — 한 줄에 균등 분배해 빈 공간 없이 꽉 채운다
+          {/* 탭 + 빠른 실행 버튼 - 한 줄에 균등 분배해 빈 공간 없이 꽉 채운다
               순서: 회원목록 · 고객진단서 · 결제조회권 · 매출통계 · [요약매출리포트] · 접속기기차단 · 진단서엑셀 · 진단링크복사 */}
           <div className="mb-4 flex flex-wrap items-center gap-2">
             {/* 1~4: 앞쪽 탭 4개(map) */}
@@ -1206,7 +1206,7 @@ export default function AdminPage() {
               🛡️ 접속 기기 차단
             </button>
 
-            {/* 6: 진단서 엑셀(실행) — 흰/회색 통일 */}
+            {/* 6: 진단서 엑셀(실행) - 흰/회색 통일 */}
             <button
               onClick={downloadAllDiag}
               disabled={diagnoses.length === 0}
@@ -1216,7 +1216,7 @@ export default function AdminPage() {
               📋 진단서 엑셀
             </button>
 
-            {/* 7: 진단링크 복사(실행) — 흰/회색 통일 */}
+            {/* 7: 진단링크 복사(실행) - 흰/회색 통일 */}
             <button
               onClick={copyDiagnosisLink}
               className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50"
@@ -1229,7 +1229,7 @@ export default function AdminPage() {
           {/* ------- 회원 목록 ------- */}
           {tab === "users" && (
             <div>
-              {/* 🔍 회원 검색 — 이름·이메일·연락처로 즉시 검색 */}
+              {/* 🔍 회원 검색 - 이름·이메일·연락처로 즉시 검색 */}
               <div className="mb-4 flex w-full flex-wrap items-center gap-2">
                 <div className="relative w-full min-w-0 sm:w-auto sm:flex-1">
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -1239,7 +1239,7 @@ export default function AdminPage() {
                     type="text"
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
-                    placeholder="회원 검색 — 이름 · 이메일 · 연락처 (예: 홍길동 / 010 / hong@)"
+                    placeholder="회원 검색 - 이름 · 이메일 · 연락처 (예: 홍길동 / 010 / hong@)"
                     className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 outline-none focus:border-brand-orange"
                   />
                 </div>
@@ -1253,7 +1253,7 @@ export default function AdminPage() {
                 )}
                 {/* 오른쪽 정렬: 유입경로 필터 + 엑셀 다운 + N명 배지 */}
                 <div className="ml-auto flex shrink-0 items-center gap-2">
-                  {/* 유입경로 필터 — 채널별로 걸러보기(어느 채널이 돈이 되는지 판단) */}
+                  {/* 유입경로 필터 - 채널별로 걸러보기(어느 채널이 돈이 되는지 판단) */}
                   <select
                     value={userSourceFilter}
                     onChange={(e) => setUserSourceFilter(e.target.value)}
@@ -1269,12 +1269,12 @@ export default function AdminPage() {
                         </option>
                       ))}
                   </select>
-                  {/* 회원 목록 CSV 다운로드 — 세무·백업·문자발송 명단용 */}
+                  {/* 회원 목록 CSV 다운로드 - 세무·백업·문자발송 명단용 */}
                   <button
                     onClick={downloadUsersCsv}
                     disabled={users.length === 0}
                     className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
-                    title="회원 명단을 엑셀(CSV)로 내려받습니다 — 이름·연락처·유입경로 포함"
+                    title="회원 명단을 엑셀(CSV)로 내려받습니다 - 이름·연락처·유입경로 포함"
                   >
                     ⬇️ 회원 엑셀 다운
                   </button>
@@ -1360,10 +1360,10 @@ export default function AdminPage() {
                               {/* ① 계정 자체 이름(소셜 로그인 닉네임) → ② 진단서 역추적 이름 → ③ 미입력 순 */}
                               {(u.full_name && u.full_name.trim()) || info.name || "이름 미입력"}
                             </button>
-                            {/* 진단 완료 여부 미니 점 — 회원↔진단서 연결 상태 한눈에 */}
+                            {/* 진단 완료 여부 미니 점 - 회원↔진단서 연결 상태 한눈에 */}
                             {hasDiag ? (
                               <span
-                                title="진단 완료 — 클릭 가능"
+                                title="진단 완료 - 클릭 가능"
                                 className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
                               />
                             ) : (
@@ -1560,7 +1560,7 @@ export default function AdminPage() {
           {/* ------- 고객 진단서 (질문지 + 결과) ------- */}
           {tab === "diagnoses" && (
             <div className="space-y-3">
-              {/* ★ 완료 / 미완료(중간이탈) 요약 — 대표님이 전화 돌릴 리드 한눈에 파악 ★ */}
+              {/* ★ 완료 / 미완료(중간이탈) 요약 - 대표님이 전화 돌릴 리드 한눈에 파악 ★ */}
               {diagnoses.length > 0 && (
                 <div className="grid grid-cols-2 gap-2">
                   <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center shadow-sm">
@@ -1581,7 +1581,7 @@ export default function AdminPage() {
                   </div>
                 </div>
               )}
-              {/* 🔍 진단서 검색 — 이름·이메일·연락처·업종·사업자번호로 즉시 검색 */}
+              {/* 🔍 진단서 검색 - 이름·이메일·연락처·업종·사업자번호로 즉시 검색 */}
               {diagnoses.length > 0 && (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <div className="relative flex-1">
@@ -1592,7 +1592,7 @@ export default function AdminPage() {
                       type="text"
                       value={diagSearch}
                       onChange={(e) => setDiagSearch(e.target.value)}
-                      placeholder="진단서 검색 — 이름 · 이메일 · 연락처 · 업종으로 찾기 (예: 홍길동 / 010 / hong@)"
+                      placeholder="진단서 검색 - 이름 · 이메일 · 연락처 · 업종으로 찾기 (예: 홍길동 / 010 / hong@)"
                       className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 outline-none focus:border-brand-orange"
                     />
                   </div>
@@ -1611,7 +1611,7 @@ export default function AdminPage() {
                   </span>
                 </div>
               )}
-              {/* 다운로드 툴바 — 전체 / 선택 다운로드 + 전체선택 체크 */}
+              {/* 다운로드 툴바 - 전체 / 선택 다운로드 + 전체선택 체크 */}
               {diagnoses.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
                   <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-600">
@@ -1699,7 +1699,7 @@ export default function AdminPage() {
                               ✅ 완료
                             </span>
                           )}
-                          {/* ☎️ 통화 상태 뱃지 — 미접촉이 아닐 때만 표시 (전화 진행상황 한눈에) */}
+                          {/* ☎️ 통화 상태 뱃지 - 미접촉이 아닐 때만 표시 (전화 진행상황 한눈에) */}
                           {(() => {
                             const st = leadNotes[d.id]?.status ?? "none";
                             if (st === "none") return null;
@@ -1716,7 +1716,7 @@ export default function AdminPage() {
                           <span className="ml-2 text-sm text-gray-500">
                             {(p as any)?.businessType || ""}
                           </span>
-                          {/* 중복 신청 뱃지 — 몇 번째 신청인지 (동일 연락처/이메일) */}
+                          {/* 중복 신청 뱃지 - 몇 번째 신청인지 (동일 연락처/이메일) */}
                           {isDup && (
                             <span className="ml-2 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700">
                               🔁 {dupIdx}번째 신청
@@ -1740,7 +1740,7 @@ export default function AdminPage() {
                         </p>
                         <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
                           {Object.entries(p)
-                            // 예전 질문지에만 있던 항목(과세유형·관심 분야) — 지금 질문지엔 없으므로 관리자 진단서에서도 숨김 (대표님 요청)
+                            // 예전 질문지에만 있던 항목(과세유형·관심 분야) - 지금 질문지엔 없으므로 관리자 진단서에서도 숨김 (대표님 요청)
                             .filter(([k]) => !["bnoTaxType", "interests"].includes(k))
                             .map(([k, v]) => (
                             <div
@@ -1756,7 +1756,7 @@ export default function AdminPage() {
                             </div>
                           ))}
                         </div>
-                        {/* ☎️ 상담 관리 — 통화 상태 + 메모 (localStorage 저장, DB 불필요) */}
+                        {/* ☎️ 상담 관리 - 통화 상태 + 메모 (localStorage 저장, DB 불필요) */}
                         <div className="mt-4 rounded-xl border border-slate-700 bg-slate-800/60 p-3">
                           <p className="mb-2 text-xs font-bold text-slate-300">☎️ 상담 관리</p>
                           {/* 통화 상태 선택 */}
@@ -1787,7 +1787,7 @@ export default function AdminPage() {
                               onChange={(e) =>
                                 setMemoDraft((prev) => ({ ...prev, [d.id]: e.target.value }))
                               }
-                              placeholder="상담 메모 — 예: 5천만 필요, 소진공 직접대출 안내함 / 다음 주 재통화"
+                              placeholder="상담 메모 - 예: 5천만 필요, 소진공 직접대출 안내함 / 다음 주 재통화"
                               rows={2}
                               className="flex-1 resize-none rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-brand-orange"
                             />

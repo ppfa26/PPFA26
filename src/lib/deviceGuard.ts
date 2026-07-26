@@ -48,7 +48,7 @@ export function getDeviceFingerprint(): string {
       h = (h * 33) ^ parts.charCodeAt(i);
     }
     const fp = (h >>> 0).toString(16);
-    // 캐시(같은 세션 내 재계산 방지) — 없어도 동일 값이 나오도록 설계됨
+    // 캐시(같은 세션 내 재계산 방지) - 없어도 동일 값이 나오도록 설계됨
     localStorage.setItem(FP_KEY, fp);
     return fp;
   } catch {
@@ -71,7 +71,7 @@ async function getPublicIp(): Promise<string | null> {
 }
 
 // 결과 열람 기기 등록/검증 (로그인 상태에서 호출)
-//   반환: { ok, message } — ok=false 면 다른 기기로 잠긴 것
+//   반환: { ok, message } - ok=false 면 다른 기기로 잠긴 것
 export async function registerViewDevice(): Promise<{
   ok: boolean;
   message: string;

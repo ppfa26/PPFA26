@@ -1,7 +1,7 @@
 "use client";
 
 // ─────────────────────────────────────────────────────────────────────────
-//  정밀 추가진단 패널 — 토스식 단계형(한 번에 하나씩) 쉬운 질문 UI
+//  정밀 추가진단 패널 - 토스식 단계형(한 번에 하나씩) 쉬운 질문 UI
 //  ⚠️ 판독 로직(runAdvancedScreening)은 절대 수정하지 않습니다.
 //     여기서는 입력 UX만 쉽게 바꾸고, 기존 Company 스키마로 변환해서 넘깁니다.
 //
@@ -53,7 +53,7 @@ function natureBadgeCls(nature: string): string {
   return "bg-purple-100 text-purple-700"; // 대리대출
 }
 
-// 업종 — 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
+// 업종 - 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
 const INDUSTRY_OPTIONS: { value: string; label: string; emoji: string }[] = [
   { value: "manufacturing", label: "제조업", emoji: "🏭" },
   { value: "wholesale", label: "도매업", emoji: "📦" },
@@ -117,7 +117,7 @@ export default function AdvancedScreeningPanel({
     return () => window.removeEventListener("mpp-advanced-applied", recompute);
   }, []);
 
-  // 단계(토스식) — 0부터 시작, 마지막 단계에서 판정 실행
+  // 단계(토스식) - 0부터 시작, 마지막 단계에서 판정 실행
   const [step, setStep] = useState(0);
 
   // ── 입력 상태 ──────────────────────────────────────────────
@@ -235,7 +235,7 @@ export default function AdvancedScreeningPanel({
 
       if (touched) setPrefilled(true);
     } catch {
-      /* 무시 — 처음 질문지 없거나 파싱 실패 시 빈 상태로 시작 */
+      /* 무시 - 처음 질문지 없거나 파싱 실패 시 빈 상태로 시작 */
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -255,7 +255,7 @@ export default function AdvancedScreeningPanel({
       const company: Company = profileToCompany(p);
       setReport(runAdvancedScreening(company));
     } catch {
-      /* 실패 시 결과 없음 — 대시보드 매칭리스트는 별도로 표시됨 */
+      /* 실패 시 결과 없음 - 대시보드 매칭리스트는 별도로 표시됨 */
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRun]);
@@ -348,7 +348,7 @@ export default function AdvancedScreeningPanel({
       };
       setReport(runAdvancedScreening(company));
     } catch {
-      /* 변환 실패 시 결과 없음 — 대시보드 매칭리스트는 별도로 표시됨 */
+      /* 변환 실패 시 결과 없음 - 대시보드 매칭리스트는 별도로 표시됨 */
     }
 
     setTimeout(() => {
@@ -794,7 +794,7 @@ function AdvancedResult({
   // ★ 실제 화면에 그린 4개 카테고리 실측 갯수를 부모(요약 배너)로 올려 숫자 100% 일치 (대표님 요청)
   onCounts?: (c: { supports: number; products: number; benefits: number; announcements: number }) => void;
 }) {
-  // ★ 요약 배너 숫자 100% 일치용 — 비동기로 그려지는 두 카드(감면·그외공고)의 실측 갯수를 자식에서 받아 보관 ★
+  // ★ 요약 배너 숫자 100% 일치용 - 비동기로 그려지는 두 카드(감면·그외공고)의 실측 갯수를 자식에서 받아 보관 ★
   const [benefitsCount, setBenefitsCount] = useState<number | null>(null);
   const [announcementsCount, setAnnouncementsCount] = useState<number | null>(null);
   // 미리보기(previewLock)에서는 '그 외 정부지원사업'(RelatedAnnouncements)이 렌더되지 않으므로 0으로 확정
@@ -806,7 +806,7 @@ function AdvancedResult({
   const lockText = previewLock ? "preview-lock-text" : "";
   const lockClick = previewLock ? "preview-lock-click" : "";
   // 텍스트가 밀집돼 모자이크가 과해 보이는 카테고리 전용(약한 블러):
-  //  🎁 정부지원제도 · 🏦 정책금융기관 (대표님 요청 — 그 카테고리만 완화)
+  //  🎁 정부지원제도 · 🏦 정책금융기관 (대표님 요청 - 그 카테고리만 완화)
   const lockTextSoft = previewLock ? "preview-lock-text-soft" : "";
   const lockClickSoft = previewLock ? "preview-lock-click-soft" : "";
   // 흐림 없이 클릭만 막기 (제목·설명은 그대로 보여주되 결제 전 페이지 이동만 차단)
@@ -823,7 +823,7 @@ function AdvancedResult({
   const [sinboRegion, setSinboRegion] = useState("");
   const selectedSinbo = REGION_SINBO.find((r) => r.region === sinboRegion);
 
-  // ★ 기관별 상품 아코디언 — 클릭 시 해당 기관의 여러 상품이 쭈르륵 펼쳐짐 ★
+  // ★ 기관별 상품 아코디언 - 클릭 시 해당 기관의 여러 상품이 쭈르륵 펼쳐짐 ★
   //  (대표님 요청) 모든 기관 카테고리를 처음부터 '펼쳐진' 상태로 통일 → 위아래 오픈 정도 차이 없음.
   const [openProducts, setOpenProducts] = useState<Record<number, boolean>>({});
   const toggleProducts = (i: number) =>
@@ -845,8 +845,8 @@ function AdvancedResult({
   const hasDae = creditMatches.some((m) => m.loan_type === "대리대출");
   const hasDirect = creditMatches.some((m) => m.loan_type === "직접대출");
 
-  // ★ 정책금융상품 '실측 갯수' — 아래 아코디언 렌더(959행~)와 100% 동일한 filterProducts 결과를 그대로 합산 ★
-  //   (Math.max(1,...) 같은 보정 없이, 화면에 실제로 그려지는 상품 카드 수와 정확히 일치시킨다 — 대표님 요청)
+  // ★ 정책금융상품 '실측 갯수' - 아래 아코디언 렌더(959행~)와 100% 동일한 filterProducts 결과를 그대로 합산 ★
+  //   (Math.max(1,...) 같은 보정 없이, 화면에 실제로 그려지는 상품 카드 수와 정확히 일치시킨다 - 대표님 요청)
   const productsShownCount = creditMatches.reduce((sum, m) => {
     const link = findInstitutionLink(m.institution);
     const isJaedan = m.institution.includes("재단");
@@ -882,7 +882,7 @@ function AdvancedResult({
         </h2>
       )}
 
-      {/* ★ 사용 안내 배너 — 숫자 요약은 상단 히어로(matching-preview)와 중복이라 제거하고
+      {/* ★ 사용 안내 배너 - 숫자 요약은 상단 히어로(matching-preview)와 중복이라 제거하고
           '어떻게 보는지' 안내 문구만 남김 (대표님 요청: 결과창 중복 정리) */}
       {autoRun && (
         <div className="rounded-2xl border border-brand-orange/70 bg-brand-grad px-4 py-5 shadow-card">
@@ -893,7 +893,7 @@ function AdvancedResult({
         </div>
       )}
 
-      {/* ① 정부지원제도 — 최상단 배치 (대표님 요청) · 기관 박스와 동일한 틀 */}
+      {/* ① 정부지원제도 - 최상단 배치 (대표님 요청) · 기관 박스와 동일한 틀 */}
       {/*  정책자금(대출·보증)과 별개로 병행 신청 가능 · 진단 기준 '해당되는 것만' · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
       {eligibleSupport.length > 0 && (
         <AccordionCard
@@ -901,7 +901,7 @@ function AdvancedResult({
           title="신청 가능한 정부지원제도"
           subtitle="지금 신청할 수 있는 제도예요"
         >
-          {/* ★ V표시(✅) 보고 이렇게 신청하면 된다 — 3스텝 미니 가이드 (대표님 요청) ★ */}
+          {/* ★ V표시(✅) 보고 이렇게 신청하면 된다 - 3스텝 미니 가이드 (대표님 요청) ★ */}
           <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">
             <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
               ✅ 표시된 곳, 이렇게 신청하시면 됩니다
@@ -954,7 +954,7 @@ function AdvancedResult({
                   <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray">
                     {prog.desc}
                   </p>
-                  {/* 신청방법 + 문의 전화 — 회색 박스 (모든 카드 통일 위치) */}
+                  {/* 신청방법 + 문의 전화 - 회색 박스 (모든 카드 통일 위치) */}
                   {(prog.applyHow || prog.applyTel) && (
                     <div className="mt-3 rounded-lg bg-gray-50 px-3 py-2.5">
                       {prog.applyHow && (
@@ -998,7 +998,7 @@ function AdvancedResult({
         </AccordionCard>
       )}
 
-      {/* ② 이용 가능한 정책금융상품 — 정부지원제도 바로 아래 (읽기 순서: 🏅→💳→💎→📢)
+      {/* ② 이용 가능한 정책금융상품 - 정부지원제도 바로 아래 (읽기 순서: 🏅→💳→💎→📢)
              (대표님 요청: '정책금융기관'보다 '정책금융상품'이 더 정확한 표현) */}
       <AccordionCard
         emoji="💳"
@@ -1038,7 +1038,7 @@ function AdvancedResult({
               : filteredProducts;
             // '승인 가능성 높음 · 먼저 신청 추천' 강조 배지는 표시 순서와 무관하게
             //  승인율(approval)이 가장 높은 상품에 붙인다. (소진공은 직접대출을 위로 올려
-            //  표시하지만, 강조는 여전히 승인율 최상위 상품 기준 — 문구 정확도 유지)
+            //  표시하지만, 강조는 여전히 승인율 최상위 상품 기준 - 문구 정확도 유지)
             const topProductIdx =
               products && products.length > 0
                 ? products.reduce(
@@ -1061,7 +1061,7 @@ function AdvancedResult({
                       {m.loan_type}
                     </span>
                   )}
-                  {/* 이미 이용 중인 기관 표시 (중복배제 참고 — 대표님 요청) */}
+                  {/* 이미 이용 중인 기관 표시 (중복배제 참고 - 대표님 요청) */}
                   {m.alreadyUsing && (
                     <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                       현재 이용 중
@@ -1077,7 +1077,7 @@ function AdvancedResult({
                   </p>
                 )}
 
-                {/* ★ 기관 내 여러 상품 아코디언 — 클릭 시 펼쳐서 상품별로 신청 (대표님 요청) ★ */}
+                {/* ★ 기관 내 여러 상품 아코디언 - 클릭 시 펼쳐서 상품별로 신청 (대표님 요청) ★ */}
                 {products && products.length > 0 && (
                   <div className="mt-2.5">
                     <button
@@ -1108,7 +1108,7 @@ function AdvancedResult({
                                 : "border border-gray-200 bg-gray-50"
                             }`}
                           >
-                            {/* ★ 이 기관에서 가장 먼저 신청하면 좋은 상품 — 체크 포인트 (대표님 요청) */}
+                            {/* ★ 이 기관에서 가장 먼저 신청하면 좋은 상품 - 체크 포인트 (대표님 요청) */}
                             {isTop && (
                               <p className={`mb-1.5 inline-flex items-center gap-1 break-keep rounded-full bg-brand-green px-2.5 py-0.5 text-[10px] font-extrabold text-white ${lockTextSoft}`}>
                                 승인 가능성 높음 · 먼저 신청 추천
@@ -1118,7 +1118,7 @@ function AdvancedResult({
                               <span className={`break-keep text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>
                                 {prod.name}
                               </span>
-                              {/* ★ 상품 성격 배지 (대표님 기준: 직접대출/대리대출) — 자금이 어떻게 나오는지 한눈에.
+                              {/* ★ 상품 성격 배지 (대표님 기준: 직접대출/대리대출) - 자금이 어떻게 나오는지 한눈에.
                                    상품에 nature가 지정돼 있으면 상품 단위로(소진공은 상품마다 갈림),
                                    없으면 기관 기본값(loanNatureOf)으로 판별. 둘 다 가능하면 배지 2개. */}
                               {(() => {
@@ -1300,7 +1300,7 @@ function AdvancedResult({
           <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-xs leading-relaxed text-brand-dark">
             💡 대출은 보통 <b>직접대출 1곳(공단이 직접 실행) + 대리대출 1곳(보증서를 받아 은행에서 실행)</b>, 즉 <b>총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>
-          {/* 신용점수 안내 — 알맹이라 결제 전 잠금 */}
+          {/* 신용점수 안내 - 알맹이라 결제 전 잠금 */}
           <p
             className={`break-keep rounded-lg px-3 py-2 text-xs leading-relaxed ${
               creditAdvice.tier === "good"
@@ -1314,7 +1314,7 @@ function AdvancedResult({
           </p>
         </div>
 
-        {/* 신청 → 실행 진행 절차·소요기간 안내 — 같은 맥락이라 정책금융기관 박스 '안'으로 통합 (대표님 요청, 구분선으로 구획) */}
+        {/* 신청 → 실행 진행 절차·소요기간 안내 - 같은 맥락이라 정책금융기관 박스 '안'으로 통합 (대표님 요청, 구분선으로 구획) */}
         {(hasDae || hasDirect) && (
           <div className="mt-4 border-t border-brand-dark/10 pt-4">
             <p className="text-base font-extrabold text-brand-dark">
@@ -1353,7 +1353,7 @@ function AdvancedResult({
           </div>
         )}
 
-        {/* 기관별 상품 한눈에 보기 — 같은 맥락(정책금융기관 상품)이라 이 박스 '안' 하단으로 통합 (대표님 요청, 구분선으로 구획) */}
+        {/* 기관별 상품 한눈에 보기 - 같은 맥락(정책금융기관 상품)이라 이 박스 '안' 하단으로 통합 (대표님 요청, 구분선으로 구획) */}
         <div className="mt-4 border-t border-brand-dark/10 pt-4">
           <p className="text-base font-extrabold text-brand-dark">
             📊 기관별 상품 한눈에 보기
@@ -1377,19 +1377,19 @@ function AdvancedResult({
         </div>
       </AccordionCard>
 
-      {/* ③ 챙기면 좋은 추가 감면 혜택 — 정책금융기관 바로 아래 (읽기 순서: 🏅→💳→💎→📢) */}
+      {/* ③ 챙기면 좋은 추가 감면 혜택 - 정책금융기관 바로 아래 (읽기 순서: 🏅→💳→💎→📢) */}
       {autoRun && <ExtraBenefitsSection previewLock={previewLock} onCount={setBenefitsCount} />}
 
-      {/* ④ 지금 열려있는 관련 정부지원사업(기업마당 실공고) — 감면 혜택 바로 아래
+      {/* ④ 지금 열려있는 관련 정부지원사업(기업마당 실공고) - 감면 혜택 바로 아래
              진단 프로필의 지역·업종·관심분야로 실제 공고를 추려 아코디언으로 노출.
              AI 해설 없이 공고명·신청기간·기관만 보여주고 기업마당 원문으로 링크. */}
       {autoRun && !previewLock && (
         <RelatedAnnouncements profile={relatedProfile} onCount={setAnnouncementsCount} />
       )}
 
-      {/* (기관별 상품 한눈에 보기는 '이용 가능한 정책금융기관' 아코디언 안 하단으로 통합됨 — 대표님 요청) */}
+      {/* (기관별 상품 한눈에 보기는 '이용 가능한 정책금융기관' 아코디언 안 하단으로 통합됨 - 대표님 요청) */}
 
-      {/* ⑤ 예비창업자 전용 지원사업 (대표님 요청 Q5) — '예비창업자' 체크한 고객에게만,
+      {/* ⑤ 예비창업자 전용 지원사업 (대표님 요청 Q5) - '예비창업자' 체크한 고객에게만,
              '사이트 바로가기' 바로 위에 별도 아코디언으로 노출. 대출이 아닌 사업화 자금(무상) 중심. */}
       {report.company.is_pre_founder && (
         <AccordionCard
@@ -1441,7 +1441,7 @@ function AdvancedResult({
         </AccordionCard>
       )}
 
-      {/* 대표님들이 알아두면 좋은 정부 사이트 모음으로 이동 — 아코디언과 톤 통일(둥근 모서리·부드러운 그림자) */}
+      {/* 대표님들이 알아두면 좋은 정부 사이트 모음으로 이동 - 아코디언과 톤 통일(둥근 모서리·부드러운 그림자) */}
       <a
         href={previewLock ? undefined : "/sites"}
         className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-3.5 shadow-card transition hover:opacity-90 ${previewLock ? "pointer-events-none" : ""}`}

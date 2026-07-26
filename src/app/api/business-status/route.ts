@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 // 국세청 사업자등록 상태조회 API (공공데이터포털)
-// 인증키는 서버 환경변수에만 저장 — 프론트로 절대 노출되지 않음
+// 인증키는 서버 환경변수에만 저장 - 프론트로 절대 노출되지 않음
 const NTS_API_KEY = process.env.NTS_BUSINESS_API_KEY as string;
 const NTS_STATUS_URL = "https://api.odcloud.kr/api/nts-businessman/v1/status";
 

@@ -129,7 +129,7 @@ export default function InstallAppButton() {
         </div>
       )}
 
-      {/* 설치 버튼 — 채널톡 버튼 바로 위 (bottom 간격을 채널톡보다 위로) */}
+      {/* 설치 버튼 - 채널톡 버튼 바로 위 (bottom 간격을 채널톡보다 위로) */}
       <button
         type="button"
         id="install-app-button"
@@ -141,7 +141,7 @@ export default function InstallAppButton() {
         }}
         className="group fixed bottom-[54px] right-4 z-50 flex w-[128px] items-center justify-center gap-1 rounded-full border border-black/5 px-2.5 py-1.5 shadow-lg ring-1 ring-black/5 transition hover:shadow-xl sm:bottom-[80px] sm:right-7 sm:w-[176px] sm:gap-1.5 sm:px-3.5 sm:py-2.5"
       >
-        {/* 홈 화면 추가 아이콘 — 화면(사각형) 안에 + 추가 */}
+        {/* 홈 화면 추가 아이콘 - 화면(사각형) 안에 + 추가 */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

@@ -24,7 +24,7 @@
 // 기존 진단(DiagnosisProfile)과 별개로, 사용자가 "정밀 추가진단(선택)"에서
 // 직접 입력하는 정밀 수치 데이터. 입력하지 않으면 추가 판정은 표시하지 않는다.
 export type Company = {
-  industry?: string; // 업종 (제조업/도소매업/음식점업/서비스업/수출업/기타) — 복수선택 시 첫 번째
+  industry?: string; // 업종 (제조업/도소매업/음식점업/서비스업/수출업/기타) - 복수선택 시 첫 번째
   industries_all?: string[]; // 진단에서 고른 업종 전체(재단 우선 취급업종 판정용, 선택)
   years_in_business?: number; // 업력(년)
   annual_revenue?: number; // 연매출(원)
@@ -44,7 +44,7 @@ export type Company = {
   region?: string; // 사업장 소재 지역(재단 지역 안내용)
   has_collateral?: boolean; // 부동산·기계장비 담보 보유
   current_institutions?: string[]; // 현재 이용 중인 보증·정책기관(중복배제 판단용)
-  purposes?: string[]; // 상담 목적(운전/시설/수출/창업 등) — 매칭 힌트
+  purposes?: string[]; // 상담 목적(운전/시설/수출/창업 등) - 매칭 힌트
   tax_delinquent?: boolean; // 국세/지방세 체납
   insurance_4_delinquent?: boolean; // 4대보험 체납
   full_capital_impairment?: boolean; // 완전자본잠식
@@ -61,7 +61,7 @@ export type Company = {
   // ── 업종·규모 기반 추천 필터용 (대표님 실무 기준) ──
   biz_type?: "personal" | "corp"; // 사업자 유형 (개인/법인)
   employee_count?: number; // 4대보험 가입 상시직원 수
-  is_small_business?: boolean; // 소상공인 여부(매출·업종 기준) — 미지정 시 매출로 자동 추정
+  is_small_business?: boolean; // 소상공인 여부(매출·업종 기준) - 미지정 시 매출로 자동 추정
   is_exporter?: boolean; // 수출 여부 (100만원이라도 수출 실적 있으면 true)
   is_tourism?: boolean; // 관광사업체 등록 여부 (관광기업 바우처 자격)
   uses_smart_tech?: boolean; // 스마트기기(키오스크·무인판매기·서빙로봇·POS 등) 사용 → 혁신성장촉진자금(일반형) 대상
@@ -125,7 +125,7 @@ export type Company = {
   ceo_is_researcher?: boolean; // 대표자가 연구원 겸직
 };
 
-// 출처 태그 (UI 표시용) — 각 판정 결과에 부착
+// 출처 태그 (UI 표시용) - 각 판정 결과에 부착
 export const SOURCE_TAGS = {
   KODIT: "출처: 신용보증기금 2026 업무설명자료",
   KIBO: "출처: 기술보증기금 2026 보증운용",
@@ -193,7 +193,7 @@ export function screenKoditHardReject(company: Company): KoditHardRejectResult {
 }
 
 // ═════════════════════════════════════════════════════════════════════════
-//  【BLOCK 2】이용 가능 기관 매칭 (업종·규모 기준 — 대표님 실무 기준)
+//  【BLOCK 2】이용 가능 기관 매칭 (업종·규모 기준 - 대표님 실무 기준)
 //  ⚠️ 정책자금 기관 선정은 신용점수가 아니라 "업종·직원수"가 핵심.
 //     - 음식점·도소매·서비스 → 지역신용보증재단·신용보증기금·소상공인시장진흥공단
 //       (4대보험 상시직원 5명 이상 → 중소벤처기업진흥공단까지 가능)
@@ -237,7 +237,7 @@ function normalizeIndustry(
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  【지역신용보증재단 우선 취급대상 업종】 (대표님 기준 — 신보→재단 이관 업종)
+//  【지역신용보증재단 우선 취급대상 업종】 (대표님 기준 - 신보→재단 이관 업종)
 //   신용보증기금이 "가계 유지 목적 생계형 업종"은 재단으로 내려보내므로,
 //   이 업종에 해당하면 매출 규모가 커도 신보가 아니라 '재단 우선'으로 안내한다.
 //   출처: 지역신용보증재단 우선 취급대상 업종 안내
@@ -277,7 +277,7 @@ export function isJaedanPriorityIndustry(industry?: string | string[]): boolean 
   });
 }
 
-// 큐레이션용 업종 대분류(IndustryKind) 산정 — 수출 여부를 최우선으로 반영.
+// 큐레이션용 업종 대분류(IndustryKind) 산정 - 수출 여부를 최우선으로 반영.
 //  대표님 기준: "수출업"은 별도 트랙이므로 수출 실적이 있으면 export로 본다.
 //  그 외엔 업종 문자열로 food/retail/manufacturing/service/etc 분류.
 function resolveIndustryKind(company: Company): IndustryKind {
@@ -336,7 +336,7 @@ export function isTechCompany(company: Company): boolean {
   );
 }
 
-// 이용 가능 기관 판정 — 업종·직원수·수출·기술·규모 기준 + 신청 권장 순서 + 중복배제
+// 이용 가능 기관 판정 - 업종·직원수·수출·기술·규모 기준 + 신청 권장 순서 + 중복배제
 export function matchInstitutions(company: Company): CreditMatch[] {
   const matches: CreditMatch[] = [];
   const cat = normalizeIndustry(company.industry);
@@ -375,7 +375,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       {
         institution: "소상공인시장진흥공단",
         criteria:
-          "재도전 전용 안내 — 재도전특별자금(재창업·채무조정 성실상환자)이 대상입니다. 일반 정책자금·보증은 면책·인가 후 3년이 경과해야 가능하며, 해당 기관이 채권자였던 경우에는 제한될 수 있습니다.",
+          "재도전 전용 안내 - 재도전특별자금(재창업·채무조정 성실상환자)이 대상입니다. 일반 정책자금·보증은 면책·인가 후 3년이 경과해야 가능하며, 해당 기관이 채권자였던 경우에는 제한될 수 있습니다.",
         priority: "MEDIUM",
         loan_type: "직접대출",
         step: 1,
@@ -501,7 +501,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
   }
 
-  // ── 중진공(직접대출) 병행 — 제조·혁신성장·수출·청년(39세↓)이면 직원 0명·개인도 OK ──
+  // ── 중진공(직접대출) 병행 - 제조·혁신성장·수출·청년(39세↓)이면 직원 0명·개인도 OK ──
   //   대표님: 매출 하한 없음. 성장 방향성·자금 사용계획·대표 의지 종합 판단.
   const qualifiesJungjin =
     isManufacturingCore || company.is_innovation_area || isExport || qualifiesYouthFund || youthFundSpecialMaybe || employees >= 5;
@@ -524,7 +524,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
   }
 
-  // ── 소진공(직접대출) 병행 — 소상공인 규모 or 제조업 추가자금 or 스마트기기 도입 ──
+  // ── 소진공(직접대출) 병행 - 소상공인 규모 or 제조업 추가자금 or 스마트기기 도입 ──
   //   대표님: 소상공인 대부분 + 중진공 받은 제조업 추가자금 + 스마트기기 도입(혁신성장촉진자금 일반형).
   //   상품별 승인율은 결과창 상품 아코디언에 정직하게 명시.
   if (segment === "small" || isManufacturingCore || company.uses_smart_tech) {
@@ -538,7 +538,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
   }
 
-  // ── 무역보험공사 — 수출실적증명원 발급 기업(법인 선호, BB+ 이상 승인율 높음) ──
+  // ── 무역보험공사 - 수출실적증명원 발급 기업(법인 선호, BB+ 이상 승인율 높음) ──
   if (isExport) {
     matches.push({
       institution: "한국무역보험공사",
@@ -619,7 +619,7 @@ export function creditScoreAdvice(company: Company): { tier: CreditTier; message
   };
 }
 
-// 하위호환용 래퍼 (신용점수만 넘어오는 기존 호출부 대비) — 내부적으로 미사용
+// 하위호환용 래퍼 (신용점수만 넘어오는 기존 호출부 대비) - 내부적으로 미사용
 export function matchByCreditScore(kcb_score: number, nice_score: number): CreditMatch[] {
   return matchInstitutions({ kcb_score, nice_score });
 }
@@ -728,11 +728,11 @@ export type GovProgram = {
   fitTags?: IndustryKind[]; // 이 사업이 특히 잘 맞는 업종들
 };
 
-// 업종 대분류 (큐레이션 기준용) — normalizeIndustry 결과와 1:1 매칭
+// 업종 대분류 (큐레이션 기준용) - normalizeIndustry 결과와 1:1 매칭
 export type IndustryKind = "food" | "retail" | "export" | "manufacturing" | "service" | "etc";
 
 export const GOV_SUPPORT_2026: GovProgram[] = [
-  // 창업(예비·초기) — 예비창업자/재창업자·나이·업력 조건이 붙어 해당자만 노출됨
+  // 창업(예비·초기) - 예비창업자/재창업자·나이·업력 조건이 붙어 해당자만 노출됨
   { name: "예비창업패키지", amount_max: 100000000, condition: "is_pre_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
   { name: "초기창업패키지", amount_max: 100000000, years_max: 3, self_burden: 0.3, segment: "both", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
   { name: "청년창업사관학교", amount_max: 100000000, age_max: 39, years_max: 3, segment: "both", isStartupProgram: true, applyUrl: "https://start.kosmes.or.kr" },
@@ -741,43 +741,43 @@ export const GOV_SUPPORT_2026: GovProgram[] = [
   { name: "공공기술창업", amount_max: 70000000, age_max: 39, condition: "is_pre_founder", segment: "both", requiresTech: true, applyUrl: "https://www.k-startup.go.kr" },
   { name: "신사업창업사관학교", amount_max: 40000000, condition: "is_pre_founder", segment: "small", fitTags: ["food", "retail", "service"], applyUrl: "https://edu.sbiz.or.kr" },
   { name: "재도전성공패키지", amount_max: 100000000, years_max: 7, condition: "is_re_founder", segment: "both", applyUrl: "https://www.k-startup.go.kr" },
-  // 중소기업(도약·글로벌·스마트공장 등) — segment: sme
+  // 중소기업(도약·글로벌·스마트공장 등) - segment: sme
   { name: "글로벌창업사관학교", amount_max: 150000000, years_max: 7, segment: "sme", requiresTech: true, isStartupProgram: true, requiresExport: true, fitTags: ["export"], applyUrl: "https://start.kosmes.or.kr" },
   { name: "창업도약패키지_일반형", amount_max: 300000000, years_min: 3, years_max: 7, segment: "sme", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
   { name: "창업도약패키지_대기업협업형", amount_max: 200000000, years_min: 3, years_max: 7, segment: "sme", isStartupProgram: true, applyUrl: "https://www.k-startup.go.kr" },
   { name: "스마트공장", amount_per_task: 100000000, amount_max_total: 700000000, self_burden: 0.3, segment: "sme", industryOnly: "manufacturing", fitTags: ["manufacturing"], applyUrl: "https://www.smart-factory.kr" },
-  // 수출바우처 — 수출기업만 (수출 체크 시에만 노출)
+  // 수출바우처 - 수출기업만 (수출 체크 시에만 노출)
   { name: "수출바우처_중기부", amount_min: 30000000, amount_max: 100000000, self_burden_min: 0.3, self_burden_max: 0.5, segment: "sme", requiresExport: true, fitTags: ["export"], applyUrl: "https://www.exportvoucher.com/portal/sample/main" },
   // ── R&D 지원사업은 정책자금 매칭 대상에서 항상 제외 (대표님 기준) ──
   // (창업성장기술개발 디딤돌/전략형/시장확대/시장대응 등은 안내하지 않음)
   // ── 데이터바우처는 '데이터 활용 목적' 기업 한정 → 일반 매칭에서 제외 (대표님 기준) ──
   { name: "혁신형중소기업_방송광고_TV", amount_max: 45000000, self_burden: 0.5, condition: "has_mainbiz", segment: "sme", applyUrl: "https://www.kobaco.co.kr" },
   { name: "혁신형중소기업_방송광고_라디오", amount_max: 3000000, self_burden: 0.7, condition: "has_mainbiz", segment: "sme", applyUrl: "https://www.kobaco.co.kr" },
-  // 소상공인(강한소상공인·판로·희망리턴·스마트제조 등) — segment: small
+  // 소상공인(강한소상공인·판로·희망리턴·스마트제조 등) - segment: small
   { name: "희망리턴패키지_경영개선", amount_max: 40000000, segment: "small", requiresReFounder: true, applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
   { name: "희망리턴패키지_재창업", amount_max: 44000000, segment: "small", requiresReFounder: true, applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
   { name: "강한소상공인_로컬브랜드", amount_max: 100000000, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
   { name: "강한소상공인_온라인셀러", amount_max: 50000000, segment: "small", requiresOperating: true, fitTags: ["retail", "food"], applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
   { name: "강한소상공인_글로벌", amount_max: 100000000, segment: "small", requiresExport: true, requiresOperating: true, fitTags: ["export"], applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
   { name: "스마트제조_소상공인", amount_max: 42000000, self_burden: 0.3, cash_ratio: 0.5, segment: "small", industryOnly: "manufacturing", requiresOperating: true, fitTags: ["manufacturing"], applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
-  // 스마트상점 기술보급 — 운영 중인 오프라인 소상공인 매장(음식·도소매·서비스)에 키오스크·서빙로봇·스마트기기 도입 지원
+  // 스마트상점 기술보급 - 운영 중인 오프라인 소상공인 매장(음식·도소매·서비스)에 키오스크·서빙로봇·스마트기기 도입 지원
   { name: "스마트상점_기술보급", amount_max: 5000000, self_burden: 0.3, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz.or.kr/smst/index.do" },
   { name: "판로개척_소상공인", amount_max: 20000000, self_burden: 0.2, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
-  // IP나래 — 창업 7년 이내 + 기술(특허 등) 보유 중소기업만
+  // IP나래 - 창업 7년 이내 + 기술(특허 등) 보유 중소기업만
   { name: "IP나래", amount_max: 17500000, support_ratio: 0.5, years_max: 7, segment: "sme", requiresTech: true, fitTags: ["manufacturing", "export"], applyUrl: "https://pms.ripc.org" },
-  // 관광기업혁신바우처 — 관광사업체만
+  // 관광기업혁신바우처 - 관광사업체만
   { name: "관광기업혁신바우처", amount_min: 20000000, amount_max: 100000000, segment: "both", requiresTourism: true, applyUrl: "https://www.tourbiz.or.kr" },
   { name: "로컬크리에이터", self_burden: 0.2, segment: "small", requiresOperating: true, fitTags: ["food", "retail", "service"], applyUrl: "https://www.sbiz24.kr/#/combinePbancList" },
   // ── 업종·기술·수출 조건 없이 폭넓게 신청 가능한 범용 사업 (대표님 "최대한 많이 알맞게" 방침) ──
   //   ★ 운영 중인 기존 사업자(예비창업 제외)라면 업종 무관하게 실질 신청 가능한 검증 사업.
   //   일반 중소기업(서비스·도소매 등 비수출·비기술)이 매칭 결과가 비지 않도록 커버리지 확보.
-  // 중소기업 컨설팅·경영지원(비즈니스지원단 등) — 운영 중 중소기업 공통
+  // 중소기업 컨설팅·경영지원(비즈니스지원단 등) - 운영 중 중소기업 공통
   { name: "중소기업_경영컨설팅지원", amount_max: 30000000, segment: "sme", requiresOperating: true, applyUrl: "https://www.mss.go.kr" },
-  // 정규직 전환·일자리 창출 연계(고용부·중기부 공통) — 운영 중 사업자 공통
+  // 정규직 전환·일자리 창출 연계(고용부·중기부 공통) - 운영 중 사업자 공통
   { name: "일자리창출_고용지원", amount_max: 10000000, segment: "both", requiresOperating: true, applyUrl: "https://www.work24.go.kr" },
-  // 스마트서비스 바우처(비대면 서비스 도입) — 운영 중 중소·소상공인 공통
+  // 스마트서비스 바우처(비대면 서비스 도입) - 운영 중 중소·소상공인 공통
   { name: "스마트서비스_바우처", amount_max: 4000000, self_burden: 0.3, segment: "both", requiresOperating: true, applyUrl: "https://www.smart-factory.kr" },
-  // 중소기업 정책자금(운전·시설) 연계 안내 — 운영 중 중소기업 공통(직접대출 정책자금)
+  // 중소기업 정책자금(운전·시설) 연계 안내 - 운영 중 중소기업 공통(직접대출 정책자금)
   { name: "중소기업_정책자금(운전·시설)", amount_max: 1000000000, segment: "sme", requiresOperating: true, applyUrl: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI001M0.do" },
 ];
 
@@ -821,12 +821,12 @@ export const REGION_SINBO: RegionSinbo[] = [
 //   · 직접대출 = 공단(소진공·중진공)과 직접 약정 후 공단이 직접 대출 실행(보증 불필요)
 //   · 대리대출 = 확인서/보증서 받고 재단·신보·기보·무보 약정 → 은행 가서 대출 실행
 //               (=보증부대출=보증서=확인서, 대표님 현장 용어로 '대리대출'로 통일)
-//   · 보험     = 대출·보증이 아닌 '보험' 상품(예: 무보 단기수출보험 — 수입자 미결제
+//   · 보험     = 대출·보증이 아닌 '보험' 상품(예: 무보 단기수출보험 - 수입자 미결제
 //               손실을 보상). 자금이 나오는 대출이 아니므로 별도 표기(대표님 확정).
 //  ※ 이 판정은 결과 '표시' 단계 후처리이며 매칭 스코어링 로직과 무관하다.
 export type LoanNature = "직접대출" | "대리대출" | "보험";
 
-// 기관 기본 성격 — 상품에 nature가 지정되지 않았을 때의 폴백.
+// 기관 기본 성격 - 상품에 nature가 지정되지 않았을 때의 폴백.
 //   중진공 = 직접대출(2026 융자사업 안내 팩트: 창업기반·청년전용·개발기술·신시장·
 //            신성장·제조현장스마트화·Net-Zero·재도약·일시적경영애로 모두 직접대출)
 //   신보·기보·무보 = 대리대출(보증서/연대보증서 발급 → 은행 대출), 재단 = 대리대출(보증부)
@@ -850,7 +850,7 @@ export type InstitutionProduct = {
   approvalNote?: string; // 승인율 관련 솔직한 안내
   applyUrl?: string; // 이 상품 신청·안내 페이지
   hookNote?: string; // 후킹/주의 안내 (예: 대상 많지만 승인율 낮음)
-  // ★ 상품 성격 배지 (대표님 기준) — 같은 기관 안에서도 상품마다 다를 수 있어 상품 단위로 지정 ★
+  // ★ 상품 성격 배지 (대표님 기준) - 같은 기관 안에서도 상품마다 다를 수 있어 상품 단위로 지정 ★
   //   직접대출 = 공단과 직접 약정 후 공단이 직접 대출 실행(보증 불필요)
   //   대리대출 = 확인서/보증서 받고 재단·신보·기보·무보 약정 → 은행 가서 대출 실행(=보증부대출)
   //   미지정 시 loanNatureOf(기관명)로 기관 기본 성격 판별.
@@ -876,7 +876,7 @@ export function filterProducts(
   //    "안 될 것 같은 공고는 지워서, 고객이 잘못된 선택을 하지 않게").
   //    ※ 매칭 스코어링 로직은 건드리지 않고, '표시 단계'에서만 걸러낸다.
   const withoutLow = eligible.filter((p) => p.approval !== "low");
-  // 3) 안전장치 — low를 걷어내 남는 상품이 하나도 없으면(그 기관에
+  // 3) 안전장치 - low를 걷어내 남는 상품이 하나도 없으면(그 기관에
   //    high/mid가 전무한 경우) 원래 자격 상품은 유지해 '빈 기관'이 되지
   //    않게 한다. (기관 자체가 사라져 보이는 부작용 방지)
   return withoutLow.length > 0 ? withoutLow : eligible;
@@ -889,7 +889,7 @@ export type InstitutionLink = {
   pdfUrl?: string; // 상품·보증 안내 자료(PDF/안내 페이지)
   pdfLabel?: string;
   manualUrl?: string; // 신청 매뉴얼(PDF) - 우리가 준비한 단계별 신청 가이드
-  productName?: string; // 대표 상품명(네모칸 라벨) — 클릭 시 productUrl로 이동
+  productName?: string; // 대표 상품명(네모칸 라벨) - 클릭 시 productUrl로 이동
   productUrl?: string; // 대표 상품 상세/안내 페이지
   products?: InstitutionProduct[]; // ★ 기관 내 여러 상품(아코디언으로 펼침) ★
   tel?: string; // 통합 콜센터 번호(표시용)
@@ -1085,7 +1085,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     manualUrl: "/manuals/sbiz-guide.pdf",
     productName: "일반경영안정자금",
     productUrl: "https://ols.semas.or.kr/ols/man/SMAN018M/page.do",
-    // ★ 소진공 내 여러 상품 — 아코디언으로 펼쳐서 골라 신청 ★ (대표님 실무 기준 승인율 표시)
+    // ★ 소진공 내 여러 상품 - 아코디언으로 펼쳐서 골라 신청 ★ (대표님 실무 기준 승인율 표시)
     products: [
       {
         name: "일반경영안정자금",
@@ -1097,7 +1097,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         nature: "대리대출", // 소진공 공식(SMAN018M): 대리대출 세부지원요건 표에 등재
       },
       {
-        name: "혁신성장촉진자금 (일반형) — 스마트기술 도입 소상공인",
+        name: "혁신성장촉진자금 (일반형) - 스마트기술 도입 소상공인",
         amount: "운전 1억원 · 시설 5억원 (기준금리+0.4%p)",
         desc: "키오스크·무인판매기·서빙로봇·스마트 POS·재고관리 S/W 등\n스마트기술을 도입한 소상공인",
         approval: "low",
@@ -1109,7 +1109,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         nature: "직접대출", // 공식(SMAN018M): 직접대출 세부지원요건 표에 등재
       },
       {
-        name: "혁신성장촉진자금 (혁신형) — 2년 연속 매출 10% 성장 소상공인",
+        name: "혁신성장촉진자금 (혁신형) - 2년 연속 매출 10% 성장 소상공인",
         amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "최근 2년 연속 매출액이 각각 10% 이상 성장한 소상공인",
         approval: "mid",
@@ -1119,7 +1119,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         nature: "직접대출",
       },
       {
-        name: "혁신성장촉진자금 (혁신형) — 수출 소상공인",
+        name: "혁신성장촉진자금 (혁신형) - 수출 소상공인",
         amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "직수출 실적(1천 달러 이상)을 보유한 소상공인",
         approval: "mid",
@@ -1129,7 +1129,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         nature: "직접대출",
       },
       {
-        name: "혁신성장촉진자금 (혁신형) — 스마트공장 도입 소상공인",
+        name: "혁신성장촉진자금 (혁신형) - 스마트공장 도입 소상공인",
         amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "스마트공장을 구축·운영 중인 소상공인",
         approval: "mid",
@@ -1139,7 +1139,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         nature: "직접대출",
       },
       {
-        name: "혁신성장촉진자금 (혁신형) — 강한소상공인·로컬크리에이터",
+        name: "혁신성장촉진자금 (혁신형) - 강한소상공인·로컬크리에이터",
         amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "중기부 '강한소상공인 성장지원' 또는\n'로컬크리에이터' 선정 기업",
         approval: "mid",
@@ -1149,7 +1149,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         nature: "직접대출",
       },
       {
-        name: "혁신성장촉진자금 (혁신형) — 성실상환자",
+        name: "혁신성장촉진자금 (혁신형) - 성실상환자",
         amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
         desc: "소진공·중진공 등 정책자금 직접대출을\n연체 없이 성실히 상환 중인 소상공인",
         approval: "mid",
@@ -1229,7 +1229,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approval: "mid",
         approvalNote: "제조·혁신성장 분야라면 직원 0명·개인사업자도 신청이 가능합니다.",
         applyUrl: "https://digital.kosmes.or.kr/dh/map/main.do?",
-        // 제조·기술·혁신성장 기업에게만 노출(순수 소상공인에게는 숨김 — 과대추천 방지)
+        // 제조·기술·혁신성장 기업에게만 노출(순수 소상공인에게는 숨김 - 과대추천 방지)
         eligibleWhen: (c) => {
           const cat = normalizeIndustry(c.industry);
           return (
@@ -1300,7 +1300,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         name: "단기수출보험(중소중견Plus+)",
         amount: "연간 보상한도 기준 · 신용조사 생략 간편",
         desc: "연간 수출 U$50백만 이하 중소·중견기업 대상\n수입자 미결제·비상위험 손실을 1년간 일괄 보상",
-        nature: "보험", // 대출·보증이 아닌 '보험' 상품(대표님 확정) — 폴백(대리대출) 대신 명시
+        nature: "보험", // 대출·보증이 아닌 '보험' 상품(대표님 확정) - 폴백(대리대출) 대신 명시
         approval: "mid",
         approvalNote: "중소·중견 수출기업이 가장 간편하게 이용하는 대표 상품입니다.",
         applyUrl: "https://www.ksure.or.kr",
@@ -1786,7 +1786,7 @@ export function checkRDDeptEligibility(company: Company): RDDeptResult {
 
 // ═════════════════════════════════════════════════════════════════════════
 //  통합 오케스트레이터 (후처리 순서: 스펙 원문 9단계)
-//   1) 기존 매칭 결과 도출 (matching.ts, 건들지 말 것 — 여기서는 호출하지 않음)
+//   1) 기존 매칭 결과 도출 (matching.ts, 건들지 말 것 - 여기서는 호출하지 않음)
 //   2) BLOCK 1: 신보 즉시부결 판정
 //   3) BLOCK 5: 재무비율 검증
 //   4) BLOCK 6: 책임경영 평가지표
@@ -1821,7 +1821,7 @@ export function runAdvancedScreening(company: Company): AdvancedScreeningReport 
   const financials = validateFinancials(company);
   // 4) BLOCK 6
   const responsibleMgmt = evaluateResponsibleManagement(company);
-  // 5) BLOCK 2 — 이용 가능 기관은 업종·직원수 기준(대표님 실무 기준)으로 판정
+  // 5) BLOCK 2 - 이용 가능 기관은 업종·직원수 기준(대표님 실무 기준)으로 판정
   const creditMatches = matchInstitutions(company);
   // 6) BLOCK 3
   const loanLimit =

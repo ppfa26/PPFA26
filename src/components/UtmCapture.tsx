@@ -17,7 +17,7 @@ import { useEffect } from "react";
  *   단, 새 광고 링크(utm_source 파라미터가 있는 링크)로 다시 들어오면 갱신한다.
  */
 const STORAGE_KEY = "mpp_utm_source";
-// 유입 신호의 '강도' 표시 — utm 파라미터(광고 링크)는 강한 신호(고정),
+// 유입 신호의 '강도' 표시 - utm 파라미터(광고 링크)는 강한 신호(고정),
 // referrer 추정치는 약한 신호(다음 방문의 실제 referrer 로 갱신 허용)
 const STRENGTH_KEY = "mpp_utm_strength"; // "hard"(광고링크) | "soft"(referrer추정)
 
@@ -30,7 +30,7 @@ function guessFromReferrer(ref: string): string | null {
   if (h.includes("facebook") || h.includes("fb.")) return "meta";
   if (h.includes("youtube") || h.includes("youtu.be")) return "youtube";
   if (h.includes("naver")) return "naver";
-  // 구글 계열(검색·지도 등) — 크롬 주소창에서 검색해 들어오면 referrer 가 구글 검색페이지
+  // 구글 계열(검색·지도 등) - 크롬 주소창에서 검색해 들어오면 referrer 가 구글 검색페이지
   if (h.includes("google") || h.includes("bing.") || h.includes("daum.net")) return "google";
   if (h.includes("daangn") || h.includes("karrot")) return "daangn";
   if (h.includes("kakao")) return "kakao";

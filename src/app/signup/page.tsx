@@ -31,7 +31,7 @@ function SignupInner() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  // 이메일 가입 폼 아코디언 (기본 닫힘 — 소셜 로그인 우선 노출, 대표님 요청)
+  // 이메일 가입 폼 아코디언 (기본 닫힘 - 소셜 로그인 우선 노출, 대표님 요청)
   const [emailOpen, setEmailOpen] = useState(false);
 
   // ── 약관 동의 (삼쩜삼式 필수/선택 분리, 대표님 요청) ──
@@ -57,7 +57,7 @@ function SignupInner() {
     setMarketingAgree(v);
   };
 
-  // 가입 시 필수 동의 검사 — 개인정보보호법상 동의는 이용자가 '직접' 체크해야 유효하므로
+  // 가입 시 필수 동의 검사 - 개인정보보호법상 동의는 이용자가 '직접' 체크해야 유효하므로
   // 자동 체크(예전 방식)를 제거하고, 필수 항목 미동의 시 진행을 차단한다.
   //  · 반환 true = 통과 / false = 미동의(차단, 안내 메시지 표시)
   //   ★ 카카오/구글 버튼 UX (대표님 요청) ★
@@ -67,7 +67,7 @@ function SignupInner() {
   const requireAgreementOrBlock = (): boolean => {
     if (!allRequiredChecked) {
       setMsg("아래 필수 약관에 동의하시면 바로 시작할 수 있어요.");
-      // 동의 박스로 스크롤 + 강조 (모드가 signup일 때만 박스가 렌더됨 — 안전하게 signup으로 전환)
+      // 동의 박스로 스크롤 + 강조 (모드가 signup일 때만 박스가 렌더됨 - 안전하게 signup으로 전환)
       if (mode !== "signup") setMode("signup");
       if (typeof window !== "undefined") {
         // 렌더 반영 후 스크롤되도록 다음 틱에 실행
@@ -89,7 +89,7 @@ function SignupInner() {
   //  · 그 외(순수 로그인) → 마이페이지(결과를 클릭해서 확인하도록 유도 · 대표님 요청)
   //  ※ 진단 데이터(mpp_diagnosis)는 localStorage에 30일간 보관되므로 로그인/이동해도 유지됨
   //
-  //  ★ 카카오/구글 소셜 로그인 콜백 안정화 (대표님 요청 — 가입 이탈 방지) ★
+  //  ★ 카카오/구글 소셜 로그인 콜백 안정화 (대표님 요청 - 가입 이탈 방지) ★
   //   OAuth 로 돌아오면 세션이 URL(#access_token=...)로 넘어오는데, supabase-js 가
   //   이를 파싱해 저장하는 데 아주 잠깐 시간이 걸린다. getSession() 을 딱 한 번만
   //   호출하면 저장 '이전'이라 세션을 못 잡고 가입 화면에 머물러 → 사용자가
@@ -153,7 +153,7 @@ function SignupInner() {
     router.push(tier ? `/payment?tier=${tier}` : nextPath || "/mypage");
   };
 
-  // 소셜 로그인 (카카오 / 구글) — Supabase OAuth
+  // 소셜 로그인 (카카오 / 구글) - Supabase OAuth
   const handleOAuth = async (provider: "kakao" | "google", label = "") => {
     setMsg(null);
     // 소셜 로그인도 '가입' 절차이므로 필수 동의를 이용자가 직접 체크했는지 검사 (미동의 시 차단)
@@ -179,7 +179,7 @@ function SignupInner() {
     }
     setLoading(true);
     try {
-      // 소셜 로그인 후 돌아올 주소 — tier(결제) 또는 next(진단 결과)를 그대로 유지
+      // 소셜 로그인 후 돌아올 주소 - tier(결제) 또는 next(진단 결과)를 그대로 유지
       const qs = tier
         ? `?tier=${tier}`
         : nextPath
@@ -190,7 +190,7 @@ function SignupInner() {
           ? `${window.location.origin}/signup${qs}`
           : undefined;
       // 카카오싱크: 로그인 시 '모두의사업친구' 채널(_VxfWxan) 추가 동의 화면을 함께 노출
-      // (구글 등 다른 provider에는 영향 없음 — 카카오일 때만 queryParams 부여)
+      // (구글 등 다른 provider에는 영향 없음 - 카카오일 때만 queryParams 부여)
       const options =
         provider === "kakao"
           ? {
@@ -227,13 +227,13 @@ function SignupInner() {
       setMsg("비밀번호는 6자 이상으로 입력해 주세요.");
       return;
     }
-    // 회원가입 시 필수 동의를 이용자가 직접 체크했는지 검사 (미동의 시 차단 — 로그인 모드는 불필요)
+    // 회원가입 시 필수 동의를 이용자가 직접 체크했는지 검사 (미동의 시 차단 - 로그인 모드는 불필요)
     if (mode === "signup" && !requireAgreementOrBlock()) return;
 
     setLoading(true);
     try {
       if (mode === "signup") {
-        // 유입경로(광고 채널) — 방문 시 UtmCapture 가 저장해 둔 값을 가입 정보에 함께 기록
+        // 유입경로(광고 채널) - 방문 시 UtmCapture 가 저장해 둔 값을 가입 정보에 함께 기록
         const utm_source = getCapturedUtmSource();
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -244,13 +244,13 @@ function SignupInner() {
               phone,
               tier: tier || "",
               utm_source,
-              // ── 약관 동의 기록 (이용자가 실제 체크한 상태를 그대로 보관 — 동의 근거) ──
+              // ── 약관 동의 기록 (이용자가 실제 체크한 상태를 그대로 보관 - 동의 근거) ──
               agree_age: agreeAge,             // [필수] 만 14세 이상
               agree_terms: agreeTerms,         // [필수] 이용약관
               agree_privacy: agreePrivacy,     // [필수] 개인정보 수집·이용
               agree_third_party: agreeThird,   // 개인정보 제3자 제공
               consent_at: new Date().toISOString(),
-              // 마케팅 수신 동의 (동의 시각 함께 기록 — 향후 정식 오픈 안내 발송 근거)
+              // 마케팅 수신 동의 (동의 시각 함께 기록 - 향후 정식 오픈 안내 발송 근거)
               marketing_agree: marketingAgree,
               marketing_agree_at: marketingAgree ? new Date().toISOString() : null,
             },
@@ -319,14 +319,14 @@ function SignupInner() {
   return (
     <PageShell pageKey="signup">
       <Header />
-      {/* 중앙 정렬 · 적당한 폭(max-w-5xl) 좌우 2분할 카드 — 화면 꽉 채우지 않고, 위아래 흰 공백 없이 */}
+      {/* 중앙 정렬 · 적당한 폭(max-w-5xl) 좌우 2분할 카드 - 화면 꽉 채우지 않고, 위아래 흰 공백 없이 */}
       <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-12">
         <div className="grid grid-cols-1 overflow-hidden rounded-3xl border border-gray-200 shadow-card lg:grid-cols-2">
-        {/* 좌측 브랜드 패널 — 데스크톱 전용(모바일 숨김) · 로고 중복 없음(상단 헤더에 이미 있음) */}
+        {/* 좌측 브랜드 패널 - 데스크톱 전용(모바일 숨김) · 로고 중복 없음(상단 헤더에 이미 있음) */}
         <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-between lg:p-10">
           <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-yellow/20 blur-3xl" />
           <div className="absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-brand-orange/20 blur-3xl" />
-          {/* 상단 여백용 (로고 자리 — 헤더에 이미 있어 중복 표기하지 않음) */}
+          {/* 상단 여백용 (로고 자리 - 헤더에 이미 있어 중복 표기하지 않음) */}
           <div className="relative h-4" />
           <div className="relative">
             <span className="inline-block rounded-full bg-brand-yellow/15 px-3 py-1 text-[11px] font-bold text-brand-yellow">
@@ -429,7 +429,7 @@ function SignupInner() {
           </button>
         </div>
 
-        {/* 이메일 가입 아코디언 토글 (기본 닫힘 — 소셜 로그인 우선, 대표님 요청) */}
+        {/* 이메일 가입 아코디언 토글 (기본 닫힘 - 소셜 로그인 우선, 대표님 요청) */}
         <button
           type="button"
           onClick={() => setEmailOpen((v) => !v)}
@@ -570,7 +570,7 @@ function SignupInner() {
                 아래 약관에 모두 동의합니다
               </span>
             </label>
-            {/* 개인정보보호법·정보통신망법 준수 — 선택 동의는 강요 금지, 미동의해도 이용 가능함을 명시 */}
+            {/* 개인정보보호법·정보통신망법 준수 - 선택 동의는 강요 금지, 미동의해도 이용 가능함을 명시 */}
             <p className="mt-2 break-keep text-[11px] leading-relaxed text-brand-gray">
               전체 동의는 선택 항목(마케팅 정보 수신)을 포함하고 있으며,
               선택 항목에 동의하지 않아도 서비스를 이용하실 수 있습니다.

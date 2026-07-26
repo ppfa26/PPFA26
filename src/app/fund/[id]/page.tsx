@@ -90,7 +90,7 @@ export default function FundDetailPage({
             </a>
           </section>
 
-          {/* 필요 서류 — 정확히 확정된 경우에만 노출. 아니면 상담 안내로 대체 */}
+          {/* 필요 서류 - 정확히 확정된 경우에만 노출. 아니면 상담 안내로 대체 */}
           <section
             id="fund-docs"
             className="mt-5 rounded-3xl border border-gray-200 bg-white p-6 shadow-card sm:p-8"

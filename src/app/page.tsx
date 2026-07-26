@@ -145,7 +145,7 @@ export default function Home() {
               AI가 찾아서 신청 방법까지 안내해 드립니다.
             </Editable>
 
-            {/* 오픈 베타 무료 앵커링 — 오픈 베타 기간 전부 0원으로 통일 (대표님 요청: '원래 9,900원' 삭제) */}
+            {/* 오픈 베타 무료 앵커링 - 오픈 베타 기간 전부 0원으로 통일 (대표님 요청: '원래 9,900원' 삭제) */}
             {BETA_FREE && (
               <div className="mx-auto mt-4 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border-2 border-brand-red/30 bg-brand-red/5 px-5 py-2.5 sm:mt-5 sm:py-3">
                 <span className="text-base font-black text-brand-red sm:text-lg">
@@ -154,7 +154,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* 핵심 혜택 — 가로 컴팩트 배지 */}
+            {/* 핵심 혜택 - 가로 컴팩트 배지 */}
             <ul className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-6 sm:gap-x-3">
               {["맞춤 AI 매칭", "신청 가능 사업만", "서류·신청까지 안내"].map(
                 (t, i) => (
@@ -190,7 +190,7 @@ export default function Home() {
               </Editable>
             </div>
 
-            {/* 면책 고지 — 광고 심사/표시광고법 대응 (대표님 요청) */}
+            {/* 면책 고지 - 광고 심사/표시광고법 대응 (대표님 요청) */}
             <Editable
               id="hero-disclaimer"
               as="p"
@@ -201,9 +201,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 구간 구분 — 얇은 회색 가로줄 (대표님 요청: 히어로↔서비스안내 사이에도 구분선 추가) */}
+        {/* 구간 구분 - 얇은 회색 가로줄 (대표님 요청: 히어로↔서비스안내 사이에도 구분선 추가) */}
         <div className="section-divider" aria-hidden="true" />
-        {/* 서비스 안내 (통합) — (대표님 요청) 기존 '🎯 서비스 안내' 박스 + '아직 몰라서 못 받고 있는 정부지원사업' 7칸 배지를
+        {/* 서비스 안내 (통합) - (대표님 요청) 기존 '🎯 서비스 안내' 박스 + '아직 몰라서 못 받고 있는 정부지원사업' 7칸 배지를
             하나의 설명 섹션으로 통합. 순서: 제목/서브문구 → 4칸 체크리스트(VALUES) → 7칸 배지(TrustBadges) */}
         <section className="bg-gray-50 px-4 py-6 sm:py-10">
           <div className="reveal mx-auto max-w-3xl text-center">
@@ -238,7 +238,7 @@ export default function Home() {
               </Editable>
             </div>
 
-            {/* 소제목 ① — 무엇을 알려주는지 (상·하 여백 동일하게 mt-4) */}
+            {/* 소제목 ① - 무엇을 알려주는지 (상·하 여백 동일하게 mt-4) */}
             <div className="mt-4 flex items-center justify-center gap-2">
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
               <Editable
@@ -272,7 +272,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* 소제목 ② — 어떻게 찾아드리는지 (상·하 여백 동일하게 mt-4) */}
+            {/* 소제목 ② - 어떻게 찾아드리는지 (상·하 여백 동일하게 mt-4) */}
             <div className="mt-4 flex items-center justify-center gap-2">
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
               <Editable
@@ -290,7 +290,7 @@ export default function Home() {
               <TrustBadges badges={TRUST_BADGES} />
             </div>
 
-            {/* 소제목 ③ — 실제 결과 예시 (대표님 요청: 위 소제목과 동일한 주황 라인으로
+            {/* 소제목 ③ - 실제 결과 예시 (대표님 요청: 위 소제목과 동일한 주황 라인으로
                 '서비스 안내'와 '결과 예시본'을 하나의 카테고리처럼 연결) */}
             <div
               id="result-sample-section"
@@ -307,7 +307,7 @@ export default function Home() {
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
             </div>
 
-            {/* 실제 대시보드 목업(그대로 재현) — 노트북 프레임 안에 담아 '화면'처럼 · 목업은 max-w-3xl로 좁게 유지 */}
+            {/* 실제 대시보드 목업(그대로 재현) - 노트북 프레임 안에 담아 '화면'처럼 · 목업은 max-w-3xl로 좁게 유지 */}
             <div className="relative mx-auto mt-4 max-w-3xl text-left">
               <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-[0_16px_40px_rgba(0,0,0,0.10)]">
                 {/* 브라우저 상단 바 */}
@@ -320,7 +320,7 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* 진단 완료 배너 — 실제 결과창 상단 히어로와 동일한 구조·문구·순서로 재현.
+                {/* 진단 완료 배너 - 실제 결과창 상단 히어로와 동일한 구조·문구·순서로 재현.
                     ★ 배지 4종·순서(🏅정부지원제도 → 💳정책금융상품 → 💎추가 감면 혜택 → 📢그 외 지원사업)를
                       실제 matching-preview 히어로와 100% 일치시킴 · 합계 24 = 5+6+8+5 */}
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
@@ -331,7 +331,7 @@ export default function Home() {
                     {/* 가로형: 왼쪽 큰 숫자 + 오른쪽 세로 요약 (실제 결과창 히어로와 동일 구조).
                         (대표님 요청) 왼쪽 '24개' 강조 확대 + 오른쪽 배지 가로 공백 축소 */}
                     <div className="mt-3 flex flex-row items-stretch gap-2 sm:gap-3">
-                      {/* 왼쪽: 총 개수 큰 숫자 — 첫 화면 최대 후킹 포인트라 크게 강조(대표님 요청) */}
+                      {/* 왼쪽: 총 개수 큰 숫자 - 첫 화면 최대 후킹 포인트라 크게 강조(대표님 요청) */}
                       <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-2.5 sm:pr-3.5">
                         <span className="break-keep text-[11px] font-bold leading-tight text-brand-dark/70 sm:text-[13px]">
                           받을 수 있는
@@ -346,7 +346,7 @@ export default function Home() {
                           매칭 완료 🎉
                         </span>
                       </div>
-                      {/* 오른쪽: 세로 요약 배지 4종 — 실제 결과창 순서와 동일. 좌우 공백 축소(대표님 요청) */}
+                      {/* 오른쪽: 세로 요약 배지 4종 - 실제 결과창 순서와 동일. 좌우 공백 축소(대표님 요청) */}
                       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                         {[
                           { icon: "🏅", l: "정부지원제도", n: "5건" },
@@ -368,12 +368,12 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* 결과 본문 — 실제 결과창 AccordionCard(흰 배경·얇은 테두리·검정 제목·부제·우측 원형 화살표)와
+                {/* 결과 본문 - 실제 결과창 AccordionCard(흰 배경·얇은 테두리·검정 제목·부제·우측 원형 화살표)와
                     동일한 겉모양으로 재현. 순서도 실제와 100% 일치: 🏅정부지원제도 → 💳정책금융상품 → 💎추가 감면 혜택.
-                    (홈은 정적 목업이라 details/summary로 접기 구현 — 겉보기만 실제 카드와 동일하게 맞춤) */}
+                    (홈은 정적 목업이라 details/summary로 접기 구현 - 겉보기만 실제 카드와 동일하게 맞춤) */}
                 <div className="space-y-3 p-4 text-left sm:p-6">
 
-                  {/* ① 🏅 신청 가능한 정부지원제도 (실제 결과창 최상단 카드) — 기본 펼침 */}
+                  {/* ① 🏅 신청 가능한 정부지원제도 (실제 결과창 최상단 카드) - 기본 펼침 */}
                   <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
@@ -390,7 +390,7 @@ export default function Home() {
                       </span>
                     </summary>
                     <div className="px-5 pb-5 pt-0">
-                    {/* ✅ 신청 3스텝 미니 가이드 — 실제 결과창과 동일 */}
+                    {/* ✅ 신청 3스텝 미니 가이드 - 실제 결과창과 동일 */}
                     <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">
                       <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
                         ✅ 표시된 곳, 이렇게 신청하시면 됩니다
@@ -408,7 +408,7 @@ export default function Home() {
                         ))}
                       </ol>
                     </div>
-                    {/* 개별 제도 카드 — 실제 결과창 카드(흰 배경·얇은 테두리·제목+뱃지→안내→설명→회색 신청방법→버튼 2종) */}
+                    {/* 개별 제도 카드 - 실제 결과창 카드(흰 배경·얇은 테두리·제목+뱃지→안내→설명→회색 신청방법→버튼 2종) */}
                     <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
                         { icon: "💳", t: "소상공인 경영안정 바우처", d: "사업체당 25만원. 공과금·4대보험료·연료비 등 9개 항목에 사용 가능.", hook: "연매출 약 1억400만원 미만이면 온라인 신청만으로 지급됩니다.", locked: "🔒 신청 사이트 주소 · 제출 서류 목록 · 신청 순서 · 마감일까지 결제 후 공개" },
@@ -441,7 +441,7 @@ export default function Home() {
                     </div>
                   </details>
 
-                  {/* ② 💳 이용 가능한 정책금융상품 (실제 결과창 두 번째 카드) — 예시라 펼침 */}
+                  {/* ② 💳 이용 가능한 정책금융상품 (실제 결과창 두 번째 카드) - 예시라 펼침 */}
                   <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
@@ -488,7 +488,7 @@ export default function Home() {
                     </div>
                   </details>
 
-                  {/* ③ 💎 챙기면 좋은 추가 감면 혜택 (실제 결과창 세 번째 카드) — 예시라 펼침 */}
+                  {/* ③ 💎 챙기면 좋은 추가 감면 혜택 (실제 결과창 세 번째 카드) - 예시라 펼침 */}
                   <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
@@ -528,7 +528,7 @@ export default function Home() {
                     </div>
                   </details>
 
-                  {/* ④ 📢 추가적인 그 외 정부지원사업 (실제 결과창 네 번째 카드 · 기업마당 실공고) — 예시라 펼침 */}
+                  {/* ④ 📢 추가적인 그 외 정부지원사업 (실제 결과창 네 번째 카드 · 기업마당 실공고) - 예시라 펼침 */}
                   <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
@@ -569,7 +569,7 @@ export default function Home() {
                       ))}
                     </div>
 
-                    {/* 🔖 정부 사이트 안내 — '추가적인 그 외 정부지원사업' 목차 최하단에 포함(대표님 요청).
+                    {/* 🔖 정부 사이트 안내 - '추가적인 그 외 정부지원사업' 목차 최하단에 포함(대표님 요청).
                         예시본이라 클릭 비활성(후킹용: '이런 것도 알려주는구나'). 실제 이동은 결과창에서만. */}
                     <div
                       aria-hidden="true"
@@ -590,7 +590,7 @@ export default function Home() {
                     </div>
                   </details>
 
-                  {/* 결제 유도 배너 — 예시본 하단(대표님 요청: '이 정도로 상세하게 알려주는구나 → 결제해봐야겠다'
+                  {/* 결제 유도 배너 - 예시본 하단(대표님 요청: '이 정도로 상세하게 알려주는구나 → 결제해봐야겠다'
                       마음이 들도록). 지금 가려진 신청 방법·서류·연락처·버튼이 결제 후 전부 열린다는 안내 */}
                   <div
                     aria-hidden="true"
@@ -621,7 +621,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 구간 구분 — 얇은 회색 가로줄 (대표님 요청: 결과예시↔이용료 사이에도 구분선 추가) */}
+        {/* 구간 구분 - 얇은 회색 가로줄 (대표님 요청: 결과예시↔이용료 사이에도 구분선 추가) */}
         <div className="section-divider" aria-hidden="true" />
         {/* 가격표 */}
         <section
@@ -629,7 +629,7 @@ export default function Home() {
           className="scroll-mt-20 px-4 py-6 sm:scroll-mt-24 sm:py-10"
         >
           <div className="reveal mx-auto max-w-5xl">
-            {/* (대표님 요청) 상단 헤더 박스 — 가로폭 조금 축소(is-wide-pricing=38rem) */}
+            {/* (대표님 요청) 상단 헤더 박스 - 가로폭 조금 축소(is-wide-pricing=38rem) */}
             <div className="section-title-glass is-wide-pricing mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
                 💳 서비스 이용 플랜
@@ -660,9 +660,9 @@ export default function Home() {
         </section>
 
         {/* FAQ */}
-        {/* 구간 구분 — 얇은 회색 가로줄 */}
+        {/* 구간 구분 - 얇은 회색 가로줄 */}
         <div className="section-divider" aria-hidden="true" />
-        {/* 섹션 상하 여백 — 하단 여백 축소(대표님 요청) */}
+        {/* 섹션 상하 여백 - 하단 여백 축소(대표님 요청) */}
         <section className="bg-gray-50 px-4 py-6 sm:py-10">
           <div className="reveal mx-auto max-w-4xl">
             <div className="section-title-glass is-wide mx-auto flex flex-col items-center text-center">
@@ -684,7 +684,7 @@ export default function Home() {
                 결제 전 가장 많이 묻는 질문들을 모았습니다.
               </Editable>
             </div>
-            {/* (대표님 요청) 아코디언 목록 가로폭 축소 — 제목 박스(is-wide=max-w-2xl)와 통일 */}
+            {/* (대표님 요청) 아코디언 목록 가로폭 축소 - 제목 박스(is-wide=max-w-2xl)와 통일 */}
             <div className="mx-auto mt-6 max-w-2xl space-y-3">
               {FAQS.map((f, i) => (
                 <details
@@ -716,7 +716,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 하단 CTA — 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
+        {/* 하단 CTA - 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
             카드 아래(Footer 사이) 세로 공백을 조금 줄여 답답하지 않게 조정 (대표님 요청) */}
         <section className="px-4 pt-3.5 pb-5 sm:pt-5 sm:pb-8">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
@@ -743,7 +743,7 @@ export default function Home() {
               )}
             </Editable>
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              {/* 왼쪽 — 무료 진단 시작하기 (주 버튼, 빨간색) */}
+              {/* 왼쪽 - 무료 진단 시작하기 (주 버튼, 빨간색) */}
               <a
                 id="home-cta-button"
                 href="/diagnosis"
@@ -751,7 +751,7 @@ export default function Home() {
               >
                 {BETA_FREE ? "무료로 진단 시작하기" : "무료 진단 시작하기"}
               </a>
-              {/* 오른쪽 — 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인) */}
+              {/* 오른쪽 - 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인) */}
               <a
                 id="home-cta-kakao"
                 href="http://pf.kakao.com/_VxfWxan/chat"
@@ -766,7 +766,7 @@ export default function Home() {
         </section>
       </main>
       <Footer />
-      {/* 오른쪽 하단 고정 — 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
+      {/* 오른쪽 하단 고정 - 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
       <InstallAppButton />
       <KakaoFloatingButton />
     </PageShell>

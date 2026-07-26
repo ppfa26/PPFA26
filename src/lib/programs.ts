@@ -60,7 +60,7 @@ export function toCategoryGroup(cat: MatchCategory): CategoryGroup {
   return cat as CategoryGroup;
 }
 
-// 기관 특성(대출/보증 구조) — 결과 상세 및 매칭 근거에 활용
+// 기관 특성(대출/보증 구조) - 결과 상세 및 매칭 근거에 활용
 export type LoanType = "직접대출" | "대리대출" | "직접·대리대출" | "보증서(대리)" | "이차보전" | "비융자";
 
 export type Program = {

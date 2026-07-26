@@ -57,7 +57,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <div className="mt-4">
               {BETA_FREE ? (
                 <>
-                  {/* 베타: '오픈 베타 기간 0원' 강조 박스 — 대표님 요청으로 박스 자체를
+                  {/* 베타: '오픈 베타 기간 0원' 강조 박스 - 대표님 요청으로 박스 자체를
                       무료 진단으로 넘어가는 CTA 버튼(Link)으로 전환 (문구 동일) */}
                   <Link
                     href="/diagnosis"
@@ -78,7 +78,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                 </>
               ) : (
                 <>
-                  {/* 정가(앵커) + 할인율 — 원래 디자인 그대로 */}
+                  {/* 정가(앵커) + 할인율 - 원래 디자인 그대로 */}
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-sm line-through ${
@@ -123,7 +123,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               ))}
             </ul>
 
-            {/* 버튼 — A안(다크 유리) 재디자인: popular 카드는 다크 유리 배경이 되므로
+            {/* 버튼 - A안(다크 유리) 재디자인: popular 카드는 다크 유리 배경이 되므로
                 버튼을 골드(brand-grad)로 바꿔 유리 위에서 또렷하게 강조 */}
             <Link
               href={BETA_FREE ? "/diagnosis" : `/signup?tier=${tier.id}`}
@@ -139,7 +139,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
         ))}
       </div>
 
-      {/* 공통 안내 — (대표님 요청) 위 가격 카드와 가로폭 통일(max-w-xl) +
+      {/* 공통 안내 - (대표님 요청) 위 가격 카드와 가로폭 통일(max-w-xl) +
          홈페이지 다크 유리 톤과 어울리도록 아이콘/문구 정렬을 정돈.
          이모지(✅/⚠️)는 앞부분을 아이콘 컬럼으로 분리해 문구를 가지런히,
          마지막 ⚠️ 안내는 상단 구분선으로 시각적으로 떼어 세련되게. */}
