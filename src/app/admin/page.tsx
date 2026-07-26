@@ -1103,7 +1103,7 @@ export default function AdminPage() {
                 🛠️ 관리자 대시보드
               </h1>
               <p className="mt-1 text-sm text-gray-500">
-                회원 · 결제 · 조회권 · 매출을 한 곳에서 관리하세요.
+                회원 · 결제 · 조회권 · 매출을 한 곳에서 관리하기
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
