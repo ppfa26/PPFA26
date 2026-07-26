@@ -607,15 +607,15 @@ export default function Home() {
                     <p className="break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-[16px]">
                       <span className="text-brand-orange">🔒 잠긴 부분</span>은 무료 진단하시면 전부 공개됩니다.
                     </p>
-                    <ul className="mx-auto mt-3 flex max-w-md flex-col items-start gap-1.5 text-left text-[12px] leading-relaxed text-brand-dark/80 sm:text-[13px]">
+                    <ul className="mx-auto mt-3 flex w-fit max-w-full flex-col items-start gap-1.5 text-left text-[12px] leading-relaxed text-brand-dark/80 sm:text-[13px]">
                       {[
                         "제도별 신청 사이트 주소 · 접수 페이지 링크",
                         "필요 서류 목록 · 신청 순서 · 마감일",
                         "담당 기관 및 고객센터 연락처",
                         "「이 상품 신청하러 가기」 등 모든 버튼 활성화",
                       ].map((t, i) => (
-                        <li key={i} className="flex items-start gap-2 break-keep">
-                          <span className="mt-px shrink-0 text-brand-green">✅</span>
+                        <li key={i} className="flex items-center gap-2 break-keep sm:whitespace-nowrap">
+                          <span className="shrink-0 text-brand-green">✅</span>
                           <span>{t}</span>
                         </li>
                       ))}
