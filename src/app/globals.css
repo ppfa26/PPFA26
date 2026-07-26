@@ -21,27 +21,35 @@ body {
   color: #f4f5f7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  background-color: #0b1020;
+}
 
-  /* ── 다크 야경 테마 ──
-     사이트 전체 고정 배경(야경) + 어두운 오버레이로 글자 가독성 확보.
-     배경은 스크롤해도 고정(attachment: fixed)되어 '유리 위에 도시' 느낌을 준다. */
+/* ── 다크 야경 테마 (완전 고정 배경 레이어) ──
+   body에 직접 background-attachment:fixed 를 주면 iOS 사파리에서 스크롤 시
+   배경이 떨리거나 튀는 버그가 있어, 뷰포트에 못 박히는 별도 고정 레이어(::before)로 분리.
+   position:fixed + inset:0 로 화면 전체를 덮고, z-index:-1 로 콘텐츠 뒤에 깔린다.
+   이 방식은 PC·모바일 모두 스크롤해도 배경이 100% 고정된다. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   background-color: #0b1020;
   background-image:
-    linear-gradient(rgba(8, 12, 24, 0.72), rgba(8, 12, 24, 0.86)),
+    linear-gradient(rgba(8, 12, 24, 0.78), rgba(8, 12, 24, 0.9)),
     url("/images/city-night-bg.jpg");
   background-size: cover;
   background-position: center top;
-  background-attachment: fixed;
   background-repeat: no-repeat;
+  pointer-events: none;
 }
 
-/* 모바일은 가로가 좁으므로 세로 배경 이미지 사용 + 고정 대신 스크롤(모바일 성능/버그 회피) */
+/* 모바일은 가로가 좁으므로 세로 배경 이미지 사용 (오버레이는 살짝 더 어둡게) */
 @media (max-width: 640px) {
-  body {
+  body::before {
     background-image:
-      linear-gradient(rgba(8, 12, 24, 0.74), rgba(8, 12, 24, 0.9)),
+      linear-gradient(rgba(8, 12, 24, 0.82), rgba(8, 12, 24, 0.94)),
       url("/images/city-night-bg-mobile.jpg");
-    background-attachment: scroll;
   }
 }
 
