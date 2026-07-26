@@ -1563,14 +1563,14 @@ export default function AdminPage() {
               {/* ★ 완료 / 미완료(중간이탈) 요약 — 대표님이 전화 돌릴 리드 한눈에 파악 ★ */}
               {diagnoses.length > 0 && (
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center shadow-sm">
                     <p className="text-xs font-semibold text-gray-500">✅ 진단 완료</p>
                     <p className="text-2xl font-extrabold text-gray-900">
                       {diagnoses.filter((d) => d.status !== "partial").length}
                       <span className="ml-1 text-sm font-bold text-gray-500">명</span>
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center shadow-sm">
                     <p className="text-xs font-semibold text-gray-500">
                       ⏳ 미완료(중간이탈) · 전화 추천
                     </p>

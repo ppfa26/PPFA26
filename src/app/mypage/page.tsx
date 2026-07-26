@@ -169,7 +169,7 @@ export default function MyPage() {
   return (
     <PageShell pageKey="mypage">
       <Header />
-      <main className="bg-gray-50 px-4 py-6">
+      <main className="bg-gray-50 px-4 pt-6 pb-4">
         <div className="mx-auto max-w-3xl">
           <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">
             마이페이지

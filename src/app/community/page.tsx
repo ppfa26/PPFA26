@@ -166,7 +166,7 @@ const APPROVALS: Approval[] = [
     kind: "정책자금",
     business: "수출기업",
     region: "인천 남동구",
-    program: "글로벌화 자금",
+    program: "신시장진출자금",
     agency: "중소벤처기업진흥공단",
     amount: "1.5억원",
   },
@@ -237,11 +237,11 @@ export default function Page() {
   return (
     <PageShell pageKey="community">
       <Header />
-      <main className="mx-auto w-full max-w-5xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8">
+      <main className="mx-auto w-full max-w-5xl px-4 pb-6 pt-6 sm:px-6 sm:pt-8">
         {/* ── 상단 히어로 ── */}
         <section className="text-center">
           <span className="inline-block rounded-full border border-gray-200 bg-brand-yellow/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-orange break-keep sm:text-xs">
-            Customer Stories · 고객 성공 사례
+            이용자 정부지원사업 승인 사례
           </span>
           <h1 className="mt-4 break-keep text-2xl font-extrabold leading-tight tracking-tight text-brand-dark xs:text-3xl sm:text-[2.6rem]">
             대표님들의 진짜 후기로
@@ -394,7 +394,7 @@ export default function Page() {
             다음 후기의 주인공은 대표님입니다
           </h2>
           <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-gray-300 sm:text-base">
-            내 사업장에 맞는 정책자금·지원금·바우처, 지금 무료로 진단받아 보세요.
+            내 사업장에 정부지원사업, 지금 무료로 진단받아 보세요.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
