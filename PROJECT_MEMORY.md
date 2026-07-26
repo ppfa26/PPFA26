@@ -36,6 +36,9 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
+- `f44ff3c` **어드민 매출통계+요약리포트 병합** → 탭 1개 `📊 일주월 매출 리포트`(revenue 탭). 요약표(오늘/이번주/이번달/전체 × 신규가입·진단·결제·매출)를 매출탭 **맨 위**에 배치, 그 아래 기존 일별(30일)·월별(12개월) 상세표+드릴다운. **요약리포트 팝업 모달·버튼·state(showReport) 완전 제거**(기능 중복 제거). + **버튼 색상 팔레트 통일**: 대표님 지정 팔레트=**레드/그린(emerald)/오렌지/블루/반투명(white 5)/흰색**. 요약리포트 버튼(indigo) 삭제, 진단링크복사 white/gray→blue, 회원액션버튼 sky/indigo→blue·amber→orange·rose→red. (유입경로 배지 utmBadge는 채널 구분 목적이라 이모지+색 유지 — 추후 통일 여부 대표님 확인 대기.)
+- `4ab2365` 진단링크 복사: 항상 한글 도메인 `https://모두의사업친구.kr/diagnosis` 하드코딩(copyDiagnosisLink). window.location.origin 퓨니코드(xn--) 방지.
+- `566e0f1` 어드민 탭줄 순서·문구 변경(·→공백): 회원목록·고객진단서·결제조회권·매출통계·요약매출리포트·접속기기차단·진단서엑셀·진단링크복사 순. (※ f44ff3c에서 매출통계·요약매출리포트가 1개로 병합됨.)
 - `43f85e8` 어드민 회원목록 기능추가(디자인 유지): ①표 헤더 클릭 정렬(가입일/최근접속/결제/누적금액, ▲▼) — state userSort{key,dir}, toggleUserSort, sortArrow. ②유입경로 필터 드롭다운(utmBadge 라벨+채널별 개수) — state userSourceFilter, userSourceCounts. 원본 검색(filteredUsers)·CSV 로직 그대로 두고 sortedUsers=filteredUsers→필터→정렬 후처리. 표 바디는 sortedUsers 사용.
 - `037e870` 글자크기 통일: 탭줄 8버튼 13→14px, 전체N명 배지·회원표 헤더 12→13px.
 - `2e9f94d` 탭줄 8버튼 flex-1 균등분배(빈공간 제거+구분선), 버튼명 '요약 리포트'→'요약 매출 리포트'.
