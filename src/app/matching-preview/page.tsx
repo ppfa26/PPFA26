@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import AdvancedScreeningPanel from "@/components/AdvancedScreeningPanel";
-import { countMatchedItems } from "@/lib/supportPrograms";
+import { countMatchedItems, getMatchedTitles, type MatchedTitle } from "@/lib/supportPrograms";
 import {
   getPaymentBlockReasons,
   PAYMENT_BLOCK_TEXT,
@@ -32,6 +32,10 @@ export default function MatchingPreview() {
   const [gate, setGate] = useState<"checking" | "guest" | "analyzing" | "ready">("checking");
   // 분석 연출 진행 단계(0~3) - "AI가 실제로 판독 중"이라는 신뢰감을 주기 위한 짧은 연출
   const [analyzeStep, setAnalyzeStep] = useState(0);
+  // ★ 비회원 게이트 '맛보기'용: 실제 매칭된 항목 제목 리스트(기관명 등).
+  //   개수는 counts/total로, 이 리스트에서 앞 3개만 흐리게 보여줘 "이렇게 많다"를 체감시킨다.
+  //   (스코어링 값은 그대로 - 표시만 부분 공개)
+  const [matchedTitles, setMatchedTitles] = useState<MatchedTitle[]>([]);
   const [counts, setCounts] = useState<{
     total: number;
     institutions: number;
@@ -96,6 +100,11 @@ export default function MatchingPreview() {
         );
         setBlockReasons(getPaymentBlockReasons(profile));
         setCounts(countMatchedItems(profile));
+        try {
+          setMatchedTitles(getMatchedTitles(profile));
+        } catch {
+          setMatchedTitles([]);
+        }
         setProfileData(profile);
       } catch {
         setCounts(null);
@@ -238,38 +247,117 @@ export default function MatchingPreview() {
   }
 
   // ── 로그인(회원가입) 게이트 화면 (비로그인 시) ──
+  //  A안(맛보기 공개): 결과를 통째로 잠그지 않고 ①카테고리별 개수 ②실제 매칭 항목
+  //  '앞 3개'를 흐리게(preview-film) 보여준 뒤, 나머지는 가입으로 유도한다.
+  //  → 방문자가 '가치'를 눈으로 먼저 확인하고 나서 가입하므로 전환율이 오른다.
   //  진단(mpp_diagnosis)은 localStorage 에 그대로 남아 있으므로,
   //  로그인/가입 후 이 페이지로 돌아오면 곧바로 결과가 열린다.
   if (gate === "guest") {
+    // 카테고리별 개수(요약 배너와 동일 계산값) - 스코어링 로직은 손대지 않고 표시만 한다.
+    const catCards = [
+      { icon: "🏛️", label: "정부지원제도", n: counts?.supports ?? 0 },
+      { icon: "💰", label: "정책금융 상품", n: counts?.products ?? 0 },
+      { icon: "🎁", label: "추가 감면·혜택", n: counts?.benefits ?? 0 },
+    ].filter((c) => c.n > 0);
+    // 맛보기 리스트: 실제 매칭 제목 앞 3개만 흐리게 노출(나머지는 가입 후)
+    const teaser = matchedTitles.slice(0, 3);
+    const restCount = Math.max(0, total - teaser.length);
+    // ★ 미래 결제 전환 대비 세팅 ★
+    //   지금(BETA_FREE=true): '무료 가입'으로 유도. 상세는 가입만 하면 전부 무료 공개.
+    //   나중(BETA_FREE=false): 동일 UI에서 문구/버튼이 '가입 후 결제'로 자동 전환된다.
+    //   → 스위치 하나(betaConfig)로 맛보기→가입→결제 퍼널이 그대로 이어진다.
+    const ctaLabel = BETA_FREE ? "🔓 무료 회원가입하고 전체 결과 보기" : "🔓 회원가입하고 전체 결과 열기";
+    const unlockNote = BETA_FREE
+      ? "지금은 오픈 베타 기간이라 가입만 하면 전체 결과를 무료로 확인하실 수 있습니다."
+      : "가입 후 결제하시면 기관명·신청방법·서류까지 전체 결과가 열립니다.";
     return (
       <PageShell pageKey="matching-preview">
         <Header />
-        <main className="px-4 py-12">
+        <main className="px-4 py-10">
           <div className="mx-auto max-w-md">
-            <div className="rounded-3xl border-2 border-brand-orange/50 bg-white p-7 text-center shadow-card sm:p-9">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
-                🔒
+            {/* ── 히어로: 개수를 크게 강조해 '이렇게 많아?' 체감 ── */}
+            <div className="rounded-3xl border-2 border-brand-orange/50 bg-white p-6 text-center shadow-card sm:p-8">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
+                🎉
               </div>
-              <h1 className="mt-4 break-keep text-xl font-extrabold text-brand-dark sm:text-2xl">
+              <h1 className="mt-3 break-keep text-lg font-extrabold text-brand-dark sm:text-2xl">
                 {name ? `${name} 대표님, ` : ""}분석이 완료되었습니다!
               </h1>
-              <p className="mt-2 break-keep text-lg font-black text-brand-orange">
-                받을 수 있는 지원사업 {total}개 매칭 🎉
+              <p className="mt-2 break-keep text-2xl font-black leading-tight text-brand-orange sm:text-3xl">
+                총 {total}개 매칭 🎯
               </p>
-              <p className="mt-4 break-keep text-sm leading-relaxed text-brand-dark/70">
-                결과를 확인하시려면{" "}
-                <b className="text-brand-dark">간편 회원가입(로그인)</b>이 필요합니다.
-                <br />
-                <b className="text-brand-orange">카카오·구글·이메일</b> 중 편한 방법으로
-                <br />
-                10초 만에 시작하고 전체 결과를 무료로 확인하세요.
+              <p className="mt-1 break-keep text-sm text-brand-dark/60">
+                대표님 사업장에 해당되는 정부지원사업을 찾았어요.
               </p>
 
+              {/* 카테고리별 개수 - 여기까지는 가입 없이 그대로 공개 */}
+              {catCards.length > 0 && (
+                <div className="mt-5 grid grid-cols-3 gap-2">
+                  {catCards.map((c) => (
+                    <div
+                      key={c.label}
+                      className="break-keep rounded-2xl border border-brand-orange/20 bg-brand-yellow/10 px-2 py-3"
+                    >
+                      <div className="text-xl">{c.icon}</div>
+                      <div className="mt-1 text-xl font-black text-brand-orange">{c.n}</div>
+                      <div className="mt-0.5 text-[11px] font-bold leading-tight text-brand-dark/70">
+                        {c.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ── 맛보기 리스트: 실제 매칭 항목 3개를 흐리게 → '진짜 결과가 있다' 증명 ── */}
+            {teaser.length > 0 && (
+              <div className="relative mt-4 overflow-hidden rounded-3xl border-2 border-brand-orange/30 bg-white p-5 shadow-card">
+                <p className="mb-3 flex items-center gap-1.5 text-sm font-extrabold text-brand-dark">
+                  <span>🔎</span> 이런 항목들이 매칭됐어요
+                </p>
+                <ul className="space-y-2.5">
+                  {teaser.map((t, i) => (
+                    <li
+                      key={`${t.kind}-${i}`}
+                      className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3"
+                    >
+                      <span className="text-lg">{t.icon}</span>
+                      <div className="min-w-0 flex-1 text-left">
+                        <span className="block text-[11px] font-bold text-brand-orange">
+                          {t.kind}
+                        </span>
+                        {/* 제목만 흐리게 - '내용은 있는데 정확히 뭔지는 가입해야 안다' */}
+                        <span className="preview-lock-text block truncate text-sm font-bold text-brand-dark">
+                          {t.title}
+                        </span>
+                      </div>
+                      <span className="text-sm">🔒</span>
+                    </li>
+                  ))}
+                </ul>
+                {restCount > 0 && (
+                  <p className="mt-3 break-keep text-center text-xs font-bold text-brand-dark/60">
+                    + 나머지 <span className="text-brand-orange">{restCount}개</span> 결과가 더
+                    기다리고 있어요
+                  </p>
+                )}
+                {/* 아래쪽 페이드로 '더 있다'는 느낌 강조 */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent" />
+              </div>
+            )}
+
+            {/* ── 가입 유도(CTA) ── */}
+            <div className="mt-4 rounded-3xl border-2 border-brand-orange/50 bg-white p-6 text-center shadow-card">
+              <p className="break-keep text-sm leading-relaxed text-brand-dark/75">
+                <b className="text-brand-dark">기관명·신청방법·필요서류</b>까지 전체 결과는
+                <br />
+                <b className="text-brand-orange">카카오·구글·이메일</b> 10초 가입 후 바로 열립니다.
+              </p>
               <Link
                 href="/signup?next=%2Fmatching-preview"
-                className="btn-brand mt-6 block rounded-full py-3.5 text-center text-base font-bold"
+                className="btn-brand mt-5 block rounded-full py-3.5 text-center text-base font-bold"
               >
-                🔓 회원가입하고 결과 전체 보기
+                {ctaLabel}
               </Link>
               <p className="mt-3 break-keep text-xs text-brand-gray">
                 이미 가입하셨나요?{" "}
@@ -280,10 +368,8 @@ export default function MatchingPreview() {
                   로그인
                 </Link>
               </p>
-
-              <div className="mt-6 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-left text-xs leading-relaxed text-brand-dark/70">
-                💡 진단 결과는 안전하게 보관되어 있습니다. 로그인하시면 방금 분석한 결과가 그대로
-                열립니다.
+              <div className="mt-5 break-keep rounded-2xl bg-brand-yellow/10 px-4 py-3 text-left text-xs leading-relaxed text-brand-dark/70">
+                💡 {unlockNote} 방금 분석한 결과는 안전하게 보관됩니다.
               </div>
               <p className="mt-4 break-keep text-[11px] leading-relaxed text-brand-dark/50">
                 ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며,
