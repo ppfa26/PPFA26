@@ -195,7 +195,7 @@ export default function MyPage() {
                     </p>
                     <button
                       onClick={handleLogout}
-                      className="rounded-full border border-gray-300 px-5 py-2 text-sm font-semibold text-brand-gray hover:bg-gray-50"
+                      className="rounded-full border border-gray-300 px-5 py-2 text-sm font-semibold text-brand-gray transition hover:scale-[1.02] hover:bg-gray-50"
                     >
                       로그아웃
                     </button>
@@ -208,7 +208,7 @@ export default function MyPage() {
                     </p>
                     <Link
                       href="/signup"
-                      className="btn-brand mt-4 inline-block rounded-full px-8 py-3"
+                      className="btn-brand mt-4 inline-block rounded-full px-8 py-3 transition hover:scale-[1.02]"
                     >
                       로그인 / 회원가입
                     </Link>
@@ -245,7 +245,7 @@ export default function MyPage() {
                     </p>
                     <Link
                       href="/matching-preview?analyze=1"
-                      className="btn-red group mt-3 inline-flex items-center gap-2 rounded-full px-8 py-2.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 sm:text-base"
+                      className="btn-red group mt-3 inline-flex items-center gap-2 rounded-full px-8 py-2.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 transition hover:scale-[1.02] sm:text-base"
                     >
                       진단 결과 전체 확인하기
                       <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
@@ -293,7 +293,7 @@ export default function MyPage() {
                       href="http://pf.kakao.com/_VxfWxan/chat"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3 transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3 transition hover:scale-[1.02] hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       <span className="flex min-w-0 flex-1 items-center gap-2">
                         <span className="shrink-0 text-base">{s.icon}</span>
@@ -350,7 +350,7 @@ export default function MyPage() {
                         href="http://pf.kakao.com/_VxfWxan/chat"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full whitespace-nowrap rounded-full bg-[#FEE500] px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:brightness-95"
+                        className="w-full whitespace-nowrap rounded-full bg-[#FEE500] px-7 py-3.5 text-center text-sm font-extrabold text-brand-dark transition hover:scale-[1.02] hover:brightness-95"
                       >
                         💬 1:1 채널톡 상담하기
                       </a>
@@ -426,7 +426,7 @@ export default function MyPage() {
                                 onClick={() => handleDeletePayment(p.order_id)}
                                 disabled={deletingOrder === p.order_id}
                                 title="이 결제 건 삭제 (관리자 전용)"
-                                className="shrink-0 rounded-lg border border-brand-red/40 px-3 py-1.5 text-xs font-bold text-brand-red transition hover:bg-brand-red/10 disabled:opacity-50"
+                                className="shrink-0 rounded-lg border border-brand-red/40 px-3 py-1.5 text-xs font-bold text-brand-red transition hover:scale-[1.02] hover:bg-brand-red/10 disabled:opacity-50"
                               >
                                 {deletingOrder === p.order_id ? "삭제 중…" : "삭제"}
                               </button>

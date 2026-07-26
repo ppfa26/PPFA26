@@ -233,7 +233,7 @@ export default function AdminPage() {
   // 무료진단 링크 복사 — 고객에게 카톡으로 진단 링크 보낼 때 원클릭
   // ※ 항상 한글 도메인으로 복사 (window.location.origin 은 퓨니코드 xn--... 로 나올 수 있어 고정)
   const copyDiagnosisLink = async () => {
-    const url = "https://모두의사업친구.kr/diagnosis";
+    const url = "https://모두의사업친구.kr";
     try {
       await navigator.clipboard.writeText(url);
       setMsg("무료진단 링크를 복사했어요. 고객에게 붙여넣기 하세요.");
@@ -1563,20 +1563,20 @@ export default function AdminPage() {
               {/* ★ 완료 / 미완료(중간이탈) 요약 — 대표님이 전화 돌릴 리드 한눈에 파악 ★ */}
               {diagnoses.length > 0 && (
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-2xl border border-green-100 bg-green-50 px-4 py-3">
-                    <p className="text-xs font-semibold text-green-700">✅ 진단 완료</p>
-                    <p className="text-2xl font-extrabold text-green-800">
+                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                    <p className="text-xs font-semibold text-gray-500">✅ 진단 완료</p>
+                    <p className="text-2xl font-extrabold text-gray-900">
                       {diagnoses.filter((d) => d.status !== "partial").length}
-                      <span className="ml-1 text-sm font-bold">명</span>
+                      <span className="ml-1 text-sm font-bold text-gray-500">명</span>
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3">
-                    <p className="text-xs font-semibold text-orange-700">
+                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                    <p className="text-xs font-semibold text-gray-500">
                       ⏳ 미완료(중간이탈) · 전화 추천
                     </p>
-                    <p className="text-2xl font-extrabold text-orange-800">
+                    <p className="text-2xl font-extrabold text-gray-900">
                       {diagnoses.filter((d) => d.status === "partial").length}
-                      <span className="ml-1 text-sm font-bold">명</span>
+                      <span className="ml-1 text-sm font-bold text-gray-500">명</span>
                     </p>
                   </div>
                 </div>
