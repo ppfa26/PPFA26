@@ -697,8 +697,10 @@ export default function Diagnosis() {
               <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP1_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP1_SUBTITLE}</p>
 
-              {/* 사업자번호 자동 조회 (국세청 연동) - 박스 틀 색상 빨간색으로 통일(대표님 요청) */}
-              <div className="mb-6 overflow-hidden rounded-2xl border border-brand-red/20 bg-brand-red/5 p-4">
+              {/* 사업자번호 자동 조회 (국세청 연동)
+                  ★톤 통일★ 위험(결격) 박스만 빨강, 나머지는 차분한 회색 1톤으로(대표님 요청).
+                  '(필수)' 강조는 제목 옆 빨강 배지로 충분하므로 박스 틀은 회색으로 통일. */}
+              <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-gray-50/70 p-4">
                 <p className="mb-2 break-keep text-[13px] font-bold text-brand-dark xs:text-sm sm:text-base">
                   {BNO_TEXT.title}{" "}
                   <span className="whitespace-nowrap text-xs font-bold text-brand-red">{BNO_TEXT.badge}</span>
@@ -792,8 +794,9 @@ export default function Diagnosis() {
                 <p className="mt-1 break-keep text-xs font-semibold text-brand-red/80">{BNO_TEXT.errorPreStartupHint}</p>
               </div>
 
-              {/* 대표자 성함 및 연락처 - 사업자등록번호 조회 바로 아래에 배치(대표님 요청). 성함·연락처 필수 · 박스 틀 색상 빨간색으로 통일 */}
-              <GroupBox title={CONTACT_TEXT.groupTitle} tone="red" matchBno>
+              {/* 대표자 성함 및 연락처 - 사업자등록번호 조회 바로 아래에 배치(대표님 요청).
+                  ★톤 통일★ 위험(결격) 박스만 빨강, 나머지는 차분한 회색 1톤으로 통일(대표님 요청). */}
+              <GroupBox title={CONTACT_TEXT.groupTitle} matchBno>
                 {CONTACT_TEXT.groupNote && (
                   <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
                     {CONTACT_TEXT.groupNote}
@@ -923,13 +926,15 @@ export default function Diagnosis() {
               </GroupBox>
 
               {/* ② 필요한 지원 (회사 정보 문맥 - '무엇이 필요한지'는 회사 상황의 일부이므로 2페이지에 배치.
-                  페이지 세로길이 균등화 목적으로도 2페이지에 무게를 실어 1·2·3 높이를 맞춤(대표님 요청). */}
-              <GroupBox title={STEP2_GROUP_NEED} tone="orange">
+                  페이지 세로길이 균등화 목적으로도 2페이지에 무게를 실어 1·2·3 높이를 맞춤(대표님 요청).
+                  ★톤 통일★ 색을 빼고 회색 기본 톤으로(대표님 요청). */}
+              <GroupBox title={STEP2_GROUP_NEED}>
                 <Field label={STEP2_FIELDS.purposes.label} hint={STEP2_FIELDS.purposes.hint}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} breakBefore={["수출자금"]} /></Field>
               </GroupBox>
 
-              {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) - 있으면 자격이 열려 더 유리한 문맥으로 묶음 */}
-              <GroupBox title={STEP2_GROUP_STRENGTH} tone="green">
+              {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) - 있으면 자격이 열려 더 유리한 문맥으로 묶음.
+                  ★톤 통일★ 색을 빼고 회색 기본 톤으로(대표님 요청). */}
+              <GroupBox title={STEP2_GROUP_STRENGTH}>
                 <Field label={STEP3_FIELDS.certifications.label} hint={STEP3_FIELDS.certifications.hint}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
                 <Field label={STEP3_FIELDS.innovation.label} hint={STEP3_FIELDS.innovation.hint}><Multi k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
               </GroupBox>
@@ -943,8 +948,9 @@ export default function Diagnosis() {
 
               {/* ── ① 정밀 매칭 질문 (카드형 체크리스트 · 대표님 요청) ──
                   탭하면 켜짐(=예), 다시 탭하면 꺼짐(=아니요). 해당되는 것만 켜면 됩니다.
-                  ★결과 무관★ 값은 기존 예/아니요와 동일 → matching.ts 결과 100% 유지. */}
-              <div className="mb-4 rounded-2xl border border-brand-yellow/50 bg-brand-yellow/10 p-3.5 sm:p-5">
+                  ★결과 무관★ 값은 기존 예/아니요와 동일 → matching.ts 결과 100% 유지.
+                  ★톤 통일★ 노랑 큰 박스 → GroupBox와 동일한 차분한 회색 톤으로(대표님 요청). */}
+              <div className="mb-4 rounded-2xl border border-gray-200 bg-gray-50/70 p-3.5 sm:p-5">
                 <p className="mb-1 break-keep text-sm font-extrabold text-brand-dark">
                   🎯 맞춤 매칭을 위한 추가 질문
                 </p>
@@ -962,8 +968,9 @@ export default function Diagnosis() {
                 </div>
               </div>
 
-              {/* ── 전화 상담 희망 여부 (대표님 요청 - 마지막 질문 1개) ── */}
-              <div className="mb-5 rounded-2xl border border-brand-orange/40 bg-brand-orange/5 p-4 sm:p-5">
+              {/* ── 전화 상담 희망 여부 (대표님 요청 - 마지막 질문 1개) ──
+                  ★톤 통일★ 오렌지 박스 → GroupBox와 동일한 차분한 회색 톤으로(대표님 요청). */}
+              <div className="mb-5 rounded-2xl border border-gray-200 bg-gray-50/70 p-3.5 sm:p-5">
                 <p className="mb-1 break-keep text-sm font-extrabold leading-snug text-brand-dark">
                   {PHONE_CONSULT_FIELD.label}
                 </p>
