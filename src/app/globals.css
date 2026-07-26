@@ -262,6 +262,35 @@ h4 {
   animation: pulseGlow 2s infinite;
 }
 
+/* 시선 유도: 아래로 살짝 튀는 화살표(👆/손가락) - '여기 눌러주세요' 강조용 */
+@keyframes nudgeDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+.animate-nudgeDown {
+  animation: nudgeDown 1.1s ease-in-out infinite;
+}
+/* 시선 유도 버튼: 오렌지 링 확산 + 아주 살짝 커졌다 작아짐 */
+@keyframes attentionPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.5);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 10px rgba(255, 149, 0, 0);
+  }
+}
+.animate-attentionPulse {
+  animation: attentionPulse 1.5s ease-in-out infinite;
+}
+
 /* 스크롤 등장 모션 (reveal-on-scroll) - 거슬리지 않게 살짝만 */
 .reveal {
   opacity: 0;

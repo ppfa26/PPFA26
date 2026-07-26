@@ -549,11 +549,14 @@ export default function Diagnosis() {
     opts,
     breakBefore,
     grid,
+    labelMap,
   }: {
     k: string;
     opts: string[];
     breakBefore?: string[];
     grid?: boolean;
+    // 화면에만 짧게 보이는 라벨 매핑(값은 opts 그대로 저장) - 매칭 로직 영향 없음
+    labelMap?: Record<string, string>;
   }) =>
     grid ? (
       <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
@@ -563,7 +566,7 @@ export default function Diagnosis() {
             onClick={() => toggle(k, o)}
             className={`${pillCls((form[k] || []).includes(o))} ${pillPad} w-full break-keep text-center sm:w-auto`}
           >
-            {o}
+            {labelMap?.[o] ?? o}
           </button>
         ))}
       </div>
@@ -573,7 +576,7 @@ export default function Diagnosis() {
           <Fragment key={o}>
             {breakBefore?.includes(o) && <div className="hidden w-full sm:block" aria-hidden />}
             <button onClick={() => toggle(k, o)} className={`${pillCls((form[k] || []).includes(o))} ${pillPad}`}>
-              {o}
+              {labelMap?.[o] ?? o}
             </button>
           </Fragment>
         ))}
@@ -744,12 +747,17 @@ export default function Diagnosis() {
                         </p>
                         <p className="mt-1 text-xs leading-relaxed text-brand-gray">
                           국세청 사업자 조회는 <b>정기 점검</b>이 잦아 일시적으로 연결이 안 될 수 있습니다.
-                          아래 <b>직접 입력하고 계속하기</b>를 클릭하시면 신청이 정상 접수됩니다.
+                          아래 <b className="text-brand-orange">직접 입력하고 계속하기</b>를 클릭하시면 신청이 정상 접수됩니다.
                         </p>
-                        <div className="mt-2.5 flex flex-wrap gap-2">
+                        {/* ★ 시선 유도 (대표님 요청) ★ 오류 시 이 버튼을 누르면 된다는 걸 손가락+맥박 애니메이션으로 강조 */}
+                        <p className="mt-2 flex items-center gap-1 text-xs font-extrabold text-brand-orange">
+                          <span className="animate-nudgeDown inline-block">👇</span>
+                          여기를 눌러 계속 진행하세요
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
                           <button
                             onClick={confirmManualBno}
-                            className="btn-brand rounded-full px-4 py-1.5 text-xs font-bold"
+                            className="btn-brand animate-attentionPulse rounded-full px-5 py-2 text-xs font-extrabold"
                           >
                             직접 입력하고 계속하기 →
                           </button>
@@ -922,7 +930,7 @@ export default function Diagnosis() {
               <GroupBox title={STEP2_GROUP_FINANCE}>
                 <Field label={STEP3_FIELDS.credit.label} hint={STEP3_FIELDS.credit.hint}><Radio k="credit" opts={STEP3_FIELDS.credit.opts} grid /></Field>
                 <Field label={STEP2_FIELDS.employees.label} hint={STEP2_FIELDS.employees.hint}><Radio k="employees" opts={STEP2_FIELDS.employees.opts} grid /></Field>
-                <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} grid /></Field>
+                <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} labelMap={STEP2_FIELDS.currentInstitutions.labelMap} grid /></Field>
               </GroupBox>
 
               {/* ② 필요한 지원 (회사 정보 문맥 - '무엇이 필요한지'는 회사 상황의 일부이므로 2페이지에 배치.
@@ -935,8 +943,9 @@ export default function Diagnosis() {
               {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) - 있으면 자격이 열려 더 유리한 문맥으로 묶음.
                   ★톤 통일★ 색을 빼고 회색 기본 톤으로(대표님 요청). */}
               <GroupBox title={STEP2_GROUP_STRENGTH}>
-                <Field label={STEP3_FIELDS.certifications.label} hint={STEP3_FIELDS.certifications.hint}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
+                {/* ★ 순서 변경 (대표님 요청) ★ 혁신성장분야 → 특허·인증 보유 여부 순. (매칭 무관: 표시 순서만) */}
                 <Field label={STEP3_FIELDS.innovation.label} hint={STEP3_FIELDS.innovation.hint}><Multi k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
+                <Field label={STEP3_FIELDS.certifications.label} hint={STEP3_FIELDS.certifications.hint}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
               </GroupBox>
             </div>
           )}
@@ -955,7 +964,7 @@ export default function Diagnosis() {
                   🎯 맞춤 매칭을 위한 추가 질문
                 </p>
                 <p className="mb-3 break-keep text-xs leading-relaxed text-brand-gray sm:mb-4">
-                  해당되는 항목만 눌러 주세요. 안 눌러면 &lsquo;아니요&rsquo;로 체크됩니다.
+                  해당되는 항목을 눌러주세요. 안 누른 질문은 &lsquo;아니요&rsquo;로 인식합니다.
                 </p>
                 {/* ★ 대표님 요청 순서 ★ 연매출성장 → 스마트기기 → 대환 → 재도전 → 정부선정 → 민간투자 */}
                 <div className="grid grid-cols-1 gap-3">
