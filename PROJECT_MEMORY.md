@@ -90,7 +90,11 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
-- **(이번 세션) 🌱 아코디언 REQ-28: 창업중심대학 삭제 + 공고시기 팩트반영 + 제목/문구 변경 + 모든고객 노출** [대표님 요청, 커밋 REQ-28]
+- **(이번 세션) 🌱 아코디언 색 톤정리(구조 무변경)** [대표님 요청, 커밋 REQ-29]
+  - **배경**: 5개 결과 아코디언 중 🌱 예비·초기·청년만 emerald(생 그린) 계열이라 톤이 튐. 나머지 4개(정부지원제도/정책금융/감면혜택/그외사업)는 이미 다크카드+brand-green 뱃지+brand-orange CTA로 통일돼 있음. **레이아웃·문구·버튼 위치/개수 0 변경, emerald 클래스 7곳만 brand 팔레트로 치환.**
+  - **치환 내역(AdvancedScreeningPanel.tsx)**: ①상단 안내박스 `border-emerald-200 bg-emerald-50/60`+`text-emerald-800` → `border-brand-green/30 bg-brand-green/5`+`text-brand-dark/80`; ②사업 카드 `border-emerald-100` → `border-gray-200`; ③"사업화 자금" 뱃지 `bg-emerald-100 text-emerald-700` → `bg-brand-green text-white`(=신청가능 뱃지와 동일); ④금액 `text-emerald-700` → `text-brand-green`; ⑤🔗사이트 바로가기 `bg-emerald-600 hover:bg-emerald-700` → `bg-brand-orange hover:brightness-95`(=나머지 CTA와 동일); ⑥📄신청 매뉴얼 `border-emerald-600 text-emerald-700 hover:bg-emerald-50` → `border-brand-orange text-brand-orange hover:bg-brand-orange/5`.
+  - **검증(390×844 Playwright, 만40세+법인, ?admin=1, 아코디언 펼침)**: 톤 통일 시각 확인 ✅(스크린샷 대표님 승인). emerald 잔여 0건. tsc+build EXIT 0. CopyGuard QA화이트리스트 제거(0건). matching.ts 0 수정.
+- **(직전) 🌱 아코디언 REQ-28: 창업중심대학 삭제 + 공고시기 팩트반영 + 제목/문구 변경 + 모든고객 노출** [대표님 요청, 커밋 REQ-28]
   - **창업중심대학 항목 완전 삭제**: PRE_FOUNDER_PROGRAMS에서 해당 오브젝트 제거(7개→6개: 예비/초기/창업도약/재도전/청년창업사관학교/원스톱센터).
   - **공고시기 팩트체크 후 detail 반영**: web_search로 창업패키지가 매년 초(1~3월 상반기 1분기)에 집중됨 확인(예비 2월경, 초기·창업도약 1/23~2/13, 청년창업사관학교 1/30~2/13, 재도전 상반기). 5개 패키지 `detail`에 "1~3월 상반기", "매년 초", "상반기 집중" 등 공고시기 문구 추가. 원스톱센터는 상시라 제외.
   - **제목/subtitle 변경**: title "예비/초기/청년창업자 정부지원사업" → "**예비·초기·청년창업자 정부지원사업**"(가운뎃점 ·). subtitle → "**예비·초기·청년에 해당하는 대표님을 위한 정부지원사업이에요**".

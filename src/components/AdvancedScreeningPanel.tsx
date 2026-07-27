@@ -902,8 +902,8 @@ function AdvancedResult({
           title="예비·초기·청년창업자 정부지원사업"
           subtitle="예비·초기·청년에 해당하는 대표님을 위한 정부지원사업이에요"
         >
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
-            <p className="break-keep text-xs leading-relaxed text-emerald-800">
+          <div className="rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
+            <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
               아래는 <b>예비·초기·청년 창업자</b>가 신청할 수 있는 대표적인 <b>사업화 자금(무상)</b> 지원사업이에요.
               정책자금(대출)과 달리 갚지 않아도 되는 지원금 중심이라, 창업 준비·초기 단계에서 먼저 챙겨보시길 권합니다.
             </p>
@@ -912,16 +912,16 @@ function AdvancedResult({
             {PRE_FOUNDER_PROGRAMS.map((p) => (
               <div
                 key={p.name}
-                className="rounded-xl border border-emerald-100 bg-white px-4 py-3 shadow-sm"
+                className="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark">
-                    <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                    <span className="shrink-0 rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">
                       사업화 자금
                     </span>
                     {p.name}
                   </span>
-                  <span className="break-keep text-xs font-bold text-emerald-700">{p.amount}</span>
+                  <span className="break-keep text-xs font-bold text-brand-green">{p.amount}</span>
                 </div>
                 <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70">
                   <b className="text-brand-dark/80">대상</b> · {p.target}
@@ -935,7 +935,7 @@ function AdvancedResult({
                     href={previewLock ? undefined : p.siteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-extrabold text-white transition hover:bg-emerald-700 ${lockClick}`}
+                    className={`inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-3.5 py-2 text-xs font-extrabold text-white transition hover:brightness-95 ${lockClick}`}
                   >
                     <span aria-hidden>🔗</span> 사이트 바로가기 <span aria-hidden>→</span>
                   </a>
@@ -944,7 +944,7 @@ function AdvancedResult({
                       href={previewLock ? undefined : p.manualUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-1.5 rounded-lg border border-emerald-600 bg-white px-3.5 py-2 text-xs font-extrabold text-emerald-700 transition hover:bg-emerald-50 ${lockClick}`}
+                      className={`inline-flex items-center gap-1.5 rounded-lg border border-brand-orange bg-white px-3.5 py-2 text-xs font-extrabold text-brand-orange transition hover:bg-brand-orange/5 ${lockClick}`}
                     >
                       <span aria-hidden>📄</span> 신청 매뉴얼
                     </a>
