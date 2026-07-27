@@ -967,26 +967,6 @@ function AdvancedResult({
           title="신청 가능한 정부지원제도"
           subtitle="지금 신청할 수 있는 제도예요"
         >
-          {/* ★ V표시(✅) 보고 이렇게 신청하면 된다 - 3스텝 미니 가이드 (대표님 요청) ★ */}
-          <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 p-3">
-            <p className="mb-1.5 break-keep text-[11px] font-extrabold text-brand-green">
-              ✅ 표시된 곳, 이렇게 신청하시면 됩니다
-            </p>
-            <ol className="space-y-1.5">
-              <li className="flex items-start gap-1.5 break-keep text-[12px] leading-relaxed text-brand-dark/80">
-                <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">1</span>
-                <span><b>✅ 신청 대상</b>인 제도의 카드를 눌러 상세 페이지로 들어가세요.</span>
-              </li>
-              <li className="flex items-start gap-1.5 break-keep text-[12px] leading-relaxed text-brand-dark/80">
-                <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">2</span>
-                <span>상세 페이지의 <b>필요서류·소요기간</b>을 확인하고 서류를 준비하세요.</span>
-              </li>
-              <li className="flex items-start gap-1.5 break-keep text-[12px] leading-relaxed text-brand-dark/80">
-                <span className="mt-px shrink-0 rounded-full bg-brand-green px-1.5 text-[10px] font-bold text-white">3</span>
-                <span><b>공식 신청 사이트/연락처</b>로 접수하시면 됩니다. 담당 부처에 문의시 간편하게 신청 가능합니다.</span>
-              </li>
-            </ol>
-          </div>
           <div className="mt-4 space-y-3">
             {eligibleSupport.map(({ prog, status }) => {
               const isEligible = status === "eligible";

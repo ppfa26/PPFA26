@@ -30,7 +30,7 @@ export const BNO_TEXT = {
   title: "🔍 사업자등록번호 국세청 자동 조회",
   badge: "(필수)",
   placeholder: "예: 123-45-67890",
-  button: "조회",
+  button: "조회하기",
   buttonLoading: "조회 중...",
   statusPrefix: "사업자 상태:",
   taxTypePrefix: "과세유형:",
