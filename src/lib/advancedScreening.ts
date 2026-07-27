@@ -924,42 +924,62 @@ export type PreFounderProgram = {
   amount: string; // 지원금(최대·평균)
   target: string; // 지원대상(연령·업력 조건)
   detail: string; // 지원내용 한 줄
-  applyUrl: string; // 공식 신청·안내 페이지
-  applyLabel: string; // 신청 버튼 라벨
+  siteUrl: string; // ① 공식 사이트 바로가기(공고 상세)
+  manualUrl?: string; // ② 신청 매뉴얼 PDF(있는 경우만)
 };
 
+// 🌱 예비/초기/청년창업자 정부지원사업 (대표님 요청)
+//  '예비창업' 또는 '청년(만39세 이하)'에 해당하는 창업 사업화 지원사업.
+//  각 항목: ① 사이트 바로가기(K-Startup 공고 상세) + ② 신청 매뉴얼(PDF).
+//  ※ 명칭·지원금·URL은 2026 공식 공고(K-Startup·중진공) 기준. 중진공 청년창업자금은
+//    '정책금융상품' 아코디언에 그대로 두고 여기서는 사업화자금(무상) 사업만 안내.
 export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
   {
     name: "예비창업패키지",
     amount: "최대 1억원 (평균 약 4,000만원 · 100% 무상)",
     target: "사업자등록 전 예비창업자 (만 19세 이상, 연령 상한 없음)",
     detail: "사업화 자금 + 창업교육 + 멘토링. 매년 2월경 공고, K-Startup에서 온라인 신청.",
-    applyUrl: "https://www.k-startup.go.kr",
-    applyLabel: "K-Startup에서 신청",
+    siteUrl: "https://www.k-startup.go.kr/web/contents/webCMRCZN.do?schM=view&id=170001",
+    manualUrl: "/manuals/startup-preliminary-manual-2026.pdf",
   },
   {
-    name: "생애최초 청년창업 지원",
-    amount: "최대 1억원 (사업화자금 5천만원 내외)",
-    target: "만 29세 이하 생애최초 청년 예비창업자",
-    detail: "청년 최초 창업자 대상 사업화자금·창업 프로그램. K-Startup 공고 확인.",
-    applyUrl: "https://www.k-startup.go.kr",
-    applyLabel: "K-Startup에서 신청",
+    name: "초기창업패키지",
+    amount: "최대 1억원 (평균 약 7,000만원 · 사업화 자금)",
+    target: "창업 3년 이내 초기 창업기업 대표자",
+    detail: "사업화 자금 + 창업기업 성장 프로그램. 주관기관(대학·기관)별 특화 지원. K-Startup 신청.",
+    siteUrl: "https://www.k-startup.go.kr/web/contents/webCMRCZN.do?schM=view&id=170002",
+    manualUrl: "/manuals/startup-early-manual-2026.pdf",
   },
   {
-    name: "청년창업사관학교",
+    name: "창업도약패키지",
+    amount: "최대 3억원 (사업화 자금 · 성장 단계)",
+    target: "창업 3년 초과 7년 이내 도약기 창업기업 대표자",
+    detail: "사업모델 고도화 + 사업화 자금 + 성장 지원. 데스밸리 극복 지원. K-Startup 신청.",
+    siteUrl: "https://www.k-startup.go.kr/web/contents/webCMRCZN.do?schM=view&id=170003",
+    manualUrl: "/manuals/startup-leap-manual-2026.pdf",
+  },
+  {
+    name: "재도전성공패키지",
+    amount: "최대 6,000만원 (사업화 자금 · 재창업 전용)",
+    target: "예비 재창업자 및 재창업 7년 이내 기업 (폐업 경험 대표자)",
+    detail: "재창업 사업화 자금 + 재기 교육·멘토링. 실패 경험을 성장으로. K-Startup 신청.",
+    siteUrl: "https://www.k-startup.go.kr/web/contents/webCMRCZN.do?schM=view&id=170007",
+    manualUrl: "/manuals/startup-restart-manual-2026.pdf",
+  },
+  {
+    name: "청년창업사관학교 (창업성공패키지)",
     amount: "최대 1억원 (총사업비의 70% 이내 · 평균 약 7,000만원)",
     target: "만 39세 이하 예비창업자 및 창업 3년 이내 대표자 (경험창업자 7년 이내)",
     detail: "중소벤처기업진흥공단 운영. 사업화자금 + 입교(집중보육) + 정책자금 연계.",
-    applyUrl: "https://start.kosmes.or.kr",
-    applyLabel: "청년창업사관학교 신청",
+    siteUrl: "https://www.k-startup.go.kr/web/contents/bizpbanc-deadline.do?schM=view&pbancSn=176107&pbancEndYn=Y",
+    manualUrl: "/manuals/startup-youth-academy-manual-2026.pdf",
   },
   {
-    name: "신사업창업사관학교",
-    amount: "최대 4,000만원 (사업화 자금)",
-    target: "생활밀착형 신사업 아이템 예비 소상공인 (음식·도소매·서비스 등)",
-    detail: "소상공인시장진흥공단 운영. 창업교육 + 점포경영체험 + 사업화 자금.",
-    applyUrl: "https://edu.sbiz.or.kr",
-    applyLabel: "신사업창업사관학교 신청",
+    name: "창업중심대학",
+    amount: "최대 1억원 (사업화 자금 · 대학 중심 창업 지원)",
+    target: "예비창업자 및 창업 7년 이내 기업 (지역 창업중심대학별 상이)",
+    detail: "권역별 창업중심대학이 운영하는 창업 사업화 지원. 지역 기반 성장 지원. K-Startup 신청.",
+    siteUrl: "https://www.k-startup.go.kr/web/contents/webFC_SP_NR.do?schM=view&id=171262",
   },
 ];
 

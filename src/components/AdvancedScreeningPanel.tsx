@@ -893,18 +893,20 @@ function AdvancedResult({
         </div>
       )}
 
-      {/* ⓪ 예비창업자 전용 지원사업 (대표님 요청) - '예비창업자' 체크한 고객에게만 보이므로
-             결과창 '맨 위'(정부지원제도 위)로 노출. 대출이 아닌 사업화 자금(무상) 중심. */}
-      {report.company.is_pre_founder && (
+      {/* ⓪ 예비/초기/청년창업자 정부지원사업 (대표님 요청) - '예비창업자' 체크했거나
+             '청년(대표자 만 39세 이하)'에 해당하는 고객에게 노출. 결과창 '맨 위'(정부지원제도 위).
+             대출이 아닌 사업화 자금(무상) 중심. 중진공 청년창업자금(대출)은 정책금융상품 아코디언 유지. */}
+      {(report.company.is_pre_founder ||
+        (typeof report.company.ceo_age === "number" && report.company.ceo_age <= 39)) && (
         <AccordionCard
           emoji="🌱"
-          title="예비창업자를 위한 정부지원사업"
-          subtitle="아직 사업자등록 전이신 대표님만 볼 수 있는 창업 사업화 지원사업이에요"
+          title="예비/초기/청년창업자 정부지원사업"
+          subtitle="예비창업이거나 청년(만 39세 이하)에 해당하는 대표님을 위한 창업 사업화 지원사업이에요"
         >
           <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-emerald-800">
-              아래는 <b>사업자등록 전 예비창업자</b>가 신청할 수 있는 대표적인 <b>사업화 자금(무상·바우처)</b> 지원사업이에요.
-              정책자금(대출)과 달리 갚지 않아도 되는 지원금 중심이라, 창업 준비 단계에서 먼저 챙겨보시길 권합니다.
+              아래는 <b>예비·초기·청년 창업자</b>가 신청할 수 있는 대표적인 <b>사업화 자금(무상)</b> 지원사업이에요.
+              정책자금(대출)과 달리 갚지 않아도 되는 지원금 중심이라, 창업 준비·초기 단계에서 먼저 챙겨보시길 권합니다.
             </p>
           </div>
           <div className="mt-3 space-y-2.5">
@@ -928,14 +930,27 @@ function AdvancedResult({
                 <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
                   {p.detail}
                 </p>
-                <a
-                  href={previewLock ? undefined : p.applyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-extrabold text-white transition hover:bg-emerald-700 ${lockClick}`}
-                >
-                  {p.applyLabel} <span aria-hidden>→</span>
-                </a>
+                {/* ★ 버튼 2종 (대표님 요청) ★ ① 사이트 바로가기 ② 신청 매뉴얼(있는 경우만) */}
+                <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                  <a
+                    href={previewLock ? undefined : p.siteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-extrabold text-white transition hover:bg-emerald-700 ${lockClick}`}
+                  >
+                    <span aria-hidden>🔗</span> 사이트 바로가기 <span aria-hidden>→</span>
+                  </a>
+                  {p.manualUrl && (
+                    <a
+                      href={previewLock ? undefined : p.manualUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1.5 rounded-lg border border-emerald-600 bg-white px-3.5 py-2 text-xs font-extrabold text-emerald-700 transition hover:bg-emerald-50 ${lockClick}`}
+                    >
+                      <span aria-hidden>📄</span> 신청 매뉴얼
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>
