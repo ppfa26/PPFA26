@@ -28,6 +28,7 @@ import {
   resolveJaedanLinks,
   loanNatureOf,
   PRE_FOUNDER_PROGRAMS,
+  isPreFounderEligible,
   type InstitutionProduct,
 } from "@/lib/advancedScreening";
 import {
@@ -832,6 +833,9 @@ function AdvancedResult({
   // ★ 결정 마비 완화(대표님 요청): '지금 신청 가능'만 먼저 펼치고, '조건 충족 시 가능'은 접어둔다. ★
   //   ⚠️ 판정/정렬/점수 로직은 그대로. 이미 계산된 결과를 '펼침 vs 접힘'으로 나눠 표시만 하는 것.
   const [showSupportPotential, setShowSupportPotential] = useState(false);
+  // ★ 🌱 창업지원사업: '해당되는 사람만' 먼저 펼치고, 자격 밖 사업은 '더 보기'로 접어둔다.(대표님 요청·승인) ★
+  //   ⚠️ 표시만 분리. 목록·순서·내용 불변. 판정은 isPreFounderEligible(진단 프로필)로만.
+  const [showPreFounderOthers, setShowPreFounderOthers] = useState(false);
 
   // report(=creditMatches)가 준비/갱신되면 모든 기관 아코디언을 기본 오픈으로 초기화
   useEffect(() => {
@@ -913,8 +917,17 @@ function AdvancedResult({
               정책자금(대출)과는 다르게 갚지 않아도 되는 지원금이며, 예비·초기 단계에서 챙기시길 권장드립니다.
             </p>
           </div>
-          <div className="mt-3 space-y-2.5">
-            {PRE_FOUNDER_PROGRAMS.map((p) => (
+          {(() => {
+            // ★ 표시만 분리(대표님 요청·승인): 진단 프로필에 '해당되는 사람'만 먼저 펼치고,
+            //   자격 밖 사업은 '더 보기'로 접어둔다. 목록·순서·내용은 그대로. 판정은 isPreFounderEligible.
+            //   ⚠️ matching.ts 스코어링과 무관한 표시용 후처리.
+            const eligibles = PRE_FOUNDER_PROGRAMS.filter((p) =>
+              isPreFounderEligible(p.eligKey, relatedProfile),
+            );
+            const others = PRE_FOUNDER_PROGRAMS.filter(
+              (p) => !isPreFounderEligible(p.eligKey, relatedProfile),
+            );
+            const renderPreFounderCard = (p: (typeof PRE_FOUNDER_PROGRAMS)[number]) => (
               <div
                 key={p.name}
                 className="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
@@ -956,8 +969,45 @@ function AdvancedResult({
                   )}
                 </div>
               </div>
-            ))}
-          </div>
+            );
+            return (
+              <div className="mt-3 space-y-2.5">
+                {eligibles.length > 0 ? (
+                  eligibles.map((p) => renderPreFounderCard(p))
+                ) : (
+                  // 진단상 해당되는 창업단계 사업이 없을 때 안내(단계 밖 = 이미 성장기 등)
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <p className="break-keep text-xs leading-relaxed text-brand-dark/60">
+                      지금 진단 기준으로 <b>바로 해당되는 창업단계 사업</b>은 없어요. 아래
+                      &lsquo;다른 창업지원사업&rsquo;에서 조건을 확인해 보세요.
+                    </p>
+                  </div>
+                )}
+
+                {others.length > 0 &&
+                  (!showPreFounderOthers ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowPreFounderOthers(true)}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-4 py-3 text-xs font-bold text-brand-orange transition hover:bg-brand-orange/10"
+                    >
+                      다른 창업지원사업 {others.length}개 더 보기 <span aria-hidden>▼</span>
+                    </button>
+                  ) : (
+                    <>
+                      {others.map((p) => renderPreFounderCard(p))}
+                      <button
+                        type="button"
+                        onClick={() => setShowPreFounderOthers(false)}
+                        className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-xs font-semibold text-brand-dark/60 transition hover:bg-gray-100"
+                      >
+                        접기 <span aria-hidden>▲</span>
+                      </button>
+                    </>
+                  ))}
+              </div>
+            );
+          })()}
           <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/45">
             ※ 공고 시기·지원금·자격은 매년 달라질 수 있어요. 신청 전 각 기관 공식 공고를 꼭 확인하세요.
           </p>

@@ -926,6 +926,16 @@ export type PreFounderProgram = {
   detail: string; // 지원내용 한 줄
   siteUrl: string; // ① 공식 사이트 바로가기(공고 상세)
   manualUrl?: string; // ② 신청 매뉴얼 PDF(있는 경우만)
+  // ★ 자격 판정 키(대표님 요청) ★ 진단 프로필로 '해당되는 사람만 먼저 펼치고' 나머지는
+  //   '더 보기'로 접기 위한 식별자. 표시 데이터(위 필드들)는 그대로, 판정 로직은
+  //   isPreFounderEligible()에서 이 key로만 분기한다. (matching.ts 스코어링과 무관)
+  eligKey:
+    | "preliminary" // 예비창업패키지 = 예비창업자(창업 전)
+    | "early" // 초기창업패키지 = 창업 3년 이내
+    | "leap" // 창업도약패키지 = 창업 3년 초과~7년 이내
+    | "restart" // 재도전성공패키지 = 폐업 후 재창업
+    | "youth" // 청년창업사관학교 = 만39세 이하 + (예비 or 창업 3년 이내)
+    | "always"; // 스타트업 원스톱센터 = 누구나
 };
 
 // 🌱 예비/초기/청년창업자 정부지원사업 (대표님 요청)
@@ -941,6 +951,7 @@ export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
     detail: "사업화 자금 + 창업교육 + 멘토링. 보통 2월경 공고(상반기 집중), K-Startup 신청.",
     siteUrl: "https://www.k-startup.go.kr/web/contents/webCMRCZN.do?schM=view&id=170001",
     manualUrl: "/manuals/startup-preliminary-manual-2026.pdf",
+    eligKey: "preliminary",
   },
   {
     name: "초기창업패키지",
@@ -949,6 +960,7 @@ export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
     detail: "사업화 자금 + 성장 프로그램(주관기관별 특화). 보통 1~2월경 공고, K-Startup 신청.",
     siteUrl: "https://www.k-startup.go.kr/web/contents/webCMRCZN.do?schM=view&id=170002",
     manualUrl: "/manuals/startup-early-manual-2026.pdf",
+    eligKey: "early",
   },
   {
     name: "창업도약패키지",
@@ -957,6 +969,7 @@ export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
     detail: "사업모델 고도화 + 사업화 자금(데스밸리 극복). 연 1회 1~2월경 공고, K-Startup 신청.",
     siteUrl: "https://www.k-startup.go.kr/web/contents/webCMRCZN.do?schM=view&id=170003",
     manualUrl: "/manuals/startup-leap-manual-2026.pdf",
+    eligKey: "leap",
   },
   {
     name: "재도전성공패키지",
@@ -965,6 +978,7 @@ export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
     detail: "재창업 사업화 자금 + 재기 교육·멘토링. 보통 2~3월경 공고, K-Startup 신청.",
     siteUrl: "https://www.k-startup.go.kr/web/contents/webCMRCZN.do?schM=view&id=170007",
     manualUrl: "/manuals/startup-restart-manual-2026.pdf",
+    eligKey: "restart",
   },
   {
     name: "청년창업사관학교 (창업성공패키지)",
@@ -973,6 +987,7 @@ export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
     detail: "중진공 운영. 사업화자금 + 집중보육 + 정책자금 연계. 보통 1~2월경 접수(상반기 집중).",
     siteUrl: "https://www.k-startup.go.kr/web/contents/bizpbanc-deadline.do?schM=view&pbancSn=176107&pbancEndYn=Y",
     manualUrl: "/manuals/startup-youth-academy-manual-2026.pdf",
+    eligKey: "youth",
   },
   {
     name: "스타트업 원스톱 지원센터",
@@ -981,8 +996,57 @@ export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
     detail: "정부 창업지원 정보 통합 안내 센터. 온라인 상담·전문가 매칭 제공, K-Startup 로그인 후 이용.",
     siteUrl: "https://www.k-startup.go.kr/onestop",
     manualUrl: "/manuals/startup-onestop-manual-2026.pdf",
+    eligKey: "always",
   },
 ];
+
+// ★ 🌱 창업지원사업 자격 판정(대표님 요청·승인) ★
+//   진단 프로필로 '해당되는 사람'을 가려 표시만 나눈다(자격자=먼저 펼침, 비자격=더 보기로 접기).
+//   ⚠️ matching.ts 스코어링 로직과 무관한 '표시용' 판정. 값·순서·점수 불변.
+//   판정은 진단 원본값 문자열 기준:
+//     businessType: "예비" | "개인사업자" | "법인사업자"
+//     years:        "창업 예정" | "1년 미만" | "3년 미만" | "5년 미만" | "7년 미만" | "7년 이상"
+//     age:          "만 34세 이하" | "만 39세 이하" | "만 40세 이상"
+//     reFounder:    "예" | "아니요"
+export function isPreFounderEligible(
+  eligKey: PreFounderProgram["eligKey"],
+  profile?: Record<string, unknown> | null,
+): boolean {
+  if (eligKey === "always") return true; // 누구나(스타트업 원스톱센터)
+  if (!profile) return false;
+
+  const s = (k: string): string => {
+    const v = profile[k];
+    return typeof v === "string" ? v : "";
+  };
+  const businessType = s("businessType");
+  const years = s("years");
+  const age = s("age");
+  const reFounder = s("reFounder");
+
+  const isPre = businessType.includes("예비") || years === "창업 예정";
+  // 창업 3년 이내 = 예비 or 1년미만 or 3년미만 (창업 예정 포함)
+  const within3y = isPre || years === "1년 미만" || years === "3년 미만";
+  // 창업 3년 초과 ~ 7년 이내 = 5년미만 or 7년미만
+  const between3and7 = years === "5년 미만" || years === "7년 미만";
+  // 청년(만 39세 이하) = 만 34세 이하 or 만 39세 이하
+  const isYoung = age === "만 34세 이하" || age === "만 39세 이하";
+
+  switch (eligKey) {
+    case "preliminary": // 예비창업패키지 = 예비창업자(창업 전)
+      return isPre;
+    case "early": // 초기창업패키지 = 창업 3년 이내
+      return within3y;
+    case "leap": // 창업도약패키지 = 창업 3년 초과 ~ 7년 이내
+      return between3and7;
+    case "restart": // 재도전성공패키지 = 폐업 후 재창업
+      return reFounder === "예";
+    case "youth": // 청년창업사관학교 = 만39세 이하 + (예비 or 창업 3년 이내)
+      return isYoung && within3y;
+    default:
+      return false;
+  }
+}
 
 export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
