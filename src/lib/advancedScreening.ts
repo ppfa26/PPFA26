@@ -981,6 +981,14 @@ export const PRE_FOUNDER_PROGRAMS: PreFounderProgram[] = [
     detail: "권역별 창업중심대학이 운영하는 창업 사업화 지원. 지역 기반 성장 지원. K-Startup 신청.",
     siteUrl: "https://www.k-startup.go.kr/web/contents/webFC_SP_NR.do?schM=view&id=171262",
   },
+  {
+    name: "스타트업 원스톱 지원센터",
+    amount: "무료 (정부 지원사업 통합 안내·상담 창구)",
+    target: "예비창업자 및 모든 창업기업 (누구나 이용 가능)",
+    detail: "정부 창업지원 정보를 한 곳에서 안내해주는 통합 지원센터. 온라인 상담 신청·전문가 매칭 등 방대한 정보를 제공해요. K-Startup에서 로그인 후 이용.",
+    siteUrl: "https://www.k-startup.go.kr/onestop",
+    manualUrl: "/manuals/startup-onestop-manual-2026.pdf",
+  },
 ];
 
 export const INSTITUTION_LINKS: InstitutionLink[] = [

@@ -2123,11 +2123,6 @@ export default function AdminPage() {
                   <p className="mt-0.5 text-xs text-gray-400">
                     접속수가 유난히 많거나, 한 IP에 여러 계정이 붙으면 의심해 보세요.
                   </p>
-                  <p className="mt-1 text-xs text-rose-500">
-                    🤖 <b>봇 의심</b> 뱃지 = 텐센트·AWS 같은 데이터센터 서버 대역입니다. 실제
-                    사람이 아니라 자동 봇/스캐너일 가능성이 높아요. 접속수가 많으면 &lsquo;IP차단&rsquo;을
-                    고려하세요. <span className="text-gray-400">(자동 차단 아님 · 표시만 됩니다)</span>
-                  </p>
                 </div>
                 <table className="w-full min-w-[560px] text-left text-sm">
                   <thead className="whitespace-nowrap bg-gray-50 text-xs text-gray-500">
@@ -2167,7 +2162,7 @@ export default function AdminPage() {
                           {cls.isDataCenter && (
                             <span
                               className="ml-1.5 inline-flex items-center gap-0.5 whitespace-nowrap rounded-md bg-rose-100 px-1.5 py-0.5 align-middle text-[10px] font-bold text-rose-600"
-                              title={`${cls.provider ?? "데이터센터"} 서버 대역입니다. 실제 사람이 아니라 자동 봇/스캐너일 가능성이 높습니다. 접속수가 많으면 차단을 고려하세요.`}
+                              title={`${cls.provider ?? "데이터센터"} 서버 대역입니다. 실제 사람이 아니라 자동 봇/스캐너일 가능성이 높습니다.`}
                             >
                               🤖 봇 의심{cls.provider ? ` · ${cls.provider}` : ""}
                             </span>
