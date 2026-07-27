@@ -858,7 +858,7 @@ export default function Diagnosis() {
                   ★톤 통일(대표님 요청)★ 위쪽 빨간 띠(제목 바)를 없애고 '대표자 기본정보'
                   박스와 동일한 GroupBox(회색 1톤)로 통일. "(해당 시 신청이 불가)"는
                   제목 괄호로 넣어 자동으로 포인트색 뱃지 처리됨. */}
-              <GroupBox title="⚠️ 신청 결격사유 확인 (해당 시 신청이 불가)">
+              <GroupBox title="⚠️ 신청 결격사유 확인 (필수)">
                 <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 twoLine /></Field>
                 <Field label={STEP3_FIELDS.taxDelinquent.label}>
                   <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 twoLine />
