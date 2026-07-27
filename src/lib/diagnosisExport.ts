@@ -53,7 +53,7 @@ function buildLabelMap(): Record<string, string> {
     smartFactory: "스마트공장 구축·도입",
     smartDevice: "매장 스마트기기 사용",
     govSelected: "정부 선정 프로그램 이력",
-    reFounder: "재창업[재도전] 여부",
+    reFounder: "재창업 [재도전] 여부",
     wantsRefinance: "저금리 대환 희망",
     privateInvestment: "민간 투자(엔젤·VC) 여부",
     innovation: "혁신성장 분야 해당",
