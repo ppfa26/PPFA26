@@ -1399,8 +1399,8 @@ function AdvancedResult({
               </div>
             )}
             <p className={`mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/55 ${lockText}`}>
-              ※ 소액 건(재단)은 비대면(모바일) 실사로 진행되는 경우가 많습니다.
-              반면 직접대출 기관과 신용보증기금·기술보증기금처럼 규모가 큰 건은 대부분 방문 실사로 진행됩니다.
+              ※ 소액건은 비대면(모바일) 실사로 진행되는 경우가 많고,
+              직접대출 기관과 신용보증기금, 기술보증기금처럼 규모가 큰 건은 방문 실사로 진행됩니다.
             </p>
           </div>
         )}
