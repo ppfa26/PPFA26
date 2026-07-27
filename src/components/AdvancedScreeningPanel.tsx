@@ -905,7 +905,8 @@ function AdvancedResult({
           <div className="rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
               아래는 <b>예비·초기·청년 창업자</b>가 신청할 수 있는 대표적인 <b>사업화 자금(무상)</b> 지원사업이에요.
-              정책자금(대출)과 달리 갚지 않아도 되는 지원금 중심이라, 창업 준비·초기 단계에서 먼저 챙겨보시길 권합니다.
+              <br />
+              정책자금(대출)과는 다르게 갚지 않아도 되는 지원금이며, 예비·초기 단계에서 챙기시길 권장드립니다.
             </p>
           </div>
           <div className="mt-3 space-y-2.5">
