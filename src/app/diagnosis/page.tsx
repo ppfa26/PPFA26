@@ -185,8 +185,9 @@ export default function Diagnosis() {
     setBnoServerDown(false);
     setBnoManual(false);
     const digits = bno.replace(/[^0-9]/g, "");
+    // 10자리 미만이면 오류 문구 없이 조용히 대기(대표님 요청: '10자리를 정확히...' 안내 제거)
     if (digits.length !== 10) {
-      setBnoResult({ ok: false, message: BNO_TEXT.errorLength });
+      setBnoResult(null);
       return;
     }
     setBnoLoading(true);
@@ -229,8 +230,9 @@ export default function Diagnosis() {
   // ★ 국세청 서버 장애 시 수동입력 확정 - 검증 없이 사업자번호를 접수한다(신청 누락 방지) ★
   const confirmManualBno = () => {
     const digits = bno.replace(/[^0-9]/g, "");
+    // 10자리 미만이면 오류 문구 없이 조용히 대기(대표님 요청: '10자리를 정확히...' 안내 제거)
     if (digits.length !== 10) {
-      setBnoResult({ ok: false, message: BNO_TEXT.errorLength });
+      setBnoResult(null);
       return;
     }
     set("bno", digits);
@@ -731,19 +733,18 @@ export default function Diagnosis() {
                   <button
                     type="button"
                     onClick={() => set("businessType", "예비")}
-                    className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-2 text-xs font-semibold transition-colors sm:px-4 sm:py-2.5 sm:text-sm ${
-                      form.businessType === "예비"
-                        ? "border-brand-orange bg-brand-orange text-white"
-                        : "border-brand-orange/50 bg-white text-brand-orange hover:bg-brand-orange/10"
-                    }`}
+                    className="btn-brand shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-xs font-semibold disabled:opacity-60 sm:px-5 sm:py-2.5 sm:text-sm"
                   >
                     예비창업자
                   </button>
                 </div>
                 {form.businessType === "예비" && (
-                  <p className="mt-2 break-keep text-xs font-semibold text-brand-orange">
-                    ✅ 예비창업자로 선택되었습니다. 사업자등록번호 없이 바로 다음 단계로 진행하세요.
-                  </p>
+                  /* ★ 대표님 요청 ★ 조회 결과 박스처럼 하단 박스로 표시해 바로 알아보게 */
+                  <div className="mt-3 rounded-xl border border-brand-orange/30 bg-brand-orange/10 px-4 py-3 text-sm">
+                    <p className="font-semibold text-brand-dark">
+                      ✅ 예비창업자를 선택하였습니다. 바로 다음 단계로 진행하세요.
+                    </p>
+                  </div>
                 )}
                 {bnoResult && (
                   <div className="mt-3 text-sm">
