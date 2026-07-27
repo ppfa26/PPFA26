@@ -733,7 +733,7 @@ export default function Diagnosis() {
                   <button
                     type="button"
                     onClick={() => set("businessType", "예비")}
-                    className="btn-brand shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-xs font-semibold disabled:opacity-60 sm:px-5 sm:py-2.5 sm:text-sm"
+                    className="shrink-0 whitespace-nowrap rounded-full bg-brand-green px-3 py-2 text-xs font-bold text-white shadow-sm transition-all hover:brightness-95 disabled:opacity-60 sm:px-5 sm:py-2.5 sm:text-sm"
                   >
                     예비창업자
                   </button>
