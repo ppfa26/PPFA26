@@ -42,9 +42,19 @@ body::before {
   min-height: 100vh;
   z-index: -1;
   background-color: #0b1020;
+  /* (성능) WebP 우선 로드 + JPG 폴백. image-set 미지원 브라우저는 아래 url() 폴백 사용.
+     WebP 변환으로 배경 용량 약 -51%(PC) / -58%(모바일) 감량 → 첫 화면 표시 속도 개선. */
   background-image:
     linear-gradient(rgba(8, 12, 24, 0.78), rgba(8, 12, 24, 0.9)),
     url("/images/city-night-bg.jpg");
+  background-image:
+    linear-gradient(rgba(8, 12, 24, 0.78), rgba(8, 12, 24, 0.9)),
+    -webkit-image-set(url("/images/city-night-bg.webp") type("image/webp"),
+      url("/images/city-night-bg.jpg") type("image/jpeg"));
+  background-image:
+    linear-gradient(rgba(8, 12, 24, 0.78), rgba(8, 12, 24, 0.9)),
+    image-set(url("/images/city-night-bg.webp") type("image/webp"),
+      url("/images/city-night-bg.jpg") type("image/jpeg"));
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -57,6 +67,14 @@ body::before {
     background-image:
       linear-gradient(rgba(8, 12, 24, 0.82), rgba(8, 12, 24, 0.94)),
       url("/images/city-night-bg-mobile.jpg");
+    background-image:
+      linear-gradient(rgba(8, 12, 24, 0.82), rgba(8, 12, 24, 0.94)),
+      -webkit-image-set(url("/images/city-night-bg-mobile.webp") type("image/webp"),
+        url("/images/city-night-bg-mobile.jpg") type("image/jpeg"));
+    background-image:
+      linear-gradient(rgba(8, 12, 24, 0.82), rgba(8, 12, 24, 0.94)),
+      image-set(url("/images/city-night-bg-mobile.webp") type("image/webp"),
+        url("/images/city-night-bg-mobile.jpg") type("image/jpeg"));
   }
 }
 

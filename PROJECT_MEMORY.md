@@ -90,7 +90,14 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
-- **(이번 세션) 🌱 아코디언 색 톤정리(구조 무변경)** [대표님 요청, 커밋 REQ-29]
+- **(이번 세션) 성능 최적화: 배경 이미지 WebP 변환(PC/모바일 렉 개선)** [대표님 요청, 커밋 REQ-30]
+  - **진단**: next.config는 이미 잘 최적화됨(gzip compress, /_next/static immutable 캐시, public 자산 1일 캐시, HTML no-cache, optimizePackageImports). 폰트도 이미 최적(Pretendard 1종 + preconnect + media=print 비동기 로딩 + noscript 폴백). 번들도 양호(대부분 170~180KB). **최대 병목 = CSS 배경이미지가 원본 JPG 로드**.
+  - **조치**: sharp(devDep)로 배경 2개 WebP 변환 — `city-night-bg.jpg` 355KB→**173KB(-51%)**, `city-night-bg-mobile.jpg` 130KB→**54KB(-58%)**. 배경은 어두운 그라디언트 오버레이(불투명 78~94%)가 덮여 q58로도 화질 저하 무시 가능.
+  - **globals.css**: `background-image`를 3단 폴백으로 교체 — ①url(jpg) 기본폴백 → ②-webkit-image-set(webp/jpg) → ③image-set(webp/jpg). 최신 브라우저는 WebP, 미지원은 자동 JPG 폴백. 그라디언트 오버레이 유지.
+  - **미사용 이미지**: approval-cases.jpg·naver-cover-*.jpg는 코드 미참조(WebP 안 만듦/삭제). next/image는 로고 2곳(Header/Footer)만 사용 — 이미 최적.
+  - **matching-preview(215KB) dynamic import는 보류**: 구조 변경 최소 원칙 + 효과 대비 회귀 위험 커서 미적용.
+  - **검증(Playwright PC 1280 + 모바일 390)**: 배경 `city-night-bg.webp 200` 실제 로드 확인 ✅. load PC 658ms / 모바일 373ms. 화면 정상(야경 배경·레이아웃·톤 무변경) 시각 확인 ✅. sharp는 devDependency라 Vercel 런타임 번들 무영향. tsc+build EXIT 0. CopyGuard QA화이트리스트 제거(0건). matching.ts 0 수정.
+- **(직전) 🌱 아코디언 색 톤정리(구조 무변경)** [대표님 요청, 커밋 REQ-29]
   - **배경**: 5개 결과 아코디언 중 🌱 예비·초기·청년만 emerald(생 그린) 계열이라 톤이 튐. 나머지 4개(정부지원제도/정책금융/감면혜택/그외사업)는 이미 다크카드+brand-green 뱃지+brand-orange CTA로 통일돼 있음. **레이아웃·문구·버튼 위치/개수 0 변경, emerald 클래스 7곳만 brand 팔레트로 치환.**
   - **치환 내역(AdvancedScreeningPanel.tsx)**: ①상단 안내박스 `border-emerald-200 bg-emerald-50/60`+`text-emerald-800` → `border-brand-green/30 bg-brand-green/5`+`text-brand-dark/80`; ②사업 카드 `border-emerald-100` → `border-gray-200`; ③"사업화 자금" 뱃지 `bg-emerald-100 text-emerald-700` → `bg-brand-green text-white`(=신청가능 뱃지와 동일); ④금액 `text-emerald-700` → `text-brand-green`; ⑤🔗사이트 바로가기 `bg-emerald-600 hover:bg-emerald-700` → `bg-brand-orange hover:brightness-95`(=나머지 CTA와 동일); ⑥📄신청 매뉴얼 `border-emerald-600 text-emerald-700 hover:bg-emerald-50` → `border-brand-orange text-brand-orange hover:bg-brand-orange/5`.
   - **검증(390×844 Playwright, 만40세+법인, ?admin=1, 아코디언 펼침)**: 톤 통일 시각 확인 ✅(스크린샷 대표님 승인). emerald 잔여 0건. tsc+build EXIT 0. CopyGuard QA화이트리스트 제거(0건). matching.ts 0 수정.
