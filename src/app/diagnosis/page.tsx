@@ -725,7 +725,26 @@ export default function Diagnosis() {
                   >
                     {bnoLoading ? BNO_TEXT.buttonLoading : BNO_TEXT.button}
                   </button>
+                  {/* ★ 예비창업자 바로가기 (대표님 요청) ★ 아직 사업자등록 전이면 이 버튼 하나로
+                      사업자 구분을 '예비'로 세팅 → goNext의 isPreStartup 예외로 사업자번호 없이 통과.
+                      기존 라디오와 완전히 같은 값("예비")을 세팅하므로 매칭·검증 로직 100% 동일. */}
+                  <button
+                    type="button"
+                    onClick={() => set("businessType", "예비")}
+                    className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-2 text-xs font-semibold transition-colors sm:px-4 sm:py-2.5 sm:text-sm ${
+                      form.businessType === "예비"
+                        ? "border-brand-orange bg-brand-orange text-white"
+                        : "border-brand-orange/50 bg-white text-brand-orange hover:bg-brand-orange/10"
+                    }`}
+                  >
+                    예비창업자
+                  </button>
                 </div>
+                {form.businessType === "예비" && (
+                  <p className="mt-2 break-keep text-xs font-semibold text-brand-orange">
+                    ✅ 예비창업자로 선택되었습니다. 사업자등록번호 없이 바로 다음 단계로 진행하세요.
+                  </p>
+                )}
                 {bnoResult && (
                   <div className="mt-3 text-sm">
                     {bnoManual ? (
@@ -799,7 +818,6 @@ export default function Diagnosis() {
                   </div>
                 )}
                 <p className="mt-2 text-xs text-brand-gray">{BNO_TEXT.note}</p>
-                <p className="mt-1 break-keep text-xs font-semibold text-brand-red/80">{BNO_TEXT.errorPreStartupHint}</p>
               </div>
 
               {/* 대표자 성함 및 연락처 - 사업자등록번호 조회 바로 아래에 배치(대표님 요청).
