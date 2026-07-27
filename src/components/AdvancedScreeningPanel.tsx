@@ -893,15 +893,14 @@ function AdvancedResult({
         </div>
       )}
 
-      {/* ⓪ 예비/초기/청년창업자 정부지원사업 (대표님 요청) - '예비창업자' 체크했거나
-             '청년(대표자 만 39세 이하)'에 해당하는 고객에게 노출. 결과창 '맨 위'(정부지원제도 위).
-             대출이 아닌 사업화 자금(무상) 중심. 중진공 청년창업자금(대출)은 정책금융상품 아코디언 유지. */}
-      {(report.company.is_pre_founder ||
-        (typeof report.company.ceo_age === "number" && report.company.ceo_age <= 39)) && (
+      {/* ⓪ 예비·초기·청년창업자 정부지원사업 (대표님 요청) - 모든 고객에게 노출.
+             결과창 '맨 위'(정부지원제도 위). 대출이 아닌 사업화 자금(무상) 중심.
+             중진공 청년창업자금(대출)은 정책금융상품 아코디언에 그대로 유지. */}
+      {(
         <AccordionCard
           emoji="🌱"
-          title="예비/초기/청년창업자 정부지원사업"
-          subtitle="예비창업이거나 청년(만 39세 이하)에 해당하는 대표님을 위한 창업 사업화 지원사업이에요"
+          title="예비·초기·청년창업자 정부지원사업"
+          subtitle="예비·초기·청년에 해당하는 대표님을 위한 정부지원사업이에요"
         >
           <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-emerald-800">
