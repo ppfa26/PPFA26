@@ -291,3 +291,14 @@
 ## 산출물 URL
 - 벽걸이 가로 PDF: https://www.genspark.ai/api/files/s/jhBNlbEy
 - 벽걸이 세로 PDF: https://www.genspark.ai/api/files/s/NK8Ppece
+
+## 셀프 업데이트/보안 진단 (현행 유지 결정) — 2026-07
+- **결정: 현행 유지 (next@14.2.35 그대로).** 대표님 "응 현행 유지" 승인.
+- npm audit → HIGH 2건이나, 우리 사이트 구조상 실제 공격 경로 없음:
+  - SSRF(GHSA-p9j2-gv94-2wf4): rewrites 미사용 → **해당 없음**
+  - Server Function 노출(GHSA-955p-x3mx-jcvp): Server Actions 거의 미사용 → 영향 극미
+  - next/image 캐시 폭증(GHSA-3x4c-7xq6-9pq8): Vercel 서버리스 → 무관
+  - postcss XSS/경로탐색: 빌드타임 도구, 런타임 영향 없음
+- 유일한 fix 경로 = `npm audit fix --force` → **next@16.2.12 breaking change** (14→16 메이저 2단계). 위험 대비 실익 마이너스라 미적용.
+- 14.2.x 라인은 이미 최신(14.2.35). 취약점 패치는 15/16 라인에만 존재.
+- **향후 액션**: Next 15 안정화 시점에 계획적 마이그레이션(별도 세션, tsc+build 검증). 급하지 않음.
