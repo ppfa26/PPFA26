@@ -65,8 +65,8 @@ export default function RelatedAnnouncements({
   return (
     <AccordionCard
       emoji="📢"
-      title="추가적인 그 외 정부지원사업"
-      subtitle="그 외 정부지원사업이에요"
+      title="그 외 놓치기 쉬운 지원사업"
+      subtitle="추가로 챙겨볼 만한 정부지원이에요"
     >
       {loading ? (
         <p className="mt-4 text-sm text-brand-dark/50">📢 관련 공고를 불러오는 중…</p>

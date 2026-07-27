@@ -899,8 +899,8 @@ function AdvancedResult({
       {(
         <AccordionCard
           emoji="🌱"
-          title="예비·초기·청년창업자 정부지원사업"
-          subtitle="예비·초기·청년에 해당하는 대표님을 위한 정부지원사업이에요"
+          title="예비·초기·청년창업자 지원사업"
+          subtitle="창업 단계 대표님을 위한 무상 사업화 자금이에요"
         >
           <div className="rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
@@ -966,7 +966,7 @@ function AdvancedResult({
         <AccordionCard
           emoji="🏅"
           title="신청 가능한 정부지원제도"
-          subtitle="지금 신청할 수 있는 제도예요"
+          subtitle="지금 바로 신청할 수 있는 제도만 모았어요"
         >
           <div className="mt-4 space-y-3">
             {eligibleSupport.map(({ prog, status }) => {

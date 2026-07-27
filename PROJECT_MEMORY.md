@@ -90,7 +90,16 @@
 - `src/app/page.tsx` / `privacy/page.tsx` — 진단·개인정보처리방침.
 
 ## 진행 이력(최근순)
-- **(이번 세션) 성능 최적화: 배경 이미지 WebP 변환(PC/모바일 렉 개선)** [대표님 요청, 커밋 REQ-30]
+- **(이번 세션) 5개 결과 아코디언 제목/부제 정리(제목=종류·부제=혜택, 반복 제거)** [대표님 요청, 커밋 "copy: 5개 아코디언 제목/부제 정리"]
+  - **배경**: 결과 아코디언 5개의 제목↔부제가 서로 겹쳐 반복(특히 📢 "추가적인 그 외 정부지원사업 / 그 외 정부지원사업이에요"). 대표님 "제목과 아코디언 안 설명들과 어울리나? 깔끔하게 수정해볼까" → 제안표 승인("그래 다 그렇게 바꿔보자"). **표시 문구만 수정, 콘텐츠·매칭 로직 0 변경.**
+  - **변경(제목=무엇인지 / 부제=대표님 이득)**:
+    - 🌱 `예비·초기·청년창업자 지원사업` / `창업 단계 대표님을 위한 무상 사업화 자금이에요` (AdvancedScreeningPanel.tsx)
+    - 🏅 `신청 가능한 정부지원제도`(유지) / `지금 바로 신청할 수 있는 제도만 모았어요` (AdvancedScreeningPanel.tsx)
+    - 💳 `이용 가능한 정책금융상품`(유지) / `낮은 금리로 받을 수 있는 자금이에요` (유지)
+    - 💎 `챙기면 좋은 감면 혜택`(제목 "추가" 제거, 모바일 2줄 유지) / `세금을 아낄 수 있는 혜택이에요` (report/ExtraBenefitsSection.tsx)
+    - 📢 `그 외 놓치기 쉬운 지원사업` / `추가로 챙겨볼 만한 정부지원이에요` (RelatedAnnouncements.tsx)
+  - **검증(Playwright PC 1280 + 모바일 390, ?admin=1, 아코디언 펼침)**: 5개 모두 제목/부제 정상 표시 시각 확인 ✅(PC·모바일 스샷 대표님 승인). 💎 모바일 2줄("챙기면 좋은"/"감면 혜택") 정상 ✅. tsc+build EXIT 0. CopyGuard QA화이트리스트 제거(0건). matching.ts 0 수정.
+- **(직전) 성능 최적화: 배경 이미지 WebP 변환(PC/모바일 렉 개선)** [대표님 요청, 커밋 REQ-30]
   - **진단**: next.config는 이미 잘 최적화됨(gzip compress, /_next/static immutable 캐시, public 자산 1일 캐시, HTML no-cache, optimizePackageImports). 폰트도 이미 최적(Pretendard 1종 + preconnect + media=print 비동기 로딩 + noscript 폴백). 번들도 양호(대부분 170~180KB). **최대 병목 = CSS 배경이미지가 원본 JPG 로드**.
   - **조치**: sharp(devDep)로 배경 2개 WebP 변환 — `city-night-bg.jpg` 355KB→**173KB(-51%)**, `city-night-bg-mobile.jpg` 130KB→**54KB(-58%)**. 배경은 어두운 그라디언트 오버레이(불투명 78~94%)가 덮여 q58로도 화질 저하 무시 가능.
   - **globals.css**: `background-image`를 3단 폴백으로 교체 — ①url(jpg) 기본폴백 → ②-webkit-image-set(webp/jpg) → ③image-set(webp/jpg). 최신 브라우저는 WebP, 미지원은 자동 JPG 폴백. 그라디언트 오버레이 유지.

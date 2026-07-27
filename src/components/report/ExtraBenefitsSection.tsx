@@ -525,13 +525,13 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
       <AccordionCard
         emoji="💎"
         title={
-          // 모바일: '챙기면 좋은' / '추가 감면 혜택' 2줄로 자연스럽게 끊음(대표님 요청).
+          // 모바일: '챙기면 좋은' / '감면 혜택' 2줄로 자연스럽게 끊음(대표님 요청).
           //   PC(sm 이상)는 공백 한 칸으로 한 줄 유지.
           <>
             챙기면 좋은
             <br className="sm:hidden" />
             <span className="hidden sm:inline"> </span>
-            추가 감면 혜택
+            감면 혜택
           </>
         }
         subtitle="세금을 아낄 수 있는 혜택이에요"
