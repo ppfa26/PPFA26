@@ -31,6 +31,10 @@ export default function RelatedAnnouncements({
 }) {
   const [items, setItems] = useState<Item[] | null>(null);
   const [loading, setLoading] = useState(true);
+  // ★ 결정 마비 완화(대표님 요청): 상위 3개만 먼저 보이고 나머지는 '더 보기'로 접어둔다. ★
+  //   ⚠️ 매칭/정렬은 서버 그대로. 여기선 표시 개수만 나눔(정보는 하나도 안 사라짐).
+  const [showAllAnnouncements, setShowAllAnnouncements] = useState(false);
+  const INITIAL_ANNOUNCEMENT_COUNT = 3;
 
   useEffect(() => {
     let alive = true;
@@ -74,7 +78,10 @@ export default function RelatedAnnouncements({
         <>
           {/* 감면 카드와 동일한 투명(흰) 박스 목록 스타일 */}
           <div className="mt-4 space-y-3">
-            {(items || []).map((it, i) => {
+            {(showAllAnnouncements
+              ? (items || [])
+              : (items || []).slice(0, INITIAL_ANNOUNCEMENT_COUNT)
+            ).map((it, i) => {
               const inner = (
                 <>
                   {/* 제목 + 카테고리 태그만 한 줄에 - 기간 배지는 아래로 내려 통일 */}
@@ -135,6 +142,31 @@ export default function RelatedAnnouncements({
               );
             })}
           </div>
+
+          {/* 3개 초과 시 '더 보기'로 나머지를 접어둠(정보는 유지, 첫 화면만 간결하게) */}
+          {(items || []).length > INITIAL_ANNOUNCEMENT_COUNT && (
+            <div className="mt-3">
+              {!showAllAnnouncements ? (
+                <button
+                  type="button"
+                  onClick={() => setShowAllAnnouncements(true)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-3 py-2.5 text-[12px] font-extrabold text-brand-orange transition hover:bg-brand-orange/15"
+                >
+                  다른 지원사업 {(items || []).length - INITIAL_ANNOUNCEMENT_COUNT}개 더 보기
+                  <span>▼</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowAllAnnouncements(false)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12px] font-bold text-brand-dark/60 transition hover:bg-gray-100"
+                >
+                  접기
+                  <span>▲</span>
+                </button>
+              )}
+            </div>
+          )}
         </>
       )}
     </AccordionCard>

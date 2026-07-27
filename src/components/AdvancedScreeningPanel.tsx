@@ -829,6 +829,10 @@ function AdvancedResult({
   const toggleProducts = (i: number) =>
     setOpenProducts((prev) => ({ ...prev, [i]: !prev[i] }));
 
+  // ★ 결정 마비 완화(대표님 요청): '지금 신청 가능'만 먼저 펼치고, '조건 충족 시 가능'은 접어둔다. ★
+  //   ⚠️ 판정/정렬/점수 로직은 그대로. 이미 계산된 결과를 '펼침 vs 접힘'으로 나눠 표시만 하는 것.
+  const [showSupportPotential, setShowSupportPotential] = useState(false);
+
   // report(=creditMatches)가 준비/갱신되면 모든 기관 아코디언을 기본 오픈으로 초기화
   useEffect(() => {
     const all: Record<number, boolean> = {};
@@ -968,8 +972,12 @@ function AdvancedResult({
           title="신청 가능한 정부지원제도"
           subtitle="지금 바로 신청할 수 있는 제도만 모았어요"
         >
-          <div className="mt-4 space-y-3">
-            {eligibleSupport.map(({ prog, status }) => {
+          {(() => {
+            // ★ 표시만 분리: '지금 신청 가능'(eligible) 먼저 펼치고, '조건 충족 시 가능'(potential)은 접어둔다.
+            //   정렬·판정은 이미 recompute()에서 끝났고 순서도 보존됨(eligible이 앞). 여기선 그룹만 나눔.
+            const eligibles = eligibleSupport.filter((x) => x.status === "eligible");
+            const potentials = eligibleSupport.filter((x) => x.status !== "eligible");
+            const renderSupportCard = ({ prog, status }: SupportItem) => {
               const isEligible = status === "eligible";
               return (
                 <Link
@@ -1040,8 +1048,42 @@ function AdvancedResult({
                   </div>
                 </Link>
               );
-            })}
-          </div>
+            };
+            return (
+              <div className="mt-4 space-y-3">
+                {/* 지금 신청 가능(초록) - 항상 펼침 */}
+                {eligibles.map((item) => renderSupportCard(item))}
+
+                {/* 조건 충족 시 가능(주황) - 접어두고 '더 보기'로 여지만 남김 */}
+                {potentials.length > 0 && (
+                  <>
+                    {!showSupportPotential ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowSupportPotential(true)}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-3 py-2.5 text-[12px] font-extrabold text-brand-orange transition hover:bg-brand-orange/15"
+                      >
+                        조건 충족 시 가능한 제도 {potentials.length}개 더 보기
+                        <span>▼</span>
+                      </button>
+                    ) : (
+                      <>
+                        {potentials.map((item) => renderSupportCard(item))}
+                        <button
+                          type="button"
+                          onClick={() => setShowSupportPotential(false)}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12px] font-bold text-brand-dark/60 transition hover:bg-gray-100"
+                        >
+                          접기
+                          <span>▲</span>
+                        </button>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })()}
         </AccordionCard>
       )}
 

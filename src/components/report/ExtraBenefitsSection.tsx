@@ -482,6 +482,9 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
   // 이 카드(🎁 추가 혜택)는 텍스트가 밀집돼 모자이크가 과해 보여 약한 블러 적용 (대표님 요청)
   const lockText = previewLock ? "preview-lock-text-soft" : "";
   const lockClick = previewLock ? "preview-lock-click-soft" : "";
+  // ★ 결정 마비 완화(대표님 요청): '지금 신청 가능'만 먼저 펼치고 '조건 충족 시 가능'은 접어둔다. ★
+  //   ⚠️ judge/정렬/점수 로직은 그대로. 이미 계산된 결과를 표시만 '펼침 vs 접힘'으로 나눔.
+  const [showBenefitCondition, setShowBenefitCondition] = useState(false);
 
   // userInput props 가 없을 때만 세션에서 읽어 매핑
   useEffect(() => {
@@ -536,9 +539,11 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
         }
         subtitle="세금을 아낄 수 있는 혜택이에요"
       >
-        {/* 가능성 높은 순 상위 6개 - 항목마다 연한 박스 + 간격으로 시원하게(금융기관 카드와 동일 감각) */}
-        <div className="mt-4 space-y-3">
-          {judged.map(({ b, v }) => {
+        {/* 가능성 높은 순 상위 6개 - '지금 신청 가능'(초록) 먼저, '조건 충족 시 가능'(주황)은 접어둠 */}
+        {(() => {
+          const yesList = judged.filter(({ v }) => v.status === "yes");
+          const condList = judged.filter(({ v }) => v.status !== "yes");
+          const renderBenefitCard = ({ b, v }: (typeof judged)[number]) => {
             const isYes = v.status === "yes";
             const isCondition = v.status === "condition";
 
@@ -668,8 +673,42 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                 </a>
               </div>
             );
-          })}
-        </div>
+          };
+          return (
+            <div className="mt-4 space-y-3">
+              {/* 지금 신청 가능(초록) - 항상 펼침 */}
+              {yesList.map((item) => renderBenefitCard(item))}
+
+              {/* 조건 충족 시 가능(주황) - 접어두고 '더 보기'로 여지만 남김 */}
+              {condList.length > 0 && (
+                <>
+                  {!showBenefitCondition ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowBenefitCondition(true)}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-3 py-2.5 text-[12px] font-extrabold text-brand-orange transition hover:bg-brand-orange/15"
+                    >
+                      조건 충족 시 가능한 혜택 {condList.length}개 더 보기
+                      <span>▼</span>
+                    </button>
+                  ) : (
+                    <>
+                      {condList.map((item) => renderBenefitCard(item))}
+                      <button
+                        type="button"
+                        onClick={() => setShowBenefitCondition(false)}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12px] font-bold text-brand-dark/60 transition hover:bg-gray-100"
+                      >
+                        접기
+                        <span>▲</span>
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          );
+        })()}
 
         {/* 하단 하이라이트 - 카드 안 소형 배너 */}
         <div className="mt-4 rounded-xl bg-brand-yellow/30 px-4 py-3 text-center">
