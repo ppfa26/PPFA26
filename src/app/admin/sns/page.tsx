@@ -76,6 +76,7 @@ export default function SnsHubPage() {
 
   // 결과
   const [loading, setLoading] = useState(false);
+  const [justDone, setJustDone] = useState(false); // 완성 직후 "✅ 글 완성!" 잠깐 표시
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [mode, setMode] = useState<"ai" | "fallback" | null>(null);
@@ -105,6 +106,7 @@ export default function SnsHubPage() {
       return;
     }
     setLoading(true);
+    setJustDone(false);
     setErrMsg(null);
     setNote(null);
     setChannels([]);
@@ -123,6 +125,9 @@ export default function SnsHubPage() {
       setMode(data.mode || null);
       setNote(data.note || null);
       setActiveTab(0);
+      // 완성 직후 버튼에 "✅ 글 완성!" 2초간 표시
+      setJustDone(true);
+      setTimeout(() => setJustDone(false), 2000);
     } catch {
       setErrMsg("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
@@ -265,9 +270,22 @@ export default function SnsHubPage() {
               type="button"
               onClick={generate}
               disabled={loading}
-              className="mt-4 w-full rounded-xl bg-brand-primary px-4 py-3 text-sm font-extrabold text-white transition hover:opacity-90 disabled:opacity-50 sm:w-auto sm:px-8"
+              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:cursor-not-allowed disabled:opacity-90 sm:w-auto sm:px-8 ${
+                justDone
+                  ? "bg-emerald-600"
+                  : "bg-brand-primary hover:opacity-90"
+              }`}
             >
-              {loading ? "✨ AI가 5채널 글 쓰는 중…" : "✨ 5채널 글 만들기"}
+              {loading ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                  글 작성중…
+                </>
+              ) : justDone ? (
+                <>✅ 글 완성!</>
+              ) : (
+                <>✨ 5채널 글 만들기</>
+              )}
             </button>
 
             {errMsg && (
