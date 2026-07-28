@@ -25,8 +25,10 @@ export const maxDuration = 60;
 //     · 억지 표현 금지, 승인 보장 금지
 // ────────────────────────────────────────────────────────────────
 
-const DEFAULT_LINK_INPOCK = "https://link.inpock.co.kr/ppfa25";
+// 대표님 실제 운영 방식: 모두의사업친구.kr 직접 노출.
+// 인스타/스레드는 링크 클릭이 안 되므로 "프로필 하단 클릭"으로 유도.
 const DEFAULT_LINK_HOME = "https://모두의사업친구.kr";
+const DEFAULT_LINK_INPOCK = DEFAULT_LINK_HOME; // 하위호환용(더는 인포크 안 씀)
 
 function stripHtml(s: string): string {
   return s

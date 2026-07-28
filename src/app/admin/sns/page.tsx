@@ -357,10 +357,10 @@ export default function SnsHubPage() {
             </ol>
           </section>
 
-          {/* 4) 채널별 업로드 설명서 */}
-          <section id="sns-upload-guide" className="mb-6">
+          {/* 4) 채널별 업로드 설명서 + 썸네일 규칙 */}
+          <section id="sns-upload-guide" className="mb-10">
             <h2 className="mb-3 text-base font-bold text-gray-900">
-              4. 채널별 올리는 방법 (처음이면 꼭 읽어주세요)
+              4. 채널별 올리는 방법 &amp; 썸네일 (처음이면 꼭 읽어주세요)
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {UPLOAD_GUIDES.map((g) => (
@@ -386,28 +386,28 @@ export default function SnsHubPage() {
                   </ol>
                 </div>
               ))}
-            </div>
-          </section>
 
-          {/* 5) 썸네일 규칙 */}
-          <section
-            id="sns-thumbnail-guide"
-            className="mb-10 rounded-2xl border border-amber-200 bg-amber-50/60 p-4 shadow-sm sm:p-6"
-          >
-            <h2 className="mb-3 text-base font-bold text-gray-900">
-              5. 썸네일 만들 때 지켜야 할 스타일 (다크 네이비 + 골드 고정)
-            </h2>
-            <ul className="space-y-1.5">
-              {THUMBNAIL_GUIDE.map((t, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-2 text-[13px] leading-relaxed text-gray-700"
-                >
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
+              {/* 썸네일 규칙 - 당근 카드 옆, 같은 흰색 배경으로 통일 */}
+              <div
+                id="sns-thumbnail-guide"
+                className="rounded-xl border border-gray-200 bg-white p-4"
+              >
+                <p className="mb-2 text-sm font-bold text-gray-900">
+                  🖼️ 썸네일 스타일 (다크 네이비 + 골드 고정)
+                </p>
+                <ul className="space-y-1.5">
+                  {THUMBNAIL_GUIDE.map((t, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-[13px] leading-relaxed text-gray-600"
+                    >
+                      <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-primary" />
+                      <span>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </section>
         </div>
       </main>
