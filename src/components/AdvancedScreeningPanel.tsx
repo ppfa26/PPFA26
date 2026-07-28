@@ -42,6 +42,7 @@ import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
 import AccordionCard from "@/components/report/AccordionCard";
 import RelatedAnnouncements from "@/components/RelatedAnnouncements";
 import { loadDiagnosisRaw, saveDiagnosis, getDiagnosisOwner } from "@/lib/diagnosisStore";
+import { GRADUATION_CRITERIA, GRADUATION_EXCLUDED_NOTE } from "@/lib/graduationCriteria";
 
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
 type SupportItem = { prog: SupportProgram; status: SupportStatus };
@@ -835,13 +836,18 @@ function AdvancedResult({
   const [showAllProducts, setShowAllProducts] = useState<Record<number, boolean>>({});
   const toggleAllProducts = (i: number) =>
     setShowAllProducts((prev) => ({ ...prev, [i]: !prev[i] }));
+  // ★ 졸업후보 기준표 '작은 아코디언'(대표님 요청): 졸업후보기업자금 상품 카드 아래에만 인라인 접이식으로.
+  //   기관·상품 인덱스 조합 키(`${i}-${pi}`)로 개별 토글. ⚠️ 순수 표시용, 판정/정렬/카운트 무관.
+  const [openGradCriteria, setOpenGradCriteria] = useState<Record<string, boolean>>({});
+  const toggleGradCriteria = (key: string) =>
+    setOpenGradCriteria((prev) => ({ ...prev, [key]: !prev[key] }));
 
   // ★ 결정 마비 완화(대표님 요청): '지금 신청 가능'만 먼저 펼치고, '조건 충족 시 가능'은 접어둔다. ★
   //   ⚠️ 판정/정렬/점수 로직은 그대로. 이미 계산된 결과를 '펼침 vs 접힘'으로 나눠 표시만 하는 것.
   const [showSupportPotential, setShowSupportPotential] = useState(false);
-  // ★ 🌱 창업지원사업: '해당되는 사람만' 먼저 펼치고, 자격 밖 사업은 '더 보기'로 접어둔다.(대표님 요청·승인) ★
-  //   ⚠️ 표시만 분리. 목록·순서·내용 불변. 판정은 isPreFounderEligible(진단 프로필)로만.
-  const [showPreFounderOthers, setShowPreFounderOthers] = useState(false);
+  // ★ 🌱 창업지원사업(방식 A, 대표님 승인): 자격 있는 사업만 표시하고,
+  //   자격 없는 신분·연령 사업(예비·재도전·청년·도약)은 '더 보기'로도 안 보이게 완전 제외.
+  //   판정은 isPreFounderEligible(진단 프로필)로만. ⚠️ matching.ts 스코어링과 무관한 표시 필터.
 
   // report(=creditMatches)가 준비/갱신되면 모든 기관 아코디언을 기본 오픈으로 초기화
   useEffect(() => {
@@ -924,14 +930,12 @@ function AdvancedResult({
             </p>
           </div>
           {(() => {
-            // ★ 표시만 분리(대표님 요청·승인): 진단 프로필에 '해당되는 사람'만 먼저 펼치고,
-            //   자격 밖 사업은 '더 보기'로 접어둔다. 목록·순서·내용은 그대로. 판정은 isPreFounderEligible.
-            //   ⚠️ matching.ts 스코어링과 무관한 표시용 후처리.
+            // ★ 방식 A(대표님 승인): 진단 프로필상 '자격 있는' 창업사업만 표시한다.
+            //   자격 없는 신분·연령 사업(예비·재도전·청년·도약)은 목록에서 완전 제외(더 보기에도 X).
+            //   'always'(스타트업 원스톱센터)는 누구나 대상 → 항상 포함된다.
+            //   ⚠️ matching.ts 스코어링과 무관한 표시용 필터. 판정은 isPreFounderEligible로만.
             const eligibles = PRE_FOUNDER_PROGRAMS.filter((p) =>
               isPreFounderEligible(p.eligKey, relatedProfile),
-            );
-            const others = PRE_FOUNDER_PROGRAMS.filter(
-              (p) => !isPreFounderEligible(p.eligKey, relatedProfile),
             );
             const renderPreFounderCard = (p: (typeof PRE_FOUNDER_PROGRAMS)[number]) => (
               <div
@@ -981,36 +985,14 @@ function AdvancedResult({
                 {eligibles.length > 0 ? (
                   eligibles.map((p) => renderPreFounderCard(p))
                 ) : (
-                  // 진단상 해당되는 창업단계 사업이 없을 때 안내(단계 밖 = 이미 성장기 등)
+                  // 자격 사업이 하나도 없을 때(이론상 always가 있어 드묾) 안내
                   <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
                     <p className="break-keep text-xs leading-relaxed text-brand-dark/60">
-                      지금 진단 기준으로 <b>바로 해당되는 창업단계 사업</b>은 없어요. 아래
-                      &lsquo;다른 창업지원사업&rsquo;에서 조건을 확인해 보세요.
+                      지금 진단 기준으로 <b>바로 해당되는 창업단계 사업</b>은 없어요.
+                      정책자금·정부지원제도 쪽을 함께 확인해 보세요.
                     </p>
                   </div>
                 )}
-
-                {others.length > 0 &&
-                  (!showPreFounderOthers ? (
-                    <button
-                      type="button"
-                      onClick={() => setShowPreFounderOthers(true)}
-                      className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-4 py-3 text-xs font-bold text-brand-orange transition hover:bg-brand-orange/10"
-                    >
-                      다른 창업지원사업 {others.length}개 더 보기 <span aria-hidden>▼</span>
-                    </button>
-                  ) : (
-                    <>
-                      {others.map((p) => renderPreFounderCard(p))}
-                      <button
-                        type="button"
-                        onClick={() => setShowPreFounderOthers(false)}
-                        className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-xs font-semibold text-brand-dark/60 transition hover:bg-gray-100"
-                      >
-                        접기 <span aria-hidden>▲</span>
-                      </button>
-                    </>
-                  ))}
               </div>
             );
           })()}
@@ -1352,6 +1334,68 @@ function AdvancedResult({
                                 이 상품 신청하러 가기 →
                               </a>
                             )}
+                            {/* ★ 졸업후보 기준 '작은 아코디언'(대표님 요청): 졸업후보기업자금 상품 카드 아래에만.
+                                 팝업이 아닌 인라인 접이식 표. 순수 참고용(matching.ts 판정과 무관). */}
+                            {prod.name.includes("졸업후보기업자금") && (() => {
+                              const gradKey = `${i}-${pi}`;
+                              const gradOpen = Boolean(openGradCriteria[gradKey]);
+                              return (
+                                <div className="mt-2.5 rounded-lg border border-gray-200 bg-white">
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleGradCriteria(gradKey)}
+                                    className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left"
+                                    aria-expanded={gradOpen}
+                                  >
+                                    <span className="break-keep text-[12px] font-bold text-brand-dark">
+                                      📋 업종별 졸업후보기업 기준 (매출·상시근로자)
+                                    </span>
+                                    <svg
+                                      className={`h-4 w-4 shrink-0 text-brand-gray transition-transform ${gradOpen ? "rotate-180" : ""}`}
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                      strokeWidth={2}
+                                    >
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                  </button>
+                                  {gradOpen && (
+                                    <div className="border-t border-gray-100 px-3 pb-3 pt-2">
+                                      <p className="mb-2 break-keep text-[11px] leading-relaxed text-brand-gray">
+                                        아래 업종별 <b>평균매출액</b>과 <b>상시근로자 수</b> 기준을 넘어서는
+                                        성장 소상공인이 '졸업후보기업' 대상입니다.
+                                      </p>
+                                      <div className="max-h-64 overflow-y-auto overflow-x-auto rounded-md border border-gray-100">
+                                        <table className="w-full min-w-[420px] border-collapse text-left text-[11px]">
+                                          <thead className="sticky top-0 bg-gray-50 text-brand-dark/70">
+                                            <tr>
+                                              <th className="whitespace-nowrap px-2 py-1.5 font-bold">코드</th>
+                                              <th className="whitespace-nowrap px-2 py-1.5 font-bold">중분류(업종)</th>
+                                              <th className="whitespace-nowrap px-2 py-1.5 font-bold">평균매출액</th>
+                                              <th className="whitespace-nowrap px-2 py-1.5 font-bold">상시근로자</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody className="text-brand-dark/80">
+                                            {GRADUATION_CRITERIA.map((row) => (
+                                              <tr key={row.code} className="border-t border-gray-100 align-top">
+                                                <td className="whitespace-nowrap px-2 py-1.5 font-semibold text-brand-gray">{row.code}</td>
+                                                <td className="break-keep px-2 py-1.5">{row.industry}</td>
+                                                <td className="whitespace-nowrap px-2 py-1.5">{row.revenue}</td>
+                                                <td className="whitespace-nowrap px-2 py-1.5">{row.employees}</td>
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <p className="mt-2 break-keep text-[10px] leading-relaxed text-brand-gray">
+                                        ※ {GRADUATION_EXCLUDED_NOTE}
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })()}
                           </div>
                           );
                         })}

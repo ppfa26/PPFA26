@@ -411,3 +411,21 @@
 ## 진단서 라벨 "재창업[재도전] 여부" → "재창업 [재도전] 여부" (대표님 요청)
 - diagnosisExport.ts L56 reFounder 라벨: "재창업[재도전]" → "재창업 [재도전]"(재창업 뒤 공백 추가).
 - 이 라벨은 마이페이지 진단서 + 엑셀 export 공유. 한 곳 수정으로 전체 반영.
+
+## 🌱 예비·재도전 완전 제외(방식 A) + 소진공 상품 3종 추가 + 졸업후보 기준 아코디언 (대표님 승인) — 2026-07
+- **배경**: 대표님 버그 리포트 2건 — (1)예비 안 눌렀는데 예비창업패키지·재도전성공패키지 계속 노출, (2)소진공을 왠만하면 다 일반경영안정자금으로만 안내.
+- **[방식 A] 🌱 창업지원사업 완전 제외** (AdvancedScreeningPanel.tsx):
+  - `isPreFounderEligible(eligKey, 진단프로필)` 자격자(`eligibles`)만 렌더. 비자격 예비·재도전·청년·도약은 '더 보기'로도 안 보이게 **완전 제외**(others 변수·더보기 버튼·showPreFounderOthers state 삭제).
+  - QA(unit): 개인·3년미만 → 초기창업+원스톱만 / 법인·7년이상 → 원스톱만. 예비·재도전 = 어느 프로필에도 노출 안 됨 확인.
+  - 요약배너 카운트 영향 0 (PRE_FOUNDER는 onCounts 미포함).
+- **[소진공 개편] INSTITUTION_LINKS(advancedScreening.ts) 상품 3종 추가** (matching.ts 불가침, eligibleWhen 조건 필터로만):
+  - **소공인특화자금**: 제조/기술서비스(normalizeIndustry manufacturing|tech_innov)일 때, approval:high, 대리대출, 목록 최상단. 문구 "제조업(소공인)이라면 가장 수월하게 받는 편".
+  - **신용취약소상공인자금(직접대출)**: nice/kcb ≤ 839, approval:mid, 직접대출. 839점 이하 전용 트랙 안내(신용관리교육 필수 명시).
+  - **졸업후보기업자금(혁신형)**: 매출 ≥ 10억원(annual_revenue>=1,000,000,000)일 때만, approval:mid("조건 충족 시 가능"), 직접대출.
+    - ★대표님 확정: 업종별 기준이 4.5억~42억 제각각 + 진단 매출 구간이 거칠어(최대 '10억 이상') 정밀 자동판정 불가 → 매출 최상단 구간만 "조건 충족 시 가능"으로 안내하고 정확 기준은 아코디언 표로 직접 확인. 영세 소상공인엔 미노출(억지매칭 방지). QA: 음식점 1억 프로필 → 졸업후보 안 뜸 확인.
+- **[졸업후보 기준 작은 아코디언]** (대표님 요청 "작은 아코디언"=인라인 접이식, 팝업 아님):
+  - 신규 `src/lib/graduationCriteria.ts`: GRADUATION_CRITERIA 61행(코드01~96, 업종/평균매출액/상시근로자, 6개 원본이미지 추출) + GRADUATION_EXCLUDED_NOTE(64~66·94·97~99 제외 각주).
+  - AdvancedScreeningPanel: 졸업후보기업자금 상품 카드 아래에만(`prod.name.includes("졸업후보기업자금")`) 인라인 접이식 표. state openGradCriteria(키 `${i}-${pi}`). max-h-64 스크롤, sticky 헤더.
+  - QA(Playwright 시각확인): 법인·제조·10억↑ → 졸업후보기업자금 + 아코디언 헤더 + 표(식료품 제조업/음식점 주점업 행) + 각주 정상 렌더 확인.
+- **검증**: tsc 0 / build 0 / unit test(filterProducts+isPreFounderEligible 4프로필) 전부 정상 / Playwright 졸업후보 UI 시각 확인.
+- **불가침 유지**: matching.ts / computeSupportStatus / judge 스코어링 미수정. CopyGuard clean 유지. 값 보존, 표시 후처리만.

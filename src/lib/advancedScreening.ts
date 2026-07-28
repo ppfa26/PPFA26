@@ -1173,6 +1173,24 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     // ★ 소진공 내 여러 상품 - 아코디언으로 펼쳐서 골라 신청 ★ (대표님 실무 기준 승인율 표시)
     products: [
       {
+        // ★ 대표님 실무 지시(2026) ★ 제조업(소공인)은 '일반경영안정' 말고 이걸 먼저.
+        //   "제조업이면 소공인특화자금이 가장 많이·수월하게 받는다" → 제조·기술서비스 소공인에 최우선 노출.
+        //   ⚠️ 표시용 상품 추가(eligibleWhen으로 제조·기술만 노출). matching.ts 스코어링과 무관.
+        name: "소공인특화자금",
+        amount: "운전 1억원 · 시설 5억원 (기준금리 수준 저리)",
+        desc: "상시근로자 10인 미만 제조업·기술서비스 소공인 전용\n(확인서 발급 → 은행 대출 · 제조 소상공인이 가장 많이 이용)",
+        approval: "high",
+        approvalNote:
+          "제조업(소공인)이라면 승인율이 높은 편이며, 소진공 상품 중 가장 수월하게 받는 편입니다.",
+        applyUrl: "https://ols.sbiz.or.kr",
+        nature: "대리대출", // 소진공 공식(SMAN018M): 대리대출 세부지원요건 표에 등재
+        // 제조업·기술서비스(소공인)에게만 노출 - 순수 도소매·음식 소상공인엔 숨김(과대추천 방지)
+        eligibleWhen: (c) => {
+          const cat = normalizeIndustry(c.industry);
+          return cat === "manufacturing" || cat === "tech_innov";
+        },
+      },
+      {
         name: "일반경영안정자금",
         amount: "최대 7,000만원 (기준금리+0.6%p)",
         desc: "업력 무관 소상공인 운전자금\n(확인서 발급 → 은행 대출, 대출기간 5년·거치 2년)",
@@ -1252,6 +1270,48 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         applyUrl: "https://ols.sbiz.or.kr",
         eligibleWhen: (c) => Boolean(c.is_re_founder),
         nature: "직접대출", // 공식(SMAN018M): 직접대출 세부지원요건 표에 등재
+      },
+      {
+        // ★ 대표님 실무 지시(2026) ★ 신용점수 839점 이하는 일반경영안정 말고 이 전용 상품으로.
+        //   NCB(NICE/KCB) 839점 이하 중·저신용 소상공인 전용 소진공 '직접대출'.
+        //   ⚠️ 표시용 상품 추가(신용점수 판정은 진단 credit→profileToCompany의 kcb/nice_score).
+        //     matching.ts 스코어링과 무관.
+        name: "신용취약소상공인자금 (직접대출)",
+        amount: "최대 3,000만원 · 저리 고정금리 (사전 신용관리교육 필수)",
+        desc: "NCB(NICE·KCB) 개인신용평점 839점 이하 중·저신용 소상공인 전용\n(신청 전 '신용관리교육' 온라인 사전 이수가 반드시 필요)",
+        approval: "mid",
+        approvalNote:
+          "839점 이하 전용 상품이라 일반자금보다 이 트랙이 유리합니다. 단 신용관리교육 수료증이 있어야 접수됩니다.",
+        applyUrl: "https://ols.sbiz.or.kr",
+        nature: "직접대출", // 공식(SMAN018M): 직접대출 세부지원요건 표에 등재
+        // 신용점수 839점 이하(=진단 '839점 이하'/'745점 이하' → score 690)에게만 노출
+        eligibleWhen: (c) => {
+          const score =
+            typeof c.nice_score === "number"
+              ? c.nice_score
+              : typeof c.kcb_score === "number"
+                ? c.kcb_score
+                : undefined;
+          return typeof score === "number" && score <= 839;
+        },
+      },
+      {
+        // ★ 대표님 실무 지시(2026) ★ 졸업후보기업(정책자금 성실상환·졸업후보)은 이 트랙으로 안내.
+        //   ★ 졸업후보 판정(대표님 확정): 업종별 기준이 4.5억~42억으로 제각각이라
+        //     진단 매출 구간(최대 '10억 이상')만으로 정밀 자동판정은 불가.
+        //     → 소상공인 최상단 매출대('10억 이상')인 대표에게만 '조건 충족 시 가능'으로 안내하고,
+        //       정확한 업종별 기준은 바로 아래 '작은 아코디언' 기준표로 직접 확인하게 한다.
+        //       (매출 낮은 영세 대표에겐 노출 안 함 → 억지매칭 방지)
+        //   ⚠️ 표시용 상품 추가. matching.ts 스코어링과 무관.
+        name: "졸업후보기업자금 (혁신형)",
+        amount: "운전 2억원 · 시설 10억원 (기준금리+0.4%p)",
+        desc: "소상공인 규모를 넘어서는 '졸업후보기업'(업종별 매출·상시근로자 기준 충족 시 대상)\n(귀사 업종의 정확한 졸업후보 기준은 아래 '졸업후보 기준' 표에서 확인하세요)",
+        approval: "mid",
+        approvalNote: "매출·직원 규모가 소상공인 상한에 근접했습니다. 아래 기준표에서 귀사 업종 기준을 충족하면 대상이 됩니다.",
+        applyUrl: "https://ols.sbiz.or.kr",
+        nature: "직접대출",
+        // 매출 '10억 이상'(1,000,000,000원)인 대표에게만 노출.
+        eligibleWhen: (c) => (c.annual_revenue ?? 0) >= 1000000000,
       },
       {
         name: "대환대출 (저금리 전환)",
