@@ -344,7 +344,7 @@ export const UPLOAD_GUIDES: { channel: string; emoji: string; steps: string[] }[
       "인스타 앱 > [+] > '게시물'",
       "'여러 항목 선택'으로 카드 1~8번 순서대로 탭",
       "캡션 + 해시태그 붙여넣고 '공유하기'",
-      "링크는 프로필 하단(처음 1번만 설정)",
+      "링크는 프로필 하단 참고",
     ],
   },
   {
@@ -380,9 +380,9 @@ export const UPLOAD_GUIDES: { channel: string; emoji: string; steps: string[] }[
     channel: "당근",
     emoji: "🥕",
     steps: [
-      "당근 앱 > '동네생활' > 글쓰기",
+      "당근 앱 > '당근 소식' > 글쓰기",
       "썸네일 1장 첨부, 내용 붙여넣기",
-      "지역(인천 서구/청라) 확인 후 게시",
+      "지역 확인 후 게시",
     ],
   },
 ];
@@ -398,6 +398,6 @@ export const UPLOAD_ORDER = [
 export const THUMBNAIL_GUIDE = [
   "다크 네이비 + 골드 럭셔리 톤 고정 (파랑/초록 금지)",
   "골드 타이틀 2줄 + 흰색 서브타이틀",
-  "하단: 청라 야경 + 모두의사업친구 로고",
+  "하단: 도시 야경 + 모두의사업친구 로고",
   "5채널 전부 같은 썸네일 1장으로 통일",
 ];

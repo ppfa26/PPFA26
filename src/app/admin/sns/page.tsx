@@ -266,27 +266,30 @@ export default function SnsHubPage() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={generate}
-              disabled={loading}
-              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:cursor-not-allowed disabled:opacity-90 sm:w-auto sm:px-8 ${
-                justDone
-                  ? "bg-emerald-600"
-                  : "bg-brand-primary hover:opacity-90"
-              }`}
-            >
-              {loading ? (
-                <>
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                  글 작성중…
-                </>
-              ) : justDone ? (
-                <>✅ 글 완성!</>
-              ) : (
-                <>✨ 5채널 글 만들기</>
-              )}
-            </button>
+            {/* 버튼 뒤 반투명 박스 - 버튼을 은은하게 감싸 시선 집중 */}
+            <div className="mt-4 inline-block rounded-2xl bg-brand-primary/10 p-2 backdrop-blur-sm sm:inline-block">
+              <button
+                type="button"
+                onClick={generate}
+                disabled={loading}
+                className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:cursor-not-allowed disabled:opacity-90 sm:w-auto sm:px-8 ${
+                  justDone
+                    ? "bg-emerald-600"
+                    : "bg-brand-primary hover:opacity-90"
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                    ✨ 작성중
+                  </>
+                ) : justDone ? (
+                  <>✨ 글 완성</>
+                ) : (
+                  <>✨ 5채널 글 만들기</>
+                )}
+              </button>
+            </div>
 
             {errMsg && (
               <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-600">
