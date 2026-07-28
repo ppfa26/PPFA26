@@ -31,8 +31,10 @@ export default function RelatedAnnouncements({
 }) {
   const [items, setItems] = useState<Item[] | null>(null);
   const [loading, setLoading] = useState(true);
-  // ★ 대표님 요청: 이 섹션은 접지 말고 전부 다 보여준다. ("어차피 할 사람은 하고 안 할 사람은 안 하니까")
-  //   → 더보기 접기 없이 서버가 준 공고를 순서 그대로 전부 렌더한다.
+  // ★ 대표님 요청(2026-07 변경): 상위 3개만 먼저 보여주고 나머지는 '더 보기'로 접는다.
+  //   (다른 결과 섹션들과 통일 - 너무 많이 펼쳐지면 화면이 길어져 이탈 우려)
+  const PREVIEW_COUNT = 3;
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -76,7 +78,7 @@ export default function RelatedAnnouncements({
         <>
           {/* 감면 카드와 동일한 투명(흰) 박스 목록 스타일 */}
           <div className="mt-4 space-y-3">
-            {(items || []).map((it, i) => {
+            {(showAll ? (items || []) : (items || []).slice(0, PREVIEW_COUNT)).map((it, i) => {
               const inner = (
                 <>
                   {/* 제목 + 카테고리 태그만 한 줄에 - 기간 배지는 아래로 내려 통일 */}
@@ -137,6 +139,19 @@ export default function RelatedAnnouncements({
               );
             })}
           </div>
+
+          {/* ★ 상위 3개 초과 시에만 더 보기 / 접기 토글 (대표님 요청) */}
+          {(items?.length || 0) > PREVIEW_COUNT && (
+            <button
+              type="button"
+              onClick={() => setShowAll((v) => !v)}
+              className="mt-3 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[13px] font-bold text-brand-dark/70 transition hover:bg-gray-50"
+            >
+              {showAll
+                ? "접기 ▲"
+                : `다른 지원사업 ${(items?.length || 0) - PREVIEW_COUNT}개 더 보기 ▼`}
+            </button>
+          )}
         </>
       )}
     </AccordionCard>
