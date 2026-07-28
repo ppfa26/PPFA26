@@ -169,13 +169,14 @@ ${material}
 인스타/스레드용(인포크): ${linkInpock}
 블로그/카카오/당근용(자사도메인): ${linkHome}`;
 
+        // GPT-5 계열은 커스텀 temperature 를 거부(기본 1만 허용)하는 경우가 있어
+        // temperature 는 넣지 않는다. JSON 응답 강제만 유지.
         const completion = await client.chat.completions.create({
-          model: process.env.OPENAI_SNS_MODEL || "gpt-4o",
+          model: process.env.OPENAI_SNS_MODEL || "gpt-5.4-mini",
           messages: [
             { role: "system", content: system },
             { role: "user", content: user },
           ],
-          temperature: 0.85,
           response_format: { type: "json_object" },
         });
 
