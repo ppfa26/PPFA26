@@ -82,6 +82,49 @@ export default function SnsHubPage() {
   const [mode, setMode] = useState<"ai" | "fallback" | null>(null);
   const [channels, setChannels] = useState<SnsChannel[]>([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [restored, setRestored] = useState(false); // 저장분 복원 완료 여부
+
+  // 뒤로가기 후 돌아와도 기존 생성글이 유지되도록 세션에 저장/복원
+  const STORAGE_KEY = "sns-hub-draft";
+
+  // 1) 최초 진입 시 저장분 복원 (다음 글 만들기 전까지 유지)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (Array.isArray(s.channels) && s.channels.length > 0) {
+          setChannels(s.channels);
+          setMode(s.mode ?? null);
+          setNote(s.note ?? null);
+          setActiveTab(typeof s.activeTab === "number" ? s.activeTab : 0);
+        }
+        if (typeof s.source === "string") setSource(s.source);
+        if (typeof s.region === "string") setRegion(s.region);
+        if (typeof s.amount === "string") setAmount(s.amount);
+        if (typeof s.emphasis === "string") setEmphasis(s.emphasis);
+      }
+    } catch {
+      /* 저장분이 손상돼도 무시 */
+    } finally {
+      setRestored(true);
+    }
+  }, []);
+
+  // 2) 결과가 바뀌면(생성/탭 이동) 세션에 저장 — 복원 완료 후에만
+  useEffect(() => {
+    if (!restored) return;
+    try {
+      if (channels.length > 0) {
+        sessionStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ channels, mode, note, activeTab, source, region, amount, emphasis })
+        );
+      }
+    } catch {
+      /* 저장 실패 무시 */
+    }
+  }, [restored, channels, mode, note, activeTab, source, region, amount, emphasis]);
 
   useEffect(() => {
     (async () => {
@@ -266,13 +309,13 @@ export default function SnsHubPage() {
               </div>
             </div>
 
-            {/* 버튼 뒤 반투명 박스 - 버튼을 은은하게 감싸 시선 집중 */}
-            <div className="mt-4 inline-block rounded-2xl bg-brand-primary/10 p-2 backdrop-blur-sm sm:inline-block">
+            {/* 버튼 뒤 반투명 박스 - 버튼 크기에 딱 맞게 감싸 시선 집중 */}
+            <div className="mt-4 inline-flex items-center justify-center rounded-xl bg-brand-primary/10 p-1 backdrop-blur-sm">
               <button
                 type="button"
                 onClick={generate}
                 disabled={loading}
-                className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:cursor-not-allowed disabled:opacity-90 sm:w-auto sm:px-8 ${
+                className={`inline-flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-extrabold text-white transition disabled:cursor-not-allowed disabled:opacity-90 ${
                   justDone
                     ? "bg-emerald-600"
                     : "bg-brand-primary hover:opacity-90"
