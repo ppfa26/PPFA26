@@ -1209,7 +1209,7 @@ function AdvancedResult({
                   m.institution.includes("기술보증기금") ||
                   m.institution.includes("재단")) && (
                   <p className="mt-2 break-keep rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-blue-800">
-                    <b>ℹ️ 대리대출(보증)</b> · 이 기관은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요. (공단이 직접 돈을 주는 방식이 아니에요)
+                    <b>ℹ️ 대리대출(보증)</b> · 이 기관은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요.
                   </p>
                 )}
 
