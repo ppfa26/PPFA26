@@ -530,3 +530,32 @@
 - **JSON 스키마 변경**: 인스타 blocks = `ig-cards`(사진구간 포함) / `ig-caption` / `ig-hashtags` (**구 `ig-link` 블록 제거** — page.tsx가 blocks를 동적 map하므로 UI 안전). 스레드 `th-chain`, 블로그 `blog-title`/`blog-body`/`blog-tags`, 카카오 `kakao`, 당근 `daangn`.
 - **링크 규칙**: 블로그/카카오/당근 = 본문에 `https://모두의사업친구.kr` 직접 노출 / 인스타·스레드 = "프로필 하단 클릭"(인포크 폐기, DEFAULT_LINK_INPOCK = HOME으로 하위호환).
 - **검증**: tsc OK, build OK. route.ts 262→295줄. 커밋 예정.
+
+## ⭐⭐⭐⭐ [최우선 고정 규칙] 썸네일 제작 방식 — 대표님 확정 (다시 새로 그리지 말 것) — 2026-07
+> 대표님이 여러 번 화내며 지시함. **썸네일 요청 오면 아래 방식 그대로만.** 새 스타일 그리기 절대 금지, 확인 질문 없이 바로 이 방식으로 뽑는다.
+
+### ✅ 확정된 유일한 제작 방식
+1. **완성본 레퍼런스를 image_urls로 넣고 nano-banana-pro로 편집(edit)** 한다. 텍스트만 교체, 나머지는 그대로 유지.
+   - 표지/일반 카드 레퍼런스: `https://www.genspark.ai/api/files/s/zHY5ka6l`
+   - CTA(마지막) 카드 레퍼런스(로고+.kr+별점 톤): `https://www.genspark.ai/api/files/s/8GBaMYj0`
+2. **고정 프롬프트 뼈대**(영어로, 이 문장 그대로 재사용):
+   > "Edit this Korean thumbnail. Keep EVERYTHING identical: dark navy background, Chicago night city skyline at bottom, thin white rounded border, white capsule badge at top, 3D glossy gold beveled Korean title font, golden horizontal glow line, white subtitle, bottom orange 'm' circle logo with '모두의사업친구'. ONLY change text: 배지 / 골드 타이틀 2줄 / 흰 서브. Korean must be perfectly spelled."
+3. 모델 `nano-banana-pro`, `aspect_ratio: auto`(레퍼런스 정사각 유지), `image_size: 2k`.
+4. **생성 후 반드시 understand_images로 한글 오타 검수**(한글 이미지는 오타 잘 남). watermark 없는 URL(`image_urls_nowatermark`)로 검수.
+5. 인스타 캐러셀이면 **카드1(표지) 1장으로 톤 확정 → 나머지 카드 병렬 생성**. 각 카드 = 배지(카테고리) + 골드 타이틀 2줄 + 흰 서브 1줄.
+
+### 🎨 고정 디자인 스펙 (절대 불변)
+- 배경: 다크네이비(#0A1628~#16233F) + 하단 시카고 야경 실루엣. **파랑/초록 절대 금지.**
+- 상단: 흰 캡슐 배지(검정 글씨) = 카테고리명.
+- 중앙: 골드(#E6C36A) **3D 입체(beveled/glossy) 굵은** 한글 타이틀 2줄 + 그 아래 골드 가로 광선줄.
+- 서브: 흰색, 골드줄 아래 한 줄(예: "2026년 신청 안내").
+- 하단: 주황 원형 m 로고 + "모두의사업친구" (CTA 카드는 그 아래 "모두의사업친구.kr").
+- 규격 1080×1080 정사각. 5채널 동일 톤.
+
+### 🚫 금지
+- 개인 이력(군출신/컨설턴트/승인건수/금액) 문구 금지. 가운뎃점(·) 금지. "100% 승인/무조건/대행" 금지.
+- 공고에 없는 수치(한도/금리/마감) 지어내기 금지 → "공고문에서 확인"으로.
+- **새 배경/새 스타일 창작 금지.** 반드시 위 레퍼런스 edit 방식.
+
+### 📌 검증된 완성 사례 (제물포구 기업환경 개선사업 8장, 2026-07 — 이대로가 정답)
+표지 3ihJEpbu / 지원대상 ljL0HRkm / 근로자기준 N5Sv6b6X / 사업개시 8Qn4dsGZ / 지원내용 vX9wnuTy / 지원한도 apFtoJhR / 신청방법 dZItBXFH / CTA uRwVrXS1 (모두 https://www.genspark.ai/api/files/s/ 접두)
