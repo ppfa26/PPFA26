@@ -1548,9 +1548,9 @@ function AdvancedResult({
           </p>
         </div>
 
-        {/* 신청 → 실행 진행 절차·소요기간 안내 - 같은 맥락이라 정책금융기관 박스 '안'으로 통합 (대표님 요청, 구분선으로 구획) */}
+        {/* 신청 → 실행 진행 절차·소요기간 안내 - 같은 맥락이라 정책금융기관 박스 '안'으로 통합 (대표님 요청, 반투명 박스로 구획) */}
         {(hasDae || hasDirect) && (
-          <div className="mt-4 border-t border-brand-dark/10 pt-4">
+          <div className="mt-4 rounded-xl border border-brand-dark/10 bg-brand-dark/[0.03] p-4">
             <p className="text-base font-extrabold text-brand-dark">
               🗓️ 신청부터 정부지원사업 실행까지 예상 소요기간
             </p>
@@ -1587,8 +1587,8 @@ function AdvancedResult({
           </div>
         )}
 
-        {/* 기관별 상품 한눈에 보기 - 같은 맥락(정책금융기관 상품)이라 이 박스 '안' 하단으로 통합 (대표님 요청, 구분선으로 구획) */}
-        <div className="mt-4 border-t border-brand-dark/10 pt-4">
+        {/* 기관별 상품 한눈에 보기 - 같은 맥락(정책금융기관 상품)이라 이 박스 '안' 하단으로 통합 (대표님 요청, 반투명 박스로 구획) */}
+        <div className="mt-4 rounded-xl border border-brand-dark/10 bg-brand-dark/[0.03] p-4">
           <p className="text-base font-extrabold text-brand-dark">
             📊 기관별 상품 한눈에 보기
           </p>
