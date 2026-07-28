@@ -262,7 +262,7 @@ ${material}
         // GPT-5 계열은 커스텀 temperature 를 거부(기본 1만 허용)하는 경우가 있어
         // temperature 는 넣지 않는다. JSON 응답 강제만 유지.
         const completion = await client.chat.completions.create({
-          model: process.env.OPENAI_SNS_MODEL || "gpt-5.5",
+          model: process.env.OPENAI_SNS_MODEL || "gpt-5.2",
           messages: [
             { role: "system", content: system },
             { role: "user", content: user },
