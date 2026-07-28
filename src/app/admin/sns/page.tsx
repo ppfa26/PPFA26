@@ -1,70 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
 import {
-  buildAllChannels,
-  DEFAULT_INPUT,
   UPLOAD_GUIDES,
   UPLOAD_ORDER,
   THUMBNAIL_GUIDE,
-  parseHashtags,
-  type SnsInput,
+  type SnsChannel,
   type SnsBlock,
 } from "@/lib/snsTemplates";
 
 type Phase = "loading" | "denied" | "ready";
-
-/* 입력 폼 필드 메타(라벨 + 도움말 + 여러줄 여부) */
-const FIELD_META: {
-  key: keyof SnsInput;
-  label: string;
-  hint: string;
-  multiline?: boolean;
-}[] = [
-  { key: "region", label: "지역", hint: "예: 인천 / 인천 서구" },
-  { key: "title", label: "사업명", hint: "예: 2026 하반기 소진공 정책자금 융자" },
-  { key: "target", label: "지원 대상", hint: "예: 인천 관내 소상공인" },
-  {
-    key: "targetExtra",
-    label: "대상 추가조건",
-    hint: "없으면 비워두세요",
-    multiline: true,
-  },
-  { key: "usage", label: "자금 용도", hint: "예: 점포 시설 개선 또는 운영자금" },
-  { key: "amount", label: "지원 한도", hint: "예: 최대 5천만원" },
-  {
-    key: "amountExtra",
-    label: "한도 추가조건",
-    hint: "없으면 비워두세요",
-    multiline: true,
-  },
-  {
-    key: "caution",
-    label: "주의사항",
-    hint: "예: 금리, 신청기간, 문의처는 공고문에 별도 안내",
-    multiline: true,
-  },
-  {
-    key: "linkInpock",
-    label: "인포크 링크 (인스타/스레드용)",
-    hint: "예: https://link.inpock.co.kr/ppfa25",
-  },
-  {
-    key: "linkHome",
-    label: "자사 도메인 (블로그/카카오/당근용)",
-    hint: "예: https://모두의사업친구.kr",
-  },
-  {
-    key: "hashtags",
-    label: "해시태그 (공백/쉼표 구분, 인스타는 앞 5개만 사용)",
-    hint: "예: 인천소상공인 소상공인정책자금 소진공융자 인천창업 모두의사업친구",
-    multiline: true,
-  },
-];
 
 /* 복사 버튼 (블록 단위) */
 function CopyButton({ text }: { text: string }) {
@@ -75,7 +24,6 @@ function CopyButton({ text }: { text: string }) {
       setDone(true);
       setTimeout(() => setDone(false), 1600);
     } catch {
-      // 클립보드 권한 실패 시 폴백: 선택 안내
       window.prompt("아래 내용을 직접 복사하세요 (Ctrl+C)", text);
     }
   };
@@ -110,7 +58,7 @@ function BlockCard({ block }: { block: SnsBlock }) {
         </div>
         <CopyButton text={block.text} />
       </div>
-      <pre className="max-h-80 overflow-auto whitespace-pre-wrap break-words px-4 py-3 text-[13px] leading-relaxed text-gray-700">
+      <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words px-4 py-3 text-[13px] leading-relaxed text-gray-700">
         {block.text}
       </pre>
     </div>
@@ -119,7 +67,19 @@ function BlockCard({ block }: { block: SnsBlock }) {
 
 export default function SnsHubPage() {
   const [phase, setPhase] = useState<Phase>("loading");
-  const [input, setInput] = useState<SnsInput>(DEFAULT_INPUT);
+
+  // 입력
+  const [source, setSource] = useState("");
+  const [region, setRegion] = useState("");
+  const [amount, setAmount] = useState("");
+  const [emphasis, setEmphasis] = useState("");
+
+  // 결과
+  const [loading, setLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
+  const [mode, setMode] = useState<"ai" | "fallback" | null>(null);
+  const [channels, setChannels] = useState<SnsChannel[]>([]);
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
@@ -139,16 +99,36 @@ export default function SnsHubPage() {
     })();
   }, []);
 
-  const channels = useMemo(() => buildAllChannels(input), [input]);
-  const tagPreview = useMemo(
-    () => parseHashtags(input.hashtags),
-    [input.hashtags]
-  );
-
-  const setField = (key: keyof SnsInput, value: string) =>
-    setInput((prev) => ({ ...prev, [key]: value }));
-
-  const resetInput = () => setInput(DEFAULT_INPUT);
+  const generate = async () => {
+    if (!source.trim()) {
+      setErrMsg("공고 링크나 내용을 입력해주세요.");
+      return;
+    }
+    setLoading(true);
+    setErrMsg(null);
+    setNote(null);
+    setChannels([]);
+    try {
+      const res = await fetch("/api/sns/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ source, region, amount, emphasis }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrMsg(data?.error || "글 생성에 실패했습니다.");
+        return;
+      }
+      setChannels(data.channels || []);
+      setMode(data.mode || null);
+      setNote(data.note || null);
+      setActiveTab(0);
+    } catch {
+      setErrMsg("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* ---------- 렌더 ---------- */
   if (phase === "loading") {
@@ -217,128 +197,142 @@ export default function SnsHubPage() {
               </Link>
             </div>
             <p className="mt-2 text-sm text-gray-500">
-              아래 정보만 채우면 5개 채널 글이 자동으로 만들어집니다. 각 블록의{" "}
-              <b>복사</b> 버튼을 누르면 바로 붙여넣을 수 있어요. (AI 없이 검증된
-              템플릿으로 생성 - 글에서 가운뎃점 자동 제거, 복붙 가능 평문)
+              공고 <b>링크</b>나 <b>내용</b>을 붙여넣고 버튼만 누르면, AI가 5개 채널
+              글을 자동으로 써줍니다. 각 블록의 <b>복사</b> 버튼으로 그대로
+              붙여넣으면 끝. (가운뎃점 자동 제거, 채널별 노출로직 자동 반영)
             </p>
           </header>
 
-          {/* 1) 입력 폼 */}
+          {/* 1) 입력 */}
           <section
-            id="sns-input-form"
+            id="sns-input"
             className="mb-6 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6"
           >
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-base font-bold text-gray-900">
-                1. 이번에 홍보할 사업 정보 입력
-              </h2>
-              <button
-                type="button"
-                onClick={resetInput}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-500 hover:bg-gray-50"
-              >
-                기본값으로 초기화
-              </button>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {FIELD_META.map((f) => (
-                <div key={f.key} className={f.multiline ? "sm:col-span-2" : ""}>
-                  <label className="mb-1 block text-xs font-bold text-gray-700">
-                    {f.label}
-                  </label>
-                  {f.multiline ? (
-                    <textarea
-                      value={input[f.key]}
-                      onChange={(e) => setField(f.key, e.target.value)}
-                      placeholder={f.hint}
-                      rows={2}
-                      className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-brand-primary"
-                    />
-                  ) : (
-                    <input
-                      type="text"
-                      value={input[f.key]}
-                      onChange={(e) => setField(f.key, e.target.value)}
-                      placeholder={f.hint}
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-brand-primary"
-                    />
-                  )}
-                  <p className="mt-1 text-[11px] text-gray-400">{f.hint}</p>
-                </div>
-              ))}
-            </div>
-            {tagPreview.length > 0 && (
-              <div className="mt-4 flex flex-wrap items-center gap-1.5">
-                <span className="text-[11px] font-bold text-gray-500">
-                  해시태그 미리보기:
-                </span>
-                {tagPreview.map((t, idx) => (
-                  <span
-                    key={t}
-                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                      idx < 5
-                        ? "bg-blue-50 text-blue-600"
-                        : "bg-gray-100 text-gray-400"
-                    }`}
-                  >
-                    #{t}
-                    {idx === 4 && (
-                      <span className="ml-1 text-[10px]">(인스타 여기까지)</span>
-                    )}
-                  </span>
-                ))}
+            <label className="mb-1 block text-sm font-bold text-gray-900">
+              1. 공고 링크 또는 내용 붙여넣기
+            </label>
+            <textarea
+              value={source}
+              onChange={(e) => setSource(e.target.value)}
+              placeholder={
+                "예1) https://www.bizinfo.go.kr/... (링크 붙여넣기)\n예2) 공고 본문을 그대로 긁어서 붙여넣기"
+              }
+              rows={4}
+              className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-brand-primary"
+            />
+            <p className="mt-1 text-[11px] text-gray-400">
+              링크를 넣으면 자동으로 읽어옵니다. 안 읽히는 사이트면 공고 내용을
+              직접 붙여넣어 주세요.
+            </p>
+
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div>
+                <label className="mb-1 block text-xs font-bold text-gray-700">
+                  지역 (선택)
+                </label>
+                <input
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                  placeholder="예: 인천"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-brand-primary"
+                />
               </div>
+              <div>
+                <label className="mb-1 block text-xs font-bold text-gray-700">
+                  지원 한도 (선택)
+                </label>
+                <input
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="예: 최대 5천만원"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-brand-primary"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-bold text-gray-700">
+                  강조할 점 (선택)
+                </label>
+                <input
+                  value={emphasis}
+                  onChange={(e) => setEmphasis(e.target.value)}
+                  placeholder="예: 마감 임박, 무담보"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-brand-primary"
+                />
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={generate}
+              disabled={loading}
+              className="mt-4 w-full rounded-xl bg-brand-primary px-4 py-3 text-sm font-extrabold text-white transition hover:opacity-90 disabled:opacity-50 sm:w-auto sm:px-8"
+            >
+              {loading ? "✨ AI가 5채널 글 쓰는 중…" : "✨ 5채널 글 만들기"}
+            </button>
+
+            {errMsg && (
+              <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-600">
+                {errMsg}
+              </p>
+            )}
+            {note && (
+              <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700">
+                ⚠️ {note}
+              </p>
             )}
           </section>
 
-          {/* 2) 채널 탭 */}
-          <section id="sns-channels" className="mb-6">
-            <h2 className="mb-3 text-base font-bold text-gray-900">
-              2. 채널별 완성된 글 (복사해서 붙여넣기)
-            </h2>
-            <div className="mb-4 flex flex-wrap gap-2">
-              {channels.map((ch, idx) => (
-                <button
-                  key={ch.channel}
-                  type="button"
-                  onClick={() => setActiveTab(idx)}
-                  className={`rounded-full px-4 py-2 text-sm font-bold transition ${
-                    idx === activeTab
-                      ? "bg-brand-dark text-white"
-                      : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  {ch.emoji} {ch.channel}
-                  <span
-                    className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] ${
+          {/* 2) 결과: 채널 탭 */}
+          {channels.length > 0 && (
+            <section id="sns-channels" className="mb-6">
+              <div className="mb-3 flex items-center gap-2">
+                <h2 className="text-base font-bold text-gray-900">
+                  2. 완성된 글 (복사해서 붙여넣기)
+                </h2>
+                {mode === "ai" && (
+                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-600">
+                    AI 생성
+                  </span>
+                )}
+                {mode === "fallback" && (
+                  <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-600">
+                    기본 템플릿
+                  </span>
+                )}
+              </div>
+
+              <div className="mb-4 flex flex-wrap gap-2">
+                {channels.map((ch, idx) => (
+                  <button
+                    key={ch.channel + idx}
+                    type="button"
+                    onClick={() => setActiveTab(idx)}
+                    className={`rounded-full px-4 py-2 text-sm font-bold transition ${
                       idx === activeTab
-                        ? "bg-white/20 text-white"
-                        : ch.depth === "심층"
-                          ? "bg-violet-50 text-violet-600"
-                          : "bg-emerald-50 text-emerald-600"
+                        ? "bg-brand-dark text-white"
+                        : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                     }`}
                   >
-                    {ch.depth}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {active && (
-              <div className="space-y-3">
-                <div className="rounded-xl bg-gray-100 px-4 py-2.5 text-sm text-gray-600">
-                  <b>
-                    {active.emoji} {active.channel}
-                  </b>{" "}
-                  - {active.depth} 채널. 아래 블록들을 위에서부터 순서대로
-                  올리시면 됩니다.
-                </div>
-                {active.blocks.map((b) => (
-                  <BlockCard key={b.key} block={b} />
+                    {ch.emoji} {ch.channel}
+                  </button>
                 ))}
               </div>
-            )}
-          </section>
+
+              {active && (
+                <div className="space-y-3">
+                  <div className="rounded-xl bg-gray-100 px-4 py-2.5 text-sm text-gray-600">
+                    <b>
+                      {active.emoji} {active.channel}
+                    </b>{" "}
+                    - 아래 블록을 위에서부터 순서대로 올리시면 됩니다.
+                  </div>
+                  {active.blocks.map((b, i) => (
+                    <BlockCard key={b.key + i} block={b} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           {/* 3) 업로드 순서 */}
           <section
