@@ -196,7 +196,7 @@ export default function SnsHubPage() {
               </h1>
               <Link
                 href="/admin"
-                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-50"
+                className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50"
               >
                 ← 관리자 홈
               </Link>
@@ -204,7 +204,7 @@ export default function SnsHubPage() {
             <p className="mt-2 text-sm text-gray-500">
               공고 <b>링크</b>나 <b>내용</b>을 붙여넣고 버튼만 누르면, AI가 5개 채널
               글을 자동으로 써줍니다. 각 블록의 <b>복사</b> 버튼으로 그대로
-              붙여넣으면 끝. (가운뎃점 자동 제거, 채널별 노출로직 자동 반영)
+              붙여넣으면 끝.
             </p>
           </header>
 
