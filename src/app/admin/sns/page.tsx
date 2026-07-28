@@ -84,13 +84,14 @@ export default function SnsHubPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [restored, setRestored] = useState(false); // 저장분 복원 완료 여부
 
-  // 뒤로가기 후 돌아와도 기존 생성글이 유지되도록 세션에 저장/복원
+  // 뒤로가기/탭 닫기 후 돌아와도 기존 생성글이 유지되도록 로컬에 저장/복원.
+  // localStorage = "다음 글 만들기"를 새로 성공하기 전까지 영구 보존(탭 닫아도 안 사라짐).
   const STORAGE_KEY = "sns-hub-draft";
 
   // 1) 최초 진입 시 저장분 복원 (다음 글 만들기 전까지 유지)
   useEffect(() => {
     try {
-      const raw = sessionStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const s = JSON.parse(raw);
         if (Array.isArray(s.channels) && s.channels.length > 0) {
@@ -116,7 +117,7 @@ export default function SnsHubPage() {
     if (!restored) return;
     try {
       if (channels.length > 0) {
-        sessionStorage.setItem(
+        localStorage.setItem(
           STORAGE_KEY,
           JSON.stringify({ channels, mode, note, activeTab, source, region, amount, emphasis })
         );
@@ -153,6 +154,13 @@ export default function SnsHubPage() {
     setErrMsg(null);
     setNote(null);
     setChannels([]);
+    // "다음 글 만들기"를 새로 누른 시점 = 이전 결과를 버리는 시점.
+    // 저장분을 여기서 지워, 생성 도중 뒤로가기해도 옛 글이 되살아나지 않게 함.
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* 무시 */
+    }
     try {
       const res = await fetch("/api/sns/generate", {
         method: "POST",
