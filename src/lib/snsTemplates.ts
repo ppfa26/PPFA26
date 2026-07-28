@@ -216,6 +216,8 @@ ${i.linkInpock}
 
 댓글에 업종만 남겨주세요. 아는 선에서 바로 답변드릴게요.`;
 
+  const thTags = `#정부지원사업 #모두의사업친구 #${(i.region || "인천").replace(/\s/g, "")} #소상공인`;
+
   return [
     {
       key: "th-chain",
@@ -223,6 +225,7 @@ ${i.linkInpock}
       hint: "본문 올리고 '스레드에 추가'로 순서대로 이어붙이기. 첫 30분 댓글 답변이 도달의 핵심.",
       text: stripMiddots(chain),
     },
+    { key: "th-hashtags", label: "해시태그", hint: "3~5개만 담백하게.", text: stripMiddots(thTags) },
   ];
 }
 
@@ -293,7 +296,12 @@ ${i.caution}
 
 ${i.linkHome}`;
 
-  return [{ key: "kakao", label: "카카오톡 채널 글", hint: "구독자에게 알림이 갑니다. 낮~저녁에 보내면 좋아요.", text: stripMiddots(text) }];
+  const kakaoTitle = `${i.region} 사장님, ${i.amount} 지금 열렸어요`;
+
+  return [
+    { key: "kakao-title", label: "소식 제목", hint: "목록에서 클릭을 부르는 짧은 제목.", text: stripMiddots(kakaoTitle) },
+    { key: "kakao", label: "카카오톡 채널 글", hint: "구독자에게 알림이 갑니다. 낮~저녁에 보내면 좋아요.", text: stripMiddots(text) },
+  ];
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -312,7 +320,14 @@ ${i.caution} 인터넷에 떠도는 얘기 말고 원문 꼭 보시고요.
 
 ${i.linkHome}`;
 
-  return [{ key: "daangn", label: "당근 글", hint: "동네생활 탭에 올리세요. 광고티 안 나게 이웃 정보공유 톤으로 썼습니다.", text: stripMiddots(text) }];
+  const daangnTitle = `${i.region} 사장님만 아는 지원금 소식`;
+  const daangnTags = `#${(i.region || "인천").replace(/\s/g, "")} #소상공인 #정부지원금`;
+
+  return [
+    { key: "daangn-title", label: "제목", hint: "광고티 안 나게, 이웃이 궁금해할 제목.", text: stripMiddots(daangnTitle) },
+    { key: "daangn", label: "당근 글", hint: "동네생활 탭에 올리세요. 광고티 안 나게 이웃 정보공유 톤으로 썼습니다.", text: stripMiddots(text) },
+    { key: "daangn-hashtags", label: "해시태그", hint: "3~5개만 담백하게.", text: stripMiddots(daangnTags) },
+  ];
 }
 
 // 채널 묶음 결과
