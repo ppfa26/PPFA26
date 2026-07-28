@@ -1110,7 +1110,7 @@ export default function AdminPage() {
             <div className="flex flex-wrap gap-2">
               <Link
                 href="/admin/sns"
-                className="rounded-xl border border-brand-primary/40 bg-brand-primary/5 px-4 py-2 text-sm font-semibold text-brand-dark shadow-sm transition hover:scale-[1.02] hover:bg-brand-primary/10"
+                className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50"
                 title="SNS 홍보글을 채널별로 자동 생성하는 글쓰기 허브"
               >
                 📣 SNS 글쓰기 허브
