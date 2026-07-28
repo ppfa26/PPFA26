@@ -463,3 +463,13 @@
 - **링크 전략(대표님 확정):**
   - 인스타(프로필 링크) + 스레드(마지막 이어달기): https://link.inpock.co.kr/ppfa25 (인포크 = 클릭통계 추적)
   - 블로그 + 카카오채널 + 당근: https://모두의사업친구.kr (자사도메인 = 브랜드 신뢰 + SEO + 바로 전환)
+
+## ✅ [완료] SNS 글쓰기 허브 (/admin/sns) — 2026-07 (방식 A 확정)
+- **직원용 도구**: 관리자만 접근(admin_stats RPC 게이트, 미로그인/비관리자=🔒 denied).
+- **경로**: `/admin/sns` (관리자 홈 상단에 "📣 SNS 글쓰기 허브" 버튼 링크).
+- **방식 A(확정)**: AI/API 호출 없음. 폼 입력값을 검증된 템플릿에 끼워넣어 5채널 글 자동 생성 → 각 블록 "복사" 버튼으로 복붙.
+- **엔진 파일**: `src/lib/snsTemplates.ts` (이 파일만 고치면 허브 글 품질 유지).
+  - SnsInput(11필드), DEFAULT_INPUT(인천 소진공 융자 예시), stripMiddots(· 자동제거), parseHashtags(인스타 앞5개), buildInstagram/Threads/Blog/Kakao/Daangn, buildAllChannels, UPLOAD_GUIDES(채널별 올리는법), UPLOAD_ORDER(하루순서), THUMBNAIL_GUIDE(다크네이비+골드 규칙).
+- **페이지 파일**: `src/app/admin/sns/page.tsx` (폼→라이브생성→탭→복사버튼→업로드설명서→썸네일규칙).
+- **직원 사용법**: ① 사업 정보 폼 채우기 → ② 채널 탭에서 완성된 글 복사 → ③ 하루 업로드 순서/채널별 올리는법 참고 → ④ 썸네일은 규칙대로 제작.
+- 커밋 499a178 (main 반영).
