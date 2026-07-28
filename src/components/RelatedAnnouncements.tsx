@@ -76,8 +76,15 @@ export default function RelatedAnnouncements({
         <p className="mt-4 text-sm text-brand-dark/50">📢 관련 공고를 불러오는 중…</p>
       ) : (
         <>
+          <div className="rounded-xl border border-brand-orange/30 bg-brand-orange/5 px-4 py-3">
+            <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
+              아래는 대표님 지역·업종·관심분야로 <b>지금 열려 있는 관련 정부지원 공고</b>를 추린 목록이에요.
+              <br />
+              위 항목 외에도 <b>추가로 챙겨볼 만한 지원사업</b>이니, 신청기간을 확인하고 원문에서 자세히 살펴보세요.
+            </p>
+          </div>
           {/* 감면 카드와 동일한 투명(흰) 박스 목록 스타일 */}
-          <div className="mt-4 space-y-3">
+          <div className="mt-3 space-y-3">
             {(showAll ? (items || []) : (items || []).slice(0, PREVIEW_COUNT)).map((it, i) => {
               const inner = (
                 <>

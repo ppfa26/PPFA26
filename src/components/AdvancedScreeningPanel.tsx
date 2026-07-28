@@ -1010,6 +1010,13 @@ function AdvancedResult({
           title="신청 가능한 정부지원제도"
           subtitle="지금 바로 신청할 수 있는 제도만 모았어요"
         >
+          <div className="mb-3 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
+            <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
+              아래는 대표님 진단 결과 <b>지금 바로 신청할 수 있는 정부지원제도</b>만 추린 목록이에요.
+              <br />
+              대출과 별개로 병행 신청할 수 있으니, 놓치지 말고 하나씩 확인해보시길 권장드립니다.
+            </p>
+          </div>
           {(() => {
             // ★ 표시만 분리 (대표님 요청): 최소 3개는 먼저 펼쳐 보여주고, 나머지는 '더 보기'로 접는다.
             //   제조업만 찍으면 '지금 신청 가능'이 혁신바우처 1개뿐이라 화면이 허전 →
@@ -1136,6 +1143,13 @@ function AdvancedResult({
         title="이용 가능한 정책금융상품"
         subtitle="낮은 금리로 받을 수 있는 자금이에요"
       >
+        <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
+          <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
+            아래는 대표님이 <b>낮은 금리로 이용할 수 있는 정책금융상품</b>이에요.
+            <br />
+            지원금(무상)과 달리 <b>갚아야 하는 자금</b>이지만, 시중 대출보다 금리와 조건이 유리하니 필요할 때 활용하시길 권장드립니다.
+          </p>
+        </div>
         <div className="mt-4 divide-y divide-gray-200">
           {creditMatches.map((m, i) => {
             const link = findInstitutionLink(m.institution);
