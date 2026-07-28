@@ -539,10 +539,12 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
         }
         subtitle="세금을 아낄 수 있는 혜택이에요"
       >
-        {/* 가능성 높은 순 상위 6개 - '지금 신청 가능'(초록) 먼저, '조건 충족 시 가능'(주황)은 접어둠 */}
+        {/* ★ 표시만 분리 (대표님 요청): 앞 3개는 먼저 펼치고, 나머지는 '더 보기'로 접는다. ★
+              judged는 이미 가능성 높은 순으로 정렬됨(yes가 앞). 판정·순서·개수·문구 그대로. */}
         {(() => {
-          const yesList = judged.filter(({ v }) => v.status === "yes");
-          const condList = judged.filter(({ v }) => v.status !== "yes");
+          const BENEFIT_INITIAL_COUNT = 3;
+          const visibleBenefits = judged.slice(0, BENEFIT_INITIAL_COUNT);
+          const restBenefits = judged.slice(BENEFIT_INITIAL_COUNT);
           const renderBenefitCard = ({ b, v }: (typeof judged)[number]) => {
             const isYes = v.status === "yes";
             const isCondition = v.status === "condition";
@@ -676,11 +678,11 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
           };
           return (
             <div className="mt-4 space-y-3">
-              {/* 지금 신청 가능(초록) - 항상 펼침 */}
-              {yesList.map((item) => renderBenefitCard(item))}
+              {/* 앞 3개 - 항상 펼침 (초록/주황 배지는 각 카드가 status로 정직하게 표시) */}
+              {visibleBenefits.map((item) => renderBenefitCard(item))}
 
-              {/* 조건 충족 시 가능(주황) - 접어두고 '더 보기'로 여지만 남김 */}
-              {condList.length > 0 && (
+              {/* 나머지 - 접어두고 '더 보기'로 여지만 남김 */}
+              {restBenefits.length > 0 && (
                 <>
                   {!showBenefitCondition ? (
                     <button
@@ -688,12 +690,12 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                       onClick={() => setShowBenefitCondition(true)}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-3 py-2.5 text-[12px] font-extrabold text-brand-orange transition hover:bg-brand-orange/15"
                     >
-                      조건 충족 시 가능한 혜택 {condList.length}개 더 보기
+                      조건 충족 시 가능한 다른 혜택 {restBenefits.length}개 더 보기
                       <span>▼</span>
                     </button>
                   ) : (
                     <>
-                      {condList.map((item) => renderBenefitCard(item))}
+                      {restBenefits.map((item) => renderBenefitCard(item))}
                       <button
                         type="button"
                         onClick={() => setShowBenefitCondition(false)}

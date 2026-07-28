@@ -829,6 +829,12 @@ function AdvancedResult({
   const [openProducts, setOpenProducts] = useState<Record<number, boolean>>({});
   const toggleProducts = (i: number) =>
     setOpenProducts((prev) => ({ ...prev, [i]: !prev[i] }));
+  // ★ 승인 잘 되는 상품 위주로(대표님 요청): 기관마다 상위 2개만 먼저 펼치고 나머지는 '더 보기'로 접는다. ★
+  //   ⚠️ 표시만 분리. filterProducts 결과·개수·정렬·요약배너 카운트 100% 보존(접힌 상품도 카운트에 포함).
+  const PRODUCTS_INITIAL_COUNT = 2;
+  const [showAllProducts, setShowAllProducts] = useState<Record<number, boolean>>({});
+  const toggleAllProducts = (i: number) =>
+    setShowAllProducts((prev) => ({ ...prev, [i]: !prev[i] }));
 
   // ★ 결정 마비 완화(대표님 요청): '지금 신청 가능'만 먼저 펼치고, '조건 충족 시 가능'은 접어둔다. ★
   //   ⚠️ 판정/정렬/점수 로직은 그대로. 이미 계산된 결과를 '펼침 vs 접힘'으로 나눠 표시만 하는 것.
@@ -1023,10 +1029,14 @@ function AdvancedResult({
           subtitle="지금 바로 신청할 수 있는 제도만 모았어요"
         >
           {(() => {
-            // ★ 표시만 분리: '지금 신청 가능'(eligible) 먼저 펼치고, '조건 충족 시 가능'(potential)은 접어둔다.
-            //   정렬·판정은 이미 recompute()에서 끝났고 순서도 보존됨(eligible이 앞). 여기선 그룹만 나눔.
-            const eligibles = eligibleSupport.filter((x) => x.status === "eligible");
-            const potentials = eligibleSupport.filter((x) => x.status !== "eligible");
+            // ★ 표시만 분리 (대표님 요청): 최소 3개는 먼저 펼쳐 보여주고, 나머지는 '더 보기'로 접는다.
+            //   제조업만 찍으면 '지금 신청 가능'이 혁신바우처 1개뿐이라 화면이 허전 →
+            //   고용지원금·두루누리 등 '조건 충족 시 가능'까지 끌어와 앞 3개를 채운다.
+            //   ⚠️ 판정·순서·개수·문구는 recompute() 결과 그대로(eligible이 앞). 여기선 펼침/접힘만 나눔.
+            //      배지는 정직하게: eligible=신청 가능(초록), potential=조건 충족 시 가능(주황).
+            const SUPPORT_INITIAL_COUNT = 3;
+            const visibleSupports = eligibleSupport.slice(0, SUPPORT_INITIAL_COUNT);
+            const restSupports = eligibleSupport.slice(SUPPORT_INITIAL_COUNT);
             const renderSupportCard = ({ prog, status }: SupportItem) => {
               const isEligible = status === "eligible";
               return (
@@ -1101,11 +1111,11 @@ function AdvancedResult({
             };
             return (
               <div className="mt-4 space-y-3">
-                {/* 지금 신청 가능(초록) - 항상 펼침 */}
-                {eligibles.map((item) => renderSupportCard(item))}
+                {/* 앞 3개 - 항상 펼침 (초록/주황 배지는 각 카드가 status로 정직하게 표시) */}
+                {visibleSupports.map((item) => renderSupportCard(item))}
 
-                {/* 조건 충족 시 가능(주황) - 접어두고 '더 보기'로 여지만 남김 */}
-                {potentials.length > 0 && (
+                {/* 나머지 - 접어두고 '더 보기'로 여지만 남김 */}
+                {restSupports.length > 0 && (
                   <>
                     {!showSupportPotential ? (
                       <button
@@ -1113,12 +1123,12 @@ function AdvancedResult({
                         onClick={() => setShowSupportPotential(true)}
                         className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-3 py-2.5 text-[12px] font-extrabold text-brand-orange transition hover:bg-brand-orange/15"
                       >
-                        조건 충족 시 가능한 제도 {potentials.length}개 더 보기
+                        조건 충족 시 가능한 다른 제도 {restSupports.length}개 더 보기
                         <span>▼</span>
                       </button>
                     ) : (
                       <>
-                        {potentials.map((item) => renderSupportCard(item))}
+                        {restSupports.map((item) => renderSupportCard(item))}
                         <button
                           type="button"
                           onClick={() => setShowSupportPotential(false)}
@@ -1156,10 +1166,12 @@ function AdvancedResult({
             //   같은 등급 안에서는 원래 순서를 유지(안정 정렬).
             const approvalRank = (a?: "high" | "mid" | "low") =>
               a === "high" ? 0 : a === "mid" ? 1 : a === "low" ? 2 : 3;
-            // ★ 소진공 한정: '직접대출' 상품을 맨 앞으로 (대표님 요청 "소진공은 직접대출 먼저 추천")
+            // ★ 중진공 한정: '직접대출' 상품을 맨 앞으로 (대표님 요청 "중진공은 직접대출 위주로")
             //   상품 nature가 배열이면 하나라도 '직접대출'이면 직접대출로 간주. 그 다음 승인율 순.
-            //   다른 기관은 기존(승인율만) 정렬 그대로 유지.
-            const isSbiz = m.institution.includes("소상공인시장진흥공단");
+            //   ⚠️ 소진공은 상품마다 직접/대리가 갈려 직접대출 우선 정렬이 오히려 어색해져(대표님 지적)
+            //      승인율순만 적용한다. 신보·기보·재단도 대리대출 성격이라 승인율만 유지.
+            const isDirectFirstInst =
+              m.institution.includes("중소벤처기업진흥공단");
             const directFirstRank = (p: InstitutionProduct) => {
               const natures = p.nature
                 ? (Array.isArray(p.nature) ? p.nature : [p.nature])
@@ -1168,7 +1180,7 @@ function AdvancedResult({
             };
             const products = filteredProducts
               ? [...filteredProducts].sort((x, y) => {
-                  if (isSbiz) {
+                  if (isDirectFirstInst) {
                     const d = directFirstRank(x) - directFirstRank(y);
                     if (d !== 0) return d; // 1차: 직접대출 먼저
                   }
@@ -1209,6 +1221,16 @@ function AdvancedResult({
                 </div>
                 <p className="mt-1.5 whitespace-pre-line break-keep text-[12px] leading-relaxed text-brand-gray">{m.criteria}</p>
 
+                {/* ★ 신보·기보·재단 = 대리대출(보증) 안내 (대표님 요청) ★
+                     "여긴 공단이 직접 주는 게 아니라 보증서 받아 은행에서 대출받는 곳"임을 초보 고객도 바로 알게. */}
+                {(m.institution.includes("신용보증기금") ||
+                  m.institution.includes("기술보증기금") ||
+                  m.institution.includes("재단")) && (
+                  <p className="mt-2 break-keep rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-blue-800">
+                    <b>ℹ️ 대리대출(보증)</b> · 이 기관은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요. (공단이 직접 돈을 주는 방식이 아니에요)
+                  </p>
+                )}
+
                 {/* 신보·기보 둘 다 자격일 때 → 중복 신청 불가 안내 (대표님 요청) */}
                 {m.exclusiveNote && (
                   <p className="mt-2 break-keep rounded-lg border border-brand-red/30 bg-brand-red/5 px-2.5 py-1.5 text-[11px] font-bold text-brand-red">
@@ -1234,10 +1256,19 @@ function AdvancedResult({
                         ▼
                       </span>
                     </button>
-                    {openProducts[i] && (
+                    {openProducts[i] && (() => {
+                      // ★ 승인 잘 되는 상품 위주(대표님 요청): 상위 2개만 먼저 보이고 나머지는 '더 보기'로 접는다. ★
+                      //   ⚠️ products는 이미 (직접대출 우선 →) 승인율순으로 정렬됨. 개수·순서·카운트 불변.
+                      const showAll = Boolean(showAllProducts[i]);
+                      const visibleProducts = showAll
+                        ? products
+                        : products.slice(0, PRODUCTS_INITIAL_COUNT);
+                      const hiddenCount = products.length - visibleProducts.length;
+                      return (
                       <div className="mt-2 space-y-2">
-                        {products.map((prod, pi) => {
-                          const isTop = pi === topProductIdx;
+                        {visibleProducts.map((prod, pi) => {
+                          // topProductIdx는 전체 products 기준 인덱스 → 잘린 배열에서도 상품 참조로 정확 비교
+                          const isTop = products[topProductIdx] === prod;
                           return (
                           <div
                             key={pi}
@@ -1324,8 +1355,28 @@ function AdvancedResult({
                           </div>
                           );
                         })}
+                        {/* ★ 상위 2개 외 나머지 상품은 '더 보기'로 접기 (대표님 요청) - 접혀도 카운트엔 전부 포함 ★ */}
+                        {products.length > PRODUCTS_INITIAL_COUNT &&
+                          (!showAll ? (
+                            <button
+                              type="button"
+                              onClick={() => toggleAllProducts(i)}
+                              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-3 py-2.5 text-[12px] font-bold text-brand-orange transition hover:bg-brand-orange/10"
+                            >
+                              다른 상품 {hiddenCount}개 더 보기 <span aria-hidden>▼</span>
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => toggleAllProducts(i)}
+                              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-[12px] font-semibold text-brand-dark/60 transition hover:bg-gray-100"
+                            >
+                              상품 접기 <span aria-hidden>▲</span>
+                            </button>
+                          ))}
                       </div>
-                    )}
+                      );
+                    })()}
                   </div>
                 )}
 
