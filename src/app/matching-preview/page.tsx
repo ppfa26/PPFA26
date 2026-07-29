@@ -517,21 +517,21 @@ export default function MatchingPreview() {
               <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 text-left">
                 {counts && total > 0 ? (
                   <>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-brand-orange/10 px-2.5 py-1.5 text-[12px] font-bold text-brand-orange sm:text-[15px]">
-                      🏅 <span className="whitespace-nowrap">정부지원제도</span>
-                      <b className="ml-auto text-[14px] text-brand-orange sm:text-lg">{liveCounts?.supports ?? counts.supports}건</b>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
+                      🏅 <span className="whitespace-nowrap text-brand-dark/70">정부지원제도</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.supports ?? counts.supports}건</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-brand-orange/10 px-2.5 py-1.5 text-[12px] font-bold text-brand-orange sm:text-[15px]">
-                      💳 <span className="whitespace-nowrap">정책금융상품</span>
-                      <b className="ml-auto text-[14px] text-brand-orange sm:text-lg">{liveCounts?.products ?? counts.products}건</b>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
+                      💳 <span className="whitespace-nowrap text-brand-dark/70">정책금융상품</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.products ?? counts.products}건</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-brand-orange/10 px-2.5 py-1.5 text-[12px] font-bold text-brand-orange sm:text-[15px]">
-                      💎 <span className="whitespace-nowrap">추가 감면 혜택</span>
-                      <b className="ml-auto text-[14px] text-brand-orange sm:text-lg">{liveCounts?.benefits ?? counts.benefits}건</b>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
+                      💎 <span className="whitespace-nowrap text-brand-dark/70">추가 감면 혜택</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.benefits ?? counts.benefits}건</b>
                     </span>
-                    <span className="flex items-center gap-1.5 rounded-lg bg-brand-orange/10 px-2.5 py-1.5 text-[12px] font-bold text-brand-orange sm:text-[15px]">
-                      📢 <span className="whitespace-nowrap">그 외 지원사업</span>
-                      <b className="ml-auto text-[14px] text-brand-orange sm:text-lg">{liveCounts?.announcements ?? 0}건</b>
+                    <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
+                      📢 <span className="whitespace-nowrap text-brand-dark/70">그 외 지원사업</span>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.announcements ?? 0}건</b>
                     </span>
                   </>
                 ) : (

@@ -338,8 +338,8 @@ export default function Home() {
                           매칭 완료 🎉
                         </span>
                       </div>
-                      {/* 오른쪽: 세로 요약 배지 4종 - 실제 결과창 순서와 동일.
-                          (대표님 요청) 라벨·건수 모두 오렌지 톤으로 통일 */}
+                      {/* 오른쪽: 세로 요약 배지 4종 - 실제 결과창(matching-preview)과 동일 스타일로 통일
+                          (대표님 요청: 결과창 버전이 더 마음에 듦 → bg-white/70 박스 + 라벨 어둡게 + 건수 오렌지) */}
                       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                         {[
                           { icon: "🏅", l: "정부지원제도", n: "5건" },
@@ -349,10 +349,10 @@ export default function Home() {
                         ].map((s) => (
                           <span
                             key={s.l}
-                            className="flex items-center gap-1.5 rounded-lg bg-brand-orange/10 px-2 py-1.5 text-[12px] font-bold text-brand-orange sm:text-[15px]"
+                            className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-[15px]"
                           >
                             {s.icon}{" "}
-                            <span className="whitespace-nowrap">{s.l}</span>
+                            <span className="whitespace-nowrap text-brand-dark/70">{s.l}</span>
                             <b className="ml-auto text-[14px] text-brand-orange sm:text-lg">{s.n}</b>
                           </span>
                         ))}
