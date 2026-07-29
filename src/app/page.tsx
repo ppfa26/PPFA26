@@ -120,7 +120,7 @@ export default function Home() {
               <Editable
                 id="hero-badge"
                 as="div"
-                className="inline-block rounded-full bg-brand-yellow px-4 py-1.5 text-xs font-bold text-brand-dark sm:px-5 sm:py-2 sm:text-sm"
+                className="inline-block rounded-full bg-brand-yellow px-5 py-2 text-sm font-bold text-brand-dark sm:px-6 sm:py-2.5 sm:text-base"
               >
                 정부지원사업 AI 통합 매칭 플랫폼
               </Editable>
