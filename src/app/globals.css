@@ -883,6 +883,39 @@ body.theme-dark {
 }
 
 /* ============================================================
+   FAQ 아코디언 - 열릴 때 부드럽게 나타나기 (7번 UX 개선)
+   <details>는 기본적으로 딱딱하게 즉시 열리므로, 열릴 때 답변에
+   fade + 살짝 아래로 미끄러지는 모션을 줘 부드럽게 보이게 한다.
+   summary(질문)는 항상 보이고, 그 외 자식(답변)만 애니메이션.
+   ============================================================ */
+.faq-accordion > summary {
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.faq-accordion > summary::-webkit-details-marker {
+  display: none;
+}
+.faq-accordion[open] > *:not(summary) {
+  animation: faqReveal 0.28s ease;
+}
+@keyframes faqReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* 접근성 - 모션 최소화 설정 시 애니메이션 끔 */
+@media (prefers-reduced-motion: reduce) {
+  .faq-accordion[open] > *:not(summary) {
+    animation: none;
+  }
+}
+
+/* ============================================================
    (성능) 모바일 스크롤 부드럽게 - backdrop-filter blur 경량화
    ------------------------------------------------------------
    backdrop-filter의 blur는 모바일 GPU에서 프레임당 비용이 커서

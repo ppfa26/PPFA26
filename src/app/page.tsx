@@ -9,6 +9,7 @@ import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
+import StickyDiagnosisBar from "@/components/StickyDiagnosisBar";
 import TrustBadges from "@/components/home/TrustBadges";
 import { BETA_FREE } from "@/lib/betaConfig";
 
@@ -337,21 +338,22 @@ export default function Home() {
                           매칭 완료 🎉
                         </span>
                       </div>
-                      {/* 오른쪽: 세로 요약 배지 4종 - 실제 결과창 순서와 동일. 좌우 공백 축소(대표님 요청) */}
+                      {/* 오른쪽: 세로 요약 배지 4종 - 실제 결과창 순서와 동일.
+                          카테고리별 색으로 구분해 한눈에 스캔되도록 (정부=파랑·금융=초록·감면=보라·기타=주황) */}
                       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                         {[
-                          { icon: "🏅", l: "정부지원제도", n: "5건" },
-                          { icon: "💳", l: "정책금융상품", n: "6건" },
-                          { icon: "💎", l: "추가 감면 혜택", n: "8건" },
-                          { icon: "📢", l: "그 외 지원사업", n: "5건" },
+                          { icon: "🏅", l: "정부지원제도", n: "5건", cls: "bg-blue-50 text-blue-700", numCls: "text-blue-600" },
+                          { icon: "💳", l: "정책금융상품", n: "6건", cls: "bg-emerald-50 text-emerald-700", numCls: "text-emerald-600" },
+                          { icon: "💎", l: "추가 감면 혜택", n: "8건", cls: "bg-violet-50 text-violet-700", numCls: "text-violet-600" },
+                          { icon: "📢", l: "그 외 지원사업", n: "5건", cls: "bg-orange-50 text-orange-700", numCls: "text-orange-600" },
                         ].map((s) => (
                           <span
                             key={s.l}
-                            className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2 py-1.5 text-[12px] font-bold text-brand-dark sm:text-[15px]"
+                            className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[12px] font-bold sm:text-[15px] ${s.cls}`}
                           >
                             {s.icon}{" "}
-                            <span className="whitespace-nowrap text-brand-dark/70">{s.l}</span>
-                            <b className="ml-auto text-[14px] text-brand-orange sm:text-lg">{s.n}</b>
+                            <span className="whitespace-nowrap">{s.l}</span>
+                            <b className={`ml-auto text-[14px] sm:text-lg ${s.numCls}`}>{s.n}</b>
                           </span>
                         ))}
                       </div>
@@ -622,7 +624,7 @@ export default function Home() {
           <div className="reveal mx-auto max-w-5xl">
             {/* (대표님 요청) 상단 헤더 박스 - 가로폭 조금 축소(is-wide-pricing=38rem) */}
             <div className="section-title-glass is-wide-pricing mx-auto flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-dark/5 px-4 py-1.5 text-xs font-bold text-brand-dark sm:text-sm">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
                 💳 서비스 이용 플랜
               </span>
               <Editable
@@ -680,7 +682,7 @@ export default function Home() {
               {FAQS.map((f, i) => (
                 <details
                   key={i}
-                  className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition open:border-brand-orange/40"
+                  className="faq-accordion group rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition open:border-brand-orange/40"
                 >
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
                     <Editable
@@ -760,6 +762,8 @@ export default function Home() {
       {/* 오른쪽 하단 고정 - 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
       <InstallAppButton />
       <KakaoFloatingButton />
+      {/* 모바일 전용 하단 고정 CTA - 어디를 보고 있든 진단 시작 가능 (진단 시작률 개선) */}
+      <StickyDiagnosisBar />
     </PageShell>
   );
 }

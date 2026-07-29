@@ -179,10 +179,53 @@ export default function MyPage() {
             <p className="mt-8 text-center text-brand-gray">불러오는 중…</p>
           ) : (
             <>
+              {/* 한눈 요약 스탯 - 로그인 회원에게만. 진단결과·이용권·상담채널 상태를 3칸으로 즉시 파악 */}
+              {email && (
+                <div
+                  id="mypage-summary"
+                  className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3"
+                >
+                  {/* ① 진단 결과 매칭 개수 */}
+                  <div className="rounded-2xl border border-gray-200 bg-white p-3.5 text-center shadow-card sm:p-4">
+                    <span className="text-xl sm:text-2xl">🎯</span>
+                    <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
+                      진단 결과
+                    </p>
+                    <p className="mt-0.5 text-lg font-black leading-none text-brand-dark sm:text-2xl">
+                      {matchCount === null ? "–" : `${matchCount}개`}
+                    </p>
+                  </div>
+                  {/* ② 이용권(열람) 상태 */}
+                  <div className="rounded-2xl border border-gray-200 bg-white p-3.5 text-center shadow-card sm:p-4">
+                    <span className="text-xl sm:text-2xl">🎟️</span>
+                    <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
+                      이용권
+                    </p>
+                    <p
+                      className={`mt-0.5 text-lg font-black leading-none sm:text-2xl ${
+                        viewStatus?.isActive ? "text-brand-green" : "text-brand-dark/40"
+                      }`}
+                    >
+                      {viewStatus?.isActive ? "이용중" : "없음"}
+                    </p>
+                  </div>
+                  {/* ③ 결제 건수 */}
+                  <div className="rounded-2xl border border-gray-200 bg-white p-3.5 text-center shadow-card sm:p-4">
+                    <span className="text-xl sm:text-2xl">🧾</span>
+                    <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
+                      결제 내역
+                    </p>
+                    <p className="mt-0.5 text-lg font-black leading-none text-brand-dark sm:text-2xl">
+                      {payments.length}건
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* 계정 정보 */}
               <section
                 id="mypage-account"
-                className="mt-5 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
+                className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
               >
                 <h2 className="text-lg font-extrabold text-brand-dark">
                   👤 계정 정보
@@ -208,7 +251,7 @@ export default function MyPage() {
                     </p>
                     <Link
                       href="/signup"
-                      className="btn-brand mt-4 inline-block rounded-full px-8 py-3 transition hover:scale-[1.02]"
+                      className="btn-red mt-4 inline-block rounded-full px-8 py-3 font-bold transition hover:scale-[1.02]"
                     >
                       로그인 / 회원가입
                     </Link>
