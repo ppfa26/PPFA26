@@ -168,7 +168,7 @@ export default function Home() {
                 id="hero-cta-primary"
                 as="a"
                 href="/diagnosis"
-                className="btn-brand w-full rounded-full px-9 py-3 text-base animate-pulseGlow sm:w-auto sm:py-3.5 sm:text-[17px]"
+                className="btn-red w-full rounded-full px-9 py-3 text-base animate-pulseGlow sm:w-auto sm:py-3.5 sm:text-[17px]"
               >
                 {BETA_FREE ? "지금 무료로 진단 시작하기" : "무료 진단 시작하기"}
               </Editable>

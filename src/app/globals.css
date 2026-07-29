@@ -782,6 +782,7 @@ body.theme-dark {
      큰 텍스트 그림자도 제거해 선명하게. */
   #hero-section .rounded-full,
   #hero-section .btn-brand,
+  #hero-section .btn-red,
   #hero-section .btn-outline,
   .bg-brand-yellow,
   .bg-\[\#FEE500\] {
