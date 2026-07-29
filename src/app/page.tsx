@@ -114,7 +114,7 @@ export default function Home() {
           id="hero-section"
           className="relative overflow-hidden px-4 pb-4 pt-4 sm:pb-8 sm:pt-8"
         >
-          <div className="hero-glass mx-auto max-w-4xl rounded-3xl px-6 py-6 text-center animate-fadeUp sm:px-14 sm:py-12">
+          <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-6 py-6 text-center animate-fadeUp sm:px-12 sm:py-12">
             {/* 상단 배지 (노란색 서비스 소개 배지) */}
             <div className="mb-5 flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
               <Editable
@@ -128,7 +128,7 @@ export default function Home() {
             <Editable
               id="hero-headline-v2"
               as="h1"
-              className="whitespace-nowrap text-[19px] font-black leading-[1.4] text-brand-dark xs:text-[23px] sm:whitespace-normal sm:text-[37px] sm:leading-tight"
+              className="whitespace-nowrap text-[20px] font-black leading-[1.35] tracking-[-0.01em] text-brand-dark xs:text-[24px] sm:whitespace-normal sm:text-[40px] sm:leading-[1.25]"
             >
               AI를 활용해 내 사업장에 알맞은
               <br />
@@ -138,7 +138,7 @@ export default function Home() {
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-4 max-w-2xl break-keep text-[15px] leading-relaxed text-brand-gray sm:mt-5 sm:text-lg sm:leading-relaxed"
+              className="mx-auto mt-4 max-w-xl break-keep text-[15px] leading-relaxed text-brand-gray sm:mt-5 sm:text-[19px] sm:leading-relaxed"
             >
               복잡한 정부지원사업, 이제 직접 찾지 마세요.
               <br />
@@ -167,7 +167,7 @@ export default function Home() {
                 id="hero-cta-primary"
                 as="a"
                 href="/diagnosis"
-                className="btn-brand w-full rounded-full px-8 py-3.5 text-base animate-pulseGlow sm:w-auto sm:py-4 sm:text-base"
+                className="btn-brand w-full rounded-full px-9 py-3 text-base animate-pulseGlow sm:w-auto sm:py-3.5 sm:text-[17px]"
               >
                 {BETA_FREE ? "지금 무료로 진단 시작하기" : "무료 진단 시작하기"}
               </Editable>
@@ -175,7 +175,7 @@ export default function Home() {
                 id="hero-cta-secondary"
                 as="a"
                 href={BETA_FREE ? "#result-sample-section" : "/pricing"}
-                className="btn-outline w-full rounded-full px-8 py-3.5 text-base sm:w-auto sm:py-4 sm:text-base"
+                className="btn-outline w-full rounded-full px-9 py-3 text-base sm:w-auto sm:py-3.5 sm:text-[17px]"
               >
                 {BETA_FREE ? "무엇을 알려주나요?" : "상품 자세히 보기"}
               </Editable>
