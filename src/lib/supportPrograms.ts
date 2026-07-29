@@ -10,7 +10,6 @@ import { DiagnosisProfile } from "./matching";
 import {
   Company,
   runAdvancedScreening,
-  INSTITUTION_PRODUCT_LINKS,
   filterProducts,
   findInstitutionLink,
   JAEDAN_PRODUCTS,

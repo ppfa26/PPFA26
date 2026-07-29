@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { isAdminEmail } from "@/lib/admin";
 
 export default function Header() {
-  const pathname = usePathname();
   const router = useRouter();
-  const isHome = pathname === "/";
 
   // 로그인 상태 추적
   const [loggedIn, setLoggedIn] = useState(false);

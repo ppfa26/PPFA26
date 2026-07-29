@@ -43,29 +43,50 @@ const REGION_KEYWORDS: Record<string, string[]> = {
 };
 
 // 업종/관심분야 → 공고에서 찾을 키워드
+//  (정확도 보강) 억지매칭 방지를 위해 '가점만' 하는 키워드. 없는 수치·자격을 만들지 않는다.
 const TOPIC_KEYWORDS: Record<string, string[]> = {
-  제조업: ["제조", "스마트공장", "공장"],
-  수출업: ["수출", "해외", "글로벌", "무역"],
-  서비스업: ["서비스"],
-  도소매업: ["소상공인", "유통", "상점"],
-  음식점업: ["소상공인", "외식", "음식"],
-  정책자금: ["자금", "융자", "대출"],
-  정부지원금: ["지원", "보조", "바우처"],
-  창업지원: ["창업", "스타트업"],
+  제조업: ["제조", "스마트공장", "공장", "생산", "설비"],
+  수출업: ["수출", "해외", "글로벌", "무역", "해외진출", "바이어"],
+  서비스업: ["서비스", "용역"],
+  도소매업: ["소상공인", "유통", "상점", "도소매", "판로"],
+  음식점업: ["소상공인", "외식", "음식", "요식", "식당"],
+  정책자금: ["자금", "융자", "대출", "보증", "이차보전"],
+  정부지원금: ["지원", "보조", "바우처", "지원금", "출연"],
+  창업지원: ["창업", "스타트업", "예비창업", "초기창업"],
   바우처: ["바우처"],
-  인증: ["인증", "특허", "지식재산"],
-  교육: ["교육", "컨설팅"],
+  인증: ["인증", "특허", "지식재산", "벤처", "이노비즈", "메인비즈"],
+  교육: ["교육", "컨설팅", "멘토링", "아카데미"],
   창업자금: ["창업", "자금"],
-  운전자금: ["운전자금", "경영", "자금"],
-  시설자금: ["시설", "설비", "장비"],
-  수출자금: ["수출", "글로벌"],
-  "인증및특허": ["인증", "특허"],
+  운전자금: ["운전자금", "경영", "자금", "경영안정"],
+  시설자금: ["시설", "설비", "장비", "임차"],
+  수출자금: ["수출", "글로벌", "무역금융"],
+  "인증및특허": ["인증", "특허", "지식재산", "R&D", "기술개발"],
+  기술개발: ["R&D", "기술개발", "연구개발", "혁신"],
+  디지털전환: ["디지털", "스마트", "AI", "빅데이터", "온라인"],
 };
 
 function normList(v: unknown): string[] {
   if (Array.isArray(v)) return v.filter((x) => typeof x === "string");
   if (typeof v === "string" && v) return [v];
   return [];
+}
+
+// (정확도) 신청기간 원문에서 '마감일'을 뽑아 이미 끝난 공고인지 판정.
+//   deadline 예: "2026-07-20 ~ 2026-08-14" / "~ 2026.08.14" / "2026-08-14"
+//   - 날짜를 못 찾으면(상시/미정 등) '살아있는 것'으로 간주해 노출 유지(공고 누락 방지).
+//   - 마지막으로 등장하는 날짜(=종료일)를 마감일로 본다.
+function isExpired(deadline: string | null | undefined, today: Date): boolean {
+  if (!deadline) return false;
+  // yyyy-mm-dd / yyyy.mm.dd / yyyy/mm/dd 형태를 모두 수용
+  const matches = deadline.match(/(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})/g);
+  if (!matches || matches.length === 0) return false; // 날짜 불명 → 노출 유지
+  const last = matches[matches.length - 1];
+  const parts = last.split(/[.\-/]/).map((n) => parseInt(n, 10));
+  if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return false;
+  const [y, m, d] = parts;
+  // 마감일은 '그날 23:59까지 유효'로 보고, 마감일 자정 다음날부터 만료 처리
+  const end = new Date(y, m - 1, d, 23, 59, 59);
+  return end.getTime() < today.getTime();
 }
 
 export async function POST(req: Request) {
@@ -127,7 +148,12 @@ export async function POST(req: Request) {
     if (error) {
       return NextResponse.json({ items: [], note: error.message });
     }
-    const rows: Announcement[] = data || [];
+    const allRows: Announcement[] = data || [];
+
+    // (정확도) 이미 마감된 공고는 "지금 열려있는 지원사업"에서 제외.
+    //   단, 날짜가 불명확한(상시/미정) 공고는 그대로 살려 노출한다.
+    const today = new Date();
+    const rows = allRows.filter((r) => !isExpired(r.deadline, today));
 
     // 스코어링: 지역 일치 +3, 업종/관심 키워드 일치마다 +2, 전국형(지역표기 없음) 소폭 가점
     const scored = rows.map((r) => {
@@ -160,15 +186,33 @@ export async function POST(req: Request) {
       return { r, score };
     });
 
-    // 점수 높은 순 → 동점이면 최신순(원래 순서 유지)
+    // 점수 높은 순 → 동점이면 최신순(rows가 이미 crawled_at desc). 안정 정렬 유지.
     scored.sort((a, b) => b.score - a.score);
 
-    // 상위 5건. 단, 아무 키워드도 안 걸려 전부 0점이면 그냥 최신 5건.
-    const top = scored.slice(0, 5).map((s) => s.r);
+    // (정확도) 실제로 프로필과 '관련 있는'(score > 0) 공고만 우선 노출한다.
+    //   → 프로필과 무관한 공고가 결과창에 섞여 신뢰도를 떨어뜨리는 문제 해결.
+    const related = scored.filter((s) => s.score > 0).map((s) => s.r);
+
+    let top: Announcement[];
+    let fallback = false;
+    if (related.length >= 3) {
+      // 관련 공고가 충분하면 그중 상위 5건만 (무관 공고 섞지 않음)
+      top = related.slice(0, 5);
+    } else {
+      // 관련 공고가 너무 적으면(지역/업종 정보 부족 등) 최신 공고로 5건까지 보충.
+      //   이 경우 '추천'이 아니라 '최근 열린 공고 참고용'임을 fallback 플래그로 알림.
+      const seen = new Set(related.map((r) => r.detail_url || r.title));
+      const filler = rows
+        .filter((r) => !seen.has(r.detail_url || r.title))
+        .slice(0, 5 - related.length);
+      top = [...related, ...filler];
+      fallback = related.length === 0;
+    }
 
     return NextResponse.json({
       items: top,
       source: "기업마당",
+      fallback, // true면 '맞춤 추천'이 아닌 '최근 공고 참고'
       matched_by: {
         region: regionKw,
         topics: topicKw,

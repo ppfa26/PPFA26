@@ -92,6 +92,25 @@ function mapBizinfoItem(it: any) {
   };
 }
 
+// ════════════════════════════════════════════════════════════════════════
+//  [확장 포인트] 공고 소스 추가 방법 (중소벤처24 / K-Startup / 기타 공공데이터)
+//  ------------------------------------------------------------------------
+//  이 크롤러는 (source, source_id) UPSERT 구조라 소스를 여러 개 붙일 수 있다.
+//  새 소스를 추가하려면 아래 2개 함수만 이 파일에 더 만들고,
+//  POST 수집 루프에서 호출해 rows 에 push 하면 끝.
+//
+//    1) async function fetchXxxPage(pageNo, numOfRows): 해당 OpenAPI 호출 → item[] 반환
+//    2) function mapXxxItem(it): item → crawled_announcements row 매핑
+//         · source     : "중소벤처24" 등 소스명(중복 방지 키의 일부)
+//         · source_id  : 소스 고유 공고ID (UPSERT onConflict 기준)
+//         · title/deadline/target/support_scale/detail_url/site_name/site_url
+//
+//  ⚠️ 전제: 각 소스는 '공공데이터포털(data.go.kr)에서 활용신청 → 별도 서비스키 발급'이
+//     필요하다. 발급받은 키를 환경변수로 넣고 fetchXxxPage 에서 사용한다.
+//     (예: process.env.SMES_API_KEY, process.env.KSTARTUP_API_KEY)
+//     키 없이 임의 연동/가짜 데이터 삽입은 하지 않는다. — 대표님 원칙(팩트근거)
+// ════════════════════════════════════════════════════════════════════════
+
 // ─────────────────────────── GET: 최근 수집 공고 조회 ───────────────────────────
 // (Vercel Cron 은 기본 GET 으로 호출됨 → x-vercel-cron 헤더가 있으면 수집 실행)
 export async function GET(req: Request) {

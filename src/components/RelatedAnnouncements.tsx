@@ -30,6 +30,8 @@ export default function RelatedAnnouncements({
   onCount?: (n: number) => void;
 }) {
   const [items, setItems] = useState<Item[] | null>(null);
+  // fallback=true → 프로필과 딱 맞는 공고가 부족해 '최근 열린 공고 참고용'으로 보여주는 상태
+  const [fallback, setFallback] = useState(false);
   const [loading, setLoading] = useState(true);
   // ★ 대표님 요청(2026-07 변경): 상위 3개만 먼저 보여주고 나머지는 '더 보기'로 접는다.
   //   (다른 결과 섹션들과 통일 - 너무 많이 펼쳐지면 화면이 길어져 이탈 우려)
@@ -46,7 +48,10 @@ export default function RelatedAnnouncements({
           body: JSON.stringify(profile || {}),
         });
         const j = await res.json();
-        if (alive) setItems(Array.isArray(j?.items) ? j.items : []);
+        if (alive) {
+          setItems(Array.isArray(j?.items) ? j.items : []);
+          setFallback(Boolean(j?.fallback));
+        }
       } catch {
         if (alive) setItems([]);
       } finally {
@@ -78,9 +83,19 @@ export default function RelatedAnnouncements({
         <>
           <div className="rounded-xl border border-brand-orange/30 bg-brand-orange/5 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
-              아래는 대표님 지역·업종·관심분야로 <b>지금 열려 있는 관련 정부지원 공고</b>를 추린 목록이에요.
-              <br />
-              위 항목 외에도 <b>추가로 챙겨볼 만한 지원사업</b>이니, 신청기간을 확인하고 원문에서 자세히 살펴보세요.
+              {fallback ? (
+                <>
+                  대표님 조건에 <b>딱 맞는 공고</b>를 특정하기 어려워, <b>지금 열려 있는 최근 공고</b>를 참고용으로 보여드려요.
+                  <br />
+                  신청기간·자격요건을 <b>원문에서 반드시 확인</b>하고 해당되는 것만 신청하세요.
+                </>
+              ) : (
+                <>
+                  아래는 대표님 지역·업종·관심분야로 <b>지금 열려 있는 관련 정부지원 공고</b>를 추린 목록이에요.
+                  <br />
+                  위 항목 외에도 <b>추가로 챙겨볼 만한 지원사업</b>이니, 신청기간을 확인하고 원문에서 자세히 살펴보세요.
+                </>
+              )}
             </p>
           </div>
           {/* 감면 카드와 동일한 투명(흰) 박스 목록 스타일 */}

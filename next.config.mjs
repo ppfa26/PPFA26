@@ -9,7 +9,7 @@ const nextConfig = {
   //  아이콘/유틸 성격의 큰 패키지에서 '실제로 쓰는 것만' 번들에 포함시켜
   //  First Load JS 를 줄인다. 렌더 결과는 동일. (Next 14 안정 기능)
   experimental: {
-    optimizePackageImports: ["@supabase/supabase-js", "@supabase/ssr"],
+    optimizePackageImports: ["@supabase/supabase-js"],
   },
 
   // ── 복제/도용 방어 ──────────────────────────────────────────

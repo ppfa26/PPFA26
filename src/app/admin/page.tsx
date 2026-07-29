@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback, useMemo, Fragment } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
@@ -190,7 +189,6 @@ function StatCard({
 /*  메인                                                               */
 /* ------------------------------------------------------------------ */
 export default function AdminPage() {
-  const router = useRouter();
   const [phase, setPhase] = useState<Phase>("loading");
   const [tab, setTab] = useState<Tab>("users");
 

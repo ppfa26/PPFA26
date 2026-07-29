@@ -19,7 +19,6 @@ import {
   Company,
   runAdvancedScreening,
   AdvancedScreeningReport,
-  REGION_SINBO,
   findInstitutionLink,
   JAEDAN_CALL_CENTER,
   JAEDAN_PRODUCTS,
@@ -149,7 +148,7 @@ export default function AdvancedScreeningPanel({
   const [hasMainbiz, setHasMainbiz] = useState(false);
 
   // 처음 질문지에서 값을 가져왔는지 표시 (안내 문구용)
-  const [prefilled, setPrefilled] = useState(false);
+
 
   // ── 처음 질문지(mpp_diagnosis) 값을 정밀진단 초깃값으로 불러오기 ──────
   //  대표님 기준: 처음 답한 내용을 이어받고, 정밀진단에서 고치면 그게 우선.
@@ -235,7 +234,7 @@ export default function AdvancedScreeningPanel({
       // 인증(메인비즈)
       if ((p.certifications || []).includes("메인비즈")) { setHasMainbiz(true); touched = true; }
 
-      if (touched) setPrefilled(true);
+      void touched;
     } catch {
       /* 무시 - 처음 질문지 없거나 파싱 실패 시 빈 상태로 시작 */
     }
@@ -819,12 +818,6 @@ function AdvancedResult({
   // 대표님 지역 기준으로 안내할 지역신용보증재단 목록 (인천→인천만, 서울→서울만, 지방→통합)
   const jaedanLinks = resolveJaedanLinks(company?.region);
 
-  const cardCls = "rounded-2xl border border-gray-200 bg-white p-5 shadow-card";
-
-  // 결과창에서 대표님이 고르는 지역(지역신용보증재단 상품 링크·신청앱 안내용)
-  const [sinboRegion, setSinboRegion] = useState("");
-  const selectedSinbo = REGION_SINBO.find((r) => r.region === sinboRegion);
-
   // ★ 기관별 상품 아코디언 - 클릭 시 해당 기관의 여러 상품이 쭈르륵 펼쳐짐 ★
   //  (대표님 요청) 모든 기관 카테고리를 처음부터 '펼쳐진' 상태로 통일 → 위아래 오픈 정도 차이 없음.
   const [openProducts, setOpenProducts] = useState<Record<number, boolean>>({});
@@ -859,8 +852,6 @@ function AdvancedResult({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [creditMatches.length]);
 
-  // 추천 기관 중 지역신용보증재단 포함 여부 → 지역 재단 안내 노출 조건
-  const hasJaedan = creditMatches.some((m) => m.institution.includes("재단"));
   // 대리대출/직접대출 추천 여부 → 진행절차 안내 노출 조건
   const hasDae = creditMatches.some((m) => m.loan_type === "대리대출");
   const hasDirect = creditMatches.some((m) => m.loan_type === "직접대출");
@@ -887,10 +878,6 @@ function AdvancedResult({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eligibleSupport.length, productsShownCount, benefitsCount, announcementsCount]);
-
-  // 신청 가능 지원사업 억원 표기 도우미
-  const won억 = (v?: number) =>
-    v ? `${(v / 100000000).toFixed(v % 100000000 === 0 ? 0 : 2)}억` : "";
 
   return (
     <div id="advanced-result" className="mt-2 space-y-3">

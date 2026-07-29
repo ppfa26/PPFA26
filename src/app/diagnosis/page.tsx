@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Fragment } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
@@ -584,33 +583,6 @@ export default function Diagnosis() {
         ))}
       </div>
     );
-  // 혁신성장 테마처럼 항목이 많은 다중선택 → 반응형 그리드
-  //  모바일: 2열 (글자 안 잘리게) / 작은태블릿: 3열 / 큰화면: 5열(2줄)
-  const MultiGrid = ({ k, opts }: { k: string; opts: string[] }) => (
-    <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-3 md:grid-cols-5">
-      {opts.map((o) => (
-        <button
-          key={o}
-          onClick={() => toggle(k, o)}
-          className={`min-h-[40px] break-keep rounded-lg border px-1.5 py-2 text-center text-[11px] font-semibold leading-tight transition hover:scale-[1.03] sm:text-xs ${
-            (form[k] || []).includes(o)
-              ? "border-brand-orange bg-brand-grad text-brand-dark"
-              : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
-          }`}
-        >
-          {o}
-        </button>
-      ))}
-    </div>
-  );
-  // 조건부 질문(라벨+설명힌트+단일선택) - 소진공 혁신형 상품 정밀 매칭용
-  const CondQ = ({ k, field }: { k: string; field: { label: string; hint: string; opts: string[] } }) => (
-    <div className="mb-5 last:mb-0">
-      <p className="mb-1 break-keep text-sm font-bold leading-snug text-brand-dark sm:text-base">{keepBrackets(field.label)}</p>
-      <p className="mb-2 break-keep text-xs leading-snug text-brand-gray">{field.hint}</p>
-      <Radio k={k} opts={field.opts} />
-    </div>
-  );
 
   // ── 심층질문 체크리스트 카드 (대표님 요청: 같은 부류끼리·답하기 편하게·톤 통일) ──
   //   ★결과 무관★ 탭하면 값이 "예"("긍정 옵션"), 다시 탭하면 "아니요"로 토글된다.
