@@ -339,21 +339,21 @@ export default function Home() {
                         </span>
                       </div>
                       {/* 오른쪽: 세로 요약 배지 4종 - 실제 결과창 순서와 동일.
-                          카테고리별 색으로 구분해 한눈에 스캔되도록 (정부=파랑·금융=초록·감면=보라·기타=주황) */}
+                          (대표님 요청) 라벨·건수 모두 오렌지 톤으로 통일 */}
                       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                         {[
-                          { icon: "🏅", l: "정부지원제도", n: "5건", cls: "bg-blue-50 text-blue-700", numCls: "text-blue-600" },
-                          { icon: "💳", l: "정책금융상품", n: "6건", cls: "bg-emerald-50 text-emerald-700", numCls: "text-emerald-600" },
-                          { icon: "💎", l: "추가 감면 혜택", n: "8건", cls: "bg-violet-50 text-violet-700", numCls: "text-violet-600" },
-                          { icon: "📢", l: "그 외 지원사업", n: "5건", cls: "bg-orange-50 text-orange-700", numCls: "text-orange-600" },
+                          { icon: "🏅", l: "정부지원제도", n: "5건" },
+                          { icon: "💳", l: "정책금융상품", n: "6건" },
+                          { icon: "💎", l: "추가 감면 혜택", n: "8건" },
+                          { icon: "📢", l: "그 외 지원사업", n: "5건" },
                         ].map((s) => (
                           <span
                             key={s.l}
-                            className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[12px] font-bold sm:text-[15px] ${s.cls}`}
+                            className="flex items-center gap-1.5 rounded-lg bg-brand-orange/10 px-2 py-1.5 text-[12px] font-bold text-brand-orange sm:text-[15px]"
                           >
                             {s.icon}{" "}
                             <span className="whitespace-nowrap">{s.l}</span>
-                            <b className={`ml-auto text-[14px] sm:text-lg ${s.numCls}`}>{s.n}</b>
+                            <b className="ml-auto text-[14px] text-brand-orange sm:text-lg">{s.n}</b>
                           </span>
                         ))}
                       </div>
