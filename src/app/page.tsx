@@ -145,15 +145,6 @@ export default function Home() {
               AI가 찾아서 신청 방법까지 안내해 드립니다.
             </Editable>
 
-            {/* 오픈 베타 무료 앵커링 - 오픈 베타 기간 전부 0원으로 통일 (대표님 요청: '원래 9,900원' 삭제) */}
-            {BETA_FREE && (
-              <div className="mx-auto mt-4 inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-2xl border-2 border-brand-red/30 bg-brand-red/5 px-5 py-2.5 sm:mt-5 sm:py-3">
-                <span className="text-base font-black text-brand-red sm:text-lg">
-                  오픈 베타 기간 전부 0원
-                </span>
-              </div>
-            )}
-
             {/* 핵심 혜택 - 가로 컴팩트 배지 */}
             <ul className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-6 sm:gap-x-3">
               {["맞춤 AI 매칭", "신청 가능 사업만", "서류·신청까지 안내"].map(
