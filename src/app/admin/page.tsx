@@ -221,6 +221,10 @@ export default function AdminPage() {
   }>({ key: "joined_at", dir: "desc" });
   const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
 
+  // IP 집계·접속 로그 표가 세로로 너무 길어서 기본은 접어두고, 헤더 클릭 시 펼침.
+  const [ipListOpen, setIpListOpen] = useState(false); // 🌐 IP별 접속 집계 접기/펼치기
+  const [accessLogOpen, setAccessLogOpen] = useState(false); // 🕑 최근 접속 로그 접기/펼치기
+
   // 리드(상담 대상) 메모·통화 상태 - 브라우저 localStorage 기반 (DB 불필요)
   const [leadNotes, setLeadNotes] = useState<Record<string, LeadNote>>({});
   // 메모 입력창 임시 상태 (진단서 id → 입력중인 메모 텍스트)
@@ -2122,15 +2126,27 @@ export default function AdminPage() {
               </div>
 
               {/* IP 집계 */}
-              <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
-                <div className="border-b border-gray-100 px-4 py-3">
-                  <h3 className="font-bold text-gray-800">
-                    🌐 IP별 접속 집계 (어뷰징 의심 파악)
-                  </h3>
-                  <p className="mt-0.5 text-xs text-gray-400">
-                    접속수가 유난히 많거나, 한 IP에 여러 계정이 붙으면 의심해 보세요.
-                  </p>
-                </div>
+              <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => setIpListOpen((v) => !v)}
+                  className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left transition hover:bg-gray-50"
+                  aria-expanded={ipListOpen}
+                >
+                  <div>
+                    <h3 className="font-bold text-gray-800">
+                      🌐 IP별 접속 집계 ({ipSummary.length}개)
+                    </h3>
+                    <p className="mt-0.5 text-xs text-gray-400">
+                      접속수가 유난히 많거나, 한 IP에 여러 계정이 붙으면 의심해 보세요.
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-sm font-bold text-gray-400">
+                    {ipListOpen ? "▲ 접기" : "▼ 펼치기"}
+                  </span>
+                </button>
+                {ipListOpen && (
+                <div className="overflow-x-auto border-t border-gray-100">
                 <table className="w-full min-w-[560px] text-left text-sm">
                   <thead className="whitespace-nowrap bg-gray-50 text-xs text-gray-500">
                     <tr>
@@ -2202,12 +2218,26 @@ export default function AdminPage() {
                     })}
                   </tbody>
                 </table>
+                </div>
+                )}
               </div>
 
               {/* 최근 접속 로그 */}
-              <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
-                <div className="flex items-center justify-between gap-2 border-b border-gray-100 px-4 py-3">
-                  <h3 className="font-bold text-gray-800">🕑 최근 접속 로그</h3>
+              <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+                <div className="flex items-center justify-between gap-2 px-4 py-3">
+                  <button
+                    type="button"
+                    onClick={() => setAccessLogOpen((v) => !v)}
+                    className="flex flex-1 items-center gap-2 text-left"
+                    aria-expanded={accessLogOpen}
+                  >
+                    <h3 className="font-bold text-gray-800">
+                      🕑 최근 접속 로그 ({access.length}건)
+                    </h3>
+                    <span className="text-sm font-bold text-gray-400">
+                      {accessLogOpen ? "▲ 접기" : "▼ 펼치기"}
+                    </span>
+                  </button>
                   <button
                     onClick={clearAccessLogs}
                     className="shrink-0 rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600 transition hover:scale-[1.03] hover:bg-rose-100"
@@ -2216,6 +2246,8 @@ export default function AdminPage() {
                     🗑️ 접속 로그 전체 삭제
                   </button>
                 </div>
+                {accessLogOpen && (
+                <div className="overflow-x-auto border-t border-gray-100">
                 <table className="w-full min-w-[600px] text-left text-sm">
                   <thead className="whitespace-nowrap bg-gray-50 text-xs text-gray-500">
                     <tr>
@@ -2258,6 +2290,8 @@ export default function AdminPage() {
                     })}
                   </tbody>
                 </table>
+                </div>
+                )}
               </div>
             </div>
           )}
