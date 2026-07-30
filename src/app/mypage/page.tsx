@@ -12,6 +12,7 @@ import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
 import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
 import { isAdminEmail } from "@/lib/admin";
+import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 
 type Payment = {
   order_id: string;
@@ -493,6 +494,18 @@ export default function MyPage() {
           )}
         </div>
       </main>
+
+      {/* ── 쿠팡 파트너스 광고 (마이페이지 하단 · 푸터 위) ──
+           partnersId 를 넣으면 다이나믹 위젯 광고가 표시됩니다.
+           승인/발급 전에는 placeholder(광고 자리) 로만 노출 → 가짜 광고 방지. */}
+      <div className="px-4 pb-2">
+        <CoupangPartnersBanner
+          iframeSrc="https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=680&height=140&tsource="
+          iframeHeight={140}
+          className="mt-1"
+        />
+      </div>
+
       <Footer />
     </PageShell>
   );
