@@ -986,6 +986,11 @@ function AdvancedResult({
           <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/45">
             ※ 공고 시기·지원금·자격은 매년 달라질 수 있어요. 신청 전 각 기관 공식 공고를 꼭 확인하세요.
           </p>
+          {/* ★ 성격별 분류(대표님 요청): 크롤링 실공고 중 '창업' 성격 공고를 이 아코디언 안에 인라인으로.
+              (기업마당 '창업'/K-Startup 창업·사업화 등) 결과 대시보드(autoRun)에서만, previewLock 제외. */}
+          {autoRun && !previewLock && (
+            <RelatedAnnouncements profile={relatedProfile} bucket="startup" variant="inline" />
+          )}
         </AccordionCard>
       )}
 
@@ -1610,16 +1615,22 @@ function AdvancedResult({
             ))}
           </div>
         </div>
+        {/* ★ 성격별 분류(대표님 요청): 크롤링 실공고 중 '융자' 성격 공고(금융/정책자금/대출·보증 등)를
+            이 정책금융 아코디언 안에 인라인으로. 결과 대시보드(autoRun)에서만, previewLock 제외. */}
+        {autoRun && !previewLock && (
+          <RelatedAnnouncements profile={relatedProfile} bucket="loan" variant="inline" />
+        )}
       </AccordionCard>
 
       {/* ③ 챙기면 좋은 추가 감면 혜택 - 정책금융기관 바로 아래 (읽기 순서: 🏅→💳→💎→📢) */}
       {autoRun && <ExtraBenefitsSection previewLock={previewLock} onCount={setBenefitsCount} />}
 
-      {/* ④ 지금 열려있는 관련 정부지원사업(기업마당 실공고) - 감면 혜택 바로 아래
-             진단 프로필의 지역·업종·관심분야로 실제 공고를 추려 아코디언으로 노출.
-             AI 해설 없이 공고명·신청기간·기관만 보여주고 기업마당 원문으로 링크. */}
+      {/* ④ 그 외 놓치기 쉬운 지원사업(실공고 '그 외' 성격) - 감면 혜택 바로 아래
+             창업(🌱)·융자(💳)로 분류되지 않은 실공고(수출·기술·경영·내수·인력·행사·판로 등).
+             AI 해설 없이 공고명·신청기간·기관만 보여주고 원문으로 링크.
+             ★ 요약 배너의 '그 외 정부지원사업' 숫자는 이 etc 버킷 갯수(onCount)만 반영. */}
       {autoRun && !previewLock && (
-        <RelatedAnnouncements profile={relatedProfile} onCount={setAnnouncementsCount} />
+        <RelatedAnnouncements profile={relatedProfile} bucket="etc" onCount={setAnnouncementsCount} />
       )}
 
       {/* (기관별 상품 한눈에 보기는 '이용 가능한 정책금융기관' 아코디언 안 하단으로 통합됨 - 대표님 요청) */}

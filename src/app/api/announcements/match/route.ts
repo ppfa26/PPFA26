@@ -6,10 +6,21 @@ export const dynamic = "force-dynamic";
 
 // ────────────────────────────────────────────────────────────────
 // 진단 프로필과 관련 있는 "지금 열려있는 실제 정부지원사업 공고"를 추려서 반환.
-//   출처: 기업마당(crawled_announcements, source='기업마당')
+//   출처: crawled_announcements (기업마당 · K-Startup · 중소벤처24)
 //   방식: 프로필의 지역·업종·관심분야 키워드로 공고 텍스트를 매칭 → 점수순 상위 N건
 //   ※ AI 미사용(비용 0). 순수 키워드 스코어링.
+//
+//  ★ 성격별 분류(대표님 요청 2026-07):
+//     공고를 '소스'가 아니라 '성격'으로 나눠 결과창의 기존 아코디언에 그대로 넣는다.
+//       · 창업(startup) → 🌱 예비·초기·청년창업자 지원사업 아코디언
+//       · 융자(loan)    → 💳 정책금융상품 아코디언
+//       · 그 외(etc)    → 📢 그 외 놓치기 쉬운 지원사업 아코디언
+//     새 아코디언을 만들지 않는다(UI 단순 유지). support_scale/제목/대상 키워드로 판정.
+//     ⚠️ 가짜·추정 데이터 삽입 없음. 공고 원문 그대로 노출.
 // ────────────────────────────────────────────────────────────────
+
+// 이 API가 실제로 조회하는 공고 소스(크롤러 3종과 일치). 순서=병합 시 우선순위.
+const WANTED_SOURCES = ["기업마당", "K-Startup", "중소벤처24"] as const;
 
 type Announcement = {
   title: string;
@@ -20,6 +31,9 @@ type Announcement = {
   detail_url: string | null;
   source: string | null;
 };
+
+// 공고 성격 분류 결과
+type Nature = "startup" | "loan" | "etc";
 
 // 지역명 → 매칭 키워드(광역시/도 축약 포함)
 const REGION_KEYWORDS: Record<string, string[]> = {
@@ -89,12 +103,128 @@ function isExpired(deadline: string | null | undefined, today: Date): boolean {
   return end.getTime() < today.getTime();
 }
 
+// ────────────────────────────────────────────────────────────────
+// 성격 분류(창업 / 융자 / 그 외)
+//   판정 근거(우선순위):
+//     1) support_scale(지원분야/사업분류/지원유형) — 소스 OpenAPI가 준 대분류
+//          · 기업마당: 수출/기술/경영/내수/인력/창업/금융/기타
+//          · K-Startup: 시설·공간·보육/멘토링·컨설팅·교육/사업화/행사·네트워크/창업교육/판로·해외진출/글로벌/정책자금 …
+//     2) 제목·대상 텍스트의 키워드(융자/창업)
+//   규칙:
+//     · 융자(loan)  : '금융/정책자금' 분야 또는 융자·대출·보증·자금·이차보전 키워드
+//     · 창업(startup): '창업' 계열 분야 또는 창업·스타트업·예비창업·1인창조기업 키워드
+//     · 그 외(etc)  : 위에 안 걸리는 전부(수출·기술·경영·내수·인력·행사·판로 등)
+//   ※ 실제 공고 텍스트만 근거로 판정 — 없는 성격을 지어내지 않는다.
+// ────────────────────────────────────────────────────────────────
+
+// 융자 성격을 강하게 시사하는 support_scale(정확 일치/부분 일치)
+const LOAN_SCALE = ["금융", "정책자금", "융자", "자금지원"];
+// 융자 성격 키워드(제목·대상)
+const LOAN_KW = /융자|대출|보증|이차보전|운전자금|시설자금|정책자금|자금지원|저리|저금리|상환/;
+
+// 창업 성격을 강하게 시사하는 support_scale
+const STARTUP_SCALE = [
+  "창업",
+  "창업교육",
+  "사업화",
+  "시설ㆍ공간ㆍ보육",
+  "시설·공간·보육",
+  "행사ㆍ네트워크",
+  "행사·네트워크",
+  "멘토링ㆍ컨설팅ㆍ교육",
+  "멘토링·컨설팅·교육",
+];
+// 창업 성격 키워드(제목·대상)
+const STARTUP_KW = /창업|스타트업|예비창업|초기창업|1인\s?창조기업|액셀러레이|인큐베이|예비\s?창업|재도전|창업기업|창업자/;
+
+function classifyNature(r: Announcement): Nature {
+  const scale = (r.support_scale || "").trim();
+  // ⚠️ target(지원대상)은 "정책자금·보증 연계를 희망하는 기업" 같은 '대상 설명'이 많아
+  //    융자 키워드 오탐을 크게 유발한다. → 융자 판정은 '제목 + 지원분야(scale)'로만.
+  //    (창업 판정은 target 포함해도 안전 — 창업 대상 설명은 곧 창업 성격이므로.)
+  const titleScale = `${r.title || ""} ${r.support_scale || ""}`;
+  const fullHay = `${r.title || ""} ${r.target || ""} ${r.support_scale || ""}`;
+
+  // 1) 융자: 지원분야가 '금융/정책자금'이거나, 제목/분야에 순수 대출·보증·융자 신호가 있을 때만.
+  if (LOAN_SCALE.some((s) => scale.includes(s))) return "loan";
+  if (LOAN_KW.test(titleScale)) return "loan";
+
+  // 2) 창업: 창업 계열 지원분야이거나, 제목/대상에 창업 신호가 있을 때.
+  if (STARTUP_SCALE.some((s) => scale === s || scale.includes(s))) return "startup";
+  if (STARTUP_KW.test(fullHay)) return "startup";
+
+  // 3) 그 외
+  return "etc";
+}
+
+// ────────────────────────────────────────────────────────────────
+// 스코어링(기존 로직 유지) - 프로필 관련성 점수를 매겨 상위만 노출
+// ────────────────────────────────────────────────────────────────
+type ProfileFlags = {
+  regionKw: string[];
+  topicKw: string[];
+  region: string;
+  isSmall: boolean;
+  isMidLarge: boolean;
+  isStartup: boolean;
+};
+
+function scoreRow(r: Announcement, f: ProfileFlags): number {
+  const hay = `${r.title || ""} ${r.target || ""} ${r.support_scale || ""} ${r.site_name || ""}`;
+  let score = 0;
+
+  // 지역: 프로필 지역 키워드가 있으면 가점, 다른 특정 지역만 콕 집은 공고는 감점
+  let regionHit = false;
+  if (f.regionKw.length > 0) {
+    for (const k of f.regionKw) if (hay.includes(k)) { score += 3; regionHit = true; }
+    if (!regionHit) {
+      for (const [nm, kws] of Object.entries(REGION_KEYWORDS)) {
+        if (f.region.includes(nm)) continue;
+        if (kws.some((k) => hay.includes(k))) { score -= 2; break; }
+      }
+    }
+  }
+
+  for (const k of f.topicKw) if (hay.includes(k)) score += 2;
+
+  // 규모/유형 매칭: 사업장 규모가 공고 대상과 맞으면 가점
+  if (f.isSmall && /소상공인|소기업|1인/.test(hay)) score += 2;
+  if (f.isMidLarge && /중소기업|중견|기업/.test(hay)) score += 2;
+  if (f.isStartup && /창업|스타트업|예비창업|초기/.test(hay)) score += 2;
+
+  return score;
+}
+
+// 한 버킷(창업/융자/그외) 안에서 점수순 상위 N건 + 부족 시 최신 보충(fallback)
+function pickTop(rows: Announcement[], f: ProfileFlags, limit: number) {
+  const scored = rows.map((r) => ({ r, score: scoreRow(r, f) }));
+  // 점수 높은 순 → 동점이면 입력 순서(=최신순) 유지. 안정 정렬.
+  scored.sort((a, b) => b.score - a.score);
+
+  const related = scored.filter((s) => s.score > 0).map((s) => s.r);
+
+  let top: Announcement[];
+  let fallback = false;
+  if (related.length >= 3) {
+    top = related.slice(0, limit);
+  } else {
+    // 관련 공고가 너무 적으면 최신 공고로 보충(참고용). 무관 공고를 섞었음을 fallback으로 알림.
+    const seen = new Set(related.map((r) => r.detail_url || r.title));
+    const filler = rows
+      .filter((r) => !seen.has(r.detail_url || r.title))
+      .slice(0, Math.max(0, limit - related.length));
+    top = [...related, ...filler];
+    fallback = related.length === 0;
+  }
+  return { top, fallback };
+}
+
 export async function POST(req: Request) {
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!url || !key) {
-      return NextResponse.json({ items: [], note: "DB 미설정" });
+      return NextResponse.json({ items: [], startup: [], loan: [], etc: [], note: "DB 미설정" });
     }
 
     const profile = (await req.json().catch(() => ({}))) as Record<string, unknown>;
@@ -111,7 +241,6 @@ export async function POST(req: Request) {
     const employees = typeof profile.employees === "string" ? profile.employees : "";
 
     // 규모 판정: 매출/직원수가 작으면 '소상공인' 성격, 크면 '중소기업' 성격
-    //  → 공고 대상(소상공인/중소기업/창업 등)과 맞춰 가점
     const isSmall =
       revenue.includes("없음") ||
       revenue.includes("1억") ||
@@ -133,92 +262,71 @@ export async function POST(req: Request) {
       const kws = TOPIC_KEYWORDS[t];
       if (kws) kws.forEach((k) => topicKwSet.add(k));
     }
-    const regionKw = Array.from(regionKwSet);
-    const topicKw = Array.from(topicKwSet);
+    const flags: ProfileFlags = {
+      regionKw: Array.from(regionKwSet),
+      topicKw: Array.from(topicKwSet),
+      region,
+      isSmall,
+      isMidLarge,
+      isStartup,
+    };
 
     const supabase = createClient(url, key);
-    // 기업마당 실공고 우선, 최신순으로 넉넉히 가져와 프론트 없이 서버에서 스코어링
+    // 3개 소스 실공고를 최신순으로 넉넉히 가져와 서버에서 성격 분류 + 스코어링.
+    //  (창업/융자는 그외보다 물량이 적어 충분히 확보하려면 넉넉히 조회)
     const { data, error } = await supabase
       .from("crawled_announcements")
       .select("title, site_name, deadline, target, support_scale, detail_url, source")
-      .eq("source", "기업마당")
+      .in("source", WANTED_SOURCES as unknown as string[])
       .order("crawled_at", { ascending: false })
-      .limit(300);
+      .limit(700);
 
     if (error) {
-      return NextResponse.json({ items: [], note: error.message });
+      return NextResponse.json({ items: [], startup: [], loan: [], etc: [], note: error.message });
     }
     const allRows: Announcement[] = data || [];
 
-    // (정확도) 이미 마감된 공고는 "지금 열려있는 지원사업"에서 제외.
-    //   단, 날짜가 불명확한(상시/미정) 공고는 그대로 살려 노출한다.
+    // (정확도) 이미 마감된 공고는 "지금 열려있는 지원사업"에서 제외. 날짜 불명(상시)은 유지.
     const today = new Date();
     const rows = allRows.filter((r) => !isExpired(r.deadline, today));
 
-    // 스코어링: 지역 일치 +3, 업종/관심 키워드 일치마다 +2, 전국형(지역표기 없음) 소폭 가점
-    const scored = rows.map((r) => {
-      const hay = `${r.title || ""} ${r.target || ""} ${r.support_scale || ""} ${r.site_name || ""}`;
-      let score = 0;
-
-      // 지역: 프로필 지역 키워드가 있으면 가점, 다른 특정 지역만 콕 집은 공고는 감점
-      let regionHit = false;
-      if (regionKw.length > 0) {
-        for (const k of regionKw) if (hay.includes(k)) { score += 3; regionHit = true; }
-        // 다른 지역명이 붙어있고 내 지역이 아니면 -2 (지자체 타지역 공고 배제)
-        if (!regionHit) {
-          for (const [nm, kws] of Object.entries(REGION_KEYWORDS)) {
-            if (region.includes(nm)) continue;
-            if (kws.some((k) => hay.includes(k))) { score -= 2; break; }
-          }
-        }
-      }
-
-      for (const k of topicKw) if (hay.includes(k)) score += 2;
-
-      // 규모/유형 매칭: 사업장 규모가 공고 대상과 맞으면 가점
-      //  · 소상공인 규모(매출↓·직원↓) → '소상공인' 공고 +2
-      //  · 중소기업 규모(매출↑·직원↑) → '중소기업/중견' 공고 +2
-      //  · 예비/초기 창업 → '창업/스타트업' 공고 +2
-      if (isSmall && /소상공인|소기업|1인/.test(hay)) score += 2;
-      if (isMidLarge && /중소기업|중견|기업/.test(hay)) score += 2;
-      if (isStartup && /창업|스타트업|예비창업|초기/.test(hay)) score += 2;
-
-      return { r, score };
-    });
-
-    // 점수 높은 순 → 동점이면 최신순(rows가 이미 crawled_at desc). 안정 정렬 유지.
-    scored.sort((a, b) => b.score - a.score);
-
-    // (정확도) 실제로 프로필과 '관련 있는'(score > 0) 공고만 우선 노출한다.
-    //   → 프로필과 무관한 공고가 결과창에 섞여 신뢰도를 떨어뜨리는 문제 해결.
-    const related = scored.filter((s) => s.score > 0).map((s) => s.r);
-
-    let top: Announcement[];
-    let fallback = false;
-    if (related.length >= 3) {
-      // 관련 공고가 충분하면 그중 상위 5건만 (무관 공고 섞지 않음)
-      top = related.slice(0, 5);
-    } else {
-      // 관련 공고가 너무 적으면(지역/업종 정보 부족 등) 최신 공고로 5건까지 보충.
-      //   이 경우 '추천'이 아니라 '최근 열린 공고 참고용'임을 fallback 플래그로 알림.
-      const seen = new Set(related.map((r) => r.detail_url || r.title));
-      const filler = rows
-        .filter((r) => !seen.has(r.detail_url || r.title))
-        .slice(0, 5 - related.length);
-      top = [...related, ...filler];
-      fallback = related.length === 0;
+    // 성격별로 3버킷 분류
+    const startupRows: Announcement[] = [];
+    const loanRows: Announcement[] = [];
+    const etcRows: Announcement[] = [];
+    for (const r of rows) {
+      const nature = classifyNature(r);
+      if (nature === "startup") startupRows.push(r);
+      else if (nature === "loan") loanRows.push(r);
+      else etcRows.push(r);
     }
 
+    // 각 버킷에서 프로필 관련성 상위만 추림.
+    //  · 창업/융자는 아코디언 내부 '보조 목록'이라 상위 3건씩(하드코딩 사업과 함께 나열)
+    //  · 그 외(📢)는 독립 카드라 기존과 동일하게 상위 5건
+    const startupPick = pickTop(startupRows, flags, 3);
+    const loanPick = pickTop(loanRows, flags, 3);
+    const etcPick = pickTop(etcRows, flags, 5);
+
     return NextResponse.json({
-      items: top,
-      source: "기업마당",
-      fallback, // true면 '맞춤 추천'이 아닌 '최근 공고 참고'
+      // ★ 하위호환: 기존 프론트가 items(=그 외)를 읽어도 동작하도록 etc를 items로도 노출
+      items: etcPick.top,
+      startup: startupPick.top,
+      loan: loanPick.top,
+      etc: etcPick.top,
+      // fallback: 각 버킷별로 알려주되, 최상위 items(그외)의 fallback을 대표값으로도 유지
+      fallback: etcPick.fallback,
+      fallback_by: {
+        startup: startupPick.fallback,
+        loan: loanPick.fallback,
+        etc: etcPick.fallback,
+      },
       matched_by: {
-        region: regionKw,
-        topics: topicKw,
+        region: flags.regionKw,
+        topics: flags.topicKw,
       },
     });
   } catch (e: any) {
-    return NextResponse.json({ items: [], note: e?.message || "매칭 실패" });
+    return NextResponse.json({ items: [], startup: [], loan: [], etc: [], note: e?.message || "매칭 실패" });
   }
 }
