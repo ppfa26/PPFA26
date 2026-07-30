@@ -1556,7 +1556,7 @@ function AdvancedResult({
 
         {/* 신청 → 실행 진행 절차·소요기간 안내 - 같은 맥락이라 정책금융기관 박스 '안'으로 통합 (대표님 요청, 반투명 박스로 구획) */}
         {(hasDae || hasDirect) && (
-          <div className="mt-4 rounded-xl border border-brand-dark/10 bg-brand-dark/[0.03] p-4">
+          <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
             <p className="text-base font-extrabold text-brand-dark">
               🗓️ 신청부터 정부지원사업 실행까지 예상 소요기간
             </p>
@@ -1590,18 +1590,11 @@ function AdvancedResult({
               ※ 소액건은 비대면(모바일) 실사로 진행되는 경우가 많고,
               직접대출 기관과 신용보증기금, 기술보증기금처럼 규모가 큰 건은 방문 실사로 진행됩니다.
             </p>
-
-            {/* 소요기간 안내 뒤 추가 반투명 박스 (대표님 요청 - 문구는 추후 교체) */}
-            <div className="mt-3 rounded-xl border border-brand-dark/10 bg-brand-dark/[0.03] p-3">
-              <p className={`break-keep text-xs leading-relaxed text-brand-dark/70 ${lockText}`}>
-                안내 문구가 들어갈 자리입니다.
-              </p>
-            </div>
           </div>
         )}
 
         {/* 기관별 상품 한눈에 보기 - 같은 맥락(정책금융기관 상품)이라 이 박스 '안' 하단으로 통합 (대표님 요청, 반투명 박스로 구획) */}
-        <div className="mt-4 rounded-xl border border-brand-dark/10 bg-brand-dark/[0.03] p-4">
+        <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
           <p className="text-base font-extrabold text-brand-dark">
             📊 기관별 상품 한눈에 보기
           </p>
@@ -1620,13 +1613,6 @@ function AdvancedResult({
                 <span className={`break-keep text-xs font-bold text-white ${lockText}`}>{p.label}</span>
               </a>
             ))}
-          </div>
-
-          {/* 기관별 상품 한눈에 보기 뒤 추가 반투명 박스 (대표님 요청 - 문구는 추후 교체) */}
-          <div className="mt-3 rounded-xl border border-brand-dark/10 bg-brand-dark/[0.03] p-3">
-            <p className={`break-keep text-xs leading-relaxed text-brand-dark/70 ${lockText}`}>
-              안내 문구가 들어갈 자리입니다.
-            </p>
           </div>
         </div>
         {/* ★ 성격별 분류(대표님 요청): 크롤링 실공고 중 '융자' 성격 공고(금융/정책자금/대출·보증 등)를
