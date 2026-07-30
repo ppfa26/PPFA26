@@ -287,23 +287,13 @@ export default function MyPage() {
                     <p className="mt-1 break-keep text-2xl font-black tracking-tight text-brand-dark sm:text-3xl">
                       총 <span className="text-brand-red">{matchCount}개</span> 매칭 완료
                     </p>
-                    {/* 진단 결과 전체 확인하기 + 리포트 다운받기(대표님 요청) - 나란히 배치 */}
-                    <div className="mt-3 flex flex-col items-center justify-center gap-2 sm:flex-row">
-                      <Link
-                        href="/matching-preview?analyze=1"
-                        className="btn-red group inline-flex items-center gap-2 rounded-full px-8 py-2.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 transition hover:scale-[1.02] sm:text-base"
-                      >
-                        진단 결과 전체 확인하기
-                        <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
-                      </Link>
-                      {/* 리포트 다운받기: 결과 페이지로 이동(자동 분석 연출) 후 아코디언 전부 펼친 PDF 자동 다운로드 */}
-                      <Link
-                        href="/matching-preview?analyze=1&download=1"
-                        className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-brand-orange bg-white px-6 py-2.5 text-sm font-bold text-brand-orange transition hover:bg-brand-orange/5 sm:text-base"
-                      >
-                        📄 리포트 다운받기
-                      </Link>
-                    </div>
+                    <Link
+                      href="/matching-preview?analyze=1"
+                      className="btn-red group mt-3 inline-flex items-center gap-2 rounded-full px-8 py-2.5 text-sm font-bold tracking-tight shadow-lg shadow-brand-red/20 transition hover:scale-[1.02] sm:text-base"
+                    >
+                      진단 결과 전체 확인하기
+                      <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+                    </Link>
                     {diagExpiry && (
                       <p className="mt-5 break-keep text-xs leading-snug text-brand-dark/50">
                         📅 이 진단 결과는{" "}

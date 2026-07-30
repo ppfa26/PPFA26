@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 /**
  * 진단 결과 리포트용 아코디언 카드.
@@ -9,18 +9,7 @@ import { useEffect, useState, type ReactNode } from "react";
  * - 기존 결과 박스의 겉모양(둥근 테두리 + 흰 배경 + 그림자)을 그대로 유지합니다.
  * - title 영역은 큰 볼드 제목, subtitle은 그 아래 작은 설명(선택).
  * - defaultOpen 으로 처음 열림/닫힘 상태를 지정합니다.
- *
- * ★ PDF 다운로드(대표님 요청): 리포트를 '아코디언 전부 펼친 상태'로 캡처하기 위해
- *   window 커스텀 이벤트로 일괄 펼침/원복을 지원한다.
- *     · "report:force-open-all" → 현재 상태를 기억해두고 강제로 펼침
- *     · "report:restore-open"   → 캡처 전 상태로 되돌림
- *   (이벤트는 PDF 생성 로직이 잠깐만 사용하고 원복하므로 평상시 UX엔 영향 없음)
  */
-
-// PDF 캡처용 일괄 펼침/원복 이벤트 이름
-export const REPORT_FORCE_OPEN_ALL = "report:force-open-all";
-export const REPORT_RESTORE_OPEN = "report:restore-open";
-
 export default function AccordionCard({
   emoji,
   title,
@@ -35,29 +24,6 @@ export default function AccordionCard({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
-  // 강제 펼침 직전의 사용자 상태를 보관했다가 원복
-  const [savedOpen, setSavedOpen] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const forceOpen = () => {
-      setOpen((prev) => {
-        setSavedOpen(prev);
-        return true;
-      });
-    };
-    const restore = () => {
-      setSavedOpen((saved) => {
-        if (saved !== null) setOpen(saved);
-        return null;
-      });
-    };
-    window.addEventListener(REPORT_FORCE_OPEN_ALL, forceOpen);
-    window.addEventListener(REPORT_RESTORE_OPEN, restore);
-    return () => {
-      window.removeEventListener(REPORT_FORCE_OPEN_ALL, forceOpen);
-      window.removeEventListener(REPORT_RESTORE_OPEN, restore);
-    };
-  }, []);
 
   return (
     // 세련화: 테두리 얇고 은은하게(PC·모바일 동일), 부드러운 그림자로 카드 입체감.
