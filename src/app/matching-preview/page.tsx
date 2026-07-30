@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import ReportDownloadButton, { REPORT_TRIGGER_DOWNLOAD } from "@/components/report/ReportDownloadButton";
 // (성능) 결과 상세 패널은 페이지에서 가장 무거운 컴포넌트(약 1.6천 줄).
 //  next/dynamic 으로 별도 청크로 분리해 초기 First Load JS 를 줄인다.
 //  ssr: true(기본) 유지 → SEO·초기 콘텐츠·결과 계산 로직은 100% 동일.
@@ -192,6 +193,30 @@ export default function MatchingPreview() {
       clearTimeout(done);
     };
   }, [gate]);
+
+  // ★ 마이페이지 '리포트 다운받기'로 넘어온 경우(?download=1) 자동 다운로드 트리거.
+  //   결과가 완전 공개된 상태(관리자/베타 무료)에서 결과창이 렌더된 뒤 이벤트를 쏜다.
+  //   (ReportDownloadButton 이 대상 DOM 준비를 폴링한 뒤 PDF 생성)
+  useEffect(() => {
+    if (gate !== "ready") return;
+    if (!(adminView || BETA_FREE)) return;
+    const wantDownload =
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("download") === "1";
+    if (!wantDownload) return;
+    const t = setTimeout(() => {
+      window.dispatchEvent(new Event(REPORT_TRIGGER_DOWNLOAD));
+      // 파라미터 정리(새로고침 시 재다운로드 방지) - 히스토리만 교체
+      try {
+        const u = new URL(window.location.href);
+        u.searchParams.delete("download");
+        window.history.replaceState({}, "", u.toString());
+      } catch {
+        /* 무시 */
+      }
+    }, 900);
+    return () => clearTimeout(t);
+  }, [gate, adminView]);
 
   // ── 세션 확인 중 로딩 화면 ──
   if (gate === "checking") {
@@ -591,6 +616,14 @@ export default function MatchingPreview() {
           </p>
           )}
           {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 - 화면 간결화 ── */}
+          {/* ★ 리포트 다운받기(대표님 요청): 전체 결과가 공개된 상태(관리자/베타 무료)에서만 노출.
+              결제 전 부분잠금(previewLock) 화면에서는 흐림 처리라 PDF 의미가 없어 숨긴다.
+              클릭 시 아래 결과창(#advanced-result)을 아코디언 전부 펼친 채 PDF로 저장. */}
+          {(adminView || BETA_FREE) && (
+            <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+              <ReportDownloadButton targetId="advanced-result" />
+            </div>
+          )}
           <div className="relative mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {/* 실제 대시보드 결과창 - 내용은 열고 이름/버튼만 부분 잠금(previewLock).
                 관리자 열람 모드 또는 오픈 베타(무료) 모드에서는 previewLock을 꺼서
