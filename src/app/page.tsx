@@ -10,6 +10,7 @@ import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
 import StickyDiagnosisBar from "@/components/StickyDiagnosisBar";
 import TrustBadges from "@/components/home/TrustBadges";
+import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 import { BETA_FREE } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
@@ -757,6 +758,14 @@ export default function Home() {
           </div>
         </section>
       </main>
+      {/* ── 쿠팡 파트너스 광고 (첫 페이지 하단 · 푸터 위) ── */}
+      <div className="px-4 pb-2">
+        <CoupangPartnersBanner
+          iframeSrc="https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=680&height=140&tsource="
+          iframeHeight={140}
+          className="mt-1"
+        />
+      </div>
       <Footer />
       {/* 오른쪽 하단 고정 - 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
       <InstallAppButton />
