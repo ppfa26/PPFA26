@@ -155,7 +155,10 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                 key={i}
                 className={`flex items-start gap-2.5 break-keep leading-relaxed ${
                   isNotice
-                    ? "mt-3 border-t border-gray-200/70 pt-3 text-brand-gray"
+                    ? // ⚠️ 면책 안내: 홈(prefix="home")에서만 글자크기 1단계 축소(줄 수 줄이기, 대표님 요청)
+                      `mt-3 border-t border-gray-200/70 pt-3 text-brand-gray ${
+                        prefix === "home" ? "text-[11px] sm:text-[12px]" : ""
+                      }`
                     : ""
                 }`}
               >
