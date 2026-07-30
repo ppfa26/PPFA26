@@ -30,6 +30,7 @@ import {
 import { BETA_FREE } from "@/lib/betaConfig";
 import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
 import { supabase } from "@/lib/supabaseClient";
+import { checkFreeView } from "@/lib/viewCredits";
 
 export default function MatchingPreview() {
   const [name, setName] = useState("");
@@ -43,7 +44,9 @@ export default function MatchingPreview() {
   // 로그인(회원가입) 게이트 상태:
   //   "checking" = 세션 확인 중 · "guest" = 비로그인(결과 잠금) · "ready" = 로그인 완료(결과 공개)
   //   ※ 관리자 열람 모드(?admin=1)는 게이트를 통과시켜 항상 "ready".
-  const [gate, setGate] = useState<"checking" | "guest" | "analyzing" | "ready">("checking");
+  const [gate, setGate] = useState<"checking" | "guest" | "analyzing" | "ready" | "limited">("checking");
+  // 무료 조회 한도 초과 시 안내 문구(계정당 서로 다른 사업자 N곳 제한)
+  const [limitMsg, setLimitMsg] = useState("");
   // 분석 연출 진행 단계(0~3) - "AI가 실제로 판독 중"이라는 신뢰감을 주기 위한 짧은 연출
   const [analyzeStep, setAnalyzeStep] = useState(0);
   // ★ 비회원 게이트 '맛보기'용: 실제 매칭된 항목 제목 리스트(기관명 등).
@@ -161,6 +164,34 @@ export default function MatchingPreview() {
     })();
   }, []);
 
+  // ── [무료 베타 어뷰징 차단] 계정당 서로 다른 사업자 N곳까지만 열람 허용 ──
+  //   한 아이디로 사업자만 바꿔가며 무제한 조회하는 도용/수집을 서버(RPC)에서 차단.
+  //   · profileData(사업자 지문)를 서버로 판정 → 한도 초과면 결과 대신 안내 화면.
+  //   · 이미 본 사업자(재열람)·식별불가 빈 지문·서버오류는 통과(정상 고객 오탐 방지).
+  //   · 관리자 열람(?admin=1)은 제외. gate 가 analyzing/ready 로 넘어간 뒤에만 판정.
+  useEffect(() => {
+    if (adminView) return;
+    if (gate !== "analyzing" && gate !== "ready") return;
+    if (!profileData) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const fv = await checkFreeView(profileData, true);
+        if (!cancelled && fv && !fv.allowed) {
+          setLimitMsg(fv.message || "");
+          setGate("limited");
+        }
+      } catch {
+        /* 판정 실패 시 통과(오탐 방지) */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // gate 가 처음 analyzing/ready 로 바뀔 때 1회 판정하면 충분(profileData 도착 기준).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileData, adminView]);
+
   // ★ 총 매칭 수 - 실측 콜백(liveCounts)이 도착하면 그 4개 합계를 쓰고(화면과 100% 일치),
   //   아직 안 왔으면 초기 계산값(counts.total)으로 즉시 숫자를 보여준다(깜빡임 방지). ★
   const total = liveCounts
@@ -253,6 +284,52 @@ export default function MatchingPreview() {
                 );
               })}
             </ul>
+          </div>
+        </main>
+        <Footer />
+      </PageShell>
+    );
+  }
+
+  // ── [무료 베타] 계정당 사업자 조회 한도 초과 안내 화면 ──
+  //  한 아이디로 서로 다른 사업자를 한도(기본 3곳) 넘게 조회하려 할 때 노출.
+  //  (도용/대량 수집 차단용 · 정상 사용자는 거의 걸리지 않음)
+  if (gate === "limited") {
+    return (
+      <PageShell pageKey="matching-preview">
+        <Header />
+        <main className="flex min-h-[60vh] items-center justify-center px-4 py-16">
+          <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-7 text-center shadow-card sm:p-9">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
+              🔒
+            </div>
+            <h1 className="break-keep text-lg font-extrabold leading-snug text-brand-dark sm:text-xl">
+              조회 한도에 도달했어요
+            </h1>
+            <p className="mt-3 break-keep text-sm leading-relaxed text-brand-dark/70">
+              {limitMsg ||
+                "한 계정에서는 서로 다른 사업자 여러 곳의 결과를 무제한으로 확인할 수 없습니다."}
+            </p>
+            <p className="mt-3 break-keep text-xs leading-relaxed text-brand-dark/50">
+              여러 사업장 진단이 필요하시면 아래 채널로 문의해 주세요.
+              이미 조회하셨던 사업장 결과는 마이페이지에서 계속 확인하실 수 있습니다.
+            </p>
+            <div className="mt-6 flex flex-col gap-2">
+              <Link
+                href="/mypage"
+                className="btn-red inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold sm:text-base"
+              >
+                마이페이지로 가기
+              </Link>
+              <a
+                href="http://pf.kakao.com/_VxfWxan/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-brand-dark/15 bg-white px-6 py-2.5 text-sm font-bold text-brand-dark/70 transition hover:bg-gray-50 sm:text-base"
+              >
+                💬 카카오톡으로 문의하기
+              </a>
+            </div>
           </div>
         </main>
         <Footer />

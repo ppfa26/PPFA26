@@ -65,6 +65,46 @@ export async function consumeViewCredit(
   };
 }
 
+// ============================================================
+// [무료 베타] 계정당 "서로 다른 사업자 조회 수" 제한 (check_free_view RPC)
+//   · 결제 조회권과 별개로, 무료 모드에서 한 계정이 사업자를 바꿔가며
+//     무제한 열람하는 어뷰징을 서버(security definer)에서 차단한다.
+//   · 판정/기록 모두 서버에서 이뤄져 브라우저 조작 불가.
+// ============================================================
+export type FreeViewResult = {
+  allowed: boolean; // 열람 허용 여부
+  used: number; // 지금까지 조회한 서로 다른 사업자 수
+  limit: number; // 계정당 한도
+  isNew: boolean; // 이번이 새 사업자였는지
+  message: string;
+};
+
+// 무료 조회 한도 판정(+확정 기록). commit=false면 기록 없이 판정만.
+export async function checkFreeView(
+  snapshot: unknown,
+  commit = true
+): Promise<FreeViewResult | null> {
+  const { data: sessionData } = await supabase.auth.getSession();
+  if (!sessionData.session?.user) return null; // 비로그인은 로그인 게이트가 별도 처리
+
+  const { data, error } = await supabase.rpc("check_free_view", {
+    p_snapshot: snapshot ?? {},
+    p_commit: commit,
+  });
+  if (error || !data || !data[0]) {
+    // 서버 오류 시엔 정상 고객이 막히지 않도록 통과시킨다(오탐 방지).
+    return { allowed: true, used: 0, limit: 0, isNew: false, message: "" };
+  }
+  const row = data[0];
+  return {
+    allowed: !!row.allowed,
+    used: Number(row.used) || 0,
+    limit: Number(row.limit_n) || 0,
+    isNew: !!row.is_new,
+    message: row.message || "",
+  };
+}
+
 // 만료일까지 남은 일수 (표시용)
 export function daysUntil(expiresAt: string | null): number | null {
   if (!expiresAt) return null;
