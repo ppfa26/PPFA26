@@ -1590,6 +1590,9 @@ function AdvancedResult({
               ※ 소액건은 비대면(모바일) 실사로 진행되는 경우가 많고,
               직접대출 기관과 신용보증기금, 기술보증기금처럼 규모가 큰 건은 방문 실사로 진행됩니다.
             </p>
+
+            {/* 소요기간 안내 뒤 추가 반투명 박스 (대표님 요청 - 문구는 추후) */}
+            <div className="mt-4 min-h-[64px] rounded-xl border border-brand-dark/10 bg-brand-dark/[0.03] p-4" />
           </div>
         )}
 
@@ -1614,6 +1617,9 @@ function AdvancedResult({
               </a>
             ))}
           </div>
+
+          {/* 기관별 상품 한눈에 보기 뒤 추가 반투명 박스 (대표님 요청 - 문구는 추후) */}
+          <div className="mt-4 min-h-[64px] rounded-xl border border-brand-dark/10 bg-brand-dark/[0.03] p-4" />
         </div>
         {/* ★ 성격별 분류(대표님 요청): 크롤링 실공고 중 '융자' 성격 공고(금융/정책자금/대출·보증 등)를
             이 정책금융 아코디언 안에 인라인으로. 결과 대시보드(autoRun)에서만, previewLock 제외. */}
