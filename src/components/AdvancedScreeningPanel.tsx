@@ -1563,10 +1563,10 @@ function AdvancedResult({
             {hasDae && (
               <div className="mt-3">
                 <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
-                  대리대출 (보증서 → 은행 · 재단/신보/기보/무보)
+                  대리대출 (보증서 → 재단/신보/기보/무보)
                 </span>
                 <p className={`mt-1.5 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
-                  신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 자금 실행
+                  신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 은행 자금 실행
                 </p>
                 <p className={`mt-0.5 break-keep text-xs leading-relaxed ${lockText}`}>
                   <b className="text-brand-orange">통상 3~6주 소요</b>
@@ -1576,13 +1576,13 @@ function AdvancedResult({
             {hasDirect && (
               <div className="mt-3">
                 <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                  직접대출 (공단이 직접 실행 · 소진공/중진공)
+                  직접대출 (공단이 직접 실행 → 소진공/중진공)
                 </span>
                 <p className={`mt-1.5 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
-                  신청 → 심사 → <b>현장 실사</b> → 약정 → 자금 실행
+                  신청 → 심사 → <b>현장 실사</b> → 승인 → 약정 → 기관 자금 실행
                 </p>
                 <p className={`mt-0.5 break-keep text-xs leading-relaxed ${lockText}`}>
-                  <b className="text-brand-orange">통상 약 8주 소요</b>
+                  <b className="text-brand-orange">통상 약 6~8주 소요</b>
                 </p>
               </div>
             )}
