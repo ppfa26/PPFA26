@@ -73,6 +73,10 @@ type ChatStep = {
   // checkGroup 전용: 체크 시 저장할 값 / 미체크 시 저장할 값
   checkYes?: string;
   checkNo?: string;
+  // 화면 표기만 다르게(저장/매칭 값은 opts 그대로). 예: 소진공→소상공인시장진흥공단
+  labelFull?: Record<string, string>;
+  // 선택지 열 수 강제(미지정 시 글자 길이로 자동 계산). 예: age → 3열 1줄
+  cols?: 1 | 2 | 3;
 };
 
 const CHAT_STEPS: ChatStep[] = [
@@ -135,6 +139,7 @@ const CHAT_STEPS: ChatStep[] = [
     type: "single",
     botLines: ["대표님 연령대를 알려주세요.", "청년 창업·세제감면 판정에 필요해요."],
     opts: STEP1_FIELDS.age.opts,
+    cols: 3, // 3개를 한 줄에 가로로(대표님 요청)
   },
   { key: "region", type: "region", botLines: ["사업장 지역은 어디신가요?"], opts: STEP1_FIELDS.region.opts },
 
@@ -146,6 +151,7 @@ const CHAT_STEPS: ChatStep[] = [
     type: "multi",
     botLines: ["현재 이용 중인 정책기관이 있나요?", STEP2_FIELDS.currentInstitutions.hint],
     opts: STEP2_FIELDS.currentInstitutions.opts,
+    labelFull: (STEP2_FIELDS.currentInstitutions as any).labelFull,
   },
   {
     key: "purposes",
@@ -331,7 +337,9 @@ export default function DiagnosisChat() {
     setCheckTemp([]);
     setBnoMsg(null);
     setBnoServerDown(false);
-    pushBotLines(CHAT_STEPS[vi].botLines);
+    // ★ 대표님 요청 ★ 질문+힌트가 2줄로 나뉘던 것을 '한 말풍선'으로 묶어서 표시(모든 곳).
+    //   여러 줄(botLines)을 \n으로 이어 하나의 말풍선으로 렌더한다. (BotBubble이 whitespace-pre-line)
+    pushBotLines([CHAT_STEPS[vi].botLines.filter(Boolean).join("\n")]);
   };
 
   // ── 이전 질문으로 되돌아가기(답변 수정) ──
@@ -373,7 +381,9 @@ export default function DiagnosisChat() {
     const step = CHAT_STEPS[stepIdx];
     const next = { ...form, [step.key]: multiTemp };
     setForm(next);
-    setMessages((m) => [...m, { who: "user", text: multiTemp.join(", ") }]);
+    // 화면 표기는 풀네임(labelFull)으로, 저장 값은 원본(multiTemp) 그대로.
+    const shown = multiTemp.map((v) => step.labelFull?.[v] || v).join(", ");
+    setMessages((m) => [...m, { who: "user", text: shown }]);
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
@@ -657,7 +667,7 @@ export default function DiagnosisChat() {
               {/* 복수 선택 */}
               {curStep.type === "multi" && (
                 <>
-                  <div className={`grid gap-2 ${COLS_CLASS[autoCols(curStep.opts || [])]}`}>
+                  <div className={`grid gap-2 ${COLS_CLASS[autoCols((curStep.opts || []).map((o) => curStep.labelFull?.[o] || o))]}`}>
                     {(curStep.opts || []).map((o) => {
                       const active = multiTemp.includes(o);
                       return (
@@ -668,7 +678,7 @@ export default function DiagnosisChat() {
                             active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
                           }`}
                         >
-                          {o}
+                          {curStep.labelFull?.[o] || o}
                         </button>
                       );
                     })}
@@ -683,14 +693,14 @@ export default function DiagnosisChat() {
                 </>
               )}
 
-              {/* 단일 선택 — 글자 길이에 맞춰 2/3열 자동 배치(C안) */}
+              {/* 단일 선택 — cols 지정 시 우선, 없으면 글자 길이 자동 배치(C안) */}
               {curStep.type === "single" && (
-                <div className={`grid gap-2 ${COLS_CLASS[autoCols(curStep.opts || [])]}`}>
+                <div className={`grid gap-2 ${COLS_CLASS[curStep.cols ?? autoCols(curStep.opts || [])]}`}>
                   {(curStep.opts || []).map((o) => (
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="break-keep rounded-full border border-gray-300 bg-white px-3 py-2.5 text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="break-keep rounded-full border border-gray-300 bg-white px-2 py-2.5 text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       {o}
                     </button>
