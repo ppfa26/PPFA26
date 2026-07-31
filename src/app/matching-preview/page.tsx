@@ -521,7 +521,7 @@ export default function MatchingPreview() {
               </div>
 
               <a
-                href="/diagnosis"
+                href="/diagnosis-chat"
                 className="btn-brand mt-6 block rounded-full py-3.5 text-center text-base font-bold"
               >
                 진단 다시 하기
@@ -703,7 +703,7 @@ export default function MatchingPreview() {
                 {/* 왼쪽 - 다시 진단하기 (보조 버튼, 흰색 아웃라인) */}
                 <a
                   id="preview-bottom-cta-button"
-                  href="/diagnosis"
+                  href="/diagnosis-chat"
                   className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
                 >
                   다시 진단하기

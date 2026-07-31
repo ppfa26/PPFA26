@@ -401,7 +401,7 @@ export default function Page() {
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/diagnosis"
+              href="/diagnosis-chat"
               className="btn-red w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
             >
               무료 진단 시작하기

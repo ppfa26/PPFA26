@@ -7,6 +7,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/diagnosis-chat" },
 };
 
-export default function DiagnosisLayout({ children }: { children: React.ReactNode }) {
+export default function DiagnosisChatLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

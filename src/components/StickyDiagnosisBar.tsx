@@ -44,7 +44,7 @@ export default function StickyDiagnosisBar() {
           </p>
         </div>
         <a
-          href="/diagnosis"
+          href="/diagnosis-chat"
           className="btn-red shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-[14px] font-bold"
         >
           무료 진단 →

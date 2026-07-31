@@ -46,7 +46,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             <Link href="/pricing" className="hover:text-white">
               요금 안내
             </Link>
-            <Link href="/diagnosis" className="hover:text-white">
+            <Link href="/diagnosis-chat" className="hover:text-white">
               무료 진단
             </Link>
             <Link href="/community" className="hover:text-white">

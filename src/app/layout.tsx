@@ -328,7 +328,7 @@ const structuredData = {
           "@type": "ListItem",
           position: 2,
           name: "무료 진단",
-          item: `${SITE_URL}/diagnosis`,
+          item: `${SITE_URL}/diagnosis-chat`,
         },
         {
           "@type": "ListItem",
@@ -357,7 +357,7 @@ const structuredData = {
         "이용약관",
       ],
       url: [
-        `${SITE_URL}/diagnosis`,
+        `${SITE_URL}/diagnosis-chat`,
         `${SITE_URL}/pricing`,
         `${SITE_URL}/business-info`,
         `${SITE_URL}/sites`,

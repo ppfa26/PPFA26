@@ -167,7 +167,7 @@ export default function Home() {
               <Editable
                 id="hero-cta-primary"
                 as="a"
-                href="/diagnosis"
+                href="/diagnosis-chat"
                 className="btn-red w-full rounded-full px-9 py-3 text-base animate-pulseGlow sm:w-auto sm:py-3.5 sm:text-[17px]"
               >
                 {BETA_FREE ? "지금 무료로 진단 시작하기" : "무료 진단 시작하기"}
@@ -739,7 +739,7 @@ export default function Home() {
               {/* 왼쪽 - 무료 진단 시작하기 (주 버튼, 빨간색) */}
               <a
                 id="home-cta-button"
-                href="/diagnosis"
+                href="/diagnosis-chat"
                 className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
               >
                 {BETA_FREE ? "무료로 진단 시작하기" : "무료 진단 시작하기"}

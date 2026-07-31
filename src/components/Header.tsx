@@ -118,7 +118,7 @@ export default function Header() {
             </Link>
           )}
           <Link
-            href="/diagnosis"
+            href="/diagnosis-chat"
             className="btn-brand header-cta-red whitespace-nowrap rounded-full px-3 py-2 text-[12px] font-bold xs:px-3.5 xs:text-[12.5px] sm:px-5 sm:py-2 sm:text-sm"
           >
             무료 진단

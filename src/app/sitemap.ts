@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const pages: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
     { path: "/", priority: 1.0, freq: "daily" },
-    { path: "/diagnosis", priority: 0.9, freq: "weekly" },
+    { path: "/diagnosis-chat", priority: 0.9, freq: "weekly" },
     { path: "/pricing", priority: 0.9, freq: "weekly" },
     { path: "/business-info", priority: 0.8, freq: "weekly" },
     { path: "/sites", priority: 0.8, freq: "weekly" },

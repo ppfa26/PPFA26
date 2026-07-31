@@ -60,7 +60,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                   {/* 베타: '오픈 베타 기간 0원' 강조 박스 - 대표님 요청으로 박스 자체를
                       무료 진단으로 넘어가는 CTA 버튼(Link)으로 전환 (문구 동일) */}
                   <Link
-                    href="/diagnosis"
+                    href="/diagnosis-chat"
                     aria-label="무료 진단 시작하기"
                     className="pricing-beta-box group mt-1 flex flex-col items-center gap-1.5 rounded-2xl px-4 py-4 text-center transition hover:brightness-110 active:scale-[0.99]"
                   >
@@ -126,7 +126,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             {/* 버튼 - A안(다크 유리) 재디자인: popular 카드는 다크 유리 배경이 되므로
                 버튼을 골드(brand-grad)로 바꿔 유리 위에서 또렷하게 강조 */}
             <Link
-              href={BETA_FREE ? "/diagnosis" : `/signup?tier=${tier.id}`}
+              href={BETA_FREE ? "/diagnosis-chat" : `/signup?tier=${tier.id}`}
               className={`pricing-cta mt-4 block rounded-full py-2.5 text-center text-sm font-bold ${
                 tier.popular
                   ? "bg-brand-grad text-brand-dark hover:opacity-90"

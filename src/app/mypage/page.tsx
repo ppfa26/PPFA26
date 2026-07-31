@@ -273,7 +273,7 @@ export default function MyPage() {
                     아직 진단 결과가 없습니다.
                     <br />
                     <Link
-                      href="/diagnosis"
+                      href="/diagnosis-chat"
                       className="mt-2 inline-block font-bold text-brand-orange underline"
                     >
                       무료 진단 받으러 가기
