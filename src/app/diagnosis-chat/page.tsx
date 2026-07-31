@@ -66,7 +66,7 @@ const CHAT_STEPS: ChatStep[] = [
     type: "bno",
     botLines: [
       "먼저 사업자등록번호를 알려주세요.",
-      "국세청에 등록된 정상 사업자만 정부지원 신청이 가능해서, 처음에 꼭 확인하고 있어요.",
+      "국세청에 등록된 정상 사업자만 신청이 가능해서\n처음에 꼭 확인하고 있어요.",
     ],
     placeholder: BNO_TEXT.placeholder,
   },
@@ -216,8 +216,8 @@ export default function DiagnosisChat() {
     pushBotLines(
       [
         "안녕하세요, 모두의사업친구예요 😊",
-        "정확한 정부지원사업 매칭 결과를 위해서는 모든 질문에 정확히 답변해 주시는 게 중요해요.",
-        `총 약 ${TOTAL_ROUGH}개의 질문으로 구성되어 있고, 정확히 답하실수록 더 정확한 결과를 받으실 수 있어요.`,
+        // 의미 단위로 직접 줄바꿈(\n) → 화면 폭과 무관하게 항상 깔끔하게 끊김
+        `총 ${TOTAL_ROUGH}개의 질문으로 구성돼 있어요.\n정확히 답하실수록 더 정확한 결과를 받을 수 있으니\n꼼꼼히 답변 부탁드려요!`,
         "그럼 시작해 볼게요! 👇",
       ],
       () => askStep(0)
@@ -617,7 +617,7 @@ function BotBubble({ text }: { text: string }) {
   return (
     <div className="flex items-end gap-2">
       <BotAvatar />
-      <div className="max-w-[85%] break-keep rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm leading-relaxed text-brand-dark shadow-sm">
+      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm leading-relaxed text-brand-dark shadow-sm">
         {text}
       </div>
     </div>
@@ -627,7 +627,7 @@ function BotBubble({ text }: { text: string }) {
 function UserBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[85%] break-keep rounded-2xl rounded-br-md bg-brand-grad px-4 py-3 text-sm font-semibold leading-relaxed text-brand-dark shadow-sm">
+      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-br-md bg-brand-grad px-4 py-3 text-sm font-semibold leading-relaxed text-brand-dark shadow-sm">
         {text}
       </div>
     </div>
