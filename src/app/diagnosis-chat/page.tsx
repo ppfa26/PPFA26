@@ -618,8 +618,12 @@ export default function DiagnosisChat() {
   return (
     <PageShell pageKey="diagnosis">
       <Header />
-      <main className="px-4 py-6 pb-4">
-        <div className="mx-auto max-w-xl">
+      {/* ★ 하단 흔들림 방지(대표님 요청) ★
+          질문마다 콘텐츠 높이가 달라 푸터가 위아래로 움직이던 문제를 해결.
+          본문에 '화면 높이 - 헤더'만큼의 최소 높이를 줘, 콘텐츠가 짧아도 항상
+          화면을 꽉 채우게 한다 → 푸터는 늘 화면 밖(스크롤해야 보이는 하단)에 고정. */}
+      <main className="min-h-[calc(100vh-72px)] px-4 pb-16 pt-6">
+        <div className="mx-auto max-w-2xl">
           {/* 진행률 바 */}
           <div className="mb-3">
             <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-brand-gray">
@@ -638,8 +642,12 @@ export default function DiagnosisChat() {
             </div>
           </div>
 
-          {/* 대화 영역 — 지난 질문은 자동으로 접고 현재 질문 위주로 보여준다 */}
-          <div className="rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
+          {/* 대화 영역 — 지난 질문은 자동으로 접고 현재 질문 위주로 보여준다.
+              ★ 하단 흔들림 방지(대표님 요청): 질문마다 옵션/입력 개수가 달라
+              박스 높이가 튀던 문제를 막기 위해 대화 영역에 '최소 높이'를 준다.
+              콘텐츠가 짧아도 이 높이만큼은 항상 확보돼, 아래 답변영역·푸터가
+              위아래로 흔들리지 않는다. 콘텐츠가 길면 자연스럽게 늘어난다. */}
+          <div className="flex min-h-[46vh] flex-col justify-end rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
             <div className="flex flex-col gap-3">
               {(() => {
                 // 최근 N개만 노출(=현재 질문 위주). 나머지는 접어서 위로 올린다.
