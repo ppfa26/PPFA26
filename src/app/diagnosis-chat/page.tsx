@@ -437,7 +437,7 @@ export default function DiagnosisChat() {
     <PageShell pageKey="diagnosis">
       <Header />
       <main className="px-4 py-6">
-        <div className="mx-auto max-w-lg">
+        <div className="mx-auto max-w-xl">
           {/* 진행률 바 */}
           <div className="mb-3">
             <div className="mb-1.5 flex justify-between text-xs font-semibold text-brand-gray">
