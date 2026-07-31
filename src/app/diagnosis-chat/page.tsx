@@ -622,10 +622,13 @@ export default function DiagnosisChat() {
           - 질문은 위→아래로 쌓이고 오래된 건 접힌다(대화 영역 로직).
           - 답변/입력 영역은 대화창 '안'에 포함되어 함께 늘었다 줄었다 한다.
             (화면 고정 없음 → 흔들림/빈 공백 없음) */}
-      {/* ★ 모바일: 하단 빈 공간 제거 위해 main 을 flex 세로 컬럼으로 만들고
-             대화 카드를 flex-1 로 화면에 꽉 채운다(sm 이상 데스크톱은 자연 높이 유지). */}
-      <main className="flex min-h-[calc(100dvh-72px)] flex-col px-4 pb-6 pt-6 sm:min-h-[calc(100vh-72px)] sm:pb-16">
-        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col sm:block sm:flex-none">
+      {/* ★ 하단 빈 공간 최소화(B안) ★
+          카드를 억지로 화면 높이만큼 늘리면(A안) 대화가 적은 초반에 카드 안이 휑하다.
+          → 카드는 '내용 높이'만큼만 자연스럽게 두고, main 의 하단 여백을 확 줄여
+            카드 아래 도시배경이 아주 조금만 보이게 한다(대화가 쌓이면 자연히 늘어남).
+          min-h 를 주지 않으므로 콘텐츠가 짧을 때 페이지가 화면보다 커지지 않는다. */}
+      <main className="flex flex-col px-4 pb-4 pt-6">
+        <div className="mx-auto flex w-full max-w-3xl flex-col">
           {/* 진행률 바 */}
           <div className="mb-3">
             <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-brand-gray">
@@ -649,8 +652,11 @@ export default function DiagnosisChat() {
               ★ 답변/입력 영역을 이 대화창 '안'에 포함시킨다(대표님 제안) ★
               → 대화창이 보기·답변 길이에 따라 세로로 늘었다 줄었다 하고, 답변창이
                 따로 화면에 고정되지 않으므로 흔들림/빈 공백이 사라진다. */}
-          {/* 모바일: flex-1 로 카드가 남는 세로공간을 채워 하단 빈 여백 제거. 데스크톱은 자연 높이. */}
-          <div className="flex flex-1 flex-col rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card sm:flex-none">
+          {/* ★ B안 최종 ★ 카드를 화면 높이만큼 채우되(min-h), 카드 '안'에서
+              대화영역(위) ↔ 입력영역(아래) 사이에 flex 스페이서를 넣어
+              봇 질문은 위, 입력창은 아래에 자연 배치한다(카톡식 채팅 레이아웃).
+              → 카드 밖 배경 여백도, 카드 안 휑함도 동시에 해결. */}
+          <div className="flex min-h-[calc(100dvh-150px)] flex-col rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
             <div className="flex flex-col gap-3">
               {(() => {
                 // 최근 N개만 노출(=현재 질문 위주). 나머지는 접어서 위로 올린다.
@@ -692,6 +698,11 @@ export default function DiagnosisChat() {
               {botTyping && <TypingBubble />}
             </div>
 
+          {/* ★ 스페이서 ★ 대화영역과 입력영역 사이 빈 공간을 flex-1 로 밀어
+              입력창을 카드 하단으로 내린다 → 카드 안이 휑하지 않고 꽉 차 보인다.
+              (대화가 많아 카드가 min-h 를 넘기면 이 스페이서는 0 이 되어 영향 없음) */}
+          <div className="flex-1" aria-hidden="true" />
+
           {/* 답변 영역 — 대화창 '안'에 포함(대표님 제안).
               봇의 마지막 질문 바로 아래에 흰 카드로 붙어, 보기/입력 길이에 따라
               대화창이 함께 늘었다 줄었다 한다. 화면 고정(fixed)이 아니므로
@@ -718,7 +729,7 @@ export default function DiagnosisChat() {
                           key={o}
                           // singleSelect면 하나만 즉시 선택·다음으로(라디오), 아니면 복수 토글.
                           onClick={() => (curStep.singleSelect ? answerMultiSingle(o) : toggleMulti(o))}
-                          className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold sm:text-[13px] transition ${
+                          className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
                             active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
                           }`}
                         >
@@ -732,7 +743,7 @@ export default function DiagnosisChat() {
                     <button
                       onClick={confirmMulti}
                       disabled={multiTemp.length === 0}
-                      className="mt-3 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark sm:text-sm disabled:opacity-40"
+                      className="mt-3 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                     >
                       {multiTemp.length > 0 ? `${multiTemp.length}개 선택 완료 →` : "하나 이상 선택해 주세요"}
                     </button>
@@ -747,7 +758,7 @@ export default function DiagnosisChat() {
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="break-keep rounded-full border border-gray-300 bg-white px-2 py-2.5 text-[14px] font-semibold sm:text-[13px] text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="break-keep rounded-full border border-gray-300 bg-white px-2 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       {o}
                     </button>
@@ -780,7 +791,7 @@ export default function DiagnosisChat() {
                   <button
                     onClick={confirmContact}
                     disabled={!nameTemp.trim() || phoneTemp.replace(/[^0-9]/g, "").length < 10}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark sm:text-sm disabled:opacity-40"
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                   >
                     입력 완료 →
                   </button>
@@ -800,7 +811,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold sm:text-[13px] transition ${
+                              className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
                               }`}
                             >
@@ -814,7 +825,7 @@ export default function DiagnosisChat() {
                   <button
                     onClick={confirmYesnoGroup}
                     disabled={(curStep.subs || []).some((s) => !groupTemp[s.key])}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark sm:text-sm disabled:opacity-40"
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                   >
                     다음 →
                   </button>
@@ -852,7 +863,7 @@ export default function DiagnosisChat() {
                   })}
                   <button
                     onClick={confirmCheckGroup}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark sm:text-sm"
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark"
                   >
                     {checkTemp.length > 0 ? `${checkTemp.length}개 선택 완료 →` : "해당 없음 →"}
                   </button>
@@ -868,7 +879,7 @@ export default function DiagnosisChat() {
                         <button
                           key={o}
                           onClick={() => answerRegion(o)}
-                          className="rounded-full border border-gray-300 bg-white px-1 py-2.5 text-[14px] font-semibold sm:text-[13px] text-brand-dark transition hover:border-brand-orange"
+                          className="rounded-full border border-gray-300 bg-white px-1 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange"
                         >
                           {o}
                         </button>
@@ -885,7 +896,7 @@ export default function DiagnosisChat() {
                         autoFocus
                         className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                       />
-                      <button onClick={confirmRegionEtc} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-[15px] font-extrabold text-brand-dark sm:text-sm disabled:opacity-40">
+                      <button onClick={confirmRegionEtc} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40">
                         입력 →
                       </button>
                     </div>
@@ -906,7 +917,7 @@ export default function DiagnosisChat() {
                     autoFocus
                     className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                   />
-                  <button onClick={confirmText} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-[15px] font-extrabold text-brand-dark sm:text-sm disabled:opacity-40">
+                  <button onClick={confirmText} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40">
                     입력 →
                   </button>
                 </div>
@@ -935,7 +946,7 @@ export default function DiagnosisChat() {
                     <button
                       onClick={checkBno}
                       disabled={bnoLoading || !bnoReady}
-                      className={`flex-[2] shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark sm:text-sm transition-all duration-300 disabled:cursor-not-allowed ${
+                      className={`flex-[2] shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
                         bnoReady
                           ? "bg-brand-grad shadow-sm"
                           : "bg-brand-orange/25 text-brand-dark/40"
@@ -985,7 +996,7 @@ function BotBubble({ text }: { text: string }) {
   return (
     <div className="flex items-end gap-2">
       <BotAvatar />
-      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 text-[15px] leading-relaxed text-brand-dark shadow-sm sm:text-sm">
+      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 text-[15px] leading-relaxed text-brand-dark shadow-sm">
         {text}
       </div>
     </div>
@@ -995,7 +1006,7 @@ function BotBubble({ text }: { text: string }) {
 function UserBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-br-md border border-white bg-brand-grad px-4 py-3 text-[15px] font-semibold leading-relaxed text-brand-dark shadow-sm sm:text-sm">
+      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-br-md border border-white bg-brand-grad px-4 py-3 text-[15px] font-semibold leading-relaxed text-brand-dark shadow-sm">
         {text}
       </div>
     </div>
