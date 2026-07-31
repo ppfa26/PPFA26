@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import benefitsData from "@/data/benefits-extra.json";
 import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 import AccordionCard from "@/components/report/AccordionCard";
+import CollapsibleItem from "@/components/report/CollapsibleItem";
 
 // ── Props 구조 (지시사항 명세 그대로) ─────────────────────────────
 //  값이 없으면 undefined 또는 0으로 전달 → 내부에서 "정보 부족" 처리
@@ -552,40 +553,46 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
           const BENEFIT_INITIAL_COUNT = 3;
           const visibleBenefits = judged.slice(0, BENEFIT_INITIAL_COUNT);
           const restBenefits = judged.slice(BENEFIT_INITIAL_COUNT);
-          const renderBenefitCard = ({ b, v }: (typeof judged)[number]) => {
+          // ★ 2단 접이식(대표님 요청): 아이콘+제목+절감액+배지만 항상 보이고,
+          //    설명·신청방법·서류·버튼 등 상세는 접었다 편다. 추천 1순위(idx 0)만 펼친다.
+          const renderBenefitCard = ({ b, v }: (typeof judged)[number], idx: number) => {
             const isYes = v.status === "yes";
             const isCondition = v.status === "condition";
 
             return (
-              <div
+              <CollapsibleItem
                 key={b.id}
-                className="group origin-left rounded-xl border border-gray-200 bg-white p-4 transition-transform duration-150 hover:scale-[1.01]"
+                defaultOpen={idx === 0}
+                className="rounded-xl border border-gray-200 bg-white p-4"
+                header={
+                  <>
+                    {/* 상단: 아이콘 + 제목 + 절감액 알약 + 대상 뱃지
+                        (융자 상품 카드와 동일한 정보 구조 - 제목 옆에 '핵심 혜택'을 알약으로) */}
+                    <span className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                      <span className="text-base">{b.icon}</span>
+                      <span className={`break-keep text-[14px] font-extrabold text-brand-dark ${lockText}`}>
+                        {b.title}
+                      </span>
+                      {v.savingText && (
+                        <span className={`break-keep rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-bold text-brand-orange ${lockText}`}>
+                          {v.savingText}
+                        </span>
+                      )}
+                      {isYes ? (
+                        <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                          신청 가능
+                        </span>
+                      ) : (
+                        <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                          조건 충족 시 가능
+                        </span>
+                      )}
+                    </span>
+                  </>
+                }
               >
-                {/* 상단: 아이콘 + 제목 + 절감액 알약 + 대상 뱃지
-                    (융자 상품 카드와 동일한 정보 구조 - 제목 옆에 '핵심 혜택'을 알약으로) */}
-                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                  <span className="text-base">{b.icon}</span>
-                  <span className={`break-keep text-[14px] font-extrabold text-brand-dark ${lockText}`}>
-                    {b.title}
-                  </span>
-                  {v.savingText && (
-                    <span className={`break-keep rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-bold text-brand-orange ${lockText}`}>
-                      {v.savingText}
-                    </span>
-                  )}
-                  {isYes ? (
-                    <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                      신청 가능
-                    </span>
-                  ) : (
-                    <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[10px] font-bold text-white">
-                      조건 충족 시 가능
-                    </span>
-                  )}
-                </div>
-
                 {/* 설명 - 누가/무엇 (융자 카드의 desc 자리와 동일 역할) */}
-                <p className="mt-2 break-keep text-[12px] leading-relaxed text-brand-gray">
+                <p className="break-keep text-[12px] leading-relaxed text-brand-gray">
                   {b.description}
                 </p>
 
@@ -680,13 +687,13 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                 >
                   🔗 {b.applyName} 신청하러 가기 →
                 </a>
-              </div>
+              </CollapsibleItem>
             );
           };
           return (
             <div className="mt-4 space-y-3">
-              {/* 앞 3개 - 항상 펼침 (초록/주황 배지는 각 카드가 status로 정직하게 표시) */}
-              {visibleBenefits.map((item) => renderBenefitCard(item))}
+              {/* 앞 3개 - 헤더는 항상 보이고 상세는 접힘(추천 1순위만 펼침) */}
+              {visibleBenefits.map((item, idx) => renderBenefitCard(item, idx))}
 
               {/* 나머지 - 접어두고 '더 보기'로 여지만 남김 */}
               {restBenefits.length > 0 && (
@@ -702,7 +709,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                     </button>
                   ) : (
                     <>
-                      {restBenefits.map((item) => renderBenefitCard(item))}
+                      {restBenefits.map((item, idx) => renderBenefitCard(item, idx + 1))}
                       <button
                         type="button"
                         onClick={() => setShowBenefitCondition(false)}

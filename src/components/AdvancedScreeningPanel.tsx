@@ -39,6 +39,7 @@ import {
 } from "@/lib/supportPrograms";
 import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
 import AccordionCard from "@/components/report/AccordionCard";
+import CollapsibleItem from "@/components/report/CollapsibleItem";
 import RelatedAnnouncements from "@/components/RelatedAnnouncements";
 import { loadDiagnosisRaw, saveDiagnosis, getDiagnosisOwner } from "@/lib/diagnosisStore";
 import { GRADUATION_CRITERIA, GRADUATION_EXCLUDED_NOTE } from "@/lib/graduationCriteria";
@@ -924,21 +925,29 @@ function AdvancedResult({
             const eligibles = PRE_FOUNDER_PROGRAMS.filter((p) =>
               isPreFounderEligible(p.eligKey, relatedProfile),
             );
-            const renderPreFounderCard = (p: (typeof PRE_FOUNDER_PROGRAMS)[number]) => (
-              <div
+            // ★ 2단 접이식(대표님 요청): 카드 상단(배지+이름+금액)만 항상 보이고,
+            //    대상·설명·버튼은 접었다 편다. 추천 1순위(idx 0)만 펼쳐 둔다.
+            const renderPreFounderCard = (
+              p: (typeof PRE_FOUNDER_PROGRAMS)[number],
+              idx: number,
+            ) => (
+              <CollapsibleItem
                 key={p.name}
+                defaultOpen={idx === 0}
                 className="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark">
-                    <span className="shrink-0 rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">
-                      사업화 자금
+                header={
+                  <span className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark">
+                      <span className="shrink-0 rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">
+                        사업화 자금
+                      </span>
+                      {p.name}
                     </span>
-                    {p.name}
+                    <span className="break-keep text-xs font-bold text-brand-green">{p.amount}</span>
                   </span>
-                  <span className="break-keep text-xs font-bold text-brand-green">{p.amount}</span>
-                </div>
-                <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70">
+                }
+              >
+                <p className="break-keep text-xs leading-relaxed text-brand-dark/70">
                   <b className="text-brand-dark/80">대상</b> · {p.target}
                 </p>
                 <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
@@ -965,12 +974,12 @@ function AdvancedResult({
                     </a>
                   )}
                 </div>
-              </div>
+              </CollapsibleItem>
             );
             return (
               <div className="mt-3 space-y-2.5">
                 {eligibles.length > 0 ? (
-                  eligibles.map((p) => renderPreFounderCard(p))
+                  eligibles.map((p, idx) => renderPreFounderCard(p, idx))
                 ) : (
                   // 자격 사업이 하나도 없을 때(이론상 always가 있어 드묾) 안내
                   <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
@@ -1018,36 +1027,43 @@ function AdvancedResult({
             const SUPPORT_INITIAL_COUNT = 3;
             const visibleSupports = eligibleSupport.slice(0, SUPPORT_INITIAL_COUNT);
             const restSupports = eligibleSupport.slice(SUPPORT_INITIAL_COUNT);
-            const renderSupportCard = ({ prog, status }: SupportItem) => {
+            // ★ 2단 접이식(대표님 요청): 카드 전체가 Link였던 것을 → 헤더(제목+요약+배지)만
+            //    항상 보이고, 신청방법·버튼 등 상세는 접었다 편다. 추천 1순위만 펼쳐 둔다.
+            //    상세 페이지로 가는 이동은 하단 '상세·소요기간·연락처' 버튼(Link)으로 분리.
+            const renderSupportCard = ({ prog, status }: SupportItem, idx: number) => {
               const isEligible = status === "eligible";
               return (
-                <Link
+                <CollapsibleItem
                   key={prog.id}
-                  href={`/support/${prog.id}`}
-                  className={`group block origin-left rounded-xl border border-gray-200 bg-white p-4 transition-transform duration-150 hover:scale-[1.01] ${lockNoClick}`}
+                  defaultOpen={idx === 0}
+                  className="rounded-xl border border-gray-200 bg-white p-4"
+                  header={
+                    <>
+                      {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 요약 안내 */}
+                      <span className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                        <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
+                        <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
+                        {isEligible ? (
+                          <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                            신청 가능
+                          </span>
+                        ) : (
+                          <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                            조건 충족 시 가능
+                          </span>
+                        )}
+                      </span>
+                      <span
+                        className={`mt-1.5 block break-keep text-[12px] font-semibold leading-relaxed ${
+                          isEligible ? "text-brand-green" : "text-brand-dark/50"
+                        }`}
+                      >
+                        {isEligible ? prog.eligibleNote : prog.ineligibleNote}
+                      </span>
+                    </>
+                  }
                 >
-                  {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 안내 → 설명 → 링크 */}
-                  <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                    <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
-                    <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
-                    {isEligible ? (
-                      <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
-                        신청 가능
-                      </span>
-                    ) : (
-                      <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[10px] font-bold text-white">
-                        조건 충족 시 가능
-                      </span>
-                    )}
-                  </div>
-                  <p
-                    className={`mt-1.5 break-keep text-[12px] font-semibold leading-relaxed ${
-                      isEligible ? "text-brand-green" : "text-brand-dark/50"
-                    }`}
-                  >
-                    {isEligible ? prog.eligibleNote : prog.ineligibleNote}
-                  </p>
-                  <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray">
+                  <p className="break-keep text-[12px] leading-relaxed text-brand-gray">
                     {prog.desc}
                   </p>
                   {/* 신청방법 + 문의 전화 - 회색 박스 (모든 카드 통일 위치) */}
@@ -1067,33 +1083,35 @@ function AdvancedResult({
                     </div>
                   )}
                   {/* 결과창에서 바로 신청 사이트로 가는 버튼 + 상세보기 버튼 (대표님 요청)
-                      · 검정 버튼: 신청 사이트 새 탭으로 즉시 이동 (상위 Link로 전파되지 않도록 stopPropagation)
-                      · 주황 버튼: 상세(승인 소요기간·연락처) 페이지로 이동 */}
+                      · 검정 버튼: 신청 사이트 새 탭으로 즉시 이동
+                      · 주황 버튼: 상세(승인 소요기간·연락처) 페이지로 이동(Link) */}
                   <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                     {prog.url && (
                       <a
                         href={previewLock ? undefined : prog.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
                         className={`inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-dark px-3 py-2 text-[11px] font-bold text-white transition hover:opacity-90 ${lockClickSoft}`}
                       >
                         이 상품 신청하러 가기
                         <span>→</span>
                       </a>
                     )}
-                    <span className="inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange transition group-hover:border-brand-orange/60 group-hover:bg-brand-orange/15">
+                    <Link
+                      href={`/support/${prog.id}`}
+                      className={`group inline-flex w-fit items-center gap-1.5 break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-[11px] font-bold text-brand-orange transition hover:border-brand-orange/60 hover:bg-brand-orange/15 ${lockNoClick}`}
+                    >
                       상세 · 소요기간 · 연락처
                       <span className="transition group-hover:translate-x-0.5">→</span>
-                    </span>
+                    </Link>
                   </div>
-                </Link>
+                </CollapsibleItem>
               );
             };
             return (
               <div className="mt-4 space-y-3">
-                {/* 앞 3개 - 항상 펼침 (초록/주황 배지는 각 카드가 status로 정직하게 표시) */}
-                {visibleSupports.map((item) => renderSupportCard(item))}
+                {/* 앞 3개 - 헤더는 항상 보이고 상세는 접힘(추천 1순위만 펼침) */}
+                {visibleSupports.map((item, idx) => renderSupportCard(item, idx))}
 
                 {/* 나머지 - 접어두고 '더 보기'로 여지만 남김 */}
                 {restSupports.length > 0 && (
@@ -1109,7 +1127,7 @@ function AdvancedResult({
                       </button>
                     ) : (
                       <>
-                        {restSupports.map((item) => renderSupportCard(item))}
+                        {restSupports.map((item, idx) => renderSupportCard(item, idx + 1))}
                         <button
                           type="button"
                           onClick={() => setShowSupportPotential(false)}
@@ -1258,63 +1276,68 @@ function AdvancedResult({
                           // topProductIdx는 전체 products 기준 인덱스 → 잘린 배열에서도 상품 참조로 정확 비교
                           const isTop = products[topProductIdx] === prod;
                           return (
-                          <div
+                          <CollapsibleItem
                             key={pi}
+                            defaultOpen={isTop}
                             className={`rounded-xl p-2.5 sm:p-3 ${
                               isTop
                                 ? "border border-brand-green/70 bg-brand-green/5"
                                 : "border border-gray-200 bg-gray-50"
                             }`}
-                          >
-                            {/* ★ 이 기관에서 가장 먼저 신청하면 좋은 상품 - 체크 포인트 (대표님 요청) */}
-                            {isTop && (
-                              <p className={`mb-1.5 inline-flex items-center gap-1 break-keep rounded-full bg-brand-green px-2.5 py-0.5 text-[10px] font-extrabold text-white ${lockTextSoft}`}>
-                                승인 가능성 높음 · 먼저 신청 추천
-                              </p>
-                            )}
-                            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                              <span className={`break-keep text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>
-                                {prod.name}
-                              </span>
-                              {/* ★ 상품 성격 배지 (대표님 기준: 직접대출/대리대출) - 자금이 어떻게 나오는지 한눈에.
-                                   상품에 nature가 지정돼 있으면 상품 단위로(소진공은 상품마다 갈림),
-                                   없으면 기관 기본값(loanNatureOf)으로 판별. 둘 다 가능하면 배지 2개. */}
-                              {(() => {
-                                const natures = prod.nature
-                                  ? (Array.isArray(prod.nature) ? prod.nature : [prod.nature])
-                                  : [loanNatureOf(m.institution)];
-                                return natures.map((nature) => (
-                                  <span
-                                    key={nature}
-                                    className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${natureBadgeCls(nature)}`}
-                                  >
-                                    {nature}
+                            header={
+                              <>
+                                {/* ★ 이 기관에서 가장 먼저 신청하면 좋은 상품 - 체크 포인트 (대표님 요청) */}
+                                {isTop && (
+                                  <span className={`mb-1.5 inline-flex items-center gap-1 break-keep rounded-full bg-brand-green px-2.5 py-0.5 text-[10px] font-extrabold text-white ${lockTextSoft}`}>
+                                    승인 가능성 높음 · 먼저 신청 추천
                                   </span>
-                                ));
-                              })()}
-                              {prod.amount && (
-                                <span className="break-keep rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
-                                  {prod.amount}
+                                )}
+                                <span className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                                  <span className={`break-keep text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>
+                                    {prod.name}
+                                  </span>
+                                  {/* ★ 상품 성격 배지 (대표님 기준: 직접대출/대리대출) - 자금이 어떻게 나오는지 한눈에.
+                                       상품에 nature가 지정돼 있으면 상품 단위로(소진공은 상품마다 갈림),
+                                       없으면 기관 기본값(loanNatureOf)으로 판별. 둘 다 가능하면 배지 2개. */}
+                                  {(() => {
+                                    const natures = prod.nature
+                                      ? (Array.isArray(prod.nature) ? prod.nature : [prod.nature])
+                                      : [loanNatureOf(m.institution)];
+                                    return natures.map((nature) => (
+                                      <span
+                                        key={nature}
+                                        className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${natureBadgeCls(nature)}`}
+                                      >
+                                        {nature}
+                                      </span>
+                                    ));
+                                  })()}
+                                  {prod.amount && (
+                                    <span className="break-keep rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                                      {prod.amount}
+                                    </span>
+                                  )}
+                                  {prod.approval && (
+                                    <span
+                                      className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                        prod.approval === "high"
+                                          ? "bg-green-100 text-brand-green"
+                                          : prod.approval === "mid"
+                                          ? "bg-brand-yellow/30 text-brand-dark"
+                                          : "bg-red-100 text-brand-red"
+                                      }`}
+                                    >
+                                      {prod.approval === "high"
+                                        ? "승인율 높은 편"
+                                        : prod.approval === "mid"
+                                        ? "조건 충족 시 가능"
+                                        : "승인율 낮은 편"}
+                                    </span>
+                                  )}
                                 </span>
-                              )}
-                              {prod.approval && (
-                                <span
-                                  className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                                    prod.approval === "high"
-                                      ? "bg-green-100 text-brand-green"
-                                      : prod.approval === "mid"
-                                      ? "bg-brand-yellow/30 text-brand-dark"
-                                      : "bg-red-100 text-brand-red"
-                                  }`}
-                                >
-                                  {prod.approval === "high"
-                                    ? "승인율 높은 편"
-                                    : prod.approval === "mid"
-                                    ? "조건 충족 시 가능"
-                                    : "승인율 낮은 편"}
-                                </span>
-                              )}
-                            </div>
+                              </>
+                            }
+                          >
                             {prod.desc && (
                               <p className="mt-1 whitespace-pre-line break-keep text-[12px] leading-relaxed text-brand-gray">
                                 {prod.desc}
@@ -1402,7 +1425,7 @@ function AdvancedResult({
                                 </div>
                               );
                             })()}
-                          </div>
+                          </CollapsibleItem>
                           );
                         })}
                         {/* ★ 상위 2개 외 나머지 상품은 '더 보기'로 접기 (대표님 요청) - 접혀도 카운트엔 전부 포함 ★ */}
