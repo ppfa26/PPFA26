@@ -588,6 +588,15 @@ export default function DiagnosisChat() {
   const answered = messages.filter((m) => m.who === "user").length;
   const progress = Math.min(100, Math.round((answered / TOTAL_ROUGH) * 100));
 
+  // 현재 form 기준으로 실제 노출되는(onlyIf 통과) 스텝만 세어 "N번째 / 전체 M개" 계산
+  const visibleSteps = CHAT_STEPS.filter((s) => !s.onlyIf || s.onlyIf(form));
+  const totalSteps = visibleSteps.length;
+  // 현재 stepIdx가 노출 스텝 중 몇 번째인지(1-base). 인트로(-1 등)면 0.
+  const curStepNo =
+    stepIdx >= 0 && stepIdx < CHAT_STEPS.length
+      ? visibleSteps.findIndex((s) => s.key === CHAT_STEPS[stepIdx].key) + 1
+      : 0;
+
   const curStep = stepIdx >= 0 && stepIdx < CHAT_STEPS.length ? CHAT_STEPS[stepIdx] : null;
   const lastMsg = messages[messages.length - 1];
   const showInput = !!curStep && !botTyping && lastMsg?.who === "bot" && !finished;
@@ -599,8 +608,15 @@ export default function DiagnosisChat() {
         <div className="mx-auto max-w-xl">
           {/* 진행률 바 */}
           <div className="mb-3">
-            <div className="mb-1.5 flex justify-between text-xs font-semibold text-brand-gray">
-              <span>무료진단</span>
+            <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-brand-gray">
+              <span>
+                무료진단
+                {curStepNo > 0 && !finished && (
+                  <span className="ml-1.5 text-brand-orange">
+                    {curStepNo}번째 질문 <span className="text-brand-gray/70">/ 전체 {totalSteps}개</span>
+                  </span>
+                )}
+              </span>
               <span>{progress}%</span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-gray-200">
