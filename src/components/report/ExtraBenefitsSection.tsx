@@ -562,7 +562,6 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
             return (
               <CollapsibleItem
                 key={b.id}
-                defaultOpen={idx === 0}
                 className="rounded-xl border border-gray-200 bg-white p-4"
                 header={
                   <>

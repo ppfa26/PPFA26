@@ -933,7 +933,6 @@ function AdvancedResult({
             ) => (
               <CollapsibleItem
                 key={p.name}
-                defaultOpen={idx === 0}
                 className="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
                 header={
                   <span className="flex flex-wrap items-center justify-between gap-2">
@@ -1035,7 +1034,6 @@ function AdvancedResult({
               return (
                 <CollapsibleItem
                   key={prog.id}
-                  defaultOpen={idx === 0}
                   className="rounded-xl border border-gray-200 bg-white p-4"
                   header={
                     <>
@@ -1278,7 +1276,6 @@ function AdvancedResult({
                           return (
                           <CollapsibleItem
                             key={pi}
-                            defaultOpen={isTop}
                             className={`rounded-xl p-2.5 sm:p-3 ${
                               isTop
                                 ? "border border-brand-green/70 bg-brand-green/5"
