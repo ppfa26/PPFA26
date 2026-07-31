@@ -139,9 +139,10 @@ const DESKTOP_VIEWPORT_SCRIPT = `
   // ★ 모바일 확대(대표님 요청) ★
   //  모바일에서 글씨/박스가 작아 잘 안 보인다는 피드백 → 축소 '기준폭'을 낮춘다.
   //  기준폭이 작을수록 같은 폰 화면에서 콘텐츠가 더 크게 보인다.
-  //  900 → 820 (약 10% 확대). PC 판별 기준(DESKTOP_WIDTH)과는 분리해
-  //  태블릿 경계는 그대로 두고 모바일 확대만 적용한다.
-  var MOBILE_BASE = 820;
+  //  900 → 820 → 720 (약 24% 확대, 대표님 재요청: 조금 더 크게).
+  //  PC 판별 기준(DESKTOP_WIDTH)과는 분리해 태블릿 경계는 그대로 두고
+  //  모바일 확대만 적용한다.
+  var MOBILE_BASE = 720;
   function apply() {
     try {
       var vp = document.querySelector('meta[name=viewport]');
@@ -150,7 +151,12 @@ const DESKTOP_VIEWPORT_SCRIPT = `
         vp.setAttribute('name', 'viewport');
         document.head.appendChild(vp);
       }
-      var w = window.screen && window.screen.width ? window.screen.width : window.innerWidth;
+      // ★ 잘림 방지(대표님 요청: 확대가 이상하게 됨) ★
+      //  screen.width 는 기기 '물리' 화면폭이라 실제 렌더 폭과 어긋날 때가 있어
+      //  (일부 폰/회전 상태) 820px 기준 페이지가 오른쪽으로 잘리거나 확대 시
+      //  중심이 튀었다. 실제 뷰포트 폭(innerWidth)을 우선 사용해 항상 화면폭에
+      //  정확히 맞춰 축소 → 어떤 상태에서도 가운데 고정, 잘림 0.
+      var w = window.innerWidth || (window.screen && window.screen.width) || 390;
       if (w >= DESKTOP_WIDTH) {
         // 진짜 넓은 화면(PC/태블릿) → 표준 반응형 유지(핀치 줌 허용)
         vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
