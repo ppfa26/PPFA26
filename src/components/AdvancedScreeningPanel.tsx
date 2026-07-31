@@ -1002,14 +1002,19 @@ function AdvancedResult({
         </AccordionCard>
       )}
 
-      {/* ① 정부지원제도 - 최상단 배치 (대표님 요청) · 기관 박스와 동일한 틀 */}
-      {/*  정책자금(대출·보증)과 별개로 병행 신청 가능 · 진단 기준 '해당되는 것만' · 클릭 시 상세(승인 소요기간·연락처)로 이동 */}
-      {eligibleSupport.length > 0 && (
+      {/* ① 정부지원제도 + 감면혜택 - 최상단 배치 (대표님 요청: 두 아코디언 완전 통합)
+             성격이 유사(신청해서 챙기는 혜택)하여 하나의 아코디언으로 묶고,
+             안에서 [신청 가능한 제도] → [챙기면 좋은 감면 혜택] 소제목으로 구분.
+             제도가 0개여도 감면혜택이 있으면 아코디언은 열린다. */}
+      {autoRun && (
         <AccordionCard
           emoji="🏅"
-          title="신청 가능한 정부지원제도"
-          subtitle="지금 바로 신청할 수 있는 제도만 모았어요"
+          title="신청·감면 혜택 한번에 챙기기"
+          subtitle="신청 가능한 제도와 세금 아끼는 감면을 모았어요"
         >
+          {/* ── 신청 가능한 정부지원제도 (제도가 있을 때만) ── */}
+          {eligibleSupport.length > 0 && (
+          <>
           <div className="mb-3 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
               아래는 대표님 진단 결과 <b>지금 바로 신청할 수 있는 정부지원제도</b>만 추린 목록이에요.
@@ -1141,10 +1146,15 @@ function AdvancedResult({
               </div>
             );
           })()}
+          </>
+          )}
+
+          {/* ── 챙기면 좋은 감면 혜택 (💎) - 통합(대표님 요청): 같은 아코디언 안에 인라인 ── */}
+          <ExtraBenefitsSection previewLock={previewLock} onCount={setBenefitsCount} embedded />
         </AccordionCard>
       )}
 
-      {/* ② 이용 가능한 정책금융상품 - 정부지원제도 바로 아래 (읽기 순서: 🏅→💳→💎→📢)
+      {/* ② 이용 가능한 정책금융상품 - 정부지원제도 바로 아래 (읽기 순서: 🏅→💳→📢)
              (대표님 요청: '정책금융기관'보다 '정책금융상품'이 더 정확한 표현) */}
       <AccordionCard
         emoji="💳"
@@ -1247,7 +1257,7 @@ function AdvancedResult({
                   <div className="mt-2.5">
                     <button
                       onClick={() => toggleProducts(i)}
-                      className={`inline-flex max-w-full items-center gap-2 rounded-xl border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockNoClick}`}
+                      className={`flex w-full items-center justify-between gap-2 rounded-xl border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockNoClick}`}
                     >
                       <span className="break-keep text-[12px] font-extrabold text-brand-orange">
                         💳 {previewLock ? "신청 가능 상품" : `${m.institution} 신청 가능 상품 ${products.length}개`} 보기
@@ -1643,8 +1653,7 @@ function AdvancedResult({
         )}
       </AccordionCard>
 
-      {/* ③ 챙기면 좋은 추가 감면 혜택 - 정책금융기관 바로 아래 (읽기 순서: 🏅→💳→💎→📢) */}
-      {autoRun && <ExtraBenefitsSection previewLock={previewLock} onCount={setBenefitsCount} />}
+      {/* ③ (통합됨) 감면 혜택은 🏅 '신청·감면 혜택 한번에 챙기기' 아코디언 안으로 이동 (대표님 요청) */}
 
       {/* ④ 그 외 놓치기 쉬운 지원사업(실공고 '그 외' 성격) - 감면 혜택 바로 아래
              창업(🌱)·융자(💳)로 분류되지 않은 실공고(수출·기술·경영·내수·인력·행사·판로 등).

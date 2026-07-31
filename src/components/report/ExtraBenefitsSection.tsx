@@ -39,6 +39,10 @@ type Props = {
   previewLock?: boolean;
   // ★ 실제 화면에 표시된 감면 혜택 '실측 갯수'를 부모(요약 배너)로 올려 숫자 100% 일치 (대표님 요청) ★
   onCount?: (n: number) => void;
+  // ★ 통합 모드(대표님 요청 2026-07): 🏅 정부지원제도 아코디언 '안'에 인라인으로 붙일 때 true.
+  //    바깥 AccordionCard 껍데기 없이 [소제목 + 안내박스 + 감면혜택 카드목록]만 렌더한다.
+  //    (판정·정렬·개수·onCount 로직은 그대로. 표시 껍데기만 벗긴다.)
+  embedded?: boolean;
 };
 
 // ── 데이터 타입 ─────────────────────────────────────────────────
@@ -475,7 +479,7 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
   }
 }
 
-export default function ExtraBenefitsSection({ userInput, previewLock = false, onCount }: Props) {
+export default function ExtraBenefitsSection({ userInput, previewLock = false, onCount, embedded = false }: Props) {
   const [input, setInput] = useState<ExtraBenefitsUserInput | null>(
     userInput ?? null
   );
@@ -523,23 +527,9 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [judged.length]);
 
-  return (
+  // ── 감면혜택 본문(안내박스 + 카드목록 + 하단 배너) - 아코디언/인라인 공용 ──
+  const body = (
     <>
-      {/* ========== 🎁 추가 감면 혜택 - 아코디언(접기) 카드 (대표님 요청) ========== */}
-      <AccordionCard
-        emoji="💎"
-        title={
-          // 모바일: '챙기면 좋은' / '감면 혜택' 2줄로 자연스럽게 끊음(대표님 요청).
-          //   PC(sm 이상)는 공백 한 칸으로 한 줄 유지.
-          <>
-            챙기면 좋은
-            <br className="sm:hidden" />
-            <span className="hidden sm:inline"> </span>
-            감면 혜택
-          </>
-        }
-        subtitle="세금을 아낄 수 있는 혜택이에요"
-      >
         <div className="mb-3 rounded-xl border border-brand-orange/20 bg-brand-orange/5 px-4 py-3">
           <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
             아래는 대표님이 <b className="text-brand-dark">챙기면 세금이나 부담금을 아낄 수 있는 감면 혜택</b>이에요.
@@ -735,8 +725,42 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
             <span className="whitespace-nowrap">소급 가능한 항목도 있습니다.</span>
           </p>
         </div>
+    </>
+  );
+
+  // ── 통합 모드(대표님 요청): 🏅 아코디언 안에 소제목 + 본문만 인라인 렌더 ──
+  //    표시할 감면혜택이 0개면 아무것도 그리지 않아 빈 소제목이 남지 않게 한다.
+  if (embedded) {
+    if (judged.length === 0) return null;
+    return (
+      <div className="mt-4 border-t border-brand-dark/5 pt-4">
+        <p className="mb-2 flex items-center gap-1.5 break-keep text-[15px] font-extrabold text-brand-dark">
+          <span aria-hidden>💎</span>
+          챙기면 좋은 감면 혜택
+        </p>
+        <p className="mb-3 break-keep text-[12px] text-brand-dark/50">세금을 아낄 수 있는 혜택이에요</p>
+        {body}
+      </div>
+    );
+  }
+
+  // ── 기본 모드: 독립 아코디언(💎) 카드 ──
+  return (
+    <>
+      <AccordionCard
+        emoji="💎"
+        title={
+          <>
+            챙기면 좋은
+            <br className="sm:hidden" />
+            <span className="hidden sm:inline"> </span>
+            감면 혜택
+          </>
+        }
+        subtitle="세금을 아낄 수 있는 혜택이에요"
+      >
+        {body}
       </AccordionCard>
-      {/* ※ 🗓️ '이 순서대로만 챙기세요' 타임라인 블록 제거(대표님 요청) - 위 4가지 혜택 카드로 충분 */}
     </>
   );
 }
