@@ -733,7 +733,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
   if (embedded) {
     if (judged.length === 0) return null;
     return (
-      <div className="mt-4 border-t border-brand-dark/5 pt-4">
+      <div className="mt-2 border-t border-brand-dark/5 pt-3">
         <p className="mb-2 flex items-center gap-1.5 break-keep text-[15px] font-extrabold text-brand-dark">
           <span aria-hidden>💎</span>
           챙기면 좋은 감면 혜택

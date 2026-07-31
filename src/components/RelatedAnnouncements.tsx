@@ -240,7 +240,7 @@ export default function RelatedAnnouncements({
   if (variant === "inline") {
     // 로딩 중이거나 0건이면 위에서 이미 null 반환됨(단, 로딩 중엔 표시)
     return (
-      <div className="mt-4 border-t border-brand-dark/5 pt-3">
+      <div className="mt-2 border-t border-brand-dark/5 pt-3">
         <p className="mb-2 flex items-center gap-1.5 break-keep text-[13px] font-extrabold text-brand-dark/80">
           <span aria-hidden>{meta.emoji}</span>
           {meta.inlineTitle}
