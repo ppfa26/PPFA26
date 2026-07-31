@@ -1098,7 +1098,10 @@ export default function AdminPage() {
     <>
       <Header />
       <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-8">
-        <div className="mx-auto max-w-6xl">
+        {/* 대시보드 전체 최대폭을 살짝 좁혀 양쪽 빈 공간을 줄인다(대표님 요청).
+            max-w-6xl(1152px)→max-w-5xl(1024px): 통계카드 5개·관리버튼 배치가
+            줄바꿈되지 않는 선에서만 축소. */}
+        <div className="mx-auto max-w-5xl">
           {/* 상단 헤더 */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
