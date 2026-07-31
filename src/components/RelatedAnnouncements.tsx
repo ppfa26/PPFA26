@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AccordionCard from "@/components/report/AccordionCard";
+import CollapsibleItem from "@/components/report/CollapsibleItem";
 
 // ────────────────────────────────────────────────────────────────
 // 진단 결과 화면에 "지금 열려있는 관련 정부지원사업" 실제 공고를 보여준다.
@@ -161,9 +162,9 @@ export default function RelatedAnnouncements({
           </div>
           <div className="mt-3 space-y-3">
             {(showAll ? (items || []) : (items || []).slice(0, PREVIEW_COUNT)).map((it, i) => {
-              const inner = (
+              // 헤더(항상 보임): 제목 + 지원분야 태그 + 신청기간 배지
+              const header = (
                 <>
-                  {/* 제목 + 지원분야 태그만 한 줄에 - 기간 배지는 아래로 내려 통일 */}
                   <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                     <span className="break-keep text-[14px] font-extrabold leading-snug text-brand-dark">
                       {it.title}
@@ -174,47 +175,46 @@ export default function RelatedAnnouncements({
                       </span>
                     )}
                   </div>
-                  {/* 신청기간 - 공고명 길이와 무관하게 항상 제목 아래 별도 줄로 통일 */}
                   {it.deadline && (
                     <span className="mt-2 inline-block shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                       🗓️ {it.deadline}
                     </span>
                   )}
-                  {/* 지역 · 대상 · 버튼 - 한 줄로 압축 (왼쪽 정보 / 오른쪽 버튼) */}
-                  <div className="mt-2 flex items-center justify-between gap-2">
-                    <p className="min-w-0 flex-1 truncate text-[12px] leading-relaxed text-brand-gray">
-                      {it.site_name && <span>🏛️ {it.site_name}</span>}
-                      {it.site_name && it.target && <span className="mx-1.5 text-brand-dark/25">·</span>}
-                      {it.target && (
-                        <>
-                          <span className="font-bold text-brand-dark/70">대상 </span>
-                          {it.target}
-                        </>
-                      )}
-                    </p>
-                    {it.detail_url && (
-                      <span className="shrink-0 break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white transition group-hover:opacity-90">
-                        공고 원문 보러 가기 →
-                      </span>
-                    )}
-                  </div>
                 </>
               );
-              return (
-                <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
-                  {it.detail_url ? (
+              // 상세(펼쳤을 때만): 소관기관 · 대상 · 공고 원문 버튼
+              const detail = (
+                <div className="flex items-center justify-between gap-2">
+                  <p className="min-w-0 flex-1 text-[12px] leading-relaxed text-brand-gray">
+                    {it.site_name && <span>🏛️ {it.site_name}</span>}
+                    {it.site_name && it.target && <span className="mx-1.5 text-brand-dark/25">·</span>}
+                    {it.target && (
+                      <>
+                        <span className="font-bold text-brand-dark/70">대상 </span>
+                        {it.target}
+                      </>
+                    )}
+                  </p>
+                  {it.detail_url && (
                     <a
                       href={it.detail_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group block origin-left transition-transform duration-150 hover:scale-[1.01]"
+                      className="shrink-0 break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white transition hover:opacity-90"
                     >
-                      {inner}
+                      공고 원문 보러 가기 →
                     </a>
-                  ) : (
-                    inner
                   )}
                 </div>
+              );
+              return (
+                <CollapsibleItem
+                  key={i}
+                  className="rounded-xl border border-gray-200 bg-white p-4"
+                  header={header}
+                >
+                  {detail}
+                </CollapsibleItem>
               );
             })}
           </div>
