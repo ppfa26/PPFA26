@@ -34,6 +34,7 @@ import {
   STEP3_TITLE,
   STEP3_SUBTITLE,
   STEP3_FIELDS,
+  STEP3_DEEP_GROUP,
   STEP3_CONDITIONAL_FIELDS,
   PHONE_CONSULT_FIELD,
 } from "@/lib/diagnosisConfig";
@@ -363,10 +364,9 @@ export default function Diagnosis() {
     //   '없음'으로 자동 세팅한다. (대부분 소상공인 = 담보없음 → 보증서·정책자금 매칭 유지)
     //   ※ setForm은 비동기라 저장에 넘기는 form을 즉시 보정하기 위해 직접 채워둔다.
     if (!form.collateral) form.collateral = "없음";
-    // ★ 심층질문 카드 미선택 = "아니요" 자동 세팅 (대표님 요청: 카드형 UI로 전환) ★
-    //   카드를 탭하지 않은 심층질문은 값이 비어 있으므로, 매칭이 참조하는 값을
+    // ★ 심층질문 미응답 = "아니요" 자동 세팅 ★
+    //   예/아니요를 고르지 않은 심층질문은 값이 비어 있으므로, 매칭이 참조하는 값을
     //   각 질문의 '아니요' 옵션으로 채워 결과 정확도를 기존과 100% 동일하게 유지한다.
-    //   (기존 Radio 방식에서 '아니요'를 고른 것과 완전히 같은 값)
     const DEEP_KEYS = [
       "revenueGrowth2y", "smartDevice", "wantsRefinance",
       "reFounder", "govSelected", "privateInvestment",
@@ -584,62 +584,6 @@ export default function Diagnosis() {
         ))}
       </div>
     );
-
-  // ── 심층질문 체크리스트 카드 (대표님 요청: 같은 부류끼리·답하기 편하게·톤 통일) ──
-  //   ★결과 무관★ 탭하면 값이 "예"("긍정 옵션"), 다시 탭하면 "아니요"로 토글된다.
-  //     기존 Radio(예/아니요)와 완전히 같은 값을 저장하므로 matching.ts 결과는 100% 동일.
-  //   미선택(값 없음)은 submit 시 아래 ensureDeepDefaults()가 부정 옵션으로 채운다.
-  const DeepCard = ({
-    k,
-    field,
-    emoji,
-  }: {
-    k: string;
-    field: { label: string; hint: string; opts: string[] };
-    emoji: string;
-  }) => {
-    const yesOpt = field.opts[0]; // "예" 계열
-    const noOpt = field.opts[1]; // "아니요" 계열
-    const active = form[k] === yesOpt;
-    return (
-      <button
-        type="button"
-        data-question
-        onClick={() => set(k, active ? noOpt : yesOpt)}
-        // deep-card / deep-card-active: globals.css 다크테마에서 카드 배경·테두리를
-        //   또렷하게 살리기 위한 명시 클래스(이모지·글자가 묻히지 않도록).
-        className={`deep-card flex w-full items-start gap-3 rounded-xl border p-3.5 text-left transition hover:scale-[1.01] sm:p-4 ${
-          active
-            ? "deep-card-active border-brand-orange bg-brand-orange/10 shadow-card"
-            : "border-gray-200 bg-white hover:border-brand-orange/60"
-        }`}
-      >
-        {/* 이모지 - 살짝 밝은 원형 배경을 깔아 다크 배경 위에서도 또렷하게(대표님 요청 가시성 개선) */}
-        <span className="deep-card-emoji mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-grad/25 text-lg leading-none sm:text-xl">
-          {emoji}
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block break-keep text-[13px] font-bold leading-snug text-brand-dark sm:text-sm">
-            {keepBrackets(field.label)}
-          </span>
-          <span className="mt-0.5 block break-keep text-[11px] leading-snug text-brand-gray sm:text-xs">
-            {field.hint}
-          </span>
-        </span>
-        {/* 체크 표시 - 켜지면 오렌지 채움, 꺼지면 빈 원(테두리만) */}
-        <span
-          className={`deep-card-check mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs font-extrabold transition ${
-            active
-              ? "border-brand-orange bg-brand-orange text-white"
-              : "border-gray-300 text-transparent"
-          }`}
-          aria-hidden
-        >
-          ✓
-        </span>
-      </button>
-    );
-  };
 
   // ── 세션 확인 중 로딩 화면 ──
   if (gate === "checking") {
@@ -939,27 +883,18 @@ export default function Diagnosis() {
               <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP3_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP3_SUBTITLE}</p>
 
-              {/* ── ① 정밀 매칭 질문 (카드형 체크리스트 · 대표님 요청) ──
-                  탭하면 켜짐(=예), 다시 탭하면 꺼짐(=아니요). 해당되는 것만 켜면 됩니다.
-                  ★결과 무관★ 값은 기존 예/아니요와 동일 → matching.ts 결과 100% 유지.
-                  ★톤 통일★ 노랑 큰 박스 → GroupBox와 동일한 차분한 회색 톤으로(대표님 요청). */}
-              <div className="mb-4 rounded-2xl border border-gray-200 bg-gray-50/70 p-3.5 sm:p-5">
-                <p className="mb-1 break-keep text-sm font-extrabold text-brand-dark">
-                  🎯 맞춤 매칭을 위한 추가 질문
-                </p>
-                <p className="mb-3 break-keep text-xs leading-relaxed text-brand-gray sm:mb-4">
-                  해당되는 항목을 눌러주세요. 안 누른 질문은 자동으로 &lsquo;아니요&rsquo;로 체크됩니다.
-                </p>
-                {/* ★ 대표님 요청 순서 ★ 연매출성장 → 스마트기기 → 대환 → 재도전 → 정부선정 → 민간투자 */}
-                <div className="grid grid-cols-1 gap-3">
-                  <DeepCard k="revenueGrowth2y" field={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y} emoji="📈" />
-                  <DeepCard k="smartDevice" field={STEP3_CONDITIONAL_FIELDS.smartDevice} emoji="🖥️" />
-                  <DeepCard k="wantsRefinance" field={STEP3_CONDITIONAL_FIELDS.wantsRefinance} emoji="🔄" />
-                  <DeepCard k="reFounder" field={STEP3_CONDITIONAL_FIELDS.reFounder} emoji="🔁" />
-                  <DeepCard k="govSelected" field={STEP3_CONDITIONAL_FIELDS.govSelected} emoji="🏆" />
-                  <DeepCard k="privateInvestment" field={STEP3_CONDITIONAL_FIELDS.privateInvestment} emoji="💵" />
-                </div>
-              </div>
+              {/* ── ① 정밀 매칭 질문 (대표님 요청: 1·2페이지와 동일한 예/아니요 버튼 방식으로 통일) ──
+                  기존 카드형 토글(DeepCard) → Field + Radio(cols2) 로 변경.
+                  ★결과 무관★ 값은 기존 예/아니요와 동일(set(k,"예"/"아니요")) → matching.ts 결과 100% 유지.
+                  미선택 시 submit 단계 ensureDeepDefaults()가 "아니요"로 채우는 로직도 그대로 유효. */}
+              <GroupBox title={STEP3_DEEP_GROUP}>
+                <Field label="📈 최근 2년 연매출이 매년 10% 이상 늘었나요?" hint={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.hint}><Radio k="revenueGrowth2y" opts={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.opts} cols2 /></Field>
+                <Field label="🖥️ 매장에 스마트기기를 쓰고 있나요?" hint={STEP3_CONDITIONAL_FIELDS.smartDevice.hint}><Radio k="smartDevice" opts={STEP3_CONDITIONAL_FIELDS.smartDevice.opts} cols2 /></Field>
+                <Field label="🔄 고금리 대출을 저금리로 갈아타고 싶으신가요?" hint={STEP3_CONDITIONAL_FIELDS.wantsRefinance.hint}><Radio k="wantsRefinance" opts={STEP3_CONDITIONAL_FIELDS.wantsRefinance.opts} cols2 /></Field>
+                <Field label="🔁 폐업 경험이 있고 다시 창업중인가요?" hint={STEP3_CONDITIONAL_FIELDS.reFounder.hint}><Radio k="reFounder" opts={STEP3_CONDITIONAL_FIELDS.reFounder.opts} cols2 /></Field>
+                <Field label="🏆 정부 선정 프로그램에 뽑힌 적 있나요?" hint={STEP3_CONDITIONAL_FIELDS.govSelected.hint}><Radio k="govSelected" opts={STEP3_CONDITIONAL_FIELDS.govSelected.opts} cols2 /></Field>
+                <Field label="💵 엔젤 VC 등 민간 투자를 받았거나 진행 중인가요?" hint={STEP3_CONDITIONAL_FIELDS.privateInvestment.hint}><Radio k="privateInvestment" opts={STEP3_CONDITIONAL_FIELDS.privateInvestment.opts} cols2 /></Field>
+              </GroupBox>
 
               {/* ── 전화 상담 희망 여부 (대표님 요청 - 마지막 질문 1개) ──
                   ★톤 통일★ 오렌지 박스 → GroupBox와 동일한 차분한 회색 톤으로(대표님 요청). */}
