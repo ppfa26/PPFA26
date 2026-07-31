@@ -1175,7 +1175,7 @@ function AdvancedResult({
              (대표님 요청: '정책금융기관'보다 '정책금융상품'이 더 정확한 표현) */}
       <AccordionCard
         emoji="💳"
-        title="이용 가능한 정책금융상품"
+        title="바로 신청 가능한 정책금융상품"
         subtitle="낮은 금리로 받을 수 있는 자금이에요"
       >
         <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">

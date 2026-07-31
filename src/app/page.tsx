@@ -539,7 +539,7 @@ export default function Home() {
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
                           <span className="shrink-0">💳</span>
-                          <span className="min-w-0 break-keep">이용 가능한 정책금융상품</span>
+                          <span className="min-w-0 break-keep">바로 신청 가능한 정책금융상품</span>
                         </span>
                         <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
                           낮은 금리로 받을 수 있는 자금이에요
