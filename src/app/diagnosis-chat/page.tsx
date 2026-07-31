@@ -49,7 +49,18 @@ import {
 //   · "bno"    = 사업자등록번호(국세청 조회 + 예비창업자 버튼)
 //   · "region" = 지역(서울·경기·인천 칩 + '기타' 직접 입력)
 //  onlyIf: 특정 조건일 때만 물어보는 스텝(법인만 자본잠식 등). 아니면 건너뜀.
-type StepType = "single" | "multi" | "text" | "phone" | "bno" | "region";
+type StepType =
+  | "single"
+  | "multi"
+  | "text"
+  | "phone"
+  | "bno"
+  | "region"
+  | "contact" // 성함 + 연락처를 한 스텝에서 입력
+  | "yesnoGroup" // 예/아니요 문항 여러 개를 한 스텝에서(각각 라디오)
+  | "checkGroup"; // 해당되는 것만 체크 → 체크=예, 나머지=아니요
+// yes/no 묶음 문항 하나
+type SubQ = { key: string; label: string; opts?: string[] };
 type ChatStep = {
   key: string;
   type: StepType;
@@ -57,6 +68,11 @@ type ChatStep = {
   opts?: string[];
   placeholder?: string;
   onlyIf?: (form: any) => boolean;
+  // group 타입에서 사용하는 하위 문항들
+  subs?: SubQ[];
+  // checkGroup 전용: 체크 시 저장할 값 / 미체크 시 저장할 값
+  checkYes?: string;
+  checkNo?: string;
 };
 
 const CHAT_STEPS: ChatStep[] = [
@@ -70,20 +86,22 @@ const CHAT_STEPS: ChatStep[] = [
     ],
     placeholder: BNO_TEXT.placeholder,
   },
-  { key: "name", type: "text", botLines: ["대표님 성함을 알려주세요."], placeholder: CONTACT_TEXT.namePlaceholder },
+  // 성함 + 연락처를 한 질문으로 합침
   {
-    key: "phone",
-    type: "phone",
-    botLines: ["연락 가능한 전화번호를 입력해 주세요.", "진단 결과와 맞춤 상담 안내에 사용돼요."],
-    placeholder: CONTACT_TEXT.phonePlaceholder,
+    key: "contact",
+    type: "contact",
+    botLines: ["대표님 성함과 연락처를 알려주세요.", "진단 결과와 맞춤 상담 안내에 사용돼요."],
   },
+  // 결격사유(회생·파산 + 세금완납)를 한 질문으로 합침
   {
-    key: "bankruptcy",
-    type: "single",
-    botLines: ["혹시 현재 회생·파산 절차가 진행 중이신가요?", "진행 중이면 신청이 어려워서 미리 확인하는 항목이에요."],
-    opts: STEP3_FIELDS.bankruptcy.opts,
+    key: "eligibility",
+    type: "yesnoGroup",
+    botLines: ["신청 자격을 먼저 확인할게요.", "아래 두 가지만 체크해 주세요."],
+    subs: [
+      { key: "bankruptcy", label: "현재 회생·파산 절차가 진행 중이신가요?", opts: STEP3_FIELDS.bankruptcy.opts },
+      { key: "taxDelinquent", label: "국세·지방세는 완납 상태이신가요?", opts: STEP3_FIELDS.taxDelinquent.opts },
+    ],
   },
-  { key: "taxDelinquent", type: "single", botLines: ["국세·지방세는 완납 상태이신가요?"], opts: STEP3_FIELDS.taxDelinquent.opts },
   // ★ businessType을 자본잠식보다 먼저 물어본다 ★
   //   원본 폼은 단일 페이지라 순서 의존성이 없지만, 채팅은 순차이므로
   //   법인 여부(businessType)를 먼저 확정해야 자본잠식(법인 전용) 스텝을 띄울 수 있다.
@@ -148,13 +166,24 @@ const CHAT_STEPS: ChatStep[] = [
     opts: STEP3_FIELDS.certifications.opts,
   },
 
-  // ── 3단계 · 맞춤 심층 질문 ──
-  { key: "revenueGrowth2y", type: "single", botLines: ["📈 최근 2년 연매출이 매년 10% 이상 늘었나요?", STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.hint], opts: STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.opts },
-  { key: "smartDevice", type: "single", botLines: ["🖥️ 매장에 스마트기기를 쓰고 있나요?", STEP3_CONDITIONAL_FIELDS.smartDevice.hint], opts: STEP3_CONDITIONAL_FIELDS.smartDevice.opts },
-  { key: "wantsRefinance", type: "single", botLines: ["🔄 고금리 대출을 저금리로 갈아타고 싶으신가요?", STEP3_CONDITIONAL_FIELDS.wantsRefinance.hint], opts: STEP3_CONDITIONAL_FIELDS.wantsRefinance.opts },
-  { key: "reFounder", type: "single", botLines: ["🔁 폐업 경험이 있고 다시 창업 중이신가요?", STEP3_CONDITIONAL_FIELDS.reFounder.hint], opts: STEP3_CONDITIONAL_FIELDS.reFounder.opts },
-  { key: "govSelected", type: "single", botLines: ["🏆 정부 선정 프로그램에 뽑힌 적 있나요?", STEP3_CONDITIONAL_FIELDS.govSelected.hint], opts: STEP3_CONDITIONAL_FIELDS.govSelected.opts },
-  { key: "privateInvestment", type: "single", botLines: ["💵 엔젤·VC 등 민간 투자를 받았거나 진행 중인가요?", STEP3_CONDITIONAL_FIELDS.privateInvestment.hint], opts: STEP3_CONDITIONAL_FIELDS.privateInvestment.opts },
+  // ── 3단계 · 맞춤 심층 질문 (6개를 '해당되는 것만 체크'로 한 질문에 통합) ──
+  //   체크한 항목만 "예", 체크 안 한 항목은 "아니요"로 저장 → 기존 폼의
+  //   '미응답=아니요' 로직과 100% 동일. matching 결과 불변.
+  {
+    key: "deepChecks",
+    type: "checkGroup",
+    botLines: ["마지막으로, 혹시 해당되는 게 있나요?", "해당되는 항목만 골라주세요. (없으면 '해당 없음')"],
+    checkYes: "예",
+    checkNo: "아니요",
+    subs: [
+      { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 매년 10% 이상 늘었어요" },
+      { key: "smartDevice", label: "🖥️ 매장에 스마트기기를 쓰고 있어요" },
+      { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 갈아타고 싶어요" },
+      { key: "reFounder", label: "🔁 폐업 경험이 있고 다시 창업 중이에요" },
+      { key: "govSelected", label: "🏆 정부 선정 프로그램에 뽑힌 적 있어요" },
+      { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중이에요" },
+    ],
+  },
   {
     key: "phoneConsult",
     type: "single",
@@ -163,8 +192,9 @@ const CHAT_STEPS: ChatStep[] = [
   },
 ];
 
-// 진행률 표시에 쓰는 '실제로 답하는' 스텝 수(조건부 제외한 기본치)
-const TOTAL_ROUGH = 22;
+// 진행률·안내에 쓰는 '실제로 답하는' 스텝 수
+//  (조건부 스텝은 대부분 안 나오므로 제외해서 대략치를 계산)
+const TOTAL_ROUGH = CHAT_STEPS.filter((s) => !s.onlyIf).length;
 
 type Msg = { who: "bot"; text: string } | { who: "user"; text: string };
 
@@ -179,6 +209,13 @@ export default function DiagnosisChat() {
   const [multiTemp, setMultiTemp] = useState<string[]>([]);
   const [textTemp, setTextTemp] = useState("");
   const [regionEtc, setRegionEtc] = useState(false);
+  // 성함+연락처(contact) 입력용
+  const [nameTemp, setNameTemp] = useState("");
+  const [phoneTemp, setPhoneTemp] = useState("");
+  // yes/no 묶음(yesnoGroup)에서 각 하위 문항 선택값
+  const [groupTemp, setGroupTemp] = useState<Record<string, string>>({});
+  // 체크리스트(checkGroup)에서 체크된 하위 문항 key들
+  const [checkTemp, setCheckTemp] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [finished, setFinished] = useState(false);
 
@@ -217,7 +254,7 @@ export default function DiagnosisChat() {
       [
         "안녕하세요, 모두의사업친구예요 😊",
         // 의미 단위로 직접 줄바꿈(\n) → 화면 폭과 무관하게 항상 깔끔하게 끊김
-        `총 ${TOTAL_ROUGH}개의 질문으로 구성돼 있어요.\n정확히 답하실수록 더 정확한 결과를\n받을 수 있으니 꼼꼼히 답변 부탁드려요!`,
+        `총 ${TOTAL_ROUGH}개 정도의 질문이에요.\n정확히 답하실수록 더 정확한 결과를\n받을 수 있으니 꼼꼼히 답변 부탁드려요!`,
         "그럼 시작해 볼게요! 👇",
       ],
       () => askStep(0)
@@ -246,6 +283,10 @@ export default function DiagnosisChat() {
     setMultiTemp([]);
     setTextTemp("");
     setRegionEtc(false);
+    setNameTemp("");
+    setPhoneTemp("");
+    setGroupTemp({});
+    setCheckTemp([]);
     setBnoMsg(null);
     setBnoServerDown(false);
     pushBotLines(CHAT_STEPS[vi].botLines);
@@ -270,6 +311,51 @@ export default function DiagnosisChat() {
     const next = { ...form, [step.key]: multiTemp };
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: multiTemp.join(", ") }]);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
+
+  // 성함 + 연락처(한 스텝) 확정
+  const confirmContact = () => {
+    const name = nameTemp.trim();
+    const phone = phoneTemp.trim();
+    const digits = phone.replace(/[^0-9]/g, "");
+    if (!name || digits.length < 10) return;
+    const next = { ...form, name, phone };
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: `${name} · ${phone}` }]);
+    savePartial(next); // 성함·연락처 확보 시 부분 리드 저장(기존 폼과 동일 전략)
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
+
+  // 예/아니요 묶음(yesnoGroup) — 하위 문항 선택
+  const pickGroup = (subKey: string, opt: string) =>
+    setGroupTemp((g) => ({ ...g, [subKey]: opt }));
+
+  const confirmYesnoGroup = () => {
+    const step = CHAT_STEPS[stepIdx];
+    const subs = step.subs || [];
+    if (subs.some((s) => !groupTemp[s.key])) return; // 전부 답해야 진행
+    const next = { ...form };
+    subs.forEach((s) => { next[s.key] = groupTemp[s.key]; });
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: subs.map((s) => groupTemp[s.key]).join(" / ") }]);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
+
+  // 체크리스트(checkGroup) — 체크=예, 미체크=아니요
+  const toggleCheck = (subKey: string) =>
+    setCheckTemp((arr) => (arr.includes(subKey) ? arr.filter((x) => x !== subKey) : [...arr, subKey]));
+
+  const confirmCheckGroup = () => {
+    const step = CHAT_STEPS[stepIdx];
+    const subs = step.subs || [];
+    const yes = step.checkYes ?? "예";
+    const no = step.checkNo ?? "아니요";
+    const next = { ...form };
+    subs.forEach((s) => { next[s.key] = checkTemp.includes(s.key) ? yes : no; });
+    setForm(next);
+    const picked = subs.filter((s) => checkTemp.includes(s.key)).map((s) => s.label.replace(/^[^가-힣a-zA-Z]+/, "").trim());
+    setMessages((m) => [...m, { who: "user", text: picked.length ? picked.join(", ") : "해당 없음" }]);
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
@@ -504,6 +590,103 @@ export default function DiagnosisChat() {
                       {o}
                     </button>
                   ))}
+                </div>
+              )}
+
+              {/* 성함 + 연락처 (한 스텝) */}
+              {curStep.type === "contact" && (
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="text"
+                    value={nameTemp}
+                    onChange={(e) => setNameTemp(e.target.value)}
+                    placeholder={CONTACT_TEXT.namePlaceholder}
+                    autoFocus
+                    className="w-full rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                  />
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={phoneTemp}
+                    onChange={(e) => setPhoneTemp(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && confirmContact()}
+                    placeholder={CONTACT_TEXT.phonePlaceholder}
+                    className="w-full rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                  />
+                  <button
+                    onClick={confirmContact}
+                    disabled={!nameTemp.trim() || phoneTemp.replace(/[^0-9]/g, "").length < 10}
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40"
+                  >
+                    입력 완료 →
+                  </button>
+                </div>
+              )}
+
+              {/* 예/아니요 묶음(yesnoGroup) — 하위 문항마다 예/아니요 */}
+              {curStep.type === "yesnoGroup" && (
+                <div className="flex flex-col gap-3">
+                  {(curStep.subs || []).map((sub) => (
+                    <div key={sub.key}>
+                      <p className="mb-1.5 break-keep px-1 text-sm font-semibold text-brand-dark">{sub.label}</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {(sub.opts || ["예", "아니요"]).map((o) => {
+                          const active = groupTemp[sub.key] === o;
+                          return (
+                            <button
+                              key={o}
+                              onClick={() => pickGroup(sub.key, o)}
+                              className={`break-keep rounded-full border px-2 py-2.5 text-[13px] font-semibold transition ${
+                                active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+                              }`}
+                            >
+                              {o}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={confirmYesnoGroup}
+                    disabled={(curStep.subs || []).some((s) => !groupTemp[s.key])}
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40"
+                  >
+                    다음 →
+                  </button>
+                </div>
+              )}
+
+              {/* 체크리스트(checkGroup) — 해당되는 것만 체크 */}
+              {curStep.type === "checkGroup" && (
+                <div className="flex flex-col gap-2">
+                  {(curStep.subs || []).map((sub) => {
+                    const active = checkTemp.includes(sub.key);
+                    return (
+                      <button
+                        key={sub.key}
+                        onClick={() => toggleCheck(sub.key)}
+                        className={`flex items-center gap-3 break-keep rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition ${
+                          active ? "border-brand-orange bg-brand-orange/10 text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+                        }`}
+                      >
+                        <span
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border text-xs ${
+                            active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-transparent"
+                          }`}
+                        >
+                          ✓
+                        </span>
+                        <span>{sub.label}</span>
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={confirmCheckGroup}
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-sm font-extrabold text-brand-dark"
+                  >
+                    {checkTemp.length > 0 ? `${checkTemp.length}개 선택 완료 →` : "해당 없음 →"}
+                  </button>
                 </div>
               )}
 
