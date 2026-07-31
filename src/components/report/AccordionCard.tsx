@@ -33,7 +33,7 @@ export default function AccordionCard({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-3 px-5 py-3.5 text-left transition hover:bg-brand-orange/5"
+        className="flex w-full items-center gap-3 px-5 py-2.5 text-left transition hover:bg-brand-orange/5"
       >
         <span className="min-w-0 flex-1">
           {/* 제목 - 16px, 아이콘·글자 세로 중앙 정렬로 깔끔하게 */}
@@ -43,7 +43,7 @@ export default function AccordionCard({
           </span>
           {/* 부제 - 짧은 한 줄 안내(모든 카드 통일). PC·모바일 동일 노출 */}
           {subtitle && (
-            <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
+            <span className="mt-0.5 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
               {subtitle}
             </span>
           )}
