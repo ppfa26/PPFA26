@@ -670,7 +670,7 @@ export default function DiagnosisChat() {
                     {hiddenCount > 0 && (
                       <button
                         onClick={() => setShowAll(true)}
-                        className="mx-auto rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+                        className="mx-auto rounded-full border border-white bg-white px-3 py-1 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
                       >
                         ▲ 지난 대화 {hiddenCount}개 펼쳐보기
                       </button>
@@ -678,7 +678,7 @@ export default function DiagnosisChat() {
                     {showAll && messages.length > KEEP && (
                       <button
                         onClick={() => setShowAll(false)}
-                        className="mx-auto rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+                        className="mx-auto rounded-full border border-white bg-white px-3 py-1 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
                       >
                         ▼ 지난 대화 접기
                       </button>
@@ -710,12 +710,12 @@ export default function DiagnosisChat() {
               대화창이 함께 늘었다 줄었다 한다. 화면 고정(fixed)이 아니므로
               스크롤·질문 전환 때 따로 흔들리거나 빈 공백이 생기지 않는다. */}
           {showInput && curStep && (
-            <div ref={answerRef} className="mt-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+            <div ref={answerRef} className="mt-3 rounded-xl border border-white bg-white p-3 shadow-sm">
               {/* 이전 질문으로 되돌아가 답변을 고칠 수 있는 버튼 */}
               {history.length >= 2 && (
                 <button
                   onClick={goBack}
-                  className="mb-2.5 inline-flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+                  className="mb-2.5 inline-flex items-center gap-1 rounded-full border border-white bg-white px-3 py-1.5 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
                 >
                   ← 이전 질문 수정
                 </button>
@@ -732,7 +732,7 @@ export default function DiagnosisChat() {
                           // singleSelect면 하나만 즉시 선택·다음으로(라디오), 아니면 복수 토글.
                           onClick={() => (curStep.singleSelect ? answerMultiSingle(o) : toggleMulti(o))}
                           className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
-                            active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+                            active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                           }`}
                         >
                           {curStep.labelFull?.[o] || o}
@@ -760,7 +760,7 @@ export default function DiagnosisChat() {
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="break-keep rounded-full border border-gray-300 bg-white px-2 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="break-keep rounded-full border border-white bg-white px-2 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       {o}
                     </button>
@@ -778,7 +778,7 @@ export default function DiagnosisChat() {
                       onChange={(e) => setNameTemp(e.target.value)}
                       placeholder={CONTACT_TEXT.namePlaceholder}
                       autoFocus
-                      className="min-w-0 flex-[2] rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                      className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                     />
                     <input
                       type="tel"
@@ -787,7 +787,7 @@ export default function DiagnosisChat() {
                       onChange={(e) => setPhoneTemp(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && confirmContact()}
                       placeholder={CONTACT_TEXT.phonePlaceholder}
-                      className="min-w-0 flex-[3] rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                      className="min-w-0 flex-[3] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                     />
                   </div>
                   <button
@@ -814,7 +814,7 @@ export default function DiagnosisChat() {
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
                               className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
-                                active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+                                active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                               }`}
                             >
                               {o}
@@ -844,12 +844,12 @@ export default function DiagnosisChat() {
                         key={sub.key}
                         onClick={() => toggleCheck(sub.key)}
                         className={`flex items-center gap-3 break-keep rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition ${
-                          active ? "border-brand-orange bg-brand-orange/10 text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+                          active ? "border-brand-orange bg-brand-orange/10 text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                         }`}
                       >
                         <span
                           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border text-xs ${
-                            active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-transparent"
+                            active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-transparent"
                           }`}
                         >
                           ✓
@@ -881,7 +881,7 @@ export default function DiagnosisChat() {
                         <button
                           key={o}
                           onClick={() => answerRegion(o)}
-                          className="rounded-full border border-gray-300 bg-white px-1 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange"
+                          className="rounded-full border border-white bg-white px-1 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange"
                         >
                           {o}
                         </button>
@@ -896,7 +896,7 @@ export default function DiagnosisChat() {
                         onKeyDown={(e) => e.key === "Enter" && confirmRegionEtc()}
                         placeholder="지역을 직접 입력해 주세요 (예: 00도 00시)"
                         autoFocus
-                        className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                        className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                       />
                       <button onClick={confirmRegionEtc} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40">
                         입력 →
@@ -917,7 +917,7 @@ export default function DiagnosisChat() {
                     onKeyDown={(e) => e.key === "Enter" && confirmText()}
                     placeholder={curStep.placeholder}
                     autoFocus
-                    className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                    className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                   />
                   <button onClick={confirmText} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40">
                     입력 →
@@ -943,7 +943,7 @@ export default function DiagnosisChat() {
                       onKeyDown={(e) => e.key === "Enter" && bnoReady && checkBno()}
                       placeholder={curStep.placeholder}
                       autoFocus
-                      className="min-w-0 flex-[3] rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                      className="min-w-0 flex-[3] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                     />
                     <button
                       onClick={checkBno}
