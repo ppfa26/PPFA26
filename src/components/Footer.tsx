@@ -7,7 +7,9 @@ import Editable from "./Editable";
 export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
   return (
     <footer className={`${topGap} border-t border-gray-100 bg-brand-dark px-8 py-8 text-gray-300 sm:px-12`}>
-      <div className="mx-auto max-w-6xl">
+      {/* 회사정보↔메뉴가 양끝으로 과하게 벌어지지 않게 최대폭을 살짝 좁혀
+          가운데로 모은다(대표님 요청). max-w-6xl→max-w-5xl */}
+      <div className="mx-auto max-w-5xl">
         <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
           {/* 브랜드 */}
           <div className="max-w-sm">

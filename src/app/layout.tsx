@@ -127,14 +127,21 @@ export const viewport: Viewport = {
 //
 //  동작:
 //   1) 화면 폭이 DESKTOP_WIDTH(900px) 이상인 진짜 PC/태블릿 → 아무것도 안 함(원본 그대로).
-//   2) 그보다 좁은 모바일 → viewport 를 width=900 + initial-scale=(기기폭/900) 로 교체.
-//      → 브라우저가 900px PC 페이지를 딱 화면폭에 맞게 축소해서 통째로 보여준다(잘림 0).
-//      ※ 기준폭 900 = 980 대비 콘텐츠가 약 9% 크게 보인다(대표님 요청: 전체 살짝 확대).
+//   2) 그보다 좁은 모바일 → viewport 를 width=820 + initial-scale=(기기폭/820) 로 교체.
+//      → 브라우저가 820px PC 페이지를 딱 화면폭에 맞게 축소해서 통째로 보여준다(잘림 0).
+//      ※ 기준폭 900→820 으로 낮춤: 모바일에서 콘텐츠가 약 10% 더 크게 보인다
+//        (대표님 요청: 모바일 글씨가 작다 → 전체 확대). PC 는 영향 없음.
 //   3) 가로/세로 회전 시 폭이 바뀌므로 resize·orientationchange 때 다시 계산.
 //  ※ <head> 안에서 즉시 실행(dangerouslySetInnerHTML) → 첫 페인트 전에 적용돼 깜빡임 최소화.
 const DESKTOP_VIEWPORT_SCRIPT = `
 (function () {
-  var DESKTOP_WIDTH = 900;
+  var DESKTOP_WIDTH = 900;   // 이 값 이상은 진짜 PC/태블릿(원본 반응형 유지)
+  // ★ 모바일 확대(대표님 요청) ★
+  //  모바일에서 글씨/박스가 작아 잘 안 보인다는 피드백 → 축소 '기준폭'을 낮춘다.
+  //  기준폭이 작을수록 같은 폰 화면에서 콘텐츠가 더 크게 보인다.
+  //  900 → 820 (약 10% 확대). PC 판별 기준(DESKTOP_WIDTH)과는 분리해
+  //  태블릿 경계는 그대로 두고 모바일 확대만 적용한다.
+  var MOBILE_BASE = 820;
   function apply() {
     try {
       var vp = document.querySelector('meta[name=viewport]');
@@ -148,16 +155,16 @@ const DESKTOP_VIEWPORT_SCRIPT = `
         // 진짜 넓은 화면(PC/태블릿) → 표준 반응형 유지(핀치 줌 허용)
         vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
       } else {
-        // 모바일 → 900px PC 화면을 기기폭에 맞춰 축소
-        var scale = w / DESKTOP_WIDTH;
+        // 모바일 → MOBILE_BASE(820px) PC 화면을 기기폭에 맞춰 축소(=콘텐츠 확대)
+        var scale = w / MOBILE_BASE;
         // ★ 입력창 클릭 시 '자동 확대' 방지(대표님 요청) ★
-        //  이 페이지는 900px 화면을 기기폭에 맞춰 축소(scale<1)해 보여준다.
+        //  이 페이지는 기준폭 화면을 기기폭에 맞춰 축소(scale<1)해 보여준다.
         //  이 상태에서 모바일 브라우저는 입력창을 탭하면 글자를 키우려고
         //  '자동 줌인'을 하는데, 축소 배율과 겹쳐 화면이 튀고 중심이 어긋나
         //  정신사나워 보인다. maximum-scale 을 initial-scale 과 '같게' 고정하면
         //  브라우저의 자동 줌 트리거가 사라져, 입력·답변 중에도 항상 화면
         //  중앙 기준 그대로 유지된다. (핀치 줌 접근성보다 시인성 우선)
-        vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no');
+        vp.setAttribute('content', 'width=' + MOBILE_BASE + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no');
       }
     } catch (e) { /* 실패해도 기본 반응형으로 그대로 노출 */ }
   }
