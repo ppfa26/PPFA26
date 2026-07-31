@@ -620,9 +620,9 @@ export default function DiagnosisChat() {
       <Header />
       {/* ★ 레이아웃(대표님 요청) ★
           - 질문은 위→아래로 쌓이고 오래된 건 접힌다(대화 영역 로직).
-          - 답변/입력 영역은 화면 맨 아래에 '고정(fixed)'된다(아래 참고).
-          - 고정 영역이 마지막 콘텐츠를 가리지 않도록 본문 하단 여백(pb)을 넉넉히 준다. */}
-      <main className="min-h-[calc(100vh-72px)] px-4 pb-[280px] pt-6">
+          - 답변/입력 영역은 대화창 '안'에 포함되어 함께 늘었다 줄었다 한다.
+            (화면 고정 없음 → 흔들림/빈 공백 없음) */}
+      <main className="min-h-[calc(100vh-72px)] px-4 pb-16 pt-6">
         <div className="mx-auto max-w-3xl">
           {/* 진행률 바 */}
           <div className="mb-3">
@@ -644,8 +644,10 @@ export default function DiagnosisChat() {
 
           {/* 대화 영역 — 질문은 위에서부터 순서대로(오래된 것 위 → 새 질문 아래)
               쌓이고, 오래된 질문은 자동으로 접어 위로 올린다(대표님 요청).
-              최소 높이를 줘 콘텐츠가 짧아도 박스가 위아래로 튀지 않게 한다. */}
-          <div className="flex min-h-[46vh] flex-col rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
+              ★ 답변/입력 영역을 이 대화창 '안'에 포함시킨다(대표님 제안) ★
+              → 대화창이 보기·답변 길이에 따라 세로로 늘었다 줄었다 하고, 답변창이
+                따로 화면에 고정되지 않으므로 흔들림/빈 공백이 사라진다. */}
+          <div className="flex flex-col rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
             <div className="flex flex-col gap-3">
               {(() => {
                 // 최근 N개만 노출(=현재 질문 위주). 나머지는 접어서 위로 올린다.
@@ -686,15 +688,13 @@ export default function DiagnosisChat() {
               })()}
               {botTyping && <TypingBubble />}
             </div>
-          </div>
 
-          {/* 답변 영역 — 화면 맨 아래에 '완전 고정(fixed)'(대표님 요청).
-              스크롤·질문 전환과 무관하게 항상 화면 하단 같은 자리에 붙어 있어
-              입력/보기 위치가 튀지 않는다. fixed 는 화면 전체폭 기준이므로 내부에
-              max-w-3xl mx-auto 컨테이너로 대화창과 같은 폭·가운데 정렬을 맞춘다. */}
+          {/* 답변 영역 — 대화창 '안'에 포함(대표님 제안).
+              봇의 마지막 질문 바로 아래에 흰 카드로 붙어, 보기/입력 길이에 따라
+              대화창이 함께 늘었다 줄었다 한다. 화면 고정(fixed)이 아니므로
+              스크롤·질문 전환 때 따로 흔들리거나 빈 공백이 생기지 않는다. */}
           {showInput && curStep && (
-            <div className="fixed inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white px-4 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.12)]">
-            <div ref={answerRef} className="mx-auto max-w-3xl">
+            <div ref={answerRef} className="mt-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
               {/* 이전 질문으로 되돌아가 답변을 고칠 수 있는 버튼 */}
               {history.length >= 2 && (
                 <button
@@ -960,8 +960,8 @@ export default function DiagnosisChat() {
                 );
               })()}
             </div>
-            </div>
           )}
+          </div>
         </div>
       </main>
       <Footer />
