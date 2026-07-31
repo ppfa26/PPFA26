@@ -618,12 +618,12 @@ export default function DiagnosisChat() {
   return (
     <PageShell pageKey="diagnosis">
       <Header />
-      {/* ★ 하단 흔들림 방지(대표님 요청) ★
-          질문마다 콘텐츠 높이가 달라 푸터가 위아래로 움직이던 문제를 해결.
-          본문에 '화면 높이 - 헤더'만큼의 최소 높이를 줘, 콘텐츠가 짧아도 항상
-          화면을 꽉 채우게 한다 → 푸터는 늘 화면 밖(스크롤해야 보이는 하단)에 고정. */}
-      <main className="min-h-[calc(100vh-72px)] px-4 pb-16 pt-6">
-        <div className="mx-auto max-w-2xl">
+      {/* ★ 레이아웃(대표님 요청) ★
+          - 질문은 위→아래로 쌓이고 오래된 건 접힌다(대화 영역 로직).
+          - 답변/입력 영역은 화면 맨 아래에 '고정(fixed)'된다(아래 참고).
+          - 고정 영역이 마지막 콘텐츠를 가리지 않도록 본문 하단 여백(pb)을 넉넉히 준다. */}
+      <main className="min-h-[calc(100vh-72px)] px-4 pb-[280px] pt-6">
+        <div className="mx-auto max-w-3xl">
           {/* 진행률 바 */}
           <div className="mb-3">
             <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-brand-gray">
@@ -642,12 +642,10 @@ export default function DiagnosisChat() {
             </div>
           </div>
 
-          {/* 대화 영역 — 지난 질문은 자동으로 접고 현재 질문 위주로 보여준다.
-              ★ 하단 흔들림 방지(대표님 요청): 질문마다 옵션/입력 개수가 달라
-              박스 높이가 튀던 문제를 막기 위해 대화 영역에 '최소 높이'를 준다.
-              콘텐츠가 짧아도 이 높이만큼은 항상 확보돼, 아래 답변영역·푸터가
-              위아래로 흔들리지 않는다. 콘텐츠가 길면 자연스럽게 늘어난다. */}
-          <div className="flex min-h-[46vh] flex-col justify-end rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
+          {/* 대화 영역 — 질문은 위에서부터 순서대로(오래된 것 위 → 새 질문 아래)
+              쌓이고, 오래된 질문은 자동으로 접어 위로 올린다(대표님 요청).
+              최소 높이를 줘 콘텐츠가 짧아도 박스가 위아래로 튀지 않게 한다. */}
+          <div className="flex min-h-[46vh] flex-col rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
             <div className="flex flex-col gap-3">
               {(() => {
                 // 최근 N개만 노출(=현재 질문 위주). 나머지는 접어서 위로 올린다.
@@ -690,10 +688,13 @@ export default function DiagnosisChat() {
             </div>
           </div>
 
-          {/* 답변 영역 — 화면 하단에 고정(sticky). 모바일에서 질문·보기·입력이 항상
-              화면 아래쪽 보기 좋은 위치에 오고, 키보드가 떠도 가려지지 않게 함(대표님 요청). */}
+          {/* 답변 영역 — 화면 맨 아래에 '완전 고정(fixed)'(대표님 요청).
+              스크롤·질문 전환과 무관하게 항상 화면 하단 같은 자리에 붙어 있어
+              입력/보기 위치가 튀지 않는다. fixed 는 화면 전체폭 기준이므로 내부에
+              max-w-3xl mx-auto 컨테이너로 대화창과 같은 폭·가운데 정렬을 맞춘다. */}
           {showInput && curStep && (
-            <div ref={answerRef} className="sticky bottom-3 z-20 mt-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.12)]">
+            <div className="fixed inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white px-4 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.12)]">
+            <div ref={answerRef} className="mx-auto max-w-3xl">
               {/* 이전 질문으로 되돌아가 답변을 고칠 수 있는 버튼 */}
               {history.length >= 2 && (
                 <button
@@ -958,6 +959,7 @@ export default function DiagnosisChat() {
                 </>
                 );
               })()}
+            </div>
             </div>
           )}
         </div>
