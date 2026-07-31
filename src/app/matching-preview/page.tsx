@@ -248,37 +248,38 @@ export default function MatchingPreview() {
     return (
       <PageShell pageKey="matching-preview">
         <Header />
-        <main className="flex min-h-[60vh] items-center justify-center px-4 py-16">
-          <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-7 text-center shadow-card sm:p-9">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10">
-              <span className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
+        {/* 로딩 화면 — 화면 정중앙 정렬 + 박스/글씨를 조금 키워 시인성 향상(대표님 요청) */}
+        <main className="flex min-h-[78vh] items-center justify-center px-4 py-16">
+          <div className="mx-auto w-full max-w-lg rounded-3xl border-2 border-brand-orange/40 bg-white p-8 text-center shadow-card sm:p-11">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand-orange/10">
+              <span className="inline-block h-11 w-11 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
             </div>
-            <p className="break-keep text-base font-extrabold leading-snug text-brand-dark sm:text-xl">
+            <p className="break-keep text-xl font-extrabold leading-snug text-brand-dark sm:text-2xl">
               대표님 사업장을 <span className="text-brand-orange">AI가 분석</span>하고 있어요
             </p>
-            <p className="mt-1.5 text-xs text-brand-gray sm:text-sm">
+            <p className="mt-2 text-sm text-brand-gray sm:text-base">
               전국 정부지원사업 데이터와 대조 중입니다
             </p>
 
-            <ul className="mt-6 space-y-2.5 text-left">
+            <ul className="mt-7 space-y-3 text-left">
               {steps.map((s, i) => {
                 const active = analyzeStep >= i;
                 const done = analyzeStep > i;
                 return (
                   <li
                     key={s.label}
-                    className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 transition-all duration-300 ${
+                    className={`flex items-center gap-3 rounded-xl border px-5 py-3.5 transition-all duration-300 ${
                       active
                         ? "border-brand-orange/40 bg-brand-yellow/10 opacity-100"
                         : "border-gray-100 bg-gray-50 opacity-40"
                     }`}
                   >
-                    <span className="text-lg">{s.icon}</span>
-                    <span className="flex-1 text-sm font-bold text-brand-dark">{s.label}</span>
+                    <span className="text-xl">{s.icon}</span>
+                    <span className="flex-1 text-[15px] font-bold text-brand-dark sm:text-base">{s.label}</span>
                     {done ? (
-                      <span className="text-sm font-extrabold text-green-600">✓</span>
+                      <span className="text-base font-extrabold text-green-600">✓</span>
                     ) : active ? (
-                      <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-brand-orange/30 border-t-brand-orange" />
+                      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-brand-orange/30 border-t-brand-orange" />
                     ) : null}
                   </li>
                 );
