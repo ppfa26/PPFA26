@@ -365,7 +365,8 @@ export async function POST(req: Request) {
 
     let fetched = 0;
     const rows: any[] = [];
-    const errors: string[] = [];
+    const errors: string[] = [];   // 실제 오류(수집 실패). 하나라도 있으면 부분성공/실패 판단에 씀
+    const notices: string[] = [];  // 오류 아님(선택 소스 스킵 등 안내). ok 판정에서 제외
     const perSource: Record<string, number> = { 기업마당: 0, "K-Startup": 0, 중소벤처24: 0 };
 
     // 4-1) 기업마당 수집
@@ -437,7 +438,10 @@ export async function POST(req: Request) {
         errors.push(`중소벤처24: ${e?.message || "수집 실패"}`);
       }
     } else {
-      errors.push("중소벤처24: SMES_API_TOKEN 미설정 → 스킵(기정원 인증키 발급 후 환경변수 추가 필요)");
+      // ★ token 미설정은 '오류'가 아니라 '선택 소스 스킵'이다.
+      //   여기에 errors 로 넣으면 기업마당·K-Startup 이 성공해도 전체가 '수집 실패'로 뜬다.
+      //   → notices 로 분리해 ok 판정에서 제외한다.
+      notices.push("중소벤처24: SMES_API_TOKEN 미설정 → 스킵(선택 소스, 기정원 인증키 발급 후 환경변수 추가 시 자동 포함)");
     }
 
     // 4) UPSERT - (source, source_id) 기준 중복 방지 & 최신화
@@ -459,15 +463,23 @@ export async function POST(req: Request) {
       else upserted += withoutId.length;
     }
 
+    // ── 성공/실패 판정 ──
+    //   · 저장(upserted)이 1건이라도 있으면 '성공'으로 본다(부분성공 포함).
+    //     일부 소스가 실패해도 다른 소스가 공고를 수집했으면 사용자에겐 성공이다.
+    //   · 저장이 0건이고 errors 가 있으면 그때만 '실패'.
+    //   · notices(선택 소스 스킵)는 ok 판정에 영향 주지 않는다.
+    const ok = upserted > 0 || errors.length === 0;
     return NextResponse.json({
-      ok: errors.length === 0,
+      ok,
+      partial: ok && errors.length > 0, // 일부 소스 실패했지만 저장은 됨
       sources: ["기업마당", "K-Startup", "중소벤처24"],
       per_source: perSource, // 소스별 매핑 성공 건수
       pages,
       fetched,
       saved: upserted,
       elapsed_ms: Date.now() - started,
-      errors,
+      errors,   // 실제 실패한 소스만
+      notices,  // 오류 아님(선택 소스 스킵 등 안내)
     });
   } catch (e: any) {
     return NextResponse.json(

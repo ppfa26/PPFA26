@@ -630,11 +630,23 @@ export default function AdminPage() {
       });
       const j = await res.json();
       if (!res.ok || j?.ok === false) {
+        // 진짜 실패(저장 0건 + 오류) 일 때만 여기로 온다.
         const detail = Array.isArray(j?.errors) && j.errors.length ? ` (${j.errors[0]})` : "";
         setMsg(`수집 실패: ${j?.note || "오류"}${detail}`);
       } else {
+        // 성공(부분성공 포함). 소스별 건수를 그대로 보여줌.
+        const ps = j?.per_source || {};
+        const parts = Object.entries(ps)
+          .filter(([, n]) => Number(n) > 0)
+          .map(([name, n]) => `${name} ${n}건`);
+        const srcText = parts.length ? parts.join(" · ") : "기업마당";
+        // 일부 소스가 실패/스킵됐으면 꼬리표로 안내(경고 아님)
+        const partialTail =
+          Array.isArray(j?.errors) && j.errors.length
+            ? ` ※ 일부 소스 지연: ${j.errors[0]}`
+            : "";
         setMsg(
-          `✅ 공고 수집 완료 - 조회 ${j.fetched ?? 0}건 / 저장·갱신 ${j.saved ?? 0}건 (출처: ${j.source || "기업마당"})`
+          `✅ 공고 수집 완료 - 조회 ${j.fetched ?? 0}건 / 저장·갱신 ${j.saved ?? 0}건 (${srcText})${partialTail}`
         );
       }
     } catch (e: any) {
