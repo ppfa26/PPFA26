@@ -145,12 +145,19 @@ const DESKTOP_VIEWPORT_SCRIPT = `
       }
       var w = window.screen && window.screen.width ? window.screen.width : window.innerWidth;
       if (w >= DESKTOP_WIDTH) {
-        // 진짜 넓은 화면(PC/태블릿) → 표준 반응형 유지
+        // 진짜 넓은 화면(PC/태블릿) → 표준 반응형 유지(핀치 줌 허용)
         vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
       } else {
-        // 모바일 → 980px PC 화면을 기기폭에 맞춰 축소
+        // 모바일 → 900px PC 화면을 기기폭에 맞춰 축소
         var scale = w / DESKTOP_WIDTH;
-        vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', initial-scale=' + scale + ', maximum-scale=5, user-scalable=yes');
+        // ★ 입력창 클릭 시 '자동 확대' 방지(대표님 요청) ★
+        //  이 페이지는 900px 화면을 기기폭에 맞춰 축소(scale<1)해 보여준다.
+        //  이 상태에서 모바일 브라우저는 입력창을 탭하면 글자를 키우려고
+        //  '자동 줌인'을 하는데, 축소 배율과 겹쳐 화면이 튀고 중심이 어긋나
+        //  정신사나워 보인다. maximum-scale 을 initial-scale 과 '같게' 고정하면
+        //  브라우저의 자동 줌 트리거가 사라져, 입력·답변 중에도 항상 화면
+        //  중앙 기준 그대로 유지된다. (핀치 줌 접근성보다 시인성 우선)
+        vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no');
       }
     } catch (e) { /* 실패해도 기본 반응형으로 그대로 노출 */ }
   }
