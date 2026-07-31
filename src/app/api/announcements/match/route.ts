@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -285,6 +286,15 @@ function pickTop(rows: Announcement[], f: ProfileFlags, limit: number) {
 
 export async function POST(req: Request) {
   try {
+    // ── 남용 방지 ──────────────────────────────────────────────
+    //  AI 미사용(비용 0)이지만 DB 조회 부하를 막기 위해 넉넉히 1분 30회 제한.
+    const blocked = enforceRateLimit(
+      req,
+      { namespace: "match", windowMs: 60_000, max: 30 },
+      "요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요."
+    );
+    if (blocked) return blocked;
+
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!url || !key) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { enforceRateLimit } from "@/lib/rateLimit";
 import {
   buildAllChannels,
   DEFAULT_INPUT,
@@ -87,6 +88,16 @@ function normalizeChannels(raw: any): SnsChannel[] | null {
 
 export async function POST(req: NextRequest) {
   try {
+    // ── 남용 방지(중요) ──────────────────────────────────────────
+    //  OpenAI(유료) 호출 + 외부 링크 본문 크롤링까지 하므로 자원 소모가 크다.
+    //  IP 기준 1분 6회로 제한(관리자 SNS 허브에서 사람이 쓰는 속도엔 충분).
+    const blocked = enforceRateLimit(
+      req,
+      { namespace: "sns", windowMs: 60_000, max: 6 },
+      "SNS 생성 요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요."
+    );
+    if (blocked) return blocked;
+
     const body = await req.json().catch(() => ({}));
     const source: string = String(body.source || "").trim();
     const region: string = String(body.region || "").trim();

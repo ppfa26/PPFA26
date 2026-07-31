@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -11,6 +12,17 @@ const NTS_STATUS_URL = "https://api.odcloud.kr/api/nts-businessman/v1/status";
 
 export async function POST(req: NextRequest) {
   try {
+    // ── 남용 방지 ────────────────────────────────────────────────
+    //  국세청 API 는 무료지만 일일 호출 한도가 있다. 봇이 사업자번호를
+    //  대량 스캐닝하면 한도가 소진돼 정상 사용자도 조회 불가가 된다.
+    //  IP 기준 1분 15회로 제한(사람이 사업자 조회를 그보다 자주 하진 않음).
+    const blocked = enforceRateLimit(
+      req,
+      { namespace: "nts", windowMs: 60_000, max: 15 },
+      "사업자 조회 요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요."
+    );
+    if (blocked) return blocked;
+
     const { bno } = await req.json();
 
     // 사업자번호 정규화: 숫자만 추출 (하이픈 등 기호 제거)

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { retrieve, buildDisclaimer } from "@/lib/knowledge";
+import { enforceRateLimit } from "@/lib/rateLimit";
 import OpenAI from "openai";
 
 export const runtime = "nodejs";
@@ -12,6 +13,17 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    // ── 남용 방지(중요) ──────────────────────────────────────────
+    //  이 API 는 OpenAI(유료) 를 호출하므로, 봇이 무제한으로 두드리면
+    //  실제 요금 폭탄이 난다. IP 기준 1분 8회로 제한한다.
+    //  (사람이 상담 질문을 1분에 8번 넘게 던지는 일은 사실상 없음 → 정상 사용자 무영향)
+    const blocked = enforceRateLimit(
+      req,
+      { namespace: "advisor", windowMs: 60_000, max: 8 },
+      "AI 상담 요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요."
+    );
+    if (blocked) return blocked;
+
     const { question } = await req.json();
     if (!question || typeof question !== "string") {
       return NextResponse.json({ error: "질문을 입력해주세요." }, { status: 400 });

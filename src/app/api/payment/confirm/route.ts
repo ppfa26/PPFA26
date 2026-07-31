@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -24,6 +25,16 @@ const TOSS_SECRET_KEY = pickIndividualSecretKey();
 // 토스페이먼츠 결제 승인 (서버 전용 시크릿 키 사용)
 export async function POST(req: NextRequest) {
   try {
+    // ── 남용 방지 ──────────────────────────────────────────────
+    //  토스 승인 자체는 paymentKey 검증이 있지만, 반복 시도(카드 스캐닝 등)
+    //  를 막기 위해 IP 기준 1분 20회로 제한. 정상 결제 흐름엔 영향 없음.
+    const blocked = enforceRateLimit(
+      req,
+      { namespace: "pay", windowMs: 60_000, max: 20 },
+      "결제 요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요."
+    );
+    if (blocked) return blocked;
+
     const { paymentKey, orderId, amount } = await req.json();
 
     if (!paymentKey || !orderId || !amount) {

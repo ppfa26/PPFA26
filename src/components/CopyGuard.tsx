@@ -80,6 +80,20 @@ export default function CopyGuard() {
       /* noop */
     }
 
+    // ── 정상 입력 보장용 예외 판별 ──────────────────────────────
+    //  입력창(input·textarea·contenteditable)에서는 사용자가 붙여넣기·
+    //  텍스트 선택·복사를 정상적으로 할 수 있어야 한다(진단 답변·검색·결제 등).
+    //  → 이 요소 안에서 발생한 이벤트는 방어 로직에서 '통과'시킨다.
+    //    (도용 방지의 핵심은 '우리 콘텐츠 본문' 보호이지, 사용자가 자기 입력을
+    //     다루는 것을 막는 게 아니다.)
+    const isEditable = (el: EventTarget | null): boolean => {
+      const node = el as HTMLElement | null;
+      if (!node || typeof node.closest !== "function") return false;
+      return !!node.closest(
+        'input, textarea, select, [contenteditable=""], [contenteditable="true"]'
+      );
+    };
+
     // ── (2) 개발자도구/소스보기 단축키 차단 ──
     const onKeyDown = (e: KeyboardEvent) => {
       const key = (e.key || "").toLowerCase();
@@ -93,8 +107,8 @@ export default function CopyGuard() {
         e.preventDefault();
         return;
       }
-      // Ctrl+S (페이지 저장)
-      if ((e.ctrlKey || e.metaKey) && key === "s") {
+      // Ctrl+S (페이지 저장) — 단, 입력창 안에서는 브라우저 기본동작에 맡김
+      if ((e.ctrlKey || e.metaKey) && key === "s" && !isEditable(e.target)) {
         e.preventDefault();
         return;
       }
@@ -107,20 +121,26 @@ export default function CopyGuard() {
     document.addEventListener("keydown", onKeyDown);
 
     // ── (3) 우클릭(컨텍스트 메뉴) 억제 ──
+    //  입력창에서는 우클릭(붙여넣기 메뉴)을 허용해 사용성 보장.
     const onContextMenu = (e: MouseEvent) => {
+      if (isEditable(e.target)) return;
       e.preventDefault();
     };
     document.addEventListener("contextmenu", onContextMenu);
 
     // ── (3) 드래그 시작 억제 (텍스트·이미지 통째 드래그 복사 방지) ──
+    //  입력창 내부 텍스트 드래그(선택)는 허용.
     const onDragStart = (e: DragEvent) => {
+      if (isEditable(e.target)) return;
       e.preventDefault();
     };
     document.addEventListener("dragstart", onDragStart);
 
     // ── (4) 대량 복사 시 출처 강제 삽입 ──
+    //  입력창 안에서 사용자가 자기 입력을 복사하는 경우는 그대로 둔다.
     const onCopy = (e: ClipboardEvent) => {
       try {
+        if (isEditable(e.target)) return;
         const sel = window.getSelection()?.toString() ?? "";
         if (sel.length > 100 && e.clipboardData) {
           e.preventDefault();

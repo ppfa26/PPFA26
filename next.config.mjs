@@ -38,6 +38,24 @@ const nextConfig = {
         key: "Content-Security-Policy",
         value: "frame-ancestors 'self';",
       },
+      // 7) HSTS — 브라우저가 이 도메인을 앞으로 항상 HTTPS로만 접속하게 강제.
+      //    중간자 공격(http 강등)·쿠키 탈취 위험을 줄인다. (Vercel은 전 구간 HTTPS)
+      //    max-age 2년 + 서브도메인 포함 + preload 등록 가능 상태.
+      {
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload",
+      },
+      // 8) Permissions-Policy — 우리가 안 쓰는 강력한 브라우저 기능(카메라·마이크·
+      //    위치·결제 자동화 등)을 아예 차단해, 삽입된 악성 스크립트가 오남용 못 하게.
+      //    (지도·결제창은 별도 도메인/팝업이라 이 정책 영향 없음)
+      {
+        key: "Permissions-Policy",
+        value:
+          "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+      },
+      // 9) 교차출처 리소스 격리(약한 수준) — 우리 문서를 남이 함부로 리소스로
+      //    가져가 임베드/스크래핑하기 조금 더 어렵게. same-site 로 두어 자체 서브도메인은 허용.
+      { key: "Cross-Origin-Resource-Policy", value: "same-site" },
     ];
 
     return [
