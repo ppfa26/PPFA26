@@ -1,13 +1,14 @@
 "use client";
 
 // ════════════════════════════════════════════════════════════════
-//  채팅형 무료진단 — 프로토타입
+//  채팅형 무료진단 (전체 버전)
 //
-//  ★ 핵심 원칙 ★
-//   · "겉모습만 채팅형" — 질문/선택지/저장되는 form 값은 기존 폼(diagnosisConfig)과
-//     100% 동일하게 유지한다. → matching 입력이 바뀌지 않아 결과 정확도 그대로.
-//   · 이 페이지는 프로토타입(질문 3개)으로, 대화형 UX를 먼저 확인하기 위한 것.
-//     승인되면 전체 22여 개 질문으로 확장한다.
+//  ★ 핵심 원칙 (절대 불변) ★
+//   · "겉모습만 채팅형" — 질문/선택지/순서/저장되는 form 값·검증·제출 로직은
+//     기존 폼(/diagnosis, diagnosisConfig)과 100% 동일하게 유지한다.
+//     → matching 입력이 바뀌지 않아 결과 정확도가 기존과 완전히 같다.
+//   · 사업자번호는 기존 /api/business-status 국세청 조회를 그대로 연결.
+//   · 제출은 기존 saveDiagnosis / saveCompletedDiagnosis / savePartialLead 로직 재사용.
 //
 //  ★ 안내 문구 (대표님 요청) ★
 //   시작 시 봇이 "모든 질문에 정확히 답해야 정확한 결과를 얻는다"고 안내한다.
@@ -15,32 +16,51 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
-import { STEP1_FIELDS, STEP3_FIELDS, CONTACT_TEXT, BNO_TEXT } from "@/lib/diagnosisConfig";
+import { trackConversion } from "@/components/KarrotPixel";
+import { supabase } from "@/lib/supabaseClient";
+import { isStatsExcludedEmail } from "@/lib/admin";
+import {
+  saveDiagnosis,
+  clearDiagnosisDraft,
+  savePartialLead,
+  saveCompletedDiagnosis,
+} from "@/lib/diagnosisStore";
+import {
+  STEP1_FIELDS,
+  STEP2_FIELDS,
+  STEP3_FIELDS,
+  STEP3_CONDITIONAL_FIELDS,
+  CONTACT_TEXT,
+  BNO_TEXT,
+  PHONE_CONSULT_FIELD,
+} from "@/lib/diagnosisConfig";
 
 // ── 채팅 대화 스크립트 ───────────────────────────────────────────
-//  ★ 질문 순서는 기존 폼(/diagnosis)과 100% 동일하게 유지한다(대표님 요청). ★
-//  각 스텝은 실제 폼의 필드(key)·선택지(opts)를 그대로 참조한다.
+//  질문 순서는 기존 폼(/diagnosis)과 100% 동일.
 //  type:
-//   · "single" = 단일 선택(칩 하나)
-//   · "multi"  = 복수 선택(칩 여러 개 + '완료' 버튼)
-//   · "text"   = 텍스트 입력(성함 등) — 채팅 입력창
+//   · "single" = 단일 선택
+//   · "multi"  = 복수 선택(+ '완료' 버튼)
+//   · "text"   = 텍스트 입력(성함)
 //   · "phone"  = 연락처 입력(숫자)
-//   · "bno"    = 사업자등록번호 입력(국세청 조회) — 프로토타입에서는 입력만 시연
+//   · "bno"    = 사업자등록번호(국세청 조회 + 예비창업자 버튼)
+//   · "region" = 지역(서울·경기·인천 칩 + '기타' 직접 입력)
+//  onlyIf: 특정 조건일 때만 물어보는 스텝(법인만 자본잠식 등). 아니면 건너뜀.
+type StepType = "single" | "multi" | "text" | "phone" | "bno" | "region";
 type ChatStep = {
   key: string;
-  type: "single" | "multi" | "text" | "phone" | "bno";
-  botLines: string[];        // 봇이 순차적으로 말하는 말풍선들
-  opts?: string[];           // 답변 칩(선택지) - single/multi 전용
-  placeholder?: string;      // 입력창 placeholder - text/phone/bno 전용
+  type: StepType;
+  botLines: string[];
+  opts?: string[];
+  placeholder?: string;
+  onlyIf?: (form: any) => boolean;
 };
 
-// ★ 기존 폼 1단계 앞부분 순서 그대로 ★
-//  사업자번호 → 성함 → 연락처 → 결격사유(회생·파산 / 세금) → 사업자구분 → 업종 → 연령
-//  (프로토타입: 여기까지만. 승인되면 매출·업력·지역·2·3단계까지 확장)
 const CHAT_STEPS: ChatStep[] = [
+  // ── 1단계 · 기본 정보 ──
   {
     key: "bno",
     type: "bno",
@@ -48,40 +68,41 @@ const CHAT_STEPS: ChatStep[] = [
       "먼저 사업자등록번호를 알려주세요.",
       "국세청에 등록된 정상 사업자만 정부지원 신청이 가능해서, 처음에 꼭 확인하고 있어요.",
     ],
-    placeholder: BNO_TEXT.placeholder, // "예: 123-45-67890"
+    placeholder: BNO_TEXT.placeholder,
   },
-  {
-    key: "name",
-    type: "text",
-    botLines: ["대표님 성함을 알려주세요."],
-    placeholder: CONTACT_TEXT.namePlaceholder, // "예: 홍길동"
-  },
+  { key: "name", type: "text", botLines: ["대표님 성함을 알려주세요."], placeholder: CONTACT_TEXT.namePlaceholder },
   {
     key: "phone",
     type: "phone",
     botLines: ["연락 가능한 전화번호를 입력해 주세요.", "진단 결과와 맞춤 상담 안내에 사용돼요."],
-    placeholder: CONTACT_TEXT.phonePlaceholder, // "예: 010-1234-5678"
+    placeholder: CONTACT_TEXT.phonePlaceholder,
   },
   {
     key: "bankruptcy",
     type: "single",
-    botLines: [
-      "혹시 현재 회생·파산 절차가 진행 중이신가요?",
-      "진행 중이면 신청 자체가 어려워서, 미리 확인하는 항목이에요.",
-    ],
+    botLines: ["혹시 현재 회생·파산 절차가 진행 중이신가요?", "진행 중이면 신청이 어려워서 미리 확인하는 항목이에요."],
     opts: STEP3_FIELDS.bankruptcy.opts,
   },
-  {
-    key: "taxDelinquent",
-    type: "single",
-    botLines: ["국세·지방세는 완납 상태이신가요?"],
-    opts: STEP3_FIELDS.taxDelinquent.opts,
-  },
+  { key: "taxDelinquent", type: "single", botLines: ["국세·지방세는 완납 상태이신가요?"], opts: STEP3_FIELDS.taxDelinquent.opts },
+  // ★ businessType을 자본잠식보다 먼저 물어본다 ★
+  //   원본 폼은 단일 페이지라 순서 의존성이 없지만, 채팅은 순차이므로
+  //   법인 여부(businessType)를 먼저 확정해야 자본잠식(법인 전용) 스텝을 띄울 수 있다.
+  //   저장 form 값·매칭 결과는 순서와 무관하게 동일하다.
   {
     key: "businessType",
     type: "single",
     botLines: ["사업자 구분을 선택해 주세요."],
     opts: STEP1_FIELDS.businessType.opts,
+    // 예비창업자 버튼으로 이미 businessType='예비'가 세팅되면 다시 묻지 않는다.
+    onlyIf: (f) => f.businessType !== "예비",
+  },
+  // 자본잠식은 법인사업자만
+  {
+    key: "capitalImpairment",
+    type: "single",
+    botLines: ["법인 자본잠식 상태인가요?", STEP3_FIELDS.capitalImpairment.hint],
+    opts: STEP3_FIELDS.capitalImpairment.opts,
+    onlyIf: (f) => f.businessType === "법인사업자",
   },
   {
     key: "industries",
@@ -89,70 +110,114 @@ const CHAT_STEPS: ChatStep[] = [
     botLines: ["어떤 업종이신가요?", "해당되는 걸 모두 골라주세요. (복수 선택 가능)"],
     opts: STEP1_FIELDS.industries.opts,
   },
+  { key: "years", type: "single", botLines: ["사업자등록증상 업력은 어느 정도이신가요?"], opts: STEP1_FIELDS.years.opts },
+  { key: "revenue", type: "single", botLines: ["연매출 규모를 알려주세요."], opts: STEP1_FIELDS.revenue.opts },
   {
     key: "age",
     type: "single",
     botLines: ["대표님 연령대를 알려주세요.", "청년 창업·세제감면 판정에 필요해요."],
     opts: STEP1_FIELDS.age.opts,
   },
+  { key: "region", type: "region", botLines: ["사업장 지역은 어디신가요?"], opts: STEP1_FIELDS.region.opts },
+
+  // ── 2단계 · 회사 정보 ──
+  { key: "credit", type: "single", botLines: ["대표자 개인 신용점수는 어느 정도인가요?", STEP3_FIELDS.credit.hint], opts: STEP3_FIELDS.credit.opts },
+  { key: "employees", type: "single", botLines: ["직원 수는 몇 명이신가요?", STEP2_FIELDS.employees.hint], opts: STEP2_FIELDS.employees.opts },
+  {
+    key: "currentInstitutions",
+    type: "multi",
+    botLines: ["현재 이용 중인 정책기관이 있나요?", STEP2_FIELDS.currentInstitutions.hint],
+    opts: STEP2_FIELDS.currentInstitutions.opts,
+  },
+  {
+    key: "purposes",
+    type: "multi",
+    botLines: ["어떤 정부지원사업이 필요하세요?", STEP2_FIELDS.purposes.hint],
+    opts: STEP2_FIELDS.purposes.opts,
+  },
+  {
+    key: "innovation",
+    type: "multi",
+    botLines: ["혁신성장 분야에 해당되나요?", STEP3_FIELDS.innovation.hint],
+    opts: STEP3_FIELDS.innovation.opts,
+  },
+  {
+    key: "certifications",
+    type: "multi",
+    botLines: ["특허·인증을 보유하고 계신가요?", STEP3_FIELDS.certifications.hint],
+    opts: STEP3_FIELDS.certifications.opts,
+  },
+
+  // ── 3단계 · 맞춤 심층 질문 ──
+  { key: "revenueGrowth2y", type: "single", botLines: ["📈 최근 2년 연매출이 매년 10% 이상 늘었나요?", STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.hint], opts: STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.opts },
+  { key: "smartDevice", type: "single", botLines: ["🖥️ 매장에 스마트기기를 쓰고 있나요?", STEP3_CONDITIONAL_FIELDS.smartDevice.hint], opts: STEP3_CONDITIONAL_FIELDS.smartDevice.opts },
+  { key: "wantsRefinance", type: "single", botLines: ["🔄 고금리 대출을 저금리로 갈아타고 싶으신가요?", STEP3_CONDITIONAL_FIELDS.wantsRefinance.hint], opts: STEP3_CONDITIONAL_FIELDS.wantsRefinance.opts },
+  { key: "reFounder", type: "single", botLines: ["🔁 폐업 경험이 있고 다시 창업 중이신가요?", STEP3_CONDITIONAL_FIELDS.reFounder.hint], opts: STEP3_CONDITIONAL_FIELDS.reFounder.opts },
+  { key: "govSelected", type: "single", botLines: ["🏆 정부 선정 프로그램에 뽑힌 적 있나요?", STEP3_CONDITIONAL_FIELDS.govSelected.hint], opts: STEP3_CONDITIONAL_FIELDS.govSelected.opts },
+  { key: "privateInvestment", type: "single", botLines: ["💵 엔젤·VC 등 민간 투자를 받았거나 진행 중인가요?", STEP3_CONDITIONAL_FIELDS.privateInvestment.hint], opts: STEP3_CONDITIONAL_FIELDS.privateInvestment.opts },
+  {
+    key: "phoneConsult",
+    type: "single",
+    botLines: [PHONE_CONSULT_FIELD.label, PHONE_CONSULT_FIELD.hint],
+    opts: PHONE_CONSULT_FIELD.opts,
+  },
 ];
 
-// 대화에 쌓이는 메시지 한 줄
-type Msg =
-  | { who: "bot"; text: string }
-  | { who: "user"; text: string };
+// 진행률 표시에 쓰는 '실제로 답하는' 스텝 수(조건부 제외한 기본치)
+const TOTAL_ROUGH = 22;
+
+type Msg = { who: "bot"; text: string } | { who: "user"; text: string };
 
 export default function DiagnosisChat() {
-  // 실제 폼과 동일한 형태의 답변 저장소 (복수선택 필드는 배열로 초기화)
-  const [form, setForm] = useState<any>({ industries: [] });
-  // 지금까지 화면에 표시된 대화
+  const router = useRouter();
+  const [form, setForm] = useState<any>({
+    purposes: [], industries: [], certifications: [], innovation: [], currentInstitutions: [],
+  });
   const [messages, setMessages] = useState<Msg[]>([]);
-  // 현재 진행 중인 질문 인덱스 (CHAT_STEPS 기준). 끝나면 length 이상.
-  const [stepIdx, setStepIdx] = useState(-1); // -1 = 인트로(인사말) 단계
-  // 봇이 "입력 중..." 표시하는 중인지
+  const [stepIdx, setStepIdx] = useState(-1); // -1 = 인트로
   const [botTyping, setBotTyping] = useState(false);
-  // 현재 복수선택 진행 중 임시 선택값
   const [multiTemp, setMultiTemp] = useState<string[]>([]);
-  // 텍스트/전화/사업자번호 입력창 임시 값
   const [textTemp, setTextTemp] = useState("");
+  const [regionEtc, setRegionEtc] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [finished, setFinished] = useState(false);
+
+  // 사업자번호 조회 상태
+  const [bnoLoading, setBnoLoading] = useState(false);
+  const [bnoMsg, setBnoMsg] = useState<{ tone: "ok" | "err" | "info"; text: string } | null>(null);
+  const [bnoServerDown, setBnoServerDown] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // 새 메시지가 쌓이면 항상 맨 아래로 스크롤
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages, botTyping]);
+  }, [messages, botTyping, bnoMsg]);
 
-  // 봇 대사들을 타이핑 연출과 함께 순차 출력한 뒤 콜백 실행
+  // 봇 대사 순차 출력
   const pushBotLines = (lines: string[], onDone?: () => void) => {
     let i = 0;
     const showNext = () => {
-      if (i >= lines.length) {
-        onDone?.();
-        return;
-      }
+      if (i >= lines.length) { onDone?.(); return; }
       setBotTyping(true);
       const line = lines[i];
-      // 대사 길이에 비례한 짧은 딜레이(최소 500ms, 최대 1100ms)
-      const delay = Math.min(1100, Math.max(500, line.length * 45));
+      const delay = Math.min(1100, Math.max(450, line.length * 40));
       setTimeout(() => {
         setBotTyping(false);
         setMessages((m) => [...m, { who: "bot", text: line }]);
         i += 1;
-        setTimeout(showNext, 250);
+        setTimeout(showNext, 220);
       }, delay);
     };
     showNext();
   };
 
-  // ── 인트로(인사말 + 안내) 자동 시작 ──
+  // 인트로 자동 시작
   useEffect(() => {
-    const total = 22; // 진행률 기준 질문 필드 수(대표님 요청: 개수 안내)
     pushBotLines(
       [
         "안녕하세요, 모두의사업친구예요 😊",
         "정확한 정부지원사업 매칭 결과를 위해서는 모든 질문에 정확히 답변해 주시는 게 중요해요.",
-        `총 약 ${total}개의 질문으로 구성되어 있고, 정확히 답하실수록 더 정확한 결과를 받으실 수 있어요.`,
+        `총 약 ${TOTAL_ROUGH}개의 질문으로 구성되어 있고, 정확히 답하실수록 더 정확한 결과를 받으실 수 있어요.`,
         "그럼 시작해 볼게요! 👇",
       ],
       () => askStep(0)
@@ -160,107 +225,245 @@ export default function DiagnosisChat() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 특정 스텝의 질문을 봇이 말하도록 진행
-  const askStep = (idx: number) => {
-    if (idx >= CHAT_STEPS.length) {
-      // 프로토타입 종료 안내
-      pushBotLines([
-        "여기까지가 프로토타입 미리보기예요! 🙌",
-        "실제로는 이 방식으로 남은 질문들도 이어서 진행됩니다.",
-      ]);
-      setStepIdx(CHAT_STEPS.length);
-      return;
+  // onlyIf 조건을 만족하는 다음 스텝 인덱스 찾기(조건 불충족은 건너뜀)
+  //  ★ fState를 명시적으로 받아 stale closure 문제를 피한다 ★
+  //   (예: businessType 선택 직후 자본잠식(법인 전용) 판정에 최신 값이 필요)
+  const nextValidIdx = (from: number, fState: any): number => {
+    let i = from;
+    while (i < CHAT_STEPS.length) {
+      const s = CHAT_STEPS[i];
+      if (!s.onlyIf || s.onlyIf(fState)) return i;
+      i += 1;
     }
-    setStepIdx(idx);
+    return CHAT_STEPS.length;
+  };
+
+  const askStep = (idx: number, fState?: any) => {
+    const cur = fState ?? form;
+    const vi = nextValidIdx(idx, cur);
+    if (vi >= CHAT_STEPS.length) { finish(cur); return; }
+    setStepIdx(vi);
     setMultiTemp([]);
     setTextTemp("");
-    pushBotLines(CHAT_STEPS[idx].botLines);
+    setRegionEtc(false);
+    setBnoMsg(null);
+    setBnoServerDown(false);
+    pushBotLines(CHAT_STEPS[vi].botLines);
   };
 
-  // 단일 선택 답변 처리
+  // 단일 선택
   const answerSingle = (opt: string) => {
     const step = CHAT_STEPS[stepIdx];
-    setForm((f: any) => ({ ...f, [step.key]: opt }));         // ★ 실제 폼과 동일 저장
+    // 결격사유(회생·파산/세금/자본잠식) 선택 시 안내만 추가하고 계속 진행(기존 폼도 진행은 시킴)
+    const next = { ...form, [step.key]: opt };
+    setForm(next);
     setMessages((m) => [...m, { who: "user", text: opt }]);
-    // 짧은 리액션 후 다음 질문
-    setTimeout(() => askStep(stepIdx + 1), 400);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
-  // 복수 선택 칩 토글
-  const toggleMulti = (opt: string) => {
-    setMultiTemp((arr) =>
-      arr.includes(opt) ? arr.filter((x) => x !== opt) : [...arr, opt]
-    );
-  };
+  const toggleMulti = (opt: string) =>
+    setMultiTemp((arr) => (arr.includes(opt) ? arr.filter((x) => x !== opt) : [...arr, opt]));
 
-  // 복수 선택 확정
   const confirmMulti = () => {
     if (multiTemp.length === 0) return;
     const step = CHAT_STEPS[stepIdx];
-    setForm((f: any) => ({ ...f, [step.key]: multiTemp }));   // ★ 배열 그대로 저장
+    const next = { ...form, [step.key]: multiTemp };
+    setForm(next);
     setMessages((m) => [...m, { who: "user", text: multiTemp.join(", ") }]);
-    setTimeout(() => askStep(stepIdx + 1), 400);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
-  // 텍스트/전화/사업자번호 입력 확정
-  //  ※ 프로토타입: 사업자번호는 국세청 조회 없이 입력만 받아 흐름을 시연한다.
-  //    (실제 확장 시 기존 /api/business-status 조회 로직을 그대로 연결)
+  // 텍스트/전화 입력
   const confirmText = () => {
     const step = CHAT_STEPS[stepIdx];
     const raw = textTemp.trim();
     if (!raw) return;
-    let value = raw;
-    let display = raw;
     if (step.type === "phone") {
-      // 숫자만 저장(기존 폼과 동일하게 하이픈 표기는 표시용)
-      value = raw;
-    }
-    if (step.type === "bno") {
       const digits = raw.replace(/[^0-9]/g, "");
-      if (digits.length !== 10) return; // 10자리 아니면 대기
-      value = digits;      // 기존 폼과 동일하게 숫자 10자리 저장
-      display = raw;
+      if (digits.length < 10) return;
     }
-    setForm((f: any) => ({ ...f, [step.key]: value }));
-    setMessages((m) => [...m, { who: "user", text: display }]);
-    setTimeout(() => askStep(stepIdx + 1), 400);
+    const next = { ...form, [step.key]: raw };
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: raw }]);
+    // 1단계 성함·연락처까지 마쳤으면 부분 리드 저장(기존 폼과 동일 전략)
+    if (step.key === "phone") savePartial(next);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
+  // 지역 선택(칩) / 기타 직접입력
+  const answerRegion = (opt: string) => {
+    if (opt === "기타") { setRegionEtc(true); setTextTemp(""); return; }
+    const next = { ...form, region: opt };
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: opt }]);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
+  const confirmRegionEtc = () => {
+    const raw = textTemp.trim();
+    if (!raw) return;
+    const next = { ...form, region: raw };
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: raw }]);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
+
+  // ── 사업자번호 국세청 조회 (기존 /api/business-status 그대로) ──
+  const tryFetchBno = async (digits: string) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4500);
+    try {
+      const res = await fetch("/api/business-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bno: digits }),
+        signal: controller.signal,
+      });
+      const data = await res.json();
+      if (data.ok && data.found) return { kind: "found" as const, data };
+      if (data.serverError) return { kind: "serverDown" as const, data };
+      return { kind: "answered" as const, data };
+    } catch {
+      return { kind: "serverDown" as const, data: { ok: false, serverError: true, message: BNO_TEXT.errorServer } };
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+
+  const checkBno = async () => {
+    const digits = textTemp.replace(/[^0-9]/g, "");
+    setBnoMsg(null);
+    setBnoServerDown(false);
+    if (digits.length !== 10) return; // 10자리 아니면 조용히 대기(기존 폼과 동일)
+    setBnoLoading(true);
+    try {
+      let r = await tryFetchBno(digits);
+      if (r.kind === "serverDown") {
+        await new Promise((res) => setTimeout(res, 1200));
+        r = await tryFetchBno(digits);
+      }
+      if (r.kind === "found") {
+        // 저장값은 기존 폼과 동일
+        const next = { ...form, bno: digits, bnoStatus: r.data.status, bnoTaxType: r.data.taxType, bnoVerified: true };
+        setForm(next);
+        setMessages((m) => [...m, { who: "user", text: textTemp.trim() }]);
+        const okIcon = r.data.statusCode === "01" ? "✅" : "⚠️";
+        pushBotLines([`${okIcon} 국세청 확인 완료 — 사업자 상태: ${r.data.status}${r.data.taxType ? ` (${r.data.taxType})` : ""}`], () =>
+          askStep(stepIdx + 1, next)
+        );
+        return;
+      }
+      if (r.kind === "serverDown") {
+        setBnoServerDown(true);
+        setBnoMsg({ tone: "info", text: "지금은 국세청 조회 서버 점검 시간이에요. 아래 '직접 입력하고 계속하기'로 진행하실 수 있어요." });
+        return;
+      }
+      // 미등록/형식오류
+      setBnoMsg({ tone: "err", text: r.data.message || BNO_TEXT.errorNotFound });
+    } finally {
+      setBnoLoading(false);
+    }
+  };
+
+  // 국세청 장애 시 수동 접수(기존 confirmManualBno과 동일 저장)
+  const confirmManualBno = () => {
+    const digits = textTemp.replace(/[^0-9]/g, "");
+    if (digits.length !== 10) return;
+    const next = { ...form, bno: digits, bnoStatus: "국세청 점검으로 자동확인 없이 접수", bnoTaxType: "", bnoVerified: false };
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: textTemp.trim() }]);
+    pushBotLines(["✅ 사업자등록번호가 접수되었어요. 자동확인은 추후 처리됩니다."], () => askStep(stepIdx + 1, next));
+  };
+
+  // 예비창업자(사업자번호 없이 진행) — businessType='예비'로 세팅 후 bno 스텝 건너뜀
+  const choosePreStartup = () => {
+    const next = { ...form, businessType: "예비" };
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: "예비창업자예요 (사업자등록 전)" }]);
+    // bno 스텝 다음(name)으로 진행. businessType='예비'가 세팅되므로
+    // businessType 질문 스텝은 onlyIf 가드로 자동 스킵되고,
+    // 법인 전용 자본잠식 스텝도 onlyIf(법인)로 자동 스킵된다. (기존 폼과 동일 값 "예비")
+    pushBotLines(["예비창업자로 진행할게요! 창업 준비 단계에 맞는 지원도 함께 찾아드려요."], () => askStep(stepIdx + 1, next));
+  };
+
+  // 부분 리드 저장(관리자 계정 제외)
+  const savePartial = async (f: any) => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      const uid = data.session?.user?.id ?? null;
+      const uemail = data.session?.user?.email ?? null;
+      if (!isStatsExcludedEmail(uemail)) await savePartialLead(f, uid);
+    } catch { /* noop */ }
+  };
+
+  // ── 제출(결과로 이동) — 기존 submit 로직 그대로 ──
+  const finish = (fState?: any) => {
+    if (submitting) return;
+    setSubmitting(true);
+    setFinished(true);
+    // 최신 form(마지막 답변 반영)을 기준으로 제출. stale closure 방지.
+    const payload: any = { ...(fState ?? form) };
+    // 담보 자동세팅 + 심층질문 미응답 기본값(기존 폼과 100% 동일)
+    if (!payload.collateral) payload.collateral = "없음";
+    ["revenueGrowth2y", "smartDevice", "wantsRefinance", "reFounder", "govSelected", "privateInvestment"].forEach((k) => {
+      if (!payload[k]) payload[k] = "아니요";
+    });
+    pushBotLines(["입력해 주신 내용으로 딱 맞는 정부지원사업을 찾고 있어요… 🔎"]);
+    (async () => {
+      const RESULT_URL = "/matching-preview?analyze=1";
+      try {
+        const { data } = await supabase.auth.getSession();
+        const user = data.session?.user ?? null;
+        saveDiagnosis(payload, user?.id ?? null);
+        clearDiagnosisDraft();
+        trackConversion("SubmitApplication");
+        if (!isStatsExcludedEmail(user?.email)) await saveCompletedDiagnosis(payload, user?.id ?? null);
+        if (user) { router.push(RESULT_URL); return; }
+        router.push(`/signup?next=${encodeURIComponent(RESULT_URL)}`);
+      } catch {
+        router.push(RESULT_URL);
+      }
+    })();
+  };
+
+  // 진행률(%) — 답한 스텝 수 기준(대략)
+  const answered = messages.filter((m) => m.who === "user").length;
+  const progress = Math.min(100, Math.round((answered / TOTAL_ROUGH) * 100));
+
   const curStep = stepIdx >= 0 && stepIdx < CHAT_STEPS.length ? CHAT_STEPS[stepIdx] : null;
-  // 답변 칩을 보여줄 조건: 현재 질문이 있고, 봇이 타이핑 중이 아니고,
-  // 아직 이 질문에 답하지 않았을 때(마지막 메시지가 봇 메시지일 때)
   const lastMsg = messages[messages.length - 1];
-  const showChips = !!curStep && !botTyping && lastMsg?.who === "bot";
+  const showInput = !!curStep && !botTyping && lastMsg?.who === "bot" && !finished;
 
   return (
     <PageShell pageKey="diagnosis">
       <Header />
       <main className="px-4 py-6">
         <div className="mx-auto max-w-lg">
-          {/* 상단 프로토타입 안내 배지 */}
-          <div className="mb-3 rounded-full bg-brand-orange/10 px-3 py-1 text-center text-[11px] font-bold text-brand-orange">
-            채팅형 진단 · 프로토타입 미리보기
+          {/* 진행률 바 */}
+          <div className="mb-3">
+            <div className="mb-1.5 flex justify-between text-xs font-semibold text-brand-gray">
+              <span>무료진단</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-gray-200">
+              <div className="h-1.5 rounded-full bg-brand-grad transition-all" style={{ width: `${progress}%` }} />
+            </div>
           </div>
 
           {/* 대화 영역 */}
-          <div className="min-h-[60vh] rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
+          <div className="min-h-[58vh] rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
             <div className="flex flex-col gap-3">
               {messages.map((m, i) =>
-                m.who === "bot" ? (
-                  <BotBubble key={i} text={m.text} />
-                ) : (
-                  <UserBubble key={i} text={m.text} />
-                )
+                m.who === "bot" ? <BotBubble key={i} text={m.text} /> : <UserBubble key={i} text={m.text} />
               )}
               {botTyping && <TypingBubble />}
               <div ref={bottomRef} />
             </div>
           </div>
 
-          {/* 답변 영역 (질문 유형별 분기) */}
-          {showChips && curStep && (
+          {/* 답변 영역 */}
+          {showInput && curStep && (
             <div className="mt-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-card">
-              {/* ── 복수 선택 ── */}
+              {/* 복수 선택 */}
               {curStep.type === "multi" && (
                 <>
                   <div className="grid grid-cols-2 gap-2">
@@ -271,9 +474,7 @@ export default function DiagnosisChat() {
                           key={o}
                           onClick={() => toggleMulti(o)}
                           className={`rounded-full border px-4 py-2.5 text-sm font-semibold transition ${
-                            active
-                              ? "border-brand-orange bg-brand-grad text-brand-dark"
-                              : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
+                            active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
                           }`}
                         >
                           {o}
@@ -291,7 +492,7 @@ export default function DiagnosisChat() {
                 </>
               )}
 
-              {/* ── 단일 선택 ── */}
+              {/* 단일 선택 */}
               {curStep.type === "single" && (
                 <div className="flex flex-col gap-2">
                   {(curStep.opts || []).map((o) => (
@@ -306,8 +507,42 @@ export default function DiagnosisChat() {
                 </div>
               )}
 
-              {/* ── 텍스트 / 전화 / 사업자번호 입력 ── */}
-              {(curStep.type === "text" || curStep.type === "phone" || curStep.type === "bno") && (
+              {/* 지역: 칩 + 기타 직접입력 */}
+              {curStep.type === "region" && (
+                <>
+                  {!regionEtc ? (
+                    <div className="grid grid-cols-4 gap-2">
+                      {(curStep.opts || []).map((o) => (
+                        <button
+                          key={o}
+                          onClick={() => answerRegion(o)}
+                          className="rounded-full border border-gray-300 bg-white px-1 py-2.5 text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange"
+                        >
+                          {o}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={textTemp}
+                        onChange={(e) => setTextTemp(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && confirmRegionEtc()}
+                        placeholder="지역을 직접 입력해 주세요 (예: 00도 00시)"
+                        autoFocus
+                        className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                      />
+                      <button onClick={confirmRegionEtc} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40">
+                        입력 →
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* 성함 / 연락처 입력 */}
+              {(curStep.type === "text" || curStep.type === "phone") && (
                 <div className="flex items-center gap-2">
                   <input
                     type={curStep.type === "text" ? "text" : "tel"}
@@ -319,23 +554,49 @@ export default function DiagnosisChat() {
                     autoFocus
                     className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
                   />
-                  <button
-                    onClick={confirmText}
-                    disabled={!textTemp.trim()}
-                    className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40"
-                  >
+                  <button onClick={confirmText} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40">
                     입력 →
                   </button>
                 </div>
               )}
+
+              {/* 사업자번호: 입력 + 조회 + 예비창업자 + 상태메시지 */}
+              {curStep.type === "bno" && (
+                <>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      value={textTemp}
+                      onChange={(e) => setTextTemp(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && checkBno()}
+                      placeholder={curStep.placeholder}
+                      autoFocus
+                      className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                    />
+                    <button onClick={checkBno} disabled={bnoLoading} className="shrink-0 rounded-full bg-brand-grad px-4 py-3 text-sm font-extrabold text-brand-dark disabled:opacity-60">
+                      {bnoLoading ? "조회 중…" : "조회 →"}
+                    </button>
+                  </div>
+                  <button onClick={choosePreStartup} className="mt-2 w-full rounded-full border border-brand-orange bg-white py-2.5 text-sm font-bold text-brand-orange transition hover:bg-brand-orange/5">
+                    아직 사업자등록 전이에요 (예비창업자)
+                  </button>
+                  {bnoMsg && (
+                    <div className={`mt-2 rounded-xl px-4 py-2.5 text-xs leading-relaxed ${
+                      bnoMsg.tone === "err" ? "bg-brand-red/10 text-brand-red" : bnoMsg.tone === "ok" ? "bg-brand-green/10 text-brand-dark" : "bg-brand-orange/10 text-brand-dark"
+                    }`}>
+                      {bnoMsg.text}
+                      {bnoServerDown && (
+                        <button onClick={confirmManualBno} className="mt-2 block w-full rounded-full bg-brand-grad py-2 text-xs font-extrabold text-brand-dark">
+                          직접 입력하고 계속하기 →
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           )}
-
-          {/* 디버그: 현재까지 저장된 form (프로토타입 확인용) */}
-          <details className="mt-4 rounded-xl border border-gray-200 bg-white p-3 text-xs text-brand-gray">
-            <summary className="cursor-pointer font-bold">🔧 저장된 답변(form) 확인 — 프로토타입용</summary>
-            <pre className="mt-2 whitespace-pre-wrap break-all">{JSON.stringify(form, null, 2)}</pre>
-          </details>
         </div>
       </main>
       <Footer />
@@ -343,24 +604,15 @@ export default function DiagnosisChat() {
   );
 }
 
-// ── 봇 아바타 (기존 로고 그대로 · 둥근 사각형에 꽉 차게) ──
-//  로고 자체가 둥근 사각형이므로 원(rounded-full)으로 자르면 모서리가 어색하게 잘린다.
-//  → rounded-xl(둥근 사각형) + object-contain 으로 로고가 프레임에 딱 맞게 보이도록 한다.
+// ── 봇 아바타 (로고 그대로 · 둥근 사각형) ──
 function BotAvatar() {
   return (
     <div className="h-9 w-9 shrink-0 overflow-hidden rounded-xl">
-      <Image
-        src="/logo-icon.png"
-        alt="모두의사업친구"
-        width={36}
-        height={36}
-        className="h-full w-full object-cover"
-      />
+      <Image src="/logo-icon.png" alt="모두의사업친구" width={36} height={36} className="h-full w-full object-cover" />
     </div>
   );
 }
 
-// ── 봇 말풍선 ──
 function BotBubble({ text }: { text: string }) {
   return (
     <div className="flex items-end gap-2">
@@ -372,7 +624,6 @@ function BotBubble({ text }: { text: string }) {
   );
 }
 
-// ── 사용자 말풍선 ──
 function UserBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
@@ -383,7 +634,6 @@ function UserBubble({ text }: { text: string }) {
   );
 }
 
-// ── 봇 "입력 중..." 점 3개 애니메이션 ──
 function TypingBubble() {
   return (
     <div className="flex items-end gap-2">
