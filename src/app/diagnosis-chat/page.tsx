@@ -94,7 +94,7 @@ const CHAT_STEPS: ChatStep[] = [
   {
     key: "contact",
     type: "contact",
-    botLines: ["대표님 성함과 연락처를 알려주세요.", "진단 결과와 맞춤 상담 안내에 사용돼요."],
+    botLines: ["대표님 성함과 연락처를 알려주세요.", "진단 결과 리포트와 맞춤 안내에 사용돼요."],
   },
   // 결격사유(회생·파산 + 세금완납)를 한 질문으로 합침
   {
@@ -506,7 +506,7 @@ export default function DiagnosisChat() {
         setForm(next);
         setMessages((m) => [...m, { who: "user", text: textTemp.trim() }]);
         const okIcon = r.data.statusCode === "01" ? "✅" : "⚠️";
-        pushBotLines([`${okIcon} 국세청 확인 완료 — 사업자 상태: ${r.data.status}${r.data.taxType ? ` (${r.data.taxType})` : ""}`], () =>
+        pushBotLines([`${okIcon} 국세청 확인 완료 - 사업자 상태 : ${r.data.status}${r.data.taxType ? ` (${r.data.taxType})` : ""}`], () =>
           askStep(stepIdx + 1, next)
         );
         return;
