@@ -28,7 +28,7 @@ export const DIAGNOSIS_TEXT = {
 export const BNO_TEXT = {
   title: "🔍 사업자등록번호 국세청 자동 조회",
   badge: "(필수)",
-  placeholder: "예: 123-45-67890",
+  placeholder: "숫자 10자리만 입력 (예: 1234567890)",
   button: "조회하기",
   buttonLoading: "조회 중...",
   statusPrefix: "사업자 상태:",
@@ -53,9 +53,9 @@ export const CONTACT_TEXT = {
   groupTitle: "📇 대표자 기본정보 (필수)",
   groupNote: "",
   nameLabel: "대표자 성함",
-  namePlaceholder: "예: 홍길동",
+  namePlaceholder: "성함",
   phoneLabel: "연락처",
-  phonePlaceholder: "예: 010-1234-5678",
+  phonePlaceholder: "연락처 (예: 01012345678)",
   errorName: "대표자 성함을 입력해 주세요.",
   errorPhone: "연락처를 정확히 입력해 주세요.",
 };
@@ -283,7 +283,7 @@ export const STEP3_FIELDS = {
   //   (기존 9개 테마 데이터는 innovationAreas.ts에 그대로 보존)
   innovation: {
     label: "혁신성장 분야에 해당되나요?",
-    hint: "AI·바이오·반도체·에너지·친환경·소재부품 등 정부 혁신성장 분야 기업은 '예'. 잘 모르면 '아니요'로 넘어가셔도 됩니다.",
+    hint: "AI·바이오·반도체·에너지·친환경·소재부품 등 정부 혁신성장 분야\n해당 기업은 '예' 잘 모르면 '아니요'로 넘어가셔도 됩니다.",
     opts: ["예, 해당돼요", "아니요/모르겠음"],
   },
   // ★ 대표자 회생·파산 상태 (3단계) - 결제 차단·정책자금 제한 판정의 핵심 ★

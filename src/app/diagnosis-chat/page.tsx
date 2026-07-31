@@ -60,7 +60,7 @@ type StepType =
   | "yesnoGroup" // 예/아니요 문항 여러 개를 한 스텝에서(각각 라디오)
   | "checkGroup"; // 해당되는 것만 체크 → 체크=예, 나머지=아니요
 // yes/no 묶음 문항 하나
-type SubQ = { key: string; label: string; opts?: string[] };
+type SubQ = { key: string; label: string; opts?: string[]; desc?: string };
 type ChatStep = {
   key: string;
   type: StepType;
@@ -182,12 +182,12 @@ const CHAT_STEPS: ChatStep[] = [
     checkYes: "예",
     checkNo: "아니요",
     subs: [
-      { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 매년 10% 이상 늘었어요" },
-      { key: "smartDevice", label: "🖥️ 매장에 스마트기기를 쓰고 있어요" },
-      { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 갈아타고 싶어요" },
-      { key: "reFounder", label: "🔁 폐업 경험이 있고 다시 창업 중이에요" },
-      { key: "govSelected", label: "🏆 정부 선정 프로그램에 뽑힌 적 있어요" },
-      { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중이에요" },
+      { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 매년 10% 이상 늘었어요", desc: "예: 2년 연속 10%↑ 성장" },
+      { key: "smartDevice", label: "🖥️ 매장에 스마트기기를 쓰고 있어요", desc: "예: 키오스크·테이블오더" },
+      { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 갈아타고 싶어요", desc: "예: 카드론·2금융 7%↑" },
+      { key: "reFounder", label: "🔁 폐업 경험이 있고 다시 창업 중이에요", desc: "예: 재창업 7년 이내" },
+      { key: "govSelected", label: "🏆 정부 선정 프로그램에 뽑힌 적 있어요", desc: "예: 백년가게·TIPS" },
+      { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중이에요", desc: "예: 투자유치 실적 보유" },
     ],
   },
   {
@@ -260,13 +260,14 @@ export default function DiagnosisChat() {
   const focusRef = useRef<HTMLDivElement>(null);
   const answerRef = useRef<HTMLDivElement>(null);
 
-  // 새 질문/답변영역이 뜨면 → 맨 밑이 아니라 화면 가운데쯤으로 이동.
-  //  · 봇이 질문을 마치고 답변영역이 나타나면 답변영역을 center로.
-  //  · 타이핑 중에는 마지막 봇 말풍선을 center로.
+  // 새 질문/답변영역이 뜨면 → 현재 질문(마지막 봇 말풍선)을 화면 가운데쯤으로 이동.
+  //  · 답변 영역은 sticky로 화면 하단에 붙어 있으므로, 스크롤 기준은 '마지막 봇 말풍선'.
+  //    (답변영역을 center로 맞추면 sticky와 겹쳐 화면이 튀므로 focusRef 우선)
+  //  · 모바일에서 좌우로 치우치지 않도록 inline: "nearest" (가로 스크롤 억제).
   useEffect(() => {
     const t = setTimeout(() => {
-      const el = answerRef.current || focusRef.current;
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      const el = focusRef.current || answerRef.current;
+      el?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
     }, 80);
     return () => clearTimeout(t);
   }, [messages, botTyping, bnoMsg]);
@@ -604,7 +605,7 @@ export default function DiagnosisChat() {
   return (
     <PageShell pageKey="diagnosis">
       <Header />
-      <main className="px-4 py-6 pb-[40vh]">
+      <main className="px-4 py-6 pb-4">
         <div className="mx-auto max-w-xl">
           {/* 진행률 바 */}
           <div className="mb-3">
@@ -668,9 +669,10 @@ export default function DiagnosisChat() {
             </div>
           </div>
 
-          {/* 답변 영역 */}
+          {/* 답변 영역 — 화면 하단에 고정(sticky). 모바일에서 질문·보기·입력이 항상
+              화면 아래쪽 보기 좋은 위치에 오고, 키보드가 떠도 가려지지 않게 함(대표님 요청). */}
           {showInput && curStep && (
-            <div ref={answerRef} className="mt-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-card">
+            <div ref={answerRef} className="sticky bottom-3 z-20 mt-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.12)]">
               {/* 이전 질문으로 되돌아가 답변을 고칠 수 있는 버튼 */}
               {history.length >= 2 && (
                 <button
@@ -724,26 +726,28 @@ export default function DiagnosisChat() {
                 </div>
               )}
 
-              {/* 성함 + 연락처 (한 스텝) */}
+              {/* 성함 + 연락처 (한 스텝) — 세로가 아니라 가로 2칸(대표님 요청) */}
               {curStep.type === "contact" && (
                 <div className="flex flex-col gap-2">
-                  <input
-                    type="text"
-                    value={nameTemp}
-                    onChange={(e) => setNameTemp(e.target.value)}
-                    placeholder={CONTACT_TEXT.namePlaceholder}
-                    autoFocus
-                    className="w-full rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
-                  />
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={phoneTemp}
-                    onChange={(e) => setPhoneTemp(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && confirmContact()}
-                    placeholder={CONTACT_TEXT.phonePlaceholder}
-                    className="w-full rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={nameTemp}
+                      onChange={(e) => setNameTemp(e.target.value)}
+                      placeholder={CONTACT_TEXT.namePlaceholder}
+                      autoFocus
+                      className="min-w-0 flex-[2] rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                    />
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      value={phoneTemp}
+                      onChange={(e) => setPhoneTemp(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && confirmContact()}
+                      placeholder={CONTACT_TEXT.phonePlaceholder}
+                      className="min-w-0 flex-[3] rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                    />
+                  </div>
                   <button
                     onClick={confirmContact}
                     disabled={!nameTemp.trim() || phoneTemp.replace(/[^0-9]/g, "").length < 10}
@@ -808,7 +812,12 @@ export default function DiagnosisChat() {
                         >
                           ✓
                         </span>
-                        <span>{sub.label}</span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block leading-snug">{sub.label}</span>
+                          {sub.desc && (
+                            <span className="mt-0.5 block text-[11px] font-medium leading-tight text-brand-gray">{sub.desc}</span>
+                          )}
+                        </span>
                       </button>
                     );
                   })}
@@ -845,7 +854,7 @@ export default function DiagnosisChat() {
                         onKeyDown={(e) => e.key === "Enter" && confirmRegionEtc()}
                         placeholder="지역을 직접 입력해 주세요 (예: 00도 00시)"
                         autoFocus
-                        className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                        className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                       />
                       <button onClick={confirmRegionEtc} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40">
                         입력 →
@@ -866,7 +875,7 @@ export default function DiagnosisChat() {
                     onKeyDown={(e) => e.key === "Enter" && confirmText()}
                     placeholder={curStep.placeholder}
                     autoFocus
-                    className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                    className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                   />
                   <button onClick={confirmText} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40">
                     입력 →
@@ -875,21 +884,35 @@ export default function DiagnosisChat() {
               )}
 
               {/* 사업자번호: 입력 + 조회 + 예비창업자 + 상태메시지 */}
-              {curStep.type === "bno" && (
+              {curStep.type === "bno" && (() => {
+                // 숫자만 추린 자리수 → 10자리여야 조회 버튼 활성화(성함·연락처 입력칸과 동일 UX)
+                const bnoDigits = textTemp.replace(/[^0-9]/g, "").length;
+                const bnoReady = bnoDigits === 10;
+                return (
                 <>
+                  {/* 입력칸은 살짝 줄이고(flex-[3]) 조회 버튼은 넓게(flex-[2]) — 대표님 요청 */}
                   <div className="flex items-center gap-2">
                     <input
                       type="tel"
                       inputMode="numeric"
+                      maxLength={12}
                       value={textTemp}
                       onChange={(e) => setTextTemp(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && checkBno()}
+                      onKeyDown={(e) => e.key === "Enter" && bnoReady && checkBno()}
                       placeholder={curStep.placeholder}
                       autoFocus
-                      className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                      className="min-w-0 flex-[3] rounded-full border border-gray-300 bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                     />
-                    <button onClick={checkBno} disabled={bnoLoading} className="shrink-0 rounded-full bg-brand-grad px-4 py-3 text-sm font-extrabold text-brand-dark disabled:opacity-60">
-                      {bnoLoading ? "조회 중…" : "조회 →"}
+                    <button
+                      onClick={checkBno}
+                      disabled={bnoLoading || !bnoReady}
+                      className={`flex-[2] shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-sm font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
+                        bnoReady
+                          ? "bg-brand-grad shadow-sm"
+                          : "bg-brand-orange/25 text-brand-dark/40"
+                      }`}
+                    >
+                      {bnoLoading ? "조회 중…" : "사업자등록번호 조회 →"}
                     </button>
                   </div>
                   <button onClick={choosePreStartup} className="mt-2 w-full rounded-full border border-brand-orange bg-white py-2.5 text-sm font-bold text-brand-orange transition hover:bg-brand-orange/5">
@@ -908,7 +931,8 @@ export default function DiagnosisChat() {
                     </div>
                   )}
                 </>
-              )}
+                );
+              })()}
             </div>
           )}
         </div>
