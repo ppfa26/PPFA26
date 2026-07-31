@@ -77,6 +77,9 @@ type ChatStep = {
   labelFull?: Record<string, string>;
   // 선택지 열 수 강제(미지정 시 글자 길이로 자동 계산). 예: age → 3열 1줄
   cols?: 1 | 2 | 3;
+  // multi 타입이지만 '하나만' 고르게(라디오식). 저장은 여전히 배열([선택값]) → 매칭 값 구조 불변.
+  // 예: innovation(혁신성장) — 예/아니요 중 하나만 선택. (대표님 요청)
+  singleSelect?: boolean;
 };
 
 const CHAT_STEPS: ChatStep[] = [
@@ -162,6 +165,7 @@ const CHAT_STEPS: ChatStep[] = [
   {
     key: "innovation",
     type: "multi",
+    singleSelect: true, // 예/아니요 중 하나만(라디오) — 둘 다 선택 불가. 저장은 [선택값] 배열 유지.
     botLines: ["혁신성장 분야에 해당되나요?", STEP3_FIELDS.innovation.hint],
     opts: STEP3_FIELDS.innovation.opts,
   },
@@ -376,6 +380,15 @@ export default function DiagnosisChat() {
 
   const toggleMulti = (opt: string) =>
     setMultiTemp((arr) => (arr.includes(opt) ? arr.filter((x) => x !== opt) : [...arr, opt]));
+
+  // singleSelect(라디오식) multi: 하나만 골라 즉시 저장·다음으로. 저장 값은 [opt] 배열 → 매칭 구조 불변.
+  const answerMultiSingle = (opt: string) => {
+    const step = CHAT_STEPS[stepIdx];
+    const next = { ...form, [step.key]: [opt] };
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: step.labelFull?.[opt] || opt }]);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
 
   const confirmMulti = () => {
     if (multiTemp.length === 0) return;
@@ -691,7 +704,8 @@ export default function DiagnosisChat() {
                       return (
                         <button
                           key={o}
-                          onClick={() => toggleMulti(o)}
+                          // singleSelect면 하나만 즉시 선택·다음으로(라디오), 아니면 복수 토글.
+                          onClick={() => (curStep.singleSelect ? answerMultiSingle(o) : toggleMulti(o))}
                           className={`break-keep rounded-full border px-3 py-2.5 text-[13px] font-semibold transition ${
                             active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
                           }`}
@@ -701,13 +715,16 @@ export default function DiagnosisChat() {
                       );
                     })}
                   </div>
-                  <button
-                    onClick={confirmMulti}
-                    disabled={multiTemp.length === 0}
-                    className="mt-3 w-full rounded-full bg-brand-grad py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40"
-                  >
-                    {multiTemp.length > 0 ? `${multiTemp.length}개 선택 완료 →` : "하나 이상 선택해 주세요"}
-                  </button>
+                  {/* singleSelect(라디오)는 '완료' 버튼 없이 클릭 즉시 진행 → 완료 버튼 숨김 */}
+                  {!curStep.singleSelect && (
+                    <button
+                      onClick={confirmMulti}
+                      disabled={multiTemp.length === 0}
+                      className="mt-3 w-full rounded-full bg-brand-grad py-3 text-sm font-extrabold text-brand-dark disabled:opacity-40"
+                    >
+                      {multiTemp.length > 0 ? `${multiTemp.length}개 선택 완료 →` : "하나 이상 선택해 주세요"}
+                    </button>
+                  )}
                 </>
               )}
 

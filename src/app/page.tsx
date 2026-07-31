@@ -416,6 +416,18 @@ export default function Home() {
                           <p className="mt-1.5 break-keep text-[11px] leading-relaxed text-brand-dark/60">
                             <b className="text-brand-dark/80">대상</b> · {p.target}
                           </p>
+                          {/* 4버튼(신청하러 가기 / 신청 방법·서류 / 소요기간 / 연락처) — 미리보기라 비활성 */}
+                          <div className="mt-2.5 flex flex-col gap-1.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="inline-block cursor-default break-keep rounded-lg bg-brand-orange px-3 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_8px_rgba(255,140,0,0.4)]">📝 신청하러 가기 →</span>
+                              <span className="inline-block cursor-default break-keep rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-1.5 text-[11px] font-bold text-brand-orange">📋 신청 방법·서류</span>
+                              <span className="inline-block cursor-default break-keep rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-1.5 text-[11px] font-bold text-brand-orange">⏱️ 소요기간 통상 6~10주</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                              <span className="inline-flex cursor-default items-center gap-1 break-keep rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green">📞 1357</span>
+                              <span className="break-keep text-[11px] leading-relaxed text-brand-dark/45">창업·정부지원 통합콜센터(1357)로 문의하면 K-Startup 신청 안내가 빠릅니다.</span>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -495,9 +507,9 @@ export default function Home() {
                       </span>
                       <div className={`mt-3 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                         {[
-                          { t: "카드 수수료 우대율", c: "수수료", cCls: "bg-rose-100 text-rose-700", saving: "연 약 60만원 절감", hook: "연매출 30억원 이하 영세·중소가맹점이면 별도 신청 없이 자동 적용됩니다." },
-                          { t: "청년창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 50% 감면 (수도권)", hook: "만 34세 이하·창업 5년 이내면 세무신고 때 자동 적용, 경쟁이 없습니다." },
-                          { t: "창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 50% 감면 (수도권)", hook: "창업 5년 이내면 요건 충족 시 신고 때 자동 적용됩니다." },
+                          { t: "카드 수수료 우대율", c: "수수료", cCls: "bg-rose-100 text-rose-700", saving: "연 약 60만원 절감", hook: "연매출 30억원 이하 영세·중소가맹점이면 별도 신청 없이 자동 적용됩니다.", applyName: "카드사·여신금융협회" },
+                          { t: "청년창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 50% 감면 (수도권)", hook: "만 34세 이하·창업 5년 이내면 세무신고 때 자동 적용, 경쟁이 없습니다.", applyName: "홈택스" },
+                          { t: "창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 50% 감면 (수도권)", hook: "창업 5년 이내면 요건 충족 시 신고 때 자동 적용됩니다.", applyName: "홈택스" },
                         ].map((b, i) => (
                           <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                             <div className="flex flex-wrap items-center gap-1.5">
@@ -507,6 +519,10 @@ export default function Home() {
                             </div>
                             <p className="mt-1.5 break-keep text-[12px] font-bold text-brand-green">📉 {b.saving}</p>
                             <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">💡 {b.hook}</p>
+                            {/* 실제 결과창과 동일한 '신청하러 가기' 버튼 — 미리보기라 비활성 */}
+                            <span className="mt-2.5 inline-block cursor-default break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white">
+                              🔗 {b.applyName} 신청하러 가기 →
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -544,9 +560,9 @@ export default function Home() {
                     {/* 기관별 상세 - 실제 결과창(기관명+대리/직접대출 배지 → 안내 → 상품 보기 버튼) */}
                     <div className={`mt-2 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { inst: "기술보증기금", nature: "대리대출", natCls: "bg-indigo-100 text-indigo-700", isGuarantee: true, criteria: "기술력 보유 중소·벤처기업 대상 기술보증서 발급. 보증서로 은행 대출 실행.", prodCount: 3 },
-                        { inst: "중소벤처기업진흥공단", nature: "직접대출", natCls: "bg-emerald-100 text-emerald-700", isGuarantee: false, criteria: "신성장기반자금·신시장진출자금 등 공단이 직접 저금리로 융자. 시설·운전자금 모두 가능.", prodCount: 3 },
-                        { inst: "소상공인시장진흥공단", nature: "직접대출", natCls: "bg-emerald-100 text-emerald-700", isGuarantee: false, criteria: "혁신성장촉진자금·대환대출 등 소상공인 전용 저금리 정책자금.", prodCount: 2 },
+                        { inst: "기술보증기금", nature: "대리대출", natCls: "bg-indigo-100 text-indigo-700", isGuarantee: true, criteria: "기술력 보유 중소·벤처기업 대상 기술보증서 발급. 보증서로 은행 대출 실행.", prodCount: 3, siteLabel: "기술보증기금 사이트", pdfLabel: "보증상품 안내자료 확인하기", tel: "1544-****", telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다." },
+                        { inst: "중소벤처기업진흥공단", nature: "직접대출", natCls: "bg-emerald-100 text-emerald-700", isGuarantee: false, criteria: "신성장기반자금·신시장진출자금 등 공단이 직접 저금리로 융자. 시설·운전자금 모두 가능.", prodCount: 3, siteLabel: "중소벤처기업진흥공단 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1811-****", telNote: "정책자금 전용번호가 일반문의보다 대기가 짧습니다." },
+                        { inst: "소상공인시장진흥공단", nature: "직접대출", natCls: "bg-emerald-100 text-emerald-700", isGuarantee: false, criteria: "혁신성장촉진자금·대환대출 등 소상공인 전용 저금리 정책자금.", prodCount: 2, siteLabel: "소상공인 정책자금 신청", pdfLabel: "정책자금 상품안내 확인하기", tel: "1533-****", telNote: "중진공·소진공·중기부 통합상담도 가능합니다." },
                       ].map((m, i) => (
                         <div key={i} className="py-4 first:pt-0">
                           <div className="flex flex-wrap items-center gap-1.5">
@@ -555,14 +571,30 @@ export default function Home() {
                             <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">✅ 신청 가능</span>
                           </div>
                           <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray">{m.criteria}</p>
-                          {m.isGuarantee && (
+                          {m.isGuarantee ? (
                             <p className="mt-2 break-keep rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-blue-800">
                               <b>ℹ️ 대리대출(보증)</b> · 이 기관은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요.
+                            </p>
+                          ) : (
+                            <p className="mt-2 break-keep rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-emerald-800">
+                              <b>ℹ️ 직접대출</b> · 이 상품은 <b>은행을 거치지 않고</b> 기관에서 <b>대출이 바로 실행</b>돼요.
                             </p>
                           )}
                           <div className="mt-2.5 flex w-full items-center justify-between gap-2 rounded-xl border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2">
                             <span className="break-keep text-[12px] font-extrabold text-brand-orange">💳 신청 가능 상품 {m.prodCount}개 보기</span>
                             <span className="shrink-0 text-brand-orange">▼</span>
+                          </div>
+                          {/* 실제 결과창과 동일한 버튼 4종(신청 매뉴얼 / 사이트 / 안내자료 / 연락처) — 미리보기라 비활성 */}
+                          <div className="mt-2.5 flex flex-col gap-1.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="inline-block cursor-default rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-1.5 text-[11px] font-bold text-brand-orange opacity-90">📄 신청 매뉴얼</span>
+                              <span className="inline-block cursor-default rounded-lg bg-brand-orange px-3 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_8px_rgba(255,140,0,0.4)]">🔗 {m.siteLabel}</span>
+                              <span className="inline-block cursor-default rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-1.5 text-[11px] font-bold text-brand-orange opacity-90">📑 {m.pdfLabel}</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                              <span className="inline-flex cursor-default items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green">📞 {m.tel}</span>
+                              <span className="break-keep text-[11px] leading-relaxed text-brand-dark/45">{m.telNote}</span>
+                            </div>
                           </div>
                         </div>
                       ))}

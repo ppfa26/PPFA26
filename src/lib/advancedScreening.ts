@@ -531,7 +531,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "소상공인시장진흥공단",
       criteria:
-        "중진공 직접대출을 이미 받은 기업도 병행할 수 있으며, 소진공 대리대출도 함께 진행할 수 있습니다.\n\n※ 지역별 편차가 크며, 실제 승인 여부는 대표자의 신용·매출·상환여력을 종합해 판단합니다.",
+        "중진공 직접대출을 이미 받은 기업도 병행할 수 있으며, 소진공 대리대출도 함께 진행할 수 있습니다.\n※ 지역별 편차가 크며, 실제 승인 여부는 대표자의 신용·매출·상환여력을 종합해 판단합니다.",
       priority: "MEDIUM",
       loan_type: "직접대출",
       step: 3,

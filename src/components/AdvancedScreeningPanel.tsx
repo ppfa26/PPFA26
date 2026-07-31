@@ -952,26 +952,43 @@ function AdvancedResult({
                 <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
                   {p.detail}
                 </p>
-                {/* ★ 버튼 2종 (대표님 요청) ★ ① 사이트 바로가기 ② 신청 매뉴얼(있는 경우만) */}
-                <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                  <a
-                    href={previewLock ? undefined : p.siteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-3.5 py-2 text-xs font-extrabold text-white transition hover:brightness-95 ${lockClick}`}
-                  >
-                    <span aria-hidden>🔗</span> 사이트 바로가기 <span aria-hidden>→</span>
-                  </a>
-                  {p.manualUrl && (
+                {/* ★ 버튼 4종 (대표님 요청) ★ ① 신청하러 가기(사이트) ② 신청 방법·서류(매뉴얼) ③ 소요기간 ④ 연락처
+                     첫페이지 미리보기와 동일한 구성. 사이트/매뉴얼은 실제 링크, 소요기간·연락처는 안내(K-Startup 공통). */}
+                <div className="mt-2.5 flex flex-col gap-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
                     <a
-                      href={previewLock ? undefined : p.manualUrl}
+                      href={previewLock ? undefined : p.siteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-1.5 rounded-lg border border-brand-orange bg-white px-3.5 py-2 text-xs font-extrabold text-brand-orange transition hover:bg-brand-orange/5 ${lockClick}`}
+                      className={`inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-3.5 py-2 text-xs font-extrabold text-white transition hover:brightness-95 ${lockClick}`}
                     >
-                      <span aria-hidden>📄</span> 신청 매뉴얼
+                      <span aria-hidden>📝</span> 신청하러 가기 <span aria-hidden>→</span>
                     </a>
-                  )}
+                    {p.manualUrl && (
+                      <a
+                        href={previewLock ? undefined : p.manualUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-1.5 rounded-lg border border-brand-orange bg-white px-3.5 py-2 text-xs font-extrabold text-brand-orange transition hover:bg-brand-orange/5 ${lockClick}`}
+                      >
+                        <span aria-hidden>📋</span> 신청 방법·서류
+                      </a>
+                    )}
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2 text-xs font-bold text-brand-orange">
+                      <span aria-hidden>⏱️</span> 소요기간 통상 6~10주
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <a
+                      href={previewLock ? undefined : "tel:1357"}
+                      className={`inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20 ${lockClick}`}
+                    >
+                      📞 1357
+                    </a>
+                    <span className={`break-keep text-[11px] leading-relaxed text-brand-dark/45 ${lockText}`}>
+                      창업·정부지원 통합콜센터(1357)로 문의하면 K-Startup 신청 안내가 빠릅니다.
+                    </span>
+                  </div>
                 </div>
               </CollapsibleItem>
             );
@@ -1242,6 +1259,17 @@ function AdvancedResult({
                   m.institution.includes("재단")) && (
                   <p className="mt-2 break-keep rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-blue-800">
                     <b>ℹ️ 대리대출(보증)</b> · 이 기관은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요.
+                  </p>
+                )}
+
+                {/* ★ 직접대출 기관(중진공·소진공) 안내 (대표님 요청) ★
+                     "여긴 은행 안 거치고 공단이 바로 대출해 주는 곳"임을 초보 고객도 바로 알게. */}
+                {(m.institution.includes("중소벤처기업진흥공단") ||
+                  m.institution.includes("소상공인시장진흥공단") ||
+                  m.institution.includes("중진공") ||
+                  m.institution.includes("소진공")) && (
+                  <p className="mt-2 break-keep rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-emerald-800">
+                    <b>ℹ️ 직접대출</b> · 이 상품은 <b>은행을 거치지 않고</b> 기관에서 <b>대출이 바로 실행</b>돼요.
                   </p>
                 )}
 
@@ -1566,8 +1594,8 @@ function AdvancedResult({
             );
           })}
         </div>
-        {/* 💡/📊 안내 박스: 상단 여백 축소(mt-2→mt-0.5, 대표님 요청) */}
-        <div className="mt-0.5 space-y-2">
+        {/* 💡/📊 안내 박스: 상단 여백을 아래 박스들(🗓️/📊/공고)과 동일한 mt-4로 통일 → 세로 간격 오와열 정렬(대표님 요청 Q5) */}
+        <div className="mt-4 space-y-2">
           <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-xs leading-relaxed text-brand-dark">
             💡 대출은 보통 <b>직접대출 1곳(공단이 직접 실행) + 대리대출 1곳(보증서를 받아 은행에서 실행)</b>, 즉 <b>총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>
