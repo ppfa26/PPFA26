@@ -972,7 +972,7 @@ function BotBubble({ text }: { text: string }) {
   return (
     <div className="flex items-end gap-2">
       <BotAvatar />
-      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm leading-relaxed text-brand-dark shadow-sm">
+      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 text-sm leading-relaxed text-brand-dark shadow-sm">
         {text}
       </div>
     </div>
@@ -982,7 +982,7 @@ function BotBubble({ text }: { text: string }) {
 function UserBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-br-md bg-brand-grad px-4 py-3 text-sm font-semibold leading-relaxed text-brand-dark shadow-sm">
+      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-br-md border border-white bg-brand-grad px-4 py-3 text-sm font-semibold leading-relaxed text-brand-dark shadow-sm">
         {text}
       </div>
     </div>
@@ -993,7 +993,7 @@ function TypingBubble() {
   return (
     <div className="flex items-end gap-2">
       <BotAvatar />
-      <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3 shadow-sm">
+      <div className="rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 shadow-sm">
         <div className="flex gap-1">
           <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-gray [animation-delay:-0.3s]" />
           <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-gray [animation-delay:-0.15s]" />
