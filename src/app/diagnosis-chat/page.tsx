@@ -656,9 +656,9 @@ export default function DiagnosisChat() {
               대화영역(위) ↔ 입력영역(아래) 사이에 flex 스페이서를 넣어
               봇 질문은 위, 입력창은 아래에 자연 배치한다(카톡식 채팅 레이아웃).
               → 카드 밖 배경 여백도, 카드 안 휑함도 동시에 해결.
-              세로 길이는 100dvh-230px 로 살짝 줄여(대표님 요청) 카드 아래 배경이
-              조금 보이게 해 답답함을 던다. */}
-          <div className="flex min-h-[calc(100dvh-230px)] flex-col rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
+              세로 길이는 100dvh-330px 로 더 줄여(대표님 재요청) 카드 아래 배경이
+              충분히 보이게 해 답답함을 던다. */}
+          <div className="flex min-h-[calc(100dvh-330px)] flex-col rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
             <div className="flex flex-col gap-3">
               {(() => {
                 // 최근 N개만 노출(=현재 질문 위주). 나머지는 접어서 위로 올린다.
