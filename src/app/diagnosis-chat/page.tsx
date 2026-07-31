@@ -187,7 +187,7 @@ const CHAT_STEPS: ChatStep[] = [
     checkNo: "아니요",
     subs: [
       { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 매년 10% 이상 늘었어요", desc: "예: 2년 연속 10%↑ 성장" },
-      { key: "smartDevice", label: "🖥️ 매장에 스마트기기를 쓰고 있어요", desc: "예: 키오스크·테이블오더" },
+      { key: "smartDevice", label: "🖥️ 매장에 스마트기기를 쓰고 있어요", desc: "예: 키오스크·테이블오더·매출관리 프로그램·무인기기·조리 및 서빙 로봇" },
       { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 갈아타고 싶어요", desc: "예: 카드론·2금융 7%↑" },
       { key: "reFounder", label: "🔁 폐업 경험이 있고 다시 창업 중이에요", desc: "예: 재창업 7년 이내" },
       { key: "govSelected", label: "🏆 정부 선정 프로그램에 뽑힌 적 있어요", desc: "예: 백년가게·TIPS" },
