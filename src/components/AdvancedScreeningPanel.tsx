@@ -1556,8 +1556,8 @@ function AdvancedResult({
             );
           })}
         </div>
-        {/* 💡/📊 안내 박스: 상단 여백을 문구 간격(space-y-2)과 맞춰 상하 균형 (대표님 요청) */}
-        <div className="mt-2 space-y-2">
+        {/* 💡/📊 안내 박스: 상단 여백 축소(mt-2→mt-0.5, 대표님 요청) */}
+        <div className="mt-0.5 space-y-2">
           <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-xs leading-relaxed text-brand-dark">
             💡 대출은 보통 <b>직접대출 1곳(공단이 직접 실행) + 대리대출 1곳(보증서를 받아 은행에서 실행)</b>, 즉 <b>총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>
