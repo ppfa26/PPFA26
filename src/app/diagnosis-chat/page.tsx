@@ -196,6 +196,26 @@ const CHAT_STEPS: ChatStep[] = [
 //  (조건부 스텝은 대부분 안 나오므로 제외해서 대략치를 계산)
 const TOTAL_ROUGH = CHAT_STEPS.filter((s) => !s.onlyIf).length;
 
+// ── 선택지 가로 배치용 열 수 자동 계산 (C안) ──
+//  · 옵션 글자 길이에 맞춰 질문마다 2열/3열을 다르게 자동 결정.
+//  · 짧은 답(예/아니요, 서울·경기 등) → 3열로 촘촘하게(세로 길이↓)
+//  · 긴 답(신용보증재단·무역보험공사 등) → 2열(글자 잘림 방지)
+//  · 아주 긴 답 → 1열
+function autoCols(opts: string[]): 1 | 2 | 3 {
+  if (!opts || opts.length === 0) return 1;
+  const maxLen = Math.max(...opts.map((o) => o.length));
+  // 옵션이 2개뿐이면 항상 한 줄에 2개(예/아니요 형태)
+  if (opts.length === 2) return maxLen <= 12 ? 2 : 1;
+  if (maxLen <= 6) return 3; // "1년 미만", "서울" 처럼 짧으면 3열
+  if (maxLen <= 14) return 2; // 보통 길이는 2열
+  return 1; // 아주 길면 1열(줄바꿈/잘림 방지)
+}
+const COLS_CLASS: Record<1 | 2 | 3, string> = {
+  1: "grid-cols-1",
+  2: "grid-cols-2",
+  3: "grid-cols-3",
+};
+
 type Msg = { who: "bot"; text: string } | { who: "user"; text: string };
 
 export default function DiagnosisChat() {
@@ -218,16 +238,31 @@ export default function DiagnosisChat() {
   const [checkTemp, setCheckTemp] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [finished, setFinished] = useState(false);
+  // 이전 질문으로 되돌아가기용 히스토리 스택
+  //  · 각 스텝을 물어보기 직전의 상태(스텝 인덱스 / 그 시점 form / 그 시점 메시지 개수)를 기록.
+  //  · '이전 질문 수정'을 누르면 마지막 기록으로 되감아 답을 다시 받을 수 있다.
+  const [history, setHistory] = useState<{ idx: number; formBefore: any; msgLen: number }[]>([]);
+  // 지난 대화 접기(펼치기 토글)
+  const [showAll, setShowAll] = useState(false);
 
   // 사업자번호 조회 상태
   const [bnoLoading, setBnoLoading] = useState(false);
   const [bnoMsg, setBnoMsg] = useState<{ tone: "ok" | "err" | "info"; text: string } | null>(null);
   const [bnoServerDown, setBnoServerDown] = useState(false);
 
-  const bottomRef = useRef<HTMLDivElement>(null);
+  // 현재 질문(마지막 봇 말풍선)을 화면 '가운데쯤'으로 스크롤하기 위한 앵커
+  const focusRef = useRef<HTMLDivElement>(null);
+  const answerRef = useRef<HTMLDivElement>(null);
 
+  // 새 질문/답변영역이 뜨면 → 맨 밑이 아니라 화면 가운데쯤으로 이동.
+  //  · 봇이 질문을 마치고 답변영역이 나타나면 답변영역을 center로.
+  //  · 타이핑 중에는 마지막 봇 말풍선을 center로.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    const t = setTimeout(() => {
+      const el = answerRef.current || focusRef.current;
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 80);
+    return () => clearTimeout(t);
   }, [messages, botTyping, bnoMsg]);
 
   // 봇 대사 순차 출력
@@ -279,7 +314,14 @@ export default function DiagnosisChat() {
     const cur = fState ?? form;
     const vi = nextValidIdx(idx, cur);
     if (vi >= CHAT_STEPS.length) { finish(cur); return; }
+    // 이 스텝을 물어보기 직전 상태를 히스토리에 기록(되돌아가기용).
+    //  msgLen은 '질문 말풍선이 붙기 전' 메시지 개수 → 되감을 때 여기까지 잘라낸다.
+    setMessages((m) => {
+      setHistory((h) => [...h, { idx: vi, formBefore: cur, msgLen: m.length }]);
+      return m;
+    });
     setStepIdx(vi);
+    setShowAll(false);
     setMultiTemp([]);
     setTextTemp("");
     setRegionEtc(false);
@@ -290,6 +332,27 @@ export default function DiagnosisChat() {
     setBnoMsg(null);
     setBnoServerDown(false);
     pushBotLines(CHAT_STEPS[vi].botLines);
+  };
+
+  // ── 이전 질문으로 되돌아가기(답변 수정) ──
+  //  마지막으로 기록된 히스토리(=현재 질문)를 버리고, 그 이전 질문을 다시 물어본다.
+  const goBack = () => {
+    if (botTyping || submitting) return;
+    if (history.length < 2) return; // 첫 질문이면 되돌릴 곳이 없음
+    // 현재 질문 기록 제거 → 이전 질문 기록이 목표
+    const prev = history[history.length - 2];
+    // prev.idx보다 뒤의 히스토리는 모두 제거(그 지점부터 다시 진행)
+    setHistory((h) => h.slice(0, h.length - 2));
+    // 메시지를 이전 질문 직전까지 잘라냄
+    setMessages((m) => m.slice(0, prev.msgLen));
+    // form을 이전 질문 직전 상태로 복원
+    setForm(prev.formBefore);
+    setStepIdx(-2); // 재질문 준비(임시). askStep이 다시 세팅.
+    setShowAll(false);
+    setBnoMsg(null);
+    setBnoServerDown(false);
+    // 이전 질문을 다시 물어본다.
+    setTimeout(() => askStep(prev.idx, prev.formBefore), 60);
   };
 
   // 단일 선택
@@ -522,7 +585,7 @@ export default function DiagnosisChat() {
   return (
     <PageShell pageKey="diagnosis">
       <Header />
-      <main className="px-4 py-6">
+      <main className="px-4 py-6 pb-[40vh]">
         <div className="mx-auto max-w-xl">
           {/* 진행률 바 */}
           <div className="mb-3">
@@ -535,31 +598,73 @@ export default function DiagnosisChat() {
             </div>
           </div>
 
-          {/* 대화 영역 */}
-          <div className="min-h-[58vh] rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
+          {/* 대화 영역 — 지난 질문은 자동으로 접고 현재 질문 위주로 보여준다 */}
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
             <div className="flex flex-col gap-3">
-              {messages.map((m, i) =>
-                m.who === "bot" ? <BotBubble key={i} text={m.text} /> : <UserBubble key={i} text={m.text} />
-              )}
+              {(() => {
+                // 최근 N개만 노출(=현재 질문 위주). 나머지는 접어서 위로 올린다.
+                const KEEP = 4;
+                const hiddenCount = showAll ? 0 : Math.max(0, messages.length - KEEP);
+                const visible = showAll ? messages : messages.slice(hiddenCount);
+                return (
+                  <>
+                    {hiddenCount > 0 && (
+                      <button
+                        onClick={() => setShowAll(true)}
+                        className="mx-auto rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+                      >
+                        ▲ 지난 대화 {hiddenCount}개 펼쳐보기
+                      </button>
+                    )}
+                    {showAll && messages.length > KEEP && (
+                      <button
+                        onClick={() => setShowAll(false)}
+                        className="mx-auto rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+                      >
+                        ▼ 지난 대화 접기
+                      </button>
+                    )}
+                    {visible.map((m, i) => {
+                      const realIdx = (showAll ? 0 : hiddenCount) + i;
+                      const isLastBot = realIdx === messages.length - 1 && m.who === "bot";
+                      return m.who === "bot" ? (
+                        <div key={realIdx} ref={isLastBot ? focusRef : undefined}>
+                          <BotBubble text={m.text} />
+                        </div>
+                      ) : (
+                        <UserBubble key={realIdx} text={m.text} />
+                      );
+                    })}
+                  </>
+                );
+              })()}
               {botTyping && <TypingBubble />}
-              <div ref={bottomRef} />
             </div>
           </div>
 
           {/* 답변 영역 */}
           {showInput && curStep && (
-            <div className="mt-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-card">
+            <div ref={answerRef} className="mt-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-card">
+              {/* 이전 질문으로 되돌아가 답변을 고칠 수 있는 버튼 */}
+              {history.length >= 2 && (
+                <button
+                  onClick={goBack}
+                  className="mb-2.5 inline-flex items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+                >
+                  ← 이전 질문 수정
+                </button>
+              )}
               {/* 복수 선택 */}
               {curStep.type === "multi" && (
                 <>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className={`grid gap-2 ${COLS_CLASS[autoCols(curStep.opts || [])]}`}>
                     {(curStep.opts || []).map((o) => {
                       const active = multiTemp.includes(o);
                       return (
                         <button
                           key={o}
                           onClick={() => toggleMulti(o)}
-                          className={`rounded-full border px-4 py-2.5 text-sm font-semibold transition ${
+                          className={`break-keep rounded-full border px-3 py-2.5 text-[13px] font-semibold transition ${
                             active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-gray-300 bg-white text-brand-dark hover:border-brand-orange"
                           }`}
                         >
@@ -578,14 +683,14 @@ export default function DiagnosisChat() {
                 </>
               )}
 
-              {/* 단일 선택 */}
+              {/* 단일 선택 — 글자 길이에 맞춰 2/3열 자동 배치(C안) */}
               {curStep.type === "single" && (
-                <div className="flex flex-col gap-2">
+                <div className={`grid gap-2 ${COLS_CLASS[autoCols(curStep.opts || [])]}`}>
                   {(curStep.opts || []).map((o) => (
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="break-keep rounded-full border border-gray-300 bg-white px-3 py-2.5 text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       {o}
                     </button>
