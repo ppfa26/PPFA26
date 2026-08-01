@@ -102,16 +102,16 @@ type ChatStep = {
 
 const CHAT_STEPS: ChatStep[] = [
   // ── 1단계 · 기본 정보 ──
-  // ★ 사업자번호 + 성함·연락처를 한 화면으로(대표님 요청) ★
-  //  사업자번호 조회(또는 예비창업자)가 끝나면 같은 화면 하단에 성함·연락처
-  //  입력칸이 펼쳐지고, '입력 완료'로 한 번에 다음(자격확인)으로 넘어간다.
-  //  기존 contact 스텝은 이 화면에 흡수됨 → 저장값(name/phone) 구조 동일.
+  // ★ 사업자번호 + 성함·연락처를 '한 화면'에 함께(대표님 요청) ★
+  //  사업자등록번호 · 성함 · 연락처 입력칸이 처음부터 동시에 보이고,
+  //  '입력 완료 →' 하나로 (조회했으면 국세청 조회값 포함) 전부 저장 후
+  //  다음(자격확인)으로 넘어간다. 기존 contact 스텝은 이 화면에 흡수됨.
   {
     key: "bno",
     type: "bno",
     botLines: [
-      "먼저 사업자등록번호를 알려주세요.",
-      "국세청에 등록된 정상 사업자인지\n확인 하는 절차에요.",
+      "먼저 사업자등록번호와 성함·연락처를\n한 번에 알려주세요.",
+      "사업자등록번호는 국세청에 등록된 정상\n사업자인지 확인하는 절차예요.",
     ],
     placeholder: BNO_TEXT.placeholder,
   },
@@ -198,6 +198,7 @@ const CHAT_STEPS: ChatStep[] = [
         label: "사업장 지역",
         opts: STEP1_FIELDS.region.opts,
         scalar: true, // 단일 문자열 저장. '기타' 선택 시 인라인 입력창 노출.
+        cols: 2, // ★ 대표님 요청 ★ 2열 2줄(서울 경기 / 인천 기타) 고정
       },
       {
         key: "currentInstitutions",
@@ -322,11 +323,9 @@ export default function DiagnosisChat() {
   const [bnoLoading, setBnoLoading] = useState(false);
   const [bnoMsg, setBnoMsg] = useState<{ tone: "ok" | "err" | "info"; text: string } | null>(null);
   const [bnoServerDown, setBnoServerDown] = useState(false);
-  // ★ bno + 성함·연락처를 한 화면에서(대표님 요청) ★
-  //  사업자번호 조회(또는 예비창업자/수동입력)가 끝나면 바로 다음 스텝으로 넘기지 않고,
-  //  같은 화면 하단에 성함·연락처 입력칸을 펼친다(bnoContactOpen=true).
-  //  '입력 완료'를 누르면 contact 값을 저장하고 다음 스텝(eligibility)으로 진행한다.
-  const [bnoContactOpen, setBnoContactOpen] = useState(false);
+  // ★ bno + 성함·연락처를 '한 화면'에서 함께 받는다(대표님 요청) ★
+  //  사업자등록번호 · 성함 · 연락처 입력칸을 처음부터 동시에 노출하고, '입력 완료 →' 하나로
+  //  (조회했으면 조회값 포함) 전부 저장 후 다음 스텝(eligibility)으로 진행한다.
 
   // 현재 질문(마지막 봇 말풍선)을 화면 '가운데쯤'으로 스크롤하기 위한 앵커
   const focusRef = useRef<HTMLDivElement>(null);
@@ -420,7 +419,6 @@ export default function DiagnosisChat() {
     setCheckTemp([]);
     setBnoMsg(null);
     setBnoServerDown(false);
-    setBnoContactOpen(false);
     // ★ 대표님 요청 ★ 질문+힌트가 2줄로 나뉘던 것을 '한 말풍선'으로 묶어서 표시(모든 곳).
     //   여러 줄(botLines)을 \n으로 이어 하나의 말풍선으로 렌더한다. (BotBubble이 whitespace-pre-line)
     pushBotLines([CHAT_STEPS[vi].botLines.filter(Boolean).join("\n")]);
@@ -486,9 +484,22 @@ export default function DiagnosisChat() {
     const phone = phoneTemp.trim();
     const digits = phone.replace(/[^0-9]/g, "");
     if (!name || digits.length < 10) return;
-    const next = { ...form, name, phone };
+    // ★ 사업자번호+성함·연락처 한 화면(대표님 요청) ★
+    //  성함·연락처 확정 시, 조회를 누르지 않았어도 입력창에 남은 사업자번호(10자리)를
+    //  함께 저장한다. (예비창업자는 businessType='예비'가 이미 세팅되어 bno 없이 진행)
+    const bnoDigits = textTemp.replace(/[^0-9]/g, "");
+    const next: any = { ...form, name, phone };
+    if (form.businessType !== "예비" && !form.bno && bnoDigits.length === 10) {
+      next.bno = bnoDigits;
+      if (!form.bnoVerified) {
+        next.bnoStatus = "미조회(입력만)";
+        next.bnoTaxType = "";
+        next.bnoVerified = false;
+      }
+    }
     setForm(next);
-    setMessages((m) => [...m, { who: "user", text: `${name} · ${phone}` }]);
+    const bnoLabel = next.bno ? `사업자번호 ${next.bno} · ` : next.businessType === "예비" ? "예비창업자 · " : "";
+    setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${name} · ${phone}` }]);
     savePartial(next); // 성함·연락처 확보 시 부분 리드 저장(기존 폼과 동일 전략)
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
@@ -646,10 +657,12 @@ export default function DiagnosisChat() {
         setForm(next);
         setMessages((m) => [...m, { who: "user", text: textTemp.trim() }]);
         const okIcon = r.data.statusCode === "01" ? "✅" : "⚠️";
-        // ★ 같은 화면에서 성함·연락처까지(대표님 요청) → 다음 스텝으로 안 넘기고 입력칸 펼침
-        pushBotLines([`${okIcon} 국세청 확인 완료 - 사업자 상태 : ${r.data.status}${r.data.taxType ? ` (${r.data.taxType})` : ""}`], () =>
-          setBnoContactOpen(true)
-        );
+        // ★ 성함·연락처는 이미 같은 화면에 함께 떠 있음(대표님 요청). 조회 성공 메시지만 안내하고
+        //   화면은 그대로 둔다 → 아래 '입력 완료 →'로 한 번에 진행.
+        setBnoMsg({
+          tone: "ok",
+          text: `${okIcon} 국세청 확인 완료 - 사업자 상태 : ${r.data.status}${r.data.taxType ? ` (${r.data.taxType})` : ""}`,
+        });
         return;
       }
       if (r.kind === "serverDown") {
@@ -670,18 +683,19 @@ export default function DiagnosisChat() {
     if (digits.length !== 10) return;
     const next = { ...form, bno: digits, bnoStatus: "국세청 점검으로 자동확인 없이 접수", bnoTaxType: "", bnoVerified: false };
     setForm(next);
-    setMessages((m) => [...m, { who: "user", text: textTemp.trim() }]);
-    // ★ 같은 화면에서 성함·연락처까지(대표님 요청)
-    pushBotLines(["✅ 사업자등록번호가 접수되었어요. 자동확인은 추후 처리됩니다."], () => setBnoContactOpen(true));
+    // ★ 성함·연락처는 이미 같은 화면에 함께 떠 있음 → 접수 안내만, 아래 '입력 완료 →'로 진행.
+    setBnoServerDown(false);
+    setBnoMsg({ tone: "ok", text: "✅ 사업자등록번호가 접수되었어요. 자동확인은 추후 처리됩니다." });
   };
 
   // 예비창업자(사업자번호 없이 진행) — businessType='예비'로 세팅 후 bno 스텝 건너뜀
   const choosePreStartup = () => {
-    const next = { ...form, businessType: "예비" };
-    setForm(next);
-    setMessages((m) => [...m, { who: "user", text: "예비창업자예요 (사업자등록 전)" }]);
-    // ★ 같은 화면에서 성함·연락처까지(대표님 요청) → businessType='예비' 세팅 후 입력칸 펼침
-    pushBotLines(["예비창업자로 진행할게요! 창업 준비 단계에 맞는 지원도 함께 찾아드려요."], () => setBnoContactOpen(true));
+    // ★ 예비창업자: 사업자번호 섹션을 인라인 배너로 접고(businessType='예비'), 성함·연락처는
+    //   같은 화면에 계속 노출 → '입력 완료 →'로 진행(대표님 요청: 한 화면 묶음).
+    setForm((f: any) => ({ ...f, businessType: "예비", bno: "", bnoVerified: false }));
+    setBnoMsg(null);
+    setBnoServerDown(false);
+    setTextTemp("");
   };
 
   // 부분 리드 저장(관리자 계정 제외)
@@ -852,11 +866,7 @@ export default function DiagnosisChat() {
                   </button>
                 )}
                 {(() => {
-                  // bno 스텝에서 조회가 끝나 성함·연락처 입력 단계면 헤더 문구도 그에 맞춘다.
-                  const headQ =
-                    curStep.type === "bno" && bnoContactOpen
-                      ? "대표님 성함과 연락처를 알려주세요."
-                      : curStep.botLines?.[0];
+                  const headQ = curStep.botLines?.[0];
                   return headQ ? (
                     <p className="min-w-0 flex-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark">
                       <span className="mr-1 text-brand-orange">Q.</span>
@@ -914,37 +924,6 @@ export default function DiagnosisChat() {
               )}
 
               {/* 성함 + 연락처 (한 스텝) — 세로가 아니라 가로 2칸(대표님 요청) */}
-              {curStep.type === "contact" && (
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={nameTemp}
-                      onChange={(e) => setNameTemp(e.target.value)}
-                      placeholder={CONTACT_TEXT.namePlaceholder}
-                      autoFocus
-                      className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
-                    />
-                    <input
-                      type="tel"
-                      inputMode="numeric"
-                      value={phoneTemp}
-                      onChange={(e) => setPhoneTemp(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && confirmContact()}
-                      placeholder={CONTACT_TEXT.phonePlaceholder}
-                      className="min-w-0 flex-[3] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
-                    />
-                  </div>
-                  <button
-                    onClick={confirmContact}
-                    disabled={!nameTemp.trim() || phoneTemp.replace(/[^0-9]/g, "").length < 10}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
-                  >
-                    입력 완료 →
-                  </button>
-                </div>
-              )}
-
               {/* 예/아니요 묶음(yesnoGroup) — 하위 문항마다 예/아니요 */}
               {curStep.type === "yesnoGroup" && (
                 <div className="flex flex-col gap-3">
@@ -1169,17 +1148,86 @@ export default function DiagnosisChat() {
                 </div>
               )}
 
-              {/* 사업자번호: 입력 + 조회 + 예비창업자 + 상태메시지 → (조회 후) 성함·연락처 */}
+              {/* ★ 사업자등록번호 + 성함 + 연락처를 '한 화면'에서 함께(대표님 요청) ★
+                  기존엔 조회/예비창업자 확정 후에야 성함·연락처가 나타나(순차형) 대표님이
+                  "묶어달라"고 재요청 → 세 가지를 처음부터 동시에 보여주도록 변경.
+                  · 사업자등록번호: 입력 + 국세청 조회(선택). 예비창업자면 조회 없이 진행.
+                  · 성함·연락처: 항상 함께 노출.
+                  · '입력 완료 →' 하나로 (조회했으면 조회값 포함) 전부 저장하고 다음으로. */}
               {curStep.type === "bno" && (() => {
-                // 숫자만 추린 자리수 → 10자리여야 조회 버튼 활성화(성함·연락처 입력칸과 동일 UX)
                 const bnoDigits = textTemp.replace(/[^0-9]/g, "").length;
                 const bnoReady = bnoDigits === 10;
-                // ★ 조회/예비창업자 확정 후 → 같은 화면에서 성함·연락처 입력(대표님 요청)
-                if (bnoContactOpen) {
-                  return (
-                    <div className="flex flex-col gap-2">
-                      <p className="mb-1 break-keep px-1 text-xs text-brand-gray">
-                        진단 결과 리포트와 맞춤 안내에 사용돼요.
+                const isPre = form.businessType === "예비"; // 예비창업자면 사업자번호 입력칸 숨김
+                const contactReady =
+                  nameTemp.trim().length > 0 && phoneTemp.replace(/[^0-9]/g, "").length >= 10;
+                // 사업자번호는 (a)조회 완료(bnoVerified/접수) (b)10자리 입력 (c)예비창업자 중 하나면 OK
+                const bnoOk = isPre || form.bnoVerified || form.bno || bnoReady;
+                return (
+                  <div className="flex flex-col gap-3">
+                    {/* 1) 사업자등록번호 */}
+                    {!isPre && (
+                      <div>
+                        <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
+                          ① 사업자등록번호
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="tel"
+                            inputMode="numeric"
+                            maxLength={12}
+                            value={textTemp}
+                            onChange={(e) => setTextTemp(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && bnoReady && checkBno()}
+                            placeholder={curStep.placeholder}
+                            autoFocus
+                            className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                          />
+                          <button
+                            onClick={checkBno}
+                            disabled={bnoLoading || !bnoReady}
+                            className={`flex-[3] shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
+                              bnoReady ? "bg-brand-grad shadow-sm" : "bg-brand-orange/25 text-brand-dark/40"
+                            }`}
+                          >
+                            {bnoLoading ? "조회 중…" : "국세청 조회 →"}
+                          </button>
+                        </div>
+                        <button
+                          onClick={choosePreStartup}
+                          className="mt-2 w-full rounded-full border border-brand-orange bg-white py-2.5 text-sm font-bold text-brand-orange transition hover:bg-brand-orange/5"
+                        >
+                          아직 사업자등록 전이에요 (예비창업자)
+                        </button>
+                        {bnoMsg && (
+                          <div className={`mt-2 rounded-xl px-4 py-2.5 text-xs leading-relaxed ${
+                            bnoMsg.tone === "err" ? "bg-brand-red/10 text-brand-red" : bnoMsg.tone === "ok" ? "bg-brand-green/10 text-brand-dark" : "bg-brand-orange/10 text-brand-dark"
+                          }`}>
+                            {bnoMsg.text}
+                            {bnoServerDown && (
+                              <button onClick={confirmManualBno} className="mt-2 block w-full rounded-full bg-brand-grad py-2 text-xs font-extrabold text-brand-dark">
+                                직접 입력하고 계속하기 →
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {isPre && (
+                      <div className="rounded-xl bg-brand-orange/10 px-4 py-2.5 text-xs leading-relaxed text-brand-dark">
+                        ✅ 예비창업자로 진행할게요. 창업 준비 단계에 맞는 지원도 함께 찾아드려요.{" "}
+                        <button
+                          onClick={() => setForm((f: any) => ({ ...f, businessType: "" }))}
+                          className="font-bold text-brand-orange underline"
+                        >
+                          사업자번호 입력으로 되돌리기
+                        </button>
+                      </div>
+                    )}
+
+                    {/* 2) 성함 · 연락처 — 처음부터 함께 노출(대표님 요청) */}
+                    <div>
+                      <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
+                        ② 성함 · 연락처
                       </p>
                       <div className="flex items-center gap-2">
                         <input
@@ -1187,7 +1235,6 @@ export default function DiagnosisChat() {
                           value={nameTemp}
                           onChange={(e) => setNameTemp(e.target.value)}
                           placeholder={CONTACT_TEXT.namePlaceholder}
-                          autoFocus
                           className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
                         <input
@@ -1195,64 +1242,22 @@ export default function DiagnosisChat() {
                           inputMode="numeric"
                           value={phoneTemp}
                           onChange={(e) => setPhoneTemp(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && confirmContact()}
+                          onKeyDown={(e) => e.key === "Enter" && bnoOk && contactReady && confirmContact()}
                           placeholder={CONTACT_TEXT.phonePlaceholder}
                           className="min-w-0 flex-[3] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
                       </div>
-                      <button
-                        onClick={confirmContact}
-                        disabled={!nameTemp.trim() || phoneTemp.replace(/[^0-9]/g, "").length < 10}
-                        className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
-                      >
-                        입력 완료 →
-                      </button>
                     </div>
-                  );
-                }
-                return (
-                <>
-                  {/* 입력칸(flex-[2])보다 조회 버튼(flex-[3])을 더 넓게 — 대표님 재요청(버튼 가로 확대) */}
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="tel"
-                      inputMode="numeric"
-                      maxLength={12}
-                      value={textTemp}
-                      onChange={(e) => setTextTemp(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && bnoReady && checkBno()}
-                      placeholder={curStep.placeholder}
-                      autoFocus
-                      className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
-                    />
+
+                    {/* 3) 한 번에 완료 */}
                     <button
-                      onClick={checkBno}
-                      disabled={bnoLoading || !bnoReady}
-                      className={`flex-[3] shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
-                        bnoReady
-                          ? "bg-brand-grad shadow-sm"
-                          : "bg-brand-orange/25 text-brand-dark/40"
-                      }`}
+                      onClick={confirmContact}
+                      disabled={!bnoOk || !contactReady}
+                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                     >
-                      {bnoLoading ? "조회 중…" : "사업자등록번호 조회 →"}
+                      입력 완료 →
                     </button>
                   </div>
-                  <button onClick={choosePreStartup} className="mt-2 w-full rounded-full border border-brand-orange bg-white py-2.5 text-sm font-bold text-brand-orange transition hover:bg-brand-orange/5">
-                    아직 사업자등록 전이에요 (예비창업자)
-                  </button>
-                  {bnoMsg && (
-                    <div className={`mt-2 rounded-xl px-4 py-2.5 text-xs leading-relaxed ${
-                      bnoMsg.tone === "err" ? "bg-brand-red/10 text-brand-red" : bnoMsg.tone === "ok" ? "bg-brand-green/10 text-brand-dark" : "bg-brand-orange/10 text-brand-dark"
-                    }`}>
-                      {bnoMsg.text}
-                      {bnoServerDown && (
-                        <button onClick={confirmManualBno} className="mt-2 block w-full rounded-full bg-brand-grad py-2 text-xs font-extrabold text-brand-dark">
-                          직접 입력하고 계속하기 →
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </>
                 );
               })()}
             </div>
