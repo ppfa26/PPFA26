@@ -153,19 +153,32 @@ export default function Home() {
             {/* ★ 신뢰 카운터 - 2년간 300개 이상 기업 지원 실적(대표님 실제 자산)을
                 손실회피와 연결: "이미 300곳이 먼저 받아갔다" → 대표님도 놓치지 말라는 메시지.
                 아래 후기 링크(당근·블로그 링크트리)로 실제 증거까지 이어지도록 구성. */}
-            <div className="mx-auto mt-5 flex w-fit max-w-md items-baseline justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-4 py-2 sm:mt-5 sm:px-5">
-              <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                지난 2년, 이미
-              </span>
-              <span className="inline-flex items-baseline">
-                <b className="text-[22px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[27px]">
-                  300
-                </b>
-                <b className="text-[14px] font-extrabold text-brand-red sm:text-[16px]">개+</b>
-              </span>
-              <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                기업은 먼저 받아갔습니다
-              </span>
+            <div className="mx-auto mt-5 flex w-fit max-w-md flex-col items-center gap-1.5 sm:mt-5">
+              <div className="flex items-baseline justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-4 py-2 sm:px-5">
+                <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                  지난 2년, 이미
+                </span>
+                <span className="inline-flex items-baseline">
+                  <b className="text-[22px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[27px]">
+                    300
+                  </b>
+                  <b className="text-[14px] font-extrabold text-brand-red sm:text-[16px]">개+</b>
+                </span>
+                <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                  기업은 먼저 받아갔습니다
+                </span>
+              </div>
+              {/* 브랜드 신뢰 링크(당근비즈 프로필 + 네이버 블로그 후기 등 전체 링크트리) */}
+              <Editable
+                id="hero-review-link"
+                as="a"
+                href="https://link.inpock.co.kr/ppfa25"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 break-keep text-[12px] font-bold text-brand-dark/60 underline decoration-brand-dark/20 underline-offset-4 transition hover:text-brand-red sm:text-[13px]"
+              >
+                🔎 모두의사업친구 더 알아보기 →
+              </Editable>
             </div>
 
             {/* ★ 첫 화면 후킹 포인트 - 우리 서비스 최대 강점(숫자)을 히어로에서 바로 노출 ★

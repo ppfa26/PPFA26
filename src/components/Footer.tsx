@@ -10,11 +10,12 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
       {/* 회사정보↔메뉴가 양끝으로 과하게 벌어지지 않게 최대폭을 살짝 좁혀
           가운데로 모은다(대표님 요청). max-w-6xl→max-w-5xl */}
       <div className="mx-auto max-w-5xl">
-        {/* (대표님 요청) 공식 채널을 브랜드↔메뉴 사이 '가운데 칸'으로 배치한 3단 레이아웃.
-            비어 보이던 가운데 공간을 채널로 채워 균형 + '실체 있는 사업자' 신뢰 강화. */}
-        <div className="flex flex-col gap-8 sm:flex-row sm:justify-between sm:gap-6">
+        {/* 공식 채널을 브랜드↔메뉴 사이 '가운데 칸'으로 배치한 3단 레이아웃.
+            세 컬럼 모두 items-start로 상단 정렬축을 맞추고, 소제목 스타일을
+            통일해(채널/바로가기) 위계·무게 균형을 잡는다. */}
+        <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
           {/* ① 브랜드 */}
-          <div className="max-w-sm">
+          <div className="sm:w-[34%] sm:max-w-sm">
             <div className="flex items-center gap-2">
               <Image
                 src="/logo/brand-footer-dark.png"
@@ -37,7 +38,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             <Editable
               id="footer-nowarranty"
               as="p"
-              className="mt-3 break-keep rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
+              className="mt-4 break-keep rounded-lg bg-white/5 px-3 py-2 text-xs leading-relaxed text-brand-yellow"
             >
               ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며,
               <br />
@@ -46,12 +47,12 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           </div>
 
           {/* ② 공식 채널 (가운데) - 유입 주력 스레드·인스타·당근을 앞에.
-              좁은 가운데 칸에 맞춰 세로 2열 배치. 각 채널 고유 브랜드 컬러 hover. */}
-          <div className="sm:px-2">
-            <p className="mb-3 text-xs font-bold tracking-[0.02em] text-gray-400">
-              공식 채널에서 만나요
+              컴팩트한 세로 2열 버튼. 각 채널 고유 브랜드 컬러 hover. */}
+          <div className="sm:w-[40%]">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500">
+              공식 채널
             </p>
-            <ul className="grid grid-cols-2 gap-2">
+            <ul className="grid grid-cols-2 gap-1.5">
               {[
                 { href: "https://www.threads.com/@ppfa25", label: "스레드", icon: "fa-brands fa-threads", cls: "hover:border-white/70 hover:text-white" },
                 { href: "https://www.instagram.com/ppfa25", label: "인스타그램", icon: "fa-brands fa-instagram", cls: "hover:border-[#E1306C]/80 hover:text-[#E1306C]" },
@@ -67,9 +68,9 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
                     href={c.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-[13px] font-semibold text-gray-300 transition ${c.cls}`}
+                    className={`flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-2.5 py-2 text-[12.5px] font-medium text-gray-300 transition ${c.cls}`}
                   >
-                    <span className="flex w-5 shrink-0 justify-center text-base" aria-hidden="true">
+                    <span className="flex w-4 shrink-0 justify-center text-[15px] leading-none" aria-hidden="true">
                       {c.icon ? <i className={c.icon} /> : c.emoji}
                     </span>
                     <span className="break-keep">{c.label}</span>
@@ -79,32 +80,37 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             </ul>
           </div>
 
-          {/* ③ 메뉴 링크 */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
-            <Link href="/pricing" className="hover:text-white">
-              요금 안내
-            </Link>
-            <Link href="/diagnosis-chat" className="hover:text-white">
-              무료 진단
-            </Link>
-            <Link href="/community" className="hover:text-white">
-              커뮤니티
-            </Link>
-            <Link href="/sites" className="hover:text-white">
-              공식 사이트 모음
-            </Link>
-            <Link href="/terms" className="hover:text-white">
-              이용약관
-            </Link>
-            <Link href="/privacy" className="hover:text-white">
-              개인정보처리방침
-            </Link>
-            <Link href="/refund" className="hover:text-white">
-              환불정책
-            </Link>
-            <Link href="/business-info" className="hover:text-white">
-              사업자정보
-            </Link>
+          {/* ③ 메뉴 링크 - 채널과 대칭되도록 소제목 부여 */}
+          <div className="sm:w-[22%]">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500">
+              바로가기
+            </p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-[13.5px] sm:grid-cols-1">
+              <Link href="/pricing" className="text-gray-300 transition hover:text-white">
+                요금 안내
+              </Link>
+              <Link href="/diagnosis-chat" className="text-gray-300 transition hover:text-white">
+                무료 진단
+              </Link>
+              <Link href="/community" className="text-gray-300 transition hover:text-white">
+                커뮤니티
+              </Link>
+              <Link href="/sites" className="text-gray-300 transition hover:text-white">
+                공식 사이트 모음
+              </Link>
+              <Link href="/terms" className="text-gray-300 transition hover:text-white">
+                이용약관
+              </Link>
+              <Link href="/privacy" className="text-gray-300 transition hover:text-white">
+                개인정보처리방침
+              </Link>
+              <Link href="/refund" className="text-gray-300 transition hover:text-white">
+                환불정책
+              </Link>
+              <Link href="/business-info" className="text-gray-300 transition hover:text-white">
+                사업자정보
+              </Link>
+            </div>
           </div>
         </div>
 
