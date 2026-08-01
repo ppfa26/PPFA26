@@ -98,7 +98,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신주엽 <span className="text-white/15">·</span> 사업자등록번호 : 597-12-02897 <span className="text-white/15">·</span> 통신판매업신고 : 제2026-인천서해-0109호 <span className="text-white/15">·</span> 주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호 <span className="text-white/15">·</span> 대표번호 : 1551-7886 <span className="text-white/15">·</span> 문의 : <span className="break-all">biospartners@naver.com</span>
           </p>
 
-          <p className="mt-2 text-gray-600">
+          <p className="mt-4 border-t border-white/10 pt-4 text-gray-600">
             © 모두의사업친구. All rights reserved.
           </p>
         </div>
