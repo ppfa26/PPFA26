@@ -375,12 +375,10 @@ export default function MatchingPreview() {
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
                 🎉
               </div>
-              <h1 className="mt-3 break-keep text-lg font-extrabold text-brand-dark sm:text-2xl">
-                {name ? `${name} 대표님 ` : "대표님 "}사업장의 분석이 완료되었습니다.
+              <h1 className="mt-3 break-keep text-base font-extrabold text-brand-dark sm:text-2xl">
+                {name ? `${name} 대표님 ` : "대표님 "}사업장의 분석이 완료되었습니다.{" "}
+                <span className="whitespace-nowrap font-extrabold tracking-wide text-brand-orange">(PRO AI 진단 리포트)</span>
               </h1>
-              <p className="mt-1 break-keep text-xs font-extrabold tracking-wide text-brand-orange sm:text-sm">
-                (PRO AI 진단 리포트)
-              </p>
               <p className="mt-2 break-keep text-2xl font-black leading-tight text-brand-orange sm:text-3xl">
                 총 {total}개 매칭 🎯
               </p>
@@ -582,7 +580,7 @@ export default function MatchingPreview() {
           {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ──
                 (대표님 요청) '000 대표님 사업장의 분석이 완료되었습니다.' + PRO AI 진단 리포트 뱃지 */}
           <div className="text-center">
-            <p className="break-keep text-base font-bold leading-snug text-brand-gray sm:text-lg">
+            <p className="break-keep text-sm font-bold leading-snug text-brand-gray sm:text-lg">
               {name ? (
                 <>
                   <span className="font-black text-brand-orange">{name} 대표님</span> 사업장의{" "}
@@ -590,10 +588,8 @@ export default function MatchingPreview() {
               ) : (
                 "대표님 사업장의 "
               )}
-              분석이 완료되었습니다.
-            </p>
-            <p className="mt-1 break-keep text-xs font-extrabold tracking-wide text-brand-orange sm:text-sm">
-              (PRO AI 진단 리포트)
+              분석이 완료되었습니다.{" "}
+              <span className="whitespace-nowrap font-extrabold tracking-wide text-brand-orange">(PRO AI 진단 리포트)</span>
             </p>
 
             {/* 가로형 카드: 왼쪽=큰 숫자, 오른쪽=매칭 요약 배지 (모바일에서도 한 줄 유지) */}
