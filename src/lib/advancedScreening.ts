@@ -1075,7 +1075,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         applyUrl: "https://www.kodit.or.kr/apps/index.do",
       },
       {
-        name: "퍼스트펭귄보증 (유망 창업기업)",
+        name: "퍼스트펭귄 보증 (유망 창업기업)",
         amount: "최대 30억원",
         desc: "창업 후 7년 이내 유망창업기업 중\n미래 성장성이 높은 핵심 창업기업 (보증비율 우대)",
         approval: "mid",
@@ -1276,7 +1276,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         //   NCB(NICE/KCB) 839점 이하 중·저신용 소상공인 전용 소진공 '직접대출'.
         //   ⚠️ 표시용 상품 추가(신용점수 판정은 진단 credit→profileToCompany의 kcb/nice_score).
         //     matching.ts 스코어링과 무관.
-        name: "신용취약소상공인자금 (직접대출)",
+        name: "신용취약자금 (직접대출)",
         amount: "최대 3,000만원 · 저리 고정금리 (사전 신용관리교육 필수)",
         desc: "NCB(NICE·KCB) 개인신용평점 839점 이하 중·저신용 소상공인 전용\n(신청 전 '신용관리교육' 온라인 사전 이수가 반드시 필요)",
         approval: "mid",
@@ -1349,7 +1349,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     productUrl: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI001M0.do",
     products: [
       {
-        name: "청년전용창업자금",
+        name: "창업기반지원자금 (청년전용창업자금)",
         amount: "최대 1억원 (제조업·중점지원분야 2억원) · 연 2.5% 고정",
         desc: "만 39세 이하 · 업력 3년 미만 청년 창업자\n(직원 0명·개인사업자도 신청 가능, 매출 하한 없음)",
         nature: "직접대출", // 중진공 정책자금(이차보전 포함)은 공단 직접대출로 표시(대표님 확정)
@@ -1452,7 +1452,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         eligibleWhen: (c) => Boolean(c.is_exporter),
       },
       {
-        name: "문화산업보증 (수출신용보증-문화산업)",
+        name: "문화산업보증",
         amount: "수출계약 기준",
         desc: "영화·게임·만화·캐릭터·애니메이션 등 문화상품\n수출자금을 은행에서 대출받을 때 K-SURE가 연대보증",
         approval: "mid",
