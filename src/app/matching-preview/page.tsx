@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import MobilePcRecommendBar from "@/components/MobilePcRecommendBar";
 // (성능) 결과 상세 패널은 페이지에서 가장 무거운 컴포넌트(약 1.6천 줄).
 //  next/dynamic 으로 별도 청크로 분리해 초기 First Load JS 를 줄인다.
 //  ssr: true(기본) 유지 → SEO·초기 콘텐츠·결과 계산 로직은 100% 동일.
@@ -365,6 +366,8 @@ export default function MatchingPreview() {
     return (
       <PageShell pageKey="matching-preview">
         <Header />
+        {/* (대표님 요청) 모바일 PC 화면 권장 안내 띠 - 미리보기(분석완료) 화면에도 노출 */}
+        <MobilePcRecommendBar />
         <main className="px-4 py-10">
           <div className="mx-auto max-w-md">
             {/* ── 히어로: 개수를 크게 강조해 '이렇게 많아?' 체감 ── */}
@@ -373,8 +376,11 @@ export default function MatchingPreview() {
                 🎉
               </div>
               <h1 className="mt-3 break-keep text-lg font-extrabold text-brand-dark sm:text-2xl">
-                {name ? `${name} 대표님, ` : ""}분석이 완료되었습니다!
+                {name ? `${name} 대표님 ` : "대표님 "}사업장의 분석이 완료되었습니다.
               </h1>
+              <p className="mt-1 break-keep text-xs font-extrabold tracking-wide text-brand-orange sm:text-sm">
+                (PRO AI 진단 리포트)
+              </p>
               <p className="mt-2 break-keep text-2xl font-black leading-tight text-brand-orange sm:text-3xl">
                 총 {total}개 매칭 🎯
               </p>
@@ -544,6 +550,8 @@ export default function MatchingPreview() {
   return (
     <PageShell pageKey="matching-preview">
       <Header />
+      {/* (대표님 요청) 모바일 접속자에게 'PC 화면 권장' 안내 띠 - 결과 페이지 상단, 닫으면 기억 */}
+      <MobilePcRecommendBar />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
           상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
       <main className={`px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-0" : "pb-40"}`}>
@@ -571,7 +579,8 @@ export default function MatchingPreview() {
             </div>
           )}
 
-          {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ── */}
+          {/* ── 상단 히어로: 가로형으로 개수를 크게 강조해 '와, 이렇게 많아?' 느낌 ──
+                (대표님 요청) '000 대표님 사업장의 분석이 완료되었습니다.' + PRO AI 진단 리포트 뱃지 */}
           <div className="text-center">
             <p className="break-keep text-base font-bold leading-snug text-brand-gray sm:text-lg">
               {name ? (
@@ -582,6 +591,9 @@ export default function MatchingPreview() {
                 "대표님 사업장의 "
               )}
               분석이 완료되었습니다.
+            </p>
+            <p className="mt-1 break-keep text-xs font-extrabold tracking-wide text-brand-orange sm:text-sm">
+              (PRO AI 진단 리포트)
             </p>
 
             {/* 가로형 카드: 왼쪽=큰 숫자, 오른쪽=매칭 요약 배지 (모바일에서도 한 줄 유지) */}
