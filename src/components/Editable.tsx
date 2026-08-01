@@ -26,6 +26,8 @@ type Props = {
   children: React.ReactNode;
   className?: string;
   href?: string;
+  target?: string;
+  rel?: string;
   onClick?: () => void;
 };
 
@@ -57,6 +59,8 @@ export default function Editable({
   children,
   className = "",
   href,
+  target,
+  rel,
   onClick,
 }: Props) {
   const { editMode, edits, saveEdit } = useEdit();
@@ -120,6 +124,8 @@ export default function Editable({
     commonProps.onClick = (e: React.MouseEvent) => e.preventDefault();
   } else {
     if (href && as === "a") commonProps.href = href;
+    if (as === "a" && target) commonProps.target = target;
+    if (as === "a" && rel) commonProps.rel = rel;
     if (onClick) commonProps.onClick = onClick;
   }
 

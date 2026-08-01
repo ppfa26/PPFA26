@@ -17,15 +17,15 @@ const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 크롤링" },
   { icon: "📚", text: "정부 부처 공문 팩트체크" },
   { icon: "🗂️", text: "정책자금·지원금·바우처·인증" },
-  { icon: "🎯", text: "내 사업장에 가능한 것만 매칭" },
+  { icon: "🎯", text: "대표님 사업장에 가능한 것만 매칭" },
   { icon: "📝", text: "신청 방법·필요 서류·순서까지" },
-  { icon: "🚫", text: "안내 및 추천 · 행정 대행 없음" },
+  { icon: "🤝", text: "정부지원사업 정식자문" },
   { icon: "💳", text: "부담 없는 1회성 결제" },
-  { icon: "💬", text: "채널톡 상담 운영" },
+  { icon: "💬", text: "1:1 카카오톡 상담 운영" },
 ];
 
 const VALUES = [
-  "어떤 자금·지원사업이 나에게 맞는지",
+  "어떤 자금·지원사업이 대표님께 맞는지",
   "어디서 어떻게 신청하는지",
   "서류는 뭐가 필요한지",
   "지원사업을 신청하는 순서까지",
@@ -37,12 +37,14 @@ const FAQS = [
     a: <>아닙니다. 1회성 결제입니다.</>,
   },
   {
-    q: "Q2. 행정대행 신청해주시나요?",
+    q: "Q2. 정확히 무엇을 알려주시나요?",
     a: (
       <>
-        아닙니다. 저희는 안내·추천·매칭 플랫폼입니다.
+        대표님 사업장이 신청 가능한 정부지원사업을 찾아드립니다.
         <br />
-        서류 발급과 신청은 이용자님이 직접 하십니다.
+        각 사업의 신청 방법·필요 서류·신청 순서·최신 공고까지 안내드리며,
+        <br />
+        서류 발급과 최종 신청은 대표님께서 직접 진행하시면 됩니다.
       </>
     ),
   },
@@ -59,7 +61,7 @@ const FAQS = [
     ),
   },
   {
-    q: "Q4. 승인후 추가 수수료가 있나요?",
+    q: "Q4. 결제 후 추가 수수료가 있나요?",
     a: (
       <>
         없습니다.
@@ -98,7 +100,7 @@ const FAQS = [
       <>
         매일 정부 공식 사이트를 자동으로 확인합니다.
         <br />
-        최신 공고 및 공고를 팩트체크 후 반영합니다.
+        최신 공고를 팩트체크 후 반영합니다.
       </>
     ),
   },
@@ -120,8 +122,8 @@ export default function Home() {
           <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-6 py-6 text-center animate-fadeUp sm:px-12 sm:py-12">
             {/* 상단 배지 (노란색 서비스 소개 배지) */}
             <div className="mb-5 flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
-              <Editable
-                id="hero-badge"
+            <Editable
+              id="hero-badge"
                 as="div"
                 className="inline-block rounded-full bg-brand-yellow px-5 py-2 text-sm font-extrabold tracking-[-0.01em] text-brand-dark sm:px-6 sm:py-2.5 sm:text-base"
               >
@@ -131,11 +133,11 @@ export default function Home() {
             <Editable
               id="hero-headline-v2"
               as="h1"
-              className="whitespace-nowrap text-[21px] font-black leading-[1.28] tracking-[-0.03em] text-brand-dark xs:text-[25px] sm:whitespace-normal sm:text-[43px] sm:leading-[1.18] sm:tracking-[-0.035em]"
+              className="break-keep text-[23px] font-black leading-[1.26] tracking-[-0.03em] text-brand-dark xs:text-[26px] sm:text-[42px] sm:leading-[1.16] sm:tracking-[-0.035em]"
             >
-              AI를 활용해 내 사업장에 알맞은
+              몰라서 못 받은 <span className="text-brand-red">정부지원금</span>,
               <br />
-              <span className="text-brand-red">정부지원사업</span>을 찾아드립니다.
+              지금도 <span className="text-brand-red">다른 대표님</span>이 받아가고 있습니다.
             </Editable>
 
             <Editable
@@ -143,10 +145,41 @@ export default function Home() {
               as="p"
               className="mx-auto mt-4 max-w-xl break-keep text-[15px] font-medium leading-relaxed text-brand-gray sm:mt-5 sm:text-[19px] sm:leading-relaxed"
             >
-              복잡한 정부지원사업, 이제 직접 찾지 마세요.
+              대표님 사업장이 받을 수 있는 정부지원사업,
               <br />
-              AI가 찾아서 신청 방법까지 안내해 드립니다.
+              AI가 <b className="text-brand-dark">찾아서 신청 방법까지</b> 알려드립니다.
             </Editable>
+
+            {/* ★ 신뢰 카운터 - 2년간 300개 이상 기업 지원 실적(대표님 실제 자산)을
+                손실회피와 연결: "이미 300곳이 먼저 받아갔다" → 대표님도 놓치지 말라는 메시지.
+                아래 후기 링크(당근·블로그 링크트리)로 실제 증거까지 이어지도록 구성. */}
+            <div className="mx-auto mt-5 flex w-fit max-w-md flex-col items-center gap-1.5 sm:mt-6">
+              <div className="flex items-baseline justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-4 py-2 sm:px-5">
+                <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                  지난 2년, 이미
+                </span>
+                <span className="inline-flex items-baseline">
+                  <b className="text-[22px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[27px]">
+                    300
+                  </b>
+                  <b className="text-[14px] font-extrabold text-brand-red sm:text-[16px]">개+</b>
+                </span>
+                <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                  기업이 먼저 받아갔습니다
+                </span>
+              </div>
+              {/* 실제 후기 링크(당근비즈 프로필 + 네이버 블로그 후기 링크트리) - 신뢰 증거 */}
+              <Editable
+                id="hero-review-link"
+                as="a"
+                href="https://link.inpock.co.kr/ppfa25"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 break-keep text-[12px] font-bold text-brand-dark/60 underline decoration-brand-dark/20 underline-offset-4 transition hover:text-brand-red sm:text-[13px]"
+              >
+                🔎 실제 대표님 후기 보기 (당근·블로그) →
+              </Editable>
+            </div>
 
             {/* ★ 첫 화면 후킹 포인트 - 우리 서비스 최대 강점(숫자)을 히어로에서 바로 노출 ★
                 아래 결과 목업까지 스크롤하지 않아도 "얼마나 많이 찾아주는지"가 첫눈에 보이게.
@@ -191,7 +224,7 @@ export default function Home() {
                 href="/diagnosis-chat"
                 className="btn-red w-full whitespace-nowrap rounded-full px-6 py-3.5 text-[16px] font-extrabold tracking-[-0.02em] animate-pulseGlow sm:w-auto sm:px-10 sm:py-4 sm:text-[18px] sm:tracking-[-0.01em]"
               >
-                {BETA_FREE ? "지금 무료로 진단 시작하기" : "무료 진단 시작하기"}
+                지금 내 지원사업 확인하기
               </Editable>
               {/* 부 CTA - 보조 행동이므로 조금 차분하게(작게) 두어 주 버튼이 도드라지게 */}
               <Editable
@@ -201,6 +234,21 @@ export default function Home() {
                 className="btn-outline w-full whitespace-nowrap rounded-full px-8 py-3 text-[15px] font-bold sm:w-auto sm:py-3.5 sm:text-base"
               >
                 {BETA_FREE ? "무엇을 알려주나요?" : "상품 자세히 보기"}
+              </Editable>
+            </div>
+
+            {/* ★ 결정 지점(진단 시작 바로 아래)에 1:1 카카오톡 상담 버튼.
+                "혼자 진단하기 망설여지는 대표님"을 사람 상담으로 자연스럽게 흡수 → 이탈 방지. */}
+            <div className="mt-3 flex justify-center sm:mt-3.5">
+              <Editable
+                id="hero-cta-kakao"
+                as="a"
+                href="http://pf.kakao.com/_VxfWxan/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 break-keep text-[13px] font-bold text-brand-dark/70 underline decoration-brand-dark/25 underline-offset-4 transition hover:text-brand-dark sm:text-sm"
+              >
+                💬 진단이 어려우신가요? 카카오톡으로 1:1 상담받기 →
               </Editable>
             </div>
 
@@ -238,17 +286,11 @@ export default function Home() {
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium leading-relaxed text-brand-gray"
               >
-                {BETA_FREE ? (
-                  <>
-                    내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
-                  </>
-                ) : (
-                  <>
-                    내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아드립니다.
-                    <br />
-                    무엇을·어디서·어떻게까지 한 번에 알려드립니다.
-                  </>
-                )}
+                예창패·초창패·청년창업사관학교·정책자금·보증까지—
+                <br />
+                대표님이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아,
+                <br />
+                무엇을·어디서·어떻게까지 알려드립니다.
               </Editable>
             </div>
 
@@ -742,11 +784,7 @@ export default function Home() {
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium text-brand-gray"
               >
-                {BETA_FREE ? (
-                  <>오픈 베타 기간 전부 무료로 이용하실 수 있습니다.</>
-                ) : (
-                  <>1회성 결제이며 월 구독 결제가 아닙니다.</>
-                )}
+                1회성 결제이며, 월 구독이 아닙니다.
               </Editable>
             </div>
             <div className="mt-6">
@@ -821,33 +859,27 @@ export default function Home() {
               as="h2"
               className="break-keep text-[22px] font-black tracking-[-0.03em] text-white sm:text-[26px]"
             >
-              {BETA_FREE
-                ? "오픈 베타 기간, 지금은 전부 무료입니다"
-                : "지금 무료로 진단받아 보세요"}
+              오늘도 예산은 줄어들고 있습니다
             </Editable>
             <Editable
               id="home-cta-sub"
               as="p"
               className="mx-auto mt-3 max-w-md break-keep text-sm leading-relaxed text-gray-300"
             >
-              {BETA_FREE ? (
-                <>
-                  1분이면 내 사업장에 알맞은 정부지원사업을 전부 확인할 수 있습니다.
-                </>
-              ) : (
-                <>1분이면 내 사업장에 알맞은 정부지원사업을 찾을 수 있습니다.</>
-              )}
+              정부지원사업은 대부분 선착순·예산 소진으로 마감됩니다.
+              <br />
+              1분 진단으로 대표님 사업장이 받을 수 있는 사업부터 먼저 확인하세요.
             </Editable>
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              {/* 왼쪽 - 무료 진단 시작하기 (주 버튼, 빨간색) */}
+              {/* 왼쪽 - 진단 시작하기 (주 버튼, 빨간색) */}
               <a
                 id="home-cta-button"
                 href="/diagnosis-chat"
                 className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
               >
-                {BETA_FREE ? "무료로 진단 시작하기" : "무료 진단 시작하기"}
+                지금 내 지원사업 확인하기
               </a>
-              {/* 오른쪽 - 1:1 채널톡 상담하기 (보조 버튼, 흰색 아웃라인) */}
+              {/* 오른쪽 - 1:1 카카오톡 상담하기 (보조 버튼, 흰색 아웃라인) */}
               <a
                 id="home-cta-kakao"
                 href="http://pf.kakao.com/_VxfWxan/chat"
@@ -855,9 +887,20 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3.5 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
               >
-                💬 1:1 채널톡 상담하기
+                💬 1:1 카카오톡 상담하기
               </a>
             </div>
+            {/* ★ 하단 신뢰 링크 - 실제 후기(당근·블로그) 링크트리로 마지막 신뢰 보강 */}
+            <Editable
+              id="home-cta-review-link"
+              as="a"
+              href="https://link.inpock.co.kr/ppfa25"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex items-center gap-1 break-keep text-[13px] font-bold text-gray-300 underline decoration-gray-500 underline-offset-4 transition hover:text-white"
+            >
+              🔎 실제 대표님 후기 보기 (당근·블로그) →
+            </Editable>
           </div>
         </section>
       </main>

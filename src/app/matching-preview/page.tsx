@@ -365,9 +365,9 @@ export default function MatchingPreview() {
     //   지금(BETA_FREE=true): '무료 가입'으로 유도. 상세는 가입만 하면 전부 무료 공개.
     //   나중(BETA_FREE=false): 동일 UI에서 문구/버튼이 '가입 후 결제'로 자동 전환된다.
     //   → 스위치 하나(betaConfig)로 맛보기→가입→결제 퍼널이 그대로 이어진다.
-    const ctaLabel = BETA_FREE ? "🔓 무료 회원가입하고 전체 결과 보기" : "🔓 회원가입하고 전체 결과 열기";
+    const ctaLabel = BETA_FREE ? "🔓 회원가입하고 전체 결과 보기" : "🔓 회원가입하고 전체 결과 열기";
     const unlockNote = BETA_FREE
-      ? "지금은 오픈 베타 기간이라 가입만 하면 전체 결과를 무료로 확인하실 수 있습니다."
+      ? "회원가입하시면 대표님 사업장에 맞는 전체 결과를 확인하실 수 있습니다."
       : "가입 후 결제하시면 기관명·신청방법·서류까지 전체 결과가 열립니다.";
     return (
       <PageShell pageKey="matching-preview" stickyFooter>

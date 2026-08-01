@@ -391,7 +391,7 @@ export default function DiagnosisChat() {
       [
         // ★ 대표님 요청 ★ 인사말 + 안내를 '한 말풍선'으로 합침(문단 사이 빈 줄).
         //   의미 단위로 직접 줄바꿈(\n) → 화면 폭과 무관하게 항상 깔끔하게 끊김
-        `안녕하세요, 모두의사업친구예요 😊\n\n진단을 위한 질문은 총 ${TOTAL_ROUGH}개에요.\n\n정확히 답할수록 더욱 정확한 결과를\n받을 수 있으니 꼼꼼히 답변 부탁드려요!`,
+        `안녕하세요 대표님, 모두의사업친구예요 😊\n\n대표님 사업장이 받을 수 있는 정부지원사업을\n지금부터 찾아드릴게요.\n\n진단을 위한 질문은 총 ${TOTAL_ROUGH}개에요.\n정확히 답할수록 더욱 정확한 결과를\n받을 수 있으니 꼼꼼히 답변 부탁드려요!`,
       ],
       () => askStep(0)
     );
@@ -827,7 +827,7 @@ export default function DiagnosisChat() {
           <div className="mb-3">
             <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-brand-gray">
               <span>
-                무료진단
+                맞춤 진단
                 {curStepNo > 0 && !finished && (
                   <span className="ml-1.5 text-brand-orange">
                     {curStepNo}번째 질문 <span className="text-brand-gray/70">/ 전체 {totalSteps}개</span>
