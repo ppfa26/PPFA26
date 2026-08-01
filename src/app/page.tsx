@@ -894,14 +894,14 @@ export default function Home() {
             </div>
             {/* ★ 하단 신뢰 링크 - 실제 후기(당근·블로그) 링크트리로 마지막 신뢰 보강 */}
             <Editable
-              id="home-cta-review-link"
+              id="home-cta-learnmore-link"
               as="a"
               href="https://link.inpock.co.kr/ppfa25"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex items-center gap-1 break-keep text-[13px] font-bold text-gray-300 underline decoration-gray-500 underline-offset-4 transition hover:text-white"
             >
-              🔎 실제 대표님 후기 보기 (당근·블로그) →
+              🔎 모두의사업친구 더 알아보기 →
             </Editable>
           </div>
         </section>
