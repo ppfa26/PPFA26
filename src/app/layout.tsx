@@ -177,6 +177,36 @@ const DESKTOP_VIEWPORT_SCRIPT = `
   apply();
   window.addEventListener('orientationchange', function () { setTimeout(apply, 200); });
   window.addEventListener('resize', apply);
+
+  // ★ 입력창 탭 시 '확대(자동 줌)' 완전 차단 (대표님 재요청) ★
+  //  iOS Safari 는 viewport 의 maximum-scale/user-scalable=no 를 무시하고,
+  //  input/textarea 에 포커스가 가는 순간 '글자 키우기' 자동 줌을 강제한다.
+  //  이 페이지는 이미 축소(scale<1)해 보여주고 있어서, 그 위에 자동 줌이
+  //  겹치면 화면이 튀고 중심이 어긋난다.
+  //  해법(iOS 표준 우회): 포커스 '직전'(pointerdown/touchstart 단계)에
+  //  viewport 를 현재 배율로 '못 박아' 두면, 브라우저가 포커스 시 다시
+  //  줌할 여지를 없앤다. blur 후엔 원래 계산식(apply)으로 되돌린다.
+  function lockZoom() {
+    try {
+      var w = window.innerWidth || (window.screen && window.screen.width) || 390;
+      if (w >= DESKTOP_WIDTH) return; // PC/태블릿은 건드리지 않음
+      var vp = document.querySelector('meta[name=viewport]');
+      if (!vp) return;
+      var scale = w / MOBILE_BASE;
+      vp.setAttribute('content', 'width=' + MOBILE_BASE + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no');
+    } catch (e) {}
+  }
+  function isField(t) {
+    if (!t || !t.tagName) return false;
+    var n = t.tagName.toLowerCase();
+    return n === 'input' || n === 'textarea' || n === 'select' || t.isContentEditable;
+  }
+  // 포커스가 실제로 들어가기 전에 미리 배율을 고정한다.
+  document.addEventListener('touchstart', function (e) { if (isField(e.target)) lockZoom(); }, true);
+  document.addEventListener('pointerdown', function (e) { if (isField(e.target)) lockZoom(); }, true);
+  document.addEventListener('focusin', function (e) { if (isField(e.target)) lockZoom(); }, true);
+  // 입력이 끝나면(포커스 해제) 표준 계산으로 복귀 → 회전/리사이즈 대응 유지.
+  document.addEventListener('focusout', function () { setTimeout(apply, 50); }, true);
 })();
 `;
 

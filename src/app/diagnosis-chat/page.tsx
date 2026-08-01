@@ -59,9 +59,21 @@ type StepType =
   | "contact" // 성함 + 연락처를 한 스텝에서 입력
   | "yesnoGroup" // 예/아니요 문항 여러 개를 한 스텝에서(각각 라디오)
   | "singleGroup" // 단일선택 문항 여러 개를 한 스텝에서(각 문항 = 보기 중 하나 선택)
+  | "multiGroup" // 복수선택 문항 여러 개를 한 스텝에서(각 문항 = 여러 개 선택 or 라디오)
   | "checkGroup"; // 해당되는 것만 체크 → 체크=예, 나머지=아니요
 // yes/no 묶음 문항 하나
-type SubQ = { key: string; label: string; opts?: string[]; desc?: string; hint?: string; cols?: 1 | 2 | 3 };
+type SubQ = {
+  key: string;
+  label: string;
+  opts?: string[];
+  desc?: string;
+  hint?: string;
+  cols?: 1 | 2 | 3;
+  // multiGroup 전용: 이 하위문항을 '하나만' 고르게(라디오식). 저장은 [선택값] 배열 유지.
+  singleSelect?: boolean;
+  // 화면 표기만 풀네임으로(저장/매칭 값은 opts 원본). 예: 소진공→소상공인시장진흥공단
+  labelFull?: Record<string, string>;
+};
 type ChatStep = {
   key: string;
   type: StepType;
@@ -162,32 +174,41 @@ const CHAT_STEPS: ChatStep[] = [
   },
   { key: "region", type: "region", botLines: ["사업장 지역은 어디신가요?"], opts: STEP1_FIELDS.region.opts },
 
-  // ── 2단계 · 회사 정보 ──
+  // ── 2단계 · 회사 정보 (짧은 복수선택 문항 4개를 한 화면에 묶음 · 대표님 요청) ──
+  //  현재기관 / 필요목적 / 혁신성장 / 특허인증 → 한 화면에서 쭉 고르고 '다음'.
+  //  각 문항의 저장값 구조(배열)는 개별 스텝과 100% 동일 → 매칭 결과 불변.
   {
-    key: "currentInstitutions",
-    type: "multi",
-    botLines: ["현재 이용 중인 정책기관이 있나요?", STEP2_FIELDS.currentInstitutions.hint],
-    opts: STEP2_FIELDS.currentInstitutions.opts,
-    labelFull: (STEP2_FIELDS.currentInstitutions as any).labelFull,
-  },
-  {
-    key: "purposes",
-    type: "multi",
-    botLines: ["어떤 정부지원사업이 필요하세요?", STEP2_FIELDS.purposes.hint],
-    opts: STEP2_FIELDS.purposes.opts,
-  },
-  {
-    key: "innovation",
-    type: "multi",
-    singleSelect: true, // 예/아니요 중 하나만(라디오) — 둘 다 선택 불가. 저장은 [선택값] 배열 유지.
-    botLines: ["혁신성장 분야에 해당되나요?", STEP3_FIELDS.innovation.hint],
-    opts: STEP3_FIELDS.innovation.opts,
-  },
-  {
-    key: "certifications",
-    type: "multi",
-    botLines: ["특허·인증을 보유하고 계신가요?", STEP3_FIELDS.certifications.hint],
-    opts: STEP3_FIELDS.certifications.opts,
+    key: "companyGroup",
+    type: "multiGroup",
+    botLines: ["회사 상황을 한 번에 알려주세요.", "해당되는 걸 골라주세요. (없으면 비워두셔도 돼요)"],
+    subs: [
+      {
+        key: "currentInstitutions",
+        label: "현재 이용 중인 정책기관",
+        hint: STEP2_FIELDS.currentInstitutions.hint,
+        opts: STEP2_FIELDS.currentInstitutions.opts,
+        labelFull: (STEP2_FIELDS.currentInstitutions as any).labelFull,
+      },
+      {
+        key: "purposes",
+        label: "필요한 정부지원사업",
+        hint: STEP2_FIELDS.purposes.hint,
+        opts: STEP2_FIELDS.purposes.opts,
+      },
+      {
+        key: "innovation",
+        label: "혁신성장 분야 해당 여부",
+        hint: STEP3_FIELDS.innovation.hint,
+        opts: STEP3_FIELDS.innovation.opts,
+        singleSelect: true, // 예/아니요 중 하나만(라디오). 저장은 [선택값] 배열 유지.
+      },
+      {
+        key: "certifications",
+        label: "보유 특허·인증",
+        hint: STEP3_FIELDS.certifications.hint,
+        opts: STEP3_FIELDS.certifications.opts,
+      },
+    ],
   },
 
   // ── 3단계 · 맞춤 심층 질문 (6개를 '해당되는 것만 체크'로 한 질문에 통합) ──
@@ -258,6 +279,8 @@ export default function DiagnosisChat() {
   const [phoneTemp, setPhoneTemp] = useState("");
   // yes/no 묶음(yesnoGroup)에서 각 하위 문항 선택값
   const [groupTemp, setGroupTemp] = useState<Record<string, string>>({});
+  // 복수선택 묶음(multiGroup)에서 각 하위 문항의 선택 배열
+  const [groupMultiTemp, setGroupMultiTemp] = useState<Record<string, string[]>>({});
   // 체크리스트(checkGroup)에서 체크된 하위 문항 key들
   const [checkTemp, setCheckTemp] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -361,6 +384,7 @@ export default function DiagnosisChat() {
     setNameTemp("");
     setPhoneTemp("");
     setGroupTemp({});
+    setGroupMultiTemp({});
     setCheckTemp([]);
     setBnoMsg(null);
     setBnoServerDown(false);
@@ -448,6 +472,34 @@ export default function DiagnosisChat() {
     subs.forEach((s) => { next[s.key] = groupTemp[s.key]; });
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: subs.map((s) => groupTemp[s.key]).join(" / ") }]);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
+
+  // 복수선택 묶음(multiGroup) — 하위 문항별 다중 토글 / 라디오
+  const toggleGroupMulti = (subKey: string, opt: string) =>
+    setGroupMultiTemp((g) => {
+      const arr = g[subKey] || [];
+      return { ...g, [subKey]: arr.includes(opt) ? arr.filter((x) => x !== opt) : [...arr, opt] };
+    });
+  // singleSelect 하위문항: 하나만(라디오). 같은 걸 다시 누르면 해제.
+  const pickGroupMultiSingle = (subKey: string, opt: string) =>
+    setGroupMultiTemp((g) => ({ ...g, [subKey]: g[subKey]?.[0] === opt ? [] : [opt] }));
+
+  const confirmMultiGroup = () => {
+    const step = CHAT_STEPS[stepIdx];
+    const subs = step.subs || [];
+    const next = { ...form };
+    subs.forEach((s) => { next[s.key] = groupMultiTemp[s.key] || []; });
+    setForm(next);
+    // 사용자 말풍선: 각 문항의 선택값(풀네임 표기)을 " / "로 이어 요약. 비어있으면 생략.
+    const summary = subs
+      .map((s) => {
+        const picked = (groupMultiTemp[s.key] || []).map((v) => s.labelFull?.[v] || v);
+        return picked.length ? picked.join(", ") : null;
+      })
+      .filter(Boolean)
+      .join(" / ");
+    setMessages((m) => [...m, { who: "user", text: summary || "해당 없음" }]);
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
@@ -900,6 +952,47 @@ export default function DiagnosisChat() {
                     onClick={confirmYesnoGroup}
                     disabled={(curStep.subs || []).some((s) => !groupTemp[s.key])}
                     className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                  >
+                    다음 →
+                  </button>
+                </div>
+              )}
+
+              {/* ★ 복수선택 묶음(multiGroup) — 짧은 복수선택 질문 여러 개를 한 화면에서(대표님 요청) ★
+                  각 하위 문항마다 label(+hint)과 보기 버튼들을 세로로 나열.
+                  · 일반 하위문항: 여러 개 토글(복수 선택)
+                  · singleSelect 하위문항(예: 혁신성장): 하나만(라디오)
+                  맨 아래 '다음 →' 하나로 제출. 저장값 구조는 개별 스텝과 동일(배열). */}
+              {curStep.type === "multiGroup" && (
+                <div className="flex flex-col gap-4">
+                  {(curStep.subs || []).map((sub) => {
+                    const picked = groupMultiTemp[sub.key] || [];
+                    return (
+                      <div key={sub.key}>
+                        <p className="mb-1 break-keep px-1 text-[15px] font-bold text-brand-dark">{sub.label}</p>
+                        {sub.hint && <p className="mb-1.5 break-keep px-1 text-xs text-brand-gray">{sub.hint}</p>}
+                        <div className={`grid gap-2 ${COLS_CLASS[sub.cols ?? autoCols((sub.opts || []).map((o) => sub.labelFull?.[o] || o))]}`}>
+                          {(sub.opts || []).map((o) => {
+                            const active = picked.includes(o);
+                            return (
+                              <button
+                                key={o}
+                                onClick={() => (sub.singleSelect ? pickGroupMultiSingle(sub.key, o) : toggleGroupMulti(sub.key, o))}
+                                className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                                  active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
+                                }`}
+                              >
+                                {sub.labelFull?.[o] || o}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <button
+                    onClick={confirmMultiGroup}
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark"
                   >
                     다음 →
                   </button>
