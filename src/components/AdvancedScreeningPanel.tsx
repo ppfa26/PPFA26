@@ -1023,7 +1023,7 @@ function AdvancedResult({
       {autoRun && (
         <AccordionCard
           emoji="🏅"
-          title="신청·감면 혜택 한번에 챙기기"
+          title="신청·감면 혜택 한번에 모두 챙기기"
           subtitle="신청 가능한 제도와 세금 아끼는 감면을 모았어요"
         >
           {/* ── 신청 가능한 정부지원제도 (제도가 있을 때만) ── */}

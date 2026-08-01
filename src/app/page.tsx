@@ -443,7 +443,7 @@ export default function Home() {
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
                           <span className="shrink-0">🏅</span>
-                          <span className="min-w-0 break-keep">신청·감면 혜택 한번에 챙기기</span>
+                          <span className="min-w-0 break-keep">신청·감면 혜택 한번에 모두 챙기기</span>
                         </span>
                         <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
                           신청 가능한 제도와 세금 아끼는 감면을 모았어요
