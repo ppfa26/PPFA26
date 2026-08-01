@@ -126,12 +126,22 @@ export function labelForKey(key: string): string {
   return DIAGNOSIS_LABELS[key] ?? key;
 }
 
+// ★ 엑셀(XML) 손상 방지 - 셀 문자열에서 허용되지 않는 제어문자 제거 ★
+//   XML 1.0 스펙상 \x09(탭)·\x0A(LF)·\x0D(CR) 외의 제어문자(\x00~\x1F 등)는 넣을 수 없다.
+//   고객 프로필 데이터에 이런 문자가 섞여 있으면 Excel이 "파일 손상, 복구할까요?"를 띄우므로 미리 제거.
+export function sanitizeCellText(s: string): string {
+  // eslint-disable-next-line no-control-regex
+  return s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
+}
+
 // 값(배열/객체/원시)을 사람이 읽기 쉬운 문자열로
 export function valueToText(v: unknown): string {
-  if (v === null || v === undefined || v === "") return "-";
-  if (Array.isArray(v)) return v.length ? v.join(", ") : "-";
-  if (typeof v === "object") return JSON.stringify(v);
-  return String(v);
+  let out: string;
+  if (v === null || v === undefined || v === "") out = "-";
+  else if (Array.isArray(v)) out = v.length ? v.join(", ") : "-";
+  else if (typeof v === "object") out = JSON.stringify(v);
+  else out = String(v);
+  return sanitizeCellText(out);
 }
 
 // CSV 셀 이스케이프 (쉼표·따옴표·줄바꿈 대응)
@@ -218,7 +228,7 @@ function buildDiagBlocks(records: DiagnosisRecord[]): DiagBlock[] {
     if (phoneText !== "-") headerParts.push(phoneText);
     if (bnoText !== "-") headerParts.push(bnoText);
     headerParts.push(fmtKST(rec.created_at));
-    const title = `■ ${headerParts.join(" · ")}${dupNote}`;
+    const title = sanitizeCellText(`■ ${headerParts.join(" · ")}${dupNote}`);
 
     const rows: [string, string][] = [
       ["이름", valueToText(applicant)],
@@ -268,9 +278,11 @@ export async function diagnosesToXlsxBlob(records: DiagnosisRecord[]): Promise<B
   const wb = new ExcelJS.Workbook();
   wb.creator = "모두의사업친구";
   wb.created = new Date();
-  const ws = wb.addWorksheet("고객진단서", {
-    views: [{ state: "frozen", ySplit: 0 }],
-  });
+  // ★ 파일 손상("복구하시겠습니까?") 원인이던 views 설정 제거 ★
+  //   기존 views:[{state:"frozen",ySplit:0}] 는 '행을 하나도 고정하지 않는데 frozen 상태'라는
+  //   OOXML 규격 위반 pane 을 만들어 Excel이 파일 손상으로 판단, 복구 대화상자를 띄웠다.
+  //   이 파일은 사람마다 제목·헤더가 반복되므로 틀 고정이 불필요 → 아예 제거한다.
+  const ws = wb.addWorksheet("고객진단서");
 
   // 열 너비 넉넉히 - 질문(라벨) 28, 답변 60 (긴 답변도 한눈에)
   ws.columns = [
