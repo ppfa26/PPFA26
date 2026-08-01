@@ -532,9 +532,7 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
     <>
         <div className="mb-3 rounded-xl border border-brand-orange/20 bg-brand-orange/5 px-4 py-3">
           <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
-            아래는 대표님이 <b className="text-brand-dark">챙기면 세금이나 부담금을 아낄 수 있는 감면 혜택</b>이에요.
-            <br />
-            자금을 새로 받는 건 아니지만, 요건만 맞으면 <b className="text-brand-dark">내야 할 돈을 줄여주는 혜택</b>이라 놓치면 손해예요.
+            돈을 새로 받는 건 아니지만, 요건만 맞으면 <b className="text-brand-dark">내야 할 세금·부담금을 줄여주는 혜택</b>이라 놓치면 손해예요.
           </p>
         </div>
         {/* ★ 표시만 분리 (대표님 요청): 앞 3개는 먼저 펼치고, 나머지는 '더 보기'로 접는다. ★

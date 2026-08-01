@@ -895,8 +895,8 @@ function AdvancedResult({
       {autoRun && (
         <div className="rounded-2xl border border-brand-orange/70 bg-brand-grad px-4 py-3.5 shadow-card">
           <p className="break-keep text-[14px] font-semibold leading-relaxed text-brand-dark/80">
-            👇 <b>✅ 표시</b>된 곳이 <b>지금 바로 신청 가능한 곳</b>입니다.{" "}
-            <b>&ldquo;상품 보기&rdquo;</b>를 누르면 신청 상품과 방법을 순서대로 안내드려요.
+            👇 <b>✅ 표시</b>된 곳이 <b>지금 바로 신청 가능한 곳</b>이에요.{" "}
+            <b>&ldquo;상품 보기&rdquo;</b>를 누르면 신청 방법을 순서대로 알려드려요.
           </p>
         </div>
       )}
@@ -912,9 +912,7 @@ function AdvancedResult({
         >
           <div className="rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
-              아래는 <b>예비·초기·청년 창업자</b>가 신청할 수 있는 대표적인 <b>사업화 자금(무상)</b> 지원사업이에요.
-              <br />
-              정책자금(대출)과는 다르게 갚지 않아도 되는 지원금이며, 예비·초기 단계에서 챙기시길 권장드립니다.
+              <b>안 갚아도 되는 사업화 자금(무상)</b>이에요. 창업 초기에만 받을 수 있으니 지금 꼭 챙기세요.
             </p>
           </div>
           {(() => {
@@ -1009,7 +1007,7 @@ function AdvancedResult({
             );
           })()}
           <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-dark/45">
-            ※ 공고 시기·지원금·자격은 매년 달라질 수 있어요. 신청 전 각 기관 공식 공고를 꼭 확인하세요.
+            ※ 지원금·자격은 매년 바뀌어요. 신청 전 공식 공고를 꼭 확인하세요.
           </p>
           {/* ★ 성격별 분류(대표님 요청): 크롤링 실공고 중 '창업' 성격 공고를 이 아코디언 안에 인라인으로.
               (기업마당 '창업'/K-Startup 창업·사업화 등) 결과 대시보드(autoRun)에서만, previewLock 제외. */}
@@ -1034,9 +1032,7 @@ function AdvancedResult({
           <>
           <div className="mb-3 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
-              아래는 대표님 진단 결과 <b>지금 바로 신청할 수 있는 정부지원제도</b>만 추린 목록이에요.
-              <br />
-              대출과 별개로 병행 신청할 수 있으니, 놓치지 말고 하나씩 확인해보시길 권장드립니다.
+              대표님이 <b>지금 바로 신청할 수 있는 제도</b>만 골랐어요. 대출과 따로 챙길 수 있으니 놓치지 마세요.
             </p>
           </div>
           {(() => {
@@ -1180,9 +1176,7 @@ function AdvancedResult({
       >
         <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
           <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
-            아래는 대표님이 <b>낮은 금리로 이용할 수 있는 정책금융상품</b>이에요.
-            <br />
-            지원금(무상)과 달리 <b>갚아야 하는 자금</b>이지만, 시중 대출보다 금리와 조건이 유리하니 필요할 때 활용하시길 권장드립니다.
+            <b>갚아야 하는 자금</b>이지만 시중 대출보다 금리·조건이 유리해요. 자금이 필요할 때 활용하세요.
           </p>
         </div>
         <div className="mt-4 divide-y divide-gray-200">

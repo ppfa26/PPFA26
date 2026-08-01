@@ -323,14 +323,12 @@ export default function MyPage() {
 
                 <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
                   {[
-                    { icon: "📊", name: "회사 IR 자료 제작", price: "50만원", accent: true },
-                    { icon: "📝", name: "사업계획서 첨삭", price: "50만원", accent: true },
-                    { icon: "📑", name: "IR + 사업계획서 첨삭", price: "90만원", accent: true },
-                    { icon: "💰", name: "정부지원사업 러닝메이트 자문", price: "문의", accent: false },
-                    { icon: "🚀", name: "예비 · 초기창업패키지", price: "문의", accent: false },
+                    { icon: "📊", name: "회사 IR 자료 제작", price: "30만원", accent: true },
+                    { icon: "📝", name: "사업계획서 첨삭", price: "30만원", accent: true },
+                    { icon: "📑", name: "IR + 사업계획서 첨삭", price: "50만원", accent: true },
+                    { icon: "💰", name: "정부지원사업 정식자문", price: "문의", accent: false },
                     { icon: "🧾", name: "세무조사 · 기장", price: "문의", accent: false },
                     { icon: "🌏", name: "수출 관세 상담", price: "문의", accent: false },
-                    { icon: "🛡️", name: "사업자 보험 상담", price: "문의", accent: false },
                   ].map((s) => (
                     <a
                       key={s.name}
