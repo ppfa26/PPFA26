@@ -181,16 +181,24 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "credit", label: "대표자 개인 신용점수", hint: STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
     ],
   },
-  { key: "region", type: "region", botLines: ["사업장 지역은 어디신가요?"], opts: STEP1_FIELDS.region.opts },
-
-  // ── 2단계 · 회사 정보 (짧은 복수선택 문항 4개를 한 화면에 묶음 · 대표님 요청) ──
-  //  현재기관 / 필요목적 / 혁신성장 / 특허인증 → 한 화면에서 쭉 고르고 '다음'.
-  //  각 문항의 저장값 구조(배열)는 개별 스텝과 100% 동일 → 매칭 결과 불변.
+  // ── 2단계 · 회사 정보 ──
+  //  ★ 대표님 요청(B2=나 + C1) ★ 지역을 회사정보 묶음의 '맨 위'로 합치되,
+  //    한 화면 최대 3문항 원칙을 지키려고 2개 화면으로 나눔.
+  //    · 화면A(≤3): 지역 + 현재기관 + 필요사업
+  //    · 화면B(≤2): 혁신성장 + 특허인증
+  //  각 문항의 저장값 구조는 개별 스텝과 동일 → 매칭 결과 불변.
+  //  지역(region)은 단일값이라 scalar 로 저장. '기타'는 인라인 직접입력.
   {
-    key: "companyGroup",
+    key: "companyGroupA",
     type: "multiGroup",
-    botLines: ["회사 상황을 한 번에 알려주세요.", "해당되는 걸 골라주세요. (없으면 비워두셔도 돼요)"],
+    botLines: ["회사 상황을 알려주세요. (1/2)", "먼저 지역과 지원 관련 정보예요. (없으면 비워두셔도 돼요)"],
     subs: [
+      {
+        key: "region",
+        label: "사업장 지역",
+        opts: STEP1_FIELDS.region.opts,
+        scalar: true, // 단일 문자열 저장. '기타' 선택 시 인라인 입력창 노출.
+      },
       {
         key: "currentInstitutions",
         label: "현재 이용 중인 정책기관",
@@ -204,6 +212,13 @@ const CHAT_STEPS: ChatStep[] = [
         hint: STEP2_FIELDS.purposes.hint,
         opts: STEP2_FIELDS.purposes.opts,
       },
+    ],
+  },
+  {
+    key: "companyGroupB",
+    type: "multiGroup",
+    botLines: ["회사 상황을 알려주세요. (2/2)", "해당되는 걸 골라주세요. (없으면 비워두셔도 돼요)"],
+    subs: [
       {
         key: "innovation",
         label: "혁신성장 분야 해당 여부",
@@ -290,6 +305,8 @@ export default function DiagnosisChat() {
   const [groupTemp, setGroupTemp] = useState<Record<string, string>>({});
   // 복수선택 묶음(multiGroup)에서 각 하위 문항의 선택 배열
   const [groupMultiTemp, setGroupMultiTemp] = useState<Record<string, string[]>>({});
+  // multiGroup 안의 지역(region) '기타' 직접입력값
+  const [groupRegionEtc, setGroupRegionEtc] = useState("");
   // 체크리스트(checkGroup)에서 체크된 하위 문항 key들
   const [checkTemp, setCheckTemp] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -399,6 +416,7 @@ export default function DiagnosisChat() {
     setPhoneTemp("");
     setGroupTemp({});
     setGroupMultiTemp({});
+    setGroupRegionEtc("");
     setCheckTemp([]);
     setBnoMsg(null);
     setBnoServerDown(false);
@@ -506,15 +524,28 @@ export default function DiagnosisChat() {
     const subs = (step.subs || []).filter((s) => !s.subOnlyIf || s.subOnlyIf(form));
     // 필수 검증: scalar(단일 저장) 하위문항은 반드시 하나 선택해야 진행(예: 사업자 구분).
     if (subs.some((s) => s.scalar && !(groupMultiTemp[s.key] && groupMultiTemp[s.key][0]))) return;
+    // 지역 '기타' 선택인데 직접입력이 비어 있으면 진행 불가
+    const regionSub = subs.find((s) => s.key === "region");
+    if (regionSub && groupMultiTemp["region"]?.[0] === "기타" && !groupRegionEtc.trim()) return;
     const next = { ...form };
     subs.forEach((s) => {
       const picked = groupMultiTemp[s.key] || [];
-      next[s.key] = s.scalar ? (picked[0] ?? form[s.key]) : picked; // scalar=단일 문자열, 그 외=배열
+      if (s.key === "region") {
+        // 지역: '기타'면 직접입력값, 아니면 선택 칩
+        next.region = picked[0] === "기타" ? groupRegionEtc.trim() : (picked[0] ?? form.region);
+      } else {
+        next[s.key] = s.scalar ? (picked[0] ?? form[s.key]) : picked; // scalar=단일 문자열, 그 외=배열
+      }
     });
     setForm(next);
     // 사용자 말풍선: 각 문항의 선택값(풀네임 표기)을 " / "로 이어 요약. 비어있으면 생략.
     const summary = subs
       .map((s) => {
+        if (s.key === "region") {
+          const r = groupMultiTemp["region"]?.[0];
+          if (!r) return null;
+          return r === "기타" ? groupRegionEtc.trim() : r;
+        }
         const picked = (groupMultiTemp[s.key] || []).map((v) => s.labelFull?.[v] || v);
         return picked.length ? picked.join(", ") : null;
       })
@@ -1019,14 +1050,27 @@ export default function DiagnosisChat() {
                             );
                           })}
                         </div>
+                        {/* 지역 '기타' → 인라인 직접입력 (scalar sub 전용) */}
+                        {sub.key === "region" && picked[0] === "기타" && (
+                          <input
+                            type="text"
+                            value={groupRegionEtc}
+                            onChange={(e) => setGroupRegionEtc(e.target.value)}
+                            placeholder="지역을 직접 입력해 주세요 (예: 부산 해운대구)"
+                            className="mt-2 w-full rounded-xl border border-white bg-white px-3.5 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                          />
+                        )}
                       </div>
                     );
                   })}
                   <button
                     onClick={confirmMultiGroup}
-                    disabled={(curStep.subs || [])
-                      .filter((s) => (!s.subOnlyIf || s.subOnlyIf(form)) && s.scalar)
-                      .some((s) => !(groupMultiTemp[s.key] && groupMultiTemp[s.key][0]))}
+                    disabled={
+                      (curStep.subs || [])
+                        .filter((s) => (!s.subOnlyIf || s.subOnlyIf(form)) && s.scalar)
+                        .some((s) => !(groupMultiTemp[s.key] && groupMultiTemp[s.key][0])) ||
+                      (groupMultiTemp["region"]?.[0] === "기타" && !groupRegionEtc.trim())
+                    }
                     className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                   >
                     다음 →

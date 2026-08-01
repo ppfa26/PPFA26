@@ -572,11 +572,11 @@ export default function Home() {
                           </div>
                           <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray">{m.criteria}</p>
                           {m.isGuarantee ? (
-                            <p className="mt-2 break-keep rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-blue-800">
+                            <p className="mt-2 break-keep rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-[11px] leading-relaxed text-brand-dark/80 shadow-sm">
                               <b>ℹ️ 대리대출(보증)</b> · 이 기관은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요.
                             </p>
                           ) : (
-                            <p className="mt-2 break-keep rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-emerald-800">
+                            <p className="mt-2 break-keep rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-[11px] leading-relaxed text-brand-dark/80 shadow-sm">
                               <b>ℹ️ 직접대출</b> · 이 상품은 <b>은행을 거치지 않고</b> 기관에서 <b>대출이 바로 실행</b>돼요.
                             </p>
                           )}

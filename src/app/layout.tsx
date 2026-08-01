@@ -133,16 +133,16 @@ export const viewport: Viewport = {
 //        (대표님 요청: 모바일 글씨가 작다 → 전체 확대). PC 는 영향 없음.
 //   3) 가로/세로 회전 시 폭이 바뀌므로 resize·orientationchange 때 다시 계산.
 //  ※ <head> 안에서 즉시 실행(dangerouslySetInnerHTML) → 첫 페인트 전에 적용돼 깜빡임 최소화.
+//  ★★ 확대 문제 근본 수정 (대표님 C2 재요청) ★★
+//  이전 방식: 폰을 720px 'PC 폭'으로 강제 축소(scale<1)해 넓게 보여줬는데,
+//    안드로이드(삼성 인터넷)·크롬은 user-scalable=no 를 무시하고 키보드가
+//    뜨거나 입력칸을 탭하면 제멋대로 다시 줌인 → 시작부터 확대·잘림, 입력 시 확대.
+//  변경: 강제 축소를 '완전히 제거'하고 표준 반응형(width=device-width)만 사용.
+//    → 폰은 폰 크기 그대로(자동 줌 트리거 자체가 없어짐). 콘텐츠를 크게 보이게
+//      하는 건 축소가 아니라 CSS(폰트/여백)로 처리한다.
+//    입력칸은 모두 16px(text-base) 이상이라 iOS 의 '작은 글씨 자동 확대'도 안 걸린다.
 const DESKTOP_VIEWPORT_SCRIPT = `
 (function () {
-  var DESKTOP_WIDTH = 900;   // 이 값 이상은 진짜 PC/태블릿(원본 반응형 유지)
-  // ★ 모바일 확대(대표님 요청) ★
-  //  모바일에서 글씨/박스가 작아 잘 안 보인다는 피드백 → 축소 '기준폭'을 낮춘다.
-  //  기준폭이 작을수록 같은 폰 화면에서 콘텐츠가 더 크게 보인다.
-  //  900 → 820 → 720 (약 24% 확대, 대표님 재요청: 조금 더 크게).
-  //  PC 판별 기준(DESKTOP_WIDTH)과는 분리해 태블릿 경계는 그대로 두고
-  //  모바일 확대만 적용한다.
-  var MOBILE_BASE = 720;
   function apply() {
     try {
       var vp = document.querySelector('meta[name=viewport]');
@@ -151,62 +151,11 @@ const DESKTOP_VIEWPORT_SCRIPT = `
         vp.setAttribute('name', 'viewport');
         document.head.appendChild(vp);
       }
-      // ★ 잘림 방지(대표님 요청: 확대가 이상하게 됨) ★
-      //  screen.width 는 기기 '물리' 화면폭이라 실제 렌더 폭과 어긋날 때가 있어
-      //  (일부 폰/회전 상태) 820px 기준 페이지가 오른쪽으로 잘리거나 확대 시
-      //  중심이 튀었다. 실제 뷰포트 폭(innerWidth)을 우선 사용해 항상 화면폭에
-      //  정확히 맞춰 축소 → 어떤 상태에서도 가운데 고정, 잘림 0.
-      var w = window.innerWidth || (window.screen && window.screen.width) || 390;
-      if (w >= DESKTOP_WIDTH) {
-        // 진짜 넓은 화면(PC/태블릿) → 표준 반응형 유지(핀치 줌 허용)
-        vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
-      } else {
-        // 모바일 → MOBILE_BASE(820px) PC 화면을 기기폭에 맞춰 축소(=콘텐츠 확대)
-        var scale = w / MOBILE_BASE;
-        // ★ 입력창 클릭 시 '자동 확대' 방지(대표님 요청) ★
-        //  이 페이지는 기준폭 화면을 기기폭에 맞춰 축소(scale<1)해 보여준다.
-        //  이 상태에서 모바일 브라우저는 입력창을 탭하면 글자를 키우려고
-        //  '자동 줌인'을 하는데, 축소 배율과 겹쳐 화면이 튀고 중심이 어긋나
-        //  정신사나워 보인다. maximum-scale 을 initial-scale 과 '같게' 고정하면
-        //  브라우저의 자동 줌 트리거가 사라져, 입력·답변 중에도 항상 화면
-        //  중앙 기준 그대로 유지된다. (핀치 줌 접근성보다 시인성 우선)
-        vp.setAttribute('content', 'width=' + MOBILE_BASE + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no');
-      }
-    } catch (e) { /* 실패해도 기본 반응형으로 그대로 노출 */ }
-  }
-  apply();
-  window.addEventListener('orientationchange', function () { setTimeout(apply, 200); });
-  window.addEventListener('resize', apply);
-
-  // ★ 입력창 탭 시 '확대(자동 줌)' 완전 차단 (대표님 재요청) ★
-  //  iOS Safari 는 viewport 의 maximum-scale/user-scalable=no 를 무시하고,
-  //  input/textarea 에 포커스가 가는 순간 '글자 키우기' 자동 줌을 강제한다.
-  //  이 페이지는 이미 축소(scale<1)해 보여주고 있어서, 그 위에 자동 줌이
-  //  겹치면 화면이 튀고 중심이 어긋난다.
-  //  해법(iOS 표준 우회): 포커스 '직전'(pointerdown/touchstart 단계)에
-  //  viewport 를 현재 배율로 '못 박아' 두면, 브라우저가 포커스 시 다시
-  //  줌할 여지를 없앤다. blur 후엔 원래 계산식(apply)으로 되돌린다.
-  function lockZoom() {
-    try {
-      var w = window.innerWidth || (window.screen && window.screen.width) || 390;
-      if (w >= DESKTOP_WIDTH) return; // PC/태블릿은 건드리지 않음
-      var vp = document.querySelector('meta[name=viewport]');
-      if (!vp) return;
-      var scale = w / MOBILE_BASE;
-      vp.setAttribute('content', 'width=' + MOBILE_BASE + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no');
+      // 표준 반응형: 확대/축소 강제 없음. 핀치 줌은 접근성 위해 허용.
+      vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
     } catch (e) {}
   }
-  function isField(t) {
-    if (!t || !t.tagName) return false;
-    var n = t.tagName.toLowerCase();
-    return n === 'input' || n === 'textarea' || n === 'select' || t.isContentEditable;
-  }
-  // 포커스가 실제로 들어가기 전에 미리 배율을 고정한다.
-  document.addEventListener('touchstart', function (e) { if (isField(e.target)) lockZoom(); }, true);
-  document.addEventListener('pointerdown', function (e) { if (isField(e.target)) lockZoom(); }, true);
-  document.addEventListener('focusin', function (e) { if (isField(e.target)) lockZoom(); }, true);
-  // 입력이 끝나면(포커스 해제) 표준 계산으로 복귀 → 회전/리사이즈 대응 유지.
-  document.addEventListener('focusout', function () { setTimeout(apply, 50); }, true);
+  apply();
 })();
 `;
 
