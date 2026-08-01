@@ -11,7 +11,7 @@ import {
   labelForKey,
   valueToText,
   sortKeysByQuestionOrder,
-  diagnosesToCsv,
+  downloadDiagnosesXlsx,
   downloadCsv,
   computeDuplicateIndex,
   type DiagnosisRecord,
@@ -360,13 +360,18 @@ export default function AdminPage() {
       dupIndex: dupIndexMap.get(d.id),
     }));
 
-  // 엑셀(CSV) 다운로드 - 전체 / 선택 / 개별
-  const downloadAllDiag = () => {
+  // 엑셀(.xlsx) 다운로드 - 전체 / 선택 / 개별 (열 너비 넉넉히·열자마자 한눈에)
+  const downloadAllDiag = async () => {
     if (diagnoses.length === 0) return;
     const stamp = new Date().toISOString().slice(0, 10);
-    downloadCsv(`고객진단서_전체_${stamp}`, diagnosesToCsv(toRecords(diagnoses)));
+    try {
+      await downloadDiagnosesXlsx(`고객진단서_전체_${stamp}`, toRecords(diagnoses));
+    } catch {
+      setMsg("엑셀 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      setTimeout(() => setMsg(null), 3000);
+    }
   };
-  const downloadSelectedDiag = () => {
+  const downloadSelectedDiag = async () => {
     const list = diagnoses.filter((d) => selectedDiag.has(d.id));
     if (list.length === 0) {
       setMsg("먼저 다운로드할 진단서를 체크해 주세요.");
@@ -374,15 +379,25 @@ export default function AdminPage() {
       return;
     }
     const stamp = new Date().toISOString().slice(0, 10);
-    downloadCsv(`고객진단서_선택${list.length}건_${stamp}`, diagnosesToCsv(toRecords(list)));
+    try {
+      await downloadDiagnosesXlsx(`고객진단서_선택${list.length}건_${stamp}`, toRecords(list));
+    } catch {
+      setMsg("엑셀 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      setTimeout(() => setMsg(null), 3000);
+    }
   };
-  const downloadOneDiag = (d: AdminDiagnosis) => {
+  const downloadOneDiag = async (d: AdminDiagnosis) => {
     const applicant = d.name || (d.profile as any)?.name || "고객";
     // 동명이인 구분을 위해 연락처 뒤 4자리를 파일명에 추가
     const rawPhone = String(d.phone || (d.profile as any)?.phone || "").replace(/[^0-9]/g, "");
     const tail = rawPhone.length >= 4 ? `_${rawPhone.slice(-4)}` : "";
     const stamp = new Date(d.created_at).toISOString().slice(0, 10);
-    downloadCsv(`고객진단서_${applicant}${tail}_${stamp}`, diagnosesToCsv(toRecords([d])));
+    try {
+      await downloadDiagnosesXlsx(`고객진단서_${applicant}${tail}_${stamp}`, toRecords([d]));
+    } catch {
+      setMsg("엑셀 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      setTimeout(() => setMsg(null), 3000);
+    }
   };
 
   // 회원 목록 CSV 다운로드 - 세무·백업·문자발송 명단용 (진단서에서 이름·연락처 역추적 포함)
@@ -1237,7 +1252,7 @@ export default function AdminPage() {
               onClick={downloadAllDiag}
               disabled={diagnoses.length === 0}
               className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
-              title="접수된 모든 고객 진단서를 엑셀(CSV)로 내려받습니다"
+              title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
             >
               📋 진단서 엑셀
             </button>

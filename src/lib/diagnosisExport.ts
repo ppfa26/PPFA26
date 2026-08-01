@@ -152,19 +152,12 @@ export type DiagnosisRecord = {
   dupIndex?: number; // 몇 번째 신청인지 (중복 감지 결과)
 };
 
-// 여러 진단서를 하나의 CSV(엑셀)로 변환 - ★세로 방식★ (대표님 요청)
-//  화면 질문지처럼 A열=질문 / B열=답변 이 세로로 쭉 나열됩니다.
-//    (제목 줄)  ■ 신주엽 개인사업자 · 01030329388 · 5971202897 · 2026-07-16 …
-//    질문        | 답변
-//    대표자 연령 | 만 39세 이하 (청년)
-//    이름        | 신주엽
-//    …          | …
-//  한 사람이 끝나면 빈 줄 1칸을 두고 다음 사람 정보가 이어집니다.
-export function diagnosesToCsv(records: DiagnosisRecord[]): string {
-  const lines: string[] = [];
+// ── 진단서 1명 분량을 "제목 + (질문,답변) 행들"로 구성하는 공통 헬퍼 ──
+//   CSV·엑셀(xlsx) 두 출력이 완전히 같은 순서·내용을 쓰도록 한 곳에서 만든다.
+type DiagBlock = { title: string; isPartial: boolean; rows: [string, string][] };
 
+function buildDiagBlocks(records: DiagnosisRecord[]): DiagBlock[] {
   // ── 모든 고객에 공통으로 쓸 질문(행) 순서를 통일한다 ──
-  //   기본 항목(이름·연락처·이메일) + 프로필에 등장한 모든 질문 키
   const collected: string[] = [];
   const seen = new Set<string>();
   records.forEach((rec) => {
@@ -181,50 +174,148 @@ export function diagnosesToCsv(records: DiagnosisRecord[]): string {
   // ★ 정식 질문 순서로 정렬 (대표님 요청 - 엑셀도 실제 질문 순서와 동일하게) ★
   const profileKeys = sortKeysByQuestionOrder(collected);
 
-  records.forEach((rec, i) => {
-    if (i > 0) {
-      lines.push(""); // 사람 사이 빈 줄 1칸으로 구분
-    }
-
+  return records.map((rec) => {
     const applicant = rec.name || (rec.profile as any)?.name || "이름미입력";
     const bizType = valueToText((rec.profile as any)?.businessType);
     const phoneText = valueToText(rec.phone ?? (rec.profile as any)?.phone);
     const bnoText = valueToText((rec.profile as any)?.bno);
     const dupNote =
       rec.dupIndex && rec.dupIndex > 1 ? ` · ${rec.dupIndex}번째 신청(중복)` : "";
-    // 완료/미완료 상태 - 엑셀에서도 전화 돌릴 미완료 리드를 바로 구분
-    const statusNote = rec.status === "partial" ? "[미완료-중간이탈]" : "[완료]";
+    const isPartial = rec.status === "partial";
+    const statusNote = isPartial ? "[미완료-중간이탈]" : "[완료]";
 
-    // ── 사람 구분 제목 줄 (상태 · 이름 · 사업자유형 · 연락처 · 사업자번호 · 접수일시) ──
     const headerParts = [statusNote, applicant];
     if (bizType !== "-") headerParts.push(bizType);
     if (phoneText !== "-") headerParts.push(phoneText);
     if (bnoText !== "-") headerParts.push(bnoText);
     headerParts.push(fmtKST(rec.created_at));
-    lines.push(csvCell(`■ ${headerParts.join(" · ")}${dupNote}`));
+    const title = `■ ${headerParts.join(" · ")}${dupNote}`;
 
-    // ── 질문 | 답변 헤더 줄 ──
-    lines.push([csvCell("질문"), csvCell("답변")].join(","));
-
-    // ── 기본 항목 (이름·연락처·이메일) 먼저 ──
     const rows: [string, string][] = [
       ["이름", valueToText(applicant)],
       ["연락처", valueToText(rec.phone ?? (rec.profile as any)?.phone)],
       ["이메일", valueToText(rec.email ?? (rec.profile as any)?.email)],
     ];
-
-    // ── 프로필 질문들 세로로 나열 ──
     profileKeys.forEach((k) => {
       rows.push([labelForKey(k), valueToText((rec.profile as any)?.[k])]);
     });
 
-    rows.forEach(([q, a]) => {
+    return { title, isPartial, rows };
+  });
+}
+
+// 여러 진단서를 하나의 CSV(엑셀)로 변환 - ★세로 방식★ (대표님 요청)
+//  화면 질문지처럼 A열=질문 / B열=답변 이 세로로 쭉 나열됩니다.
+export function diagnosesToCsv(records: DiagnosisRecord[]): string {
+  const lines: string[] = [];
+  const blocks = buildDiagBlocks(records);
+
+  blocks.forEach((b, i) => {
+    if (i > 0) lines.push(""); // 사람 사이 빈 줄 1칸으로 구분
+    lines.push(csvCell(b.title));
+    lines.push([csvCell("질문"), csvCell("답변")].join(","));
+    b.rows.forEach(([q, a]) => {
       lines.push([csvCell(q), csvCell(a)].join(","));
     });
   });
 
   // 엑셀 한글 깨짐 방지: UTF-8 BOM
   return "\uFEFF" + lines.join("\r\n");
+}
+
+// ════════════════════════════════════════════════════════════════
+//  ★ 진짜 엑셀(.xlsx) 다운로드 (대표님 요청 - 열 너비 넉넉히, 열자마자 한눈에) ★
+//    · A열=질문, B열=답변 (세로형 유지)
+//    · 열 너비를 넓게 지정 → 내용이 잘리지 않고 바로 보임
+//    · 사람 구분 제목 줄(연한 파랑) / 질문·답변 헤더(굵게 회색) 스타일
+//    · 미완료(중간이탈) 고객 제목 줄은 연한 빨강으로 강조 → 전화 돌릴 리드 즉시 구분
+//    · exceljs는 무거우므로 다운로드 시점에만 동적 import (초기 로딩 영향 0)
+// ════════════════════════════════════════════════════════════════
+export async function diagnosesToXlsxBlob(records: DiagnosisRecord[]): Promise<Blob> {
+  const ExcelJS = (await import("exceljs")).default;
+  const wb = new ExcelJS.Workbook();
+  wb.creator = "모두의사업친구";
+  wb.created = new Date();
+  const ws = wb.addWorksheet("고객진단서", {
+    views: [{ state: "frozen", ySplit: 0 }],
+  });
+
+  // 열 너비 넉넉히 - 질문(라벨) 28, 답변 60 (긴 답변도 한눈에)
+  ws.columns = [
+    { key: "q", width: 30 },
+    { key: "a", width: 62 },
+  ];
+
+  const blocks = buildDiagBlocks(records);
+
+  blocks.forEach((b, i) => {
+    if (i > 0) {
+      ws.addRow([]); // 사람 사이 빈 줄 1칸
+    }
+
+    // ── 제목 줄 (2칸 병합 + 배경색) ──
+    const titleRow = ws.addRow([b.title]);
+    ws.mergeCells(`A${titleRow.number}:B${titleRow.number}`);
+    const titleCell = titleRow.getCell(1);
+    titleCell.font = { bold: true, size: 12, color: { argb: "FF1F2937" } };
+    titleCell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      // 미완료=연한 빨강, 완료=연한 파랑
+      fgColor: { argb: b.isPartial ? "FFFDE2E1" : "FFDCEBFA" },
+    };
+    titleCell.alignment = { vertical: "middle", wrapText: true };
+    titleRow.height = 22;
+
+    // ── 질문 | 답변 헤더 줄 ──
+    const headRow = ws.addRow(["질문", "답변"]);
+    headRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FF374151" } };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFF3F4F6" },
+      };
+      cell.alignment = { vertical: "middle" };
+      cell.border = {
+        bottom: { style: "thin", color: { argb: "FFD1D5DB" } },
+      };
+    });
+
+    // ── 데이터 행들 ──
+    b.rows.forEach(([q, a]) => {
+      const r = ws.addRow([q, a]);
+      r.getCell(1).font = { bold: true, color: { argb: "FF6B7280" } };
+      r.getCell(1).alignment = { vertical: "top" };
+      r.getCell(2).alignment = { vertical: "top", wrapText: true };
+      r.eachCell((cell) => {
+        cell.border = {
+          bottom: { style: "hair", color: { argb: "FFE5E7EB" } },
+        };
+      });
+    });
+  });
+
+  const buffer = await wb.xlsx.writeBuffer();
+  return new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+}
+
+// 브라우저에서 xlsx 파일 다운로드 실행
+export async function downloadDiagnosesXlsx(
+  filename: string,
+  records: DiagnosisRecord[]
+): Promise<void> {
+  const blob = await diagnosesToXlsxBlob(records);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename.endsWith(".xlsx") ? filename : `${filename}.xlsx`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 // KST(한국시간) 표기
