@@ -965,7 +965,7 @@ export default function Diagnosis() {
         </div>
       </main>
       {/* ── 쿠팡 파트너스 광고 (무료진단 1·2·3 단계 하단 · 푸터 위) ── */}
-      <div className="border-t border-brand-dark/5 px-4 py-5">
+      <div className="border-t border-brand-dark/5 px-4 py-2.5">
         <CoupangPartnersBanner
           iframeSrc="https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=680&height=140&tsource="
           iframeHeight={140}

@@ -140,10 +140,10 @@ export default function CoupangPartnersBanner({
     <aside
       id="coupang-partners-banner"
       aria-label="쿠팡 파트너스 광고"
-      className={`mx-auto w-full max-w-3xl rounded-2xl border border-brand-dark/10 bg-white/70 p-4 ${className}`}
+      className={`mx-auto w-full max-w-3xl rounded-2xl border border-brand-dark/10 bg-white/70 px-4 py-3 ${className}`}
     >
       {/* ── "광고" 라벨 (상단 명시) ── */}
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-1.5 flex items-center justify-between">
         <span className="inline-flex items-center gap-1 rounded-md bg-brand-dark/70 px-2 py-0.5 text-[11px] font-bold text-white">
           광고
         </span>
@@ -191,7 +191,7 @@ export default function CoupangPartnersBanner({
       )}
 
       {/* ── 대가성(수수료) 문구 — 공정위 필수 ── */}
-      <p className="mt-2.5 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
+      <p className="mt-2 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
         {DISCLOSURE}
       </p>
     </aside>

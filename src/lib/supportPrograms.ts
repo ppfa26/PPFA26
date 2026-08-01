@@ -541,13 +541,14 @@ export function countMatchedItems(p: DiagnosisProfile): {
     const report = runAdvancedScreening(company);
     const creditMatches = report.creditMatches || [];
     institutions = creditMatches.length;
-    // 상품 수 = 기관별 '대표님 조건에 맞는 상품'만 필터해 합산 (각 기관 최소 1)
+    // 상품 수 = 기관별 '대표님 조건에 맞는 상품'만 필터해 합산.
+    // ★ 결과 화면(AdvancedResult.productsShownCount)과 100% 동일하게 계산하기 위해
+    //   Math.max(1,...) 보정 없이, 실제로 그려지는 상품 카드 수를 그대로 합산한다. ★
     products = creditMatches.reduce((sum, m) => {
-      if (m.institution.includes("재단")) {
-        return sum + Math.max(1, filterProducts(JAEDAN_PRODUCTS, company).length);
-      }
+      const isJaedan = m.institution.includes("재단");
       const link = findInstitutionLink(m.institution);
-      return sum + Math.max(1, filterProducts(link?.products, company).length || 1);
+      const filtered = filterProducts(isJaedan ? JAEDAN_PRODUCTS : link?.products, company);
+      return sum + (filtered?.length || 0);
     }, 0);
   } catch {
     institutions = 0;

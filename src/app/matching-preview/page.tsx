@@ -193,11 +193,17 @@ export default function MatchingPreview() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData, adminView]);
 
-  // ★ 총 매칭 수 - 실측 콜백(liveCounts)이 도착하면 그 4개 합계를 쓰고(화면과 100% 일치),
-  //   아직 안 왔으면 초기 계산값(counts.total)으로 즉시 숫자를 보여준다(깜빡임 방지). ★
-  const total = liveCounts
-    ? liveCounts.supports + liveCounts.products + liveCounts.benefits + liveCounts.announcements
-    : counts?.total ?? 0;
+  // ★ 요약 배너에 실제로 '표시되는' 4개 카테고리 값 - 단일 소스로 도출해
+  //   큰 숫자(total)와 배지 숫자가 항상 100% 일치하도록 한다. (대표님 요청: 숫자 정확히 맞추기)
+  //   실측 콜백(liveCounts)이 도착하면 그 값을, 아직이면 초기 계산값(counts)을 쓴다.
+  //   ⚠️ '그 외 지원사업'(announcements)은 실측 콜백에만 있으므로, 도착 전에는 0으로 표시하고
+  //      total에서도 0으로 잡아, 화면 배지 합(=total)이 항상 어긋나지 않게 한다.
+  const shownSupports = liveCounts?.supports ?? counts?.supports ?? 0;
+  const shownProducts = liveCounts?.products ?? counts?.products ?? 0;
+  const shownBenefits = liveCounts?.benefits ?? counts?.benefits ?? 0;
+  const shownAnnouncements = liveCounts?.announcements ?? 0;
+  // ★ 큰 숫자 = 화면에 보이는 배지 4개의 합 (항상 일치) ★
+  const total = shownSupports + shownProducts + shownBenefits + shownAnnouncements;
   const isBlocked = blockReasons.length > 0;
 
   // ── 'AI 분석 중' 연출 진행 (analyzing → 약 2.2초 후 ready) ──
@@ -622,19 +628,19 @@ export default function MatchingPreview() {
                   <>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
                       🏅 <span className="whitespace-nowrap text-brand-dark/70">정부지원제도</span>
-                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.supports ?? counts.supports}건</b>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{shownSupports}건</b>
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
                       💳 <span className="whitespace-nowrap text-brand-dark/70">정책금융상품</span>
-                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.products ?? counts.products}건</b>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{shownProducts}건</b>
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
                       💎 <span className="whitespace-nowrap text-brand-dark/70">추가 감면 혜택</span>
-                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.benefits ?? counts.benefits}건</b>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{shownBenefits}건</b>
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
                       📢 <span className="whitespace-nowrap text-brand-dark/70">그 외 지원사업</span>
-                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{liveCounts?.announcements ?? 0}건</b>
+                      <b className="ml-auto text-[15px] text-brand-orange sm:text-lg">{shownAnnouncements}건</b>
                     </span>
                   </>
                 ) : (
@@ -776,7 +782,7 @@ export default function MatchingPreview() {
       {/* ── 쿠팡 파트너스 광고 (결과 하단 · 푸터 위) ──
            partnersId 를 넣으면 다이나믹 위젯 광고가 표시됩니다.
            승인/발급 전에는 placeholder(광고 자리) 로만 노출 → 가짜 광고 방지. */}
-      <div className="border-t border-brand-dark/5 px-4 py-5">
+      <div className="border-t border-brand-dark/5 px-4 py-2.5">
         <CoupangPartnersBanner
           iframeSrc="https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=680&height=140&tsource="
           iframeHeight={140}
