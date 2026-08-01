@@ -83,8 +83,10 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           </div>
         </div>
 
-        {/* ── 중단: 메뉴 네비 (가운뎃점 한 줄) ───────────────────────── */}
-        <nav className="mt-10 border-t border-white/10 pt-6">
+        {/* ── 중단: 메뉴 네비 (가운뎃점 한 줄) + 면책 고지 ─────────────
+            브랜드/채널과 같은 '위 블록'으로 묶어 구분선 없이 이어붙인다
+            (세로 2칸: 위 블록 / 아래 사업자정보). */}
+        <nav className="mt-8">
           <ul className="flex flex-wrap items-center gap-x-1 gap-y-2 text-[13.5px] text-gray-400">
             {MENU.map((m, i) => (
               <li key={m.href} className="flex items-center">
@@ -101,7 +103,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
         <Editable
           id="footer-nowarranty"
           as="p"
-          className="mt-6 break-keep text-xs leading-relaxed text-gray-500"
+          className="mt-4 break-keep text-xs leading-relaxed text-gray-500"
         >
           ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
         </Editable>
