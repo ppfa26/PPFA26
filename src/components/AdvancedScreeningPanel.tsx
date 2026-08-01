@@ -47,12 +47,11 @@ import { GRADUATION_CRITERIA, GRADUATION_EXCLUDED_NOTE } from "@/lib/graduationC
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
 type SupportItem = { prog: SupportProgram; status: SupportStatus };
 
-// ★ 상품 성격 배지 색상 (대표님 기준: 직접대출=블루 / 대리대출=보라 / 보험=오렌지) ★
+// ★ 상품 성격 배지 색상 (대표님 요청: 대리대출·직접대출 = 보라색으로 통일 / 보험=오렌지) ★
 //   위험 액션이 아니므로 레드 미사용. '보험'은 대출·보증과 구분되게 오렌지 톤.
 function natureBadgeCls(nature: string): string {
-  if (nature === "직접대출") return "bg-blue-100 text-blue-700";
   if (nature === "보험") return "bg-orange-100 text-orange-700";
-  return "bg-purple-100 text-purple-700"; // 대리대출
+  return "bg-purple-100 text-purple-700"; // 대리대출·직접대출 (보라색 통일)
 }
 
 // 업종 - 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)

@@ -560,9 +560,9 @@ export default function Home() {
                     {/* 기관별 상세 - 실제 결과창(기관명+대리/직접대출 배지 → 안내 → 상품 보기 버튼) */}
                     <div className={`mt-2 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { inst: "기술보증기금", nature: "대리대출", natCls: "bg-indigo-100 text-indigo-700", isGuarantee: true, criteria: "기술력 보유 중소·벤처기업 대상 기술보증서 발급. 보증서로 은행 대출 실행.", prodCount: 3, siteLabel: "기술보증기금 사이트", pdfLabel: "보증상품 안내자료 확인하기", tel: "1544-****", telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다." },
-                        { inst: "중소벤처기업진흥공단", nature: "직접대출", natCls: "bg-emerald-100 text-emerald-700", isGuarantee: false, criteria: "신성장기반자금·신시장진출자금 등 공단이 직접 저금리로 융자. 시설·운전자금 모두 가능.", prodCount: 3, siteLabel: "중소벤처기업진흥공단 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1811-****", telNote: "정책자금 전용번호가 일반문의보다 대기가 짧습니다." },
-                        { inst: "소상공인시장진흥공단", nature: "직접대출", natCls: "bg-emerald-100 text-emerald-700", isGuarantee: false, criteria: "혁신성장촉진자금·대환대출 등 소상공인 전용 저금리 정책자금.", prodCount: 2, siteLabel: "소상공인 정책자금 신청", pdfLabel: "정책자금 상품안내 확인하기", tel: "1533-****", telNote: "중진공·소진공·중기부 통합상담도 가능합니다." },
+                        { inst: "기술보증기금", nature: "대리대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: true, criteria: "기술력 보유 중소·벤처기업 대상 기술보증서 발급. 보증서로 은행 대출 실행.", prodCount: 3, siteLabel: "기술보증기금 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1544-****", telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다." },
+                        { inst: "중소벤처기업진흥공단", nature: "직접대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: false, criteria: "신성장기반자금·신시장진출자금 등 공단이 직접 저금리로 융자. 시설·운전자금 모두 가능.", prodCount: 3, siteLabel: "중소벤처기업진흥공단 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1811-****", telNote: "정책자금 전용번호가 일반문의보다 대기가 짧습니다." },
+                        { inst: "소상공인시장진흥공단", nature: "직접대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: false, criteria: "혁신성장촉진자금·대환대출 등 소상공인 전용 저금리 정책자금.", prodCount: 2, siteLabel: "소상공인정책자금 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1533-****", telNote: "중진공·소진공·중기부 통합상담도 가능합니다." },
                       ].map((m, i) => (
                         <div key={i} className="py-4 first:pt-0">
                           <div className="flex flex-wrap items-center gap-1.5">

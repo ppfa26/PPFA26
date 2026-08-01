@@ -1054,7 +1054,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     siteUrl: "https://www.kodit.or.kr/apps/index.do",
     siteLabel: "신용보증기금 사이트",
     pdfUrl: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2806&bbsId=1002&ps=417",
-    pdfLabel: "보증상품 안내자료 확인하기",
+    pdfLabel: "정책자금 상품안내 확인하기",
     manualUrl: "/manuals/kodit-guide.pdf",
     productName: "일반운전자금보증",
     productUrl: "https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2806&bbsId=1002&ps=417",
@@ -1109,7 +1109,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
     siteUrl: "https://www.kibo.or.kr/portal",
     siteLabel: "기술보증기금 사이트",
     pdfUrl: "https://www.kibo.or.kr/main/board/boardType08.do",
-    pdfLabel: "보증상품 안내자료 확인하기",
+    pdfLabel: "정책자금 상품안내 확인하기",
     manualUrl: "/manuals/kibo-guide.pdf",
     productName: "기술보증(운전·시설)",
     productUrl: "https://www.kibo.or.kr/main/board/boardType08.do",
@@ -1489,7 +1489,7 @@ export const JAEDAN_SITE_LINKS: {
     url: "https://www.seoulshinbo.co.kr",
     manualUrl: "/manuals/seoul-sinbo-guide.pdf",
     productUrl: "https://www.seoulshinbo.co.kr/wbase/contents.do?mng_cd=BUSI2346",
-    productLabel: "보증상품 안내자료 확인하기",
+    productLabel: "정책자금 상품안내 확인하기",
     regionKey: "서울",
   },
   {
@@ -1497,7 +1497,7 @@ export const JAEDAN_SITE_LINKS: {
     url: "https://www.gcgf.or.kr/gcgf/intro.do",
     manualUrl: "/manuals/gyeonggi-sinbo-easyone-guide.pdf",
     productUrl: "https://www.gcgf.or.kr/gcgf/cm/conts/contsView.do?mi=1052&contsId=1023",
-    productLabel: "보증상품 안내자료 확인하기",
+    productLabel: "정책자금 상품안내 확인하기",
     regionKey: "경기",
   },
   {
@@ -1505,7 +1505,7 @@ export const JAEDAN_SITE_LINKS: {
     url: "https://www.icsinbo.or.kr",
     manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf",
     productUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
-    productLabel: "보증상품 안내자료 확인하기",
+    productLabel: "정책자금 상품안내 확인하기",
     regionKey: "인천",
   },
   {
@@ -1513,7 +1513,7 @@ export const JAEDAN_SITE_LINKS: {
     url: "https://untact.koreg.or.kr/web/index.do",
     manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf",
     productUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
-    productLabel: "보증상품 안내자료 확인하기",
+    productLabel: "정책자금 상품안내 확인하기",
     // regionKey 없음 = 서울·경기·인천 외 전 지역의 기본(통합) 안내
   },
 ];
