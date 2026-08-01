@@ -125,15 +125,17 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "taxDelinquent", label: "국세·지방세는 완납 상태이신가요?", opts: STEP3_FIELDS.taxDelinquent.opts },
     ],
   },
-  // ★ 사업자 구분 + 업종을 한 화면으로(대표님 요청) ★
-  //   businessType(단일·스칼라 저장) + industries(복수) 를 한 스텝에 묶는다.
+  // ★ 사업자 구분 + 업종 + 사업장 지역을 한 화면으로(대표님 요청) ★
+  //   businessType(단일·스칼라 저장) + industries(복수) + region(단일·스칼라) 를 한 스텝에 묶는다.
   //   · 예비창업자면 businessType='예비'가 이미 세팅되어 있어 사업자구분 섹션은 숨김(subOnlyIf).
+  //     → 예비: 업종 + 지역(2개) / 일반: 구분 + 업종 + 지역(3개) → 화면당 최대 3문항 원칙 준수.
   //   · businessType을 여기서 확정해야 뒤의 자본잠식(법인 전용) 스텝 노출을 판단할 수 있다.
-  //   저장 form 값(businessType 스칼라 / industries 배열)은 개별 스텝과 100% 동일 → 매칭 결과 불변.
+  //   · 지역(region)은 단일값이라 scalar 저장. '기타' 선택 시 인라인 직접입력창 노출(2열 2줄).
+  //   저장 form 값(businessType 스칼라 / industries 배열 / region 스칼라)은 개별 스텝과 100% 동일 → 매칭 결과 불변.
   {
     key: "bizGroup",
     type: "multiGroup",
-    botLines: ["사업자 구분과 업종을 알려주세요."],
+    botLines: ["사업자 구분·업종·사업장 지역을 알려주세요."],
     subs: [
       {
         key: "businessType",
@@ -146,6 +148,13 @@ const CHAT_STEPS: ChatStep[] = [
         key: "industries",
         label: "업종 (복수 선택 가능)",
         opts: STEP1_FIELDS.industries.opts,
+      },
+      {
+        key: "region",
+        label: "사업장 지역",
+        opts: STEP1_FIELDS.region.opts,
+        scalar: true, // 단일 문자열 저장. '기타' 선택 시 인라인 입력창 노출.
+        cols: 2, // ★ 대표님 요청 ★ 2열 2줄(서울 경기 / 인천 기타) 고정
       },
     ],
   },
@@ -182,24 +191,16 @@ const CHAT_STEPS: ChatStep[] = [
     ],
   },
   // ── 2단계 · 회사 정보 ──
-  //  ★ 대표님 요청(B2=나 + C1) ★ 지역을 회사정보 묶음의 '맨 위'로 합치되,
-  //    한 화면 최대 3문항 원칙을 지키려고 2개 화면으로 나눔.
-  //    · 화면A(≤3): 지역 + 현재기관 + 필요사업
+  //  ★ 대표님 요청 ★ 지역(region)은 앞의 bizGroup(구분·업종·지역)으로 이동.
+  //    → 여기 companyGroupA는 현재기관 + 필요사업 2문항만 남김. (화면당 최대 3문항 원칙 유지)
+  //    · 화면A(≤2): 현재기관 + 필요사업
   //    · 화면B(≤2): 혁신성장 + 특허인증
   //  각 문항의 저장값 구조는 개별 스텝과 동일 → 매칭 결과 불변.
-  //  지역(region)은 단일값이라 scalar 로 저장. '기타'는 인라인 직접입력.
   {
     key: "companyGroupA",
     type: "multiGroup",
-    botLines: ["회사 상황을 알려주세요. (1/2)", "먼저 지역과 지원 관련 정보예요. (없으면 비워두셔도 돼요)"],
+    botLines: ["회사 상황을 알려주세요. (1/2)", "지원 관련 정보예요. (없으면 비워두셔도 돼요)"],
     subs: [
-      {
-        key: "region",
-        label: "사업장 지역",
-        opts: STEP1_FIELDS.region.opts,
-        scalar: true, // 단일 문자열 저장. '기타' 선택 시 인라인 입력창 노출.
-        cols: 2, // ★ 대표님 요청 ★ 2열 2줄(서울 경기 / 인천 기타) 고정
-      },
       {
         key: "currentInstitutions",
         label: "현재 이용 중인 정책기관",
@@ -1180,12 +1181,12 @@ export default function DiagnosisChat() {
                             onKeyDown={(e) => e.key === "Enter" && bnoReady && checkBno()}
                             placeholder={curStep.placeholder}
                             autoFocus
-                            className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                            className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                           />
                           <button
                             onClick={checkBno}
                             disabled={bnoLoading || !bnoReady}
-                            className={`flex-[3] shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
+                            className={`flex-1 shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
                               bnoReady ? "bg-brand-grad shadow-sm" : "bg-brand-orange/25 text-brand-dark/40"
                             }`}
                           >
@@ -1235,7 +1236,7 @@ export default function DiagnosisChat() {
                           value={nameTemp}
                           onChange={(e) => setNameTemp(e.target.value)}
                           placeholder={CONTACT_TEXT.namePlaceholder}
-                          className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                          className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
                         <input
                           type="tel"
@@ -1244,7 +1245,7 @@ export default function DiagnosisChat() {
                           onChange={(e) => setPhoneTemp(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && bnoOk && contactReady && confirmContact()}
                           placeholder={CONTACT_TEXT.phonePlaceholder}
-                          className="min-w-0 flex-[3] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                          className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
                       </div>
                     </div>
