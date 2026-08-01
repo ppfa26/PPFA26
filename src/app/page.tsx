@@ -143,7 +143,7 @@ export default function Home() {
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-4 max-w-xl break-keep text-[15px] font-medium leading-relaxed text-brand-gray sm:mt-5 sm:text-[19px] sm:leading-relaxed"
+              className="mx-auto mt-5 max-w-xl break-keep text-[15px] font-medium leading-relaxed text-brand-gray sm:mt-5 sm:text-[19px] sm:leading-relaxed"
             >
               대표님 사업장이 받을 수 있는 정부지원사업,
               <br />
@@ -153,38 +153,25 @@ export default function Home() {
             {/* ★ 신뢰 카운터 - 2년간 300개 이상 기업 지원 실적(대표님 실제 자산)을
                 손실회피와 연결: "이미 300곳이 먼저 받아갔다" → 대표님도 놓치지 말라는 메시지.
                 아래 후기 링크(당근·블로그 링크트리)로 실제 증거까지 이어지도록 구성. */}
-            <div className="mx-auto mt-5 flex w-fit max-w-md flex-col items-center gap-1.5 sm:mt-6">
-              <div className="flex items-baseline justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-4 py-2 sm:px-5">
-                <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                  지난 2년, 이미
-                </span>
-                <span className="inline-flex items-baseline">
-                  <b className="text-[22px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[27px]">
-                    300
-                  </b>
-                  <b className="text-[14px] font-extrabold text-brand-red sm:text-[16px]">개+</b>
-                </span>
-                <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                  기업이 먼저 받아갔습니다
-                </span>
-              </div>
-              {/* 실제 후기 링크(당근비즈 프로필 + 네이버 블로그 후기 링크트리) - 신뢰 증거 */}
-              <Editable
-                id="hero-review-link"
-                as="a"
-                href="https://link.inpock.co.kr/ppfa25"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 break-keep text-[12px] font-bold text-brand-dark/60 underline decoration-brand-dark/20 underline-offset-4 transition hover:text-brand-red sm:text-[13px]"
-              >
-                🔎 실제 대표님 후기 보기 (당근·블로그) →
-              </Editable>
+            <div className="mx-auto mt-5 flex w-fit max-w-md items-baseline justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-4 py-2 sm:mt-5 sm:px-5">
+              <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                지난 2년, 이미
+              </span>
+              <span className="inline-flex items-baseline">
+                <b className="text-[22px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[27px]">
+                  300
+                </b>
+                <b className="text-[14px] font-extrabold text-brand-red sm:text-[16px]">개+</b>
+              </span>
+              <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                기업은 먼저 받아갔습니다
+              </span>
             </div>
 
             {/* ★ 첫 화면 후킹 포인트 - 우리 서비스 최대 강점(숫자)을 히어로에서 바로 노출 ★
                 아래 결과 목업까지 스크롤하지 않아도 "얼마나 많이 찾아주는지"가 첫눈에 보이게.
                 크기는 절제해 CTA 버튼을 밀지 않도록 컴팩트하게. */}
-            <div className="mx-auto mt-5 flex w-fit max-w-md items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 sm:mt-6 sm:gap-2 sm:px-5">
+            <div className="mx-auto mt-5 flex w-fit max-w-md items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 sm:mt-5 sm:gap-2 sm:px-5">
               <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
                 한 번의 진단으로 평균
               </span>
@@ -200,7 +187,7 @@ export default function Home() {
             </div>
 
             {/* 핵심 혜택 - 가로 컴팩트 배지 */}
-            <ul className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-6 sm:gap-x-3">
+            <ul className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-5 sm:gap-x-3">
               {["맞춤 AI 매칭", "신청 가능 사업만", "서류·신청까지 안내"].map(
                 (t, i) => (
                   <li
@@ -216,7 +203,7 @@ export default function Home() {
               )}
             </ul>
 
-            <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:mt-7 sm:flex-row sm:gap-3">
+            <div className="mt-5 flex flex-col items-center justify-center gap-2.5 sm:mt-5 sm:flex-row sm:gap-3">
               {/* 주 CTA - 최우선 행동. 부 버튼보다 살짝 크고 굵게(위계 강화) */}
               <Editable
                 id="hero-cta-primary"
@@ -239,7 +226,7 @@ export default function Home() {
 
             {/* ★ 결정 지점(진단 시작 바로 아래)에 1:1 카카오톡 상담 버튼.
                 "혼자 진단하기 망설여지는 대표님"을 사람 상담으로 자연스럽게 흡수 → 이탈 방지. */}
-            <div className="mt-3 flex justify-center sm:mt-3.5">
+            <div className="mt-4 flex justify-center sm:mt-4">
               <Editable
                 id="hero-cta-kakao"
                 as="a"
@@ -256,7 +243,7 @@ export default function Home() {
             <Editable
               id="hero-disclaimer"
               as="p"
-              className="mx-auto mt-4 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:mt-5 sm:text-xs"
+              className="mx-auto mt-5 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:mt-5 sm:text-xs"
             >
               본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
             </Editable>
