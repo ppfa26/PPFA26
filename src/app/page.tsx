@@ -175,11 +175,11 @@ export default function Home() {
                 이미
                 <b className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[23px]">300</b>
                 <b className="text-[13px] font-extrabold text-brand-red sm:text-[15px]">개+</b>
-                기업 이용
+                기업이 이용중
               </span>
               <span className="text-brand-dark/15" aria-hidden="true">·</span>
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                평균
+                평균 지원사업
                 <b className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[23px]">24</b>
                 <b className="text-[13px] font-extrabold text-brand-orange sm:text-[15px]">개</b>
                 매칭
