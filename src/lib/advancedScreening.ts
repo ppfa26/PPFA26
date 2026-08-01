@@ -1106,7 +1106,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   },
   {
     match: "기술보증기금",
-    siteUrl: "https://www.kibo.or.kr/portal",
+    siteUrl: "https://www.kibo.or.kr/dbranch/index.do",
     siteLabel: "기술보증기금 사이트",
     pdfUrl: "https://www.kibo.or.kr/main/board/boardType08.do",
     pdfLabel: "정책자금 상품안내 확인하기",
@@ -1122,7 +1122,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approvalNote: "청년·기술창업이면 우대 폭이 커 접근할 만합니다. 인증이 없어도 우선 신청해 볼 만합니다.",
         hookNote:
           "특허·벤처·이노비즈·연구소 인증이 없어도 우선 신청해 보세요.\n부결 시 인증을 하나씩 보완해 재신청하면 승인 가능성이 높아집니다.",
-        applyUrl: "https://www.kibo.or.kr/portal",
+        applyUrl: "https://www.kibo.or.kr/dbranch/index.do",
         eligibleWhen: (c) =>
           typeof c.ceo_age === "number" &&
           c.ceo_age <= 39 &&
@@ -1135,7 +1135,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         desc: "창업 후 7년 이내 맞춤형 창업성장분야 기업\n(지식문화·이공계 챌린저·숙련형 제조창업 등)",
         approval: "mid",
         approvalNote: "제조·기술 창업기업은 신용보증기금보다 먼저 접근하는 것이 유리합니다.",
-        applyUrl: "https://www.kibo.or.kr/portal",
+        applyUrl: "https://www.kibo.or.kr/dbranch/index.do",
         eligibleWhen: (c) =>
           typeof c.years_in_business === "number" && c.years_in_business < 7,
       },
@@ -1147,14 +1147,14 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
         approvalNote: "제조업·기술기업은 인증이 없어도 우선 신청해 볼 만합니다.",
         hookNote:
           "특허·벤처·이노비즈·연구소 인증이 없어도 우선 신청해 보세요.\n부결 시 인증을 하나씩 보완해 재신청하면 승인 가능성이 높아집니다.",
-        applyUrl: "https://www.kibo.or.kr/portal",
+        applyUrl: "https://www.kibo.or.kr/dbranch/index.do",
       },
       {
         name: "기술보증 (시설자금)",
         amount: "시설투자액 기준",
         desc: "R&D·생산설비 등 시설투자 보증서",
         approval: "mid",
-        applyUrl: "https://www.kibo.or.kr/portal",
+        applyUrl: "https://www.kibo.or.kr/dbranch/index.do",
       },
     ],
     tel: "1544-1120",
