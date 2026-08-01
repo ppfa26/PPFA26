@@ -1164,7 +1164,7 @@ export const INSTITUTION_LINKS: InstitutionLink[] = [
   {
     match: "소상공인시장진흥공단",
     siteUrl: "https://ols.sbiz.or.kr",
-    siteLabel: "소상공인 정책자금 신청",
+    siteLabel: "소상공인정책자금 사이트",
     pdfUrl: "https://ols.semas.or.kr/ols/man/SMAN018M/page.do",
     pdfLabel: "정책자금 상품안내 확인하기",
     manualUrl: "/manuals/sbiz-guide.pdf",
