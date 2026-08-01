@@ -57,35 +57,28 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             </Editable>
           </div>
 
-          {/* 공식 채널 - 원형 아이콘 바 */}
-          <div className="sm:text-right">
-            <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500 sm:text-right">
-              공식 채널
-            </p>
-            <ul className="flex flex-wrap gap-2.5 sm:justify-end">
-              {CHANNELS.map((c) => (
-                <li key={c.label}>
-                  <a
-                    href={c.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={c.label}
-                    aria-label={c.label}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition ${c.hover}`}
-                  >
-                    <span className="text-[18px] leading-none" aria-hidden="true">
-                      {c.icon ? <i className={c.icon} /> : c.emoji}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* 공식 채널 - 라벨 없이 원형 아이콘만(미니멀). hover 시 브랜드 컬러 + title 툴팁 */}
+          <ul className="flex flex-wrap gap-2 sm:justify-end">
+            {CHANNELS.map((c) => (
+              <li key={c.label}>
+                <a
+                  href={c.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={c.label}
+                  aria-label={c.label}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition ${c.hover}`}
+                >
+                  <span className="text-[17px] leading-none" aria-hidden="true">
+                    {c.icon ? <i className={c.icon} /> : c.emoji}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* ── 중단: 메뉴 네비 (가운뎃점 한 줄) + 면책 고지 ─────────────
-            브랜드/채널과 같은 '위 블록'으로 묶어 구분선 없이 이어붙인다
-            (세로 2칸: 위 블록 / 아래 사업자정보). */}
+        {/* ── 중단: 메뉴 네비 (가운뎃점 한 줄) — 위 블록으로 자연스럽게 이어붙임 */}
         <nav className="mt-8">
           <ul className="flex flex-wrap items-center gap-x-1 gap-y-2 text-[13.5px] text-gray-400">
             {MENU.map((m, i) => (
@@ -99,17 +92,17 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           </ul>
         </nav>
 
-        {/* 면책 고지 - 컴팩트 */}
-        <Editable
-          id="footer-nowarranty"
-          as="p"
-          className="mt-4 break-keep text-xs leading-relaxed text-gray-500"
-        >
-          ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
-        </Editable>
-
-        {/* ── 하단: 사업자 정보 + 저작권 ───────────────────────────── */}
+        {/* ── 하단: 면책 고지 + 사업자 정보 + 저작권 ───────────────────
+            면책 문구를 하단 고지 영역으로 내려 위 블록을 시원하게 정리. */}
         <div className="mt-8 break-keep border-t border-white/10 pt-6 text-[11px] leading-relaxed text-gray-500">
+          <Editable
+            id="footer-nowarranty"
+            as="p"
+            className="mb-4 break-keep text-[11px] leading-relaxed text-gray-500"
+          >
+            ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
+          </Editable>
+
           {/* 모바일: 항목별 줄바꿈 */}
           <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1 sm:hidden">
             <dt className="shrink-0 text-gray-400">상호명</dt>
