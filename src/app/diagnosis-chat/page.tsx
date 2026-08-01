@@ -83,6 +83,9 @@ type ChatStep = {
   key: string;
   type: StepType;
   botLines: string[];
+  // 답변영역 상단 'Q.' 제목을 botLines[0] 대신 별도로 지정할 때 사용(대표님 요청).
+  //   예: bno 단계 말풍선 첫 줄은 '그럼 시작해 볼게요! 👇'지만, Q. 제목은 '사업자등록번호 및 사업자 구분 👇'.
+  questionHead?: string;
   opts?: string[];
   placeholder?: string;
   onlyIf?: (form: any) => boolean;
@@ -109,11 +112,17 @@ const CHAT_STEPS: ChatStep[] = [
   {
     key: "bno",
     type: "bno",
+    // ★ 대표님 요청 ★ 3개 블록을 '빈 줄'로 구분(말풍선 안에서 문단이 벌어지게 \n\n 사용).
+    //   botLines는 join("\n")으로 이어지므로, 문단 사이 빈 줄은 각 항목 끝에 "" 한 줄을 넣어 만든다.
     botLines: [
       "그럼 시작해 볼게요! 👇",
+      "",
       "하단에 사업자등록번호와\n사업자 구분을 알려주세요.",
+      "",
       "국세청에 정상 등록 후 운영중인\n사업자인지 확인하는 절차예요.",
     ],
+    // Q. 제목은 말풍선 첫 줄('그럼 시작해 볼게요!') 대신 이 문구로 표시.
+    questionHead: "사업자등록번호 및 사업자 구분 👇",
     placeholder: BNO_TEXT.placeholder,
   },
   // 결격사유(회생·파산 + 세금완납)를 한 질문으로 합침
@@ -428,7 +437,13 @@ export default function DiagnosisChat() {
     setBlocked(null); // 새 질문으로 넘어가면 탈락 종료 상태 해제
     // ★ 대표님 요청 ★ 질문+힌트가 2줄로 나뉘던 것을 '한 말풍선'으로 묶어서 표시(모든 곳).
     //   여러 줄(botLines)을 \n으로 이어 하나의 말풍선으로 렌더한다. (BotBubble이 whitespace-pre-line)
-    pushBotLines([CHAT_STEPS[vi].botLines.filter(Boolean).join("\n")]);
+    //   ※ botLines 안에 빈 문자열("")이 있으면 '문단 사이 빈 줄'을 의도한 것이므로 filter로 지우지 않고
+    //     그대로 이어붙여 빈 줄이 살아있게 한다(예: bno 단계 3블록 구분).
+    const rawLines = CHAT_STEPS[vi].botLines;
+    const bubbleText = rawLines.some((l) => l === "")
+      ? rawLines.join("\n") // 빈 줄 의도 → 그대로 유지
+      : rawLines.filter(Boolean).join("\n");
+    pushBotLines([bubbleText]);
   };
 
   // ── 이전 질문으로 되돌아가기(답변 수정) ──
@@ -906,7 +921,8 @@ export default function DiagnosisChat() {
                   </button>
                 )}
                 {(() => {
-                  const headQ = curStep.botLines?.[0];
+                  // questionHead가 있으면 그걸 우선(예: bno). 없으면 botLines 첫 줄.
+                  const headQ = curStep.questionHead || curStep.botLines?.[0];
                   return headQ ? (
                     <p className="min-w-0 flex-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark">
                       <span className="mr-1 text-brand-orange">Q.</span>
