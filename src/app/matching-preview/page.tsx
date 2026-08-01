@@ -547,9 +547,10 @@ export default function MatchingPreview() {
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
           상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
       <main className={`px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-0" : "pb-40"}`}>
-        {/* 결과창은 정보가 많아 데스크톱에서 넓게 펼쳐 보여준다(대표님 요청 '와이드').
-            모바일(<768px)은 어차피 화면 꽉 차므로 영향 없음. */}
-        <div className="mx-auto max-w-5xl">
+        {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
+            max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
+            좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}
+        <div className="mx-auto max-w-3xl">
           {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ── */}
           {adminView && (
             <div className="mb-6 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-4 text-center">
@@ -781,8 +782,8 @@ export default function MatchingPreview() {
            (관리자 열람 모드에서는 숨김) */}
       {!adminView && !BETA_FREE && (
       <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-brand-orange bg-white/97 px-4 py-3 shadow-[0_-6px_24px_rgba(255,140,0,0.22)] backdrop-blur">
-        {/* 결과 본문 넓힘(max-w-5xl)에 맞춰 결제바도 같은 폭으로 정렬 */}
-        <div className="mx-auto max-w-5xl">
+        {/* 결제바도 본문 폭(max-w-3xl)에 맞춰 정렬 */}
+        <div className="mx-auto max-w-3xl">
           <Editable
             id="preview-sticky-title"
             as="p"
