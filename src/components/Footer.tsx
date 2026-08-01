@@ -72,6 +72,41 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           </div>
         </div>
 
+        {/* ── 공식 채널 (대표님 요청: 전 채널 노출 · 유입 주력 스레드·인스타·당근을 앞줄에) ──
+            "여기저기서 실제로 활동하는 진짜 사업자"라는 신뢰를 주는 영역.
+            각 채널 고유 브랜드 컬러로 실체감을 강조. 문의는 카카오톡이 메인. */}
+        <div className="mt-8 border-t border-white/10 pt-6">
+          <p className="mb-3 text-xs font-bold tracking-[0.02em] text-gray-400">
+            공식 채널에서 만나요
+          </p>
+          <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {[
+              { href: "https://www.threads.com/@ppfa25", label: "스레드", icon: "fa-brands fa-threads", cls: "hover:border-white/70 hover:text-white" },
+              { href: "https://www.instagram.com/ppfa25", label: "인스타그램", icon: "fa-brands fa-instagram", cls: "hover:border-[#E1306C]/80 hover:text-[#E1306C]" },
+              { href: "https://www.daangn.com/kr/local-profile/8j96yjujtkqy/?referrer=share", label: "당근", emoji: "🥕", cls: "hover:border-[#FF8A3D]/80 hover:text-[#FF8A3D]" },
+              { href: "https://pf.kakao.com/_VxfWxan/chat", label: "카카오톡 상담", emoji: "💬", cls: "hover:border-[#FEE500]/80 hover:text-[#FEE500]" },
+              { href: "https://blog.naver.com/biospartners", label: "네이버 블로그", icon: "fa-solid fa-blog", cls: "hover:border-[#03C75A]/80 hover:text-[#03C75A]" },
+              { href: "https://map.naver.com/p/entry/place/1118269039", label: "네이버 지도", icon: "fa-solid fa-location-dot", cls: "hover:border-[#03C75A]/80 hover:text-[#03C75A]" },
+              { href: "https://pf.kakao.com/_VxfWxan", label: "카카오톡 채널", emoji: "📢", cls: "hover:border-[#FEE500]/80 hover:text-[#FEE500]" },
+              { href: "https://link.inpock.co.kr/ppfa25", label: "전체 링크·후기", icon: "fa-solid fa-link", cls: "hover:border-brand-orange/80 hover:text-brand-orange" },
+            ].map((c) => (
+              <li key={c.label}>
+                <a
+                  href={c.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-[13px] font-semibold text-gray-300 transition ${c.cls}`}
+                >
+                  <span className="flex w-5 shrink-0 justify-center text-base" aria-hidden="true">
+                    {c.icon ? <i className={c.icon} /> : c.emoji}
+                  </span>
+                  <span className="break-keep">{c.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {/* 사업자 정보 */}
         <div className="mt-8 break-keep border-t border-white/10 pt-6 text-[11px] leading-relaxed text-gray-500">
           {/* 모바일: 항목별 줄바꿈 */}

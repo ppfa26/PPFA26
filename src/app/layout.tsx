@@ -474,6 +474,13 @@ export default function RootLayout({
             href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
           />
         </noscript>
+        {/* ── Font Awesome (푸터 SNS 브랜드 아이콘용) ──
+            인스타·스레드·카카오·네이버 등 실제 로고 아이콘을 쓰기 위해 로드.
+            eslint-disable-next-line @next/next/no-css-tags */}
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css"
+        />
       </head>
       <body className="theme-dark">
         <ScrollToTop />
