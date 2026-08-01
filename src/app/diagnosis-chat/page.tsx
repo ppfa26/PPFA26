@@ -58,9 +58,10 @@ type StepType =
   | "region"
   | "contact" // 성함 + 연락처를 한 스텝에서 입력
   | "yesnoGroup" // 예/아니요 문항 여러 개를 한 스텝에서(각각 라디오)
+  | "singleGroup" // 단일선택 문항 여러 개를 한 스텝에서(각 문항 = 보기 중 하나 선택)
   | "checkGroup"; // 해당되는 것만 체크 → 체크=예, 나머지=아니요
 // yes/no 묶음 문항 하나
-type SubQ = { key: string; label: string; opts?: string[]; desc?: string };
+type SubQ = { key: string; label: string; opts?: string[]; desc?: string; hint?: string; cols?: 1 | 2 | 3 };
 type ChatStep = {
   key: string;
   type: StepType;
@@ -135,20 +136,33 @@ const CHAT_STEPS: ChatStep[] = [
     botLines: ["어떤 업종이신가요?", "해당되는 걸 모두 골라주세요. (복수 선택 가능)"],
     opts: STEP1_FIELDS.industries.opts,
   },
-  { key: "years", type: "single", botLines: ["사업자등록증상 업력은 어느 정도이신가요?"], opts: STEP1_FIELDS.years.opts },
-  { key: "revenue", type: "single", botLines: ["연매출 규모를 알려주세요."], opts: STEP1_FIELDS.revenue.opts },
+  // ★ 사업 규모 묶음(대표님 요청: 같은 카테고리는 한 화면에서 쭉 답변) ★
+  //   업력·연매출·직원수를 한 스텝(singleGroup)으로 묶는다.
+  //   저장 값(years/revenue/employees)은 개별 질문일 때와 100% 동일 → 매칭 결과 불변.
   {
-    key: "age",
-    type: "single",
-    botLines: ["대표님 연령대를 알려주세요.", "청년 창업·세제감면 판정에 필요해요."],
-    opts: STEP1_FIELDS.age.opts,
-    cols: 3, // 3개를 한 줄에 가로로(대표님 요청)
+    key: "sizeGroup",
+    type: "singleGroup",
+    botLines: ["사업 규모를 한 번에 알려주세요.", "아래 세 가지만 골라주세요."],
+    subs: [
+      { key: "years", label: "사업자등록증상 업력", opts: STEP1_FIELDS.years.opts },
+      { key: "revenue", label: "연매출 규모", opts: STEP1_FIELDS.revenue.opts },
+      { key: "employees", label: "직원 수", hint: STEP2_FIELDS.employees.hint, opts: STEP2_FIELDS.employees.opts },
+    ],
+  },
+  // ★ 대표자 정보 묶음(대표님 요청) ★
+  //   연령대·신용점수를 한 스텝으로 묶는다. 저장 값(age/credit) 동일 → 매칭 결과 불변.
+  {
+    key: "ownerGroup",
+    type: "singleGroup",
+    botLines: ["대표님에 대해 알려주세요.", "연령대와 신용점수를 골라주세요."],
+    subs: [
+      { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 3 },
+      { key: "credit", label: "대표자 개인 신용점수", hint: STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
+    ],
   },
   { key: "region", type: "region", botLines: ["사업장 지역은 어디신가요?"], opts: STEP1_FIELDS.region.opts },
 
   // ── 2단계 · 회사 정보 ──
-  { key: "credit", type: "single", botLines: ["대표자 개인 신용점수는 어느 정도인가요?", STEP3_FIELDS.credit.hint], opts: STEP3_FIELDS.credit.opts },
-  { key: "employees", type: "single", botLines: ["직원 수는 몇 명이신가요?", STEP2_FIELDS.employees.hint], opts: STEP2_FIELDS.employees.opts },
   {
     key: "currentInstitutions",
     type: "multi",
@@ -835,6 +849,44 @@ export default function DiagnosisChat() {
                               onClick={() => pickGroup(sub.key, o)}
                               className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
+                              }`}
+                            >
+                              {o}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={confirmYesnoGroup}
+                    disabled={(curStep.subs || []).some((s) => !groupTemp[s.key])}
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                  >
+                    다음 →
+                  </button>
+                </div>
+              )}
+
+              {/* ★ 단일선택 묶음(singleGroup) — 여러 질문을 한 화면에서 쭉 답변(대표님 요청) ★
+                  각 하위 문항마다 label(+hint)과 보기 버튼들을 세로로 나열하고,
+                  맨 아래 '다음 →' 로 한 번에 제출한다. groupTemp/pickGroup/
+                  confirmYesnoGroup 을 그대로 재사용(전부 선택해야 다음 활성화). */}
+              {curStep.type === "singleGroup" && (
+                <div className="flex flex-col gap-4">
+                  {(curStep.subs || []).map((sub) => (
+                    <div key={sub.key}>
+                      <p className="mb-1 break-keep px-1 text-[15px] font-bold text-brand-dark">{sub.label}</p>
+                      {sub.hint && <p className="mb-1.5 break-keep px-1 text-xs text-brand-gray">{sub.hint}</p>}
+                      <div className={`grid gap-2 ${COLS_CLASS[sub.cols ?? autoCols(sub.opts || [])]}`}>
+                        {(sub.opts || []).map((o) => {
+                          const active = groupTemp[sub.key] === o;
+                          return (
+                            <button
+                              key={o}
+                              onClick={() => pickGroup(sub.key, o)}
+                              className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                                active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                               }`}
                             >
                               {o}
