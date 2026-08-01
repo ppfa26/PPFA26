@@ -153,22 +153,24 @@ export default function Home() {
             {/* ★ 신뢰 카운터 - 2년간 300개 이상 기업 지원 실적(대표님 실제 자산)을
                 손실회피와 연결: "이미 300곳이 먼저 받아갔다" → 대표님도 놓치지 말라는 메시지.
                 아래 후기 링크(당근·블로그 링크트리)로 실제 증거까지 이어지도록 구성. */}
-            <div className="mx-auto mt-5 flex w-fit max-w-md flex-col items-center gap-1.5 sm:mt-5">
-              <div className="flex items-baseline justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-4 py-2 sm:px-5">
-                <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                  지난 2년, 이미
-                </span>
-                <span className="inline-flex items-baseline">
-                  <b className="text-[22px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[27px]">
-                    300
-                  </b>
-                  <b className="text-[14px] font-extrabold text-brand-red sm:text-[16px]">개+</b>
-                </span>
-                <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                  기업은 먼저 받아갔습니다
-                </span>
-              </div>
-              {/* 브랜드 신뢰 링크(당근비즈 프로필 + 네이버 블로그 후기 등 전체 링크트리) */}
+            <div className="mx-auto mt-5 flex w-fit max-w-md items-baseline justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-4 py-2 sm:mt-5 sm:px-5">
+              <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                지난 2년, 이미
+              </span>
+              <span className="inline-flex items-baseline">
+                <b className="text-[22px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[27px]">
+                  300
+                </b>
+                <b className="text-[14px] font-extrabold text-brand-red sm:text-[16px]">개+</b>
+              </span>
+              <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                기업은 먼저 받아갔습니다
+              </span>
+            </div>
+
+            {/* 브랜드 신뢰 링크(당근비즈 프로필 + 네이버 블로그 후기 등 전체 링크트리).
+                위(300개 배지)·아래(24개 매칭)와 mt-4로 상하 대칭 간격을 갖도록 독립 배치. */}
+            <div className="mt-4 flex justify-center sm:mt-4">
               <Editable
                 id="hero-review-link"
                 as="a"
@@ -184,7 +186,7 @@ export default function Home() {
             {/* ★ 첫 화면 후킹 포인트 - 우리 서비스 최대 강점(숫자)을 히어로에서 바로 노출 ★
                 아래 결과 목업까지 스크롤하지 않아도 "얼마나 많이 찾아주는지"가 첫눈에 보이게.
                 크기는 절제해 CTA 버튼을 밀지 않도록 컴팩트하게. */}
-            <div className="mx-auto mt-5 flex w-fit max-w-md items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 sm:mt-5 sm:gap-2 sm:px-5">
+            <div className="mx-auto mt-4 flex w-fit max-w-md items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 sm:mt-4 sm:gap-2 sm:px-5">
               <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
                 한 번의 진단으로 평균
               </span>
