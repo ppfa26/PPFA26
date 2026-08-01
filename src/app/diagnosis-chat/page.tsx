@@ -932,7 +932,7 @@ export default function DiagnosisChat() {
                 const bnoReady = bnoDigits === 10;
                 return (
                 <>
-                  {/* 입력칸은 살짝 줄이고(flex-[3]) 조회 버튼은 넓게(flex-[2]) — 대표님 요청 */}
+                  {/* 입력칸(flex-[2])보다 조회 버튼(flex-[3])을 더 넓게 — 대표님 재요청(버튼 가로 확대) */}
                   <div className="flex items-center gap-2">
                     <input
                       type="tel"
@@ -943,12 +943,12 @@ export default function DiagnosisChat() {
                       onKeyDown={(e) => e.key === "Enter" && bnoReady && checkBno()}
                       placeholder={curStep.placeholder}
                       autoFocus
-                      className="min-w-0 flex-[3] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                      className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                     />
                     <button
                       onClick={checkBno}
                       disabled={bnoLoading || !bnoReady}
-                      className={`flex-[2] shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
+                      className={`flex-[3] shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
                         bnoReady
                           ? "bg-brand-grad shadow-sm"
                           : "bg-brand-orange/25 text-brand-dark/40"
