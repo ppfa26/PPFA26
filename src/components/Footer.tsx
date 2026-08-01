@@ -114,7 +114,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             </p>
           </address>
 
-          <p className="mt-3 border-t border-white/10 pt-4 text-gray-600">
+          <p className="mt-2 text-gray-600">
             © 모두의사업친구. All rights reserved.
           </p>
         </div>
