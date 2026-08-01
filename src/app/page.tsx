@@ -182,12 +182,6 @@ export default function Home() {
               </Editable>
             </div>
 
-            {/* ★ 부담 낮추는 표기(대표님 요청) ★ 소요시간·질문 수를 CTA 아래 작게 표시 → 시작률↑ */}
-            <p className="mt-3 flex items-center justify-center gap-1.5 text-[12px] font-semibold text-brand-gray sm:text-[13px]">
-              <span className="text-brand-orange">⏱</span>
-              약 1분이면 끝나요 · 질문 10여 개
-            </p>
-
             {/* 면책 고지 - 광고 심사/표시광고법 대응 (대표님 요청) */}
             <Editable
               id="hero-disclaimer"
@@ -376,8 +370,8 @@ export default function Home() {
                   {/* ★ 상단 사용 안내 배너 - 실제 결과창(AdvancedScreeningPanel)과 동일 문구 */}
                   <div className="rounded-2xl border border-brand-orange/70 bg-brand-grad px-4 py-3 shadow-card">
                     <p className="break-keep text-[13px] font-semibold leading-relaxed text-brand-dark/80">
-                      👇 <b>✅ 표시</b>된 곳이 <b>지금 바로 신청 가능한 곳</b>입니다.{" "}
-                      <b>&ldquo;상품 보기&rdquo;</b>를 누르면 신청 상품과 방법을 순서대로 안내드려요.
+                      👇 <b>✅ 표시</b>된 곳이 <b>지금 바로 신청 가능한 곳</b>이에요.{" "}
+                      <b>&ldquo;상품 보기&rdquo;</b>를 누르면 신청 방법을 순서대로 알려드려요.
                     </p>
                   </div>
 
@@ -617,7 +611,7 @@ export default function Home() {
                           <span className="min-w-0 break-keep">그 외 놓치기 쉬운 지원사업</span>
                         </span>
                         <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
-                          지금 모집 중인 그 외 정부지원사업이에요
+                          추가로 챙겨볼 만한 정부지원이에요
                         </span>
                       </span>
                       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 group-open:rotate-180">

@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import CopyGuard from "@/components/CopyGuard";
 import UtmCapture from "@/components/UtmCapture";
 import ScrollToTop from "@/components/ScrollToTop";
+import ViewportManager from "@/components/ViewportManager";
 import AccessLogger from "@/components/AccessLogger";
 import FontLoader from "@/components/FontLoader";
 import KarrotPixel from "@/components/KarrotPixel";
@@ -141,8 +142,30 @@ export const viewport: Viewport = {
 //    → 폰은 폰 크기 그대로(자동 줌 트리거 자체가 없어짐). 콘텐츠를 크게 보이게
 //      하는 건 축소가 아니라 CSS(폰트/여백)로 처리한다.
 //    입력칸은 모두 16px(text-base) 이상이라 iOS 의 '작은 글씨 자동 확대'도 안 걸린다.
+// ★★ 데스크톱(PC) 화면 강제 재도입 (대표님 요청) ★★
+//  · 모바일로 접속해도 넓은 PC 화면이 통째로 축소돼 보이게 한다.
+//    → viewport width 를 DESKTOP_WIDTH(820)로 고정하고 initial-scale 을
+//      '기기 화면폭 ÷ 820' 으로 정확히 계산해 넣어 어떤 폰에서도 잘림 0.
+//  · [리스크 회피] 입력칸이 있는 진단 챗봇/폼 페이지는 제외한다.
+//    예전에 이 방식이 안드로이드(삼성 인터넷)·크롬에서 입력칸 탭 시 제멋대로
+//    줌인·잘림을 일으켰던 곳이 바로 이 두 페이지라, 여기만 표준 반응형으로 두어
+//    근본적으로 문제를 회피한다. 나머지(랜딩·결과·가격 등)만 데스크톱 강제.
+//  · 진짜 PC/태블릿(폭 ≥ DESKTOP_WIDTH)은 손대지 않는다(원본 그대로).
+//  · 회전(resize/orientationchange) 시 폭이 바뀌므로 다시 계산.
 const DESKTOP_VIEWPORT_SCRIPT = `
 (function () {
+  var DESKTOP_WIDTH = 820;
+  // 입력칸 자동 줌 문제가 있는 페이지 → 표준 반응형 유지(데스크톱 강제 제외)
+  var EXCLUDE = ['/diagnosis-chat', '/diagnosis-form'];
+  function isExcluded() {
+    try {
+      var p = location.pathname || '';
+      for (var i = 0; i < EXCLUDE.length; i++) {
+        if (p === EXCLUDE[i] || p.indexOf(EXCLUDE[i] + '/') === 0) return true;
+      }
+    } catch (e) {}
+    return false;
+  }
   function apply() {
     try {
       var vp = document.querySelector('meta[name=viewport]');
@@ -151,11 +174,20 @@ const DESKTOP_VIEWPORT_SCRIPT = `
         vp.setAttribute('name', 'viewport');
         document.head.appendChild(vp);
       }
-      // 표준 반응형: 확대/축소 강제 없음. 핀치 줌은 접근성 위해 허용.
-      vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
+      var w = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
+      if (isExcluded() || w >= DESKTOP_WIDTH) {
+        // 진짜 PC/태블릿 또는 입력 페이지 → 표준 반응형(확대 강제 없음, 핀치 줌 허용)
+        vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
+        return;
+      }
+      // 모바일 → 820px PC 페이지를 기기 화면폭에 딱 맞게 축소해서 통째로 표시(잘림 0)
+      var scale = Math.round((w / DESKTOP_WIDTH) * 1000) / 1000;
+      vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', initial-scale=' + scale + ', maximum-scale=5, user-scalable=yes');
     } catch (e) {}
   }
   apply();
+  window.addEventListener('resize', apply);
+  window.addEventListener('orientationchange', apply);
 })();
 `;
 
@@ -417,6 +449,8 @@ export default function RootLayout({
       </head>
       <body className="theme-dark">
         <ScrollToTop />
+        {/* ★ 데스크톱 화면 강제 - 경로 전환 시에도 정책 재적용(대표님 요청) ★ */}
+        <ViewportManager />
         {/* 접속(IP) 로거 - 회원/비회원 모든 방문자 IP를 관리자에 기록(대표님 요청 A안) */}
         <AccessLogger />
         <CopyGuard />
