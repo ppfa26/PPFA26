@@ -182,6 +182,12 @@ export default function Home() {
               </Editable>
             </div>
 
+            {/* ★ 부담 낮추는 표기(대표님 요청) ★ 소요시간·질문 수를 CTA 아래 작게 표시 → 시작률↑ */}
+            <p className="mt-3 flex items-center justify-center gap-1.5 text-[12px] font-semibold text-brand-gray sm:text-[13px]">
+              <span className="text-brand-orange">⏱</span>
+              약 1분이면 끝나요 · 질문 10여 개
+            </p>
+
             {/* 면책 고지 - 광고 심사/표시광고법 대응 (대표님 요청) */}
             <Editable
               id="hero-disclaimer"

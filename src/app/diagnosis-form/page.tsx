@@ -37,6 +37,7 @@ import {
   STEP3_DEEP_GROUP,
   STEP3_CONDITIONAL_FIELDS,
   PHONE_CONSULT_FIELD,
+  getPaymentBlockReasons,
 } from "@/lib/diagnosisConfig";
 
 // ── 순수 레이아웃 컴포넌트(모듈 레벨) ──
@@ -141,6 +142,8 @@ export default function Diagnosis() {
   const [gate, setGate] = useState<"checking" | "guest" | "ready">("checking");
   // 대표자 연락 정보(성함·연락처) 필수 검증 에러 메시지
   const [contactErr, setContactErr] = useState("");
+  // ★ 대표님 요청 ★ 자격확인 탈락(회생·파산 중/세금 체납) 시 종료 화면. 연락처 안 받고 종료.
+  const [blocked, setBlocked] = useState<null | { reasons: string[] }>(null);
 
   // 사업자번호 조회 상태
   const [bno, setBno] = useState("");
@@ -315,6 +318,15 @@ export default function Diagnosis() {
           if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
           return;
         }
+      }
+      // ★ 대표님 요청 ★ 성함·연락처보다 먼저 결격사유(회생·파산 중/세금 체납)를 판정한다.
+      //   탈락이면 개인정보(성함·연락처)를 받지 않고 종료 화면으로. (자본잠식은 결제단계에서 처리)
+      const reasons = getPaymentBlockReasons(form).filter((r) => r === "bankruptcy" || r === "tax");
+      if (reasons.length > 0) {
+        setContactErr("");
+        setBlocked({ reasons });
+        if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
       }
       const name = (form.name || "").trim();
       const phoneDigits = (form.phone || "").replace(/[^0-9]/g, "");
@@ -608,7 +620,30 @@ export default function Diagnosis() {
             </div>
           </div>
 
-          {step === 1 && (
+          {/* ★ 자격 탈락 종료 화면(대표님 요청) ★ 회생·파산 중/세금 체납이면 여기서 종료.
+              성함·연락처는 받지 않는다. 잘못 눌렀을 수 있으니 '뒤로 가기' 제공. */}
+          {blocked && (
+            <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-6 shadow-card sm:p-8">
+              <p className="mb-3 text-center text-4xl">😥</p>
+              <p className="mb-2 break-keep text-center text-lg font-extrabold leading-snug text-brand-dark">
+                아쉽지만 지금은 정부지원사업<br className="sm:hidden" /> 신청이 어려운 상태예요.
+              </p>
+              <p className="mx-auto max-w-md break-keep text-center text-sm leading-relaxed text-brand-gray">
+                {blocked.reasons.includes("bankruptcy") && "회생·파산 절차 종료 후"}
+                {blocked.reasons.includes("bankruptcy") && blocked.reasons.includes("tax") && " · "}
+                {blocked.reasons.includes("tax") && "세금 완납 후"}
+                {" "}다시 진단받으시면 훨씬 많은 지원을 받으실 수 있어요.
+              </p>
+              <button
+                onClick={() => { setBlocked(null); if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                className="mx-auto mt-5 block rounded-full border border-gray-200 bg-white px-6 py-2.5 text-sm font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+              >
+                ← 뒤로 가기 (잘못 선택하셨다면)
+              </button>
+            </div>
+          )}
+
+          {!blocked && step === 1 && (
             <div className="animate-fadeUp rounded-2xl border border-gray-100 bg-white p-4 shadow-card sm:p-6">
               <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP1_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP1_SUBTITLE}</p>
@@ -732,9 +767,29 @@ export default function Diagnosis() {
                 <p className="mt-2 text-xs text-brand-gray">{BNO_TEXT.note}</p>
               </div>
 
-              {/* 대표자 성함 및 연락처 - 사업자등록번호 조회 바로 아래에 배치(대표님 요청).
+              {/* ★ 순서 변경 (대표님 요청) ★ '안 될 사람'(회생·파산 중/세금 체납)은 애초에
+                  결격사유에서 먼저 걸러낸다. 성함·연락처보다 위에 배치해, 탈락자에게는
+                  개인정보를 요구하지 않는다. (goNext에서 탈락 시 종료 화면) */}
+              <GroupBox title="⚠️ 신청 결격사유 확인 (필수)">
+                <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 twoLine /></Field>
+                <Field label={STEP3_FIELDS.taxDelinquent.label}>
+                  <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 twoLine />
+                </Field>
+                {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
+                {form.businessType === "법인사업자" && (
+                  <div className="mt-5">
+                    <p className="mb-1 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.capitalImpairment.label)}</p>
+                    <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
+                      {STEP3_FIELDS.capitalImpairment.hint}
+                    </p>
+                    <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
+                  </div>
+                )}
+              </GroupBox>
+
+              {/* 대표자 성함 및 연락처 - ★ 결격사유(자격확인) 통과 후에 받는다(대표님 요청) ★
                   ★톤 통일★ 위험(결격) 박스만 빨강, 나머지는 차분한 회색 1톤으로 통일(대표님 요청). */}
-              <GroupBox title={CONTACT_TEXT.groupTitle} matchBno>
+              <GroupBox title={CONTACT_TEXT.groupTitle}>
                 {CONTACT_TEXT.groupNote && (
                   <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray">
                     {CONTACT_TEXT.groupNote}
@@ -759,32 +814,13 @@ export default function Diagnosis() {
                     className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-brand-dark outline-none focus:border-brand-orange"
                   />
                 </Field>
+                {/* ★ 개인정보 안심 한 줄(대표님 요청) ★ */}
+                <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-gray">
+                  🔒 입력하신 정보는 진단 결과 안내·매칭 용도로만 사용됩니다.
+                </p>
 
                 {/* 제3자 제공 동의는 회원가입 단계에서 1회만 받는다(중복 제거·거부감 완화, 대표님 요청).
                     비회원은 진단 결과를 볼 수 없어 반드시 가입을 거치므로 동의 근거는 가입 시점에 확보된다. */}
-              </GroupBox>
-
-              {/* ★ 대표님 요청 ★ 신청 결격사유 확인을 1단계 성함 아래로 이동.
-                  어렵게 다 작성했는데 결격사유면 신청도 못 하므로, 처음에 먼저 확인.
-                  (회생·파산 / 세금 체납 - 승인 자체가 막히는 핵심 항목만)
-                  ★톤 통일(대표님 요청)★ 위쪽 빨간 띠(제목 바)를 없애고 '대표자 기본정보'
-                  박스와 동일한 GroupBox(회색 1톤)로 통일. "(해당 시 신청이 불가)"는
-                  제목 괄호로 넣어 자동으로 포인트색 뱃지 처리됨. */}
-              <GroupBox title="⚠️ 신청 결격사유 확인 (필수)">
-                <Field label={STEP3_FIELDS.bankruptcy.label}><Radio k="bankruptcy" opts={STEP3_FIELDS.bankruptcy.opts} cols2 twoLine /></Field>
-                <Field label={STEP3_FIELDS.taxDelinquent.label}>
-                  <Radio k="taxDelinquent" opts={STEP3_FIELDS.taxDelinquent.opts} cols2 twoLine />
-                </Field>
-                {/* 자본잠식은 법인사업자에게만 물어봄 (개인은 파산·회생으로 판정) */}
-                {form.businessType === "법인사업자" && (
-                  <div className="mt-5">
-                    <p className="mb-1 break-keep font-bold leading-snug text-brand-dark">{keepBrackets(STEP3_FIELDS.capitalImpairment.label)}</p>
-                    <p className="mb-2 break-keep text-xs leading-relaxed text-brand-gray">
-                      {STEP3_FIELDS.capitalImpairment.hint}
-                    </p>
-                    <Radio k="capitalImpairment" opts={STEP3_FIELDS.capitalImpairment.opts} />
-                  </div>
-                )}
               </GroupBox>
 
               {/* 사업장 정보 - 문맥별 한 박스로 묶어 깔끔하게 (유형→업종→업력→매출→연령→지역 자연스러운 순서) */}
@@ -930,8 +966,8 @@ export default function Diagnosis() {
             </p>
           )}
 
-          {/* 네비 버튼 */}
-          <div className="mt-6 flex gap-3">
+          {/* 네비 버튼 — 자격 탈락 종료 화면에선 숨김(종료 화면 자체 '뒤로 가기' 사용) */}
+          <div className={`mt-6 flex gap-3 ${blocked ? "hidden" : ""}`}>
             {step > 1 && (
               <button
                 onClick={() => {

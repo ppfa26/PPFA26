@@ -36,6 +36,7 @@ import {
   STEP3_CONDITIONAL_FIELDS,
   CONTACT_TEXT,
   BNO_TEXT,
+  getPaymentBlockReasons,
 } from "@/lib/diagnosisConfig";
 
 // ── 채팅 대화 스크립트 ───────────────────────────────────────────
@@ -101,20 +102,22 @@ type ChatStep = {
 
 const CHAT_STEPS: ChatStep[] = [
   // ── 1단계 · 기본 정보 ──
-  // ★ 사업자번호 + 성함·연락처를 '한 화면'에 함께(대표님 요청) ★
-  //  사업자등록번호 · 성함 · 연락처 입력칸이 처음부터 동시에 보이고,
-  //  '입력 완료 →' 하나로 (조회했으면 국세청 조회값 포함) 전부 저장 후
-  //  다음(자격확인)으로 넘어간다. 기존 contact 스텝은 이 화면에 흡수됨.
+  // ★ 순서 변경 (대표님 요청) ★ 애초에 '안 될 사람'(회생·파산 중/세금 체납)은 자격확인에서
+  //   먼저 걸러내고, 통과한 분에게만 성함·연락처를 받는다.
+  //   → (1) 사업자번호·구분 → (2) 자격확인 → (3) 성함·연락처(신설) 순.
+  //   이렇게 하면 탈락자에게는 개인정보를 요구하지 않아 이탈·컴플레인이 줄어든다.
   {
     key: "bno",
     type: "bno",
     botLines: [
-      "먼저 사업자등록번호와 구분,\n성함·연락처를 한 번에 알려주세요.",
+      "먼저 사업자등록번호와 구분을\n알려주세요.",
       "사업자등록번호는 국세청에 등록된 정상\n사업자인지 확인하는 절차예요.",
     ],
     placeholder: BNO_TEXT.placeholder,
   },
   // 결격사유(회생·파산 + 세금완납)를 한 질문으로 합침
+  //  ★ 대표님 요청 ★ 여기서 '파산·회생 중' 또는 '세금 미납/체납'이면 탈락 → 종료 화면으로.
+  //    (confirmYesnoGroup에서 getPaymentBlockReasons로 판정)
   {
     key: "eligibility",
     type: "yesnoGroup",
@@ -122,6 +125,16 @@ const CHAT_STEPS: ChatStep[] = [
     subs: [
       { key: "bankruptcy", label: "현재 회생·파산 절차가 진행 중이신가요?", opts: STEP3_FIELDS.bankruptcy.opts },
       { key: "taxDelinquent", label: "국세·지방세는 완납 상태이신가요?", opts: STEP3_FIELDS.taxDelinquent.opts },
+    ],
+  },
+  // ★ 성함·연락처(신설·대표님 요청) ★ 자격확인 통과 후에만 받는다.
+  //   국세청 조회로 '✅ 확인 완료'까지 마친 뒤라 심리적 저항이 적다(앵커링).
+  {
+    key: "contact",
+    type: "contact",
+    botLines: [
+      "자격 확인이 끝났어요! 👍",
+      "결과를 보내드릴 성함과 연락처를\n알려주세요.",
     ],
   },
   // ★ Q3 대표님 정보(대표님 요청: 자격확인 바로 다음으로 이동) ★
@@ -132,7 +145,8 @@ const CHAT_STEPS: ChatStep[] = [
     botLines: ["대표님에 대해 알려주세요.", "연령대와 신용점수를 골라주세요."],
     subs: [
       { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 3 },
-      { key: "credit", label: "대표자 개인 신용점수", hint: STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
+      // ★ 안심 문구(대표님 요청) ★ 신용점수는 이탈 방어 지점 → "낮아도 가능"을 명시.
+      { key: "credit", label: "대표자 개인 신용점수", hint: "점수가 낮아도 신청 가능한 상품이 있으니 편하게 골라주세요. " + STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
     ],
   },
   // ★ Q4 사업장 업종 및 지역(대표님 요청) ★
@@ -301,6 +315,9 @@ export default function DiagnosisChat() {
   const [checkTemp, setCheckTemp] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [finished, setFinished] = useState(false);
+  // ★ 대표님 요청 ★ 자격확인 탈락(회생·파산 중/세금 체납) 시 표시하는 종료 상태.
+  //   탈락 시엔 성함·연락처를 받지 않고 여기서 깔끔하게 종료한다.
+  const [blocked, setBlocked] = useState<null | { reasons: string[] }>(null);
   // 이전 질문으로 되돌아가기용 히스토리 스택
   //  · 각 스텝을 물어보기 직전의 상태(스텝 인덱스 / 그 시점 form / 그 시점 메시지 개수)를 기록.
   //  · '이전 질문 수정'을 누르면 마지막 기록으로 되감아 답을 다시 받을 수 있다.
@@ -408,6 +425,7 @@ export default function DiagnosisChat() {
     setCheckTemp([]);
     setBnoMsg(null);
     setBnoServerDown(false);
+    setBlocked(null); // 새 질문으로 넘어가면 탈락 종료 상태 해제
     // ★ 대표님 요청 ★ 질문+힌트가 2줄로 나뉘던 것을 '한 말풍선'으로 묶어서 표시(모든 곳).
     //   여러 줄(botLines)을 \n으로 이어 하나의 말풍선으로 렌더한다. (BotBubble이 whitespace-pre-line)
     pushBotLines([CHAT_STEPS[vi].botLines.filter(Boolean).join("\n")]);
@@ -467,20 +485,16 @@ export default function DiagnosisChat() {
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
-  // 성함 + 연락처(한 스텝) 확정
-  const confirmContact = () => {
-    const name = nameTemp.trim();
-    const phone = phoneTemp.trim();
-    const digits = phone.replace(/[^0-9]/g, "");
-    if (!name || digits.length < 10) return;
-    // ★ 대표님 요청 Q1 ★ 사업자 구분(예비/개인/법인) 미선택 시 진행 차단
+  // ★ 사업자번호·구분(bno 스텝) 확정 → 자격확인으로. (대표님 요청: 성함·연락처는 뒤로 분리) ★
+  const confirmBnoStep = () => {
+    // 사업자 구분(예비/개인/법인) 미선택 시 진행 차단
     if (!form.businessType) return;
-    // ★ 사업자번호+성함·연락처 한 화면(대표님 요청) ★
-    //  성함·연락처 확정 시, 조회를 누르지 않았어도 입력창에 남은 사업자번호(10자리)를
-    //  함께 저장한다. (예비창업자는 businessType='예비'가 이미 세팅되어 bno 없이 진행)
+    const isPre = form.businessType === "예비";
     const bnoDigits = textTemp.replace(/[^0-9]/g, "");
-    const next: any = { ...form, name, phone };
-    if (form.businessType !== "예비" && !form.bno && bnoDigits.length === 10) {
+    // 예비창업자가 아니면 사업자번호가 (조회완료 or 10자리 입력) 준비돼야 진행
+    if (!isPre && !form.bno && bnoDigits.length !== 10) return;
+    const next: any = { ...form };
+    if (!isPre && !form.bno && bnoDigits.length === 10) {
       next.bno = bnoDigits;
       if (!form.bnoVerified) {
         next.bnoStatus = "미조회(입력만)";
@@ -489,15 +503,26 @@ export default function DiagnosisChat() {
       }
     }
     setForm(next);
-    // ★ 대표님 요청 Q1 ★ 사업자 구분(예비/개인/법인)을 사용자 답변 요약에 함께 표기
     const bnoLabel = next.bno
       ? `사업자번호 ${next.bno} · `
       : next.businessType === "예비"
-      ? "예비창업자 · "
+      ? "예비창업자"
       : "";
     const bizTypeLabel =
-      next.businessType && next.businessType !== "예비" ? `${next.businessType} · ` : "";
-    setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${bizTypeLabel}${name} · ${phone}` }]);
+      next.businessType && next.businessType !== "예비" ? `${next.businessType}` : "";
+    setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${bizTypeLabel}`.replace(/ · $/, "") }]);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
+
+  // 성함 + 연락처(한 스텝) 확정 — ★ 자격확인 통과 후 신설 스텝(대표님 요청) ★
+  const confirmContact = () => {
+    const name = nameTemp.trim();
+    const phone = phoneTemp.trim();
+    const digits = phone.replace(/[^0-9]/g, "");
+    if (!name || digits.length < 10) return;
+    const next: any = { ...form, name, phone };
+    setForm(next);
+    setMessages((m) => [...m, { who: "user", text: `${name} · ${phone}` }]);
     savePartial(next); // 성함·연락처 확보 시 부분 리드 저장(기존 폼과 동일 전략)
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
@@ -514,6 +539,16 @@ export default function DiagnosisChat() {
     subs.forEach((s) => { next[s.key] = groupTemp[s.key]; });
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: subs.map((s) => groupTemp[s.key]).join(" / ") }]);
+    // ★ 대표님 요청 ★ 자격확인(eligibility)에서 '파산·회생 중' 또는 '세금 미납/체납'이면
+    //   더 진행하지 않고(성함·연락처도 받지 않고) 종료 화면으로. 잘못 눌렀을 수 있으니 뒤로가기 제공.
+    if (step.key === "eligibility") {
+      const reasons = getPaymentBlockReasons(next);
+      const blockingNow = reasons.filter((r) => r === "bankruptcy" || r === "tax");
+      if (blockingNow.length > 0) {
+        setTimeout(() => setBlocked({ reasons: blockingNow }), 380);
+        return;
+      }
+    }
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
@@ -751,7 +786,14 @@ export default function DiagnosisChat() {
 
   const curStep = stepIdx >= 0 && stepIdx < CHAT_STEPS.length ? CHAT_STEPS[stepIdx] : null;
   const lastMsg = messages[messages.length - 1];
-  const showInput = !!curStep && !botTyping && lastMsg?.who === "bot" && !finished;
+  const showInput = !!curStep && !botTyping && lastMsg?.who === "bot" && !finished && !blocked;
+
+  // ★ 자격 탈락 종료 화면에서 '뒤로가기'(대표님 요청) ★
+  //   잘못 눌렀을 수 있으니 종료 상태를 풀고 자격확인 질문으로 되돌린다.
+  const undoBlocked = () => {
+    setBlocked(null);
+    goBack();
+  };
 
   return (
     <PageShell pageKey="diagnosis">
@@ -1156,8 +1198,6 @@ export default function DiagnosisChat() {
                 const bnoDigits = textTemp.replace(/[^0-9]/g, "").length;
                 const bnoReady = bnoDigits === 10;
                 const isPre = form.businessType === "예비"; // 예비창업자면 사업자번호 입력칸 숨김
-                const contactReady =
-                  nameTemp.trim().length > 0 && phoneTemp.replace(/[^0-9]/g, "").length >= 10;
                 // 사업자번호는 (a)조회 완료(bnoVerified/접수) (b)10자리 입력 (c)예비창업자 중 하나면 OK
                 const bnoOk = isPre || form.bnoVerified || form.bno || bnoReady;
                 // ★ 대표님 요청 Q1 ★ 사업자 구분(예비/개인/법인)을 이 화면에서 확정.
@@ -1254,7 +1294,25 @@ export default function DiagnosisChat() {
                       </div>
                     )}
 
-                    {/* 3) 성함 · 연락처 — 처음부터 함께 노출(대표님 요청) */}
+                    {/* 3) 다음으로 (사업자번호/구분 준비되면 활성화)
+                        ★ 성함·연락처는 자격확인 통과 후 별도 스텝으로 분리됨(대표님 요청) ★ */}
+                    <button
+                      onClick={confirmBnoStep}
+                      disabled={!bnoOk || !bizTypeOk}
+                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                    >
+                      다음 →
+                    </button>
+                  </div>
+                );
+              })()}
+
+              {/* ★ 성함·연락처 스텝(신설·대표님 요청) ★ 자격확인 통과 후에만 노출 */}
+              {curStep.type === "contact" && (() => {
+                const contactReady =
+                  nameTemp.trim().length > 0 && phoneTemp.replace(/[^0-9]/g, "").length >= 10;
+                return (
+                  <div className="flex flex-col gap-3">
                     <div>
                       <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
                         성함 · 연락처
@@ -1265,6 +1323,7 @@ export default function DiagnosisChat() {
                           value={nameTemp}
                           onChange={(e) => setNameTemp(e.target.value)}
                           placeholder={CONTACT_TEXT.namePlaceholder}
+                          autoFocus
                           className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
                         <input
@@ -1272,17 +1331,19 @@ export default function DiagnosisChat() {
                           inputMode="numeric"
                           value={phoneTemp}
                           onChange={(e) => setPhoneTemp(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && bnoOk && bizTypeOk && contactReady && confirmContact()}
+                          onKeyDown={(e) => e.key === "Enter" && contactReady && confirmContact()}
                           placeholder={CONTACT_TEXT.phonePlaceholder}
                           className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
                       </div>
+                      {/* ★ 개인정보 안심 한 줄(대표님 요청) ★ */}
+                      <p className="mt-2 break-keep px-1 text-[11px] leading-relaxed text-brand-gray">
+                        🔒 입력하신 정보는 진단 결과 안내·매칭 용도로만 사용됩니다.
+                      </p>
                     </div>
-
-                    {/* 4) 한 번에 완료 (사업자번호/구분/연락처 모두 준비돼야 활성화) */}
                     <button
                       onClick={confirmContact}
-                      disabled={!bnoOk || !bizTypeOk || !contactReady}
+                      disabled={!contactReady}
                       className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                     >
                       입력 완료 →
@@ -1290,6 +1351,29 @@ export default function DiagnosisChat() {
                   </div>
                 );
               })()}
+            </div>
+          )}
+
+          {/* ★ 자격 탈락 종료 화면(대표님 요청) ★ 회생·파산 중/세금 체납이면 여기서 종료.
+              성함·연락처는 받지 않는다. 잘못 눌렀을 수 있으니 '뒤로 가기' 제공. */}
+          {blocked && (
+            <div ref={answerRef} className="mt-3 rounded-xl border border-white bg-white p-5 shadow-sm">
+              <p className="mb-2 text-center text-3xl">😥</p>
+              <p className="mb-2 break-keep text-center text-[16px] font-extrabold leading-snug text-brand-dark">
+                아쉽지만 지금은 정부지원사업 신청이<br className="hidden xs:block" /> 어려운 상태예요.
+              </p>
+              <p className="mx-auto max-w-md break-keep text-center text-[13.5px] leading-relaxed text-brand-gray">
+                {blocked.reasons.includes("bankruptcy") && "회생·파산 절차 종료 후"}
+                {blocked.reasons.includes("bankruptcy") && blocked.reasons.includes("tax") && " · "}
+                {blocked.reasons.includes("tax") && "세금 완납 후"}
+                {" "}다시 진단받으시면 훨씬 많은 지원을 받으실 수 있어요.
+              </p>
+              <button
+                onClick={undoBlocked}
+                className="mx-auto mt-4 block rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+              >
+                ← 뒤로 가기 (잘못 선택하셨다면)
+              </button>
             </div>
           )}
           </div>
