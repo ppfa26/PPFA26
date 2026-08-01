@@ -32,29 +32,20 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
   return (
     <footer className={`${topGap} border-t border-white/10 bg-brand-dark text-gray-300`}>
       <div className="mx-auto max-w-5xl px-6 py-8 sm:px-8">
-        {/* ── 상단: 브랜드(좌) + 공식 채널(우) ───────────────────────── */}
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-          {/* 브랜드 */}
-          <div className="max-w-md">
-            <div className="flex items-center gap-2.5">
-              <Image
-                src="/logo/brand-footer-dark.png"
-                alt="모두의사업친구"
-                width={32}
-                height={32}
-                className="h-8 w-8 shrink-0 rounded-lg"
-              />
-              <span className="text-lg font-extrabold leading-none text-white">
-                모두의사업친구
-              </span>
-            </div>
-            <Editable
-              id="footer-tagline"
-              as="p"
-              className="mt-4 break-keep text-sm leading-relaxed text-gray-400"
-            >
-              내 사업장에 알맞은 정부지원사업을 찾는 가장 빠른 방법
-            </Editable>
+        {/* ── 1줄: 브랜드(좌) + 공식 채널(우) ───────────────────────── */}
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          {/* 브랜드 (태그라인 제거 → 로고+이름만, 최대한 간결) */}
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/logo/brand-footer-dark.png"
+              alt="모두의사업친구"
+              width={32}
+              height={32}
+              className="h-8 w-8 shrink-0 rounded-lg"
+            />
+            <span className="text-lg font-extrabold leading-none text-white">
+              모두의사업친구
+            </span>
           </div>
 
           {/* 공식 채널 - 라벨 없이 원형 아이콘만(미니멀). hover 시 브랜드 컬러 + title 툴팁 */}
@@ -67,9 +58,9 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
                   rel="noopener noreferrer"
                   title={c.label}
                   aria-label={c.label}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition ${c.hover}`}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition ${c.hover}`}
                 >
-                  <span className="text-[17px] leading-none" aria-hidden="true">
+                  <span className="text-[16px] leading-none" aria-hidden="true">
                     {c.icon ? <i className={c.icon} /> : c.emoji}
                   </span>
                 </a>
@@ -78,8 +69,8 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           </ul>
         </div>
 
-        {/* ── 중단: 메뉴 네비 (가운뎃점 한 줄) — 위 블록으로 자연스럽게 이어붙임 */}
-        <nav className="mt-6">
+        {/* ── 2줄: 메뉴 네비 (가운뎃점) ─────────────────────────────── */}
+        <nav className="mt-5">
           <ul className="flex flex-wrap items-center gap-x-1 gap-y-2 text-[13.5px] text-gray-400">
             {MENU.map((m, i) => (
               <li key={m.href} className="flex items-center">
@@ -92,47 +83,22 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           </ul>
         </nav>
 
-        {/* ── 하단: 면책 고지 + 사업자 정보 + 저작권 ───────────────────
-            면책 문구를 하단 고지 영역으로 내려 위 블록을 시원하게 정리. */}
-        <div className="mt-6 break-keep border-t border-white/10 pt-5 text-[11px] leading-relaxed text-gray-500">
+        {/* ── 3줄(법적 고지): 면책 + 사업자정보(가운뎃점 압축) + 저작권 ───
+            사업자정보 3줄을 하나의 흐름으로 압축(자동 wrap). 법적 항목 전부 유지. */}
+        <div className="mt-5 break-keep border-t border-white/10 pt-5 text-[11px] leading-relaxed text-gray-500">
           <Editable
             id="footer-nowarranty"
             as="p"
-            className="mb-3 break-keep text-[11px] leading-relaxed text-gray-500"
+            className="break-keep text-[11px] leading-relaxed text-gray-500"
           >
             ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
           </Editable>
 
-          {/* 모바일: 항목별 줄바꿈 */}
-          <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-1 sm:hidden">
-            <dt className="shrink-0 text-gray-400">상호명</dt>
-            <dd className="text-gray-500">모두의사업친구</dd>
-            <dt className="shrink-0 text-gray-400">대표자</dt>
-            <dd className="text-gray-500">신주엽</dd>
-            <dt className="shrink-0 text-gray-400">주소</dt>
-            <dd className="text-gray-500">인천광역시 서해구 청라커낼로288번길 26, 285호</dd>
-            <dt className="shrink-0 text-gray-400">사업자등록번호</dt>
-            <dd className="text-gray-500">597-12-02897</dd>
-            <dt className="shrink-0 text-gray-400">통신판매업신고</dt>
-            <dd className="text-gray-500">제2026-인천서해-0109호</dd>
-            <dt className="shrink-0 text-gray-400">대표번호</dt>
-            <dd className="text-gray-500">1551-7886</dd>
-            <dt className="shrink-0 text-gray-400">문의</dt>
-            <dd className="break-all text-gray-500">biospartners@naver.com</dd>
-          </dl>
+          <p className="mt-2 text-gray-500">
+            상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신주엽 <span className="text-white/15">·</span> 사업자등록번호 : 597-12-02897 <span className="text-white/15">·</span> 통신판매업신고 : 제2026-인천서해-0109호 <span className="text-white/15">·</span> 주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호 <span className="text-white/15">·</span> 대표번호 : 1551-7886 <span className="text-white/15">·</span> 문의 : <span className="break-all">biospartners@naver.com</span>
+          </p>
 
-          {/* PC: 한 줄(가운뎃점) 형태 */}
-          <div className="hidden sm:block">
-            <p>
-              상호명 : 모두의사업친구 · 대표자 : 신주엽 · 주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호
-            </p>
-            <p className="mt-1">
-              사업자등록번호 : 597-12-02897 · 통신판매업신고 : 제2026-인천서해-0109호
-            </p>
-            <p className="mt-1">대표번호 : 1551-7886 · 문의 : biospartners@naver.com</p>
-          </div>
-
-          <p className="mt-3 text-gray-600">
+          <p className="mt-2 text-gray-600">
             © 모두의사업친구. All rights reserved.
           </p>
         </div>
