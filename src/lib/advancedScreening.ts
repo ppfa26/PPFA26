@@ -414,7 +414,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "기술보증기금",
       criteria: isManufacturingCore
-        ? "제조업은 기술보증기금부터가 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능하며(첫거래 1억·최대 2억), 인증이 없어도 우선 신청 후 부결 시 특허·벤처·이노비즈를 보완해 재신청하세요."
+        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다.\n기업 인증 등 가점사항이 없어도 우선 신청 후, 부결 시 특허·벤처·이노비즈를 보완해서 재신청하세요."
         : "기술력(특허·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증이라, 매출이 낮아도 보증이 가능합니다.",
       priority: "TECH_BASED",
       loan_type: "대리대출",
@@ -436,7 +436,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "기술보증기금",
       criteria: isManufacturingCore
-        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다.\n(첫거래 1억·최대 2억). 인증이 없어도 우선 신청 후, 부결 시 특허·벤처·이노비즈를 보완해 재신청하세요."
+        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다.\n기업 인증 등 가점사항이 없어도 우선 신청 후, 부결 시 특허·벤처·이노비즈를 보완해서 재신청하세요."
         : "기술력(특허·상표·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증입니다. 매출이 낮아도 승인 가능성이 있습니다(신용보증기금·재단과 중복 불가).",
       priority: "TECH_BASED",
       loan_type: "대리대출",
@@ -517,7 +517,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     if (!reasons.length && employees >= 5) reasons.push("상시직원 5명 이상");
     matches.push({
       institution: "중소벤처기업진흥공단",
-      criteria: `${reasons.join(" · ")} 조건으로 중진공 정책자금(직접대출) 병행이 가능합니다.\n성장 계획·자금 사용처·대표 의지를 종합 심사하며, 보증기관과는 별개로 진행됩니다.`,
+      criteria: `${reasons.join(" · ")} · 대리대출과 병행이 가능합니다.\n성장 계획·자금 사용처·대표 의지를 종합 심사를 진행합니다.`,
       priority: "HIGH",
       loan_type: "직접대출",
       step: 2,

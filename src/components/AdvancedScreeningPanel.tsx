@@ -1251,7 +1251,7 @@ function AdvancedResult({
                 {(m.institution.includes("신용보증기금") ||
                   m.institution.includes("기술보증기금") ||
                   m.institution.includes("재단")) && (
-                  <p className="mt-2 break-keep rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-blue-800">
+                  <p className="mt-2 break-keep rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs leading-relaxed text-brand-dark/80">
                     <b>ℹ️ 대리대출(보증)</b> · 이 기관은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요.
                   </p>
                 )}
@@ -1262,7 +1262,7 @@ function AdvancedResult({
                   m.institution.includes("소상공인시장진흥공단") ||
                   m.institution.includes("중진공") ||
                   m.institution.includes("소진공")) && (
-                  <p className="mt-2 break-keep rounded-lg border border-gray-400 bg-gray-400 px-2.5 py-1.5 text-[11px] leading-relaxed text-white">
+                  <p className="mt-2 break-keep rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs leading-relaxed text-brand-dark/80">
                     <b>ℹ️ 직접대출</b> · 이 상품은 <b>은행을 거치지 않고</b> 기관에서 <b>대출이 바로 실행</b>돼요.
                   </p>
                 )}
