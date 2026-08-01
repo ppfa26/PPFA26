@@ -31,9 +31,9 @@ const MENU = [
 export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
   return (
     <footer className={`${topGap} border-t border-white/10 bg-brand-dark text-gray-300`}>
-      <div className="mx-auto max-w-5xl px-6 py-12 sm:px-8">
+      <div className="mx-auto max-w-5xl px-6 py-8 sm:px-8">
         {/* ── 상단: 브랜드(좌) + 공식 채널(우) ───────────────────────── */}
-        <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           {/* 브랜드 */}
           <div className="max-w-md">
             <div className="flex items-center gap-2.5">
@@ -79,7 +79,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
         </div>
 
         {/* ── 중단: 메뉴 네비 (가운뎃점 한 줄) — 위 블록으로 자연스럽게 이어붙임 */}
-        <nav className="mt-8">
+        <nav className="mt-6">
           <ul className="flex flex-wrap items-center gap-x-1 gap-y-2 text-[13.5px] text-gray-400">
             {MENU.map((m, i) => (
               <li key={m.href} className="flex items-center">
@@ -94,11 +94,11 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
 
         {/* ── 하단: 면책 고지 + 사업자 정보 + 저작권 ───────────────────
             면책 문구를 하단 고지 영역으로 내려 위 블록을 시원하게 정리. */}
-        <div className="mt-8 break-keep border-t border-white/10 pt-6 text-[11px] leading-relaxed text-gray-500">
+        <div className="mt-6 break-keep border-t border-white/10 pt-5 text-[11px] leading-relaxed text-gray-500">
           <Editable
             id="footer-nowarranty"
             as="p"
-            className="mb-4 break-keep text-[11px] leading-relaxed text-gray-500"
+            className="mb-3 break-keep text-[11px] leading-relaxed text-gray-500"
           >
             ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
           </Editable>
@@ -132,7 +132,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             <p className="mt-1">대표번호 : 1551-7886 · 문의 : biospartners@naver.com</p>
           </div>
 
-          <p className="mt-4 text-gray-600">
+          <p className="mt-3 text-gray-600">
             © 모두의사업친구. All rights reserved.
           </p>
         </div>
