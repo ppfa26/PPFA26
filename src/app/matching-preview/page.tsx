@@ -257,36 +257,36 @@ export default function MatchingPreview() {
         <Header />
         {/* 로딩 화면 — 화면 정중앙 정렬 + 박스/글씨를 조금 키워 시인성 향상(대표님 요청) */}
         <main className="flex min-h-[78vh] items-center justify-center px-4 py-16">
-          <div className="mx-auto w-full max-w-lg rounded-3xl border-2 border-brand-orange/40 bg-white p-8 text-center shadow-card sm:p-11">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-brand-orange/10">
-              <span className="inline-block h-11 w-11 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
+          <div className="mx-auto w-full max-w-xl rounded-3xl border-2 border-brand-orange/40 bg-white p-9 text-center shadow-card sm:p-14">
+            <div className="mx-auto mb-7 flex h-24 w-24 items-center justify-center rounded-full bg-brand-orange/10">
+              <span className="inline-block h-14 w-14 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
             </div>
-            <p className="break-keep text-xl font-extrabold leading-snug text-brand-dark sm:text-2xl">
+            <p className="break-keep text-2xl font-extrabold leading-snug text-brand-dark sm:text-3xl">
               대표님 사업장을 <span className="text-brand-orange">AI가 분석</span>하고 있어요
             </p>
-            <p className="mt-2 text-sm text-brand-gray sm:text-base">
+            <p className="mt-3 text-base text-brand-gray sm:text-lg">
               전국 정부지원사업 데이터와 대조 중입니다
             </p>
 
-            <ul className="mt-7 space-y-3 text-left">
+            <ul className="mt-8 space-y-3.5 text-left">
               {steps.map((s, i) => {
                 const active = analyzeStep >= i;
                 const done = analyzeStep > i;
                 return (
                   <li
                     key={s.label}
-                    className={`flex items-center gap-3 rounded-xl border px-5 py-3.5 transition-all duration-300 ${
+                    className={`flex items-center gap-3.5 rounded-xl border px-6 py-4 transition-all duration-300 ${
                       active
                         ? "border-brand-orange/40 bg-brand-yellow/10 opacity-100"
                         : "border-gray-100 bg-gray-50 opacity-40"
                     }`}
                   >
-                    <span className="text-xl">{s.icon}</span>
-                    <span className="flex-1 text-[15px] font-bold text-brand-dark sm:text-base">{s.label}</span>
+                    <span className="text-2xl">{s.icon}</span>
+                    <span className="flex-1 text-base font-bold text-brand-dark sm:text-lg">{s.label}</span>
                     {done ? (
-                      <span className="text-base font-extrabold text-green-600">✓</span>
+                      <span className="text-lg font-extrabold text-green-600">✓</span>
                     ) : active ? (
-                      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-brand-orange/30 border-t-brand-orange" />
+                      <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-brand-orange/30 border-t-brand-orange" />
                     ) : null}
                   </li>
                 );

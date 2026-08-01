@@ -191,18 +191,19 @@ const CHAT_STEPS: ChatStep[] = [
     type: "multiGroup",
     botLines: ["회사 상황을 알려주세요. (1/2)", "지원 관련 정보예요. (없으면 비워두셔도 돼요)"],
     subs: [
+      // ★ 순서 변경 (대표님 요청) ★ '대표님이 필요한 정부지원사업'을 '현재 이용 중인 정책기관' 위로.
+      {
+        key: "purposes",
+        label: "대표님이 필요한 정부지원사업",
+        hint: STEP2_FIELDS.purposes.hint,
+        opts: STEP2_FIELDS.purposes.opts,
+      },
       {
         key: "currentInstitutions",
         label: "현재 이용 중인 정책기관",
         hint: STEP2_FIELDS.currentInstitutions.hint,
         opts: STEP2_FIELDS.currentInstitutions.opts,
         labelFull: (STEP2_FIELDS.currentInstitutions as any).labelFull,
-      },
-      {
-        key: "purposes",
-        label: "필요한 정부지원사업",
-        hint: STEP2_FIELDS.purposes.hint,
-        opts: STEP2_FIELDS.purposes.opts,
       },
     ],
   },
@@ -211,18 +212,19 @@ const CHAT_STEPS: ChatStep[] = [
     type: "multiGroup",
     botLines: ["회사 상황을 알려주세요. (2/2)", "해당되는 걸 골라주세요. (없으면 비워두셔도 돼요)"],
     subs: [
+      // ★ 순서 변경 (대표님 요청) ★ '보유 특허·인증'을 '혁신성장 분야 해당 여부' 위로.
+      {
+        key: "certifications",
+        label: "보유 특허·인증",
+        hint: STEP3_FIELDS.certifications.hint,
+        opts: STEP3_FIELDS.certifications.opts,
+      },
       {
         key: "innovation",
         label: "혁신성장 분야 해당 여부",
         hint: STEP3_FIELDS.innovation.hint,
         opts: STEP3_FIELDS.innovation.opts,
         singleSelect: true, // 예/아니요 중 하나만(라디오). 저장은 [선택값] 배열 유지.
-      },
-      {
-        key: "certifications",
-        label: "보유 특허·인증",
-        hint: STEP3_FIELDS.certifications.hint,
-        opts: STEP3_FIELDS.certifications.opts,
       },
     ],
   },
@@ -237,12 +239,12 @@ const CHAT_STEPS: ChatStep[] = [
     checkYes: "예",
     checkNo: "아니요",
     subs: [
-      { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 매년 10% 이상 늘었어요", desc: "예: 2년 연속 10%↑ 성장" },
+      { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 매년 10% 이상 늘었어요", desc: "예: 2년 연속 10%↑연매출 상승 기업인 경우" },
       { key: "smartDevice", label: "🖥️ 매장에 스마트기기를 쓰고 있어요", desc: "예: 키오스크·테이블오더·매출관리 프로그램·무인기기·조리 및 서빙 로봇" },
-      { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 갈아타고 싶어요", desc: "예: 카드론·2금융 7%↑" },
-      { key: "reFounder", label: "🔁 폐업 경험이 있고 다시 창업 중이에요", desc: "예: 재창업 7년 이내" },
-      { key: "govSelected", label: "🏆 정부 선정 프로그램에 뽑힌 적 있어요", desc: "예: 백년가게·TIPS" },
-      { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중이에요", desc: "예: 투자유치 실적 보유" },
+      { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 갈아타고 싶어요", desc: "예: 카드론·2금융 7%↑사용중인 경우" },
+      { key: "reFounder", label: "🔁 폐업 경험이 있고 다시 창업 중이에요", desc: "예: 재창업 7년 이내인 사업자인 경우" },
+      { key: "govSelected", label: "🏆 정부 선정 프로그램에 뽑힌 적 있어요", desc: "예: 백년가게·TIPS등 선정 된 경우" },
+      { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중이에요", desc: "예: 투자유치 실적 보유중인 기업인 경우" },
     ],
   },
   // ★ 대표님 요청 ★ 마지막 '전화 무료 상담 원하시나요?'(phoneConsult) 질문 제거.

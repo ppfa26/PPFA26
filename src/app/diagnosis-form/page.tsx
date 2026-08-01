@@ -852,6 +852,13 @@ export default function Diagnosis() {
               <h1 className="mb-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-lg">{STEP2_TITLE}</h1>
               <p className="mb-4 break-keep text-xs leading-relaxed text-brand-gray sm:mb-5 sm:text-sm">{STEP2_SUBTITLE}</p>
 
+              {/* ② 필요한 지원 (회사 정보 문맥 - '무엇이 필요한지'는 회사 상황의 일부이므로 2페이지에 배치.
+                  ★순서 변경 (대표님 요청)★ '대표님이 필요한 정부지원사업' 질문을 '현재 이용 중인 정책기관' 위로 이동.
+                  ★톤 통일★ 색을 빼고 회색 기본 톤으로(대표님 요청). */}
+              <GroupBox title={STEP2_GROUP_NEED}>
+                <Field label={STEP2_FIELDS.purposes.label} hint={STEP2_FIELDS.purposes.hint}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} breakBefore={["수출자금"]} /></Field>
+              </GroupBox>
+
               {/* ① 자금 여건·현재 이용 현황 - 순서(대표님 요청): 신용점수 → 직원수 → 이용 중인 정책기관
                   ※ '담보 보유 여부' 질문은 제거(대표님 요청). 매칭은 '담보없음' 기준(대부분 소상공인)으로
                      제출 시 자동 세팅되므로 보증서·정책자금 매칭 정확도는 그대로 유지됨. */}
@@ -861,19 +868,12 @@ export default function Diagnosis() {
                 <Field label={STEP2_FIELDS.currentInstitutions.label} hint={STEP2_FIELDS.currentInstitutions.hint}><Multi k="currentInstitutions" opts={STEP2_FIELDS.currentInstitutions.opts} labelMap={STEP2_FIELDS.currentInstitutions.labelMap} grid /></Field>
               </GroupBox>
 
-              {/* ② 필요한 지원 (회사 정보 문맥 - '무엇이 필요한지'는 회사 상황의 일부이므로 2페이지에 배치.
-                  페이지 세로길이 균등화 목적으로도 2페이지에 무게를 실어 1·2·3 높이를 맞춤(대표님 요청).
-                  ★톤 통일★ 색을 빼고 회색 기본 톤으로(대표님 요청). */}
-              <GroupBox title={STEP2_GROUP_NEED}>
-                <Field label={STEP2_FIELDS.purposes.label} hint={STEP2_FIELDS.purposes.hint}><Multi k="purposes" opts={STEP2_FIELDS.purposes.opts} breakBefore={["수출자금"]} /></Field>
-              </GroupBox>
-
               {/* ③ 우리 기업의 강점 (인증·특허·혁신성장) - 있으면 자격이 열려 더 유리한 문맥으로 묶음.
                   ★톤 통일★ 색을 빼고 회색 기본 톤으로(대표님 요청). */}
               <GroupBox title={STEP2_GROUP_STRENGTH}>
-                {/* ★ 순서 변경 (대표님 요청) ★ 혁신성장분야 → 특허·인증 보유 여부 순. (매칭 무관: 표시 순서만) */}
-                <Field label={STEP3_FIELDS.innovation.label} hint={STEP3_FIELDS.innovation.hint}><Multi k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
+                {/* ★ 순서 변경 (대표님 요청) ★ 보유 특허·인증 → 혁신성장 분야 해당 여부 순. (매칭 무관: 표시 순서만) */}
                 <Field label={STEP3_FIELDS.certifications.label} hint={STEP3_FIELDS.certifications.hint}><Multi k="certifications" opts={STEP3_FIELDS.certifications.opts} /></Field>
+                <Field label={STEP3_FIELDS.innovation.label} hint={STEP3_FIELDS.innovation.hint}><Multi k="innovation" opts={STEP3_FIELDS.innovation.opts} /></Field>
               </GroupBox>
             </div>
           )}
@@ -888,12 +888,12 @@ export default function Diagnosis() {
                   ★결과 무관★ 값은 기존 예/아니요와 동일(set(k,"예"/"아니요")) → matching.ts 결과 100% 유지.
                   미선택 시 submit 단계 ensureDeepDefaults()가 "아니요"로 채우는 로직도 그대로 유효. */}
               <GroupBox title={STEP3_DEEP_GROUP}>
-                <Field label="📈 최근 2년 연매출이 매년 10% 이상 늘었나요?" hint={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.hint}><Radio k="revenueGrowth2y" opts={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.opts} cols2 /></Field>
-                <Field label="🖥️ 매장에 스마트기기를 쓰고 있나요?" hint={STEP3_CONDITIONAL_FIELDS.smartDevice.hint}><Radio k="smartDevice" opts={STEP3_CONDITIONAL_FIELDS.smartDevice.opts} cols2 /></Field>
-                <Field label="🔄 고금리 대출을 저금리로 갈아타고 싶으신가요?" hint={STEP3_CONDITIONAL_FIELDS.wantsRefinance.hint}><Radio k="wantsRefinance" opts={STEP3_CONDITIONAL_FIELDS.wantsRefinance.opts} cols2 /></Field>
-                <Field label="🔁 폐업 경험이 있고 다시 창업중인가요?" hint={STEP3_CONDITIONAL_FIELDS.reFounder.hint}><Radio k="reFounder" opts={STEP3_CONDITIONAL_FIELDS.reFounder.opts} cols2 /></Field>
-                <Field label="🏆 정부 선정 프로그램에 뽑힌 적 있나요?" hint={STEP3_CONDITIONAL_FIELDS.govSelected.hint}><Radio k="govSelected" opts={STEP3_CONDITIONAL_FIELDS.govSelected.opts} cols2 /></Field>
-                <Field label="💵 엔젤 VC 등 민간 투자를 받았거나 진행 중인가요?" hint={STEP3_CONDITIONAL_FIELDS.privateInvestment.hint}><Radio k="privateInvestment" opts={STEP3_CONDITIONAL_FIELDS.privateInvestment.opts} cols2 /></Field>
+                <Field label={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.label} hint={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.hint}><Radio k="revenueGrowth2y" opts={STEP3_CONDITIONAL_FIELDS.revenueGrowth2y.opts} cols2 /></Field>
+                <Field label={STEP3_CONDITIONAL_FIELDS.smartDevice.label} hint={STEP3_CONDITIONAL_FIELDS.smartDevice.hint}><Radio k="smartDevice" opts={STEP3_CONDITIONAL_FIELDS.smartDevice.opts} cols2 /></Field>
+                <Field label={STEP3_CONDITIONAL_FIELDS.wantsRefinance.label} hint={STEP3_CONDITIONAL_FIELDS.wantsRefinance.hint}><Radio k="wantsRefinance" opts={STEP3_CONDITIONAL_FIELDS.wantsRefinance.opts} cols2 /></Field>
+                <Field label={STEP3_CONDITIONAL_FIELDS.reFounder.label} hint={STEP3_CONDITIONAL_FIELDS.reFounder.hint}><Radio k="reFounder" opts={STEP3_CONDITIONAL_FIELDS.reFounder.opts} cols2 /></Field>
+                <Field label={STEP3_CONDITIONAL_FIELDS.govSelected.label} hint={STEP3_CONDITIONAL_FIELDS.govSelected.hint}><Radio k="govSelected" opts={STEP3_CONDITIONAL_FIELDS.govSelected.opts} cols2 /></Field>
+                <Field label={STEP3_CONDITIONAL_FIELDS.privateInvestment.label} hint={STEP3_CONDITIONAL_FIELDS.privateInvestment.hint}><Radio k="privateInvestment" opts={STEP3_CONDITIONAL_FIELDS.privateInvestment.opts} cols2 /></Field>
               </GroupBox>
 
               {/* ── 전화 상담 희망 여부 (대표님 요청 - 마지막 질문 1개) ──
