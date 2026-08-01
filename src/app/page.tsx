@@ -109,7 +109,9 @@ export default function Home() {
     <PageShell pageKey="home">
       <ScrollReveal />
       <Header />
-      <main>
+      {/* ★ 하단 플로팅 버튼(앱 설치·1:1 상담)이 마지막 콘텐츠를 가리지 않도록
+          모바일에서 본문 아래에 안전 여백을 확보 (데스크톱은 버튼이 화면 밖 우측이라 영향 적음) */}
+      <main className="pb-24 sm:pb-0">
         {/* 히어로 */}
         <section
           id="hero-section"
@@ -121,7 +123,7 @@ export default function Home() {
               <Editable
                 id="hero-badge"
                 as="div"
-                className="inline-block rounded-full bg-brand-yellow px-5 py-2 text-sm font-bold text-brand-dark sm:px-6 sm:py-2.5 sm:text-base"
+                className="inline-block rounded-full bg-brand-yellow px-5 py-2 text-sm font-extrabold tracking-[-0.01em] text-brand-dark sm:px-6 sm:py-2.5 sm:text-base"
               >
                 정부지원사업 AI 통합 매칭 플랫폼
               </Editable>
@@ -129,7 +131,7 @@ export default function Home() {
             <Editable
               id="hero-headline-v2"
               as="h1"
-              className="whitespace-nowrap text-[20px] font-black leading-[1.35] tracking-[-0.01em] text-brand-dark xs:text-[24px] sm:whitespace-normal sm:text-[40px] sm:leading-[1.25]"
+              className="whitespace-nowrap text-[21px] font-black leading-[1.28] tracking-[-0.03em] text-brand-dark xs:text-[25px] sm:whitespace-normal sm:text-[43px] sm:leading-[1.18] sm:tracking-[-0.035em]"
             >
               AI를 활용해 내 사업장에 알맞은
               <br />
@@ -139,12 +141,30 @@ export default function Home() {
             <Editable
               id="hero-sub"
               as="p"
-              className="mx-auto mt-4 max-w-xl break-keep text-[15px] leading-relaxed text-brand-gray sm:mt-5 sm:text-[19px] sm:leading-relaxed"
+              className="mx-auto mt-4 max-w-xl break-keep text-[15px] font-medium leading-relaxed text-brand-gray sm:mt-5 sm:text-[19px] sm:leading-relaxed"
             >
               복잡한 정부지원사업, 이제 직접 찾지 마세요.
               <br />
               AI가 찾아서 신청 방법까지 안내해 드립니다.
             </Editable>
+
+            {/* ★ 첫 화면 후킹 포인트 - 우리 서비스 최대 강점(숫자)을 히어로에서 바로 노출 ★
+                아래 결과 목업까지 스크롤하지 않아도 "얼마나 많이 찾아주는지"가 첫눈에 보이게.
+                크기는 절제해 CTA 버튼을 밀지 않도록 컴팩트하게. */}
+            <div className="mx-auto mt-5 flex w-fit max-w-md items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 sm:mt-6 sm:gap-2 sm:px-5">
+              <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                한 번의 진단으로 평균
+              </span>
+              <span className="inline-flex items-baseline">
+                <b className="text-[22px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[27px]">
+                  24
+                </b>
+                <b className="text-[14px] font-extrabold text-brand-orange sm:text-[16px]">개</b>
+              </span>
+              <span className="break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
+                매칭
+              </span>
+            </div>
 
             {/* 핵심 혜택 - 가로 컴팩트 배지 */}
             <ul className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-6 sm:gap-x-3">
@@ -152,7 +172,7 @@ export default function Home() {
                 (t, i) => (
                   <li
                     key={t}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand-dark shadow-sm sm:text-sm"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-bold tracking-[-0.01em] text-brand-dark shadow-sm sm:text-sm"
                   >
                     <span className="text-brand-orange">✓</span>
                     <Editable id={`hero-check-${i}`} as="span">
@@ -164,19 +184,21 @@ export default function Home() {
             </ul>
 
             <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:mt-7 sm:flex-row sm:gap-3">
+              {/* 주 CTA - 최우선 행동. 부 버튼보다 살짝 크고 굵게(위계 강화) */}
               <Editable
                 id="hero-cta-primary"
                 as="a"
                 href="/diagnosis-chat"
-                className="btn-red w-full rounded-full px-9 py-3 text-base animate-pulseGlow sm:w-auto sm:py-3.5 sm:text-[17px]"
+                className="btn-red w-full whitespace-nowrap rounded-full px-6 py-3.5 text-[16px] font-extrabold tracking-[-0.02em] animate-pulseGlow sm:w-auto sm:px-10 sm:py-4 sm:text-[18px] sm:tracking-[-0.01em]"
               >
                 {BETA_FREE ? "지금 무료로 진단 시작하기" : "무료 진단 시작하기"}
               </Editable>
+              {/* 부 CTA - 보조 행동이므로 조금 차분하게(작게) 두어 주 버튼이 도드라지게 */}
               <Editable
                 id="hero-cta-secondary"
                 as="a"
                 href={BETA_FREE ? "#result-sample-section" : "/pricing"}
-                className="btn-outline w-full rounded-full px-9 py-3 text-base sm:w-auto sm:py-3.5 sm:text-[17px]"
+                className="btn-outline w-full whitespace-nowrap rounded-full px-8 py-3 text-[15px] font-bold sm:w-auto sm:py-3.5 sm:text-base"
               >
                 {BETA_FREE ? "무엇을 알려주나요?" : "상품 자세히 보기"}
               </Editable>
@@ -201,20 +223,20 @@ export default function Home() {
           <div className="reveal mx-auto max-w-3xl text-center">
             {/* (대표님 요청) 가로폭 조금 확대(is-wide-value=40rem) */}
             <div className="section-title-glass is-wide-value mx-auto flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm">
                 🎯 서비스 안내
               </span>
               <Editable
                 id="home-value-title-v2"
                 as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+                className="break-keep text-[22px] font-black tracking-[-0.03em] text-brand-dark sm:text-[26px]"
               >
                 아직 몰라서 못 받고 있는 정부지원사업
               </Editable>
               <Editable
                 id="home-value-sub"
                 as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-brand-gray"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium leading-relaxed text-brand-gray"
               >
                 {BETA_FREE ? (
                   <>
@@ -236,7 +258,7 @@ export default function Home() {
               <Editable
                 id="home-value-step1"
                 as="span"
-                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
+                className="break-keep text-[13px] font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm"
               >
                 이런걸 알려드려요
               </Editable>
@@ -270,7 +292,7 @@ export default function Home() {
               <Editable
                 id="home-value-step2"
                 as="span"
-                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
+                className="break-keep text-[13px] font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm"
               >
                 이렇게 알려드려요
               </Editable>
@@ -292,7 +314,7 @@ export default function Home() {
               <Editable
                 id="home-value-step3"
                 as="span"
-                className="break-keep text-[13px] font-bold text-brand-orange sm:text-sm"
+                className="break-keep text-[13px] font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm"
               >
                 결과는 이렇게 나와요
               </Editable>
@@ -705,20 +727,20 @@ export default function Home() {
           <div className="reveal mx-auto max-w-5xl">
             {/* (대표님 요청) 상단 헤더 박스 - 가로폭 조금 축소(is-wide-pricing=38rem) */}
             <div className="section-title-glass is-wide-pricing mx-auto flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm">
                 💳 서비스 이용 플랜
               </span>
               <Editable
                 id="home-pricing-title"
                 as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+                className="break-keep text-[22px] font-black tracking-[-0.03em] text-brand-dark sm:text-[26px]"
               >
                 PRO AI 진단 리포트
               </Editable>
               <Editable
                 id="home-pricing-sub"
                 as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium text-brand-gray"
               >
                 {BETA_FREE ? (
                   <>오픈 베타 기간 전부 무료로 이용하실 수 있습니다.</>
@@ -740,20 +762,20 @@ export default function Home() {
         <section className="bg-gray-50 px-4 py-6 sm:py-10">
           <div className="reveal mx-auto max-w-4xl">
             <div className="section-title-glass is-wide mx-auto flex flex-col items-center text-center">
-              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-bold text-brand-orange sm:text-sm">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm">
                 💬 자주 묻는 질문
               </span>
               <Editable
                 id="home-faq-title"
                 as="h2"
-                className="break-keep text-xl font-extrabold text-brand-dark sm:text-2xl"
+                className="break-keep text-[22px] font-black tracking-[-0.03em] text-brand-dark sm:text-[26px]"
               >
                 궁금한 점, 미리 확인하세요
               </Editable>
               <Editable
                 id="home-faq-sub"
                 as="p"
-                className="mx-auto mt-3 max-w-xl break-keep text-sm text-brand-gray"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium text-brand-gray"
               >
                 결제 전 가장 많이 묻는 질문들을 모았습니다.
               </Editable>
@@ -797,7 +819,7 @@ export default function Home() {
             <Editable
               id="home-cta-title"
               as="h2"
-              className="break-keep text-xl font-black text-white sm:text-2xl"
+              className="break-keep text-[22px] font-black tracking-[-0.03em] text-white sm:text-[26px]"
             >
               {BETA_FREE
                 ? "오픈 베타 기간, 지금은 전부 무료입니다"
