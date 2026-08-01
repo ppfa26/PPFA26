@@ -166,6 +166,11 @@ const DESKTOP_VIEWPORT_SCRIPT = `
     } catch (e) {}
     return false;
   }
+  // ★ 물리 기기폭 캐시 ★
+  //  스크립트 '최초 실행' 시점의 innerWidth 는 아직 viewport 를 width=820 으로 바꾸기 전이라
+  //  정확한 물리 기기폭(CSS px)이다. 이 값을 캐시해 두고 resize 재실행 때 재사용한다.
+  //  (재실행 시 innerWidth 는 이미 820 으로 오염돼 있어 그대로 쓰면 scale 이 틀어진다.)
+  var deviceW = 0;
   function apply() {
     try {
       var vp = document.querySelector('meta[name=viewport]');
@@ -174,14 +179,21 @@ const DESKTOP_VIEWPORT_SCRIPT = `
         vp.setAttribute('name', 'viewport');
         document.head.appendChild(vp);
       }
-      var w = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
+      var iw = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
+      // 최초 1회: 아직 820 강제 전이므로 이 값이 진짜 기기폭 → 캐시.
+      //  (이미 820 이면 데스크톱이거나 재실행 오염값이므로 캐시하지 않는다.)
+      if (deviceW === 0 && iw > 0 && iw < DESKTOP_WIDTH) deviceW = iw;
+      // 이후에는 캐시된 물리 기기폭을 우선 사용(없으면 현재 innerWidth).
+      var w = deviceW > 0 ? deviceW : iw;
       if (isExcluded() || w >= DESKTOP_WIDTH) {
         // 진짜 PC/태블릿 또는 입력 페이지 → 표준 반응형(확대 강제 없음, 핀치 줌 허용)
         vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
         return;
       }
       // 모바일 → 820px PC 페이지를 기기 화면폭에 딱 맞게 축소해서 통째로 표시(잘림 0)
-      var scale = Math.round((w / DESKTOP_WIDTH) * 1000) / 1000;
+      //  ★ 반드시 내림(floor) ★ : 반올림하면 scale 이 실제보다 커져 820*scale > 기기폭 이 되고
+      //   페이지가 화면보다 넓어져 오른쪽이 잘린다. 내림하면 scale*820 <= 기기폭 이라 잘림 0.
+      var scale = Math.floor((w / DESKTOP_WIDTH) * 1000) / 1000;
       vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', initial-scale=' + scale + ', maximum-scale=5, user-scalable=yes');
     } catch (e) {}
   }
