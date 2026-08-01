@@ -32,10 +32,10 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
   return (
     <footer className={`${topGap} border-t border-white/10 bg-brand-dark text-gray-300`}>
       <div className="mx-auto max-w-5xl px-6 py-8 sm:px-8">
-        {/* ── 1줄: 브랜드(좌) + 공식 채널(우) ───────────────────────── */}
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        {/* ── 1줄: 브랜드 + 공식 채널을 로고 옆에 바로 이어 붙임(빈칸 제거) ── */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
           {/* 브랜드 (태그라인 제거 → 로고+이름만, 최대한 간결) */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex shrink-0 items-center gap-2.5">
             <Image
               src="/logo/brand-footer-dark.png"
               alt="모두의사업친구"
@@ -48,8 +48,8 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             </span>
           </div>
 
-          {/* 공식 채널 - 라벨 없이 원형 아이콘만(미니멀). hover 시 브랜드 컬러 + title 툴팁 */}
-          <ul className="flex flex-wrap gap-2 sm:justify-end">
+          {/* 공식 채널 - 라벨 없이 원형 아이콘만(미니멀). 로고 이름 바로 옆에 이어 붙임 */}
+          <ul className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             {CHANNELS.map((c) => (
               <li key={c.label}>
                 <a
@@ -58,9 +58,9 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
                   rel="noopener noreferrer"
                   title={c.label}
                   aria-label={c.label}
-                  className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition ${c.hover}`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition sm:h-9 sm:w-9 ${c.hover}`}
                 >
-                  <span className="text-[16px] leading-none" aria-hidden="true">
+                  <span className="text-[15px] leading-none sm:text-[16px]" aria-hidden="true">
                     {c.icon ? <i className={c.icon} /> : c.emoji}
                   </span>
                 </a>
