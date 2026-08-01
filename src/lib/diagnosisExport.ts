@@ -72,6 +72,55 @@ function buildLabelMap(): Record<string, string> {
 
 export const DIAGNOSIS_LABELS = buildLabelMap();
 
+// ════════════════════════════════════════════════════════════════
+//  정식 "질문 순서" (대표님 요청 - 진단서·엑셀을 실제 질문 순서와 동일하게)
+//    diagnosisConfig.ts 의 필드 정의 순서를 그대로 사용한다.
+//    · 기본정보(이름·연락처·이메일·사업자번호 관련)를 맨 앞에
+//    · 이어서 1단계 → 2단계 → 3단계 조건부 → 전화상담 → 3단계 심층 순서
+//    ※ 여기 없는 예상 밖 키는 정렬 시 맨 뒤로 밀린다(누락 방지).
+// ════════════════════════════════════════════════════════════════
+export const DIAGNOSIS_KEY_ORDER: string[] = [
+  // ── 기본 정보 ──
+  "name",
+  "phone",
+  "email",
+  "bno",
+  "bnoStatus",
+  "bnoVerified",
+  // ── 1단계 · 기본 정보 ──
+  ...Object.keys(STEP1_FIELDS),
+  // ── 2단계 · 회사 정보 ──
+  ...Object.keys(STEP2_FIELDS),
+  // ── 3단계 · 조건부(맞춤 매칭 추가 질문) ──
+  ...Object.keys(STEP3_CONDITIONAL_FIELDS),
+  // ── 전화 상담 희망 ──
+  "phoneConsult",
+  // ── 3단계 · 심층 질문 ──
+  ...Object.keys(STEP3_FIELDS),
+];
+
+const KEY_ORDER_INDEX: Record<string, number> = DIAGNOSIS_KEY_ORDER.reduce(
+  (acc, k, i) => {
+    acc[k] = i;
+    return acc;
+  },
+  {} as Record<string, number>
+);
+
+// 진단서 항목 키들을 "정식 질문 순서"로 정렬한다.
+//   순서 목록에 없는 키는 뒤로 밀되, 원래 등장 순서는 유지(안정 정렬).
+export function sortKeysByQuestionOrder(keys: string[]): string[] {
+  const BIG = DIAGNOSIS_KEY_ORDER.length + 1000;
+  return keys
+    .map((k, i) => ({ k, i }))
+    .sort((a, b) => {
+      const oa = KEY_ORDER_INDEX[a.k] ?? BIG + a.i;
+      const ob = KEY_ORDER_INDEX[b.k] ?? BIG + b.i;
+      return oa - ob;
+    })
+    .map((x) => x.k);
+}
+
 // 키 → 한글 라벨 (없으면 키 그대로)
 export function labelForKey(key: string): string {
   return DIAGNOSIS_LABELS[key] ?? key;
@@ -116,7 +165,7 @@ export function diagnosesToCsv(records: DiagnosisRecord[]): string {
 
   // ── 모든 고객에 공통으로 쓸 질문(행) 순서를 통일한다 ──
   //   기본 항목(이름·연락처·이메일) + 프로필에 등장한 모든 질문 키
-  const profileKeys: string[] = [];
+  const collected: string[] = [];
   const seen = new Set<string>();
   records.forEach((rec) => {
     Object.keys(rec.profile || {}).forEach((k) => {
@@ -125,10 +174,12 @@ export function diagnosesToCsv(records: DiagnosisRecord[]): string {
       if (["bnoTaxType", "interests"].includes(k)) return;
       if (!seen.has(k)) {
         seen.add(k);
-        profileKeys.push(k);
+        collected.push(k);
       }
     });
   });
+  // ★ 정식 질문 순서로 정렬 (대표님 요청 - 엑셀도 실제 질문 순서와 동일하게) ★
+  const profileKeys = sortKeysByQuestionOrder(collected);
 
   records.forEach((rec, i) => {
     if (i > 0) {

@@ -10,6 +10,7 @@ import { classifyIp } from "@/lib/ipClassify";
 import {
   labelForKey,
   valueToText,
+  sortKeysByQuestionOrder,
   diagnosesToCsv,
   downloadCsv,
   computeDuplicateIndex,
@@ -1763,11 +1764,21 @@ export default function AdminPage() {
                         <p className="mb-2 text-xs font-bold text-slate-300">
                           📝 작성한 질문지 전체
                         </p>
-                        <div className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
-                          {Object.entries(p)
-                            // 예전 질문지에만 있던 항목(과세유형·관심 분야) - 지금 질문지엔 없으므로 관리자 진단서에서도 숨김 (대표님 요청)
-                            .filter(([k]) => !["bnoTaxType", "interests"].includes(k))
-                            .map(([k, v]) => (
+                        {/* ★ 대표님 요청 ★ 진단서 항목을 (1) 실제 질문 순서대로 정렬하고
+                            (2) 가로 2줄 유지하되 세로(칼럼) 우선으로 채운다 - 신문 칼럼처럼
+                            왼쪽 열을 위→아래로 다 읽고, 이어서 오른쪽 열을 위→아래로 읽는다.
+                            CSS grid는 가로 우선이라, 정렬된 항목을 왼/오 두 배열로 나눠 각 열을 세로로 렌더한다. */}
+                        {(() => {
+                          // 예전 질문지 전용 항목(과세유형·관심 분야) 제외 후, 정식 질문 순서로 정렬
+                          const entries = sortKeysByQuestionOrder(
+                            Object.keys(p).filter(
+                              (k) => !["bnoTaxType", "interests"].includes(k)
+                            )
+                          ).map((k) => [k, (p as any)[k]] as const);
+                          // 세로 우선(칼럼) 채움: 앞 절반 = 왼쪽 열, 뒤 절반 = 오른쪽 열
+                          const half = Math.ceil(entries.length / 2);
+                          const columns = [entries.slice(0, half), entries.slice(half)];
+                          const renderItem = ([k, v]: readonly [string, unknown]) => (
                             <div
                               key={k}
                               className="flex gap-2 border-b border-slate-700/60 py-1 text-sm"
@@ -1779,8 +1790,17 @@ export default function AdminPage() {
                                 {valueToText(v)}
                               </span>
                             </div>
-                          ))}
-                        </div>
+                          );
+                          return (
+                            <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+                              {columns.map((col, ci) => (
+                                <div key={ci} className="flex flex-col">
+                                  {col.map(renderItem)}
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
                         {/* ☎️ 상담 관리 - 통화 상태 + 메모 (localStorage 저장, DB 불필요) */}
                         <div className="mt-4 rounded-xl border border-slate-700 bg-slate-800/60 p-3">
                           <p className="mb-2 text-xs font-bold text-slate-300">☎️ 상담 관리</p>
