@@ -83,8 +83,8 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           </ul>
         </nav>
 
-        {/* ── 3줄(법적 고지): 면책 + 사업자정보(가운뎃점 압축) + 저작권 ───
-            사업자정보 3줄을 하나의 흐름으로 압축(자동 wrap). 법적 항목 전부 유지. */}
+        {/* ── 3줄(법적 고지): 면책 + 사업자정보(항목별 줄바꿈) + 저작권 ───
+            사업자정보는 항목 단위로 줄을 나눠(가운뎃점은 같은 줄 묶음만) 가독성 확보. 법적 항목 전부 유지. */}
         <div className="mt-5 break-keep border-t border-white/10 pt-5 text-[11px] leading-relaxed text-gray-500">
           <Editable
             id="footer-nowarranty"
@@ -94,11 +94,27 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
           </Editable>
 
-          <p className="mt-2 text-gray-500">
-            상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신주엽 <span className="text-white/15">·</span> 사업자등록번호 : 597-12-02897 <span className="text-white/15">·</span> 통신판매업신고 : 제2026-인천서해-0109호 <span className="text-white/15">·</span> 주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호 <span className="text-white/15">·</span> 대표번호 : 1551-7886 <span className="text-white/15">·</span> 문의 : <span className="break-all">biospartners@naver.com</span>
-          </p>
+          {/* 모바일: 항목별 줄바꿈(좁은 폭 → 가독성) */}
+          <address className="mt-3 space-y-0.5 not-italic text-gray-500 sm:hidden">
+            <p>상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신주엽</p>
+            <p>사업자등록번호 : 597-12-02897</p>
+            <p>통신판매업신고 : 제2026-인천서해-0109호</p>
+            <p>주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호</p>
+            <p>대표번호 : 1551-7886</p>
+            <p>문의 : <span className="break-all">biospartners@naver.com</span></p>
+          </address>
 
-          <p className="mt-4 border-t border-white/10 pt-4 text-gray-600">
+          {/* PC: 2줄로 묶어 간결하게(가운뎃점) */}
+          <address className="mt-3 hidden space-y-0.5 not-italic text-gray-500 sm:block">
+            <p>
+              상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신주엽 <span className="text-white/15">·</span> 사업자등록번호 : 597-12-02897 <span className="text-white/15">·</span> 통신판매업신고 : 제2026-인천서해-0109호
+            </p>
+            <p>
+              주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호 <span className="text-white/15">·</span> 대표번호 : 1551-7886 <span className="text-white/15">·</span> 문의 : biospartners@naver.com
+            </p>
+          </address>
+
+          <p className="mt-3 border-t border-white/10 pt-4 text-gray-600">
             © 모두의사업친구. All rights reserved.
           </p>
         </div>
