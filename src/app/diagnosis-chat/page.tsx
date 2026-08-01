@@ -71,6 +71,11 @@ type SubQ = {
   cols?: 1 | 2 | 3;
   // multiGroup 전용: 이 하위문항을 '하나만' 고르게(라디오식). 저장은 [선택값] 배열 유지.
   singleSelect?: boolean;
+  // multiGroup 전용: 저장을 배열이 아니라 '단일 문자열'로(예: businessType). 자동으로 라디오식.
+  //  · 매칭 로직이 스칼라를 기대하는 필드(businessType 등)를 묶음 화면에 넣을 때 사용.
+  scalar?: boolean;
+  // 이 하위문항을 조건부로만 노출(예: 예비창업자면 사업자 구분은 숨김).
+  subOnlyIf?: (form: any) => boolean;
   // 화면 표기만 풀네임으로(저장/매칭 값은 opts 원본). 예: 소진공→소상공인시장진흥공단
   labelFull?: Record<string, string>;
 };
@@ -97,6 +102,10 @@ type ChatStep = {
 
 const CHAT_STEPS: ChatStep[] = [
   // ── 1단계 · 기본 정보 ──
+  // ★ 사업자번호 + 성함·연락처를 한 화면으로(대표님 요청) ★
+  //  사업자번호 조회(또는 예비창업자)가 끝나면 같은 화면 하단에 성함·연락처
+  //  입력칸이 펼쳐지고, '입력 완료'로 한 번에 다음(자격확인)으로 넘어간다.
+  //  기존 contact 스텝은 이 화면에 흡수됨 → 저장값(name/phone) 구조 동일.
   {
     key: "bno",
     type: "bno",
@@ -105,12 +114,6 @@ const CHAT_STEPS: ChatStep[] = [
       "국세청에 등록된 정상 사업자인지\n확인 하는 절차에요.",
     ],
     placeholder: BNO_TEXT.placeholder,
-  },
-  // 성함 + 연락처를 한 질문으로 합침
-  {
-    key: "contact",
-    type: "contact",
-    botLines: ["대표님 성함과 연락처를 알려주세요.", "진단 결과 리포트와 맞춤 안내에 사용돼요."],
   },
   // 결격사유(회생·파산 + 세금완납)를 한 질문으로 합침
   {
@@ -122,17 +125,29 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "taxDelinquent", label: "국세·지방세는 완납 상태이신가요?", opts: STEP3_FIELDS.taxDelinquent.opts },
     ],
   },
-  // ★ businessType을 자본잠식보다 먼저 물어본다 ★
-  //   원본 폼은 단일 페이지라 순서 의존성이 없지만, 채팅은 순차이므로
-  //   법인 여부(businessType)를 먼저 확정해야 자본잠식(법인 전용) 스텝을 띄울 수 있다.
-  //   저장 form 값·매칭 결과는 순서와 무관하게 동일하다.
+  // ★ 사업자 구분 + 업종을 한 화면으로(대표님 요청) ★
+  //   businessType(단일·스칼라 저장) + industries(복수) 를 한 스텝에 묶는다.
+  //   · 예비창업자면 businessType='예비'가 이미 세팅되어 있어 사업자구분 섹션은 숨김(subOnlyIf).
+  //   · businessType을 여기서 확정해야 뒤의 자본잠식(법인 전용) 스텝 노출을 판단할 수 있다.
+  //   저장 form 값(businessType 스칼라 / industries 배열)은 개별 스텝과 100% 동일 → 매칭 결과 불변.
   {
-    key: "businessType",
-    type: "single",
-    botLines: ["사업자 구분을 선택해 주세요."],
-    opts: STEP1_FIELDS.businessType.opts,
-    // 예비창업자 버튼으로 이미 businessType='예비'가 세팅되면 다시 묻지 않는다.
-    onlyIf: (f) => f.businessType !== "예비",
+    key: "bizGroup",
+    type: "multiGroup",
+    botLines: ["사업자 구분과 업종을 알려주세요."],
+    subs: [
+      {
+        key: "businessType",
+        label: "사업자 구분",
+        opts: STEP1_FIELDS.businessType.opts,
+        scalar: true, // 단일 문자열로 저장(라디오식)
+        subOnlyIf: (f) => f.businessType !== "예비", // 예비창업자면 숨김
+      },
+      {
+        key: "industries",
+        label: "업종 (복수 선택 가능)",
+        opts: STEP1_FIELDS.industries.opts,
+      },
+    ],
   },
   // 자본잠식은 법인사업자만
   {
@@ -141,12 +156,6 @@ const CHAT_STEPS: ChatStep[] = [
     botLines: ["법인 자본잠식 상태인가요?", STEP3_FIELDS.capitalImpairment.hint],
     opts: STEP3_FIELDS.capitalImpairment.opts,
     onlyIf: (f) => f.businessType === "법인사업자",
-  },
-  {
-    key: "industries",
-    type: "multi",
-    botLines: ["어떤 업종이신가요?", "해당되는 걸 모두 골라주세요. (복수 선택 가능)"],
-    opts: STEP1_FIELDS.industries.opts,
   },
   // ★ 사업 규모 묶음(대표님 요청: 같은 카테고리는 한 화면에서 쭉 답변) ★
   //   업력·연매출·직원수를 한 스텝(singleGroup)으로 묶는다.
@@ -296,6 +305,11 @@ export default function DiagnosisChat() {
   const [bnoLoading, setBnoLoading] = useState(false);
   const [bnoMsg, setBnoMsg] = useState<{ tone: "ok" | "err" | "info"; text: string } | null>(null);
   const [bnoServerDown, setBnoServerDown] = useState(false);
+  // ★ bno + 성함·연락처를 한 화면에서(대표님 요청) ★
+  //  사업자번호 조회(또는 예비창업자/수동입력)가 끝나면 바로 다음 스텝으로 넘기지 않고,
+  //  같은 화면 하단에 성함·연락처 입력칸을 펼친다(bnoContactOpen=true).
+  //  '입력 완료'를 누르면 contact 값을 저장하고 다음 스텝(eligibility)으로 진행한다.
+  const [bnoContactOpen, setBnoContactOpen] = useState(false);
 
   // 현재 질문(마지막 봇 말풍선)을 화면 '가운데쯤'으로 스크롤하기 위한 앵커
   const focusRef = useRef<HTMLDivElement>(null);
@@ -388,6 +402,7 @@ export default function DiagnosisChat() {
     setCheckTemp([]);
     setBnoMsg(null);
     setBnoServerDown(false);
+    setBnoContactOpen(false);
     // ★ 대표님 요청 ★ 질문+힌트가 2줄로 나뉘던 것을 '한 말풍선'으로 묶어서 표시(모든 곳).
     //   여러 줄(botLines)을 \n으로 이어 하나의 말풍선으로 렌더한다. (BotBubble이 whitespace-pre-line)
     pushBotLines([CHAT_STEPS[vi].botLines.filter(Boolean).join("\n")]);
@@ -487,9 +502,15 @@ export default function DiagnosisChat() {
 
   const confirmMultiGroup = () => {
     const step = CHAT_STEPS[stepIdx];
-    const subs = step.subs || [];
+    // 조건부(subOnlyIf) 하위문항은 조건 불충족 시 제외
+    const subs = (step.subs || []).filter((s) => !s.subOnlyIf || s.subOnlyIf(form));
+    // 필수 검증: scalar(단일 저장) 하위문항은 반드시 하나 선택해야 진행(예: 사업자 구분).
+    if (subs.some((s) => s.scalar && !(groupMultiTemp[s.key] && groupMultiTemp[s.key][0]))) return;
     const next = { ...form };
-    subs.forEach((s) => { next[s.key] = groupMultiTemp[s.key] || []; });
+    subs.forEach((s) => {
+      const picked = groupMultiTemp[s.key] || [];
+      next[s.key] = s.scalar ? (picked[0] ?? form[s.key]) : picked; // scalar=단일 문자열, 그 외=배열
+    });
     setForm(next);
     // 사용자 말풍선: 각 문항의 선택값(풀네임 표기)을 " / "로 이어 요약. 비어있으면 생략.
     const summary = subs
@@ -594,8 +615,9 @@ export default function DiagnosisChat() {
         setForm(next);
         setMessages((m) => [...m, { who: "user", text: textTemp.trim() }]);
         const okIcon = r.data.statusCode === "01" ? "✅" : "⚠️";
+        // ★ 같은 화면에서 성함·연락처까지(대표님 요청) → 다음 스텝으로 안 넘기고 입력칸 펼침
         pushBotLines([`${okIcon} 국세청 확인 완료 - 사업자 상태 : ${r.data.status}${r.data.taxType ? ` (${r.data.taxType})` : ""}`], () =>
-          askStep(stepIdx + 1, next)
+          setBnoContactOpen(true)
         );
         return;
       }
@@ -618,7 +640,8 @@ export default function DiagnosisChat() {
     const next = { ...form, bno: digits, bnoStatus: "국세청 점검으로 자동확인 없이 접수", bnoTaxType: "", bnoVerified: false };
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: textTemp.trim() }]);
-    pushBotLines(["✅ 사업자등록번호가 접수되었어요. 자동확인은 추후 처리됩니다."], () => askStep(stepIdx + 1, next));
+    // ★ 같은 화면에서 성함·연락처까지(대표님 요청)
+    pushBotLines(["✅ 사업자등록번호가 접수되었어요. 자동확인은 추후 처리됩니다."], () => setBnoContactOpen(true));
   };
 
   // 예비창업자(사업자번호 없이 진행) — businessType='예비'로 세팅 후 bno 스텝 건너뜀
@@ -626,10 +649,8 @@ export default function DiagnosisChat() {
     const next = { ...form, businessType: "예비" };
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: "예비창업자예요 (사업자등록 전)" }]);
-    // bno 스텝 다음(name)으로 진행. businessType='예비'가 세팅되므로
-    // businessType 질문 스텝은 onlyIf 가드로 자동 스킵되고,
-    // 법인 전용 자본잠식 스텝도 onlyIf(법인)로 자동 스킵된다. (기존 폼과 동일 값 "예비")
-    pushBotLines(["예비창업자로 진행할게요! 창업 준비 단계에 맞는 지원도 함께 찾아드려요."], () => askStep(stepIdx + 1, next));
+    // ★ 같은 화면에서 성함·연락처까지(대표님 요청) → businessType='예비' 세팅 후 입력칸 펼침
+    pushBotLines(["예비창업자로 진행할게요! 창업 준비 단계에 맞는 지원도 함께 찾아드려요."], () => setBnoContactOpen(true));
   };
 
   // 부분 리드 저장(관리자 계정 제외)
@@ -799,12 +820,19 @@ export default function DiagnosisChat() {
                     ← 이전
                   </button>
                 )}
-                {curStep.botLines?.[0] && (
-                  <p className="min-w-0 flex-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark">
-                    <span className="mr-1 text-brand-orange">Q.</span>
-                    {curStep.botLines[0]}
-                  </p>
-                )}
+                {(() => {
+                  // bno 스텝에서 조회가 끝나 성함·연락처 입력 단계면 헤더 문구도 그에 맞춘다.
+                  const headQ =
+                    curStep.type === "bno" && bnoContactOpen
+                      ? "대표님 성함과 연락처를 알려주세요."
+                      : curStep.botLines?.[0];
+                  return headQ ? (
+                    <p className="min-w-0 flex-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark">
+                      <span className="mr-1 text-brand-orange">Q.</span>
+                      {headQ}
+                    </p>
+                  ) : null;
+                })()}
               </div>
               {/* 복수 선택 */}
               {curStep.type === "multi" && (
@@ -965,8 +993,12 @@ export default function DiagnosisChat() {
                   맨 아래 '다음 →' 하나로 제출. 저장값 구조는 개별 스텝과 동일(배열). */}
               {curStep.type === "multiGroup" && (
                 <div className="flex flex-col gap-4">
-                  {(curStep.subs || []).map((sub) => {
+                  {(curStep.subs || [])
+                    .filter((sub) => !sub.subOnlyIf || sub.subOnlyIf(form))
+                    .map((sub) => {
                     const picked = groupMultiTemp[sub.key] || [];
+                    // scalar(단일 저장)·singleSelect 는 라디오식(하나만) 동작
+                    const radio = sub.scalar || sub.singleSelect;
                     return (
                       <div key={sub.key}>
                         <p className="mb-1 break-keep px-1 text-[15px] font-bold text-brand-dark">{sub.label}</p>
@@ -977,7 +1009,7 @@ export default function DiagnosisChat() {
                             return (
                               <button
                                 key={o}
-                                onClick={() => (sub.singleSelect ? pickGroupMultiSingle(sub.key, o) : toggleGroupMulti(sub.key, o))}
+                                onClick={() => (radio ? pickGroupMultiSingle(sub.key, o) : toggleGroupMulti(sub.key, o))}
                                 className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
                                   active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                                 }`}
@@ -992,7 +1024,10 @@ export default function DiagnosisChat() {
                   })}
                   <button
                     onClick={confirmMultiGroup}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark"
+                    disabled={(curStep.subs || [])
+                      .filter((s) => (!s.subOnlyIf || s.subOnlyIf(form)) && s.scalar)
+                      .some((s) => !(groupMultiTemp[s.key] && groupMultiTemp[s.key][0]))}
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                   >
                     다음 →
                   </button>
@@ -1090,11 +1125,47 @@ export default function DiagnosisChat() {
                 </div>
               )}
 
-              {/* 사업자번호: 입력 + 조회 + 예비창업자 + 상태메시지 */}
+              {/* 사업자번호: 입력 + 조회 + 예비창업자 + 상태메시지 → (조회 후) 성함·연락처 */}
               {curStep.type === "bno" && (() => {
                 // 숫자만 추린 자리수 → 10자리여야 조회 버튼 활성화(성함·연락처 입력칸과 동일 UX)
                 const bnoDigits = textTemp.replace(/[^0-9]/g, "").length;
                 const bnoReady = bnoDigits === 10;
+                // ★ 조회/예비창업자 확정 후 → 같은 화면에서 성함·연락처 입력(대표님 요청)
+                if (bnoContactOpen) {
+                  return (
+                    <div className="flex flex-col gap-2">
+                      <p className="mb-1 break-keep px-1 text-xs text-brand-gray">
+                        진단 결과 리포트와 맞춤 안내에 사용돼요.
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={nameTemp}
+                          onChange={(e) => setNameTemp(e.target.value)}
+                          placeholder={CONTACT_TEXT.namePlaceholder}
+                          autoFocus
+                          className="min-w-0 flex-[2] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                        />
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          value={phoneTemp}
+                          onChange={(e) => setPhoneTemp(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && confirmContact()}
+                          placeholder={CONTACT_TEXT.phonePlaceholder}
+                          className="min-w-0 flex-[3] rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                        />
+                      </div>
+                      <button
+                        onClick={confirmContact}
+                        disabled={!nameTemp.trim() || phoneTemp.replace(/[^0-9]/g, "").length < 10}
+                        className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                      >
+                        입력 완료 →
+                      </button>
+                    </div>
+                  );
+                }
                 return (
                 <>
                   {/* 입력칸(flex-[2])보다 조회 버튼(flex-[3])을 더 넓게 — 대표님 재요청(버튼 가로 확대) */}
