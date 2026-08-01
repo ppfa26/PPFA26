@@ -111,8 +111,8 @@ const CHAT_STEPS: ChatStep[] = [
     type: "bno",
     botLines: [
       "그럼 시작해 볼게요! 👇",
-      "사업자등록번호와\n구분을 알려주세요.",
-      "국세청에 등록된 정상\n사업자인지 확인하는 절차예요.",
+      "하단에 사업자등록번호와\n사업자 구분을 알려주세요.",
+      "국세청에 정상 등록 후 운영중인\n사업자인지 확인하는 절차예요.",
     ],
     placeholder: BNO_TEXT.placeholder,
   },
