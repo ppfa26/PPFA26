@@ -109,7 +109,7 @@ const CHAT_STEPS: ChatStep[] = [
     key: "bno",
     type: "bno",
     botLines: [
-      "먼저 사업자등록번호와 성함·연락처를\n한 번에 알려주세요.",
+      "먼저 사업자등록번호와 구분,\n성함·연락처를 한 번에 알려주세요.",
       "사업자등록번호는 국세청에 등록된 정상\n사업자인지 확인하는 절차예요.",
     ],
     placeholder: BNO_TEXT.placeholder,
@@ -124,25 +124,27 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "taxDelinquent", label: "국세·지방세는 완납 상태이신가요?", opts: STEP3_FIELDS.taxDelinquent.opts },
     ],
   },
-  // ★ 사업자 구분 + 업종 + 사업장 지역을 한 화면으로(대표님 요청) ★
-  //   businessType(단일·스칼라 저장) + industries(복수) + region(단일·스칼라) 를 한 스텝에 묶는다.
-  //   · 예비창업자면 businessType='예비'가 이미 세팅되어 있어 사업자구분 섹션은 숨김(subOnlyIf).
-  //     → 예비: 업종 + 지역(2개) / 일반: 구분 + 업종 + 지역(3개) → 화면당 최대 3문항 원칙 준수.
-  //   · businessType을 여기서 확정해야 뒤의 자본잠식(법인 전용) 스텝 노출을 판단할 수 있다.
+  // ★ Q3 대표님 정보(대표님 요청: 자격확인 바로 다음으로 이동) ★
+  //   연령대·신용점수를 한 스텝으로 묶는다. 저장 값(age/credit) 동일 → 매칭 결과 불변.
+  {
+    key: "ownerGroup",
+    type: "singleGroup",
+    botLines: ["대표님에 대해 알려주세요.", "연령대와 신용점수를 골라주세요."],
+    subs: [
+      { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 3 },
+      { key: "credit", label: "대표자 개인 신용점수", hint: STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
+    ],
+  },
+  // ★ Q4 사업장 업종 및 지역(대표님 요청) ★
+  //   사업자 구분(businessType)은 Q1(bno) 화면으로 이동했으므로 여기선 업종+지역만.
+  //   · industries(복수) + region(단일·스칼라) 2문항.
   //   · 지역(region)은 단일값이라 scalar 저장. '기타' 선택 시 인라인 직접입력창 노출(2열 2줄).
-  //   저장 form 값(businessType 스칼라 / industries 배열 / region 스칼라)은 개별 스텝과 100% 동일 → 매칭 결과 불변.
+  //   저장 form 값(industries 배열 / region 스칼라)은 개별 스텝과 100% 동일 → 매칭 결과 불변.
   {
     key: "bizGroup",
     type: "multiGroup",
-    botLines: ["사업자 구분·업종·사업장 지역을 알려주세요."],
+    botLines: ["사업장 업종 및 지역을 알려주세요."],
     subs: [
-      {
-        key: "businessType",
-        label: "사업자 구분",
-        opts: STEP1_FIELDS.businessType.opts,
-        scalar: true, // 단일 문자열로 저장(라디오식)
-        subOnlyIf: (f) => f.businessType !== "예비", // 예비창업자면 숨김
-      },
       {
         key: "industries",
         label: "업종 (복수 선택 가능)",
@@ -157,7 +159,7 @@ const CHAT_STEPS: ChatStep[] = [
       },
     ],
   },
-  // 자본잠식은 법인사업자만
+  // 자본잠식은 법인사업자만 (businessType은 Q1 bno 화면에서 확정됨 → 여기서 판정)
   {
     key: "capitalImpairment",
     type: "single",
@@ -176,17 +178,6 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "years", label: "사업자등록증상 업력", opts: STEP1_FIELDS.years.opts },
       { key: "revenue", label: "연매출 규모", opts: STEP1_FIELDS.revenue.opts },
       { key: "employees", label: "직원 수", hint: STEP2_FIELDS.employees.hint, opts: STEP2_FIELDS.employees.opts },
-    ],
-  },
-  // ★ 대표자 정보 묶음(대표님 요청) ★
-  //   연령대·신용점수를 한 스텝으로 묶는다. 저장 값(age/credit) 동일 → 매칭 결과 불변.
-  {
-    key: "ownerGroup",
-    type: "singleGroup",
-    botLines: ["대표님에 대해 알려주세요.", "연령대와 신용점수를 골라주세요."],
-    subs: [
-      { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 3 },
-      { key: "credit", label: "대표자 개인 신용점수", hint: STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
     ],
   },
   // ── 2단계 · 회사 정보 ──
@@ -480,6 +471,8 @@ export default function DiagnosisChat() {
     const phone = phoneTemp.trim();
     const digits = phone.replace(/[^0-9]/g, "");
     if (!name || digits.length < 10) return;
+    // ★ 대표님 요청 Q1 ★ 사업자 구분(예비/개인/법인) 미선택 시 진행 차단
+    if (!form.businessType) return;
     // ★ 사업자번호+성함·연락처 한 화면(대표님 요청) ★
     //  성함·연락처 확정 시, 조회를 누르지 않았어도 입력창에 남은 사업자번호(10자리)를
     //  함께 저장한다. (예비창업자는 businessType='예비'가 이미 세팅되어 bno 없이 진행)
@@ -494,8 +487,15 @@ export default function DiagnosisChat() {
       }
     }
     setForm(next);
-    const bnoLabel = next.bno ? `사업자번호 ${next.bno} · ` : next.businessType === "예비" ? "예비창업자 · " : "";
-    setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${name} · ${phone}` }]);
+    // ★ 대표님 요청 Q1 ★ 사업자 구분(예비/개인/법인)을 사용자 답변 요약에 함께 표기
+    const bnoLabel = next.bno
+      ? `사업자번호 ${next.bno} · `
+      : next.businessType === "예비"
+      ? "예비창업자 · "
+      : "";
+    const bizTypeLabel =
+      next.businessType && next.businessType !== "예비" ? `${next.businessType} · ` : "";
+    setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${bizTypeLabel}${name} · ${phone}` }]);
     savePartial(next); // 성함·연락처 확보 시 부분 리드 저장(기존 폼과 동일 전략)
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
@@ -1158,6 +1158,10 @@ export default function DiagnosisChat() {
                   nameTemp.trim().length > 0 && phoneTemp.replace(/[^0-9]/g, "").length >= 10;
                 // 사업자번호는 (a)조회 완료(bnoVerified/접수) (b)10자리 입력 (c)예비창업자 중 하나면 OK
                 const bnoOk = isPre || form.bnoVerified || form.bno || bnoReady;
+                // ★ 대표님 요청 Q1 ★ 사업자 구분(예비/개인/법인)을 이 화면에서 확정.
+                //   예비는 '예비창업자' 버튼으로, 개인/법인은 아래 선택칩으로 세팅.
+                //   구분이 정해져야 '입력 완료 →' 활성화(뒤 자본잠식 판정에도 필요).
+                const bizTypeOk = !!form.businessType; // '예비' | '개인사업자' | '법인사업자'
                 return (
                   <div className="flex flex-col gap-3">
                     {/* 1) 사업자등록번호 */}
@@ -1220,10 +1224,38 @@ export default function DiagnosisChat() {
                       </div>
                     )}
 
-                    {/* 2) 성함 · 연락처 — 처음부터 함께 노출(대표님 요청) */}
+                    {/* ★ 대표님 요청 Q1 ★ 사업자 구분(개인/법인) — 예비창업자가 아닐 때만 노출.
+                        (예비창업자는 위 '예비창업자' 버튼으로 businessType='예비'가 세팅됨) */}
+                    {!isPre && (
+                      <div>
+                        <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
+                          ② 사업자 구분
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {["개인사업자", "법인사업자"].map((t) => {
+                            const active = form.businessType === t;
+                            return (
+                              <button
+                                key={t}
+                                onClick={() => setForm((f: any) => ({ ...f, businessType: t }))}
+                                className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
+                                  active
+                                    ? "border-brand-orange bg-brand-grad text-brand-dark"
+                                    : "border-white bg-white text-brand-dark hover:border-brand-orange"
+                                }`}
+                              >
+                                {t}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 3) 성함 · 연락처 — 처음부터 함께 노출(대표님 요청) */}
                     <div>
                       <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
-                        ② 성함 · 연락처
+                        {isPre ? "②" : "③"} 성함 · 연락처
                       </p>
                       <div className="flex items-center gap-2">
                         <input
@@ -1238,17 +1270,17 @@ export default function DiagnosisChat() {
                           inputMode="numeric"
                           value={phoneTemp}
                           onChange={(e) => setPhoneTemp(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && bnoOk && contactReady && confirmContact()}
+                          onKeyDown={(e) => e.key === "Enter" && bnoOk && bizTypeOk && contactReady && confirmContact()}
                           placeholder={CONTACT_TEXT.phonePlaceholder}
                           className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
                       </div>
                     </div>
 
-                    {/* 3) 한 번에 완료 */}
+                    {/* 4) 한 번에 완료 (사업자번호/구분/연락처 모두 준비돼야 활성화) */}
                     <button
                       onClick={confirmContact}
-                      disabled={!bnoOk || !contactReady}
+                      disabled={!bnoOk || !bizTypeOk || !contactReady}
                       className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                     >
                       입력 완료 →
