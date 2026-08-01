@@ -258,7 +258,7 @@ export default function Home() {
             <Editable
               id="hero-disclaimer"
               as="p"
-              className="mx-auto mt-5 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:mt-5 sm:text-xs"
+              className="mx-auto mt-4 max-w-xl break-keep text-[11px] leading-relaxed text-brand-gray/70 sm:mt-4 sm:text-xs"
             >
               본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업 승인을 보장하지 않습니다.
             </Editable>
