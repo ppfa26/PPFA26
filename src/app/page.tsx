@@ -135,9 +135,9 @@ export default function Home() {
               as="h1"
               className="break-keep text-[23px] font-black leading-[1.26] tracking-[-0.03em] text-brand-dark xs:text-[26px] sm:text-[42px] sm:leading-[1.16] sm:tracking-[-0.035em]"
             >
-              몰라서 못 받은 <span className="text-brand-red">정부지원금</span>,
+              AI를 활용해 내 사업장에 알맞은
               <br />
-              지금도 <span className="text-brand-red">다른 대표님</span>이 받아가고 있습니다.
+              <span className="text-brand-red">정부지원사업</span>을 찾아드립니다.
             </Editable>
 
             <Editable
