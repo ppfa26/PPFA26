@@ -36,7 +36,6 @@ import {
   STEP3_CONDITIONAL_FIELDS,
   CONTACT_TEXT,
   BNO_TEXT,
-  PHONE_CONSULT_FIELD,
 } from "@/lib/diagnosisConfig";
 
 // ── 채팅 대화 스크립트 ───────────────────────────────────────────
@@ -255,12 +254,8 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중이에요", desc: "예: 투자유치 실적 보유" },
     ],
   },
-  {
-    key: "phoneConsult",
-    type: "single",
-    botLines: [PHONE_CONSULT_FIELD.label, PHONE_CONSULT_FIELD.hint],
-    opts: PHONE_CONSULT_FIELD.opts,
-  },
+  // ★ 대표님 요청 ★ 마지막 '전화 무료 상담 원하시나요?'(phoneConsult) 질문 제거.
+  //   deepChecks 이후 곧바로 finish()로 진단이 마무리됨(askStep이 인덱스 초과 시 finish 호출).
 ];
 
 // 진행률·안내에 쓰는 '실제로 답하는' 스텝 수
