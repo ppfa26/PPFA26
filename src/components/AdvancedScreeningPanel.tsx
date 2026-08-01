@@ -1268,7 +1268,7 @@ function AdvancedResult({
                   m.institution.includes("소상공인시장진흥공단") ||
                   m.institution.includes("중진공") ||
                   m.institution.includes("소진공")) && (
-                  <p className="mt-2 break-keep rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] leading-relaxed text-emerald-800">
+                  <p className="mt-2 break-keep rounded-lg border border-gray-400 bg-gray-400 px-2.5 py-1.5 text-[11px] leading-relaxed text-white">
                     <b>ℹ️ 직접대출</b> · 이 상품은 <b>은행을 거치지 않고</b> 기관에서 <b>대출이 바로 실행</b>돼요.
                   </p>
                 )}
@@ -1594,8 +1594,8 @@ function AdvancedResult({
             );
           })}
         </div>
-        {/* 💡/📊 안내 박스: 앞 상품목록과의 상단 여백을 축소(mt-4→mt-2, 대표님 요청) */}
-        <div className="mt-2 space-y-2">
+        {/* 💡/📊 안내 박스: 앞 상품목록과의 상단 여백을 한 칸 더 축소(mt-2→mt-1, 대표님 요청) */}
+        <div className="mt-1 space-y-2">
           <p className="break-keep rounded-lg bg-brand-yellow/10 px-3 py-2 text-xs leading-relaxed text-brand-dark">
             💡 대출은 보통 <b>직접대출 1곳(공단이 직접 실행) + 대리대출 1곳(보증서를 받아 은행에서 실행)</b>, 즉 <b>총 2곳</b>에서 동시에 진행할 수 있습니다.
           </p>

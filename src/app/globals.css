@@ -813,6 +813,15 @@ body.theme-dark {
   /* 히어로 체크 아이콘(✓) 주황 → 레드 */
   #hero-section .text-brand-orange { color: #FF4D5E !important; }
 
+  /* 무료진단 챗봇 질문 말풍선 → 테두리를 '진짜 흰색'으로 통일.
+     (위 카드 규칙2가 .bg-white.rounded-2xl 에 흐린 유리 테두리를 강제하고
+      그 셀렉터 specificity가 높으므로, 같은 클래스 조합에 .chat-bot-bubble을
+      더해 우선순위를 이겨서 순백 테두리로 덮어씀. 배경/글자는 유리 다크 유지) */
+  .chat-bot-bubble.bg-white.rounded-2xl,
+  .chat-bot-bubble.bg-white {
+    border-color: #ffffff !important;
+  }
+
 }
 
 /* 모션 최소화를 선호하는 사용자는 애니메이션 비활성화 (접근성) */

@@ -1279,7 +1279,7 @@ function BotBubble({ text }: { text: string }) {
   return (
     <div className="flex items-end gap-2">
       <BotAvatar />
-      <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 text-[15px] leading-relaxed text-brand-dark shadow-sm">
+      <div className="chat-bot-bubble max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 text-[15px] leading-relaxed text-brand-dark shadow-sm">
         {text}
       </div>
     </div>
