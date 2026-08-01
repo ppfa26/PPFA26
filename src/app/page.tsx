@@ -131,7 +131,7 @@ export default function Home() {
               </Editable>
             </div>
             <Editable
-              id="hero-headline-v2"
+              id="hero-headline-v3"
               as="h1"
               className="break-keep text-[23px] font-black leading-[1.26] tracking-[-0.03em] text-brand-dark xs:text-[26px] sm:text-[42px] sm:leading-[1.16] sm:tracking-[-0.035em]"
             >
