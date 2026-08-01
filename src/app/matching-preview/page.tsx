@@ -234,9 +234,9 @@ export default function MatchingPreview() {
   // ── 세션 확인 중 로딩 화면 ──
   if (gate === "checking") {
     return (
-      <PageShell pageKey="matching-preview">
+      <PageShell pageKey="matching-preview" stickyFooter>
         <Header />
-        <main className="flex min-h-[50vh] items-center justify-center px-4 py-20">
+        <main className="flex flex-1 min-h-[50vh] items-center justify-center px-4 py-20">
           <p className="text-sm font-semibold text-brand-gray">불러오는 중...</p>
         </main>
         <Footer />
@@ -253,10 +253,10 @@ export default function MatchingPreview() {
       { icon: "🎯", label: "맞춤 결과 정리" },
     ];
     return (
-      <PageShell pageKey="matching-preview">
+      <PageShell pageKey="matching-preview" stickyFooter>
         <Header />
         {/* 로딩 화면 — 화면 정중앙 정렬 (대표님 요청: 크기 축소) */}
-        <main className="flex min-h-[70vh] items-center justify-center px-4 py-12">
+        <main className="flex flex-1 min-h-[70vh] items-center justify-center px-4 py-12">
           <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-6 text-center shadow-card sm:p-9">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10">
               <span className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
@@ -304,9 +304,9 @@ export default function MatchingPreview() {
   //  (도용/대량 수집 차단용 · 정상 사용자는 거의 걸리지 않음)
   if (gate === "limited") {
     return (
-      <PageShell pageKey="matching-preview">
+      <PageShell pageKey="matching-preview" stickyFooter>
         <Header />
-        <main className="flex min-h-[60vh] items-center justify-center px-4 py-16">
+        <main className="flex flex-1 min-h-[60vh] items-center justify-center px-4 py-16">
           <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-7 text-center shadow-card sm:p-9">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
               🔒
@@ -370,11 +370,11 @@ export default function MatchingPreview() {
       ? "지금은 오픈 베타 기간이라 가입만 하면 전체 결과를 무료로 확인하실 수 있습니다."
       : "가입 후 결제하시면 기관명·신청방법·서류까지 전체 결과가 열립니다.";
     return (
-      <PageShell pageKey="matching-preview">
+      <PageShell pageKey="matching-preview" stickyFooter>
         <Header />
         {/* (대표님 요청) 모바일 PC 화면 권장 안내 띠 - 미리보기(분석완료) 화면에도 노출 */}
         <MobilePcRecommendBar />
-        <main className="px-4 py-10">
+        <main className="flex-1 px-4 py-10">
           <div className="mx-auto max-w-md">
             {/* ── 히어로: 개수를 크게 강조해 '이렇게 많아?' 체감 ── */}
             <div className="rounded-3xl border-2 border-brand-orange/50 bg-white p-6 text-center shadow-card sm:p-8">
@@ -490,9 +490,9 @@ export default function MatchingPreview() {
   //  안 되는데 결제받으면 환불 요청이 뻔하므로, 결제 유도 대신 정직하게 안내한다.
   if (isBlocked) {
     return (
-      <PageShell pageKey="matching-preview">
+      <PageShell pageKey="matching-preview" stickyFooter>
         <Header />
-        <main className="px-4 py-10">
+        <main className="flex-1 px-4 py-10">
           <div className="mx-auto max-w-xl">
             <div className="rounded-3xl border-2 border-brand-red/40 bg-white p-7 text-center shadow-card">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/10 text-3xl">
@@ -552,13 +552,13 @@ export default function MatchingPreview() {
   }
 
   return (
-    <PageShell pageKey="matching-preview">
+    <PageShell pageKey="matching-preview" stickyFooter>
       <Header />
       {/* (대표님 요청) 모바일 접속자에게 'PC 화면 권장' 안내 띠 - 결과 페이지 상단, 닫으면 기억 */}
       <MobilePcRecommendBar />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
           상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-0" : "pb-40"}`}>
+      <main className={`flex-1 px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-0" : "pb-40"}`}>
         {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
             max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
             좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}

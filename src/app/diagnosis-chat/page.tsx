@@ -811,18 +811,17 @@ export default function DiagnosisChat() {
   };
 
   return (
-    <PageShell pageKey="diagnosis">
+    <PageShell pageKey="diagnosis" stickyFooter>
       <Header />
       {/* ★ 레이아웃(대표님 요청) ★
           - 질문은 위→아래로 쌓이고 오래된 건 접힌다(대화 영역 로직).
           - 답변/입력 영역은 대화창 '안'에 포함되어 함께 늘었다 줄었다 한다.
             (화면 고정 없음 → 흔들림/빈 공백 없음) */}
-      {/* ★ 하단 빈 공간 최소화(B안) ★
-          카드를 억지로 화면 높이만큼 늘리면(A안) 대화가 적은 초반에 카드 안이 휑하다.
-          → 카드는 '내용 높이'만큼만 자연스럽게 두고, main 의 하단 여백을 확 줄여
-            카드 아래 도시배경이 아주 조금만 보이게 한다(대화가 쌓이면 자연히 늘어남).
-          min-h 를 주지 않으므로 콘텐츠가 짧을 때 페이지가 화면보다 커지지 않는다. */}
-      <main className="flex flex-col px-4 pb-4 pt-6">
+      {/* ★ 푸터 고정(sticky footer, 대표님 요청) ★
+          PageShell 이 화면 전체 높이(flex 세로)를 잡고, main 에 flex-1 을 줘서
+          대화가 짧아도 main 이 남는 공간을 채운다 → Footer 가 항상 화면 맨 아래에 붙어
+          단계마다 푸터 위치가 오르락내리락하지 않는다. */}
+      <main className="flex flex-1 flex-col px-4 pb-4 pt-6">
         <div className="mx-auto flex w-full max-w-3xl flex-col">
           {/* 진행률 바 */}
           <div className="mb-3">
