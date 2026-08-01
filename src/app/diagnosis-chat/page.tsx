@@ -1168,7 +1168,7 @@ export default function DiagnosisChat() {
                     {!isPre && (
                       <div>
                         <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
-                          ① 사업자등록번호
+                          사업자등록번호
                         </p>
                         <div className="flex items-center gap-2">
                           <input
@@ -1229,7 +1229,7 @@ export default function DiagnosisChat() {
                     {!isPre && (
                       <div>
                         <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
-                          ② 사업자 구분
+                          사업자 구분
                         </p>
                         <div className="grid grid-cols-2 gap-2">
                           {["개인사업자", "법인사업자"].map((t) => {
@@ -1255,7 +1255,7 @@ export default function DiagnosisChat() {
                     {/* 3) 성함 · 연락처 — 처음부터 함께 노출(대표님 요청) */}
                     <div>
                       <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
-                        {isPre ? "②" : "③"} 성함 · 연락처
+                        성함 · 연락처
                       </p>
                       <div className="flex items-center gap-2">
                         <input
