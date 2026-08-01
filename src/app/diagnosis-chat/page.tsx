@@ -264,17 +264,25 @@ export default function DiagnosisChat() {
   const focusRef = useRef<HTMLDivElement>(null);
   const answerRef = useRef<HTMLDivElement>(null);
 
-  // 새 질문/답변영역이 뜨면 → 현재 질문(마지막 봇 말풍선)을 화면 가운데쯤으로 이동.
-  //  · 답변 영역은 sticky로 화면 하단에 붙어 있으므로, 스크롤 기준은 '마지막 봇 말풍선'.
-  //    (답변영역을 center로 맞추면 sticky와 겹쳐 화면이 튀므로 focusRef 우선)
-  //  · 모바일에서 좌우로 치우치지 않도록 inline: "nearest" (가로 스크롤 억제).
+  // ★ 스크롤 모션 최소화(대표님 요청: 질문↔답변 왔다갔다 해서 눈 아픔) ★
+  //  기존엔 messages·botTyping·bnoMsg 가 바뀔 때마다(=봇 타이핑 시작/끝, 줄마다)
+  //  화면을 center 로 다시 맞춰, 질문지↔답변지로 화면이 위아래로 튀었다.
+  //  개선:
+  //   1) 의존성에서 botTyping 제거 → 타이핑 점3개가 떴다 사라질 때 스크롤 안 함.
+  //   2) 기준을 '답변영역(answerRef) 하단'으로 통일하고 block:"nearest" 사용
+  //      → 이미 보이면 아예 안 움직이고, 벗어났을 때만 최소 거리로 살짝 이동.
+  //   3) messages 길이가 실제로 늘었을 때만(=새 질문/답변 확정) 스크롤.
+  const prevMsgLen = useRef(0);
   useEffect(() => {
+    const grew = messages.length > prevMsgLen.current;
+    prevMsgLen.current = messages.length;
+    if (!grew && !bnoMsg) return; // 타이핑 등 자잘한 변화엔 스크롤하지 않음
     const t = setTimeout(() => {
-      const el = focusRef.current || answerRef.current;
-      el?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
-    }, 80);
+      const el = answerRef.current || focusRef.current;
+      el?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    }, 120);
     return () => clearTimeout(t);
-  }, [messages, botTyping, bnoMsg]);
+  }, [messages.length, bnoMsg]);
 
   // 봇 대사 순차 출력
   const pushBotLines = (lines: string[], onDone?: () => void) => {
@@ -711,15 +719,27 @@ export default function DiagnosisChat() {
               스크롤·질문 전환 때 따로 흔들리거나 빈 공백이 생기지 않는다. */}
           {showInput && curStep && (
             <div ref={answerRef} className="mt-3 rounded-xl border border-white bg-white p-3 shadow-sm">
-              {/* 이전 질문으로 되돌아가 답변을 고칠 수 있는 버튼 */}
-              {history.length >= 2 && (
-                <button
-                  onClick={goBack}
-                  className="mb-2.5 inline-flex items-center gap-1 rounded-full border border-white bg-white px-3 py-1.5 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
-                >
-                  ← 이전 질문 수정
-                </button>
-              )}
+              {/* ★ 답변영역 헤더(대표님 요청) ★
+                  '이전 질문 수정' 버튼 옆에 현재 질문 문구를 항상 함께 보여준다.
+                  → 화면을 확대해 위쪽 채팅 말풍선이 안 보여도, 답변영역만 보고
+                    지금 무슨 질문에 답하는지 바로 알 수 있어 작성이 편하다.
+                  · botLines[0] = 그 질문의 핵심 한 줄. */}
+              <div className="mb-2.5 flex items-center gap-2">
+                {history.length >= 2 && (
+                  <button
+                    onClick={goBack}
+                    className="inline-flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand-gray transition hover:border-brand-orange hover:text-brand-orange"
+                  >
+                    ← 이전
+                  </button>
+                )}
+                {curStep.botLines?.[0] && (
+                  <p className="min-w-0 flex-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark">
+                    <span className="mr-1 text-brand-orange">Q.</span>
+                    {curStep.botLines[0]}
+                  </p>
+                )}
+              </div>
               {/* 복수 선택 */}
               {curStep.type === "multi" && (
                 <>
