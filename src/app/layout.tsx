@@ -180,9 +180,11 @@ const DESKTOP_VIEWPORT_SCRIPT = `
         document.head.appendChild(vp);
       }
       var iw = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
-      // 최초 1회: 아직 820 강제 전이므로 이 값이 진짜 기기폭 → 캐시.
-      //  (이미 820 이면 데스크톱이거나 재실행 오염값이므로 캐시하지 않는다.)
-      if (deviceW === 0 && iw > 0 && iw < DESKTOP_WIDTH) deviceW = iw;
+      // 진짜 기기폭 캐시(가장 작은 유효값 채택).
+      //  820 강제 후 재실행 때 iw 는 820 으로 오염되므로 < DESKTOP_WIDTH 값만 신뢰한다.
+      //  첫 실행이 타이밍상 부정확했더라도, 이후 실행에서 더 작은(진짜) 기기폭이 잡히면 갱신 →
+      //  "간혹 잘못된 값으로 굳는" 문제를 방지한다.
+      if (iw > 0 && iw < DESKTOP_WIDTH && (deviceW === 0 || iw < deviceW)) deviceW = iw;
       // 이후에는 캐시된 물리 기기폭을 우선 사용(없으면 현재 innerWidth).
       var w = deviceW > 0 ? deviceW : iw;
       if (isExcluded() || w >= DESKTOP_WIDTH) {
@@ -197,9 +199,23 @@ const DESKTOP_VIEWPORT_SCRIPT = `
       vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', initial-scale=' + scale + ', maximum-scale=5, user-scalable=yes');
     } catch (e) {}
   }
+  // ★ 안정적 재적용 ★
+  //  "간혹 첫 화면에서 데스크톱 뷰가 안 먹는" 문제의 원인은 초기 실행 타이밍이다.
+  //  스크립트가 <head> 에서 딱 1번만 apply() 하는데, 그 순간 브라우저가 아직 레이아웃(화면폭)을
+  //  확정하기 전이면 잘못된 값으로 굳고, 이후 resize 가 안 오면 재보정 기회가 없다.
+  //  → 레이아웃이 확정되는 여러 시점(즉시·다음 프레임·짧은 지연·DOM 로드·완전 로드·bfcache 복원)
+  //    에서 반복 적용해 어떤 폰에서도 확실히 데스크톱 뷰가 걸리게 한다. (재적용은 부작용 없음)
   apply();
+  try { requestAnimationFrame(apply); } catch (e) {}
+  setTimeout(apply, 50);
+  setTimeout(apply, 300);
+  setTimeout(apply, 800);
   window.addEventListener('resize', apply);
   window.addEventListener('orientationchange', apply);
+  document.addEventListener('DOMContentLoaded', apply);
+  window.addEventListener('load', apply);
+  // 뒤로/앞으로 가기 캐시(bfcache)로 복원될 때도 다시 적용 (모바일에서 흔한 케이스)
+  window.addEventListener('pageshow', apply);
 })();
 `;
 
