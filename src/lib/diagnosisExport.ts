@@ -150,11 +150,35 @@ export type DiagnosisRecord = {
   status?: string | null; // 'completed'(완료) | 'partial'(미완료·중간이탈)
   created_at: string;
   dupIndex?: number; // 몇 번째 신청인지 (중복 감지 결과)
+  // ★ 상담 관리 상태 (대표님 요청) ★ 엑셀 제목 줄에 미접촉/통화 완료/부재중/계약을 그대로 표시
+  //   admin 에서 leadNotes(localStorage) 를 읽어 채워 넣는다. 없으면 '미접촉'으로 취급.
+  callStatusLabel?: string;
 };
 
 // ── 진단서 1명 분량을 "제목 + (질문,답변) 행들"로 구성하는 공통 헬퍼 ──
 //   CSV·엑셀(xlsx) 두 출력이 완전히 같은 순서·내용을 쓰도록 한 곳에서 만든다.
-type DiagBlock = { title: string; isPartial: boolean; rows: [string, string][] };
+type DiagBlock = {
+  title: string;
+  isPartial: boolean;
+  rows: [string, string][];
+  titleFillArgb: string; // 제목 줄 배경색 (상담 상태별)
+};
+
+// 상담 상태 라벨 → 엑셀 제목 줄 배경색 (화면 뱃지 색감과 맞춤)
+//   미접촉=연회색 · 통화 완료=연파랑 · 부재중=연노랑 · 계약=연초록
+function callStatusFillArgb(label: string): string {
+  switch (label) {
+    case "통화 완료":
+      return "FFDCEBFA"; // 연파랑
+    case "부재중":
+      return "FFFDF0D5"; // 연노랑
+    case "계약":
+      return "FFDCF5E7"; // 연초록
+    case "미접촉":
+    default:
+      return "FFEFF1F3"; // 연회색
+  }
+}
 
 function buildDiagBlocks(records: DiagnosisRecord[]): DiagBlock[] {
   // ── 모든 고객에 공통으로 쓸 질문(행) 순서를 통일한다 ──
@@ -182,7 +206,12 @@ function buildDiagBlocks(records: DiagnosisRecord[]): DiagBlock[] {
     const dupNote =
       rec.dupIndex && rec.dupIndex > 1 ? ` · ${rec.dupIndex}번째 신청(중복)` : "";
     const isPartial = rec.status === "partial";
-    const statusNote = isPartial ? "[미완료-중간이탈]" : "[완료]";
+    // ★ 상담 관리 상태를 맨 앞에 표시 (대표님 요청) - 미접촉/통화 완료/부재중/계약 ★
+    //   없으면 '미접촉'으로 취급. 진단이 미완료(중간이탈)면 뒤에 표시를 덧붙여 전화 리드 구분.
+    const callLabel = rec.callStatusLabel || "미접촉";
+    const statusNote = isPartial
+      ? `[${callLabel}] [미완료-중간이탈]`
+      : `[${callLabel}]`;
 
     const headerParts = [statusNote, applicant];
     if (bizType !== "-") headerParts.push(bizType);
@@ -200,7 +229,10 @@ function buildDiagBlocks(records: DiagnosisRecord[]): DiagBlock[] {
       rows.push([labelForKey(k), valueToText((rec.profile as any)?.[k])]);
     });
 
-    return { title, isPartial, rows };
+    // 미완료(중간이탈)는 상담 상태와 무관하게 연빨강으로 강조(전화 리드 즉시 구분)
+    const titleFillArgb = isPartial ? "FFFDE2E1" : callStatusFillArgb(callLabel);
+
+    return { title, isPartial, rows, titleFillArgb };
   });
 }
 
@@ -261,8 +293,8 @@ export async function diagnosesToXlsxBlob(records: DiagnosisRecord[]): Promise<B
     titleCell.fill = {
       type: "pattern",
       pattern: "solid",
-      // 미완료=연한 빨강, 완료=연한 파랑
-      fgColor: { argb: b.isPartial ? "FFFDE2E1" : "FFDCEBFA" },
+      // 상담 상태별 색 (미접촉=회색·통화완료=파랑·부재중=노랑·계약=초록, 미완료=빨강)
+      fgColor: { argb: b.titleFillArgb },
     };
     titleCell.alignment = { vertical: "middle", wrapText: true };
     titleRow.height = 22;

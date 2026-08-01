@@ -347,18 +347,24 @@ export default function AdminPage() {
     );
   };
 
-  // 진단서 → 다운로드용 레코드로 변환 (중복 순번 포함)
+  // 진단서 → 다운로드용 레코드로 변환 (중복 순번 + 상담 상태 라벨 포함)
   const toRecords = (list: AdminDiagnosis[]): DiagnosisRecord[] =>
-    list.map((d) => ({
-      id: d.id,
-      email: d.email,
-      name: d.name,
-      phone: d.phone,
-      profile: (d.profile || {}) as Record<string, unknown>,
-      status: d.status,
-      created_at: d.created_at,
-      dupIndex: dupIndexMap.get(d.id),
-    }));
+    list.map((d) => {
+      // ★ 상담 관리 상태(localStorage)를 엑셀 제목 줄에 실어 보낸다 (대표님 요청) ★
+      //   미접촉/통화 완료/부재중/계약. 기록 없으면 '미접촉'(none).
+      const st = leadNotes[d.id]?.status ?? "none";
+      return {
+        id: d.id,
+        email: d.email,
+        name: d.name,
+        phone: d.phone,
+        profile: (d.profile || {}) as Record<string, unknown>,
+        status: d.status,
+        created_at: d.created_at,
+        dupIndex: dupIndexMap.get(d.id),
+        callStatusLabel: CALL_STATUS_META[st]?.label ?? "미접촉",
+      };
+    });
 
   // 엑셀(.xlsx) 다운로드 - 전체 / 선택 / 개별 (열 너비 넉넉히·열자마자 한눈에)
   const downloadAllDiag = async () => {
