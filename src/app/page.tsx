@@ -263,13 +263,15 @@ export default function Home() {
                 아직 몰라서 못 받고 있는 정부지원사업
               </Editable>
               <Editable
-                id="home-value-sub"
+                id="home-value-sub-v2"
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium leading-relaxed text-brand-gray"
               >
-                예창패·초창패·청년창업사관학교·정책자금·보증까지—
+                예창패·초창패·청년창업사관학교·
+                <br className="sm:hidden" />
+                정부지원사업·보증까지,
                 <br />
-                대표님이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을 AI가 한 번에 찾아,
+                대표님이 받을 수 있는 <b className="text-brand-dark">모든 지원사업</b>을 AI가 한 번에 찾아
                 <br />
                 무엇을·어디서·어떻게까지 알려드립니다.
               </Editable>
