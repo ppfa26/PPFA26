@@ -155,8 +155,9 @@ export default function Diagnosis() {
   const tryFetchBno = async (
     digits: string
   ): Promise<{ kind: "found" | "serverDown" | "answered"; data: any }> => {
-    // 재시도를 감안해 개별 시도는 4.5초로 짧게 끊는다 (총 대기 과도하지 않게)
-    const TIMEOUT_MS = 4500;
+    // ★ 대표님 요청 ★ 정상 조회는 보통 1~2초. 점검 중이면 3.5초만 시도하고 곧바로
+    //   수동입력 폴백을 연다(자동 재시도 없음 - 오래 기다리게 하지 않음).
+    const TIMEOUT_MS = 3500;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
     try {
@@ -193,17 +194,10 @@ export default function Diagnosis() {
     }
     setBnoLoading(true);
 
-    // ★ 대표님 요청 반영 ★ 고객은 오래 못 기다린다.
-    //   단, 국세청 503은 '순간 장애'인 경우가 많으므로 자동으로 딱 1회만 짧게(1.2초 텀) 재시도한다.
-    //   그래도 안 되면 즉시 수동입력 우회를 연다. (무한 재시도로 시간 끌지 않음)
+    // ★ 대표님 요청 반영 ★ 고객은 오래 못 기다린다. 자동 재시도 없이 3.5초 단발 시도만 하고,
+    //   점검·장애면 곧바로 수동입력 우회를 연다.
     try {
-      let r = await tryFetchBno(digits);
-
-      // 국세청 장애면 1.2초 뒤 자동 1회 재시도 (순간 혼잡이면 두 번째에 성공)
-      if (r.kind === "serverDown") {
-        await new Promise((resolve) => setTimeout(resolve, 1200));
-        r = await tryFetchBno(digits);
-      }
+      const r = await tryFetchBno(digits);
 
       if (r.kind === "found") {
         setBnoResult(r.data);
@@ -215,7 +209,7 @@ export default function Diagnosis() {
       }
 
       if (r.kind === "serverDown") {
-        // 재시도까지 실패 → 수동입력 우회 열기
+        // 점검·장애 → 곧바로 수동입력 우회 열기(재시도 없음)
         setBnoResult(r.data);
         setBnoServerDown(true);
         return;

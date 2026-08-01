@@ -14,7 +14,7 @@
 //   시작 시 봇이 "모든 질문에 정확히 답해야 정확한 결과를 얻는다"고 안내한다.
 // ════════════════════════════════════════════════════════════════
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
@@ -618,7 +618,9 @@ export default function DiagnosisChat() {
   // ── 사업자번호 국세청 조회 (기존 /api/business-status 그대로) ──
   const tryFetchBno = async (digits: string) => {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 4500);
+    // ★ 대표님 요청 ★ 정상 조회는 보통 1~2초. 점검 중이면 오래 기다리게 하지 말고
+    //   3.5초만 시도한 뒤 곧바로 '직접 입력하고 계속하기' 폴백을 연다(자동 재시도 없음).
+    const timer = setTimeout(() => controller.abort(), 3500);
     try {
       const res = await fetch("/api/business-status", {
         method: "POST",
@@ -644,11 +646,9 @@ export default function DiagnosisChat() {
     if (digits.length !== 10) return; // 10자리 아니면 조용히 대기(기존 폼과 동일)
     setBnoLoading(true);
     try {
-      let r = await tryFetchBno(digits);
-      if (r.kind === "serverDown") {
-        await new Promise((res) => setTimeout(res, 1200));
-        r = await tryFetchBno(digits);
-      }
+      // ★ 대표님 요청 ★ 자동 재시도 제거 - 3.5초 단발 시도.
+      //   조회 중(정상)이면 응답을 기다리고, 점검·장애면 3.5초 뒤 즉시 폴백을 연다.
+      const r = await tryFetchBno(digits);
       if (r.kind === "found") {
         // 저장값은 기존 폼과 동일
         const next = { ...form, bno: digits, bnoStatus: r.data.status, bnoTaxType: r.data.taxType, bnoVerified: true };
@@ -1309,7 +1309,10 @@ function BotAvatar() {
   );
 }
 
-function BotBubble({ text }: { text: string }) {
+// ★ 성능(대표님 요청) ★ 말풍선은 text(문자열)만 바뀔 때만 다시 그리도록 memo 처리.
+//   입력창 타이핑·타이머 등으로 부모(챗봇)가 리렌더돼도 기존 말풍선들은 재렌더를 건너뛴다.
+//   → 타이핑 렉·롱태스크 감소. 표시 결과는 100% 동일.
+const BotBubble = memo(function BotBubble({ text }: { text: string }) {
   return (
     <div className="flex items-end gap-2">
       <BotAvatar />
@@ -1318,9 +1321,9 @@ function BotBubble({ text }: { text: string }) {
       </div>
     </div>
   );
-}
+});
 
-function UserBubble({ text }: { text: string }) {
+const UserBubble = memo(function UserBubble({ text }: { text: string }) {
   return (
     <div className="flex justify-end">
       <div className="max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-br-md border border-white bg-brand-grad px-4 py-3 text-[15px] font-semibold leading-relaxed text-brand-dark shadow-sm">
@@ -1328,7 +1331,7 @@ function UserBubble({ text }: { text: string }) {
       </div>
     </div>
   );
-}
+});
 
 function TypingBubble() {
   return (
