@@ -119,7 +119,7 @@ const CHAT_STEPS: ChatStep[] = [
       "",
       "하단에 사업자등록번호와\n사업자 구분을 알려주세요.",
       "",
-      "국세청에 정상 등록 후 운영중인\n사업자인지 확인하는 절차예요.",
+      "국세청에 정상 등록 후\n운영중인 사업자인지\n확인하는 절차예요.",
     ],
     // Q. 제목은 말풍선 첫 줄('그럼 시작해 볼게요!') 대신 이 문구로 표시.
     questionHead: "사업자등록번호 및 사업자 구분 👇",
@@ -299,7 +299,7 @@ const COLS_CLASS: Record<1 | 2 | 3, string> = {
   3: "grid-cols-3",
 };
 
-type Msg = { who: "bot"; text: string } | { who: "user"; text: string };
+type Msg = { who: "bot"; text: string; wide?: boolean } | { who: "user"; text: string };
 
 export default function DiagnosisChat() {
   const router = useRouter();
@@ -368,7 +368,8 @@ export default function DiagnosisChat() {
   }, [messages.length, bnoMsg]);
 
   // 봇 대사 순차 출력
-  const pushBotLines = (lines: string[], onDone?: () => void) => {
+  //  ★ wide=true면 해당 말풍선들을 '동일 고정 폭'으로 렌더(인트로 안내처럼 폭을 맞추고 싶을 때).
+  const pushBotLines = (lines: string[], onDone?: () => void, wide = false) => {
     let i = 0;
     const showNext = () => {
       if (i >= lines.length) { onDone?.(); return; }
@@ -377,7 +378,7 @@ export default function DiagnosisChat() {
       const delay = Math.min(1100, Math.max(450, line.length * 40));
       setTimeout(() => {
         setBotTyping(false);
-        setMessages((m) => [...m, { who: "bot", text: line }]);
+        setMessages((m) => [...m, { who: "bot", text: line, wide }]);
         i += 1;
         setTimeout(showNext, 220);
       }, delay);
@@ -387,13 +388,14 @@ export default function DiagnosisChat() {
 
   // 인트로 자동 시작
   useEffect(() => {
+    // ★ 대표님 요청 ★ 인트로 안내를 '한 말풍선'으로(줄바꿈은 의미 단위로 직접 \n).
+    //   이어지는 bno 안내(말풍선 2)와 함께 가로 폭을 동일(wide)하게 맞춘다.
     pushBotLines(
       [
-        // ★ 대표님 요청 ★ 인사말 + 안내를 '한 말풍선'으로 합침(문단 사이 빈 줄).
-        //   의미 단위로 직접 줄바꿈(\n) → 화면 폭과 무관하게 항상 깔끔하게 끊김
-        `안녕하세요 대표님, 모두의사업친구예요 😊\n\n대표님 사업장이 받을 수 있는 정부지원사업을\n지금부터 찾아드릴게요.\n\n진단을 위한 질문은 총 ${TOTAL_ROUGH}개에요.\n정확히 답할수록 더욱 정확한 결과를\n받을 수 있으니 꼼꼼히 답변 부탁드려요!`,
+        `안녕하세요 대표님,\n모두의사업친구예요 😊\n\n대표님 사업장이 받을 수 있는\n정부지원사업을\n지금부터 찾아드릴게요.\n\n진단을 위한 질문은\n총 ${TOTAL_ROUGH}개에요.\n정확히 답할수록\n더욱 정확한 결과를\n받을 수 있으니\n꼼꼼히 답변 부탁드려요!`,
       ],
-      () => askStep(0)
+      () => askStep(0),
+      true
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -443,7 +445,8 @@ export default function DiagnosisChat() {
     const bubbleText = rawLines.some((l) => l === "")
       ? rawLines.join("\n") // 빈 줄 의도 → 그대로 유지
       : rawLines.filter(Boolean).join("\n");
-    pushBotLines([bubbleText]);
+    // ★ bno(첫 스텝) 안내는 인트로 말풍선과 가로 폭을 동일(wide)하게 맞춘다.
+    pushBotLines([bubbleText], undefined, CHAT_STEPS[vi].type === "bno");
   };
 
   // ── 이전 질문으로 되돌아가기(답변 수정) ──
@@ -883,7 +886,7 @@ export default function DiagnosisChat() {
                       const isLastBot = realIdx === messages.length - 1 && m.who === "bot";
                       return m.who === "bot" ? (
                         <div key={realIdx} ref={isLastBot ? focusRef : undefined}>
-                          <BotBubble text={m.text} />
+                          <BotBubble text={m.text} wide={m.wide} />
                         </div>
                       ) : (
                         <UserBubble key={realIdx} text={m.text} />
@@ -1412,11 +1415,16 @@ function BotAvatar() {
 // ★ 성능(대표님 요청) ★ 말풍선은 text(문자열)만 바뀔 때만 다시 그리도록 memo 처리.
 //   입력창 타이핑·타이머 등으로 부모(챗봇)가 리렌더돼도 기존 말풍선들은 재렌더를 건너뛴다.
 //   → 타이핑 렉·롱태스크 감소. 표시 결과는 100% 동일.
-const BotBubble = memo(function BotBubble({ text }: { text: string }) {
+const BotBubble = memo(function BotBubble({ text, wide }: { text: string; wide?: boolean }) {
+  // wide=true → 인트로/첫 안내 말풍선을 '동일 고정 폭'으로(가로 길이 통일). 아바타 폭만큼 빼서 정렬.
   return (
     <div className="flex items-end gap-2">
       <BotAvatar />
-      <div className="chat-bot-bubble max-w-[88%] whitespace-pre-line break-keep rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 text-[15px] leading-relaxed text-brand-dark shadow-sm">
+      <div
+        className={`chat-bot-bubble whitespace-pre-line break-keep rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 text-[15px] leading-relaxed text-brand-dark shadow-sm ${
+          wide ? "w-[calc(88%-2.5rem)] max-w-[320px]" : "max-w-[88%]"
+        }`}
+      >
         {text}
       </div>
     </div>
