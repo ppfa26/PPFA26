@@ -211,25 +211,25 @@ export default function Home() {
                 상단은 깔끔하게, 부가 행동은 여기서 유도(이탈 방지) ── */}
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 sm:mt-5">
               <Editable
-                id="hero-review-link"
+                id="hero-review-link-v2"
                 as="a"
                 href="https://link.inpock.co.kr/ppfa25"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 break-keep text-[13px] font-bold text-brand-dark/70 underline decoration-brand-dark/25 underline-offset-4 transition hover:text-brand-red sm:text-sm"
               >
-                🔎 모두의사업친구 더 알아보기 →
+                🔎 모두의사업친구 더 알아보기
               </Editable>
               <span className="hidden text-brand-dark/15 sm:inline" aria-hidden="true">·</span>
               <Editable
-                id="hero-cta-kakao"
+                id="hero-cta-kakao-v2"
                 as="a"
                 href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 break-keep text-[13px] font-bold text-brand-dark/70 underline decoration-brand-dark/25 underline-offset-4 transition hover:text-brand-dark sm:text-sm"
               >
-                💬 카카오톡으로 1:1 상담받기 →
+                💬 카카오톡으로 1:1 상담받기
               </Editable>
             </div>
 
@@ -875,14 +875,14 @@ export default function Home() {
             </div>
             {/* ★ 하단 신뢰 링크 - 실제 후기(당근·블로그) 링크트리로 마지막 신뢰 보강 */}
             <Editable
-              id="home-cta-learnmore-link"
+              id="home-cta-learnmore-link-v2"
               as="a"
               href="https://link.inpock.co.kr/ppfa25"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex items-center gap-1 break-keep text-[13px] font-bold text-gray-300 underline decoration-gray-500 underline-offset-4 transition hover:text-white"
             >
-              🔎 모두의사업친구 더 알아보기 →
+              🔎 모두의사업친구 더 알아보기
             </Editable>
           </div>
         </section>
