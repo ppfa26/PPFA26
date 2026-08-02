@@ -168,7 +168,7 @@ export default function Home() {
               )}
             </ul>
 
-            {/* ── 신뢰 바(증거) - 흩어져 있던 300개·24개 두 배지를 한 줄 pill 하나로 통합.
+            {/* ── 신뢰 바(증거) - 흩어져 있던 300개·28개 두 배지를 한 줄 pill 하나로 통합.
                 가운뎃점으로 묶어 노이즈를 줄이고 "얼마나 검증됐는지"를 한 번에 전달 ── */}
             <div className="mx-auto mt-5 flex w-fit max-w-lg flex-wrap items-center justify-center gap-x-2.5 gap-y-1 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-5 py-2 sm:mt-5 sm:gap-x-3.5 sm:px-6">
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
@@ -180,7 +180,7 @@ export default function Home() {
               <span className="text-brand-dark/15" aria-hidden="true">·</span>
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
                 평균 지원사업
-                <b className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[23px]">24</b>
+                <b className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[23px]">28</b>
                 <b className="text-[13px] font-extrabold text-brand-orange sm:text-[15px]">개</b>
                 매칭
               </span>
@@ -357,14 +357,14 @@ export default function Home() {
 
                 {/* 진단 완료 배너 - 실제 결과창 상단 히어로와 동일한 구조·문구·순서로 재현.
                     ★ 배지 4종·순서(🏅정부지원제도 → 💳정책금융상품 → 💎추가 감면 혜택 → 📢그 외 지원사업)를
-                      실제 matching-preview 히어로와 100% 일치시킴 · 합계 24 = 5+8+6+5 */}
+                      실제 matching-preview 히어로와 100% 일치시킴 · 합계 28 = 5+8+10+5 */}
                 <div className="p-4 pb-0 sm:p-6 sm:pb-0">
                   <div className="rounded-3xl border-2 border-brand-orange/60 bg-gradient-to-r from-brand-orange/10 to-white p-3 shadow-[0_10px_30px_rgba(255,140,0,0.15)] sm:p-3.5">
                     <p className="break-keep text-center text-[15px] font-bold leading-snug text-brand-dark/80 sm:text-[17px]">
                       🎉 진단 완료! <b className="font-black text-brand-orange">지금 신청해볼 수 있는 정부지원사업</b>이에요.
                     </p>
                     {/* 가로형: 왼쪽 큰 숫자 + 오른쪽 세로 요약 (실제 결과창 히어로와 동일 구조).
-                        (대표님 요청) 왼쪽 '24개' 강조 확대 + 오른쪽 배지 가로 공백 축소 */}
+                        (대표님 요청) 왼쪽 '28개' 강조 확대 + 오른쪽 배지 가로 공백 축소 */}
                     <div className="mt-3 flex flex-row items-stretch gap-2 sm:gap-3">
                       {/* 왼쪽: 총 개수 큰 숫자 - 첫 화면 최대 후킹 포인트라 크게 강조(대표님 요청) */}
                       <div className="flex shrink-0 flex-col items-center justify-center border-r border-brand-orange/25 pr-2.5 sm:pr-3.5">
@@ -374,7 +374,7 @@ export default function Home() {
                           지원사업
                         </span>
                         <span className="mt-0.5 flex items-end gap-0.5">
-                          <b className="text-5xl font-black leading-none text-brand-orange sm:text-6xl">24</b>
+                          <b className="text-5xl font-black leading-none text-brand-orange sm:text-6xl">28</b>
                           <b className="pb-0.5 text-xl font-extrabold text-brand-orange sm:text-2xl">개</b>
                         </span>
                         <span className="mt-1 break-keep text-[10px] font-bold text-brand-dark/50 sm:text-[11px]">
@@ -387,7 +387,7 @@ export default function Home() {
                         {[
                           { icon: "🏅", l: "정부지원제도", n: "5건" },
                           { icon: "💳", l: "정책금융상품", n: "8건" },
-                          { icon: "💎", l: "추가 감면 혜택", n: "6건" },
+                          { icon: "💎", l: "추가 감면 혜택", n: "10건" },
                           { icon: "📢", l: "그 외 지원사업", n: "5건" },
                         ].map((s) => (
                           <span
@@ -553,8 +553,8 @@ export default function Home() {
                       <div className={`mt-3 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                         {[
                           { t: "카드 수수료 우대율", c: "수수료", cCls: "bg-rose-100 text-rose-700", saving: "연 약 60만원 절감", hook: "연매출 30억원 이하 영세·중소가맹점이면 별도 신청 없이 자동 적용됩니다.", applyName: "카드사·여신금융협회" },
-                          { t: "청년창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 50% 감면 (수도권)", hook: "만 34세 이하·창업 5년 이내면 세무신고 때 자동 적용, 경쟁이 없습니다.", applyName: "홈택스" },
-                          { t: "창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 50% 감면 (수도권)", hook: "창업 5년 이내면 요건 충족 시 신고 때 자동 적용됩니다.", applyName: "홈택스" },
+                          { t: "청년창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 최대 100% 감면", hook: "만 34세 이하·창업 5년 이내면 세무신고 때 자동 적용, 경쟁이 없습니다.", applyName: "홈택스" },
+                          { t: "창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 최대 100% 감면", hook: "창업 5년 이내면 요건 충족 시 신고 때 자동 적용됩니다.", applyName: "홈택스" },
                         ].map((b, i) => (
                           <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                             <div className="flex flex-wrap items-center gap-1.5">
