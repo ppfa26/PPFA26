@@ -1686,6 +1686,64 @@ function AdvancedResult({
 
       {/* (기관별 상품 한눈에 보기는 '이용 가능한 정책금융기관' 아코디언 안 하단으로 통합됨 - 대표님 요청) */}
 
+      {/* ⑤ 전문가 도움(유료 자문) 아코디언 - 아코디언 목록 맨 아래에 동일 디자인으로(대표님 요청).
+             지원사업 아코디언들을 쭉 보다가 마지막에 자연스럽게 열어보게 유도.
+             내용은 마이페이지 '전문가 도움' 표와 동일한 6개 서비스. */}
+      {!previewLock && (
+        <AccordionCard
+          emoji="🤝"
+          title="전문가 도움이 더 필요하신가요?"
+          subtitle="직접 하기 어려운 부분을 자문받고 싶은 분만 열어보세요"
+        >
+          <p className="break-keep text-sm leading-relaxed text-brand-gray">
+            직접 하기 어려운 부분 중{" "}
+            <b className="text-brand-dark">자문을 원하시는 분에 한해</b> 별도로 상담을 진행합니다.
+          </p>
+
+          <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+            {[
+              { icon: "📊", name: "회사 IR 자료 제작", price: "30만원", accent: true },
+              { icon: "📝", name: "사업계획서 첨삭", price: "30만원", accent: true },
+              { icon: "📑", name: "IR + 사업계획서 첨삭", price: "50만원", accent: true },
+              { icon: "💰", name: "정부지원사업 정식자문", price: "문의", accent: false },
+              { icon: "🧾", name: "세무조사 · 기장", price: "문의", accent: false },
+              { icon: "🌏", name: "수출 관세 상담", price: "문의", accent: false },
+            ].map((s) => (
+              <a
+                key={s.name}
+                href="http://pf.kakao.com/_VxfWxan/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3 transition hover:scale-[1.02] hover:border-brand-orange hover:bg-brand-orange/5"
+              >
+                <span className="flex min-w-0 flex-1 items-center gap-2">
+                  <span className="shrink-0 text-base">{s.icon}</span>
+                  <span className="min-w-0 flex-1 truncate whitespace-nowrap text-[14px] font-bold leading-snug text-brand-dark">
+                    {s.name}
+                  </span>
+                </span>
+                <span className="flex shrink-0 items-center gap-1.5">
+                  <span
+                    className={`whitespace-nowrap text-[13px] font-extrabold ${
+                      s.accent ? "text-brand-orange" : "text-brand-gray"
+                    }`}
+                  >
+                    {s.price}
+                  </span>
+                  <span className="whitespace-nowrap rounded-full bg-brand-dark px-2.5 py-1 text-[11px] font-bold text-white transition group-hover:opacity-90">
+                    신청 문의
+                  </span>
+                </span>
+              </a>
+            ))}
+          </div>
+
+          <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
+            ※ 위 서비스는 AI 진단 리포트에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
+          </p>
+        </AccordionCard>
+      )}
+
       {/* (예비창업자 전용 지원사업 아코디언은 최상단으로 이동 - 대표님 요청.
              예비창업 체크한 사람만 보이므로 맨 위(정부지원제도 위)에 노출.) */}
 
