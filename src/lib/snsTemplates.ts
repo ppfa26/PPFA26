@@ -43,9 +43,16 @@ export function stripMiddots(s: string): string {
     .replace(/\u00B7/g, ", ") // · (middle dot) → 쉼표
     .replace(/\u2027/g, ", ") // ‧ (hyphenation point)
     .replace(/\u30FB/g, ", ") // ・ (katakana middle dot)
+    // ── 대표님 지시: 글머리/장식 특수기호 전면 제거 (AI가 실수로 넣어도 서버에서 청소) ──
+    // 줄 맨 앞에 오는 글머리 기호는 통째로 제거, 문장 중간에 오면 공백으로.
+    .replace(/^[ \t]*[▶▸▪►▷◆◇■□●○※★☆✓✔❖‣⁃»›]+[ \t]*/gm, "")
+    .replace(/[▶▸▪►▷◆◇■□●○※★☆✓✔❖‣⁃»›]/g, "")
+    .replace(/[ \t]*→[ \t]*/g, " ") // 화살표 → 공백
+    .replace(/^[ \t]*>[ \t]+/gm, "") // 줄 앞 인용부호 '> '
     .replace(/\s*,\s*,\s*/g, ", ") // 중복 쉼표 정리
     .replace(/[ \t]{2,}/g, " ") // 중복 공백 정리
-    .replace(/ ,/g, ",");
+    .replace(/ ,/g, ",")
+    .replace(/[ \t]+$/gm, ""); // 줄 끝 공백 제거
 }
 
 // 해시태그 문자열 → 배열 (# 제거, 공백/쉼표 분리)
