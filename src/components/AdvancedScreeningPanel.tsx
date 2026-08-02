@@ -1692,15 +1692,10 @@ function AdvancedResult({
       {!previewLock && (
         <AccordionCard
           emoji="🤝"
-          title="전문가 도움이 더 필요하신가요?"
-          subtitle="직접 하기 어려운 부분을 자문받고 싶은 분만 열어보세요"
+          title="전문가 자문 도움이 필요하신가요?"
+          subtitle="직접 하기 어려운 부분을 자문받고 싶은 분들만 확인하세요"
         >
-          <p className="break-keep text-sm leading-relaxed text-brand-gray">
-            직접 하기 어려운 부분 중{" "}
-            <b className="text-brand-dark">자문을 원하시는 분에 한해</b> 별도로 상담을 진행합니다.
-          </p>
-
-          <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+          <div className="grid gap-2.5 sm:grid-cols-2">
             {[
               { icon: "📊", name: "회사 IR 자료 제작", price: "30만원", accent: true },
               { icon: "📝", name: "사업계획서 첨삭", price: "30만원", accent: true },
