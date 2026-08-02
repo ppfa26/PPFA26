@@ -145,7 +145,7 @@ export default function Home() {
               as="p"
               className="mx-auto mt-5 max-w-xl break-keep text-[15px] font-medium leading-relaxed text-brand-gray sm:mt-5 sm:text-[19px] sm:leading-relaxed"
             >
-              대표님 사업장이 받을 수 있는 정부지원사업,
+              대표님 사업장이 받을 수 있는 정부지원사업
               <br />
               AI가 <b className="text-brand-dark">찾아서 신청 방법까지</b> 알려드립니다.
             </Editable>
