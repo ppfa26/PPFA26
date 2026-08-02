@@ -144,7 +144,7 @@ const CHAT_STEPS: ChatStep[] = [
     type: "contact",
     botLines: [
       "자격 확인이 끝났어요! 👍",
-      "결과를 보내드릴 성함과 연락처를\n알려주세요.",
+      "결과를 보내드릴 성함과\n연락처를 알려주세요.",
     ],
   },
   // ★ Q3 대표님 정보(대표님 요청: 자격확인 바로 다음으로 이동) ★
@@ -213,7 +213,7 @@ const CHAT_STEPS: ChatStep[] = [
   {
     key: "companyGroupA",
     type: "multiGroup",
-    botLines: ["회사 상황을 알려주세요. (1/2)", "지원 관련 정보예요. (없으면 비워두셔도 돼요)"],
+    botLines: ["회사 상황을 알려주세요. (1/2)", "해당되는 걸 골라주세요."],
     subs: [
       // ★ 순서 변경 (대표님 요청) ★ '대표님이 필요한 정부지원사업'을 '현재 이용 중인 정책기관' 위로.
       {
@@ -234,7 +234,7 @@ const CHAT_STEPS: ChatStep[] = [
   {
     key: "companyGroupB",
     type: "multiGroup",
-    botLines: ["회사 상황을 알려주세요. (2/2)", "해당되는 걸 골라주세요. (없으면 비워두셔도 돼요)"],
+    botLines: ["회사 상황을 알려주세요. (2/2)", "해당되는 걸 골라주세요."],
     subs: [
       // ★ 순서 변경 (대표님 요청) ★ '보유 특허·인증'을 '혁신성장 분야 해당 여부' 위로.
       {
@@ -259,7 +259,7 @@ const CHAT_STEPS: ChatStep[] = [
   {
     key: "deepChecks",
     type: "checkGroup",
-    botLines: ["마지막으로, 혹시 해당되는 게 있나요?", "해당되는 항목만 골라주세요. (없으면 '해당 없음')"],
+    botLines: ["마지막으로, 혹시 해당되는 게 있나요?", "해당되는 항목만 골라주세요."],
     checkYes: "예",
     checkNo: "아니요",
     subs: [
