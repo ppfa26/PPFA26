@@ -18,17 +18,20 @@ const SI = {
     "M22.125 0H1.875C.8394 0 0 .8394 0 1.875v20.25C0 23.1606.8394 24 1.875 24h20.25C23.1606 24 24 23.1606 24 22.125V1.875C24 .8394 23.1606 0 22.125 0zM12 18.75c-.591 0-1.1697-.0413-1.7317-.1209-.5626.3965-3.813 2.6797-4.1198 2.7225 0 0-.1258.0489-.2328-.0141s-.0876-.2282-.0876-.2282c.0322-.2198.8426-3.0183.992-3.5333-2.7452-1.36-4.5701-3.7686-4.5701-6.5135C2.25 6.8168 6.6152 3.375 12 3.375s9.75 3.4418 9.75 7.6875c0 4.2457-4.3652 7.6875-9.75 7.6875zM8.0496 9.8672h-.8777v3.3417c0 .2963-.2523.5372-.5625.5372s-.5625-.2409-.5625-.5372V9.8672h-.8777c-.3044 0-.552-.2471-.552-.5508s.2477-.5508.552-.5508h2.8804c.3044 0 .552.2471.552.5508s-.2477.5508-.552.5508zm10.9879 2.9566a.558.558 0 0 1 .108.4167.5588.5588 0 0 1-.2183.371.5572.5572 0 0 1-.3383.1135.558.558 0 0 1-.4493-.2236l-1.3192-1.7479-.1952.1952v1.2273a.5635.5635 0 0 1-.5627.5628.563.563 0 0 1-.5625-.5625V9.3281c0-.3102.2523-.5625.5625-.5625s.5625.2523.5625.5625v1.209l1.5694-1.5694c.0807-.0807.1916-.1252.312-.1252.1404 0 .2814.0606.3871.1661.0985.0984.1573.2251.1654.3566.0082.1327-.036.2542-.1241.3425l-1.2818 1.2817 1.3845 1.8344zm-8.3502-3.5023c-.095-.2699-.3829-.5475-.7503-.5557-.3663.0083-.6542.2858-.749.5551l-1.3455 3.5415c-.1708.5305-.0217.7272.1333.7988a.8568.8568 0 0 0 .3576.0776c.2346 0 .4139-.0952.4678-.2481l.2787-.7297 1.7152.0001.2785.7292c.0541.1532.2335.2484.4681.2484a.8601.8601 0 0 0 .3576-.0775c.1551-.0713.3041-.2681.1329-.7999l-1.3449-3.5398zm-1.3116 2.4433l.5618-1.5961.5618 1.5961H9.3757zm5.9056 1.3836c0 .2843-.2418.5156-.5391.5156h-1.8047c-.2973 0-.5391-.2314-.5391-.5156V9.3281c0-.3102.2576-.5625.5742-.5625s.5742.2523.5742.5625v3.3047h1.1953c.2974 0 .5392.2314.5392.5156z",
 } as const;
 
-/* 공식 채널 - 유입 주력(스레드·인스타·당근)을 앞쪽에.
-   라벨 없는 원형 아이콘으로 압축해 깔끔하게, hover 시 브랜드 컬러 + 툴팁(title). */
+/* 공식 채널 - 유입 주력(스레드·인스타·당근)을 앞쪽에, 상담·채널·플레이스 계열은 뒤쪽에.
+   두 종류로 렌더:
+   ① img: 실제 브랜드 로고(자체 컬러 타일) → 카톡 상담/채널·스마트플레이스·인포크링크. rounded-lg 정사각 타일 그대로.
+   ② svg/fa: 단색 아이콘(스레드·인스타·당근·네이버 블로그) → 동일 규격 타일 안에 currentColor + hover 브랜드 컬러.
+   모두 같은 h-9 정사각 rounded-lg 타일로 규격 통일해 톤 일관성 확보. */
 const CHANNELS = [
   { href: "https://www.threads.com/@ppfa25", label: "스레드", svg: SI.threads, hover: "hover:border-white/60 hover:bg-white/10 hover:text-white" },
   { href: "https://www.instagram.com/ppfa25", label: "인스타그램", svg: SI.instagram, hover: "hover:border-[#E1306C]/70 hover:bg-[#E1306C]/15 hover:text-[#E1306C]" },
   { href: "https://www.daangn.com/kr/local-profile/8j96yjujtkqy/?referrer=share", label: "당근", fa: "fa-solid fa-carrot", hover: "hover:border-[#FF8A3D]/70 hover:bg-[#FF8A3D]/15 hover:text-[#FF8A3D]" },
-  { href: "https://pf.kakao.com/_VxfWxan/chat", label: "카카오톡 상담", svg: SI.kakaotalk, hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
   { href: "https://blog.naver.com/biospartners", label: "네이버 블로그", svg: SI.naver, hover: "hover:border-[#03C75A]/70 hover:bg-[#03C75A]/15 hover:text-[#03C75A]" },
-  { href: "https://map.naver.com/p/entry/place/1118269039", label: "네이버 지도", svg: SI.naver, hover: "hover:border-[#03C75A]/70 hover:bg-[#03C75A]/15 hover:text-[#03C75A]" },
-  { href: "https://pf.kakao.com/_VxfWxan", label: "카카오톡 채널", svg: SI.kakaotalk, hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
-  { href: "https://link.inpock.co.kr/ppfa25", label: "전체 링크·후기", fa: "fa-solid fa-link", hover: "hover:border-brand-orange/70 hover:bg-brand-orange/15 hover:text-brand-orange" },
+  { href: "https://pf.kakao.com/_VxfWxan/chat", label: "카카오톡 상담", img: "/logo/channels/kakaotalk.png" },
+  { href: "https://pf.kakao.com/_VxfWxan", label: "카카오톡 채널", img: "/logo/channels/kakao-channel.png" },
+  { href: "https://map.naver.com/p/entry/place/1118269039", label: "네이버 스마트플레이스", img: "/logo/channels/smartplace.png" },
+  { href: "https://link.inpock.co.kr/ppfa25", label: "전체 링크·후기", img: "/logo/channels/inpock.png" },
 ];
 
 const MENU = [
@@ -62,34 +65,58 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             </span>
           </div>
 
-          {/* 공식 채널 - 라벨 없이 원형 아이콘만(미니멀). 로고 이름 바로 옆에 이어 붙임 */}
+          {/* 공식 채널 - 라벨 없이 아이콘만(미니멀). 로고 이름 바로 옆에 이어 붙임.
+              컬러 브랜드 로고(img)와 단색 아이콘(svg/fa)을 동일 규격 rounded-lg 타일로 통일 */}
           <ul className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-            {CHANNELS.map((c) => (
-              <li key={c.label}>
-                <a
-                  href={c.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={c.label}
-                  aria-label={c.label}
-                  className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition sm:h-9 sm:w-9 ${c.hover}`}
-                >
-                  <span className="flex items-center justify-center text-[15px] leading-none sm:text-[16px]" aria-hidden="true">
-                    {c.svg ? (
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="h-[15px] w-[15px] sm:h-4 sm:w-4"
-                      >
-                        <path d={c.svg} />
-                      </svg>
-                    ) : (
-                      <i className={c.fa} />
-                    )}
-                  </span>
-                </a>
-              </li>
-            ))}
+            {CHANNELS.map((c) =>
+              c.img ? (
+                /* ① 실제 브랜드 로고 (자체 컬러 타일) */
+                <li key={c.label}>
+                  <a
+                    href={c.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={c.label}
+                    aria-label={c.label}
+                    className="block h-8 w-8 overflow-hidden rounded-lg ring-1 ring-white/10 transition hover:ring-2 hover:ring-white/40 sm:h-9 sm:w-9"
+                  >
+                    <Image
+                      src={c.img}
+                      alt={c.label}
+                      width={36}
+                      height={36}
+                      className="h-full w-full object-cover"
+                    />
+                  </a>
+                </li>
+              ) : (
+                /* ② 단색 아이콘 (스레드·인스타·당근·네이버 블로그) */
+                <li key={c.label}>
+                  <a
+                    href={c.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={c.label}
+                    aria-label={c.label}
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-gray-300 transition sm:h-9 sm:w-9 ${c.hover}`}
+                  >
+                    <span className="flex items-center justify-center text-[15px] leading-none sm:text-[16px]" aria-hidden="true">
+                      {c.svg ? (
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="h-[15px] w-[15px] sm:h-4 sm:w-4"
+                        >
+                          <path d={c.svg} />
+                        </svg>
+                      ) : (
+                        <i className={c.fa} />
+                      )}
+                    </span>
+                  </a>
+                </li>
+              )
+            )}
           </ul>
         </div>
 
