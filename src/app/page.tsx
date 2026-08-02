@@ -263,17 +263,13 @@ export default function Home() {
                 아직 몰라서 못 받고 있는 정부지원사업
               </Editable>
               <Editable
-                id="home-value-sub-v2"
+                id="home-value-sub-v3"
                 as="p"
                 className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium leading-relaxed text-brand-gray"
               >
-                예창패·초창패·청년창업사관학교·
-                <br className="sm:hidden" />
-                정부지원사업·보증까지,
+                내 사업장이 받을 수 있는 <b className="text-brand-dark">모든 정부지원사업</b>을
                 <br />
-                대표님이 받을 수 있는 <b className="text-brand-dark">모든 지원사업</b>을 AI가 한 번에 찾아
-                <br />
-                무엇을·어디서·어떻게까지 알려드립니다.
+                AI가 모두 찾아 무엇을·어디서·어떻게까지 알려줍니다.
               </Editable>
             </div>
 
@@ -443,6 +439,7 @@ export default function Home() {
                     <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
                       <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
                         아래는 <b>예비·초기·청년 창업자</b>가 신청할 수 있는 대표적인 <b>사업화 자금(무상)</b> 지원사업이에요.
+                        <br />
                         갚지 않아도 되는 지원금이니 창업 단계에서 꼭 챙기시길 권장드립니다.
                       </p>
                     </div>
@@ -505,6 +502,7 @@ export default function Home() {
                     <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
                       <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
                         아래는 대표님 진단 결과 <b>지금 바로 신청할 수 있는 정부지원제도</b>만 추린 목록이에요.
+                        <br />
                         대출과 별개로 병행 신청할 수 있으니, 놓치지 말고 하나씩 확인해보시길 권장드립니다.
                       </p>
                     </div>
@@ -601,7 +599,9 @@ export default function Home() {
                     <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
                       <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
                         아래는 대표님이 <b>낮은 금리로 이용할 수 있는 정책금융상품</b>이에요.
-                        지원금(무상)과 달리 <b>갚아야 하는 자금</b>이지만, 시중 대출보다 금리·조건이 유리하니 필요할 때 활용하시길 권장드립니다.
+                        지원금(무상)과 달리 <b>갚아야 하는 자금</b>이지만,
+                        <br />
+                        시중 대출보다 금리·조건이 유리하니 필요할 때 활용하시길 권장드립니다.
                       </p>
                     </div>
                     {/* 기관별 상세 - 실제 결과창(기관명+대리/직접대출 배지 → 안내 → 상품 보기 버튼) */}
