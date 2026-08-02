@@ -314,10 +314,17 @@ const structuredData = {
         addressRegion: "인천광역시",
         addressCountry: "KR",
       },
-      // 동일 사업체 신호(NAP 통일) - 검색엔진이 여러 채널을 한 회사로 묶습니다.
+      // 동일 사업체 신호(NAP 통일) - 검색엔진이 여러 채널을 한 회사로 묶어
+      //  '공식 계정 네트워크'로 인식하게 한다(브랜드 신뢰도·상단 노출에 유리).
+      //  ※ 실제 운영 중인 공식 채널 URL만 등록(Footer와 동일 출처).
       sameAs: [
-        "https://www.daangn.com/kr/business/모두의사업친구",
-        "http://pf.kakao.com/_VxfWxan",
+        "https://blog.naver.com/biospartners",
+        "https://map.naver.com/p/entry/place/1118269039",
+        "https://www.instagram.com/ppfa25",
+        "https://www.threads.com/@ppfa25",
+        "https://link.inpock.co.kr/ppfa25",
+        "https://pf.kakao.com/_VxfWxan",
+        "https://www.daangn.com/kr/local-profile/8j96yjujtkqy/",
       ] as string[],
     },
     {
@@ -337,12 +344,11 @@ const structuredData = {
         addressRegion: "인천광역시",
         addressCountry: "KR",
       },
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "4.3",
-        bestRating: "5",
-        ratingCount: "75",
-      },
+      // ★ aggregateRating(별점) 제거 ★
+      //  실제로 검증 가능한 리뷰 데이터(사이트 내 리뷰 마크업)가 없는 상태에서
+      //  별점을 넣으면 구글·네이버의 '자체 평가 리뷰 스팸' 정책 위반으로 간주돼
+      //  구조화 데이터 전체가 무시되거나 사이트 신뢰도가 깎일 수 있다.
+      //  → 실제 리뷰 시스템을 붙이기 전까지는 넣지 않는 것이 안전하다.
       parentOrganization: { "@id": `${SITE_URL}/#organization` },
     },
     {
@@ -407,12 +413,13 @@ const structuredData = {
       // 검색결과 사이트링크용 주요 메뉴
       "@type": "SiteNavigationElement",
       "@id": `${SITE_URL}/#navigation`,
+      // 실제 사이트 메뉴(Footer)와 일치시켜 검색엔진이 잘못된 하위 링크를 만들지 않게 한다.
       name: [
         "무료 진단",
         "요금 안내",
         "정부지원사업 정보",
-        "신청 사이트 모음",
-        "커뮤니티",
+        "정부 사이트",
+        "후기",
         "이용약관",
       ],
       url: [
