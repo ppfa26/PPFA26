@@ -22,14 +22,14 @@ const SI = {
    전부 단색 아이콘(svg=simple-icons brand path / fa=Font Awesome)으로 통일해 톤 일관성 확보.
    동일 규격 rounded 타일 안에 currentColor + hover 시 브랜드 컬러. */
 const CHANNELS = [
-  { href: "https://www.threads.com/@ppfa25", label: "스레드", svg: SI.threads, hover: "hover:border-white/60 hover:bg-white/10 hover:text-white" },
-  { href: "https://www.instagram.com/ppfa25", label: "인스타그램", svg: SI.instagram, hover: "hover:border-[#E1306C]/70 hover:bg-[#E1306C]/15 hover:text-[#E1306C]" },
-  { href: "https://www.daangn.com/kr/local-profile/8j96yjujtkqy/?referrer=share", label: "당근", fa: "fa-solid fa-carrot", hover: "hover:border-[#FF8A3D]/70 hover:bg-[#FF8A3D]/15 hover:text-[#FF8A3D]" },
   { href: "https://blog.naver.com/biospartners", label: "네이버 블로그", svg: SI.naver, hover: "hover:border-[#03C75A]/70 hover:bg-[#03C75A]/15 hover:text-[#03C75A]" },
+  { href: "https://map.naver.com/p/entry/place/1118269039", label: "네이버 스마트플레이스", fa: "fa-solid fa-location-dot", hover: "hover:border-[#03C75A]/70 hover:bg-[#03C75A]/15 hover:text-[#03C75A]" },
+  { href: "https://www.daangn.com/kr/local-profile/8j96yjujtkqy/?referrer=share", label: "당근 비즈프로필", fa: "fa-solid fa-carrot", hover: "hover:border-[#FF8A3D]/70 hover:bg-[#FF8A3D]/15 hover:text-[#FF8A3D]" },
+  { href: "https://www.instagram.com/ppfa25", label: "인스타그램", svg: SI.instagram, hover: "hover:border-[#E1306C]/70 hover:bg-[#E1306C]/15 hover:text-[#E1306C]" },
+  { href: "https://www.threads.com/@ppfa25", label: "스레드", svg: SI.threads, hover: "hover:border-white/60 hover:bg-white/10 hover:text-white" },
   { href: "https://pf.kakao.com/_VxfWxan/chat", label: "카카오톡 상담", svg: SI.kakaotalk, hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
   { href: "https://pf.kakao.com/_VxfWxan", label: "카카오톡 채널", svg: SI.kakaotalk, hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
-  { href: "https://map.naver.com/p/entry/place/1118269039", label: "네이버 스마트플레이스", fa: "fa-solid fa-location-dot", hover: "hover:border-[#03C75A]/70 hover:bg-[#03C75A]/15 hover:text-[#03C75A]" },
-  { href: "https://link.inpock.co.kr/ppfa25", label: "전체 링크·후기", fa: "fa-solid fa-link", hover: "hover:border-brand-orange/70 hover:bg-brand-orange/15 hover:text-brand-orange" },
+  { href: "https://link.inpock.co.kr/ppfa25", label: "인포크링크", fa: "fa-solid fa-link", hover: "hover:border-brand-orange/70 hover:bg-brand-orange/15 hover:text-brand-orange" },
 ];
 
 const MENU = [
