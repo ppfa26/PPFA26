@@ -58,16 +58,12 @@ export default function Header() {
             priority
           />
           <span className="flex flex-col justify-center pr-0.5 xs:pr-1 sm:pr-0">
-            <span className="block whitespace-nowrap text-[17px] font-extrabold leading-tight tracking-[-0.01em] text-brand-dark xs:text-[18px] sm:text-[21px]">
+            <span className="block w-full whitespace-nowrap text-[18px] font-extrabold leading-tight tracking-[-0.02em] text-brand-dark xs:text-[19px] sm:text-[22px]">
               모두의사업친구
             </span>
-            {/* 모바일: 자연스러운 폭 */}
-            <span className="mt-[2px] block whitespace-nowrap text-[9px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray xs:text-[10px] sm:hidden">
-              정부지원사업 통합 매칭 플랫폼
-            </span>
-            {/* PC: 브랜드명 폭에 맞춰 글자 양끝정렬 */}
+            {/* 브랜드명 폭에 맞춰 서브라인을 양끝정렬 → 두 줄 가로폭 통일(모바일·PC 공통) */}
             <span
-              className="mt-[3px] hidden w-full whitespace-nowrap text-[11px] font-semibold leading-tight text-brand-gray sm:block"
+              className="mt-[2px] block w-full whitespace-nowrap text-[9.5px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray/90 xs:text-[10.5px] sm:mt-[3px] sm:text-[11px]"
               style={{ textAlignLast: "justify" }}
             >
               정부지원사업 통합 매칭 플랫폼
