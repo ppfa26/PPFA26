@@ -19,19 +19,17 @@ const SI = {
 } as const;
 
 /* 공식 채널 - 유입 주력(스레드·인스타·당근)을 앞쪽에, 상담·채널·플레이스 계열은 뒤쪽에.
-   두 종류로 렌더:
-   ① img: 실제 브랜드 로고(자체 컬러 타일) → 카톡 상담/채널·스마트플레이스·인포크링크. rounded-lg 정사각 타일 그대로.
-   ② svg/fa: 단색 아이콘(스레드·인스타·당근·네이버 블로그) → 동일 규격 타일 안에 currentColor + hover 브랜드 컬러.
-   모두 같은 h-9 정사각 rounded-lg 타일로 규격 통일해 톤 일관성 확보. */
+   전부 단색 아이콘(svg=simple-icons brand path / fa=Font Awesome)으로 통일해 톤 일관성 확보.
+   동일 규격 rounded 타일 안에 currentColor + hover 시 브랜드 컬러. */
 const CHANNELS = [
   { href: "https://www.threads.com/@ppfa25", label: "스레드", svg: SI.threads, hover: "hover:border-white/60 hover:bg-white/10 hover:text-white" },
   { href: "https://www.instagram.com/ppfa25", label: "인스타그램", svg: SI.instagram, hover: "hover:border-[#E1306C]/70 hover:bg-[#E1306C]/15 hover:text-[#E1306C]" },
   { href: "https://www.daangn.com/kr/local-profile/8j96yjujtkqy/?referrer=share", label: "당근", fa: "fa-solid fa-carrot", hover: "hover:border-[#FF8A3D]/70 hover:bg-[#FF8A3D]/15 hover:text-[#FF8A3D]" },
   { href: "https://blog.naver.com/biospartners", label: "네이버 블로그", svg: SI.naver, hover: "hover:border-[#03C75A]/70 hover:bg-[#03C75A]/15 hover:text-[#03C75A]" },
-  { href: "https://pf.kakao.com/_VxfWxan/chat", label: "카카오톡 상담", img: "/logo/channels/kakaotalk.png" },
-  { href: "https://pf.kakao.com/_VxfWxan", label: "카카오톡 채널", img: "/logo/channels/kakao-channel.png" },
-  { href: "https://map.naver.com/p/entry/place/1118269039", label: "네이버 스마트플레이스", img: "/logo/channels/smartplace.png" },
-  { href: "https://link.inpock.co.kr/ppfa25", label: "전체 링크·후기", img: "/logo/channels/inpock.png" },
+  { href: "https://pf.kakao.com/_VxfWxan/chat", label: "카카오톡 상담", svg: SI.kakaotalk, hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
+  { href: "https://pf.kakao.com/_VxfWxan", label: "카카오톡 채널", svg: SI.kakaotalk, hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
+  { href: "https://map.naver.com/p/entry/place/1118269039", label: "네이버 스마트플레이스", fa: "fa-solid fa-location-dot", hover: "hover:border-[#03C75A]/70 hover:bg-[#03C75A]/15 hover:text-[#03C75A]" },
+  { href: "https://link.inpock.co.kr/ppfa25", label: "전체 링크·후기", fa: "fa-solid fa-link", hover: "hover:border-brand-orange/70 hover:bg-brand-orange/15 hover:text-brand-orange" },
 ];
 
 const MENU = [
@@ -65,58 +63,35 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
             </span>
           </div>
 
-          {/* 공식 채널 - 라벨 없이 아이콘만(미니멀). 로고 이름 바로 옆에 이어 붙임.
-              컬러 브랜드 로고(img)와 단색 아이콘(svg/fa)을 동일 규격 rounded-lg 타일로 통일 */}
+          {/* 공식 채널 - 라벨 없이 단색 아이콘만(미니멀). 로고 이름 바로 옆에 이어 붙임.
+              전부 동일 규격 rounded 타일 + currentColor 단색으로 톤 통일, hover 시 브랜드 컬러 */}
           <ul className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-            {CHANNELS.map((c) =>
-              c.img ? (
-                /* ① 실제 브랜드 로고 (자체 컬러 타일) */
-                <li key={c.label}>
-                  <a
-                    href={c.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={c.label}
-                    aria-label={c.label}
-                    className="block h-8 w-8 overflow-hidden rounded-lg ring-1 ring-white/10 transition hover:ring-2 hover:ring-white/40 sm:h-9 sm:w-9"
-                  >
-                    <Image
-                      src={c.img}
-                      alt={c.label}
-                      width={36}
-                      height={36}
-                      className="h-full w-full object-cover"
-                    />
-                  </a>
-                </li>
-              ) : (
-                /* ② 단색 아이콘 (스레드·인스타·당근·네이버 블로그) */
-                <li key={c.label}>
-                  <a
-                    href={c.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={c.label}
-                    aria-label={c.label}
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-gray-300 transition sm:h-9 sm:w-9 ${c.hover}`}
-                  >
-                    <span className="flex items-center justify-center text-[15px] leading-none sm:text-[16px]" aria-hidden="true">
-                      {c.svg ? (
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="h-[15px] w-[15px] sm:h-4 sm:w-4"
-                        >
-                          <path d={c.svg} />
-                        </svg>
-                      ) : (
-                        <i className={c.fa} />
-                      )}
-                    </span>
-                  </a>
-                </li>
-              )
-            )}
+            {CHANNELS.map((c) => (
+              <li key={c.label}>
+                <a
+                  href={c.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={c.label}
+                  aria-label={c.label}
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-gray-300 transition sm:h-9 sm:w-9 ${c.hover}`}
+                >
+                  <span className="flex items-center justify-center text-[15px] leading-none sm:text-[16px]" aria-hidden="true">
+                    {c.svg ? (
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="h-[15px] w-[15px] sm:h-4 sm:w-4"
+                      >
+                        <path d={c.svg} />
+                      </svg>
+                    ) : (
+                      <i className={c.fa} />
+                    )}
+                  </span>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 
