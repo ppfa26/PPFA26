@@ -35,11 +35,10 @@ const CHANNELS = [
 const MENU = [
   { href: "/pricing", label: "요금 안내" },
   { href: "/diagnosis-chat", label: "무료 진단" },
-  { href: "/community", label: "커뮤니티" },
-  { href: "/sites", label: "공식 사이트 모음" },
+  { href: "/sites", label: "정부 사이트" },
   { href: "/terms", label: "이용약관" },
-  { href: "/privacy", label: "개인정보처리방침" },
   { href: "/refund", label: "환불정책" },
+  { href: "/privacy", label: "개인정보처리방침" },
   { href: "/business-info", label: "사업자정보" },
 ];
 
