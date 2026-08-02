@@ -1422,7 +1422,7 @@ const BotBubble = memo(function BotBubble({ text, wide }: { text: string; wide?:
       <BotAvatar />
       <div
         className={`chat-bot-bubble whitespace-pre-line break-keep rounded-2xl rounded-bl-md border border-white bg-white px-4 py-3 text-[15px] leading-relaxed text-brand-dark shadow-sm ${
-          wide ? "w-[calc(88%-2.5rem)] max-w-[320px]" : "max-w-[88%]"
+          wide ? "w-fit max-w-[280px]" : "max-w-[88%]"
         }`}
       >
         {text}
