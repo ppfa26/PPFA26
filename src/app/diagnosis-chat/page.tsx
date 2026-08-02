@@ -1223,7 +1223,7 @@ export default function DiagnosisChat() {
                   <div className="flex flex-col gap-4">
                     {/* 1) 사업자 구분 (예비창업자 → 개인사업자 → 법인사업자) */}
                     <div>
-                      <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
+                      <p className="mb-1.5 break-keep px-1 text-sm font-semibold text-brand-dark">
                         사업자 구분
                       </p>
                       <div className="grid grid-cols-3 gap-2">
@@ -1394,13 +1394,13 @@ export default function DiagnosisChat() {
             <div ref={answerRef} className="mt-3 rounded-xl border border-white bg-white p-5 shadow-sm">
               <p className="mb-2 text-center text-3xl">😥</p>
               <p className="mb-2 break-keep text-center text-[16px] font-extrabold leading-snug text-brand-dark">
-                아쉽지만 지금은 정부지원사업 신청이<br className="hidden xs:block" /> 어려운 상태예요.
+                아쉽지만 지금은 정부지원사업<br /> 신청이 어려운 상태예요.
               </p>
               <p className="mx-auto max-w-md break-keep text-center text-[13.5px] leading-relaxed text-brand-gray">
                 {blocked.reasons.includes("bankruptcy") && "회생·파산 절차 종료 후"}
                 {blocked.reasons.includes("bankruptcy") && blocked.reasons.includes("tax") && " · "}
                 {blocked.reasons.includes("tax") && "세금 완납 후"}
-                {" "}다시 진단받으시면 훨씬 많은 지원을 받으실 수 있어요.
+                {" "}다시<br /> 진단 받으시면 훨씬 많은 지원을 받으실 수 있어요.
               </p>
               <button
                 onClick={undoBlocked}
