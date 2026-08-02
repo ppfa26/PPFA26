@@ -55,7 +55,7 @@ type StepType =
   | "text"
   | "phone"
   | "bno"
-  | "bizType" // 사업자 구분(개인/법인/예비)만 받는 맨 앞 스텝(대표님 요청: 번호·연락처는 맨 뒤로)
+  | "bizEligibility" // ★ 사업자 구분 + 자격확인(회생·파산/세금완납)을 한 화면에서(대표님 요청)
   | "bnoContact" // 사업자번호 + 성함 + 연락처를 한 화면에서(맨 마지막·결과 직전)
   | "region"
   | "contact" // 성함 + 연락처를 한 스텝에서 입력
@@ -112,25 +112,19 @@ const CHAT_STEPS: ChatStep[] = [
   //   → (1) 사업자번호·구분 → (2) 자격확인 → (3) 성함·연락처(신설) 순.
   //   이렇게 하면 탈락자에게는 개인정보를 요구하지 않아 이탈·컴플레인이 줄어든다.
   {
-    // ★ 순서 개편 (대표님 요청) ★ 맨 앞에서는 '사업자 구분'만 가볍게 받는다.
+    // ★ 화면 통합 (대표님 요청) ★ '사업자 구분' + '신청 자격 확인(회생·파산/세금완납)'을 한 화면에서.
     //   (사업자번호·성함·연락처는 진단을 다 마친 '맨 뒤'로 이동 → 초반 이탈 방지)
     //   사업자 구분(businessType)은 뒤 자본잠식(법인 전용) 판정에 필요하므로 앞에 남긴다.
-    key: "bizType",
-    type: "bizType",
+    //   ★ 대표님 요청 ★ 자격확인에서 '파산·회생 중' 또는 '세금 미납/체납'이면 탈락 → 종료 화면으로.
+    //     (confirmBizEligibility에서 getPaymentBlockReasons로 판정)
+    key: "bizEligibility",
+    type: "bizEligibility",
     botLines: [
       "그럼 시작해 볼게요! 👇",
       "",
-      "먼저 사업자 구분만\n알려주세요.",
+      "사업자 구분과\n신청 자격을 먼저 확인할게요.",
     ],
     questionHead: "사업자 구분을 선택해 주세요 👇",
-  },
-  // 결격사유(회생·파산 + 세금완납)를 한 질문으로 합침
-  //  ★ 대표님 요청 ★ 여기서 '파산·회생 중' 또는 '세금 미납/체납'이면 탈락 → 종료 화면으로.
-  //    (confirmYesnoGroup에서 getPaymentBlockReasons로 판정)
-  {
-    key: "eligibility",
-    type: "yesnoGroup",
-    botLines: ["신청 자격을 먼저 확인할게요.", "아래 두 가지만 체크해 주세요."],
     subs: [
       { key: "bankruptcy", label: "현재 회생·파산 절차가 진행 중이신가요?", opts: STEP3_FIELDS.bankruptcy.opts },
       { key: "taxDelinquent", label: "국세·지방세는 완납 상태이신가요?", opts: STEP3_FIELDS.taxDelinquent.opts },
@@ -450,8 +444,8 @@ export default function DiagnosisChat() {
     const bubbleText = rawLines.some((l) => l === "")
       ? rawLines.join("\n") // 빈 줄 의도 → 그대로 유지
       : rawLines.filter(Boolean).join("\n");
-    // ★ bizType(첫 스텝)·bnoContact(마지막) 안내는 인트로 말풍선과 가로 폭을 동일(wide)하게 맞춘다.
-    pushBotLines([bubbleText], undefined, CHAT_STEPS[vi].type === "bizType" || CHAT_STEPS[vi].type === "bnoContact");
+    // ★ bizEligibility(첫 스텝)·bnoContact(마지막) 안내는 인트로 말풍선과 가로 폭을 동일(wide)하게 맞춘다.
+    pushBotLines([bubbleText], undefined, CHAT_STEPS[vi].type === "bizEligibility" || CHAT_STEPS[vi].type === "bnoContact");
   };
 
   // ── 이전 질문으로 되돌아가기(답변 수정) ──
@@ -508,14 +502,28 @@ export default function DiagnosisChat() {
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
-  // ★ 순서 개편 (대표님 요청) ★ 맨 앞 사업자구분(bizType 스텝) 확정 → 자격확인으로.
-  //   사업자번호·성함·연락처는 맨 마지막(bnoContact)에서 받으므로 여기선 구분만 확정한다.
-  const confirmBizTypeStep = () => {
+  // ★ 화면 통합 (대표님 요청) ★ 사업자 구분 + 자격확인(회생·파산/세금완납)을 한 화면에서 확정.
+  //   · businessType(칩) + 하위 자격문항(groupTemp) 모두 선택돼야 진행.
+  //   · '파산·회생 중' 또는 '세금 미납/체납'이면 종료 화면으로 차단(getPaymentBlockReasons).
+  //   · 사업자번호·성함·연락처는 맨 마지막(bnoContact)에서 받는다.
+  const confirmBizEligibility = () => {
+    const step = CHAT_STEPS[stepIdx];
+    const subs = step.subs || [];
     if (!form.businessType) return; // 구분(개인/법인/예비) 미선택 시 차단
+    if (subs.some((s) => !groupTemp[s.key])) return; // 자격 문항 전부 답해야 진행
     const next: any = { ...form };
+    subs.forEach((s) => { next[s.key] = groupTemp[s.key]; });
     setForm(next);
-    const label = next.businessType === "예비" ? "예비창업자" : next.businessType;
-    setMessages((m) => [...m, { who: "user", text: label }]);
+    const bizLabel = next.businessType === "예비" ? "예비창업자" : next.businessType;
+    const eligLabel = subs.map((s) => groupTemp[s.key]).join(" / ");
+    setMessages((m) => [...m, { who: "user", text: `${bizLabel} / ${eligLabel}` }]);
+    // ★ 대표님 요청 ★ '파산·회생 중' 또는 '세금 미납/체납'이면 더 진행하지 않고 종료 화면으로.
+    const reasons = getPaymentBlockReasons(next);
+    const blockingNow = reasons.filter((r) => r === "bankruptcy" || r === "tax");
+    if (blockingNow.length > 0) {
+      setTimeout(() => setBlocked({ reasons: blockingNow }), 380);
+      return;
+    }
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
@@ -1203,18 +1211,23 @@ export default function DiagnosisChat() {
                 </div>
               )}
 
-              {/* ★ 순서 개편 (대표님 요청) ★ 맨 앞: '사업자 구분'만 (개인/법인/예비).
-                  사업자번호·성함·연락처는 진단을 다 마친 뒤 맨 마지막(bnoContact)에서 받는다.
-                  businessType은 뒤 자본잠식(법인 전용) 판정에 필요하므로 여기서 확정한다. */}
-              {curStep.type === "bizType" && (() => {
+              {/* ★ 화면 통합 (대표님 요청) ★ 맨 앞: '사업자 구분' + '신청 자격 확인'을 한 화면에서.
+                  · 사업자 구분(예비/개인/법인) 칩 + 자격확인(회생·파산/세금완납) 라디오 2개.
+                  · 사업자번호·성함·연락처는 진단을 다 마친 뒤 맨 마지막(bnoContact)에서 받는다.
+                  · businessType은 뒤 자본잠식(법인 전용) 판정에 필요하므로 여기서 확정한다.
+                  · '파산·회생 중' 또는 '세금 미납/체납'이면 confirmBizEligibility에서 종료 화면으로. */}
+              {curStep.type === "bizEligibility" && (() => {
+                const subs = curStep.subs || [];
+                const canNext = !!form.businessType && subs.every((s) => !!groupTemp[s.key]);
                 return (
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-4">
+                    {/* 1) 사업자 구분 (예비창업자 → 개인사업자 → 법인사업자) */}
                     <div>
                       <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
                         사업자 구분
                       </p>
                       <div className="grid grid-cols-3 gap-2">
-                        {["개인사업자", "법인사업자", "예비"].map((t) => {
+                        {["예비", "개인사업자", "법인사업자"].map((t) => {
                           const active = form.businessType === t;
                           const label = t === "예비" ? "예비창업자" : t;
                           return (
@@ -1238,9 +1251,33 @@ export default function DiagnosisChat() {
                         </p>
                       )}
                     </div>
+                    {/* 2) 신청 자격 확인 (회생·파산 / 세금 완납) */}
+                    {subs.map((sub) => (
+                      <div key={sub.key}>
+                        <p className="mb-1.5 break-keep px-1 text-sm font-semibold text-brand-dark">{sub.label}</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {(sub.opts || ["예", "아니요"]).map((o) => {
+                            const active = groupTemp[sub.key] === o;
+                            return (
+                              <button
+                                key={o}
+                                onClick={() => pickGroup(sub.key, o)}
+                                className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                                  active
+                                    ? "border-brand-orange bg-brand-grad text-brand-dark"
+                                    : "border-white bg-white text-brand-dark hover:border-brand-orange"
+                                }`}
+                              >
+                                {o}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
                     <button
-                      onClick={confirmBizTypeStep}
-                      disabled={!form.businessType}
+                      onClick={confirmBizEligibility}
+                      disabled={!canNext}
                       className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                     >
                       다음 →
