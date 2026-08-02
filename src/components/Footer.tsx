@@ -28,7 +28,7 @@ const CHANNELS = [
   { href: "https://www.instagram.com/ppfa25", label: "인스타그램", svg: SI.instagram, hover: "hover:border-[#E1306C]/70 hover:bg-[#E1306C]/15 hover:text-[#E1306C]" },
   { href: "https://www.threads.com/@ppfa25", label: "스레드", svg: SI.threads, hover: "hover:border-white/60 hover:bg-white/10 hover:text-white" },
   { href: "https://pf.kakao.com/_VxfWxan/chat", label: "카카오톡 상담", svg: SI.kakaotalk, hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
-  { href: "https://pf.kakao.com/_VxfWxan", label: "카카오톡 채널", svg: SI.kakaotalk, hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
+  { href: "https://pf.kakao.com/_VxfWxan", label: "카카오톡 채널", fa: "fa-solid fa-bullhorn", hover: "hover:border-[#FEE500]/70 hover:bg-[#FEE500]/15 hover:text-[#FEE500]" },
   { href: "https://link.inpock.co.kr/ppfa25", label: "인포크링크", fa: "fa-solid fa-link", hover: "hover:border-brand-orange/70 hover:bg-brand-orange/15 hover:text-brand-orange" },
 ];
 
