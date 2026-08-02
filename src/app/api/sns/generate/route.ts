@@ -223,7 +223,7 @@ export async function POST(req: NextRequest) {
 - 제목(kakao-title): 20자 내외, 혜택/마감이 드러나는 짧은 후킹 제목. 기호 없이.
 - 본문: "안녕하세요 대표님" 짧은 정중체. 5~8줄, 줄바꿈 많이. 맨 위 한 줄 후킹. 핵심 혜택(30초, 무료, 수수료0원) 압축. 자사도메인 ${linkHome} 노출. 이모지 최소화, 기호 금지. 해시태그 없음.
 
-【당근 - 동네생활】
+【당근 비즈프로필 - 동네생활】
 - 톤: 친근한 해요체. 단, 우리는 "정보를 정리해 알려주는 모두의사업친구 계정"임을 숨기지 말 것. "저도 알아보다 알게 됐다" 같은 제3자 위장 절대 금지. 대신 "저희가 이 지역 사장님들 위해 정리해드려요" 같은 다정하지만 정직한 톤.
 - 제목(daangn-title): 20자 내외, 이웃이 궁금해할 제목. 기호 없이.
 - 본문: 지역명(${region || "우리 동네"}) 언급으로 지역 관련성. 광고 카피 느낌 줄이고 정보 위주로 편하게. 자사도메인 ${linkHome} 한 번 자연스럽게. 기호 금지, 이모지 최소화.
@@ -234,6 +234,11 @@ export async function POST(req: NextRequest) {
 ━━━━━━━━━━━━━━━━━━━━━━━━
 {
   "channels": [
+    { "channel": "네이버 블로그", "emoji": "📝", "depth": "심층", "blocks": [
+      { "key": "blog-title", "label": "제목 (검색 최적화)", "text": "..." },
+      { "key": "blog-body", "label": "본문 (오프닝3줄+질문후킹+섹션+핵심정리+CTA, 사진 구간 포함)", "hint": "우리 블로그 표준 구조, 기호 없이", "text": "안녕하세요 대표님!\\n정부지원사업 AI 통합 매칭 플랫폼\\n모두의사업친구입니다.\\n\\n..." },
+      { "key": "blog-tags", "label": "태그 12~15개", "text": "#... #모두의사업친구 #모사친" }
+    ] },
     { "channel": "인스타그램", "emoji": "📸", "depth": "심층", "blocks": [
       { "key": "ig-cards", "label": "캐러셀 카드 8장 (사진 구간 포함)", "hint": "카드1 표지부터 카드8 CTA까지", "text": "[카드1 - 표지]\\n[사진① ...]\\n후킹 문구\\n\\n[카드2]\\n..." },
       { "key": "ig-caption", "label": "캡션 (저장/공유 유도 포함)", "text": "..." },
@@ -243,16 +248,11 @@ export async function POST(req: NextRequest) {
       { "key": "th-chain", "label": "본문 + 이어달기 (각 500자 이내)", "hint": "[1/5]부터 순서 표시, 댓글 유도로 마무리", "text": "[1/5]\\n첫 줄 강한 훅\\n...\\n\\n[2/5]\\n..." },
       { "key": "th-hashtags", "label": "해시태그 (3~5개)", "text": "#정부지원사업 #모두의사업친구 #..." }
     ] },
-    { "channel": "네이버 블로그", "emoji": "📝", "depth": "심층", "blocks": [
-      { "key": "blog-title", "label": "제목 (검색 최적화)", "text": "..." },
-      { "key": "blog-body", "label": "본문 (오프닝3줄+질문후킹+섹션+핵심정리+CTA, 사진 구간 포함)", "hint": "우리 블로그 표준 구조, 기호 없이", "text": "안녕하세요 대표님!\\n정부지원사업 AI 통합 매칭 플랫폼\\n모두의사업친구입니다.\\n\\n..." },
-      { "key": "blog-tags", "label": "태그 12~15개", "text": "#... #모두의사업친구 #모사친" }
-    ] },
     { "channel": "카카오톡 채널", "emoji": "💬", "depth": "간단", "blocks": [
       { "key": "kakao-title", "label": "소식 제목 (20자 내외, 클릭 유도)", "text": "..." },
       { "key": "kakao", "label": "카카오 메시지 (짧고 강하게)", "text": "..." }
     ] },
-    { "channel": "당근", "emoji": "🥕", "depth": "간단", "blocks": [
+    { "channel": "당근 비즈프로필", "emoji": "🥕", "depth": "간단", "blocks": [
       { "key": "daangn-title", "label": "제목 (20자 내외)", "text": "..." },
       { "key": "daangn", "label": "당근 동네생활 글", "text": "..." },
       { "key": "daangn-hashtags", "label": "해시태그 (3~5개)", "text": "#..." }
