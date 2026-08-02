@@ -55,6 +55,8 @@ type StepType =
   | "text"
   | "phone"
   | "bno"
+  | "bizType" // 사업자 구분(개인/법인/예비)만 받는 맨 앞 스텝(대표님 요청: 번호·연락처는 맨 뒤로)
+  | "bnoContact" // 사업자번호 + 성함 + 연락처를 한 화면에서(맨 마지막·결과 직전)
   | "region"
   | "contact" // 성함 + 연락처를 한 스텝에서 입력
   | "yesnoGroup" // 예/아니요 문항 여러 개를 한 스텝에서(각각 라디오)
@@ -110,20 +112,19 @@ const CHAT_STEPS: ChatStep[] = [
   //   → (1) 사업자번호·구분 → (2) 자격확인 → (3) 성함·연락처(신설) 순.
   //   이렇게 하면 탈락자에게는 개인정보를 요구하지 않아 이탈·컴플레인이 줄어든다.
   {
-    key: "bno",
-    type: "bno",
-    // ★ 대표님 요청 ★ 3개 블록을 '빈 줄'로 구분(말풍선 안에서 문단이 벌어지게 \n\n 사용).
-    //   botLines는 join("\n")으로 이어지므로, 문단 사이 빈 줄은 각 항목 끝에 "" 한 줄을 넣어 만든다.
+    // ★ 순서 개편 (대표님 요청) ★ 맨 앞에서는 '사업자 구분'만 가볍게 받는다.
+    //   (사업자번호·성함·연락처는 진단을 다 마친 '맨 뒤'로 이동 → 초반 이탈 방지)
+    //   사업자 구분(businessType)은 뒤 자본잠식(법인 전용) 판정에 필요하므로 앞에 남긴다.
+    key: "bizType",
+    type: "bizType",
     botLines: [
       "그럼 시작해 볼게요! 👇",
       "",
-      "하단에 사업자등록번호와\n사업자 구분을 알려주세요.",
+      "먼저 사업자 구분만\n알려주세요.",
       "",
-      "국세청에 정상 등록 후\n운영중인 사업자인지\n확인하는 절차예요.",
+      "사업자등록번호와 연락처는\n진단이 끝난 뒤 마지막에\n한 번만 여쭤볼게요.",
     ],
-    // Q. 제목은 말풍선 첫 줄('그럼 시작해 볼게요!') 대신 이 문구로 표시.
-    questionHead: "사업자등록번호 및 사업자 구분 👇",
-    placeholder: BNO_TEXT.placeholder,
+    questionHead: "사업자 구분을 선택해 주세요 👇",
   },
   // 결격사유(회생·파산 + 세금완납)를 한 질문으로 합침
   //  ★ 대표님 요청 ★ 여기서 '파산·회생 중' 또는 '세금 미납/체납'이면 탈락 → 종료 화면으로.
@@ -137,15 +138,8 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "taxDelinquent", label: "국세·지방세는 완납 상태이신가요?", opts: STEP3_FIELDS.taxDelinquent.opts },
     ],
   },
-  // ★ 성함·연락처(신설·대표님 요청) ★ 자격확인 통과 후에만 받는다.
-  //   국세청 조회로 '✅ 확인 완료'까지 마친 뒤라 심리적 저항이 적다(앵커링).
-  {
-    key: "contact",
-    type: "contact",
-    botLines: [
-      "성함과 연락처를 알려주세요.",
-    ],
-  },
+  // ★ 순서 개편 (대표님 요청) ★ 사업자번호·성함·연락처는 맨 마지막(deepChecks 다음)으로 이동.
+  //   → 아래 CHAT_STEPS 끝의 'bnoContact' 스텝 참고.
   // ★ Q3 대표님 정보(대표님 요청: 자격확인 바로 다음으로 이동) ★
   //   연령대·신용점수를 한 스텝으로 묶는다. 저장 값(age/credit) 동일 → 매칭 결과 불변.
   {
@@ -270,8 +264,22 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중이에요", desc: "예: 투자유치 실적 보유중인 기업인 경우" },
     ],
   },
-  // ★ 대표님 요청 ★ 마지막 '전화 무료 상담 원하시나요?'(phoneConsult) 질문 제거.
-  //   deepChecks 이후 곧바로 finish()로 진단이 마무리됨(askStep이 인덱스 초과 시 finish 호출).
+  // ★ 순서 개편 (대표님 요청) ★ 진단을 다 마친 '맨 마지막'에 사업자번호·성함·연락처를 한 화면에서 받는다.
+  //   이미 모든 질문에 답한 상태(매몰비용)라 이탈이 크게 줄고, 국세청 조회가 실패해도(A안)
+  //   결과는 그대로 보여주고 연락처는 저장한다. 여기서 savePartial로 리드가 확보된다.
+  {
+    key: "bnoContact",
+    type: "bnoContact",
+    botLines: [
+      "거의 다 됐어요! 🎉",
+      "",
+      "진단 결과를 정리하고 있어요.",
+      "",
+      "결과를 안내해드릴 수 있도록\n사업자등록번호와\n성함·연락처만 알려주세요.",
+    ],
+    questionHead: "사업자등록번호 · 성함 · 연락처 👇",
+    placeholder: BNO_TEXT.placeholder,
+  },
 ];
 
 // 진행률·안내에 쓰는 '실제로 답하는' 스텝 수
@@ -444,8 +452,8 @@ export default function DiagnosisChat() {
     const bubbleText = rawLines.some((l) => l === "")
       ? rawLines.join("\n") // 빈 줄 의도 → 그대로 유지
       : rawLines.filter(Boolean).join("\n");
-    // ★ bno(첫 스텝) 안내는 인트로 말풍선과 가로 폭을 동일(wide)하게 맞춘다.
-    pushBotLines([bubbleText], undefined, CHAT_STEPS[vi].type === "bno");
+    // ★ bizType(첫 스텝)·bnoContact(마지막) 안내는 인트로 말풍선과 가로 폭을 동일(wide)하게 맞춘다.
+    pushBotLines([bubbleText], undefined, CHAT_STEPS[vi].type === "bizType" || CHAT_STEPS[vi].type === "bnoContact");
   };
 
   // ── 이전 질문으로 되돌아가기(답변 수정) ──
@@ -502,15 +510,31 @@ export default function DiagnosisChat() {
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
-  // ★ 사업자번호·구분(bno 스텝) 확정 → 자격확인으로. (대표님 요청: 성함·연락처는 뒤로 분리) ★
-  const confirmBnoStep = () => {
-    // 사업자 구분(예비/개인/법인) 미선택 시 진행 차단
-    if (!form.businessType) return;
+  // ★ 순서 개편 (대표님 요청) ★ 맨 앞 사업자구분(bizType 스텝) 확정 → 자격확인으로.
+  //   사업자번호·성함·연락처는 맨 마지막(bnoContact)에서 받으므로 여기선 구분만 확정한다.
+  const confirmBizTypeStep = () => {
+    if (!form.businessType) return; // 구분(개인/법인/예비) 미선택 시 차단
+    const next: any = { ...form };
+    setForm(next);
+    const label = next.businessType === "예비" ? "예비창업자" : next.businessType;
+    setMessages((m) => [...m, { who: "user", text: label }]);
+    setTimeout(() => askStep(stepIdx + 1, next), 380);
+  };
+
+  // ★ 순서 개편 (대표님 요청) ★ 맨 마지막(bnoContact 스텝) 확정 — 사업자번호+성함+연락처 한 번에.
+  //   국세청 조회가 실패해도(A안) 번호만 입력됐으면 그대로 접수하고 진단 결과로 진행한다.
+  //   성함·연락처 확보 시 savePartial로 리드를 저장한다.
+  const confirmBnoContact = () => {
     const isPre = form.businessType === "예비";
+    const name = nameTemp.trim();
+    const phone = phoneTemp.trim();
+    const phoneDigits = phone.replace(/[^0-9]/g, "");
+    if (!name || phoneDigits.length < 10) return; // 성함·연락처는 필수
     const bnoDigits = textTemp.replace(/[^0-9]/g, "");
     // 예비창업자가 아니면 사업자번호가 (조회완료 or 10자리 입력) 준비돼야 진행
     if (!isPre && !form.bno && bnoDigits.length !== 10) return;
-    const next: any = { ...form };
+    const next: any = { ...form, name, phone };
+    // 국세청 조회 없이 번호만 입력한 경우: 그대로 접수(미조회 표시). (A안)
     if (!isPre && !form.bno && bnoDigits.length === 10) {
       next.bno = bnoDigits;
       if (!form.bnoVerified) {
@@ -520,27 +544,9 @@ export default function DiagnosisChat() {
       }
     }
     setForm(next);
-    const bnoLabel = next.bno
-      ? `사업자번호 ${next.bno} · `
-      : next.businessType === "예비"
-      ? "예비창업자"
-      : "";
-    const bizTypeLabel =
-      next.businessType && next.businessType !== "예비" ? `${next.businessType}` : "";
-    setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${bizTypeLabel}`.replace(/ · $/, "") }]);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
-  };
-
-  // 성함 + 연락처(한 스텝) 확정 — ★ 자격확인 통과 후 신설 스텝(대표님 요청) ★
-  const confirmContact = () => {
-    const name = nameTemp.trim();
-    const phone = phoneTemp.trim();
-    const digits = phone.replace(/[^0-9]/g, "");
-    if (!name || digits.length < 10) return;
-    const next: any = { ...form, name, phone };
-    setForm(next);
-    setMessages((m) => [...m, { who: "user", text: `${name} · ${phone}` }]);
-    savePartial(next); // 성함·연락처 확보 시 부분 리드 저장(기존 폼과 동일 전략)
+    const bnoLabel = next.bno ? `사업자번호 ${next.bno} · ` : isPre ? "예비창업자 · " : "";
+    setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${name} · ${phone}` }]);
+    savePartial(next); // 성함·연락처 확보 시 부분 리드 저장(영업 명단)
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
@@ -738,15 +744,8 @@ export default function DiagnosisChat() {
     setBnoMsg({ tone: "ok", text: "✅ 사업자등록번호가 접수되었어요. 자동확인은 추후 처리됩니다." });
   };
 
-  // 예비창업자(사업자번호 없이 진행) — businessType='예비'로 세팅 후 bno 스텝 건너뜀
-  const choosePreStartup = () => {
-    // ★ 예비창업자: 사업자번호 섹션을 인라인 배너로 접고(businessType='예비'), 성함·연락처는
-    //   같은 화면에 계속 노출 → '입력 완료 →'로 진행(대표님 요청: 한 화면 묶음).
-    setForm((f: any) => ({ ...f, businessType: "예비", bno: "", bnoVerified: false }));
-    setBnoMsg(null);
-    setBnoServerDown(false);
-    setTextTemp("");
-  };
+  // ★ 순서 개편(대표님 요청) ★ 예비창업자 선택은 맨 앞 bizType 화면의 '예비창업자' 칩으로 대체됨.
+  //   (기존 choosePreStartup 인라인 버튼은 제거)
 
   // 부분 리드 저장(관리자 계정 제외)
   const savePartial = async (f: any) => {
@@ -1206,25 +1205,66 @@ export default function DiagnosisChat() {
                 </div>
               )}
 
-              {/* ★ 사업자등록번호 + 성함 + 연락처를 '한 화면'에서 함께(대표님 요청) ★
-                  기존엔 조회/예비창업자 확정 후에야 성함·연락처가 나타나(순차형) 대표님이
-                  "묶어달라"고 재요청 → 세 가지를 처음부터 동시에 보여주도록 변경.
-                  · 사업자등록번호: 입력 + 국세청 조회(선택). 예비창업자면 조회 없이 진행.
-                  · 성함·연락처: 항상 함께 노출.
-                  · '입력 완료 →' 하나로 (조회했으면 조회값 포함) 전부 저장하고 다음으로. */}
-              {curStep.type === "bno" && (() => {
-                const bnoDigits = textTemp.replace(/[^0-9]/g, "").length;
-                const bnoReady = bnoDigits === 10;
-                const isPre = form.businessType === "예비"; // 예비창업자면 사업자번호 입력칸 숨김
-                // 사업자번호는 (a)조회 완료(bnoVerified/접수) (b)10자리 입력 (c)예비창업자 중 하나면 OK
-                const bnoOk = isPre || form.bnoVerified || form.bno || bnoReady;
-                // ★ 대표님 요청 Q1 ★ 사업자 구분(예비/개인/법인)을 이 화면에서 확정.
-                //   예비는 '예비창업자' 버튼으로, 개인/법인은 아래 선택칩으로 세팅.
-                //   구분이 정해져야 '입력 완료 →' 활성화(뒤 자본잠식 판정에도 필요).
-                const bizTypeOk = !!form.businessType; // '예비' | '개인사업자' | '법인사업자'
+              {/* ★ 순서 개편 (대표님 요청) ★ 맨 앞: '사업자 구분'만 (개인/법인/예비).
+                  사업자번호·성함·연락처는 진단을 다 마친 뒤 맨 마지막(bnoContact)에서 받는다.
+                  businessType은 뒤 자본잠식(법인 전용) 판정에 필요하므로 여기서 확정한다. */}
+              {curStep.type === "bizType" && (() => {
                 return (
                   <div className="flex flex-col gap-3">
-                    {/* 1) 사업자등록번호 */}
+                    <div>
+                      <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
+                        사업자 구분
+                      </p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {["개인사업자", "법인사업자", "예비"].map((t) => {
+                          const active = form.businessType === t;
+                          const label = t === "예비" ? "예비창업자" : t;
+                          return (
+                            <button
+                              key={t}
+                              onClick={() => setForm((f: any) => ({ ...f, businessType: t }))}
+                              className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                                active
+                                  ? "border-brand-orange bg-brand-grad text-brand-dark"
+                                  : "border-white bg-white text-brand-dark hover:border-brand-orange"
+                              }`}
+                            >
+                              {label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {form.businessType === "예비" && (
+                        <p className="mt-2 break-keep rounded-xl bg-brand-orange/10 px-4 py-2.5 text-xs leading-relaxed text-brand-dark">
+                          ✅ 예비창업자로 진행할게요. 창업 준비 단계에 맞는 지원도 함께 찾아드려요.
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      onClick={confirmBizTypeStep}
+                      disabled={!form.businessType}
+                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                    >
+                      다음 →
+                    </button>
+                  </div>
+                );
+              })()}
+
+              {/* ★ 순서 개편 (대표님 요청) ★ 맨 마지막: 사업자번호 + 성함 + 연락처를 한 화면에서.
+                  예비창업자는 사업자번호 입력을 건너뛴다. 국세청 조회가 실패해도(A안) 진단은 계속 진행하고
+                  연락처를 저장한다. 여기서 confirmBnoContact가 savePartial(리드 저장)까지 처리한다. */}
+              {curStep.type === "bnoContact" && (() => {
+                const isPre = form.businessType === "예비"; // 예비창업자면 사업자번호 입력칸 숨김
+                const bnoReady = textTemp.replace(/[^0-9]/g, "").length === 10;
+                const contactReady =
+                  nameTemp.trim().length > 0 && phoneTemp.replace(/[^0-9]/g, "").length >= 10;
+                // 진행 가능: (예비 or 사업자번호 준비됨) AND 성함·연락처 준비됨
+                const bnoOk = isPre || form.bnoVerified || form.bno || bnoReady;
+                const canSubmit = bnoOk && contactReady;
+                return (
+                  <div className="flex flex-col gap-3">
+                    {/* 1) 사업자등록번호 (예비창업자는 생략) */}
                     {!isPre && (
                       <div>
                         <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
@@ -1239,25 +1279,18 @@ export default function DiagnosisChat() {
                             onChange={(e) => setTextTemp(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && bnoReady && checkBno()}
                             placeholder={curStep.placeholder}
-                            autoFocus
                             className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                           />
                           <button
                             onClick={checkBno}
                             disabled={bnoLoading || !bnoReady}
-                            className={`flex-1 shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
+                            className={`shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
                               bnoReady ? "bg-brand-grad shadow-sm" : "bg-brand-orange/25 text-brand-dark/40"
                             }`}
                           >
                             {bnoLoading ? "조회 중…" : "국세청 조회 →"}
                           </button>
                         </div>
-                        <button
-                          onClick={choosePreStartup}
-                          className="mt-2 w-full rounded-full border border-brand-orange bg-white py-2.5 text-sm font-bold text-brand-orange transition hover:bg-brand-orange/5"
-                        >
-                          아직 사업자등록 전이에요 (예비창업자)
-                        </button>
                         {bnoMsg && (
                           <div className={`mt-2 rounded-xl px-4 py-2.5 text-xs leading-relaxed ${
                             bnoMsg.tone === "err" ? "bg-brand-red/10 text-brand-red" : bnoMsg.tone === "ok" ? "bg-brand-green/10 text-brand-dark" : "bg-brand-orange/10 text-brand-dark"
@@ -1270,67 +1303,16 @@ export default function DiagnosisChat() {
                             )}
                           </div>
                         )}
-                      </div>
-                    )}
-                    {isPre && (
-                      <div className="rounded-xl bg-brand-orange/10 px-4 py-2.5 text-xs leading-relaxed text-brand-dark">
-                        ✅ 예비창업자로 진행할게요. 창업 준비 단계에 맞는 지원도 함께 찾아드려요.{" "}
-                        <button
-                          onClick={() => setForm((f: any) => ({ ...f, businessType: "" }))}
-                          className="font-bold text-brand-orange underline"
-                        >
-                          사업자번호 입력으로 되돌리기
-                        </button>
+                        {/* ★ A안(대표님 확정) ★ 조회를 안 해도(번호만 입력해도) 진단은 계속 진행된다는 안내. */}
+                        {!bnoMsg && bnoReady && !form.bnoVerified && (
+                          <p className="mt-2 break-keep px-1 text-[11px] leading-relaxed text-brand-gray">
+                            국세청 조회 없이 번호만 입력해도 결과 확인은 가능해요.
+                          </p>
+                        )}
                       </div>
                     )}
 
-                    {/* ★ 대표님 요청 Q1 ★ 사업자 구분(개인/법인) — 예비창업자가 아닐 때만 노출.
-                        (예비창업자는 위 '예비창업자' 버튼으로 businessType='예비'가 세팅됨) */}
-                    {!isPre && (
-                      <div>
-                        <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
-                          사업자 구분
-                        </p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {["개인사업자", "법인사업자"].map((t) => {
-                            const active = form.businessType === t;
-                            return (
-                              <button
-                                key={t}
-                                onClick={() => setForm((f: any) => ({ ...f, businessType: t }))}
-                                className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
-                                  active
-                                    ? "border-brand-orange bg-brand-grad text-brand-dark"
-                                    : "border-white bg-white text-brand-dark hover:border-brand-orange"
-                                }`}
-                              >
-                                {t}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 3) 다음으로 (사업자번호/구분 준비되면 활성화)
-                        ★ 성함·연락처는 자격확인 통과 후 별도 스텝으로 분리됨(대표님 요청) ★ */}
-                    <button
-                      onClick={confirmBnoStep}
-                      disabled={!bnoOk || !bizTypeOk}
-                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
-                    >
-                      다음 →
-                    </button>
-                  </div>
-                );
-              })()}
-
-              {/* ★ 성함·연락처 스텝(신설·대표님 요청) ★ 자격확인 통과 후에만 노출 */}
-              {curStep.type === "contact" && (() => {
-                const contactReady =
-                  nameTemp.trim().length > 0 && phoneTemp.replace(/[^0-9]/g, "").length >= 10;
-                return (
-                  <div className="flex flex-col gap-3">
+                    {/* 2) 성함 · 연락처 */}
                     <div>
                       <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
                         성함 · 연락처
@@ -1341,7 +1323,6 @@ export default function DiagnosisChat() {
                           value={nameTemp}
                           onChange={(e) => setNameTemp(e.target.value)}
                           placeholder={CONTACT_TEXT.namePlaceholder}
-                          autoFocus
                           className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
                         <input
@@ -1349,7 +1330,7 @@ export default function DiagnosisChat() {
                           inputMode="numeric"
                           value={phoneTemp}
                           onChange={(e) => setPhoneTemp(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && contactReady && confirmContact()}
+                          onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
                           placeholder={CONTACT_TEXT.phonePlaceholder}
                           className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
                         />
@@ -1360,11 +1341,11 @@ export default function DiagnosisChat() {
                       </p>
                     </div>
                     <button
-                      onClick={confirmContact}
-                      disabled={!contactReady}
+                      onClick={confirmBnoContact}
+                      disabled={!canSubmit}
                       className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                     >
-                      입력 완료 →
+                      진단 결과 확인하기 →
                     </button>
                   </div>
                 );
