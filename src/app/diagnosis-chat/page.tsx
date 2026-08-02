@@ -143,8 +143,7 @@ const CHAT_STEPS: ChatStep[] = [
     key: "contact",
     type: "contact",
     botLines: [
-      "자격 확인이 끝났어요! 👍",
-      "결과를 보내드릴 성함과\n연락처를 알려주세요.",
+      "성함과 연락처를 알려주세요.",
     ],
   },
   // ★ Q3 대표님 정보(대표님 요청: 자격확인 바로 다음으로 이동) ★
@@ -167,7 +166,7 @@ const CHAT_STEPS: ChatStep[] = [
   {
     key: "bizGroup",
     type: "multiGroup",
-    botLines: ["사업장 업종 및 지역을 알려주세요."],
+    botLines: ["사업자 업종 및 지역을 알려주세요."],
     subs: [
       {
         key: "industries",
