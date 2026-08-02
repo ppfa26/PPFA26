@@ -253,9 +253,9 @@ export default function SnsHubPage() {
               </Link>
             </div>
             <p className="mt-2 text-sm text-gray-500">
-              공고 <b>링크</b>나 <b>내용</b>을 붙여넣고 버튼만 누르면, AI가 5개 채널
-              글을 자동으로 써줍니다. 각 블록의 <b>복사</b> 버튼으로 그대로
-              붙여넣으면 끝.
+              공고 <b>링크</b>나 <b>내용</b>을 붙여넣고 버튼만 누르면, AI가{" "}
+              <b>네이버 블로그</b> 글을 자동으로 써줍니다. 각 블록의{" "}
+              <b>복사</b> 버튼으로 그대로 붙여넣으면 끝.
             </p>
           </header>
 
@@ -337,7 +337,7 @@ export default function SnsHubPage() {
                 ) : justDone ? (
                   <>✨ 글 완성</>
                 ) : (
-                  <>✨ 5채널 글 만들기</>
+                  <>✨ 블로그 글 만들기</>
                 )}
               </button>
             </div>
@@ -432,7 +432,7 @@ export default function SnsHubPage() {
           {/* 4) 채널별 업로드 설명서 + 썸네일 규칙 */}
           <section id="sns-upload-guide" className="mb-10">
             <h2 className="mb-3 text-base font-bold text-gray-900">
-              4. 채널별 올리는 방법 &amp; 썸네일 (처음이면 꼭 읽어주세요)
+              4. 블로그 올리는 방법 &amp; 썸네일 (처음이면 꼭 읽어주세요)
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {UPLOAD_GUIDES.map((g) => (
