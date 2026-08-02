@@ -61,3 +61,23 @@ Keep bottom logo "모두의사업친구" unchanged. All Korean text perfectly sp
 - Card6: 중앙 "신청은 온라인으로" / 서브 "국가문화예술지원시스템(NCAS) 접수"
 - Card7: 중앙 "한도 · 금리 · 서류" / 서브 "자세한 내용은 공고문에서 확인"
 - Card8(CTA): 뱃지 "무료 AI 진단" / 중앙 "내 사업 맞춤 공고 / 30초 만에 정리" / 서브 "오픈 베타 무료" / + 별점 + 모두의사업친구.kr
+
+## 인천 중소기업 육성자금 8차 캠페인 8장 (2026-08 진행분)
+> bizinfo 공고 PBLN_000000000124861 / 수행기관 인천테크노파크(032-260-0662,0663,0664) / 신청 비즈오케이(BizOK) / 예산 소진 시까지
+> 서브텍스트의 나열은 가운뎃점(·) 대신 쉼표로 표기(무심볼 원칙).
+- Card1(대표): 뱃지 "인천 중소기업 육성자금" / 중앙 "인천 중소기업 / 사장님 주목" / 서브 "2026년 8차 지원 안내"
+  - 완성본: https://www.genspark.ai/api/files/s/ozhAbU6h (틀=FDRfm0LU)
+- Card2: 중앙 "2026년 8차 / 인천 중소기업 육성자금" / 서브 "예산 소진 시까지 접수"
+  - 완성본: https://www.genspark.ai/api/files/s/E7NLC6R0
+- Card3: 중앙 "누가 신청하나요?" / 서브 "경영안정자금 잔여한도 보유 기업"
+  - 완성본: https://www.genspark.ai/api/files/s/rSYnCqMI
+- Card4: 중앙 "어디에 쓰나요?" / 서브 "기계구입, 공장확보, 벤처창업"
+  - 완성본: https://www.genspark.ai/api/files/s/pPJgZrqo
+- Card5: 중앙 "이런 자금도" / 서브 "에너지효율화, 재해기업, 기술이전"
+  - 완성본: https://www.genspark.ai/api/files/s/NxN4lTJn
+- Card6: 중앙 "신청은 온라인으로" / 서브 "비즈오케이(BizOK) 접수"
+  - 완성본: https://www.genspark.ai/api/files/s/GF1e70rC
+- Card7: 중앙 "자세한 내용은 / 공고문에서 확인" / 서브 "한도 금리 서류" (뱃지 "한도 금리 서류")
+  - 완성본: https://www.genspark.ai/api/files/s/wt8gy5wK
+- Card8(CTA): 뱃지 "무료 AI 진단" / 중앙 "내 사업 맞춤 공고 / 30초 만에 정리" / 서브 "오픈 베타 무료" / + 별점 + 모두의사업친구.kr (틀=LXPWrRKX)
+  - 완성본: https://www.genspark.ai/api/files/s/lIwZXlwJ
