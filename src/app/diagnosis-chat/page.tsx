@@ -1227,7 +1227,7 @@ export default function DiagnosisChat() {
                         사업자 구분
                       </p>
                       <div className="grid grid-cols-3 gap-2">
-                        {["예비", "개인사업자", "법인사업자"].map((t) => {
+                        {["개인사업자", "법인사업자", "예비"].map((t) => {
                           const active = form.businessType === t;
                           const label = t === "예비" ? "예비창업자" : t;
                           return (
