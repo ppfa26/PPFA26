@@ -179,14 +179,21 @@ const DESKTOP_VIEWPORT_SCRIPT = `
         vp.setAttribute('name', 'viewport');
         document.head.appendChild(vp);
       }
+      // ★★ [핵심 버그 수정] 진짜 기기폭 판정 ★★
+      //  예전엔 innerWidth 만 봤는데, width=820 을 적용한 뒤 apply() 가 재실행되면
+      //  innerWidth 가 820 으로 '오염'된다. 이때 deviceW 캐시가 아직 비어 있으면(타이밍)
+      //  w=820 이 되어 "진짜 PC"로 오판 → 모바일인데도 width=device-width 로 되돌아가
+      //  데스크톱 강제가 풀려버리는 문제가 있었다(모바일에서 PC버전이 안 보임).
+      //  → window.screen.width 는 viewport 메타 변경과 무관한 '물리 화면폭'이라 절대
+      //    오염되지 않는다. 이것을 기기폭 판정의 1순위 기준으로 삼아 확실하게 모바일을 감지한다.
+      var screenW = (window.screen && window.screen.width) ? window.screen.width : 0;
       var iw = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
-      // 진짜 기기폭 캐시(가장 작은 유효값 채택).
-      //  820 강제 후 재실행 때 iw 는 820 으로 오염되므로 < DESKTOP_WIDTH 값만 신뢰한다.
-      //  첫 실행이 타이밍상 부정확했더라도, 이후 실행에서 더 작은(진짜) 기기폭이 잡히면 갱신 →
-      //  "간혹 잘못된 값으로 굳는" 문제를 방지한다.
-      if (iw > 0 && iw < DESKTOP_WIDTH && (deviceW === 0 || iw < deviceW)) deviceW = iw;
-      // 이후에는 캐시된 물리 기기폭을 우선 사용(없으면 현재 innerWidth).
-      var w = deviceW > 0 ? deviceW : iw;
+      // 오염되지 않는 물리 화면폭(screenW)을 최우선으로 캐시. 없으면 innerWidth 폴백.
+      var trueW = (screenW > 0 && screenW < DESKTOP_WIDTH) ? screenW
+                : (iw > 0 && iw < DESKTOP_WIDTH) ? iw : 0;
+      if (trueW > 0 && (deviceW === 0 || trueW < deviceW)) deviceW = trueW;
+      // 판정 기준: 캐시된 진짜 기기폭 > 오염 안 된 screenW > innerWidth 순.
+      var w = deviceW > 0 ? deviceW : (screenW > 0 ? screenW : iw);
       if (isExcluded() || w >= DESKTOP_WIDTH) {
         // 진짜 PC/태블릿 또는 입력 페이지 → 표준 반응형(확대 강제 없음, 핀치 줌 허용)
         vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
