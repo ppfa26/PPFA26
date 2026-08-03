@@ -14,6 +14,15 @@
 
 html {
   scroll-behavior: smooth;
+  /* ★ 하단 스크롤 잘림 방지 ★
+     width=820 축소(데스크톱 강제) 방식에서 일부 모바일 브라우저는 스크롤 컨테이너와
+     스크롤 가능 높이를 모호하게 계산해 페이지 끝까지 안 내려가는 경우가 있다.
+     html 을 명시적 스크롤 컨테이너(overflow-y:auto)로 두고 높이를 콘텐츠에 맞게(auto)
+     풀어두면 브라우저가 전체 문서 높이를 스크롤 영역으로 정확히 인식한다. */
+  height: auto;
+  overflow-y: auto;
+  /* iOS 관성 스크롤(모멘텀) 보장 */
+  -webkit-overflow-scrolling: touch;
 }
 
 body {

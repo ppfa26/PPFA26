@@ -193,10 +193,15 @@ const DESKTOP_VIEWPORT_SCRIPT = `
         return;
       }
       // 모바일 → 820px PC 페이지를 기기 화면폭에 딱 맞게 축소해서 통째로 표시(잘림 0)
-      //  ★ 반드시 내림(floor) ★ : 반올림하면 scale 이 실제보다 커져 820*scale > 기기폭 이 되고
-      //   페이지가 화면보다 넓어져 오른쪽이 잘린다. 내림하면 scale*820 <= 기기폭 이라 잘림 0.
-      var scale = Math.floor((w / DESKTOP_WIDTH) * 1000) / 1000;
-      vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', initial-scale=' + scale + ', maximum-scale=5, user-scalable=yes');
+      //  ★★ 스크롤 하단 잘림(안 내려감) 버그 수정 ★★
+      //   예전엔 initial-scale 을 직접 계산해 넣었는데(width=820, initial-scale=0.475 …),
+      //   iOS 사파리·삼성인터넷은 initial-scale 이 '명시'되면 '비주얼 뷰포트' 높이를 그 스케일
+      //   기준으로 고정해버린다. 그 결과 레이아웃 뷰포트 높이가 실제 콘텐츠보다 짧게 잡혀
+      //   페이지 하단 일부가 스크롤 영역 밖으로 밀려 "끝까지 안 내려가는" 버그가 생겼다.
+      //   → width=820 만 지정하고 initial-scale 은 브라우저 자동 계산에 맡기면(생략),
+      //     브라우저가 820 폭에 맞춰 스케일·뷰포트 높이를 '일관되게' 계산해 스크롤 영역이 정확해진다.
+      //     (width=<고정폭> 방식의 표준 권장법. 잘림 0 + 하단까지 정상 스크롤 동시 달성.)
+      vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', maximum-scale=5, user-scalable=yes');
     } catch (e) {}
   }
   // ★ 안정적 재적용 ★
