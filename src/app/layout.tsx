@@ -265,7 +265,7 @@ const DESKTOP_VIEWPORT_SCRIPT = `
       // 모바일인데 width=820 이 아니면(=하이드레이션이 device-width 로 덮음) 고쳐야 함
       return c.indexOf('width=' + DESKTOP_WIDTH) === -1;
     }
-    if (document.head && typeof MutationObserver !== 'undefined') {
+    if (typeof MutationObserver !== 'undefined') {
       var mo = new MutationObserver(function () {
         if (reapplying) return;
         if (needsFix()) {
@@ -275,8 +275,19 @@ const DESKTOP_VIEWPORT_SCRIPT = `
           setTimeout(function () { reapplying = false; }, 0);
         }
       });
-      mo.observe(document.head, { childList: true, subtree: true, attributes: true, attributeFilter: ['content', 'name'] });
+      // ★ 관찰 대상은 항상 존재하는 <html>(documentElement) 로 잡고 subtree 로 <head> 내부까지 감시.
+      //   document.head 가 인라인 스크립트 실행 시점에 아직 미완성이어도 안전하게 등록된다.
+      //   또한 하이드레이션 직전/직후 어느 타이밍이든 viewport 교체를 놓치지 않는다.
+      mo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['content', 'name'] });
     }
+    // ★ 보강: observer 가 어떤 이유로든 놓칠 때를 대비한 안전망(짧은 폴링).
+    //   하이드레이션 완료까지 넉넉히 몇 초간 주기적으로 needsFix 를 확인해 강제 복원.
+    var polls = 0;
+    var pollIv = setInterval(function () {
+      polls++;
+      if (needsFix()) { reapplying = true; apply(); setTimeout(function () { reapplying = false; }, 0); }
+      if (polls > 40) clearInterval(pollIv); // 약 40 * 150ms = 6초 후 중단
+    }, 150);
   } catch (e) {}
 })();
 `;
