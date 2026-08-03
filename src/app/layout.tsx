@@ -240,6 +240,44 @@ const DESKTOP_VIEWPORT_SCRIPT = `
   window.addEventListener('load', apply);
   // 뒤로/앞으로 가기 캐시(bfcache)로 복원될 때도 다시 적용 (모바일에서 흔한 케이스)
   window.addEventListener('pageshow', apply);
+
+  // ★★★ [진짜 근본 원인 수정] Next.js 하이드레이션이 viewport 를 덮어쓰는 문제 ★★★
+  //  증상: 우리 스크립트가 <head> 에서 viewport 를 width=820 으로 정확히 바꿔도,
+  //        그 직후 Next.js 클라이언트 하이드레이션(viewport export)이 실행되면서
+  //        width=device-width 태그를 '새로 추가'하고 우리가 만든 820 태그를 '제거'해버린다.
+  //        → 최종적으로 device-width 가 승리해 모바일에서 PC(데스크톱) 화면이 안 보였다.
+  //        (setTimeout/rAF/load 는 전부 하이드레이션 '이전'이라 소용없었다.)
+  //  해법: head 를 MutationObserver 로 상시 감시한다. Next.js 든 무엇이든 viewport 태그를
+  //        추가·변경·제거하는 순간을 감지해 즉시 apply() 로 다시 820 을 강제한다.
+  //        이렇게 하면 어느 프레임워크가 언제 개입해도 '항상 우리 값이 최종 승자'가 된다.
+  //        (apply() 는 이미 우리 값이면 그대로 다시 쓸 뿐이라 안전. 아래 가드로 루프도 방지.)
+  try {
+    var reapplying = false;
+    function needsFix() {
+      // 제외 페이지나 진짜 PC 는 device-width 가 정상이므로 고칠 필요 없음
+      if (isExcluded()) return false;
+      var sW = (window.screen && window.screen.width) ? window.screen.width : 0;
+      var iW = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
+      var realW = (sW > 0 && sW < DESKTOP_WIDTH) ? sW : (iW > 0 && iW < DESKTOP_WIDTH ? iW : (deviceW || 0));
+      if (!(realW > 0 && realW < DESKTOP_WIDTH)) return false; // 모바일이 아니면 고치지 않음
+      var vp = document.querySelector('meta[name=viewport]');
+      var c = vp ? (vp.getAttribute('content') || '') : '';
+      // 모바일인데 width=820 이 아니면(=하이드레이션이 device-width 로 덮음) 고쳐야 함
+      return c.indexOf('width=' + DESKTOP_WIDTH) === -1;
+    }
+    if (document.head && typeof MutationObserver !== 'undefined') {
+      var mo = new MutationObserver(function () {
+        if (reapplying) return;
+        if (needsFix()) {
+          reapplying = true;
+          apply();
+          // apply 로 인한 자기 자신의 mutation 은 무시하도록 다음 프레임에 잠금 해제
+          setTimeout(function () { reapplying = false; }, 0);
+        }
+      });
+      mo.observe(document.head, { childList: true, subtree: true, attributes: true, attributeFilter: ['content', 'name'] });
+    }
+  } catch (e) {}
 })();
 `;
 
