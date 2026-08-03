@@ -280,14 +280,19 @@ const DESKTOP_VIEWPORT_SCRIPT = `
       //   또한 하이드레이션 직전/직후 어느 타이밍이든 viewport 교체를 놓치지 않는다.
       mo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['content', 'name'] });
     }
-    // ★ 보강: observer 가 어떤 이유로든 놓칠 때를 대비한 안전망(짧은 폴링).
-    //   하이드레이션 완료까지 넉넉히 몇 초간 주기적으로 needsFix 를 확인해 강제 복원.
+    // ★ 보강: observer 가 어떤 이유로든 놓칠 때를 대비한 안전망(폴링).
+    //   하이드레이션·클라이언트 라우팅은 페이지마다 완료 시점이 제각각이라, 짧게 끊으면
+    //   폴링 종료 후 다시 device-width 로 덮이는 페이지가 생긴다(레이스). 따라서 폴링을
+    //   '넉넉히' 유지하되, 시간이 지날수록 간격을 늘려(150ms→1s) 성능 부담 없이 계속 감시한다.
     var polls = 0;
-    var pollIv = setInterval(function () {
+    function pollTick() {
       polls++;
       if (needsFix()) { reapplying = true; apply(); setTimeout(function () { reapplying = false; }, 0); }
-      if (polls > 40) clearInterval(pollIv); // 약 40 * 150ms = 6초 후 중단
-    }, 150);
+      // 처음 5초는 150ms 간격(하이드레이션 집중 구간), 이후 30초까지는 1초 간격으로 계속 감시.
+      var delay = polls < 34 ? 150 : 1000;
+      if (polls < 34 + 25) setTimeout(pollTick, delay); // 약 5s + 25s = 30초간 상시 복원
+    }
+    setTimeout(pollTick, 150);
   } catch (e) {}
 })();
 `;
