@@ -173,11 +173,23 @@ const DESKTOP_VIEWPORT_SCRIPT = `
   var deviceW = 0;
   function apply() {
     try {
-      var vp = document.querySelector('meta[name=viewport]');
-      if (!vp) {
+      // ★★ [핵심 버그 수정] viewport 메타 태그 중복 제거 ★★
+      //  Next.js 가 viewport export 로 만든 태그 + 과거 로직이 추가로 만든 태그가 공존해
+      //  head 안에 <meta name=viewport> 가 2개 존재하는 경우가 있었다. 이때 우리 스크립트가
+      //  querySelector 로 '첫 번째' 태그만 width=820 으로 바꿔도, 남아 있는 다른 태그(device-width)가
+      //  브라우저 적용에서 이겨버려 데스크톱 강제가 전혀 먹지 않았다(모바일에서 PC버전 안 보임).
+      //  → 모든 viewport 태그를 찾아 '마지막 1개'만 남기고 나머지는 제거한 뒤, 그 하나만 수정한다.
+      var vps = document.querySelectorAll('meta[name=viewport]');
+      var vp;
+      if (vps.length === 0) {
         vp = document.createElement('meta');
         vp.setAttribute('name', 'viewport');
         document.head.appendChild(vp);
+      } else {
+        vp = vps[vps.length - 1]; // 브라우저는 마지막 태그를 우선하므로 마지막 것을 채택
+        for (var k = 0; k < vps.length - 1; k++) {
+          if (vps[k] && vps[k].parentNode) vps[k].parentNode.removeChild(vps[k]);
+        }
       }
       // ★★ [핵심 버그 수정] 진짜 기기폭 판정 ★★
       //  예전엔 innerWidth 만 봤는데, width=820 을 적용한 뒤 apply() 가 재실행되면
