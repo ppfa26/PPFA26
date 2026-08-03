@@ -105,15 +105,22 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // ★ 정상 반응형 (viewport 자체는 기기폭을 따른다) ★
-  //  데스크톱(PC) 화면 강제는 viewport width 고정이 아니라, 아래 <head> 의
-  //  런타임 스크립트(DESKTOP_VIEWPORT_SCRIPT)로 처리한다.
-  //  · 이유: width:980 만 주고 initialScale 을 비우면 브라우저마다 자동 축소
-  //    동작이 달라(일부 폰에서 화면이 오른쪽으로 잘림) 안정적이지 않다.
-  //  · 스크립트는 '현재 기기 화면폭 ÷ 980' 으로 initial-scale 을 정확히 계산해
-  //    넣으므로 어떤 폰에서도 잘림 없이 PC 화면 전체가 한눈에 축소돼 보인다.
-  width: "device-width",
-  initialScale: 1,
+  // ★★★ [데스크톱(PC) 화면 강제 — 서버 레벨 고정 방식] ★★★
+  //  기존엔 여기를 width:"device-width"(반응형)로 두고, <head> 런타임 스크립트로
+  //  모바일일 때만 width=820 으로 '되돌려' PC뷰를 강제했다. 그런데 Next.js 하이드레이션이
+  //  이 export 값(device-width)을 클라이언트에서 다시 심어버려, 스크립트가 아무리 820 으로
+  //  바꿔도 페이지마다 타이밍 레이스로 되돌아가 모바일에서 PC뷰가 불안정하게만 걸렸다.
+  //  → 근본 해결: viewport width 자체를 820 으로 '고정'한다. 서버가 처음부터 width=820 을
+  //    HTML 에 심고, 하이드레이션도 같은 값을 유지하므로 되돌릴 것이 없다(레이스 소멸).
+  //    · 진짜 PC(≥820)는 어차피 820 보다 넓어 축소가 일어나지 않아 원본 그대로 보인다.
+  //    · 모바일은 820px 폭 PC 레이아웃을 기기폭에 맞게 브라우저가 자동 축소해 통째로 보여준다.
+  //    · initialScale 은 '지정하지 않는다'. iOS 사파리·삼성인터넷은 initial-scale 을 명시하면
+  //      비주얼 뷰포트 높이를 그 스케일로 고정해버려 페이지 하단이 스크롤 밖으로 밀리는
+  //      "끝까지 안 내려가는" 버그가 났다. width 만 고정하고 스케일은 브라우저 자동계산에
+  //      맡기면(=표준 권장) 스크롤 영역이 정확히 잡혀 하단까지 정상 스크롤된다.
+  //  ※ 입력칸 자동 줌 문제가 있던 /diagnosis-chat, /diagnosis-form 은 각 하위 layout 에서
+  //    viewport 를 device-width 로 override 하여 이 고정에서 제외한다.
+  width: 820,
   // 화면 확대/축소(핀치 줌)를 막지 않습니다.
   //  → 글씨가 작게 느껴지는 중장년 고객이 손가락으로 크게 키워 볼 수 있도록 접근성 보장.
   maximumScale: 5,
@@ -121,181 +128,6 @@ export const viewport: Viewport = {
   // PWA: 앱 실행 시 상단 상태바/브라우저 UI 색상 (다크 테마에 맞춘 어두운 색)
   themeColor: "#0b0b0f",
 };
-
-// ★ 데스크톱(PC) 화면 강제 스크립트 (대표님 요청) ★
-//  모바일 세로 레이아웃이 정보가 많아 버거워 보이므로, 핸드폰으로 접속해도
-//  '데스크톱 사이트' 체크를 켠 것처럼 넓은 PC 화면이 잘림 없이 축소돼 보이게 한다.
-//
-//  동작:
-//   1) 화면 폭이 DESKTOP_WIDTH(900px) 이상인 진짜 PC/태블릿 → 아무것도 안 함(원본 그대로).
-//   2) 그보다 좁은 모바일 → viewport 를 width=820 + initial-scale=(기기폭/820) 로 교체.
-//      → 브라우저가 820px PC 페이지를 딱 화면폭에 맞게 축소해서 통째로 보여준다(잘림 0).
-//      ※ 기준폭 900→820 으로 낮춤: 모바일에서 콘텐츠가 약 10% 더 크게 보인다
-//        (대표님 요청: 모바일 글씨가 작다 → 전체 확대). PC 는 영향 없음.
-//   3) 가로/세로 회전 시 폭이 바뀌므로 resize·orientationchange 때 다시 계산.
-//  ※ <head> 안에서 즉시 실행(dangerouslySetInnerHTML) → 첫 페인트 전에 적용돼 깜빡임 최소화.
-//  ★★ 확대 문제 근본 수정 (대표님 C2 재요청) ★★
-//  이전 방식: 폰을 720px 'PC 폭'으로 강제 축소(scale<1)해 넓게 보여줬는데,
-//    안드로이드(삼성 인터넷)·크롬은 user-scalable=no 를 무시하고 키보드가
-//    뜨거나 입력칸을 탭하면 제멋대로 다시 줌인 → 시작부터 확대·잘림, 입력 시 확대.
-//  변경: 강제 축소를 '완전히 제거'하고 표준 반응형(width=device-width)만 사용.
-//    → 폰은 폰 크기 그대로(자동 줌 트리거 자체가 없어짐). 콘텐츠를 크게 보이게
-//      하는 건 축소가 아니라 CSS(폰트/여백)로 처리한다.
-//    입력칸은 모두 16px(text-base) 이상이라 iOS 의 '작은 글씨 자동 확대'도 안 걸린다.
-// ★★ 데스크톱(PC) 화면 강제 재도입 (대표님 요청) ★★
-//  · 모바일로 접속해도 넓은 PC 화면이 통째로 축소돼 보이게 한다.
-//    → viewport width 를 DESKTOP_WIDTH(820)로 고정하고 initial-scale 을
-//      '기기 화면폭 ÷ 820' 으로 정확히 계산해 넣어 어떤 폰에서도 잘림 0.
-//  · [리스크 회피] 입력칸이 있는 진단 챗봇/폼 페이지는 제외한다.
-//    예전에 이 방식이 안드로이드(삼성 인터넷)·크롬에서 입력칸 탭 시 제멋대로
-//    줌인·잘림을 일으켰던 곳이 바로 이 두 페이지라, 여기만 표준 반응형으로 두어
-//    근본적으로 문제를 회피한다. 나머지(랜딩·결과·가격 등)만 데스크톱 강제.
-//  · 진짜 PC/태블릿(폭 ≥ DESKTOP_WIDTH)은 손대지 않는다(원본 그대로).
-//  · 회전(resize/orientationchange) 시 폭이 바뀌므로 다시 계산.
-const DESKTOP_VIEWPORT_SCRIPT = `
-(function () {
-  var DESKTOP_WIDTH = 820;
-  // 입력칸 자동 줌 문제가 있는 페이지 → 표준 반응형 유지(데스크톱 강제 제외)
-  var EXCLUDE = ['/diagnosis-chat', '/diagnosis-form'];
-  function isExcluded() {
-    try {
-      var p = location.pathname || '';
-      for (var i = 0; i < EXCLUDE.length; i++) {
-        if (p === EXCLUDE[i] || p.indexOf(EXCLUDE[i] + '/') === 0) return true;
-      }
-    } catch (e) {}
-    return false;
-  }
-  // ★ 물리 기기폭 캐시 ★
-  //  스크립트 '최초 실행' 시점의 innerWidth 는 아직 viewport 를 width=820 으로 바꾸기 전이라
-  //  정확한 물리 기기폭(CSS px)이다. 이 값을 캐시해 두고 resize 재실행 때 재사용한다.
-  //  (재실행 시 innerWidth 는 이미 820 으로 오염돼 있어 그대로 쓰면 scale 이 틀어진다.)
-  var deviceW = 0;
-  function apply() {
-    try {
-      // ★★ [핵심 버그 수정] viewport 메타 태그 중복 제거 ★★
-      //  Next.js 가 viewport export 로 만든 태그 + 과거 로직이 추가로 만든 태그가 공존해
-      //  head 안에 <meta name=viewport> 가 2개 존재하는 경우가 있었다. 이때 우리 스크립트가
-      //  querySelector 로 '첫 번째' 태그만 width=820 으로 바꿔도, 남아 있는 다른 태그(device-width)가
-      //  브라우저 적용에서 이겨버려 데스크톱 강제가 전혀 먹지 않았다(모바일에서 PC버전 안 보임).
-      //  → 모든 viewport 태그를 찾아 '마지막 1개'만 남기고 나머지는 제거한 뒤, 그 하나만 수정한다.
-      var vps = document.querySelectorAll('meta[name=viewport]');
-      var vp;
-      if (vps.length === 0) {
-        vp = document.createElement('meta');
-        vp.setAttribute('name', 'viewport');
-        document.head.appendChild(vp);
-      } else {
-        vp = vps[vps.length - 1]; // 브라우저는 마지막 태그를 우선하므로 마지막 것을 채택
-        for (var k = 0; k < vps.length - 1; k++) {
-          if (vps[k] && vps[k].parentNode) vps[k].parentNode.removeChild(vps[k]);
-        }
-      }
-      // ★★ [핵심 버그 수정] 진짜 기기폭 판정 ★★
-      //  예전엔 innerWidth 만 봤는데, width=820 을 적용한 뒤 apply() 가 재실행되면
-      //  innerWidth 가 820 으로 '오염'된다. 이때 deviceW 캐시가 아직 비어 있으면(타이밍)
-      //  w=820 이 되어 "진짜 PC"로 오판 → 모바일인데도 width=device-width 로 되돌아가
-      //  데스크톱 강제가 풀려버리는 문제가 있었다(모바일에서 PC버전이 안 보임).
-      //  → window.screen.width 는 viewport 메타 변경과 무관한 '물리 화면폭'이라 절대
-      //    오염되지 않는다. 이것을 기기폭 판정의 1순위 기준으로 삼아 확실하게 모바일을 감지한다.
-      var screenW = (window.screen && window.screen.width) ? window.screen.width : 0;
-      var iw = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
-      // 오염되지 않는 물리 화면폭(screenW)을 최우선으로 캐시. 없으면 innerWidth 폴백.
-      var trueW = (screenW > 0 && screenW < DESKTOP_WIDTH) ? screenW
-                : (iw > 0 && iw < DESKTOP_WIDTH) ? iw : 0;
-      if (trueW > 0 && (deviceW === 0 || trueW < deviceW)) deviceW = trueW;
-      // 판정 기준: 캐시된 진짜 기기폭 > 오염 안 된 screenW > innerWidth 순.
-      var w = deviceW > 0 ? deviceW : (screenW > 0 ? screenW : iw);
-      if (isExcluded() || w >= DESKTOP_WIDTH) {
-        // 진짜 PC/태블릿 또는 입력 페이지 → 표준 반응형(확대 강제 없음, 핀치 줌 허용)
-        vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
-        return;
-      }
-      // 모바일 → 820px PC 페이지를 기기 화면폭에 딱 맞게 축소해서 통째로 표시(잘림 0)
-      //  ★★ 스크롤 하단 잘림(안 내려감) 버그 수정 ★★
-      //   예전엔 initial-scale 을 직접 계산해 넣었는데(width=820, initial-scale=0.475 …),
-      //   iOS 사파리·삼성인터넷은 initial-scale 이 '명시'되면 '비주얼 뷰포트' 높이를 그 스케일
-      //   기준으로 고정해버린다. 그 결과 레이아웃 뷰포트 높이가 실제 콘텐츠보다 짧게 잡혀
-      //   페이지 하단 일부가 스크롤 영역 밖으로 밀려 "끝까지 안 내려가는" 버그가 생겼다.
-      //   → width=820 만 지정하고 initial-scale 은 브라우저 자동 계산에 맡기면(생략),
-      //     브라우저가 820 폭에 맞춰 스케일·뷰포트 높이를 '일관되게' 계산해 스크롤 영역이 정확해진다.
-      //     (width=<고정폭> 방식의 표준 권장법. 잘림 0 + 하단까지 정상 스크롤 동시 달성.)
-      vp.setAttribute('content', 'width=' + DESKTOP_WIDTH + ', maximum-scale=5, user-scalable=yes');
-    } catch (e) {}
-  }
-  // ★ 안정적 재적용 ★
-  //  "간혹 첫 화면에서 데스크톱 뷰가 안 먹는" 문제의 원인은 초기 실행 타이밍이다.
-  //  스크립트가 <head> 에서 딱 1번만 apply() 하는데, 그 순간 브라우저가 아직 레이아웃(화면폭)을
-  //  확정하기 전이면 잘못된 값으로 굳고, 이후 resize 가 안 오면 재보정 기회가 없다.
-  //  → 레이아웃이 확정되는 여러 시점(즉시·다음 프레임·짧은 지연·DOM 로드·완전 로드·bfcache 복원)
-  //    에서 반복 적용해 어떤 폰에서도 확실히 데스크톱 뷰가 걸리게 한다. (재적용은 부작용 없음)
-  apply();
-  try { requestAnimationFrame(apply); } catch (e) {}
-  setTimeout(apply, 50);
-  setTimeout(apply, 300);
-  setTimeout(apply, 800);
-  window.addEventListener('resize', apply);
-  window.addEventListener('orientationchange', apply);
-  document.addEventListener('DOMContentLoaded', apply);
-  window.addEventListener('load', apply);
-  // 뒤로/앞으로 가기 캐시(bfcache)로 복원될 때도 다시 적용 (모바일에서 흔한 케이스)
-  window.addEventListener('pageshow', apply);
-
-  // ★★★ [진짜 근본 원인 수정] Next.js 하이드레이션이 viewport 를 덮어쓰는 문제 ★★★
-  //  증상: 우리 스크립트가 <head> 에서 viewport 를 width=820 으로 정확히 바꿔도,
-  //        그 직후 Next.js 클라이언트 하이드레이션(viewport export)이 실행되면서
-  //        width=device-width 태그를 '새로 추가'하고 우리가 만든 820 태그를 '제거'해버린다.
-  //        → 최종적으로 device-width 가 승리해 모바일에서 PC(데스크톱) 화면이 안 보였다.
-  //        (setTimeout/rAF/load 는 전부 하이드레이션 '이전'이라 소용없었다.)
-  //  해법: head 를 MutationObserver 로 상시 감시한다. Next.js 든 무엇이든 viewport 태그를
-  //        추가·변경·제거하는 순간을 감지해 즉시 apply() 로 다시 820 을 강제한다.
-  //        이렇게 하면 어느 프레임워크가 언제 개입해도 '항상 우리 값이 최종 승자'가 된다.
-  //        (apply() 는 이미 우리 값이면 그대로 다시 쓸 뿐이라 안전. 아래 가드로 루프도 방지.)
-  try {
-    var reapplying = false;
-    function needsFix() {
-      // 제외 페이지나 진짜 PC 는 device-width 가 정상이므로 고칠 필요 없음
-      if (isExcluded()) return false;
-      var sW = (window.screen && window.screen.width) ? window.screen.width : 0;
-      var iW = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
-      var realW = (sW > 0 && sW < DESKTOP_WIDTH) ? sW : (iW > 0 && iW < DESKTOP_WIDTH ? iW : (deviceW || 0));
-      if (!(realW > 0 && realW < DESKTOP_WIDTH)) return false; // 모바일이 아니면 고치지 않음
-      var vp = document.querySelector('meta[name=viewport]');
-      var c = vp ? (vp.getAttribute('content') || '') : '';
-      // 모바일인데 width=820 이 아니면(=하이드레이션이 device-width 로 덮음) 고쳐야 함
-      return c.indexOf('width=' + DESKTOP_WIDTH) === -1;
-    }
-    if (typeof MutationObserver !== 'undefined') {
-      var mo = new MutationObserver(function () {
-        if (reapplying) return;
-        if (needsFix()) {
-          reapplying = true;
-          apply();
-          // apply 로 인한 자기 자신의 mutation 은 무시하도록 다음 프레임에 잠금 해제
-          setTimeout(function () { reapplying = false; }, 0);
-        }
-      });
-      // ★ 관찰 대상은 항상 존재하는 <html>(documentElement) 로 잡고 subtree 로 <head> 내부까지 감시.
-      //   document.head 가 인라인 스크립트 실행 시점에 아직 미완성이어도 안전하게 등록된다.
-      //   또한 하이드레이션 직전/직후 어느 타이밍이든 viewport 교체를 놓치지 않는다.
-      mo.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['content', 'name'] });
-    }
-    // ★ 보강: observer 가 어떤 이유로든 놓칠 때를 대비한 안전망(폴링).
-    //   하이드레이션·클라이언트 라우팅은 페이지마다 완료 시점이 제각각이라, 짧게 끊으면
-    //   폴링 종료 후 다시 device-width 로 덮이는 페이지가 생긴다(레이스). 따라서 폴링을
-    //   '넉넉히' 유지하되, 시간이 지날수록 간격을 늘려(150ms→1s) 성능 부담 없이 계속 감시한다.
-    var polls = 0;
-    function pollTick() {
-      polls++;
-      if (needsFix()) { reapplying = true; apply(); setTimeout(function () { reapplying = false; }, 0); }
-      // 처음 5초는 150ms 간격(하이드레이션 집중 구간), 이후 30초까지는 1초 간격으로 계속 감시.
-      var delay = polls < 34 ? 150 : 1000;
-      if (polls < 34 + 25) setTimeout(pollTick, delay); // 약 5s + 25s = 30초간 상시 복원
-    }
-    setTimeout(pollTick, 150);
-  } catch (e) {}
-})();
-`;
 
 // ─────────────────────────────────────────────────────────────
 //  [A안] 모바일 배경 고정 스크립트
@@ -520,9 +352,8 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        {/* ★ 데스크톱(PC) 화면 강제 - 첫 페인트 전에 즉시 실행되도록 head 최상단 배치 (대표님 요청) ★ */}
-        {/* eslint-disable-next-line react/no-danger */}
-        <script dangerouslySetInnerHTML={{ __html: DESKTOP_VIEWPORT_SCRIPT }} />
+        {/* ★ 데스크톱(PC) 화면 강제는 viewport export(width:820)로 서버에서 고정 처리한다.
+            (기존 런타임 스크립트 방식은 하이드레이션 레이스로 불안정해 제거함) ★ */}
         {/* ★ [A안] 모바일 배경 고정 - --app-vh 못 박기 (스크롤 시 배경 흔들림 방지) ★ */}
         {/* eslint-disable-next-line react/no-danger */}
         <script dangerouslySetInnerHTML={{ __html: BG_LOCK_SCRIPT }} />
