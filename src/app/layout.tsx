@@ -4,7 +4,6 @@ import { Analytics } from "@vercel/analytics/react";
 import CopyGuard from "@/components/CopyGuard";
 import UtmCapture from "@/components/UtmCapture";
 import ScrollToTop from "@/components/ScrollToTop";
-import ViewportManager from "@/components/ViewportManager";
 import AccessLogger from "@/components/AccessLogger";
 import FontLoader from "@/components/FontLoader";
 import KarrotPixel from "@/components/KarrotPixel";
@@ -400,8 +399,10 @@ export default function RootLayout({
       </head>
       <body className="theme-dark">
         <ScrollToTop />
-        {/* ★ 데스크톱 화면 강제 - 경로 전환 시에도 정책 재적용(대표님 요청) ★ */}
-        <ViewportManager />
+        {/* ★ 데스크톱(PC) 화면 강제는 viewport export(width:820)로 서버에서 고정한다.
+            (기존 ViewportManager 는 경로 전환마다 initial-scale=0.439 를 런타임 삽입해,
+             삼성인터넷/사파리에서 페이지 하단이 스크롤 밖으로 밀리는 "끝까지 안 내려가는"
+             버그를 재유발했으므로 제거함. 서버 고정만으로 PC 강제가 충분하다.) ★ */}
         {/* 접속(IP) 로거 - 회원/비회원 모든 방문자 IP를 관리자에 기록(대표님 요청 A안) */}
         <AccessLogger />
         <CopyGuard />
