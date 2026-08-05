@@ -321,12 +321,18 @@ export async function loadDiagnosisFromServer(
   if (!currentUserId) return null;
   try {
     // 본인(user_id=현재계정)의 가장 최근 진단 1건
-    const { data, error } = await supabase
+    // ★ [멈춤 방지] Supabase 응답이 지연되면 결과 화면이 로딩에서 멈추므로 4초 타임아웃.
+    //   타임아웃 시 null 을 반환해 localStorage 값으로 결과를 진행한다(멈춤 방지 우선).
+    const queryPromise = supabase
       .from("diagnoses")
       .select("profile, created_at")
       .eq("user_id", currentUserId)
       .order("created_at", { ascending: false })
       .limit(1);
+    const { data, error } = (await Promise.race([
+      queryPromise,
+      new Promise((resolve) => setTimeout(() => resolve({ data: null, error: null }), 4000)),
+    ])) as { data: Array<{ profile: unknown; created_at: string }> | null; error: unknown };
 
     if (error || !data || data.length === 0) return null;
 

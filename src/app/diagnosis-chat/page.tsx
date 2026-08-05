@@ -778,18 +778,38 @@ export default function DiagnosisChat() {
     pushBotLines(["입력해 주신 내용으로 딱 맞는 정부지원사업을 찾고 있어요… 🔎"]);
     (async () => {
       const RESULT_URL = "/matching-preview?analyze=1";
+      // ★★ [멈춤 버그 수정] 결과 이동을 서버 저장과 '분리'한다 ★★
+      //  기존엔 saveCompletedDiagnosis(Supabase RPC)를 await 로 기다린 뒤에야 router.push 를
+      //  실행했다. 그 RPC 가 느리거나(콜드스타트) 응답이 지연되면 "…찾고 있어요" 화면에서
+      //  영영 멈춰(사용자 체감: '조회 후 화면 정지') 결과로 못 넘어갔다.
+      //  → 세션 확인에는 3초 타임아웃을 걸고, 서버 저장은 '백그라운드(fire-and-forget)'로
+      //    던진 뒤 즉시 결과로 이동한다. 결과 화면(matching-preview)이 자체적으로 서버
+      //    동기화를 다시 하므로 여기서 저장 완료를 기다릴 필요가 전혀 없다.
+      let user: any = null;
       try {
-        const { data } = await supabase.auth.getSession();
-        const user = data.session?.user ?? null;
+        // getSession 이 멈추는 극단적 케이스까지 방어(3초 타임아웃)
+        const sessionRes: any = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise((resolve) => setTimeout(() => resolve({ data: { session: null } }), 3000)),
+        ]);
+        user = sessionRes?.data?.session?.user ?? null;
+      } catch {
+        user = null;
+      }
+      try {
         saveDiagnosis(payload, user?.id ?? null);
         clearDiagnosisDraft();
         trackConversion("SubmitApplication");
-        if (!isStatsExcludedEmail(user?.email)) await saveCompletedDiagnosis(payload, user?.id ?? null);
-        if (user) { router.push(RESULT_URL); return; }
-        router.push(`/signup?next=${encodeURIComponent(RESULT_URL)}`);
-      } catch {
-        router.push(RESULT_URL);
-      }
+      } catch { /* 로컬 저장 실패해도 이동은 계속 */ }
+      // 서버 저장은 기다리지 않고 백그라운드로만 시도(실패해도 결과엔 영향 없음)
+      try {
+        if (!isStatsExcludedEmail(user?.email)) {
+          void saveCompletedDiagnosis(payload, user?.id ?? null);
+        }
+      } catch { /* noop */ }
+      // 즉시 결과(또는 회원가입)로 이동 → 더 이상 멈추지 않는다
+      if (user) { router.push(RESULT_URL); }
+      else { router.push(`/signup?next=${encodeURIComponent(RESULT_URL)}`); }
     })();
   };
 
