@@ -1230,7 +1230,7 @@ function AdvancedResult({
             return (
               <div
                 key={i}
-                className="border-t border-brand-dark/10 py-4 first:border-t-0 first:pt-0"
+                className="border-t border-brand-dark/10 py-3 first:border-t-0 first:pt-0"
               >
                 <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                   <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
@@ -1255,7 +1255,7 @@ function AdvancedResult({
                 {(m.institution.includes("신용보증기금") ||
                   m.institution.includes("기술보증기금") ||
                   m.institution.includes("재단")) && (
-                  <p className="mt-2 break-keep rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs leading-relaxed text-brand-dark/80">
+                  <p className="mt-1.5 break-keep rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-[11px] leading-relaxed text-brand-dark/80">
                     <b>ℹ️ 대리대출</b> · 이 상품은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요.
                   </p>
                 )}
@@ -1266,7 +1266,7 @@ function AdvancedResult({
                   m.institution.includes("소상공인시장진흥공단") ||
                   m.institution.includes("중진공") ||
                   m.institution.includes("소진공")) && (
-                  <p className="mt-2 break-keep rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs leading-relaxed text-brand-dark/80">
+                  <p className="mt-1.5 break-keep rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-[11px] leading-relaxed text-brand-dark/80">
                     <b>ℹ️ 직접대출</b> · 이 상품은 <b>은행을 거치지 않고</b> 기관에서 <b>대출이 바로 실행</b>돼요.
                   </p>
                 )}
@@ -1280,7 +1280,7 @@ function AdvancedResult({
 
                 {/* ★ 기관 내 여러 상품 아코디언 - 클릭 시 펼쳐서 상품별로 신청 (대표님 요청) ★ */}
                 {products && products.length > 0 && (
-                  <div className="mt-2.5">
+                  <div className="mt-2">
                     <button
                       onClick={() => toggleProducts(i)}
                       className={`flex w-full items-center justify-between gap-2 rounded-xl border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockNoClick}`}
@@ -1488,7 +1488,7 @@ function AdvancedResult({
 
                 {/* 신보·기보·소진공·중진공 → 신청 매뉴얼 + 사이트 바로가기 (재단은 아래 지역 드롭다운으로 안내) */}
                 {link && (
-                  <div className="mt-2.5 flex flex-col gap-1.5">
+                  <div className="mt-2 flex flex-col gap-1.5">
                     <div className="flex flex-wrap items-center gap-2">
                       {link.manualUrl && (
                         <a
@@ -1542,7 +1542,7 @@ function AdvancedResult({
                   </div>
                 )}
                 {isJaedan && (
-                  <div className="mt-2.5 flex flex-col gap-2">
+                  <div className="mt-2 flex flex-col gap-2">
                     {jaedanLinks.map((j) => (
                       <div key={j.url} className="flex flex-wrap items-center gap-2">
                         {j.manualUrl && (
