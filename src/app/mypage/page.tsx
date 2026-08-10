@@ -187,23 +187,23 @@ export default function MyPage() {
                   className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3"
                 >
                   {/* ① 진단 결과 매칭 개수 */}
-                  <div className="rounded-2xl border border-gray-200 bg-white p-3.5 text-center shadow-card sm:p-4">
+                  <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center shadow-card sm:p-3.5">
                     <span className="text-xl sm:text-2xl">🎯</span>
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       진단 결과
                     </p>
-                    <p className="mt-0.5 text-lg font-black leading-none text-brand-dark sm:text-2xl">
+                    <p className="mt-0.5 text-lg font-black leading-none text-brand-dark sm:text-xl">
                       {matchCount === null ? "–" : `${matchCount}개`}
                     </p>
                   </div>
                   {/* ② 이용권(열람) 상태 */}
-                  <div className="rounded-2xl border border-gray-200 bg-white p-3.5 text-center shadow-card sm:p-4">
+                  <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center shadow-card sm:p-3.5">
                     <span className="text-xl sm:text-2xl">🎟️</span>
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       이용권
                     </p>
                     <p
-                      className={`mt-0.5 text-lg font-black leading-none sm:text-2xl ${
+                      className={`mt-0.5 text-lg font-black leading-none sm:text-xl ${
                         viewStatus?.isActive ? "text-brand-green" : "text-brand-dark/40"
                       }`}
                     >
@@ -211,12 +211,12 @@ export default function MyPage() {
                     </p>
                   </div>
                   {/* ③ 결제 건수 */}
-                  <div className="rounded-2xl border border-gray-200 bg-white p-3.5 text-center shadow-card sm:p-4">
+                  <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center shadow-card sm:p-3.5">
                     <span className="text-xl sm:text-2xl">🧾</span>
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       결제 내역
                     </p>
-                    <p className="mt-0.5 text-lg font-black leading-none text-brand-dark sm:text-2xl">
+                    <p className="mt-0.5 text-lg font-black leading-none text-brand-dark sm:text-xl">
                       {payments.length}건
                     </p>
                   </div>
@@ -228,7 +228,7 @@ export default function MyPage() {
                 id="mypage-account"
                 className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
               >
-                <h2 className="text-lg font-extrabold text-brand-dark">
+                <h2 className="text-base font-extrabold text-brand-dark sm:text-lg">
                   👤 계정 정보
                 </h2>
                 {email ? (
@@ -265,7 +265,7 @@ export default function MyPage() {
                 id="mypage-diagnosis"
                 className="mt-4 rounded-3xl border border-gray-200 bg-white p-4 shadow-card sm:p-5"
               >
-                <h2 className="text-lg font-extrabold text-brand-dark">
+                <h2 className="text-base font-extrabold text-brand-dark sm:text-lg">
                   🎯 나의 진단 결과
                 </h2>
                 {matchCount === null ? (
@@ -281,10 +281,10 @@ export default function MyPage() {
                   </div>
                 ) : (
                   <div className="mt-3 rounded-3xl border border-gray-200 bg-gradient-to-br from-brand-yellow/25 to-brand-orange/10 p-4 text-center sm:p-5">
-                    <p className="break-keep text-sm leading-snug text-brand-dark/70 sm:text-base">
+                    <p className="break-keep text-[13px] leading-snug text-brand-dark/70 sm:text-sm">
                       {diagName ? `${diagName} 대표님 ` : "대표님 "}사업장에 딱 맞는 지원사업
                     </p>
-                    <p className="mt-1 break-keep text-2xl font-black tracking-tight text-brand-dark sm:text-3xl">
+                    <p className="mt-1 break-keep text-xl font-black tracking-tight text-brand-dark sm:text-2xl">
                       총 <span className="text-brand-red">{matchCount}개</span> 매칭 완료
                     </p>
                     <Link
@@ -295,7 +295,7 @@ export default function MyPage() {
                       <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </Link>
                     {diagExpiry && (
-                      <p className="mt-5 break-keep text-xs leading-snug text-brand-dark/50">
+                      <p className="mt-3 break-keep text-xs leading-snug text-brand-dark/50">
                         📅 이 진단 결과는{" "}
                         <b className="text-brand-dark/70">
                           {diagExpiry.getFullYear()}년 {diagExpiry.getMonth() + 1}월{" "}
@@ -313,7 +313,7 @@ export default function MyPage() {
                 id="mypage-extra-services"
                 className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
               >
-                <h2 className="text-lg font-extrabold text-brand-dark">
+                <h2 className="text-base font-extrabold text-brand-dark sm:text-lg">
                   🤝 전문가 도움이 더 필요하신가요?
                 </h2>
                 <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
@@ -377,7 +377,7 @@ export default function MyPage() {
                       💬
                     </span>
                     <div className="min-w-0 flex-1">
-                      <h2 className="break-keep text-lg font-extrabold text-brand-dark">
+                      <h2 className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
                         결제 회원 전용 1:1 상담
                       </h2>
                       <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
