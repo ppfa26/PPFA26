@@ -900,6 +900,39 @@ function AdvancedResult({
         </div>
       )}
 
+      {/* ★ 초보자용 '보는 순서' 길잡이 (대표님 요청) ★ ✅ 안내 네모칸 바로 아래에 아코디언으로 배치.
+          문구는 아래 실제 카드(제목·이모지·부제)와 100% 통일해, "1번 = 이 카드"가 바로 연결되게 한다. */}
+      {autoRun && (
+        <AccordionCard
+          emoji="💡"
+          title="복잡해 보여도 걱정 마세요 — 이 순서로 보시면 돼요"
+          subtitle="위에서부터 아래 4가지 순서대로만 확인하시면 됩니다"
+        >
+          <ol className="flex flex-col gap-2">
+            {[
+              { n: "1", emoji: "🌱", title: "예비·초기·청년창업자 지원사업", desc: "창업 단계 대표님을 위한 무상 사업화 자금이에요" },
+              { n: "2", emoji: "🏅", title: "신청·감면 혜택 한번에 모두 챙기기", desc: "신청 가능한 제도와 세금 아끼는 감면을 모았어요" },
+              { n: "3", emoji: "💳", title: "바로 신청 가능한 정책금융상품", desc: "낮은 금리로 받을 수 있는 자금이에요" },
+              { n: "4", emoji: "📢", title: "그 외 놓치기 쉬운 지원사업", desc: "추가로 챙겨볼 만한 정부지원이에요" },
+            ].map((s) => (
+              <li key={s.n} className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2.5">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-orange text-[13px] font-black text-white">
+                  {s.n}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block break-keep text-[14px] font-extrabold leading-snug text-brand-dark">
+                    {s.emoji} {s.title}
+                  </span>
+                  <span className="mt-0.5 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
+                    {s.desc}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </AccordionCard>
+      )}
+
       {/* ⓪ 예비·초기·청년창업자 정부지원사업 (대표님 요청) - 모든 고객에게 노출.
              결과창 '맨 위'(정부지원제도 위). 대출이 아닌 사업화 자금(무상) 중심.
              중진공 청년창업자금(대출)은 정책금융상품 아코디언에 그대로 유지. */}
