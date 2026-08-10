@@ -933,13 +933,12 @@ function AdvancedResult({
                 className="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
                 header={
                   <span className="flex flex-wrap items-center justify-between gap-2">
+                    {/* ★ 다이어트(대표님 요청) ★ 카드 제목에 이미 '무상 사업화 자금'이라 적혀 있어
+                        항목마다 반복되던 '사업화 자금' 배지는 삭제. 대신 금액을 크고 선명하게. */}
                     <span className="flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark">
-                      <span className="shrink-0 rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">
-                        사업화 자금
-                      </span>
                       {p.name}
                     </span>
-                    <span className="break-keep text-xs font-bold text-brand-green">{p.amount}</span>
+                    <span className="shrink-0 break-keep text-sm font-black text-brand-green">{p.amount}</span>
                   </span>
                 }
               >
