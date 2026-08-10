@@ -264,8 +264,8 @@ const CHAT_STEPS: ChatStep[] = [
     type: "bnoContact",
     botLines: [
       "거의 다 됐어요! 🎉",
-      "",
       "진단 결과를 정리하고 있어요.",
+      "",
       "결과 안내를 위해 마지막으로\n사업자등록번호와 대표자님\n성함·연락처만 알려주세요.",
     ],
     questionHead: "사업자등록번호 · 성함 · 연락처 👇",
