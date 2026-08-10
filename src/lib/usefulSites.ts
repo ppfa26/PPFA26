@@ -52,14 +52,13 @@ export const USEFUL_SITE_CATEGORIES: SiteCategory[] = [
   {
     key: "startup",
     emoji: "📘",
-    label: "창업·서민금융·교육·인증",
+    label: "창업·교육·정책정보",
     sites: [
       { name: "보조금24", url: "https://www.gov.kr/" },
       { name: "고용24 개인", url: "https://www.work24.go.kr/" },
       { name: "고용24 기업", url: "https://www.work24.go.kr/cm/main.do?topArea=EBM00" },
       { name: "한눈에 보는 정책", url: "https://www.korea.kr/" },
       { name: "국가법령정보센터", url: "https://www.law.go.kr/" },
-      { name: "KOSIS 국가통계포털", url: "https://kosis.kr/" },
       { name: "K-Startup 창업지원포털", url: "https://www.k-startup.go.kr/" },
       { name: "창업진흥원", url: "https://www.kised.or.kr/" },
       { name: "서민금융진흥원", url: "https://www.kinfa.or.kr/" },
@@ -81,9 +80,10 @@ export const USEFUL_SITE_CATEGORIES: SiteCategory[] = [
   {
     key: "tools",
     emoji: "📙",
-    label: "사업 실무·데이터·조회 도구",
+    label: "신용·세무·데이터 조회 도구",
     sites: [
       { name: "중소기업현황정보시스템", url: "https://sminfo.mss.go.kr/" },
+      { name: "KOSIS 국가통계포털", url: "https://kosis.kr/" },
       { name: "국세청 홈택스", url: "https://www.hometax.go.kr/" },
       { name: "한국전자인증 공인인증서", url: "https://www.crosscert.com/" },
       { name: "나이스지키미", url: "https://www.credit.co.kr/" },
