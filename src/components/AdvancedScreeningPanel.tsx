@@ -902,10 +902,6 @@ function AdvancedResult({
               실제 4개 카드가 곧 목차 역할을 하므로 중복 없이 깔끔해진다. */}
           <p className="mt-2 break-keep border-t border-brand-dark/10 pt-2 text-[14px] font-semibold leading-relaxed text-brand-dark/70">
             🔎 잘 모르시겠으면 위에서부터 아래 순서대로 확인하시면 됩니다.
-            <br />
-            <span className="text-brand-dark/60">
-              🌱 무상 지원금 → 🏅 감면 혜택 → 💳 정책자금 → 📢 그 외 기회
-            </span>
           </p>
         </div>
       )}
