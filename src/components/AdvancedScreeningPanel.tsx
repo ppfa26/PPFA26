@@ -1056,7 +1056,7 @@ function AdvancedResult({
               return (
                 <CollapsibleItem
                   key={prog.id}
-                  className="rounded-xl border border-gray-200 bg-white p-4"
+                  className="rounded-xl border border-gray-200 bg-white px-4 py-3"
                   header={
                     <>
                       {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 요약 안내 */}
