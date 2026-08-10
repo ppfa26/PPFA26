@@ -513,13 +513,13 @@ export default function Home() {
                         { icon: "🧑‍💼", t: "고용촉진장려금 (고용24)", badge: "조건 충족 시 가능", badgeCls: "bg-brand-orange/90", d: "취업취약계층을 정규직으로 채용하면 1인당 최대 720만원 지원.", hook: "채용 계획이 있으면 채용 전 신청해야 대상이 됩니다.", locked: "🔒 지원 대상 요건 체크 · 신청 순서 · 담당 기관 연락처까지 결제 후 공개" },
                         { icon: "🛡️", t: "두루누리 사회보험료 지원", badge: "신청 가능", badgeCls: "bg-brand-green", d: "신규 채용 근로자·사업주의 국민연금·고용보험료 최대 80% 지원.", hook: "근로자 10명 미만 사업장은 4대보험 신고 시 함께 신청돼 사실상 자동입니다.", locked: "🔒 지원 대상 요건 체크 · 신고 시 신청 방법 · 담당 기관 연락처까지 결제 후 공개" },
                       ].map((g, i) => (
-                        <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
+                        <div key={i} className="rounded-xl border border-gray-200 bg-white px-4 py-2.5">
                           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                             <span className="text-base">{g.icon}</span>
                             <span className="text-[14px] font-extrabold text-brand-dark">{g.t}</span>
                             <span className={`shrink-0 break-keep rounded-full ${g.badgeCls} px-2 py-0.5 text-[10px] font-bold text-white`}>{g.badge}</span>
                           </div>
-                          <p className="mt-1.5 break-keep text-[12px] font-semibold leading-relaxed text-brand-green">
+                          <p className="mt-1 break-keep text-[12px] font-semibold leading-relaxed text-brand-green">
                             💡 {g.hook}
                           </p>
                           <p className="mt-1 break-keep text-[12px] leading-relaxed text-brand-gray">{g.d}</p>
