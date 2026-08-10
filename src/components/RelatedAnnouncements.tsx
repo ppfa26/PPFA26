@@ -218,7 +218,11 @@ export default function RelatedAnnouncements({
             <button
               type="button"
               onClick={() => setShowAll((v) => !v)}
-              className="mt-3 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[13px] font-bold text-brand-dark/70 transition hover:bg-gray-50"
+              className={
+                showAll
+                  ? "mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-[12px] font-bold text-brand-dark/60 transition hover:bg-gray-100"
+                  : "mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-3 py-2.5 text-[12px] font-extrabold text-brand-orange transition hover:bg-brand-orange/15"
+              }
             >
               {showAll
                 ? "접기 ▲"
