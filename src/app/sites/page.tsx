@@ -25,7 +25,10 @@ export default function SitesPage() {
             <table className="w-full table-fixed text-left text-sm">
               <tbody className="divide-y divide-gray-100">
                 {cat.sites.map((site, i) => (
-                  <tr key={i} className="align-top hover:bg-gray-50">
+                  <tr
+                    key={i}
+                    className="align-top transition-transform duration-150 ease-out hover:scale-[1.02]"
+                  >
                     <td className="w-9 bg-gray-50 px-2 py-3 text-center font-semibold text-brand-gray sm:w-10 sm:px-3">
                       {i + 1}
                     </td>

@@ -1707,10 +1707,10 @@ function AdvancedResult({
       >
         <span className="min-w-0">
           <span className="flex items-center gap-2 break-keep text-[16px] font-extrabold leading-snug text-white">
-            🔖 대표님들이 알아두면 좋은 정부 사이트
+            🔖 알아두면 좋은 정부 사이트
           </span>
           <span className="mt-0.5 block break-keep text-[12px] leading-relaxed text-white/60">
-            알아두면 좋은 정부 기관 공식 사이트예요
+            정부 기관 공식 사이트예요
           </span>
         </span>
         <span className={`shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark ${lockClick}`}>
