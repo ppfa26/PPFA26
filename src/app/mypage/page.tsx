@@ -7,11 +7,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { supabase } from "@/lib/supabaseClient";
-import { TIER_MAP } from "@/lib/products";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
 import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
-import { isAdminEmail } from "@/lib/admin";
 import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 
 type Payment = {
@@ -31,9 +29,6 @@ export default function MyPage() {
   const [matchCount, setMatchCount] = useState<number | null>(null);
   const [diagName, setDiagName] = useState("");
   const [diagExpiry, setDiagExpiry] = useState<Date | null>(null);
-  // ★ 관리자(대표님) 여부 - 결제 내역 삭제 버튼은 관리자에게만 노출 ★
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [deletingOrder, setDeletingOrder] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -47,8 +42,6 @@ export default function MyPage() {
 
       if (user) {
         setEmail(user.email ?? null);
-        // ★ 관리자(대표님) 계정이면 결제 내역 삭제 버튼을 보여준다 ★
-        setIsAdmin(isAdminEmail(user.email));
         // 2) 결제 내역 조회
         try {
           const { data } = await supabase
@@ -130,34 +123,6 @@ export default function MyPage() {
       mounted = false;
     };
   }, []);
-
-  // ★ 결제 건 삭제 (관리자 전용) ★
-  //   관리자 서버함수(admin_delete_payment)를 호출해 매출 통계·결제 내역에서 완전히 제거.
-  //   일반 고객에게는 버튼 자체가 노출되지 않으며, 서버에서도 관리자만 실행 가능하다.
-  async function handleDeletePayment(orderId: string) {
-    if (
-      !window.confirm(
-        `[${orderId}] 결제 건을 삭제할까요?\n매출 통계·결제 내역에서 완전히 제거되며 되돌릴 수 없습니다.`
-      )
-    )
-      return;
-    setDeletingOrder(orderId);
-    try {
-      const { error } = await supabase.rpc("admin_delete_payment", {
-        p_order_id: orderId,
-      });
-      if (error) {
-        alert(`삭제 중 오류가 발생했습니다: ${error.message}`);
-      } else {
-        // 화면 목록에서도 즉시 제거
-        setPayments((prev) => prev.filter((p) => p.order_id !== orderId));
-      }
-    } catch (e) {
-      alert(`삭제 중 오류가 발생했습니다: ${String(e)}`);
-    } finally {
-      setDeletingOrder(null);
-    }
-  }
 
   async function handleLogout() {
     // ★ 진단 결과 30일 유지 ★ 로그아웃해도 진단 결과를 삭제하지 않는다.
