@@ -1056,7 +1056,7 @@ function AdvancedResult({
               return (
                 <CollapsibleItem
                   key={prog.id}
-                  className="rounded-xl border border-gray-200 bg-white px-4 py-3"
+                  className="rounded-xl border border-gray-200 bg-white px-4 py-2.5"
                   header={
                     <>
                       {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 요약 안내 */}
@@ -1074,7 +1074,7 @@ function AdvancedResult({
                         )}
                       </span>
                       <span
-                        className={`mt-1.5 block break-keep text-[12px] font-semibold leading-relaxed ${
+                        className={`mt-1 block break-keep text-[12px] font-semibold leading-relaxed ${
                           isEligible ? "text-brand-green" : "text-brand-dark/50"
                         }`}
                       >
