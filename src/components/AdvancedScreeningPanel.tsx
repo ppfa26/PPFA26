@@ -900,8 +900,8 @@ function AdvancedResult({
           {/* ★ 초보자용 '보는 순서' 안내 (대표님 요청) ★ 목차 아코디언을 따로 두면 아래 실제
               카드와 제목이 그대로 중복됨 → 별도 목차를 없애고, 이 배너 안에 순서 한 줄로 녹인다.
               실제 4개 카드가 곧 목차 역할을 하므로 중복 없이 깔끔해진다. */}
-          <p className="mt-2 break-keep border-t border-brand-dark/10 pt-2 text-[13px] font-semibold leading-relaxed text-brand-dark/70">
-            🔎 잘 모르시겠으면 이 순서로 보시면 돼요. 위에서부터 아래 순서대로 확인하시면 됩니다.
+          <p className="mt-2 break-keep border-t border-brand-dark/10 pt-2 text-[14px] font-semibold leading-relaxed text-brand-dark/70">
+            🔎 잘 모르시겠으면 위에서부터 아래 순서대로 확인하시면 됩니다.
             <br />
             <span className="text-brand-dark/60">
               🌱 무상 지원금 → 🏅 감면 혜택 → 💳 정책자금 → 📢 그 외 기회
