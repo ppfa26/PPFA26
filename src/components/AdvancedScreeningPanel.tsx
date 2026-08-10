@@ -912,8 +912,8 @@ function AdvancedResult({
       {(
         <AccordionCard
           emoji="🌱"
-          title="예비·초기·청년창업자 지원사업"
-          subtitle="창업 단계 대표님을 위한 무상 사업화 자금이에요"
+          title="예비·초기·청년 사업자 지원금"
+          subtitle="안 갚아도 되는 예비·초기·청년 지원금이에요"
         >
           <div className="rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
@@ -1028,8 +1028,8 @@ function AdvancedResult({
       {autoRun && (
         <AccordionCard
           emoji="🏅"
-          title="신청·감면 혜택 한번에 모두 챙기기"
-          subtitle="신청 가능한 제도와 세금 아끼는 감면을 모았어요"
+          title="내 혜택·감면 모두 챙기기"
+          subtitle="신청 가능한 혜택과 세금 감면을 모았어요"
         >
           {/* ── 신청 가능한 정부지원제도 (제도가 있을 때만) ── */}
           {eligibleSupport.length > 0 && (
@@ -1175,8 +1175,8 @@ function AdvancedResult({
              (대표님 요청: '정책금융기관'보다 '정책금융상품'이 더 정확한 표현) */}
       <AccordionCard
         emoji="💳"
-        title="바로 신청 가능한 정책금융상품"
-        subtitle="낮은 금리로 받을 수 있는 자금이에요"
+        title="사업자 정책자금 대출"
+        subtitle="낮은 금리로 받는 정부 자금이에요"
       >
         <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
           <p className="break-keep text-xs leading-relaxed text-brand-dark/80">

@@ -56,8 +56,8 @@ const BUCKET_META: Record<
   },
   etc: {
     emoji: "📢",
-    title: "그 외 놓치기 쉬운 지원사업",
-    subtitle: "추가로 챙겨볼 만한 정부지원이에요",
+    title: "그 외 추가 지원사업",
+    subtitle: "그 외 지원사업도 챙겨보세요",
     inlineTitle: "지금 열려 있는 관련 공고",
     accent: "border-brand-orange/30 bg-brand-orange/5",
   },
