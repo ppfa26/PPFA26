@@ -527,28 +527,49 @@ export default function DiagnosisChat() {
     setTimeout(() => askStep(stepIdx + 1, next), 380);
   };
 
-  // ★ 순서 개편 (대표님 요청) ★ 맨 마지막(bnoContact 스텝) 확정 — 사업자번호+성함+연락처 한 번에.
-  //   국세청 조회가 실패해도(A안) 번호만 입력됐으면 그대로 접수하고 진단 결과로 진행한다.
-  //   성함·연락처 확보 시 savePartial로 리드를 저장한다.
-  const confirmBnoContact = () => {
+  // ★ 대표님 확정(2026) ★ 국세청 조회 버튼을 없애고, '진단 결과 확인하기 →' 버튼 하나로
+  //   국세청 조회 + 접수 + 진단 결과 진행을 한 번에 처리한다.
+  //   핵심: 국세청 조회는 '있으면 좋은' 부가정보일 뿐, 조회가 성공하든/실패하든/느리든
+  //   절대 화면을 멈추지 않고 무조건 다음 스텝으로 진행한다(3.5초 타임아웃 tryFetchBno 사용).
+  const confirmBnoContact = async () => {
+    if (bnoLoading) return; // 중복 클릭 방지
     const isPre = form.businessType === "예비";
     const name = nameTemp.trim();
     const phone = phoneTemp.trim();
     const phoneDigits = phone.replace(/[^0-9]/g, "");
     if (!name || phoneDigits.length < 10) return; // 성함·연락처는 필수
     const bnoDigits = textTemp.replace(/[^0-9]/g, "");
-    // 예비창업자가 아니면 사업자번호가 (조회완료 or 10자리 입력) 준비돼야 진행
+    // 예비창업자가 아니면 사업자번호가 (이미 저장됨 or 10자리 입력) 준비돼야 진행
     if (!isPre && !form.bno && bnoDigits.length !== 10) return;
+
     const next: any = { ...form, name, phone };
-    // 국세청 조회 없이 번호만 입력한 경우: 그대로 접수(미조회 표시). (A안)
+
+    // 사업자번호가 새로 입력됐고 아직 검증 전이면 → 국세청 조회를 '한 번' 시도(3.5초 제한).
+    // 성공하면 검증정보 저장, 실패/타임아웃이면 '미조회(입력만)'으로 그대로 접수. 어느 경우든 진행은 계속.
     if (!isPre && !form.bno && bnoDigits.length === 10) {
       next.bno = bnoDigits;
-      if (!form.bnoVerified) {
+      setBnoLoading(true);
+      try {
+        const r = await tryFetchBno(bnoDigits);
+        if (r.kind === "found") {
+          next.bnoStatus = r.data.status;
+          next.bnoTaxType = r.data.taxType;
+          next.bnoVerified = true;
+        } else {
+          next.bnoStatus = "미조회(입력만)";
+          next.bnoTaxType = "";
+          next.bnoVerified = false;
+        }
+      } catch {
+        // tryFetchBno는 내부에서 예외를 흡수하지만, 만약을 대비해 여기서도 안전하게 접수 처리
         next.bnoStatus = "미조회(입력만)";
         next.bnoTaxType = "";
         next.bnoVerified = false;
+      } finally {
+        setBnoLoading(false);
       }
     }
+
     setForm(next);
     const bnoLabel = next.bno ? `사업자번호 ${next.bno} · ` : isPre ? "예비창업자 · " : "";
     setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${name} · ${phone}` }]);
@@ -703,52 +724,8 @@ export default function DiagnosisChat() {
     }
   };
 
-  const checkBno = async () => {
-    const digits = textTemp.replace(/[^0-9]/g, "");
-    setBnoMsg(null);
-    setBnoServerDown(false);
-    if (digits.length !== 10) return; // 10자리 아니면 조용히 대기(기존 폼과 동일)
-    setBnoLoading(true);
-    try {
-      // ★ 대표님 요청 ★ 자동 재시도 제거 - 3.5초 단발 시도.
-      //   조회 중(정상)이면 응답을 기다리고, 점검·장애면 3.5초 뒤 즉시 폴백을 연다.
-      const r = await tryFetchBno(digits);
-      if (r.kind === "found") {
-        // 저장값은 기존 폼과 동일
-        const next = { ...form, bno: digits, bnoStatus: r.data.status, bnoTaxType: r.data.taxType, bnoVerified: true };
-        setForm(next);
-        setMessages((m) => [...m, { who: "user", text: textTemp.trim() }]);
-        const okIcon = r.data.statusCode === "01" ? "✅" : "⚠️";
-        // ★ 성함·연락처는 이미 같은 화면에 함께 떠 있음(대표님 요청). 조회 성공 메시지만 안내하고
-        //   화면은 그대로 둔다 → 아래 '입력 완료 →'로 한 번에 진행.
-        setBnoMsg({
-          tone: "ok",
-          text: `${okIcon} 국세청 확인 완료 - 사업자 상태 : ${r.data.status}${r.data.taxType ? ` (${r.data.taxType})` : ""}`,
-        });
-        return;
-      }
-      if (r.kind === "serverDown") {
-        setBnoServerDown(true);
-        setBnoMsg({ tone: "info", text: "지금은 국세청 조회 서버 점검 시간이에요. 아래 '직접 입력하고 계속하기'로 진행하실 수 있어요." });
-        return;
-      }
-      // 미등록/형식오류
-      setBnoMsg({ tone: "err", text: r.data.message || BNO_TEXT.errorNotFound });
-    } finally {
-      setBnoLoading(false);
-    }
-  };
-
-  // 국세청 장애 시 수동 접수(기존 confirmManualBno과 동일 저장)
-  const confirmManualBno = () => {
-    const digits = textTemp.replace(/[^0-9]/g, "");
-    if (digits.length !== 10) return;
-    const next = { ...form, bno: digits, bnoStatus: "국세청 점검으로 자동확인 없이 접수", bnoTaxType: "", bnoVerified: false };
-    setForm(next);
-    // ★ 성함·연락처는 이미 같은 화면에 함께 떠 있음 → 접수 안내만, 아래 '입력 완료 →'로 진행.
-    setBnoServerDown(false);
-    setBnoMsg({ tone: "ok", text: "✅ 사업자등록번호가 접수되었어요. 자동확인은 추후 처리됩니다." });
-  };
+  // ★ 대표님 확정(2026) ★ 기존 '국세청 조회' 버튼용 checkBno / 장애 시 수동접수 confirmManualBno는
+  //   버튼 통합으로 제거됨. 국세청 조회는 confirmBnoContact 안에서 3.5초 단발로만 시도한다.
 
   // ★ 순서 개편(대표님 요청) ★ 예비창업자 선택은 맨 앞 bizType 화면의 '예비창업자' 칩으로 대체됨.
   //   (기존 choosePreStartup 인라인 버튼은 제거)
@@ -1325,45 +1302,16 @@ export default function DiagnosisChat() {
                         <p className="mb-1.5 break-keep px-1 text-xs font-bold text-brand-dark/70">
                           사업자등록번호
                         </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="tel"
-                            inputMode="numeric"
-                            maxLength={12}
-                            value={textTemp}
-                            onChange={(e) => setTextTemp(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && bnoReady && checkBno()}
-                            placeholder={curStep.placeholder}
-                            className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
-                          />
-                          <button
-                            onClick={checkBno}
-                            disabled={bnoLoading || !bnoReady}
-                            className={`shrink-0 whitespace-nowrap rounded-full px-4 py-3 text-[15px] font-extrabold text-brand-dark transition-all duration-300 disabled:cursor-not-allowed ${
-                              bnoReady ? "bg-brand-grad shadow-sm" : "bg-brand-orange/25 text-brand-dark/40"
-                            }`}
-                          >
-                            {bnoLoading ? "조회 중…" : "국세청 조회 →"}
-                          </button>
-                        </div>
-                        {bnoMsg && (
-                          <div className={`mt-2 rounded-xl px-4 py-2.5 text-xs leading-relaxed ${
-                            bnoMsg.tone === "err" ? "bg-brand-red/10 text-brand-red" : bnoMsg.tone === "ok" ? "bg-brand-green/10 text-brand-dark" : "bg-brand-orange/10 text-brand-dark"
-                          }`}>
-                            {bnoMsg.text}
-                            {bnoServerDown && (
-                              <button onClick={confirmManualBno} className="mt-2 block w-full rounded-full bg-brand-grad py-2 text-xs font-extrabold text-brand-dark">
-                                직접 입력하고 계속하기 →
-                              </button>
-                            )}
-                          </div>
-                        )}
-                        {/* ★ A안(대표님 확정) ★ 조회를 안 해도(번호만 입력해도) 진단은 계속 진행된다는 안내. */}
-                        {!bnoMsg && bnoReady && !form.bnoVerified && (
-                          <p className="mt-2 break-keep px-1 text-[11px] leading-relaxed text-brand-gray">
-                            국세청 조회 없이 번호만 입력해도 결과 확인은 가능해요.
-                          </p>
-                        )}
+                        <input
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={12}
+                          value={textTemp}
+                          onChange={(e) => setTextTemp(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
+                          placeholder={curStep.placeholder}
+                          className="w-full rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                        />
                       </div>
                     )}
 
@@ -1397,10 +1345,10 @@ export default function DiagnosisChat() {
                     </div>
                     <button
                       onClick={confirmBnoContact}
-                      disabled={!canSubmit}
+                      disabled={!canSubmit || bnoLoading}
                       className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
                     >
-                      진단 결과 확인하기 →
+                      {bnoLoading ? "확인 중…" : "진단 결과 확인하기 →"}
                     </button>
                   </div>
                 );
