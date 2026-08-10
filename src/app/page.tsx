@@ -435,8 +435,8 @@ export default function Home() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
                       </span>
                     </summary>
-                    <div className="px-5 pb-5 pt-0">
-                    <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
+                    <div className="px-5 pb-4 pt-0">
+                    <div className="mt-2 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
                       <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
                         아래는 <b>예비·초기·청년 창업자</b>가 신청할 수 있는 대표적인 <b>사업화 자금(무상)</b> 지원사업이에요.
                         <br />
@@ -497,9 +497,9 @@ export default function Home() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
                       </span>
                     </summary>
-                    <div className="px-5 pb-5 pt-0">
+                    <div className="px-5 pb-4 pt-0">
                     {/* ── 제도 subsection 안내 (실제 결과창 초록 박스와 동일 문구) ── */}
-                    <div className="mt-3 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
+                    <div className="mt-2 rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
                       <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
                         아래는 대표님 진단 결과 <b>지금 바로 신청할 수 있는 정부지원제도</b>만 추린 목록이에요.
                         <br />
@@ -594,9 +594,9 @@ export default function Home() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
                       </span>
                     </summary>
-                    <div className="px-5 pb-5 pt-0">
+                    <div className="px-5 pb-4 pt-0">
                     {/* 안내 (실제 결과창 파란 박스와 동일 문구) */}
-                    <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
+                    <div className="mt-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
                       <p className="break-keep text-[12px] leading-relaxed text-brand-dark/80">
                         아래는 대표님이 <b>낮은 금리로 이용할 수 있는 정책금융상품</b>이에요.
                         지원금(무상)과 달리 <b>갚아야 하는 자금</b>이지만,
@@ -665,9 +665,9 @@ export default function Home() {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
                       </span>
                     </summary>
-                    <div className="px-5 pb-5 pt-0">
+                    <div className="px-5 pb-4 pt-0">
                     {/* 실제 결과창 공고 카드(제목+지원규모 태그 → 🗓️신청기간 배지 → 🏛️기관·대상 + 원문 버튼)와 동일 */}
-                    <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`mt-2 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
                         { title: "2026년 스마트 제조혁신 지원사업(스마트공장 구축)", scale: "최대 6천만원", deadline: "2026년 통합공고 진행", org: "중소벤처기업부", target: "제조 중소기업" },
                         { title: "2026년 인천 소상공인 경영환경개선 지원사업", scale: "항목별 최대 250만원", deadline: "예산 소진 시 마감", org: "인천광역시", target: "인천 소상공인" },
