@@ -654,6 +654,40 @@ export default function MatchingPreview() {
 
           {/* ── (대표님 요청) '이런 내용을 알려드립니다' 목차 박스 삭제 - 세로 길이 축소 ── */}
 
+          {/* ── (대표님 요청) 초보자용 '보는 순서' 길잡이 카드 ──
+               "23개나 되네…" 하고 얼어붙는 초보 대표님께, 위에서부터 이 순서로만 보면 된다고
+               부드럽게 안내한다. 기존 카드 구성/순서는 그대로 두고 안내만 위에 얹는다. */}
+          <section
+            id="reading-guide"
+            className="mt-4 rounded-2xl border border-brand-orange/25 bg-gradient-to-br from-brand-orange/5 to-white p-4 shadow-sm sm:p-5"
+          >
+            <p className="break-keep text-[15px] font-extrabold leading-snug text-brand-dark sm:text-base">
+              💡 복잡해 보여도 걱정 마세요. <span className="text-brand-orange">위에서부터 이 순서</span>로만 보시면 돼요.
+            </p>
+            <ol className="mt-3 flex flex-col gap-2">
+              {[
+                { n: "1", emoji: "🌱", title: "안 갚아도 되는 무상 지원금", desc: "예비·초기·청년창업 지원사업부터" },
+                { n: "2", emoji: "💎", title: "세금·비용 아끼는 감면 혜택", desc: "신청만 하면 되는 것들" },
+                { n: "3", emoji: "💳", title: "자금이 필요하면 낮은 금리 정책자금", desc: "빌리는 돈이라 천천히 확인" },
+                { n: "4", emoji: "📢", title: "그 외 놓치기 쉬운 기회", desc: "추가로 챙겨볼 지원사업" },
+              ].map((s) => (
+                <li key={s.n} className="flex items-center gap-3 rounded-xl bg-white/70 px-3 py-2.5">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-orange text-[13px] font-black text-white">
+                    {s.n}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block break-keep text-[14px] font-bold leading-snug text-brand-dark sm:text-[15px]">
+                      {s.emoji} {s.title}
+                    </span>
+                    <span className="mt-0.5 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
+                      {s.desc}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+
           {/* ── (대표님 요청) '무료 베타 오픈중' 안내 문구 삭제 - 화면 간결화 ── */}
 
           {/* ── 중간 결제 유도 박스 (정식 유료 모드 전용) ──
