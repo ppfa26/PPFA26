@@ -717,7 +717,7 @@ export default function MatchingPreview() {
                 as="p"
                 className="mx-auto mt-1.5 max-w-md break-keep text-sm leading-snug text-gray-300"
               >
-                서비스 이용에 어려움을 겪고 있으시다면 1:1 채널톡 상담하기를 클릭하세요.
+                서비스 이용이 어렵거나 IR·사업계획서 등 전문가 도움이 필요하시면 아래 1:1 채널톡으로 문의하세요.
               </Editable>
               <div className="mt-4 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
                 {/* 왼쪽 - 다시 진단하기 (보조 버튼, 흰색 아웃라인) */}
