@@ -29,6 +29,39 @@ type Item = {
 
 type Bucket = "startup" | "loan" | "etc";
 
+// ────────────────────────────────────────────────────────────────
+// ★ 속도 개선(대표님 요청 2026-08): 결과창에서 이 컴포넌트가 3번(startup/loan/etc)
+//   렌더되면서 각자 /api/announcements/match 를 따로 호출 → 같은 공고 700건을 3번
+//   중복 조회해 느렸다. 서버는 한 응답에 startup/loan/etc를 모두 담아 주므로,
+//   같은 profile이면 '진행 중(in-flight) Promise'를 공유해 네트워크 요청을 1번으로 합친다.
+//   (모듈 레벨 캐시. profile JSON을 key로 사용. onCount 등 기존 로직은 그대로.)
+// ────────────────────────────────────────────────────────────────
+// 응답 형태는 서버가 startup/loan/etc/fallback_by 등 동적 키를 가지므로 any로 둔다(기존 동작 유지).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MatchResponse = any;
+const _matchCache = new Map<string, Promise<MatchResponse>>();
+
+function fetchMatchShared(profile: Record<string, unknown> | null): Promise<MatchResponse> {
+  const key = JSON.stringify(profile || {});
+  const cached = _matchCache.get(key);
+  if (cached) return cached;
+
+  const p = fetch("/api/announcements/match", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: key,
+  })
+    .then((res) => res.json() as Promise<MatchResponse>)
+    .catch((e) => {
+      // 실패한 요청은 캐시에서 지워 다음 렌더 때 재시도 가능하게 한다.
+      _matchCache.delete(key);
+      throw e;
+    });
+
+  _matchCache.set(key, p);
+  return p;
+}
+
 // 버킷별 표시 설정(아코디언 제목/색/안내문). etc만 독립 카드라 카드 제목을 씀.
 const BUCKET_META: Record<
   Bucket,
@@ -92,12 +125,8 @@ export default function RelatedAnnouncements({
     let alive = true;
     (async () => {
       try {
-        const res = await fetch("/api/announcements/match", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(profile || {}),
-        });
-        const j = await res.json();
+        // ★ 3개 버킷이 같은 profile이면 요청 1번을 공유(속도 개선). 실패 시 catch로.
+        const j = await fetchMatchShared(profile);
         if (alive) {
           // 서버가 성격별 배열(startup/loan/etc)을 준다. 없으면 items(하위호환)로 폴백.
           const arr = Array.isArray(j?.[bucket])

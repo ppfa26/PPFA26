@@ -136,12 +136,18 @@ const TOPIC_KEYWORDS: Record<string, string[]> = {
   인증: ["인증", "특허", "지식재산", "벤처", "이노비즈", "메인비즈"],
   교육: ["교육", "컨설팅", "멘토링", "아카데미"],
   창업자금: ["창업", "자금"],
-  운전자금: ["운전자금", "경영", "자금", "경영안정"],
-  시설자금: ["시설", "설비", "장비", "임차"],
+  운전자금: ["운전자금", "경영", "자금", "경영안정", "운영자금", "긴급"],
+  시설자금: ["시설", "설비", "장비", "임차", "공장", "기계", "인테리어"],
   수출자금: ["수출", "글로벌", "무역금융"],
   "인증및특허": ["인증", "특허", "지식재산", "R&D", "기술개발"],
   기술개발: ["R&D", "기술개발", "연구개발", "혁신"],
   디지털전환: ["디지털", "스마트", "AI", "빅데이터", "온라인"],
+  // ── (b1 보강) 진단 관심분야(purposes) 실제 값과 1:1 매칭되도록 동의어 키 추가 ──
+  //    진단 값은 정규화 시 대괄호·중점(·)이 제거된다: "바우처·인증·특허"→"바우처인증특허".
+  바우처인증특허: ["바우처", "인증", "특허", "지식재산", "벤처", "이노비즈", "메인비즈"],
+  세무노무행정: ["세무", "노무", "행정", "회계", "기장", "인건비", "고용", "4대보험", "컨설팅"],
+  // ── (b1 보강) 업종 세분 동의어 ──
+  기타: [],
 };
 
 function normList(v: unknown): string[] {
@@ -332,9 +338,24 @@ export async function POST(req: Request) {
       if (region.includes(name)) kws.forEach((k) => regionKwSet.add(k));
     }
     const topicKwSet = new Set<string>();
+    // (정확도 b1 보강 · 대표님 요청 2026-08) 진단 값은 "운전자금 [운영자금]"처럼
+    //   대괄호 부가설명·공백이 붙어 오는 경우가 있어, TOPIC_KEYWORDS 정확일치만으로는
+    //   매칭이 누락됐다. → 값을 정규화(공백/대괄호 제거)하고, 사전 키가 값에 '포함'되면
+    //   가점 키워드를 흡수하도록 부분일치까지 지원한다. (억지매칭 방지: 사전 키 기준 포함만)
+    const normTopic = (s: string) =>
+      s.replace(/\s+/g, "").replace(/\[[^\]]*\]/g, "").replace(/[·,]/g, "");
     for (const t of [...industries, ...topics]) {
-      const kws = TOPIC_KEYWORDS[t];
-      if (kws) kws.forEach((k) => topicKwSet.add(k));
+      const nt = normTopic(t);
+      if (!nt) continue;
+      // 1) 정규화 후 정확일치 우선
+      if (TOPIC_KEYWORDS[nt]) {
+        TOPIC_KEYWORDS[nt].forEach((k) => topicKwSet.add(k));
+        continue;
+      }
+      // 2) 사전 키가 값 안에 포함되면(예: "바우처인증특허" ⊇ "바우처"/"인증") 해당 가점 흡수
+      for (const [key, kws] of Object.entries(TOPIC_KEYWORDS)) {
+        if (nt.includes(key)) kws.forEach((k) => topicKwSet.add(k));
+      }
     }
     const flags: ProfileFlags = {
       regionKw: Array.from(regionKwSet),
