@@ -964,7 +964,7 @@ export default function DiagnosisChat() {
                           key={o}
                           // singleSelect면 하나만 즉시 선택·다음으로(라디오), 아니면 복수 토글.
                           onClick={() => (curStep.singleSelect ? answerMultiSingle(o) : toggleMulti(o))}
-                          className={`break-keep rounded-full border px-3 py-2.5 text-[13px] font-semibold transition ${
+                          className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
                             active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                           }`}
                         >
@@ -993,7 +993,7 @@ export default function DiagnosisChat() {
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       {renderOptLabel(o)}
                     </button>
@@ -1015,7 +1015,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border px-3 py-2.5 text-[13px] font-semibold transition ${
+                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                               }`}
                             >
@@ -1053,7 +1053,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border px-3 py-2.5 text-[13px] font-semibold transition ${
+                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                               }`}
                             >
@@ -1098,7 +1098,7 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => (radio ? pickGroupMultiSingle(sub.key, o) : toggleGroupMulti(sub.key, o))}
-                                className={`break-keep rounded-full border px-3 py-2.5 text-[13px] font-semibold transition ${
+                                className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
                                   active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                                 }`}
                               >
@@ -1182,7 +1182,7 @@ export default function DiagnosisChat() {
                         <button
                           key={o}
                           onClick={() => answerRegion(o)}
-                          className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                          className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                         >
                           {renderOptLabel(o)}
                         </button>
@@ -1249,7 +1249,7 @@ export default function DiagnosisChat() {
                             <button
                               key={t}
                               onClick={() => setForm((f: any) => ({ ...f, businessType: t }))}
-                              className={`break-keep rounded-full border px-3 py-2.5 text-[13px] font-semibold transition ${
+                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
                                 active
                                   ? "border-brand-orange bg-brand-grad text-brand-dark"
                                   : "border-white bg-white text-brand-dark hover:border-brand-orange"
@@ -1277,7 +1277,7 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => pickGroup(sub.key, o)}
-                                className={`break-keep rounded-full border px-3 py-2.5 text-[13px] font-semibold transition ${
+                                className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
                                   active
                                     ? "border-brand-orange bg-brand-grad text-brand-dark"
                                     : "border-white bg-white text-brand-dark hover:border-brand-orange"
