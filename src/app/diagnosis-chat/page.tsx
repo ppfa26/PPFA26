@@ -286,9 +286,9 @@ function autoCols(opts: string[]): 1 | 2 | 3 {
   if (!opts || opts.length === 0) return 1;
   const maxLen = Math.max(...opts.map((o) => o.length));
   // 옵션이 2개뿐이면 항상 한 줄에 2개(예/아니요 형태)
-  if (opts.length === 2) return maxLen <= 12 ? 2 : 1;
-  if (maxLen <= 6) return 3; // "1년 미만", "서울" 처럼 짧으면 3열
-  if (maxLen <= 14) return 2; // 보통 길이는 2열
+  if (opts.length === 2) return maxLen <= 11 ? 2 : 1;
+  if (maxLen <= 5) return 3; // "1년 미만", "서울" 처럼 짧으면 3열
+  if (maxLen <= 12) return 2; // 보통 길이는 2열
   return 1; // 아주 길면 1열(줄바꿈/잘림 방지)
 }
 const COLS_CLASS: Record<1 | 2 | 3, string> = {
@@ -974,7 +974,7 @@ export default function DiagnosisChat() {
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="break-keep rounded-full border border-white bg-white px-2 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       {o}
                     </button>
@@ -996,7 +996,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                              className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                               }`}
                             >
@@ -1034,7 +1034,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                              className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                               }`}
                             >
@@ -1079,7 +1079,7 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => (radio ? pickGroupMultiSingle(sub.key, o) : toggleGroupMulti(sub.key, o))}
-                                className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                                className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
                                   active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                                 }`}
                               >
@@ -1163,7 +1163,7 @@ export default function DiagnosisChat() {
                         <button
                           key={o}
                           onClick={() => answerRegion(o)}
-                          className="rounded-full border border-white bg-white px-1 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange"
+                          className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                         >
                           {o}
                         </button>
@@ -1230,7 +1230,7 @@ export default function DiagnosisChat() {
                             <button
                               key={t}
                               onClick={() => setForm((f: any) => ({ ...f, businessType: t }))}
-                              className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                              className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
                                 active
                                   ? "border-brand-orange bg-brand-grad text-brand-dark"
                                   : "border-white bg-white text-brand-dark hover:border-brand-orange"
@@ -1258,7 +1258,7 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => pickGroup(sub.key, o)}
-                                className={`break-keep rounded-full border px-2 py-2.5 text-[14px] font-semibold transition ${
+                                className={`break-keep rounded-full border px-3 py-2.5 text-[14px] font-semibold transition ${
                                   active
                                     ? "border-brand-orange bg-brand-grad text-brand-dark"
                                     : "border-white bg-white text-brand-dark hover:border-brand-orange"
