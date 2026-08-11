@@ -247,17 +247,17 @@ const CHAT_STEPS: ChatStep[] = [
   {
     key: "deepChecks",
     type: "checkGroup",
-    botLines: ["사업장에 해당되는 게 있나요?", "해당되는 항목만 골라주세요."],
+    botLines: ["내 사업장에 해당되는 게 있나요?", "해당되는 항목만 골라주세요."],
     checkYes: "예",
     checkNo: "아니요",
     subs: [
       // ★ 순서 재배열 (대표님 요청) ★ key/저장값·매칭 로직은 그대로, 노출 순서만 변경.
-      { key: "reFounder", label: "🔁 폐업 경험이 있고 다시 창업 중이에요", desc: "예: 재창업 7년 이내인 사업자인 경우" },
-      { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 갈아타고 싶어요", desc: "예: 카드론·2금융 7%↑사용중인 경우" },
-      { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 매년 10% 이상 늘었어요", desc: "예: 2년 연속 10%↑연매출 상승 기업인 경우" },
-      { key: "smartDevice", label: "🖥️ 매장에 스마트기기를 쓰고 있어요", desc: "예: 키오스크·테이블오더·무인기기·조리 및 서빙 로봇" },
-      { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중이에요", desc: "예: 투자유치 실적 보유중인 기업인 경우" },
-      { key: "govSelected", label: "🏆 정부 선정 프로그램에 뽑힌 적 있어요", desc: "예: 백년가게·TIPS등 선정 된 경우" },
+      { key: "reFounder", label: "🔁 폐업 경험이 있고 다시 창업 중", desc: "예: 재창업 7년 이내인 사업자인 경우 체크" },
+      { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 대환 원함", desc: "예: 카드론·2금융 7%↑사용중인 경우 체크" },
+      { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 매년 10% 이상 상승", desc: "예: 2년 연속 10%↑연매출 상승 기업인 경우 체크" },
+      { key: "smartDevice", label: "🖥️ 매장에서 스마트기기를 사용중", desc: "예: 키오스크·테이블오더·무인기기·조리·서빙 로봇" },
+      { key: "privateInvestment", label: "💵 엔젤·VC 등 민간 투자를 받았거나 진행 중", desc: "예: 투자유치 실적 보유중인 기업인 경우 체크" },
+      { key: "govSelected", label: "🏆 정부 프로그램에 선정된 이력 있음", desc: "예: 백년가게·TIPS등 선정 된 경우 체크" },
     ],
   },
   // ★ 순서 개편 (대표님 요청) ★ 진단을 다 마친 '맨 마지막'에 사업자번호·성함·연락처를 한 화면에서 받는다.
