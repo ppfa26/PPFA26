@@ -139,7 +139,8 @@ const CHAT_STEPS: ChatStep[] = [
     type: "singleGroup",
     botLines: ["대표님에 대해 알려주세요.", "연령대와 신용점수를 골라주세요."],
     subs: [
-      { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 3 },
+      // 연령대는 라벨이 길어("만 34세 이하") 3열에선 줄바꿈이 어색 → 아래 신용점수와 동일하게 2열로 두어 한 줄로 시원하게 표시(매칭값 그대로 유지).
+      { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 2 },
       // ★ 안심 문구(대표님 요청) ★ 신용점수는 이탈 방어 지점 → "낮아도 가능"을 명시.
       { key: "credit", label: "대표자 개인 신용점수", hint: "점수가 낮아도 신청 가능한 상품이 있으니 편하게 골라주세요. " + STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
     ],
