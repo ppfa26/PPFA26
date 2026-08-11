@@ -216,6 +216,8 @@ const CHAT_STEPS: ChatStep[] = [
         hint: STEP2_FIELDS.currentInstitutions.hint,
         opts: STEP2_FIELDS.currentInstitutions.opts,
         labelFull: (STEP2_FIELDS.currentInstitutions as any).labelFull,
+        // 라벨이 긴 기관명(소상공인시장진흥공단 등) → 좌우패딩 살짝 줄여 여백 확보(가운데 정렬 안정화).
+        compact: true,
       },
     ],
   },
@@ -1103,7 +1105,9 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => (radio ? pickGroupMultiSingle(sub.key, o) : toggleGroupMulti(sub.key, o))}
-                                className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
+                                className={`break-keep rounded-full border py-2.5 text-center text-[13px] font-semibold transition ${
+                                  sub.compact ? "px-1.5" : "px-3"
+                                } ${
                                   active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                                 }`}
                               >
