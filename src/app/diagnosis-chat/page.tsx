@@ -256,7 +256,7 @@ const CHAT_STEPS: ChatStep[] = [
       { key: "wantsRefinance", label: "🔄 고금리 대출을 저금리로 대환 원함", desc: "예: 카드론·2금융 7%↑사용중인 경우" },
       { key: "revenueGrowth2y", label: "📈 최근 2년 연매출이 10% 이상 상승", desc: "예: 2년 연속 10%↑연매출 상승 기업인 경우" },
       { key: "smartDevice", label: "🖥️ 매장에서 스마트기기를 사용중", desc: "예: 키오스크·테이블오더·무인기기·로봇" },
-      { key: "privateInvestment", label: "💵 엔젤 등 민간 투자를 받았거나 진행 중", desc: "예: 투자유치 실적 보유중인 기업인 경우" },
+      { key: "privateInvestment", label: "💵 엔젤 등 민간 투자를 받았거나 진행", desc: "예: 투자유치 실적 보유중인 기업인 경우" },
       { key: "govSelected", label: "🏆 정부 프로그램에 선정된 이력 있음", desc: "예: 백년가게·TIPS등 선정 된 경우" },
     ],
   },
