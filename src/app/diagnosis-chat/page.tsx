@@ -14,7 +14,7 @@
 //   시작 시 봇이 "모든 질문에 정확히 답해야 정확한 결과를 얻는다"고 안내한다.
 // ════════════════════════════════════════════════════════════════
 
-import { useState, useEffect, useRef, memo } from "react";
+import { useState, useEffect, useRef, memo, type ReactNode } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
@@ -296,6 +296,24 @@ const COLS_CLASS: Record<1 | 2 | 3, string> = {
   2: "grid-cols-2",
   3: "grid-cols-3",
 };
+
+// ── 옵션 라벨 "본문 [상태]" 2줄 분리 표시 (diagnosis-form 방식과 동일) ──
+//  예) "해당 없음 [신청 가능]" → 모바일: '해당 없음' / '[신청 가능]' 2줄 · PC(sm↑): 한 줄 그대로.
+//  · 대괄호가 없는 옵션은 원문 그대로 표시.
+//  · 반환은 표시(JSX)만 바꿀 뿐, 원본 문자열 값(onClick·판정)은 그대로 유지된다.
+function renderOptLabel(label: string): ReactNode {
+  const m = label.match(/^(.*?)\s*(\[[^\]]*\])\s*$/);
+  if (!m) return label;
+  return (
+    <>
+      {m[1]}
+      {/* 모바일: 줄바꿈 · PC(sm 이상): 공백 한 칸으로 한 줄 유지 */}
+      <br className="sm:hidden" />
+      <span className="hidden sm:inline"> </span>
+      {m[2]}
+    </>
+  );
+}
 
 type Msg = { who: "bot"; text: string; wide?: boolean } | { who: "user"; text: string };
 
@@ -949,7 +967,7 @@ export default function DiagnosisChat() {
                             active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                           }`}
                         >
-                          {curStep.labelFull?.[o] || o}
+                          {renderOptLabel(curStep.labelFull?.[o] || o)}
                         </button>
                       );
                     })}
@@ -976,7 +994,7 @@ export default function DiagnosisChat() {
                       onClick={() => answerSingle(o)}
                       className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                     >
-                      {o}
+                      {renderOptLabel(o)}
                     </button>
                   ))}
                 </div>
@@ -1000,7 +1018,7 @@ export default function DiagnosisChat() {
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                               }`}
                             >
-                              {o}
+                              {renderOptLabel(o)}
                             </button>
                           );
                         })}
@@ -1038,7 +1056,7 @@ export default function DiagnosisChat() {
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                               }`}
                             >
-                              {o}
+                              {renderOptLabel(o)}
                             </button>
                           );
                         })}
@@ -1083,7 +1101,7 @@ export default function DiagnosisChat() {
                                   active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                                 }`}
                               >
-                                {sub.labelFull?.[o] || o}
+                                {renderOptLabel(sub.labelFull?.[o] || o)}
                               </button>
                             );
                           })}
@@ -1165,7 +1183,7 @@ export default function DiagnosisChat() {
                           onClick={() => answerRegion(o)}
                           className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-[14px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
                         >
-                          {o}
+                          {renderOptLabel(o)}
                         </button>
                       ))}
                     </div>
@@ -1264,7 +1282,7 @@ export default function DiagnosisChat() {
                                     : "border-white bg-white text-brand-dark hover:border-brand-orange"
                                 }`}
                               >
-                                {o}
+                                {renderOptLabel(o)}
                               </button>
                             );
                           })}
