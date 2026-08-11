@@ -270,7 +270,7 @@ const CHAT_STEPS: ChatStep[] = [
       "",
       "결과 안내를 위해 마지막으로\n사업자등록번호와 대표자님\n성함·연락처만 알려주세요.",
     ],
-    questionHead: "사업자등록번호 · 성함 · 연락처 👇",
+    questionHead: "사업자등록번호 · 성함 · 연락처",
     placeholder: BNO_TEXT.placeholder,
   },
 ];
@@ -1354,7 +1354,7 @@ export default function DiagnosisChat() {
                           onChange={(e) => setPhoneTemp(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
                           // chat 화면은 성함·연락처가 반칸씩 나뉘어 좁으므로 짧은 placeholder 사용(잘림 방지). config는 diagnosis-form과 공유되어 미변경.
-                          placeholder="연락처 (010…)"
+                          placeholder="연락처"
                           className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
                         />
                       </div>
