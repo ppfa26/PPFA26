@@ -71,6 +71,8 @@ type SubQ = {
   desc?: string;
   hint?: string;
   cols?: 1 | 2 | 3;
+  // 3열 등 버튼폭이 좁을 때 좌우패딩·폰트를 살짝 줄여 글자가 빡빡하지 않게(예: 연령대 3열).
+  compact?: boolean;
   // multiGroup 전용: 이 하위문항을 '하나만' 고르게(라디오식). 저장은 [선택값] 배열 유지.
   singleSelect?: boolean;
   // multiGroup 전용: 저장을 배열이 아니라 '단일 문자열'로(예: businessType). 자동으로 라디오식.
@@ -139,8 +141,8 @@ const CHAT_STEPS: ChatStep[] = [
     type: "singleGroup",
     botLines: ["대표님에 대해 알려주세요.", "연령대와 신용점수를 골라주세요."],
     subs: [
-      // 연령대는 라벨이 길어("만 34세 이하") 3열에선 줄바꿈이 어색 → 아래 신용점수와 동일하게 2열로 두어 한 줄로 시원하게 표시(매칭값 그대로 유지).
-      { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 2 },
+      // 연령대는 3열 1줄로 시원하게(대표님 요청). 3열은 버튼폭이 좁아지므로 compact 플래그로 좌우패딩·폰트만 살짝 줄임(매칭값 그대로 유지).
+      { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 3, compact: true },
       // ★ 안심 문구(대표님 요청) ★ 신용점수는 이탈 방어 지점 → "낮아도 가능"을 명시.
       { key: "credit", label: "대표자 개인 신용점수", hint: "점수가 낮아도 신청 가능한 상품이 있으니 편하게 골라주세요. " + STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
     ],
@@ -1054,7 +1056,9 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
+                              className={`break-keep rounded-full border py-2.5 text-center font-semibold transition ${
+                                sub.compact ? "px-1.5 text-[12px]" : "px-3 text-[13px]"
+                              } ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
                               }`}
                             >
