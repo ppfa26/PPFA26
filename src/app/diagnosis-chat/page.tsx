@@ -945,7 +945,7 @@ export default function DiagnosisChat() {
                   // questionHead가 있으면 그걸 우선(예: bno). 없으면 botLines 첫 줄.
                   const headQ = curStep.questionHead || curStep.botLines?.[0];
                   return headQ ? (
-                    <p className="min-w-0 flex-1 break-keep text-[15px] font-extrabold leading-snug text-brand-dark">
+                    <p className="min-w-0 flex-1 break-keep text-[13.5px] font-extrabold leading-snug text-brand-dark">
                       <span className="mr-1 text-brand-orange">Q.</span>
                       {headQ}
                     </p>
@@ -1155,7 +1155,7 @@ export default function DiagnosisChat() {
                           ✓
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block leading-snug">{sub.label}</span>
+                          <span className="block text-[13px] leading-snug">{sub.label}</span>
                           {sub.desc && (
                             <span className="mt-0.5 block text-[11px] font-medium leading-tight text-brand-gray">{sub.desc}</span>
                           )}
@@ -1327,7 +1327,7 @@ export default function DiagnosisChat() {
                           onChange={(e) => setTextTemp(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
                           placeholder={curStep.placeholder}
-                          className="w-full rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                          className="w-full rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
                         />
                       </div>
                     )}
@@ -1343,7 +1343,7 @@ export default function DiagnosisChat() {
                           value={nameTemp}
                           onChange={(e) => setNameTemp(e.target.value)}
                           placeholder={CONTACT_TEXT.namePlaceholder}
-                          className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                          className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
                         />
                         <input
                           type="tel"
@@ -1351,8 +1351,9 @@ export default function DiagnosisChat() {
                           value={phoneTemp}
                           onChange={(e) => setPhoneTemp(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
-                          placeholder={CONTACT_TEXT.phonePlaceholder}
-                          className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                          // chat 화면은 성함·연락처가 반칸씩 나뉘어 좁으므로 짧은 placeholder 사용(잘림 방지). config는 diagnosis-form과 공유되어 미변경.
+                          placeholder="연락처 (010…)"
+                          className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
                         />
                       </div>
                       {/* ★ 개인정보 안심 한 줄(대표님 요청) ★ */}
