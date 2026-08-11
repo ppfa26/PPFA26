@@ -184,9 +184,9 @@ const CHAT_STEPS: ChatStep[] = [
     type: "singleGroup",
     botLines: ["사업 규모를 한 번에 알려주세요.", "아래 세 가지만 골라주세요."],
     subs: [
-      { key: "years", label: "사업자등록증상 업력", opts: STEP1_FIELDS.years.opts },
-      { key: "revenue", label: "연매출 규모", opts: STEP1_FIELDS.revenue.opts },
-      { key: "employees", label: "직원 수", hint: STEP2_FIELDS.employees.hint, opts: STEP2_FIELDS.employees.opts },
+      { key: "years", label: "사업자등록증상 업력", opts: STEP1_FIELDS.years.opts, cols: 3 },
+      { key: "revenue", label: "연매출 규모", opts: STEP1_FIELDS.revenue.opts, cols: 3 },
+      { key: "employees", label: "직원 수", hint: STEP2_FIELDS.employees.hint, opts: STEP2_FIELDS.employees.opts, cols: 3 },
     ],
   },
   // ── 2단계 · 회사 정보 ──
