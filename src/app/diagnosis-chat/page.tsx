@@ -126,7 +126,7 @@ const CHAT_STEPS: ChatStep[] = [
       "",
       "사업자 구분과\n신청 자격을 먼저 확인할게요.",
     ],
-    questionHead: "사업자 구분을 선택해 주세요 👇",
+    questionHead: "사업자 구분을 선택해 주세요",
     subs: [
       { key: "bankruptcy", label: "현재 회생·파산 절차가 진행 중이신가요?", opts: STEP3_FIELDS.bankruptcy.opts },
       { key: "taxDelinquent", label: "국세·지방세는 완납 상태이신가요?", opts: STEP3_FIELDS.taxDelinquent.opts },
