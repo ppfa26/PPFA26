@@ -243,8 +243,12 @@ export default function MatchingPreview() {
     if (!meta) return;
     const RESPONSIVE =
       "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes";
-    const DESKTOP =
-      "width=820, initial-scale=1, maximum-scale=5, user-scalable=yes";
+    // ★ initial-scale 을 '주지 않는' 게 핵심 ★
+    //   initial-scale=1 을 넣으면 820px 을 1배율로 그려 화면보다 넓은 왼쪽 일부만 확대돼 보여
+    //   사용자가 직접 핀치아웃해야 전체가 보였다(대표님 신고).
+    //   initial-scale 을 빼면 모바일 브라우저가 width=820 콘텐츠를 '화면 폭에 맞게' 자동 축소해
+    //   처음부터 데스크톱 결과창 전체가 한눈에 깔끔히 보인다. (maximum-scale 은 확대 여지 위해 유지)
+    const DESKTOP = "width=820, maximum-scale=5, user-scalable=yes";
     meta.setAttribute("content", gate === "ready" ? DESKTOP : RESPONSIVE);
     return () => {
       // 언마운트(다른 페이지 이동) 시 반응형으로 원복해 다른 화면에 데스크톱 폭이 새지 않게 함
