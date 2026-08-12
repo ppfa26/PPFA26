@@ -282,7 +282,7 @@ export default function MatchingPreview() {
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10">
               <span className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
             </div>
-            <p className="break-keep text-xl font-extrabold leading-snug text-brand-dark sm:text-2xl">
+            <p className="whitespace-nowrap text-[17px] font-extrabold leading-snug text-brand-dark sm:text-2xl">
               대표님 사업장을 <span className="text-brand-orange">AI가 분석</span>하고 있어요
             </p>
             <p className="mt-2 text-sm text-brand-gray sm:text-base">
