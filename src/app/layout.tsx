@@ -13,9 +13,9 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
+  title: "정부지원사업 AI 통합 매칭 플랫폼, 모두의사업친구",
   description:
-    "내 사업장에 딱 맞는 정부지원사업을 한번에 진단하고, 신청 방법까지 안내하는 AI 통합 매칭 플랫폼입니다.",
+    "내 사업장에 딱 맞는 정부지원사업을 매칭하고 신청 방법까지 한번에 안내, AI 통합 매칭 플랫폼",
   keywords: [
     // ── 핵심 키워드 ──
     "정책자금",
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
+    title: "정부지원사업 AI 통합 매칭 플랫폼, 모두의사업친구",
     description: "AI가 내 사업장에 알맞은 정부지원사업을 전부 찾아드립니다.",
     type: "website",
     locale: "ko_KR",
@@ -95,13 +95,13 @@ export const metadata: Metadata = {
         url: "/og-image-v3.jpg",
         width: 1200,
         height: 630,
-        alt: "모두의사업친구 - 정부지원사업 AI 통합 매칭 플랫폼",
+        alt: "정부지원사업 AI 통합 매칭 플랫폼, 모두의사업친구",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
+    title: "정부지원사업 AI 통합 매칭 플랫폼, 모두의사업친구",
     description: "AI가 내 사업장에 알맞은 정부지원사업을 전부 찾아드립니다.",
     images: ["/og-image-v3.jpg"],
   },
@@ -276,7 +276,7 @@ const structuredData = {
         "정부지원사업 AI 통합 매칭 플랫폼",
       ],
       description:
-        "내 사업장에 딱 맞는 정부지원사업을 한번에 진단하고, 신청 방법까지 안내하는 AI 통합 매칭 플랫폼입니다.",
+        "내 사업장에 딱 맞는 정부지원사업을 매칭하고 신청 방법까지 한번에 안내, AI 통합 매칭 플랫폼",
       inLanguage: "ko-KR",
       publisher: { "@id": `${SITE_URL}/#organization` },
       // ★ 사이트링크 검색창(Sitelinks Searchbox) ★
