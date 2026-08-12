@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "모두의사업친구 | 정부지원사업 AI 통합 매칭 플랫폼",
   description:
-    "AI가 내 사업장에 딱 맞는 정부지원사업을 한 번에 진단하고, 신청 방법까지 한번에 안내하는 AI 통합 매칭 플랫폼입니다.",
+    "내 사업장에 딱 맞는 정부지원사업을 한번에 진단하고, 신청 방법까지 안내하는 AI 통합 매칭 플랫폼입니다.",
   keywords: [
     // ── 핵심 키워드 ──
     "정책자금",
@@ -64,7 +64,11 @@ export const metadata: Metadata = {
     title: "모두의사업친구",
   },
   icons: {
-    icon: "/favicon.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png", sizes: "192x192" },
+    ],
+    shortcut: "/favicon.ico",
     // iOS 홈 화면 설치 시 'm' 로고 아이콘 사용
     apple: "/apple-icon-180.png",
   },
@@ -272,7 +276,7 @@ const structuredData = {
         "정부지원사업 AI 통합 매칭 플랫폼",
       ],
       description:
-        "AI가 내 사업장에 딱 맞는 정부지원사업을 한 번에 진단하고, 신청 방법까지 한번에 안내하는 AI 통합 매칭 플랫폼입니다.",
+        "내 사업장에 딱 맞는 정부지원사업을 한번에 진단하고, 신청 방법까지 안내하는 AI 통합 매칭 플랫폼입니다.",
       inLanguage: "ko-KR",
       publisher: { "@id": `${SITE_URL}/#organization` },
       // ★ 사이트링크 검색창(Sitelinks Searchbox) ★
