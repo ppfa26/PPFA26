@@ -109,11 +109,11 @@ const FAQS = [
 
 export default function Home() {
   // ── 첫 화면(홈)이 진입 즉시 화면 폭에 맞게 보이도록 뷰포트 fit-to-width 강제 (대표님 요청) ──
-  //  루트 layout 은 width=820(데스크톱 강제)이지만, Next.js 가 자동으로 initial-scale=1 을
-  //  붙여 넣어 모바일에서 820px 왼쪽 일부만 확대돼 보이고 손가락으로 축소해야 전체가 보였다.
-  //  → 결과창(matching-preview)에서 검증된 방식과 동일하게 initial-scale 을 '빼서'
-  //    브라우저가 820px 콘텐츠를 기기 폭에 맞게 자동 축소(fit-to-width)하게 한다.
-  //    다른 페이지로 이동하면(언마운트) 루트 기본값으로 돌려놓아 홈에만 적용되게 한다.
+  //  이 페이지는 (home) route group 의 layout.tsx 에서 서버가 처음부터 width=device-width 로
+  //  렌더링한다. 그 상태에서 JS 로 width=820(initial-scale 없음)으로 '전환'하면, 결과창
+  //  (matching-preview)과 100% 동일한 검증된 방식이라 삼성인터넷·사파리도 폭에 맞게 재축소한다.
+  //  (핵심: 서버 HTML 이 device-width → JS 가 820 으로 바뀌는 '전환'이 있어야 브라우저가
+  //   fit-to-width 를 다시 계산한다. 홈이 처음부터 820 이면 그 전환이 없어 안 먹혔었다.)
   useEffect(() => {
     if (typeof document === "undefined") return;
     const meta = document.querySelector(
@@ -121,26 +121,10 @@ export default function Home() {
     ) as HTMLMetaElement | null;
     if (!meta) return;
     const prev = meta.getAttribute("content");
-    const FIT = "width=820, maximum-scale=5, user-scalable=yes";
-    // ★ 핵심: 모바일 브라우저(삼성인터넷·사파리)는 첫 렌더에서 잡은 스케일을 유지해,
-    //   viewport 를 '한 번' 바꾸는 것만으로는 fit-to-width 를 다시 계산하지 않는다.
-    //   → 아주 잠깐 device-width 로 두었다가 다음 프레임에 width=820(FIT) 로 바꿔
-    //     'viewport 가 변했다'는 신호를 줘야 브라우저가 폭에 맞게 재축소한다.
-    meta.setAttribute(
-      "content",
-      "width=device-width, maximum-scale=5, user-scalable=yes"
-    );
-    const raf1 = requestAnimationFrame(() => {
-      const raf2 = requestAnimationFrame(() => {
-        meta.setAttribute("content", FIT);
-      });
-      // 정리용으로 raf2 를 보관
-      (meta as unknown as { _raf2?: number })._raf2 = raf2;
-    });
+    // ★ initial-scale 을 '주지 않는' 게 핵심 → 브라우저가 820px 을 기기 폭에 맞게 자동 축소 ★
+    meta.setAttribute("content", "width=820, maximum-scale=5, user-scalable=yes");
     return () => {
-      cancelAnimationFrame(raf1);
-      const raf2 = (meta as unknown as { _raf2?: number })._raf2;
-      if (raf2) cancelAnimationFrame(raf2);
+      // 다른 페이지로 이동하면(언마운트) 원래 값으로 되돌린다.
       if (prev) meta.setAttribute("content", prev);
     };
   }, []);
