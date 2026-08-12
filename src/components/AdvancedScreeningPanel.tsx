@@ -383,7 +383,8 @@ export default function AdvancedScreeningPanel({
   const activeSteps = STEPS.filter((s) => !s.skip);
   const totalSteps = activeSteps.length;
   const cur = activeSteps[step];
-  const progress = Math.round(((step + 1) / totalSteps) * 100);
+  // totalSteps 가 0 인 극단적 상황(스텝 전부 skip)에서도 0으로 나누지 않도록 방어
+  const progress = totalSteps > 0 ? Math.round(((step + 1) / totalSteps) * 100) : 0;
 
   const next = () => setStep((s) => Math.min(s + 1, totalSteps - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
