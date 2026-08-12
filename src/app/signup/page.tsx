@@ -430,9 +430,15 @@ function SignupInner() {
             {mode === "signup" ? "회원가입" : "로그인"}
           </Editable>
           <Editable id="signup-desc" as="p" className="mt-2 text-sm text-brand-gray">
-            {mode === "signup"
-              ? "이메일로 간편하게 가입하고 나만의 AI 매칭 리포트를 받아보세요."
-              : "가입하신 이메일로 로그인해 주세요."}
+            {mode === "signup" ? (
+              <>
+                이메일로 간편하게 가입하고
+                <br />
+                나만의 AI 매칭 리포트를 받아보세요.
+              </>
+            ) : (
+              "가입하신 이메일로 로그인해 주세요."
+            )}
           </Editable>
         </div>
 

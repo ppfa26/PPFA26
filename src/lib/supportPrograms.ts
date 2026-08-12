@@ -485,11 +485,12 @@ export function profileToCompany(p: DiagnosisProfile): Company {
         (p.bankruptcy.includes("면책") ||
           p.bankruptcy.includes("인가") ||
           p.bankruptcy.includes("진행") ||
+          p.bankruptcy.includes("파산/회생 중") ||
           p.bankruptcy.includes("파산·회생 중") ||
           p.bankruptcy === "있음"))
     ),
-    // "파산·회생 중"(신문구)·"파산·회생 진행 중"(구문구) 모두 ongoing 처리
-    bankruptcy_status: (p.bankruptcy?.includes("진행") || p.bankruptcy?.startsWith?.("파산·회생 중"))
+    // "파산/회생 중"(신문구)·"파산·회생 중"(구문구)·"파산·회생 진행 중"(더 구문구) 모두 ongoing 처리
+    bankruptcy_status: (p.bankruptcy?.includes("진행") || p.bankruptcy?.startsWith?.("파산/회생 중") || p.bankruptcy?.startsWith?.("파산·회생 중"))
       ? "ongoing"
       : p.bankruptcy?.includes("면책") || p.bankruptcy?.includes("인가") || p.bankruptcy === "있음"
         ? "discharged"

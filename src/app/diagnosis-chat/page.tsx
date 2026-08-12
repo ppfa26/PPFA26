@@ -142,7 +142,7 @@ const CHAT_STEPS: ChatStep[] = [
     botLines: ["대표님에 대해 알려주세요.", "연령대와 신용점수를 골라주세요."],
     subs: [
       // 연령대는 3열 1줄로 시원하게(대표님 요청). 3열은 버튼폭이 좁아지므로 compact 플래그로 좌우패딩·폰트만 살짝 줄임(매칭값 그대로 유지).
-      { key: "age", label: "대표님 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 3, compact: true },
+      { key: "age", label: "대표자 연령대", hint: "청년 창업·세제감면 판정에 필요해요.", opts: STEP1_FIELDS.age.opts, cols: 3, compact: true },
       // ★ 안심 문구(대표님 요청) ★ 신용점수는 이탈 방어 지점 → "낮아도 가능"을 명시.
       { key: "credit", label: "대표자 개인 신용점수", hint: "점수가 낮아도 신청 가능한 상품이 있으니 편하게 골라주세요. " + STEP3_FIELDS.credit.hint, opts: STEP3_FIELDS.credit.opts },
     ],
@@ -164,7 +164,7 @@ const CHAT_STEPS: ChatStep[] = [
       },
       {
         key: "region",
-        label: "사업장 지역",
+        label: "사업장 소재 지역",
         opts: STEP1_FIELDS.region.opts,
         scalar: true, // 단일 문자열 저장. '기타' 선택 시 인라인 입력창 노출.
         cols: 2, // ★ 대표님 요청 ★ 2열 2줄(서울 경기 / 인천 기타) 고정

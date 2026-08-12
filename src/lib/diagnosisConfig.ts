@@ -294,7 +294,7 @@ export const STEP3_FIELDS = {
   bankruptcy: {
     label: "대표자 회생·파산 상태",
     hint: "", // (대표님 요청) '면책·인가 완료 3년 후…' 안내 문구 제거
-    opts: ["해당 없음 [신청 가능]", "파산·회생 중 [신청 불가]"],
+    opts: ["해당 없음 [신청 가능]", "파산/회생 중 [신청 불가]"],
   },
   // ★ 세금 체납 여부 - 체납 중이면 정책자금·정부지원 전체 신청 불가 → 결제 차단 ★
   taxDelinquent: {
@@ -321,7 +321,7 @@ export type PaymentBlockReason = "bankruptcy" | "tax" | "capital";
 export function getPaymentBlockReasons(p: any): PaymentBlockReason[] {
   const reasons: PaymentBlockReason[] = [];
   // 옵션 문구 뒤에 부가설명(예: " (6회차 경과)")이 붙어도 판정되도록 startsWith 사용
-  if (typeof p?.bankruptcy === "string" && (p.bankruptcy.startsWith("파산·회생 중") || p.bankruptcy.startsWith("파산·회생 진행 중"))) reasons.push("bankruptcy");
+  if (typeof p?.bankruptcy === "string" && (p.bankruptcy.startsWith("파산/회생 중") || p.bankruptcy.startsWith("파산·회생 중") || p.bankruptcy.startsWith("파산·회생 진행 중"))) reasons.push("bankruptcy");
   // 세금 체납 판정 - 새 문구("미납/체납 …")·구 문구("미납/체납 중 …"·"체납 있음 …") 모두 대응
   if (typeof p?.taxDelinquent === "string" && (p.taxDelinquent.startsWith("미납/체납") || p.taxDelinquent.startsWith("체납 있음"))) reasons.push("tax");
   // 자본잠식은 법인만 판정 (개인사업자·예비창업자는 해당 없음)
