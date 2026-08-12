@@ -21,7 +21,29 @@ function SignupInner() {
   const selected = tier ? TIER_MAP[tier] : null;
   // 로그인/가입 후 돌아갈 곳 (예: 진단 결과 페이지 /matching-preview).
   //  안전을 위해 우리 사이트 내부 경로(/로 시작)만 허용한다.
-  const rawNext = params.get("next") || "";
+  //  ★ 카카오/구글 소셜 로그인 콜백 대응 ★
+  //    Supabase OAuth(PKCE)는 콜백으로 돌아올 때 URL 에 ?code=... 를 붙였다가
+  //    detectSessionInUrl 로 처리한 뒤 쿼리스트링을 정리하는데, 이 과정에서
+  //    우리가 넣어둔 ?next=... 까지 함께 날아가 버리는 경우가 있다.
+  //    → 그 결과 콜백 후 next 를 못 찾아 진단 결과(/matching-preview)가 아니라
+  //      기본값(마이페이지/홈)으로 튕겨 "첫 페이지로 돌아가는" 이탈이 발생했다(대표님 신고).
+  //    → next 를 URL 뿐 아니라 localStorage 에도 백업해 두고, URL 에서 사라졌으면
+  //      localStorage 에서 복원한다. (소셜 로그인 왕복 전 구간에서 안전)
+  const NEXT_KEY = "mpp_next_after_auth";
+  const rawNext = (() => {
+    const fromUrl = params.get("next") || "";
+    if (fromUrl.startsWith("/")) return fromUrl;
+    // URL 에 없으면(=콜백 후 정리됨) localStorage 백업에서 복원
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem(NEXT_KEY) || "";
+        if (saved.startsWith("/")) return saved;
+      } catch {
+        /* noop */
+      }
+    }
+    return "";
+  })();
   const nextPath = rawNext.startsWith("/") ? rawNext : "";
 
   const [mode, setMode] = useState<Mode>("signup");
@@ -101,7 +123,14 @@ function SignupInner() {
     const go = () => {
       if (done) return;
       done = true;
-      router.replace(tier ? `/payment?tier=${tier}` : nextPath || "/mypage");
+      const dest = tier ? `/payment?tier=${tier}` : nextPath || "/mypage";
+      // 목적지로 이동하는 순간 next 백업은 소임을 다했으니 정리(다음 로그인에 오염 방지)
+      try {
+        localStorage.removeItem(NEXT_KEY);
+      } catch {
+        /* noop */
+      }
+      router.replace(dest);
     };
 
     // ★ 소셜 로그인(카카오/구글) 유입경로(UTM) 백필 ★
@@ -179,6 +208,15 @@ function SignupInner() {
     }
     setLoading(true);
     try {
+      // ★ 소셜 로그인 왕복 대비: next(진단 결과 경로)를 localStorage 에도 백업 ★
+      //   OAuth 콜백에서 URL 의 ?next=... 가 정리돼 사라지더라도 여기 저장분으로 복원한다.
+      //   (tier 결제 흐름일 땐 next 대신 tier 를 쓰므로 저장하지 않고, 잔여 백업은 지운다.)
+      try {
+        if (!tier && nextPath) localStorage.setItem(NEXT_KEY, nextPath);
+        else localStorage.removeItem(NEXT_KEY);
+      } catch {
+        /* noop */
+      }
       // 소셜 로그인 후 돌아올 주소 - tier(결제) 또는 next(진단 결과)를 그대로 유지
       const qs = tier
         ? `?tier=${tier}`
