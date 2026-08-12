@@ -215,6 +215,22 @@ const channelStyle: Record<Review["channel"], string> = {
 };
 
 export default function Page() {
+  // ── 후기/커뮤니티도 진입 즉시 화면 폭에 맞게 보이도록 fit-to-width (대표님 요청) ──
+  //  layout.tsx 가 서버에서 device-width 로 렌더링 → 여기서 width=820(initial-scale 없음)으로
+  //  '전환'하면 브라우저(삼성인터넷·사파리)가 폭에 맞게 자동 축소한다(결과창과 동일한 검증 방식).
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const meta = document.querySelector(
+      'meta[name="viewport"]'
+    ) as HTMLMetaElement | null;
+    if (!meta) return;
+    const prev = meta.getAttribute("content");
+    meta.setAttribute("content", "width=820, maximum-scale=5, user-scalable=yes");
+    return () => {
+      if (prev) meta.setAttribute("content", prev);
+    };
+  }, []);
+
   // ── 사이트링크 검색창(SearchAction) 대응 ──
   //  네이버/구글 검색결과의 브랜드 검색창에서 넘어온 ?q= 검색어로 후기를 필터링.
   //  검색어가 없으면 전체 후기를 그대로 노출한다.
