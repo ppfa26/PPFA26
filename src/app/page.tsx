@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
@@ -107,6 +108,28 @@ const FAQS = [
 ];
 
 export default function Home() {
+  // ── 첫 화면(홈)이 진입 즉시 화면 폭에 맞게 보이도록 뷰포트 fit-to-width 강제 (대표님 요청) ──
+  //  루트 layout 은 width=820(데스크톱 강제)이지만, Next.js 가 자동으로 initial-scale=1 을
+  //  붙여 넣어 모바일에서 820px 왼쪽 일부만 확대돼 보이고 손가락으로 축소해야 전체가 보였다.
+  //  → 결과창(matching-preview)에서 검증된 방식과 동일하게 initial-scale 을 '빼서'
+  //    브라우저가 820px 콘텐츠를 기기 폭에 맞게 자동 축소(fit-to-width)하게 한다.
+  //    다른 페이지로 이동하면(언마운트) 루트 기본값으로 돌려놓아 홈에만 적용되게 한다.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const meta = document.querySelector(
+      'meta[name="viewport"]'
+    ) as HTMLMetaElement | null;
+    if (!meta) return;
+    const prev = meta.getAttribute("content");
+    meta.setAttribute(
+      "content",
+      "width=820, maximum-scale=5, user-scalable=yes"
+    );
+    return () => {
+      if (prev) meta.setAttribute("content", prev);
+    };
+  }, []);
+
   return (
     <PageShell pageKey="home">
       <ScrollReveal />
