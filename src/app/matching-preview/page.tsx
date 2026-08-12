@@ -230,6 +230,28 @@ export default function MatchingPreview() {
     };
   }, [gate]);
 
+  // ── 결과창만 '데스크톱(width=820) 버전'으로 보이게 뷰포트 동적 전환 (대표님 요청) ──
+  //  로딩/연출 화면(checking·analyzing 등)은 그대로 반응형(device-width)으로 두어 기기 폭에 딱 맞고,
+  //  결과 리포트(gate==="ready")로 넘어가는 순간에만 <meta viewport> 를 width=820 으로 바꿔
+  //  기존 데스크톱 결과창 모습(전체가 한눈에 축소되어 보이던 화면)으로 되돌린다.
+  //  화면을 떠나거나 다시 로딩 단계로 돌아가면 반응형으로 원복한다.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const meta = document.querySelector(
+      'meta[name="viewport"]'
+    ) as HTMLMetaElement | null;
+    if (!meta) return;
+    const RESPONSIVE =
+      "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes";
+    const DESKTOP =
+      "width=820, initial-scale=1, maximum-scale=5, user-scalable=yes";
+    meta.setAttribute("content", gate === "ready" ? DESKTOP : RESPONSIVE);
+    return () => {
+      // 언마운트(다른 페이지 이동) 시 반응형으로 원복해 다른 화면에 데스크톱 폭이 새지 않게 함
+      meta.setAttribute("content", RESPONSIVE);
+    };
+  }, [gate]);
+
   // ── 세션 확인 중 로딩 화면 ──
   if (gate === "checking") {
     return (
