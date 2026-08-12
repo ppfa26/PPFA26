@@ -121,11 +121,26 @@ export default function Home() {
     ) as HTMLMetaElement | null;
     if (!meta) return;
     const prev = meta.getAttribute("content");
+    const FIT = "width=820, maximum-scale=5, user-scalable=yes";
+    // ★ 핵심: 모바일 브라우저(삼성인터넷·사파리)는 첫 렌더에서 잡은 스케일을 유지해,
+    //   viewport 를 '한 번' 바꾸는 것만으로는 fit-to-width 를 다시 계산하지 않는다.
+    //   → 아주 잠깐 device-width 로 두었다가 다음 프레임에 width=820(FIT) 로 바꿔
+    //     'viewport 가 변했다'는 신호를 줘야 브라우저가 폭에 맞게 재축소한다.
     meta.setAttribute(
       "content",
-      "width=820, maximum-scale=5, user-scalable=yes"
+      "width=device-width, maximum-scale=5, user-scalable=yes"
     );
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => {
+        meta.setAttribute("content", FIT);
+      });
+      // 정리용으로 raf2 를 보관
+      (meta as unknown as { _raf2?: number })._raf2 = raf2;
+    });
     return () => {
+      cancelAnimationFrame(raf1);
+      const raf2 = (meta as unknown as { _raf2?: number })._raf2;
+      if (raf2) cancelAnimationFrame(raf2);
       if (prev) meta.setAttribute("content", prev);
     };
   }, []);
