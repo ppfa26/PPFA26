@@ -190,6 +190,22 @@ function StatCard({
 /*  메인                                                               */
 /* ------------------------------------------------------------------ */
 export default function AdminPage() {
+  // ── 관리자 대시보드도 진입 즉시 화면 폭에 맞게 보이도록 fit-to-width (대표님 요청) ──
+  //  layout.tsx 가 서버에서 device-width 로 렌더링 → 여기서 width=820(initial-scale 없음)으로
+  //  '전환'하면 브라우저(삼성인터넷·사파리)가 폭에 맞게 자동 축소한다(결과창과 동일한 검증 방식).
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const meta = document.querySelector(
+      'meta[name="viewport"]'
+    ) as HTMLMetaElement | null;
+    if (!meta) return;
+    const prev = meta.getAttribute("content");
+    meta.setAttribute("content", "width=820, maximum-scale=5, user-scalable=yes");
+    return () => {
+      if (prev) meta.setAttribute("content", prev);
+    };
+  }, []);
+
   const [phase, setPhase] = useState<Phase>("loading");
   const [tab, setTab] = useState<Tab>("users");
 
