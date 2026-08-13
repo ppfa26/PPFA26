@@ -7,6 +7,7 @@ import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
 import ScrollReveal from "@/components/ScrollReveal";
+import CountUp from "@/components/CountUp";
 import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
 import StickyDiagnosisBar from "@/components/StickyDiagnosisBar";
@@ -193,17 +194,32 @@ export default function Home() {
             {/* ── 신뢰 바(증거) - 흩어져 있던 300개·28개 두 배지를 한 줄 pill 하나로 통합.
                 가운뎃점으로 묶어 노이즈를 줄이고 "얼마나 검증됐는지"를 한 번에 전달 ── */}
             <div className="mx-auto mt-5 flex w-fit max-w-lg flex-wrap items-center justify-center gap-x-2.5 gap-y-1 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-5 py-2 sm:mt-5 sm:gap-x-3.5 sm:px-6">
+              {/* 실시간 표시(초록 점) - "지금도 돌아가는 서비스"라는 생동감 부여 */}
+              <span className="inline-flex items-center gap-1.5 break-keep text-[11px] font-extrabold text-emerald-600 sm:text-[12.5px]">
+                <span className="relative flex h-2 w-2" aria-hidden="true">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                실시간
+              </span>
+              <span className="text-brand-dark/15" aria-hidden="true">·</span>
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
                 이미
-                <b className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[23px]">300</b>
-                <b className="text-[13px] font-extrabold text-brand-red sm:text-[15px]">개+</b>
+                <CountUp
+                  end={300}
+                  suffix="개+"
+                  className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[23px]"
+                />
                 기업이 이용중
               </span>
               <span className="text-brand-dark/15" aria-hidden="true">·</span>
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
                 평균 지원사업
-                <b className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[23px]">28</b>
-                <b className="text-[13px] font-extrabold text-brand-orange sm:text-[15px]">개</b>
+                <CountUp
+                  end={28}
+                  suffix="개"
+                  className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[23px]"
+                />
                 매칭
               </span>
             </div>
