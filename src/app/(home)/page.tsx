@@ -193,7 +193,7 @@ export default function Home() {
 
             {/* ── 신뢰 바(증거) - 흩어져 있던 300개·28개 두 배지를 한 줄 pill 하나로 통합.
                 가운뎃점으로 묶어 노이즈를 줄이고 "얼마나 검증됐는지"를 한 번에 전달 ── */}
-            <div className="mx-auto mt-5 flex w-fit max-w-lg flex-wrap items-center justify-center gap-x-2.5 gap-y-1 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-5 py-2 sm:mt-5 sm:gap-x-3.5 sm:px-6">
+            <div className="mx-auto mt-5 flex w-fit max-w-lg flex-wrap items-center justify-center gap-x-2.5 gap-y-1 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-5 py-2 sm:mt-5 sm:max-w-none sm:flex-nowrap sm:gap-x-3.5 sm:px-6">
               {/* 실시간 표시(초록 점) - "지금도 돌아가는 서비스"라는 생동감 부여 */}
               <span className="inline-flex items-center gap-1.5 break-keep text-[11px] font-extrabold text-emerald-600 sm:text-[12.5px]">
                 <span className="relative flex h-2 w-2" aria-hidden="true">
