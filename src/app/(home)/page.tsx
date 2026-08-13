@@ -210,17 +210,17 @@ export default function Home() {
                   suffix="개+"
                   className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[23px]"
                 />
-                기업이 이용중
+                대표님이 사용중
               </span>
               <span className="text-brand-dark/15" aria-hidden="true">·</span>
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                평균 지원사업
+                평균
                 <CountUp
-                  end={28}
-                  suffix="개"
+                  end={20}
+                  suffix="개+"
                   className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[23px]"
                 />
-                매칭
+                혜택 발견
               </span>
             </div>
 
