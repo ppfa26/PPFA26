@@ -203,11 +203,6 @@ export default function MatchingPreview() {
   const shownAnnouncements = liveCounts?.announcements ?? 0;
   // ★ 큰 숫자 = 화면에 보이는 배지 4개의 합 (항상 일치) ★
   const total = shownSupports + shownProducts + shownBenefits + shownAnnouncements;
-  // ★ '그 외 지원사업'(announcements)은 오직 비동기 실측 콜백(liveCounts)에서만 온다.
-  //   콜백 도착 전에는 announcements=0 이라 total 이 잠깐 26 → (콜백 후) 27 로 튀는 문제가 있었다.
-  //   그래서 콜백(liveCounts)이 도착해 announcements 가 확정되기 전까지는 큰 숫자를 확정 표시하지 않고
-  //   로딩 표시(…)를 보여준다. 도착하면 처음부터 완성된 최종 숫자로 딱 뜬다. (대표님 요청: 숫자 안 튀게) */
-  const countsReady = liveCounts !== null;
   const isBlocked = blockReasons.length > 0;
 
   // ── 'AI 분석 중' 연출 진행 (analyzing → 약 2.2초 후 ready) ──
@@ -635,7 +630,7 @@ export default function MatchingPreview() {
                 </span>
                 <span className="mt-0.5 flex items-end gap-0.5">
                   <b className="text-5xl font-black leading-none text-brand-orange sm:text-[3.25rem]">
-                    {countsReady ? total : "…"}
+                    {total}
                   </b>
                   <b className="pb-1 text-xl font-extrabold text-brand-orange sm:text-2xl">
                     개
@@ -650,7 +645,7 @@ export default function MatchingPreview() {
                   ★ 화면 아코디언 순서·갯수와 100% 일치: 🏅제도 → 💳정책금융상품 → 💎감면 → 📢그외사업
                   ★ 실측 콜백(liveCounts)이 도착하면 그 값을, 아직이면 초기 계산값을 표시. */}
               <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 text-left">
-                {countsReady && total > 0 ? (
+                {counts && total > 0 ? (
                   <>
                     <span className="flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1 text-[12px] font-bold text-brand-dark sm:text-base">
                       🏅 <span className="whitespace-nowrap text-brand-dark/70">정부지원제도</span>
