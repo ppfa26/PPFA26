@@ -39,7 +39,7 @@ export const DEFAULT_INPUT: SnsInput = {
 //    대표님 반복 지시 - 절대 잊지 말 것
 // ────────────────────────────────────────────────────────────────
 export function stripMiddots(s: string): string {
-  return s
+  const cleaned = s
     // ── 대표님 지시: 사진 자리는 번호만. [사진1: 설명] / [사진 1 - 설명] / [사진1 표지…] → [사진1] ──
     .replace(/\[\s*사진\s*(\d+)[^\]]*\]/g, "[사진$1]")
     .replace(/\u00B7/g, ", ") // · (middle dot) → 쉼표
@@ -55,6 +55,62 @@ export function stripMiddots(s: string): string {
     .replace(/[ \t]{2,}/g, " ") // 중복 공백 정리
     .replace(/ ,/g, ",")
     .replace(/[ \t]+$/gm, ""); // 줄 끝 공백 제거
+  return compactBlankLines(cleaned);
+}
+
+/**
+ * 불필요한 세로 빈 줄을 대표님 수정본 규칙대로 압축한다.
+ * (AI 결과·기본 템플릿 모두 stripMiddots를 거치므로 한 곳에서 일괄 적용)
+ *
+ * 규칙
+ *  1) 연속 빈 줄 2개 이상 → 1개로 (문단 사이 간격은 빈 줄 1개만 유지)
+ *  2) 소제목 [ ... ] 바로 아래 빈 줄 제거 → 제목과 첫 내용을 붙임
+ *  3) 숫자 리스트(1. 2. 3.) 항목 사이 빈 줄 제거 → 붙임
+ *  4) "핵심 정리"의 라벨 줄(제도명:, 목적: …) 사이 빈 줄 제거 → 붙임
+ *  5) [사진N] 위에는 빈 줄 1개, 아래는 빈 줄 1개만 유지
+ */
+function compactBlankLines(input: string): string {
+  const lines = input.replace(/\r\n/g, "\n").split("\n");
+
+  const isBlank = (l?: string) => l === undefined || l.trim() === "";
+  const isHeading = (l?: string) => !!l && /^\s*\[.*\]\s*$/.test(l.trim());
+  const isPhoto = (l?: string) => !!l && /^\s*\[사진\d+\]\s*$/.test(l.trim());
+  // "1. " "2) " 같은 숫자 리스트 항목
+  const isListItem = (l?: string) =>
+    !!l && /^\s*\d+\s*[.)]\s+\S/.test(l);
+  // "제도명:" "지원 한도:" 처럼 라벨: 로 시작하는 핵심정리 줄
+  const isLabelLine = (l?: string) =>
+    !!l && /^\s*[^\s:][^:]{0,20}:\s*\S/.test(l);
+
+  const out: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (isBlank(line)) {
+      const prev = out[out.length - 1]; // 이미 확정된 직전 줄
+      // 다음의 실제(비어있지 않은) 줄 찾기
+      let j = i + 1;
+      while (j < lines.length && isBlank(lines[j])) j++;
+      const next = lines[j];
+
+      // 이전이 소제목이면 → 바로 아래 빈 줄 제거 (제목 붙이기)
+      if (isHeading(prev) && !isPhoto(prev)) continue;
+      // 리스트 항목 사이 빈 줄 제거 (양쪽이 리스트일 때)
+      if (isListItem(prev) && isListItem(next)) continue;
+      // 핵심정리 라벨 줄 사이 빈 줄 제거 (양쪽이 라벨일 때)
+      if (isLabelLine(prev) && isLabelLine(next)) continue;
+      // 연속 빈 줄은 1개로 (직전이 이미 빈 줄이면 스킵)
+      if (isBlank(prev)) continue;
+      // 그 외에는 빈 줄 1개 유지
+      out.push("");
+      continue;
+    }
+
+    out.push(line);
+  }
+
+  // 앞뒤 빈 줄 정리
+  return out.join("\n").replace(/^\n+/, "").replace(/\n+$/, "").trimEnd();
 }
 
 // ────────────────────────────────────────────────────────────────
