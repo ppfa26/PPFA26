@@ -324,8 +324,8 @@ export default function MatchingPreview() {
     return (
       <PageShell pageKey="matching-preview" stickyFooter>
         <Header />
-        {/* 로딩 화면 — 화면 정중앙 정렬 (대표님 요청: 크기 축소) */}
-        <main className="flex flex-1 min-h-[70vh] items-center justify-center px-4 py-12">
+        {/* 로딩 화면 — 화면 정중앙 정렬 (대표님 요청: 상단으로 살짝, 좌우 완전 중앙) */}
+        <main className="flex flex-1 min-h-[85vh] items-center justify-center px-4 pb-16 pt-4">
           <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-6 text-center shadow-card sm:p-9">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10">
               <span className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
