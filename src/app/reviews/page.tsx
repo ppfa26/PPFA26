@@ -262,16 +262,22 @@ export default function ReviewsPage() {
           <p className="reveal inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
             Growth Stories
           </p>
-          <h1 className="reveal mt-5 break-keep text-[25px] font-black leading-[1.3] tracking-[-0.035em] text-white sm:text-[40px] sm:leading-[1.2]">
-            정부지원사업 신청과 그 과정의 이야기,
-            <br className="hidden sm:block" />{" "}
-            그 후 기업은 <span className="text-brand-orange">어떻게 달라졌을까요?</span>
+          <h1 className="reveal mt-5 break-keep text-center text-[25px] font-black leading-[1.35] tracking-[-0.035em] text-white sm:text-[40px] sm:leading-[1.25]">
+            정부지원사업 신청과
+            <br />
+            그 과정의 이야기,
+            <br />
+            그 후 기업은{" "}
+            <span className="text-brand-orange">어떻게 달라졌을까요?</span>
           </h1>
-          <p className="reveal mx-auto mt-5 max-w-xl break-keep text-[13.5px] font-medium leading-[1.75] text-white/55 sm:text-[16px]">
-            저희가 진짜로 증명하려는건 승인 사례가 아니라,
-            <br className="hidden sm:block" />{" "}
-            우리의 자문이 기업을{" "}
-            <b className="font-bold text-white/90">어디에서 어디로 데려갔는가</b>입니다.
+          <p className="reveal mx-auto mt-5 max-w-xl break-keep text-center text-[14px] font-medium leading-[1.85] text-white/60 sm:text-[16.5px]">
+            저희가 진짜로 증명하려는 건
+            <br />
+            승인 사례가 아니라,
+            <br />
+            우리의 자문이 기업을 어디에서 어디로
+            <br />
+            <b className="font-bold text-white/90">데려갔는가</b>입니다.
           </p>
         </section>
 
@@ -357,9 +363,9 @@ export default function ReviewsPage() {
             <h2 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
               그 외에도 이어지는 <span className="text-brand-orange">승인 사례</span>
             </h2>
-            <p className="mx-auto mt-3 max-w-md break-keep text-[12.5px] font-medium leading-[1.7] text-white/50 sm:text-[14.5px]">
+            <p className="mx-auto mt-3 max-w-md break-keep text-center text-[13px] font-medium leading-[1.75] text-white/55 sm:text-[14.5px]">
               업종도, 지역도, 자금 용도도 모두 다릅니다.
-              <br className="hidden sm:block" />{" "}
+              <br />
               대표님 사업장 역시 대상이 될 수 있습니다.
             </p>
           </div>
@@ -431,8 +437,10 @@ export default function ReviewsPage() {
               <i className="fas fa-comment" aria-hidden="true" />
               카카오톡으로 1:1 상담하기
             </a>
-            <p className="mx-auto mt-4 max-w-sm break-keep text-[11.5px] font-medium leading-[1.6] text-white/40 sm:text-[12.5px]">
-              부담 없이 물어보세요. 대표님 상황부터 편하게 들어드립니다.
+            <p className="mx-auto mt-4 max-w-sm break-keep text-center text-[12px] font-medium leading-[1.7] text-white/45 sm:text-[12.5px]">
+              부담 없이 물어보세요.
+              <br />
+              대표님 상황부터 편하게 들어드립니다.
             </p>
           </div>
         </section>
@@ -444,10 +452,12 @@ export default function ReviewsPage() {
             <br />
             <span className="text-brand-orange">대표님</span>일 수 있습니다
           </h3>
-          <p className="mx-auto mt-4 max-w-md break-keep text-[13.5px] font-medium leading-[1.7] text-white/60 sm:text-[16px]">
+          <p className="mx-auto mt-4 max-w-md break-keep text-center text-[14px] font-medium leading-[1.8] text-white/60 sm:text-[16px]">
             정부지원사업 AI 통합 매칭 플랫폼이
-            <br className="hidden sm:block" />{" "}
-            대표님 사업장에 딱 맞는 정부지원사업을 무료로 찾아드립니다.
+            <br />
+            대표님 사업장에 딱 맞는 정부지원사업을
+            <br />
+            무료로 찾아드립니다.
           </p>
           <Link
             href="/diagnosis-chat"
