@@ -414,11 +414,6 @@ export default function ReviewsPage() {
               <i className="fas fa-comment" aria-hidden="true" />
               카카오톡으로 1:1 상담하기
             </a>
-            <p className="mx-auto mt-5 max-w-sm break-keep text-center text-[12px] font-medium leading-[1.7] text-white/45 sm:text-[12.5px]">
-              부담 없이 물어보세요.
-              <br />
-              대표님 상황부터 편하게 들어드립니다.
-            </p>
           </div>
         </section>
 
@@ -430,7 +425,7 @@ export default function ReviewsPage() {
             <span className="text-brand-orange">대표님</span>일 수 있습니다
           </h2>
           <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-gray-300 sm:text-base">
-            정부지원사업 AI 통합 매칭 플랫폼이
+            정부지원사업 AI 통합 매칭 플랫폼 모두의사업친구가
             <br />
             대표님 사업장에 딱 맞는 정부지원사업을 무료로 찾아드립니다.
           </p>
@@ -452,7 +447,9 @@ export default function ReviewsPage() {
           </div>
           <p className="mx-auto mt-7 max-w-md break-keep text-[10.5px] leading-[1.7] text-gray-400/70 sm:text-[11.5px]">
             ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다.
+            <br />
             승인 여부·금액·기간은 정부 기관 심사 및 기업별 상황에 따라 달라질 수 있으며,
+            <br />
             동일한 결과를 보장하지 않습니다.
           </p>
           <p className="mx-auto mt-2.5 break-keep text-[10px] leading-[1.6] text-gray-500 sm:text-[10.5px]">
