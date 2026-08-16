@@ -211,42 +211,42 @@ const REVIEWS: MiniReview[] = [
   {
     nick: "육****",
     sector: "육류 가공 · 창업 2년차",
-    body: "1억이면 감사하겠다 했는데 나눠서 진행하니 2억 넘게 승인 났어요. 명절 물량 걱정 없이 넘겼습니다. 진짜 감사합니다.",
+    body: "1억만 돼도 감사했는데 나눠서 2억 넘게 승인됐어요. 명절 물량 걱정 없이 넘겼습니다.",
   },
   {
     nick: "PD****",
     sector: "방송 콘텐츠 제작",
-    body: "대출 한도가 다 막혀서 어디서도 안 된다고만 하던 상황이었는데, 벤처인증부터 순서대로 잡아주셔서 자금길이 다시 열렸습니다.",
+    body: "어디서도 안 된다던 상황, 벤처인증부터 순서대로 잡아주셔서 자금길이 다시 열렸습니다.",
   },
   {
     nick: "간***",
     sector: "간판 제작 · 제조업",
-    body: "특허가 이렇게 쓰일 수 있는 줄 몰랐어요. 신용도 올리는 것부터 하나하나 알려주셔서 IP보증까지 받았습니다.",
+    body: "특허가 이렇게 쓰일 줄 몰랐어요. 하나하나 짚어주셔서 IP보증까지 받았습니다.",
   },
   {
     nick: "카페**",
     sector: "스터디카페 운영",
-    body: "혼자 알아보면 뭐부터 해야 할지 막막했는데, 진단받고 바로 방향이 잡혔어요. 상담이 부담스럽지 않아서 좋았습니다.",
+    body: "뭐부터 할지 막막했는데 진단 한 번에 방향이 잡혔어요. 상담도 부담 없어 좋았습니다.",
   },
   {
     nick: "미용실**",
     sector: "미용업",
-    body: "서류가 복잡할 줄 알았는데 필요한 것만 딱 짚어주셔서 수월했어요. 승인까지 생각보다 빨리 됐습니다.",
+    body: "필요한 서류만 딱 짚어주셔서 수월했어요. 승인까지 생각보다 훨씬 빨랐습니다.",
   },
   {
     nick: "수출***",
     sector: "도소매 · 수출업",
-    body: "자본잠식이라 다 부결이었는데 결산부터 재무 정리까지 길게 봐주셨어요. 결국 큰 금액 확보하고 지금 매출도 많이 올랐습니다.",
+    body: "자본잠식으로 다 부결이었는데 재무 정리부터 길게 봐주셨어요. 결국 큰 금액을 확보했습니다.",
   },
   {
     nick: "노래***",
     sector: "노래연습장 운영",
-    body: "정부지원사업이 남 얘기인 줄만 알았어요. 우리 같은 곳도 대상이 된다는 걸 처음 알았습니다. 추천합니다.",
+    body: "정부지원사업은 남 얘긴 줄 알았어요. 우리 같은 곳도 된다는 걸 처음 알았습니다.",
   },
   {
     nick: "부동산**",
     sector: "부동산 중개업",
-    body: "다른 데서 안 된다던 조건이었는데 여기서는 되는 방법을 찾아주셨어요. 설명도 알아듣기 쉽게 해주십니다.",
+    body: "다른 곳에선 안 된다던 조건, 여기선 되는 방법을 찾아주셨어요. 설명도 쉽고 명확합니다.",
   },
 ];
 
@@ -364,19 +364,19 @@ export default function ReviewsPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3">
+          <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3.5">
             {MORE_CASES.map((m, i) => (
               <div
                 key={i}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] px-3.5 py-3.5 backdrop-blur-sm sm:px-5 sm:py-4"
+                className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-4 backdrop-blur-sm transition-colors hover:border-brand-orange/25 sm:px-5 sm:py-[18px]"
               >
-                <span className="text-[16px] font-black leading-none tracking-[-0.02em] text-brand-yellow sm:text-[20px]">
+                <span className="text-[17px] font-black leading-none tracking-[-0.03em] text-brand-yellow sm:text-[21px]">
                   {m.amount}
                 </span>
-                <p className="mt-2 break-keep text-[12.5px] font-bold leading-[1.35] text-white sm:text-[14px]">
+                <p className="mt-2.5 text-pretty text-[13px] font-bold leading-[1.4] tracking-[-0.01em] text-white/95 sm:text-[14.5px]">
                   {m.sector}
                 </p>
-                <p className="mt-1 break-keep text-[10.5px] font-medium leading-[1.4] text-white/45 sm:text-[11.5px]">
+                <p className="mt-auto pt-1.5 text-pretty text-[10.5px] font-medium leading-[1.45] text-white/40 sm:text-[11.5px]">
                   {m.org}
                 </p>
               </div>
@@ -399,20 +399,22 @@ export default function ReviewsPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3">
+          <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3.5">
             {REVIEWS.map((r, i) => (
               <div
                 key={i}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 backdrop-blur-sm sm:px-5 sm:py-5"
+                className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-[18px] backdrop-blur-sm sm:px-5 sm:py-5"
               >
-                <span className="text-[12px] tracking-[0.12em] text-brand-yellow" aria-label="별점 5점">
+                <span className="text-[12px] leading-none tracking-[0.14em] text-brand-yellow" aria-label="별점 5점">
                   ★★★★★
                 </span>
-                <p className="mt-2.5 flex-1 break-keep text-[12px] font-medium leading-[1.65] text-white/80 sm:text-[13.5px]">
-                  “{r.body}”
+                <p className="mt-3 flex-1 text-pretty text-[12.5px] font-medium leading-[1.7] tracking-[-0.005em] text-white/85 sm:text-[14px]">
+                  {r.body}
                 </p>
-                <p className="mt-3 border-t border-white/[0.06] pt-3 text-[11px] font-semibold text-white/40 sm:text-[12px]">
-                  <span className="text-white/70">{r.nick}</span> · {r.sector}
+                <p className="mt-3.5 border-t border-white/[0.07] pt-3 text-[10.5px] font-semibold tracking-[-0.005em] text-white/40 sm:text-[11.5px]">
+                  <span className="text-brand-orange/90">{r.nick}</span>
+                  <span className="px-1 text-white/25">·</span>
+                  {r.sector}
                 </p>
               </div>
             ))}
