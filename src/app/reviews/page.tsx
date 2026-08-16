@@ -374,10 +374,10 @@ export default function ReviewsPage() {
                 <span className="text-[17px] font-black leading-none tracking-[-0.03em] text-brand-yellow sm:text-[21px]">
                   {m.amount}
                 </span>
-                <p className="mt-2.5 text-pretty text-[13px] font-bold leading-[1.4] tracking-[-0.01em] text-white/95 sm:text-[14.5px]">
+                <p className="mt-2.5 break-keep text-[13px] font-bold leading-[1.4] tracking-[-0.01em] text-white/95 sm:text-[14.5px]">
                   {m.sector}
                 </p>
-                <p className="mt-auto pt-1.5 text-pretty text-[10.5px] font-medium leading-[1.45] text-white/40 sm:text-[11.5px]">
+                <p className="mt-auto break-keep pt-1.5 text-[10.5px] font-medium leading-[1.45] text-white/40 sm:text-[11.5px]">
                   {m.org}
                 </p>
               </div>
@@ -400,22 +400,24 @@ export default function ReviewsPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3.5">
+          <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:gap-3.5">
             {REVIEWS.map((r, i) => (
               <div
                 key={i}
-                className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-[18px] backdrop-blur-sm sm:px-5 sm:py-5"
+                className="rounded-2xl border border-white/10 bg-white/[0.035] px-5 py-[18px] backdrop-blur-sm transition-colors hover:border-brand-orange/25 sm:px-6 sm:py-5"
               >
-                <span className="text-[12px] leading-none tracking-[0.14em] text-brand-yellow" aria-label="별점 5점">
-                  ★★★★★
-                </span>
-                <p className="mt-3 flex-1 break-keep text-[12.5px] font-medium leading-[1.7] tracking-[-0.005em] text-white/85 sm:text-[14px]">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-[12.5px] leading-none tracking-[0.14em] text-brand-yellow" aria-label="별점 5점">
+                    ★★★★★
+                  </span>
+                  <span className="text-[11.5px] font-semibold tracking-[-0.005em] text-white/40 sm:text-[12.5px]">
+                    <span className="text-brand-orange/90">{r.nick}</span>
+                    <span className="px-1 text-white/25">·</span>
+                    {r.sector}
+                  </span>
+                </div>
+                <p className="mt-3 break-keep text-[13.5px] font-medium leading-[1.7] tracking-[-0.005em] text-white/85 sm:text-[15px]">
                   {r.body}
-                </p>
-                <p className="mt-3.5 border-t border-white/[0.07] pt-3 text-[10.5px] font-semibold tracking-[-0.005em] text-white/40 sm:text-[11.5px]">
-                  <span className="text-brand-orange/90">{r.nick}</span>
-                  <span className="px-1 text-white/25">·</span>
-                  {r.sector}
                 </p>
               </div>
             ))}
