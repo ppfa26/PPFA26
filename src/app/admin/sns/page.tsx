@@ -15,17 +15,8 @@ import {
 
 type Phase = "loading" | "denied" | "ready";
 
-/* 복사 버튼 (블록 단위)
-   label 을 주면 그 문구를 버튼에 표시(예: "본문+태그 한번에 복사"). */
-function CopyButton({
-  text,
-  label = "복사",
-  variant = "primary",
-}: {
-  text: string;
-  label?: string;
-  variant?: "primary" | "accent";
-}) {
+/* 복사 버튼 (블록 단위) */
+function CopyButton({ text }: { text: string }) {
   const [done, setDone] = useState(false);
   const onCopy = async () => {
     try {
@@ -36,53 +27,25 @@ function CopyButton({
       window.prompt("아래 내용을 직접 복사하세요 (Ctrl+C)", text);
     }
   };
-  const base =
-    variant === "accent"
-      ? "bg-brand-dark text-white hover:opacity-90"
-      : "bg-brand-primary text-white hover:opacity-90";
   return (
     <button
       type="button"
       onClick={onCopy}
       className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-        done ? "bg-emerald-500 text-white" : base
+        done
+          ? "bg-emerald-500 text-white"
+          : "bg-brand-primary text-white hover:opacity-90"
       }`}
     >
-      {done ? "복사됨 ✓" : label}
+      {done ? "복사됨 ✓" : "복사"}
     </button>
   );
 }
 
-/* 본문 블록이면 같은 채널의 태그 블록을 찾아 "본문+태그 한번에 복사" 값을 만든다.
-   네이버 블로그 등: 본문 붙여넣고 그 아래 해시태그까지 한 번에 들어가게 함. */
-function findTagBlock(blocks: SnsBlock[]): SnsBlock | undefined {
-  return blocks.find(
-    (b) =>
-      /tag|hashtag/i.test(b.key) ||
-      b.label.includes("태그") ||
-      b.label.includes("해시")
-  );
-}
-
-function BlockCard({
-  block,
-  siblings,
-}: {
-  block: SnsBlock;
-  siblings: SnsBlock[];
-}) {
-  // "본문+태그 한번에 복사"는 하나의 긴 글 + 하단 해시태그 구조인 채널에만 노출.
-  // (스레드=이어달기, 인스타=캐러셀 카드는 통합 복사가 부적절하므로 제외)
-  const MERGE_BODY_KEYS = ["blog-body", "daangn"];
-  const isMergeableBody = MERGE_BODY_KEYS.includes(block.key);
-  const tagBlock = isMergeableBody ? findTagBlock(siblings) : undefined;
-  const combinedText = tagBlock
-    ? `${block.text}\n\n\n${tagBlock.text}`
-    : block.text;
-
+function BlockCard({ block }: { block: SnsBlock }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-4 py-2.5">
+      <div className="flex items-center justify-between gap-2 border-b border-gray-100 px-4 py-2.5">
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-gray-900">
             {block.label}
@@ -93,16 +56,7 @@ function BlockCard({
             </p>
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          {tagBlock && (
-            <CopyButton
-              text={combinedText}
-              label="본문+태그 한번에 복사"
-              variant="accent"
-            />
-          )}
-          <CopyButton text={block.text} label={tagBlock ? "본문만 복사" : "복사"} />
-        </div>
+        <CopyButton text={block.text} />
       </div>
       <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words px-4 py-3 text-[13px] leading-relaxed text-gray-700">
         {block.text}
@@ -445,7 +399,7 @@ export default function SnsHubPage() {
                     - 아래 블록을 위에서부터 순서대로 올리시면 됩니다.
                   </div>
                   {active.blocks.map((b, i) => (
-                    <BlockCard key={b.key + i} block={b} siblings={active.blocks} />
+                    <BlockCard key={b.key + i} block={b} />
                   ))}
                 </div>
               )}
