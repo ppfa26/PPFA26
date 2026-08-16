@@ -385,7 +385,7 @@ export default function DiagnosisChat() {
     const t = setTimeout(() => {
       const el = answerRef.current || focusRef.current;
       el?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
-    }, 120);
+    }, 60);
     return () => clearTimeout(t);
   }, [messages.length, bnoMsg]);
 
@@ -501,7 +501,7 @@ export default function DiagnosisChat() {
     const next = { ...form, [step.key]: opt };
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: opt }]);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   const toggleMulti = (opt: string) =>
@@ -513,7 +513,7 @@ export default function DiagnosisChat() {
     const next = { ...form, [step.key]: [opt] };
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: step.labelFull?.[opt] || opt }]);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   const confirmMulti = () => {
@@ -524,7 +524,7 @@ export default function DiagnosisChat() {
     // 화면 표기는 풀네임(labelFull)으로, 저장 값은 원본(multiTemp) 그대로.
     const shown = multiTemp.map((v) => step.labelFull?.[v] || v).join(", ");
     setMessages((m) => [...m, { who: "user", text: shown }]);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   // ★ 화면 통합 (대표님 요청) ★ 사업자 구분 + 자격확인(회생·파산/세금완납)을 한 화면에서 확정.
@@ -546,10 +546,10 @@ export default function DiagnosisChat() {
     const reasons = getPaymentBlockReasons(next);
     const blockingNow = reasons.filter((r) => r === "bankruptcy" || r === "tax");
     if (blockingNow.length > 0) {
-      setTimeout(() => setBlocked({ reasons: blockingNow }), 380);
+      setTimeout(() => setBlocked({ reasons: blockingNow }), 200);
       return;
     }
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   // ★ 대표님 확정(2026) ★ 국세청 조회 버튼을 없애고, '진단 결과 확인하기 →' 버튼 하나로
@@ -599,7 +599,7 @@ export default function DiagnosisChat() {
     const bnoLabel = next.bno ? `사업자번호 ${next.bno} · ` : isPre ? "예비창업자 · " : "";
     setMessages((m) => [...m, { who: "user", text: `${bnoLabel}${name} · ${phone}` }]);
     savePartial(next); // 성함·연락처 확보 시 부분 리드 저장(영업 명단)
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   // 예/아니요 묶음(yesnoGroup) — 하위 문항 선택
@@ -620,11 +620,11 @@ export default function DiagnosisChat() {
       const reasons = getPaymentBlockReasons(next);
       const blockingNow = reasons.filter((r) => r === "bankruptcy" || r === "tax");
       if (blockingNow.length > 0) {
-        setTimeout(() => setBlocked({ reasons: blockingNow }), 380);
+        setTimeout(() => setBlocked({ reasons: blockingNow }), 200);
         return;
       }
     }
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   // 복수선택 묶음(multiGroup) — 하위 문항별 다중 토글 / 라디오
@@ -671,7 +671,7 @@ export default function DiagnosisChat() {
       .filter(Boolean)
       .join(" / ");
     setMessages((m) => [...m, { who: "user", text: summary || "해당 없음" }]);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   // 체크리스트(checkGroup) — 체크=예, 미체크=아니요
@@ -688,7 +688,7 @@ export default function DiagnosisChat() {
     setForm(next);
     const picked = subs.filter((s) => checkTemp.includes(s.key)).map((s) => s.label.replace(/^[^가-힣a-zA-Z]+/, "").trim());
     setMessages((m) => [...m, { who: "user", text: picked.length ? picked.join(", ") : "해당 없음" }]);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   // 텍스트/전화 입력
@@ -705,7 +705,7 @@ export default function DiagnosisChat() {
     setMessages((m) => [...m, { who: "user", text: raw }]);
     // 1단계 성함·연락처까지 마쳤으면 부분 리드 저장(기존 폼과 동일 전략)
     if (step.key === "phone") savePartial(next);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   // 지역 선택(칩) / 기타 직접입력
@@ -714,7 +714,7 @@ export default function DiagnosisChat() {
     const next = { ...form, region: opt };
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: opt }]);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
   const confirmRegionEtc = () => {
     const raw = textTemp.trim();
@@ -722,7 +722,7 @@ export default function DiagnosisChat() {
     const next = { ...form, region: raw };
     setForm(next);
     setMessages((m) => [...m, { who: "user", text: raw }]);
-    setTimeout(() => askStep(stepIdx + 1, next), 380);
+    setTimeout(() => askStep(stepIdx + 1, next), 200);
   };
 
   // ── 사업자번호 국세청 조회 (기존 /api/business-status 그대로) ──
