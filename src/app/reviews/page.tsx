@@ -270,14 +270,14 @@ export default function ReviewsPage() {
             그 후 기업은{" "}
             <span className="text-brand-orange">어떻게 달라졌을까요?</span>
           </h1>
-          <p className="reveal mx-auto mt-5 max-w-xl break-keep text-center text-[14px] font-medium leading-[1.85] text-white/60 sm:text-[16.5px]">
+          <p className="reveal mx-auto mt-5 max-w-xl break-keep text-center text-[14px] font-medium leading-[1.9] text-white/60 sm:text-[16.5px]">
             저희가 진짜로 증명하려는 건
             <br />
             승인 사례가 아니라,
             <br />
-            우리의 자문이 기업을 어디에서 어디로
+            우리의 자문이 기업을 어디에서
             <br />
-            <b className="font-bold text-white/90">데려갔는가</b>입니다.
+            어디로 <b className="font-bold text-white/90">데려갔는가</b>입니다.
           </p>
         </section>
 
