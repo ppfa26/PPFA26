@@ -36,6 +36,7 @@ const ALLOWED_SUFFIXES = [
   ".vercel.app", // Vercel 프리뷰·프로덕션
   ".모두의사업친구.kr",
   ".xn--2e0br4kgyfb0gp4gbrcj9s.kr",
+  ".sandbox.novita.ai", // 개발용 미리보기(임시). 실배포에도 남겨둬도 무해하나 원치 않으면 제거 가능.
 ];
 
 const CANONICAL_URL = "https://모두의사업친구.kr";
