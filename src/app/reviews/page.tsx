@@ -365,11 +365,11 @@ export default function ReviewsPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3.5">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4">
             {MORE_CASES.map((m, i) => (
               <div
                 key={i}
-                className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-4 backdrop-blur-sm transition-colors hover:border-brand-orange/25 sm:px-5 sm:py-[18px]"
+                className="flex min-h-[116px] flex-col rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-4 backdrop-blur-sm transition-colors hover:border-brand-orange/25 sm:min-h-[128px] sm:px-5 sm:py-[18px]"
               >
                 <span className="text-[17px] font-black leading-none tracking-[-0.03em] text-brand-yellow sm:text-[21px]">
                   {m.amount}
@@ -377,7 +377,7 @@ export default function ReviewsPage() {
                 <p className="mt-2.5 break-keep text-[13px] font-bold leading-[1.4] tracking-[-0.01em] text-white/95 sm:text-[14.5px]">
                   {m.sector}
                 </p>
-                <p className="mt-auto break-keep pt-1.5 text-[10.5px] font-medium leading-[1.45] text-white/40 sm:text-[11.5px]">
+                <p className="mt-auto break-keep pt-2 text-[10.5px] font-medium leading-[1.45] text-white/40 sm:text-[11.5px]">
                   {m.org}
                 </p>
               </div>
@@ -424,17 +424,17 @@ export default function ReviewsPage() {
           </div>
 
           {/* 후기 섹션 하단 버튼 — 카카오톡 상담 */}
-          <div className="mt-9 text-center sm:mt-11">
+          <div className="mt-12 text-center sm:mt-14">
             <a
               href="https://pf.kakao.com/_VxfWxan/chat"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 rounded-full bg-[#FEE500] px-8 py-4 text-[15px] font-extrabold tracking-[-0.01em] text-[#191600] shadow-[0_14px_40px_-14px_rgba(254,229,0,0.6)] transition-transform hover:-translate-y-0.5 sm:text-[16px]"
+              className="inline-flex items-center gap-2.5 rounded-full bg-[#FEE500] px-9 py-[17px] text-[15px] font-extrabold tracking-[-0.01em] text-[#191600] shadow-[0_16px_44px_-14px_rgba(254,229,0,0.55)] transition-transform hover:-translate-y-0.5 sm:text-[16px]"
             >
               <i className="fas fa-comment" aria-hidden="true" />
               카카오톡으로 1:1 상담하기
             </a>
-            <p className="mx-auto mt-4 max-w-sm break-keep text-center text-[12px] font-medium leading-[1.7] text-white/45 sm:text-[12.5px]">
+            <p className="mx-auto mt-5 max-w-sm break-keep text-center text-[12px] font-medium leading-[1.7] text-white/45 sm:text-[12.5px]">
               부담 없이 물어보세요.
               <br />
               대표님 상황부터 편하게 들어드립니다.
