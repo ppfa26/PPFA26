@@ -49,6 +49,10 @@ export default function MatchingPreview() {
   const [limitMsg, setLimitMsg] = useState("");
   // 분석 연출 진행 단계(0~3) - "AI가 실제로 판독 중"이라는 신뢰감을 주기 위한 짧은 연출
   const [analyzeStep, setAnalyzeStep] = useState(0);
+  // ★ 상단 진행률(%) - 0 → 100 까지 부드럽게 차오르며 '정밀 분석 중' 신뢰감을 강화 ★
+  const [analyzePct, setAnalyzePct] = useState(0);
+  // 진행률에 맞춰 회전하는 1줄 안내 문구 인덱스 (매력적인 카피 순환)
+  const [analyzeMsgIdx, setAnalyzeMsgIdx] = useState(0);
   // ★ 비회원 게이트 '맛보기'용: 실제 매칭된 항목 제목 리스트(기관명 등).
   //   개수는 counts/total로, 이 리스트에서 앞 3개만 흐리게 보여줘 "이렇게 많다"를 체감시킨다.
   //   (스코어링 값은 그대로 - 표시만 부분 공개)
@@ -205,27 +209,60 @@ export default function MatchingPreview() {
   const total = shownSupports + shownProducts + shownBenefits + shownAnnouncements;
   const isBlocked = blockReasons.length > 0;
 
-  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 2.2초 후 ready) ──
-  //  단계별 문구가 순차 점등되며 실제 판독하는 느낌을 준다. 끝나면 결과 공개 + '본 적 있음' 표시.
+  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 3.0초 후 ready) ──
+  //  · 상단 진행률(%)이 0→100 으로 부드럽게 차오르고,
+  //  · 4단계 카드가 순차 점등되며,
+  //  · 1줄 안내 문구가 회전한다.  끝나면 결과 공개 + '본 적 있음' 표시.
   useEffect(() => {
     if (gate !== "analyzing") return;
     setAnalyzeStep(0);
-    // 4단계가 순차 점등되며 '정밀 분석 중' 느낌 → 약 2.3초 후 결과 공개
-    const t1 = setTimeout(() => setAnalyzeStep(1), 550);
-    const t2 = setTimeout(() => setAnalyzeStep(2), 1050);
-    const t3 = setTimeout(() => setAnalyzeStep(3), 1550);
+    setAnalyzePct(0);
+    setAnalyzeMsgIdx(0);
+
+    const DURATION = 3000; // 전체 연출 시간(ms)
+
+    // (1) 진행률(%) 부드럽게 증가 - 약 60ms 간격으로 목표치까지 이동
+    //     실제 완료 전엔 96%에서 잠깐 멈춘 듯 보이다가, 마지막에 100%로 채워 '완료' 쾌감을 준다.
+    const startedAt = Date.now();
+    const pctTimer = setInterval(() => {
+      const elapsed = Date.now() - startedAt;
+      const ratio = Math.min(elapsed / DURATION, 1);
+      // ease-out(처음 빠르고 끝에서 천천히)로 자연스럽게, 완료 직전 96%에서 대기
+      const eased = 1 - Math.pow(1 - ratio, 2);
+      const pct = Math.min(Math.round(eased * 100), 96);
+      setAnalyzePct((prev) => (pct > prev ? pct : prev));
+    }, 60);
+
+    // (2) 4단계 카드 순차 점등
+    const t1 = setTimeout(() => setAnalyzeStep(1), 750);
+    const t2 = setTimeout(() => setAnalyzeStep(2), 1450);
+    const t3 = setTimeout(() => setAnalyzeStep(3), 2150);
+
+    // (3) 1줄 안내 문구 회전(약 0.9초마다 교체)
+    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 900);
+    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 1800);
+    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 2500);
+
+    // (4) 완료 - 100% 채우고 결과 공개
     const done = setTimeout(() => {
+      setAnalyzePct(100);
       try {
         sessionStorage.setItem("mpp_result_seen", "1");
       } catch {
         /* 무시 */
       }
-      setGate("ready");
-    }, 2300);
+      // 100% 채워진 걸 잠깐(0.25초) 보여준 뒤 결과로 전환
+      setTimeout(() => setGate("ready"), 250);
+    }, DURATION);
+
     return () => {
+      clearInterval(pctTimer);
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
+      clearTimeout(m1);
+      clearTimeout(m2);
+      clearTimeout(m3);
       clearTimeout(done);
     };
   }, [gate]);
@@ -277,6 +314,13 @@ export default function MatchingPreview() {
       { icon: "💳", label: "정부지원사업 판독" },
       { icon: "🎯", label: "맞춤 결과 정리" },
     ];
+    // 진행률에 맞춰 회전하는 매력적인 1줄 안내 문구
+    const analyzeMessages = [
+      "대표님 사업장 정보를 꼼꼼히 읽고 있어요",
+      "전국 수천 개 정부지원사업과 대조하는 중이에요",
+      "놓치기 쉬운 숨은 지원금까지 찾고 있어요",
+      "대표님께 딱 맞는 결과만 골라 정리하고 있어요",
+    ];
     return (
       <PageShell pageKey="matching-preview" stickyFooter>
         <Header />
@@ -289,9 +333,28 @@ export default function MatchingPreview() {
             <p className="whitespace-nowrap text-[17px] font-extrabold leading-snug text-brand-dark sm:text-2xl">
               대표님 사업장을 <span className="text-brand-orange">AI가 분석</span>하고 있어요
             </p>
-            <p className="mt-2 text-sm text-brand-gray sm:text-base">
-              전국 정부지원사업 데이터와 대조 중입니다
-            </p>
+
+            {/* ── 상단 진행률(%) 바 ── */}
+            <div className="mt-5">
+              <div className="mb-1.5 flex items-end justify-between">
+                <span className="text-xs font-bold text-brand-gray sm:text-sm">
+                  AI 분석 진행 중
+                </span>
+                <span className="text-lg font-extrabold text-brand-orange sm:text-xl">
+                  {analyzePct}%
+                </span>
+              </div>
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-brand-orange/10">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-brand-yellow to-brand-orange transition-all duration-300 ease-out"
+                  style={{ width: `${analyzePct}%` }}
+                />
+              </div>
+              {/* 진행률에 맞춰 회전하는 1줄 안내 문구 */}
+              <p className="mt-3 min-h-[1.25rem] text-sm text-brand-gray transition-opacity duration-300 sm:text-base">
+                {analyzeMessages[analyzeMsgIdx]}
+              </p>
+            </div>
 
             <ul className="mt-6 space-y-2.5 text-left">
               {steps.map((s, i) => {
