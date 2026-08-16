@@ -18,10 +18,10 @@ type CaseItem = {
   headline: React.ReactNode; // 한 줄 임팩트 카피
   metric: string; // 확보 금액(큰 숫자)
   metricSub: string; // 금액 부연
-  before: string;
-  strategy: string;
-  result: string;
-  beyond: string;
+  before: string[]; // 문단 배열(가독성을 위해 문단 단위로 분리)
+  strategy: string[];
+  result: string[];
+  beyond: string[];
   funds: { name: string; amount: string }[]; // 승인 내역 배지
 };
 
