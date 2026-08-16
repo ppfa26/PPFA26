@@ -397,12 +397,14 @@ export default function DiagnosisChat() {
       if (i >= lines.length) { onDone?.(); return; }
       setBotTyping(true);
       const line = lines[i];
-      const delay = Math.min(1100, Math.max(450, line.length * 40));
+      // ★ 대표님 요청 ★ 첫 인사가 너무 느려서 타이핑 지연을 단축.
+      //   글자당 40ms→22ms, 상·하한 450~1100ms → 300~650ms 로 축소.
+      const delay = Math.min(650, Math.max(300, line.length * 22));
       setTimeout(() => {
         setBotTyping(false);
         setMessages((m) => [...m, { who: "bot", text: line, wide }]);
         i += 1;
-        setTimeout(showNext, 220);
+        setTimeout(showNext, 140);
       }, delay);
     };
     showNext();
