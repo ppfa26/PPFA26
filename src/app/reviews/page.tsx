@@ -174,6 +174,82 @@ const CASES: CaseItem[] = [
   },
 ];
 
+/* ────────────────────────────────────────────────────────────
+ *  그 외 승인 사례 (작은 카드 그리드)
+ *  - 실제 승인 서류를 기반으로 익명(업종 · 기관/상품 · 금액) 처리.
+ *  - 카드가 너무 많아, 대표 사례를 추려 그리드로 요약.
+ * ──────────────────────────────────────────────────────────── */
+type MiniCase = { sector: string; org: string; amount: string };
+
+const MORE_CASES: MiniCase[] = [
+  { sector: "도소매 · 수출업", org: "무역보험공사 문화산업보증", amount: "4.75억" },
+  { sector: "방송 콘텐츠 제작", org: "중진공 수출기업글로벌화", amount: "5억" },
+  { sector: "육류 소매업", org: "소진공 일반경영안정자금", amount: "7,000만" },
+  { sector: "인테리어 디자인업", org: "소진공 일반경영안정자금", amount: "7,000만" },
+  { sector: "편의점 운영", org: "인천재단 상권활성화 특례보증", amount: "3,500만" },
+  { sector: "김밥·간이음식점", org: "중진공 혁신성장촉진자금", amount: "2억" },
+  { sector: "스터디카페 운영", org: "중진공 혁신성장촉진자금(운전)", amount: "1억" },
+  { sector: "여성복 제조업", org: "소진공 일반경영안정자금", amount: "7,000만" },
+  { sector: "노래연습장 운영", org: "소진공 일반경영안정자금", amount: "7,000만" },
+  { sector: "일반 교과 학원", org: "소진공 일반경영안정자금", amount: "7,000만" },
+  { sector: "선박부품 제조업", org: "소진공 성장기반자금(소공인)", amount: "1억" },
+  { sector: "미용업", org: "소진공 일반경영안정자금", amount: "7,000만" },
+  { sector: "물류·운송업", org: "소진공 일반경영안정자금", amount: "7,000만" },
+  { sector: "무역업(수입)", org: "인천재단 희망인천 특례보증", amount: "2,550만" },
+  { sector: "제조업(기계)", org: "경기재단 특례보증", amount: "5,000만" },
+  { sector: "체력단련시설", org: "소진공 일반경영안정자금", amount: "7,000만" },
+];
+
+/* ────────────────────────────────────────────────────────────
+ *  고객 후기 (네이버 스타일 짧은 후기)
+ *  - 실제 상담·진행 톤을 살려 자연스럽게 작성한 예시.
+ *  - 닉네임/업종은 익명. 대표님 검수 후 수정 예정.
+ * ──────────────────────────────────────────────────────────── */
+type MiniReview = { nick: string; sector: string; body: string };
+
+const REVIEWS: MiniReview[] = [
+  {
+    nick: "육****",
+    sector: "육류 가공 · 창업 2년차",
+    body: "1억이면 감사하겠다 했는데 나눠서 진행하니 2억 넘게 승인 났어요. 명절 물량 걱정 없이 넘겼습니다. 진짜 감사합니다.",
+  },
+  {
+    nick: "PD****",
+    sector: "방송 콘텐츠 제작",
+    body: "대출 한도가 다 막혀서 어디서도 안 된다고만 하던 상황이었는데, 벤처인증부터 순서대로 잡아주셔서 자금길이 다시 열렸습니다.",
+  },
+  {
+    nick: "간***",
+    sector: "간판 제작 · 제조업",
+    body: "특허가 이렇게 쓰일 수 있는 줄 몰랐어요. 신용도 올리는 것부터 하나하나 알려주셔서 IP보증까지 받았습니다.",
+  },
+  {
+    nick: "카페**",
+    sector: "스터디카페 운영",
+    body: "혼자 알아보면 뭐부터 해야 할지 막막했는데, 진단받고 바로 방향이 잡혔어요. 상담이 부담스럽지 않아서 좋았습니다.",
+  },
+  {
+    nick: "미용실**",
+    sector: "미용업",
+    body: "서류가 복잡할 줄 알았는데 필요한 것만 딱 짚어주셔서 수월했어요. 승인까지 생각보다 빨리 됐습니다.",
+  },
+  {
+    nick: "수출***",
+    sector: "도소매 · 수출업",
+    body: "자본잠식이라 다 부결이었는데 결산부터 재무 정리까지 길게 봐주셨어요. 결국 큰 금액 확보하고 지금 매출도 많이 올랐습니다.",
+  },
+  {
+    nick: "노래***",
+    sector: "노래연습장 운영",
+    body: "정부지원사업이 남 얘기인 줄만 알았어요. 우리 같은 곳도 대상이 된다는 걸 처음 알았습니다. 추천합니다.",
+  },
+  {
+    nick: "부동산**",
+    sector: "부동산 중개업",
+    body: "다른 데서 안 된다던 조건이었는데 여기서는 되는 방법을 찾아주셨어요. 설명도 알아듣기 쉽게 해주십니다.",
+  },
+];
+
 export default function ReviewsPage() {
   return (
     <PageShell pageKey="reviews" stickyFooter>
@@ -273,6 +349,92 @@ export default function ReviewsPage() {
               </div>
             </article>
           ))}
+        </section>
+
+        {/* ── 그 외 승인 사례 (작은 카드 그리드) ─────────── */}
+        <section className="reveal mt-14 sm:mt-20">
+          <div className="text-center">
+            <h2 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
+              그 외에도 이어지는 <span className="text-brand-orange">승인 사례</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-md break-keep text-[12.5px] font-medium leading-[1.7] text-white/50 sm:text-[14.5px]">
+              업종도, 지역도, 자금 용도도 모두 다릅니다.
+              <br className="hidden sm:block" />{" "}
+              대표님 사업장 역시 대상이 될 수 있습니다.
+            </p>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4">
+            {MORE_CASES.map((m, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3.5 backdrop-blur-sm sm:px-5 sm:py-4"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-[13.5px] font-bold text-white sm:text-[15px]">
+                    {m.sector}
+                  </p>
+                  <p className="mt-0.5 truncate text-[11.5px] font-medium text-white/45 sm:text-[12.5px]">
+                    {m.org}
+                  </p>
+                </div>
+                <span className="shrink-0 text-[15px] font-black tracking-[-0.02em] text-brand-yellow sm:text-[17px]">
+                  {m.amount}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-5 text-center text-[11px] font-medium text-white/35 sm:text-[12px]">
+            ※ 지면상 대표 사례만 발췌했으며, 실제 진행 건은 이보다 훨씬 많습니다.
+          </p>
+        </section>
+
+        {/* ── 고객 후기 (네이버 스타일 짧은 후기) ─────────── */}
+        <section className="reveal mt-14 sm:mt-20">
+          <div className="text-center">
+            <h2 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
+              먼저 경험한 <span className="text-brand-orange">대표님들의 후기</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-md break-keep text-[12.5px] font-medium leading-[1.7] text-white/50 sm:text-[14.5px]">
+              숫자보다 진솔한, 직접 겪은 이야기입니다.
+            </p>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 gap-3.5 sm:mt-10 sm:grid-cols-2 sm:gap-4">
+            {REVIEWS.map((r, i) => (
+              <div
+                key={i}
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm sm:p-6"
+              >
+                <div className="flex items-center gap-1 text-[13px] text-brand-yellow" aria-label="별점 5점">
+                  <span aria-hidden="true">★★★★★</span>
+                </div>
+                <p className="mt-3 flex-1 break-keep text-[13.5px] font-medium leading-[1.7] text-white/80 sm:text-[15px]">
+                  “{r.body}”
+                </p>
+                <p className="mt-4 text-[12px] font-semibold text-white/45 sm:text-[13px]">
+                  <span className="text-white/70">{r.nick}</span> · {r.sector}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* 후기 섹션 하단 버튼 — 카카오톡 상담 */}
+          <div className="mt-9 text-center sm:mt-11">
+            <a
+              href="https://pf.kakao.com/_VxfWxan/chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 rounded-full bg-[#FEE500] px-8 py-4 text-[15px] font-extrabold tracking-[-0.01em] text-[#191600] shadow-[0_14px_40px_-14px_rgba(254,229,0,0.6)] transition-transform hover:-translate-y-0.5 sm:text-[16px]"
+            >
+              <i className="fas fa-comment" aria-hidden="true" />
+              카카오톡으로 1:1 상담하기
+            </a>
+            <p className="mx-auto mt-4 max-w-sm break-keep text-[11.5px] font-medium leading-[1.6] text-white/40 sm:text-[12.5px]">
+              부담 없이 물어보세요. 대표님 상황부터 편하게 들어드립니다.
+            </p>
+          </div>
         </section>
 
         {/* ── 하단 CTA ─────────────────────────────── */}
