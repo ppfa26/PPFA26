@@ -173,22 +173,22 @@ const CASES: CaseItem[] = [
 type MiniCase = { sector: string; org: string; amount: string };
 
 const MORE_CASES: MiniCase[] = [
-  { sector: "도소매 · 수출업", org: "무역보험공사 문화산업보증", amount: "4.75억" },
-  { sector: "방송 콘텐츠 제작", org: "중진공 수출기업글로벌화", amount: "5억" },
-  { sector: "육류 소매업", org: "소진공 일반경영안정자금", amount: "7,000만" },
-  { sector: "인테리어 디자인업", org: "소진공 일반경영안정자금", amount: "7,000만" },
-  { sector: "편의점 운영", org: "인천재단 상권활성화 특례보증", amount: "3,500만" },
-  { sector: "김밥·간이음식점", org: "중진공 혁신성장촉진자금", amount: "2억" },
-  { sector: "스터디카페 운영", org: "중진공 혁신성장촉진자금(운전)", amount: "1억" },
-  { sector: "여성복 제조업", org: "소진공 일반경영안정자금", amount: "7,000만" },
-  { sector: "노래연습장 운영", org: "소진공 일반경영안정자금", amount: "7,000만" },
-  { sector: "일반 교과 학원", org: "소진공 일반경영안정자금", amount: "7,000만" },
-  { sector: "선박부품 제조업", org: "소진공 성장기반자금(소공인)", amount: "1억" },
-  { sector: "미용업", org: "소진공 일반경영안정자금", amount: "7,000만" },
-  { sector: "물류·운송업", org: "소진공 일반경영안정자금", amount: "7,000만" },
-  { sector: "무역업(수입)", org: "인천재단 희망인천 특례보증", amount: "2,550만" },
-  { sector: "제조업(기계)", org: "경기재단 특례보증", amount: "5,000만" },
-  { sector: "체력단련시설", org: "소진공 일반경영안정자금", amount: "7,000만" },
+  { sector: "도소매 · 수출업", org: "무역보험공사 문화산업보증 + 신보 협약 보증", amount: "4.5억" },
+  { sector: "방송 콘텐츠 제작", org: "중진공 수출기업글로벌화 + 소진공 수출소상공인 + 기보 컨텐츠 보증", amount: "5억" },
+  { sector: "육류 소매업", org: "소진공 일반경영안정자금 + 재단 특례 보증", amount: "7,000만" },
+  { sector: "인테리어 디자인업", org: "소진공 일반경영안정자금 + 재단 특례 보증", amount: "7,000만" },
+  { sector: "편의점 운영", org: "소진공 혁신성장촉진자금 + 재단 특례 보증", amount: "5,000만" },
+  { sector: "김밥·간이음식점", org: "소진공 혁신성장촉진자금 + 재단 협약 보증", amount: "2억" },
+  { sector: "스터디카페 운영", org: "소진공 혁신성장촉진자금(운전) + 재단 특례 보증", amount: "1억" },
+  { sector: "여성복 제조업", org: "소진공 일반경영안정자금 + 재단 특례 보증", amount: "7,000만" },
+  { sector: "노래연습장 운영", org: "소진공 일반경영안정자금 + 재단 협약 보증", amount: "7,000만" },
+  { sector: "일반 교과 학원", org: "소진공 일반경영안정자금 + 재단 협약 보증", amount: "5,000만" },
+  { sector: "선박부품 제조업", org: "중진공 성장기반자금(소공인) + 신보 협약 보증", amount: "2억" },
+  { sector: "미용업", org: "소진공 일반경영안정자금 + 재단 특례 보증", amount: "7,000만" },
+  { sector: "물류·운송업", org: "소진공 일반경영안정자금 + 재단 특례 보증", amount: "7,000만" },
+  { sector: "무역업", org: "재단 특례 보증", amount: "3,000만" },
+  { sector: "제조업(기계)", org: "재단 특례 보증", amount: "5,000만" },
+  { sector: "체력단련시설", org: "소진공 일반경영안정자금 + 재단 특례 보증", amount: "7,000만" },
 ];
 
 /* ────────────────────────────────────────────────────────────
@@ -202,7 +202,7 @@ const REVIEWS: MiniReview[] = [
   {
     nick: "육****",
     sector: "육류 가공 · 창업 2년차",
-    body: "1억만 돼도 감사했는데 나눠서 2억 넘게 승인됐어요. 명절 물량 걱정 없이 넘겼습니다.",
+    body: "1억만 돼도 감사했는데 나눠서 2억 넘게 승인됐어요. 운영자금 걱정 없이 위기를 잘 넘겼습니다.",
   },
   {
     nick: "PD****",
@@ -353,19 +353,19 @@ export default function ReviewsPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4">
+          <div className="mt-8 grid grid-cols-3 gap-2 sm:mt-10 sm:gap-3">
             {MORE_CASES.map((m, i) => (
               <div
                 key={i}
-                className="flex min-h-[116px] flex-col rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-4 backdrop-blur-sm transition-colors hover:border-brand-orange/25 sm:min-h-[128px] sm:px-5 sm:py-[18px]"
+                className="flex min-h-[124px] flex-col rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3.5 backdrop-blur-sm transition-colors hover:border-brand-orange/25 sm:min-h-[140px] sm:px-4 sm:py-4"
               >
-                <span className="text-[17px] font-black leading-none tracking-[-0.03em] text-brand-yellow sm:text-[21px]">
+                <span className="text-[15px] font-black leading-none tracking-[-0.03em] text-brand-yellow sm:text-[19px]">
                   {m.amount}
                 </span>
-                <p className="mt-2.5 break-keep text-[13px] font-bold leading-[1.4] tracking-[-0.01em] text-white/95 sm:text-[14.5px]">
+                <p className="mt-2 break-keep text-[11.5px] font-bold leading-[1.35] tracking-[-0.01em] text-white/95 sm:text-[13.5px]">
                   {m.sector}
                 </p>
-                <p className="mt-auto break-keep pt-2 text-[10.5px] font-medium leading-[1.45] text-white/40 sm:text-[11.5px]">
+                <p className="mt-auto break-keep pt-1.5 text-[9.5px] font-medium leading-[1.4] text-white/40 sm:text-[10.5px]">
                   {m.org}
                 </p>
               </div>
@@ -430,29 +430,41 @@ export default function ReviewsPage() {
           </div>
         </section>
 
-        {/* ── 하단 CTA ─────────────────────────────── */}
-        <section className="reveal mt-12 overflow-hidden rounded-[26px] border border-white/10 bg-gradient-to-br from-brand-orange/[0.14] to-transparent px-6 py-10 text-center sm:mt-16 sm:px-10 sm:py-14">
-          <h3 className="break-keep text-[21px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[28px]">
+        {/* ── 하단 CTA (전 페이지 통일 디자인: rounded-3xl bg-brand-dark) ── */}
+        <section className="reveal mt-12 rounded-3xl bg-brand-dark px-6 py-9 text-center sm:mt-16 sm:px-10 sm:py-11">
+          <h2 className="break-keep text-xl font-extrabold leading-[1.35] text-white sm:text-2xl">
             다음 성공 사례의 주인공은
             <br />
             <span className="text-brand-orange">대표님</span>일 수 있습니다
-          </h3>
-          <p className="mx-auto mt-4 max-w-md break-keep text-center text-[14px] font-medium leading-[1.85] text-white/60 sm:text-[16px]">
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-gray-300 sm:text-base">
             정부지원사업 AI 통합 매칭 플랫폼이
             <br />
             대표님 사업장에 딱 맞는 정부지원사업을 무료로 찾아드립니다.
           </p>
-          <Link
-            href="/diagnosis-chat"
-            className="btn-red mt-7 inline-flex items-center gap-2 rounded-full px-9 py-4 text-[15px] font-extrabold tracking-[-0.01em] sm:text-[17px]"
-          >
-            3분 무료 진단 시작하기
-            <span aria-hidden="true">→</span>
-          </Link>
-          <p className="mx-auto mt-6 max-w-md break-keep text-[10.5px] leading-[1.7] text-white/35 sm:text-[11.5px]">
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/diagnosis-chat"
+              className="btn-red w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
+            >
+              3분 무료 진단 시작하기 →
+            </Link>
+            <a
+              href="https://pf.kakao.com/_VxfWxan/chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-bold text-white hover:bg-white/10 sm:w-auto"
+            >
+              💬 1:1 채널톡 상담하기
+            </a>
+          </div>
+          <p className="mx-auto mt-7 max-w-md break-keep text-[10.5px] leading-[1.7] text-gray-400/70 sm:text-[11.5px]">
             ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다.
             승인 여부·금액·기간은 정부 기관 심사 및 기업별 상황에 따라 달라질 수 있으며,
             동일한 결과를 보장하지 않습니다.
+          </p>
+          <p className="mx-auto mt-2.5 break-keep text-[10px] leading-[1.6] text-gray-500 sm:text-[10.5px]">
+            출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
           </p>
         </section>
       </main>
