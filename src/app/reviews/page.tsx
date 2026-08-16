@@ -123,7 +123,7 @@ export default function ReviewsPage() {
                 </h2>
 
                 <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/10 pt-5">
-                  <span className="bg-gradient-to-br from-brand-yellow to-brand-orange bg-clip-text text-[38px] font-black leading-none tracking-[-0.03em] text-transparent sm:text-[48px]">
+                  <span className="text-[38px] font-black leading-none tracking-[-0.03em] text-brand-orange [text-shadow:0_2px_20px_rgba(255,149,0,0.45)] sm:text-[48px]">
                     {c.metric}
                   </span>
                   <span className="mb-1 text-[13px] font-semibold text-white/60 sm:text-[15px]">
