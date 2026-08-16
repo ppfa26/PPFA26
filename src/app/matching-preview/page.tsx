@@ -209,7 +209,7 @@ export default function MatchingPreview() {
   const total = shownSupports + shownProducts + shownBenefits + shownAnnouncements;
   const isBlocked = blockReasons.length > 0;
 
-  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 5.5초 후 ready) ──
+  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 6.5초 후 ready) ──
   //  · 상단 진행률(%)이 0→100 으로 부드럽게 차오르고,
   //  · 4단계 카드가 순차 점등되며,
   //  · 1줄 안내 문구가 회전한다.  끝나면 결과 공개 + '본 적 있음' 표시.
@@ -219,7 +219,7 @@ export default function MatchingPreview() {
     setAnalyzePct(0);
     setAnalyzeMsgIdx(0);
 
-    const DURATION = 5500; // 전체 연출 시간(ms) - 넉넉하게(정밀 분석 느낌 ↑)
+    const DURATION = 6500; // 전체 연출 시간(ms) - 넉넉하게(정밀 분석 느낌 ↑)
 
     // (1) 진행률(%) 부드럽게 증가 - 약 60ms 간격으로 목표치까지 이동
     //     실제 완료 전엔 96%에서 잠깐 멈춘 듯 보이다가, 마지막에 100%로 채워 '완료' 쾌감을 준다.
@@ -233,15 +233,15 @@ export default function MatchingPreview() {
       setAnalyzePct((prev) => (pct > prev ? pct : prev));
     }, 60);
 
-    // (2) 4단계 카드 순차 점등 (연출시간 5.5초에 맞춰 넉넉하게)
-    const t1 = setTimeout(() => setAnalyzeStep(1), 1350);
-    const t2 = setTimeout(() => setAnalyzeStep(2), 2700);
-    const t3 = setTimeout(() => setAnalyzeStep(3), 4050);
+    // (2) 4단계 카드 순차 점등 (연출시간 6.5초에 맞춰 넉넉하게)
+    const t1 = setTimeout(() => setAnalyzeStep(1), 1600);
+    const t2 = setTimeout(() => setAnalyzeStep(2), 3200);
+    const t3 = setTimeout(() => setAnalyzeStep(3), 4800);
 
-    // (3) 1줄 안내 문구 회전(약 1.3초마다 교체)
-    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 1350);
-    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 2900);
-    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 4400);
+    // (3) 1줄 안내 문구 회전(약 1.6초마다 교체)
+    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 1600);
+    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 3400);
+    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 5200);
 
     // (4) 완료 - 100% 채우고 결과 공개
     const done = setTimeout(() => {
