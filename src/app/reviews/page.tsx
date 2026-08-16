@@ -409,7 +409,7 @@ export default function ReviewsPage() {
                 <span className="text-[12px] leading-none tracking-[0.14em] text-brand-yellow" aria-label="별점 5점">
                   ★★★★★
                 </span>
-                <p className="mt-3 flex-1 text-pretty text-[12.5px] font-medium leading-[1.7] tracking-[-0.005em] text-white/85 sm:text-[14px]">
+                <p className="mt-3 flex-1 break-keep text-[12.5px] font-medium leading-[1.7] tracking-[-0.005em] text-white/85 sm:text-[14px]">
                   {r.body}
                 </p>
                 <p className="mt-3.5 border-t border-white/[0.07] pt-3 text-[10.5px] font-semibold tracking-[-0.005em] text-white/40 sm:text-[11.5px]">
