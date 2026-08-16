@@ -59,15 +59,18 @@ export function stripMiddots(s: string): string {
 }
 
 /**
- * 불필요한 세로 빈 줄을 대표님 수정본 규칙대로 압축한다.
- * (AI 결과·기본 템플릿 모두 stripMiddots를 거치므로 한 곳에서 일괄 적용)
+ * 불필요한 세로 빈 줄만 제거한다. (모바일 친화 · 대표님 수정본 규칙)
+ * AI 결과·기본 템플릿 모두 stripMiddots를 거치므로 한 곳에서 일괄 적용.
  *
- * 규칙
- *  1) 연속 빈 줄 2개 이상 → 1개로 (문단 사이 간격은 빈 줄 1개만 유지)
- *  2) 소제목 [ ... ] 바로 아래 빈 줄 제거 → 제목과 첫 내용을 붙임
- *  3) 숫자 리스트(1. 2. 3.) 항목 사이 빈 줄 제거 → 붙임
- *  4) "핵심 정리"의 라벨 줄(제도명:, 목적: …) 사이 빈 줄 제거 → 붙임
- *  5) [사진N] 위에는 빈 줄 1개, 아래는 빈 줄 1개만 유지
+ * 유지(띄우는) 것
+ *  - 문단과 문단 사이: 빈 줄 1개
+ *  - 숫자 리스트(1. 2. 3.) 항목 사이: 각각 빈 줄로 띄움 (대표님 지시)
+ *  - [사진N] 위/아래: 빈 줄 1개씩
+ *
+ * 제거(붙이는) 것
+ *  - 연속 빈 줄 2개 이상 → 1개로
+ *  - 소제목 [ ... ] 바로 아래 빈 줄 → 제목과 첫 내용을 붙임
+ *  - "핵심 정리"의 라벨 줄(제도명:, 목적: …) 연속 → 빈 줄 없이 붙임
  */
 function compactBlankLines(input: string): string {
   const lines = input.replace(/\r\n/g, "\n").split("\n");
@@ -75,9 +78,6 @@ function compactBlankLines(input: string): string {
   const isBlank = (l?: string) => l === undefined || l.trim() === "";
   const isHeading = (l?: string) => !!l && /^\s*\[.*\]\s*$/.test(l.trim());
   const isPhoto = (l?: string) => !!l && /^\s*\[사진\d+\]\s*$/.test(l.trim());
-  // "1. " "2) " 같은 숫자 리스트 항목
-  const isListItem = (l?: string) =>
-    !!l && /^\s*\d+\s*[.)]\s+\S/.test(l);
   // "제도명:" "지원 한도:" 처럼 라벨: 로 시작하는 핵심정리 줄
   const isLabelLine = (l?: string) =>
     !!l && /^\s*[^\s:][^:]{0,20}:\s*\S/.test(l);
@@ -93,15 +93,13 @@ function compactBlankLines(input: string): string {
       while (j < lines.length && isBlank(lines[j])) j++;
       const next = lines[j];
 
-      // 이전이 소제목이면 → 바로 아래 빈 줄 제거 (제목 붙이기)
+      // 소제목 [ ... ] 바로 아래 빈 줄 제거 → 제목 붙이기 (단, [사진N]은 예외)
       if (isHeading(prev) && !isPhoto(prev)) continue;
-      // 리스트 항목 사이 빈 줄 제거 (양쪽이 리스트일 때)
-      if (isListItem(prev) && isListItem(next)) continue;
-      // 핵심정리 라벨 줄 사이 빈 줄 제거 (양쪽이 라벨일 때)
+      // 핵심정리 라벨 줄이 연속될 때만 빈 줄 제거 (제도명: / 목적: …)
       if (isLabelLine(prev) && isLabelLine(next)) continue;
       // 연속 빈 줄은 1개로 (직전이 이미 빈 줄이면 스킵)
       if (isBlank(prev)) continue;
-      // 그 외에는 빈 줄 1개 유지
+      // 그 외에는 빈 줄 1개 유지 (문단·리스트 항목 사이 간격 보존)
       out.push("");
       continue;
     }
