@@ -109,7 +109,7 @@ export default function ReviewsPage() {
                   aria-hidden="true"
                 />
 
-                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
                   <span className="rounded-md bg-brand-orange px-2.5 py-1 text-[11px] font-black tracking-[0.06em] text-brand-dark">
                     {c.no}
                   </span>
@@ -118,11 +118,11 @@ export default function ReviewsPage() {
                   </span>
                 </div>
 
-                <h2 className="mt-4 break-keep text-[19px] font-black leading-[1.45] tracking-[-0.02em] text-white sm:text-[25px] sm:leading-[1.4]">
+                <h2 className="mx-auto mt-4 max-w-[26ch] break-keep text-center text-[19px] font-black leading-[1.45] tracking-[-0.02em] text-white sm:text-[25px] sm:leading-[1.4]">
                   {c.headline}
                 </h2>
 
-                <div className="mt-6 flex items-end gap-2.5 border-t border-white/10 pt-5">
+                <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/10 pt-5">
                   <span className="bg-gradient-to-br from-brand-yellow to-brand-orange bg-clip-text text-[38px] font-black leading-none tracking-[-0.03em] text-transparent sm:text-[48px]">
                     {c.metric}
                   </span>
@@ -225,7 +225,7 @@ function Step({
     emerald: "bg-emerald-500/15 text-emerald-400",
   };
   return (
-    <div>
+    <div className="flex flex-col items-center text-center">
       <div className="flex items-center gap-2.5">
         <span
           className={`rounded-md px-2.5 py-[3px] text-[10px] font-extrabold uppercase tracking-[0.1em] ${toneMap[tone]}`}
@@ -236,11 +236,11 @@ function Step({
           {title}
         </p>
       </div>
-      <div className="mt-3.5 flex flex-col gap-3 pl-0.5">
+      <div className="mt-3.5 flex flex-col gap-3">
         {body.map((para, i) => (
           <p
             key={i}
-            className="max-w-[52ch] break-keep text-[13px] font-normal leading-[1.85] tracking-[-0.01em] text-white/70 sm:text-[14.5px] sm:leading-[1.9]"
+            className="mx-auto max-w-[62ch] break-keep text-[13.5px] font-normal leading-[1.85] tracking-[-0.01em] text-white/70 sm:text-[15px] sm:leading-[1.9]"
           >
             {para}
           </p>
