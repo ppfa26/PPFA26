@@ -188,7 +188,6 @@ const MORE_CASES: MiniCase[] = [
   { sector: "물류·운송업", org: "소진공 일반경영안정자금 + 재단 특례 보증", amount: "7,000만" },
   { sector: "무역업", org: "재단 특례 보증", amount: "3,000만" },
   { sector: "제조업(기계)", org: "재단 특례 보증", amount: "5,000만" },
-  { sector: "체력단련시설", org: "소진공 일반경영안정자금 + 재단 특례 보증", amount: "7,000만" },
 ];
 
 /* ────────────────────────────────────────────────────────────
@@ -509,11 +508,11 @@ function Step({
           {title}
         </p>
       </div>
-      <div className="mt-3.5 flex w-full flex-col gap-3.5">
+      <div className="mx-auto mt-3.5 flex w-full max-w-[38rem] flex-col gap-3.5">
         {body.map((para, i) => (
           <p
             key={i}
-            className="mx-auto w-full max-w-[38rem] whitespace-pre-line break-keep text-[13.5px] font-normal leading-[1.8] tracking-[-0.01em] text-white/70 sm:text-[15px] sm:leading-[1.85]"
+            className="w-full whitespace-pre-line break-keep text-left text-[13.5px] font-normal leading-[1.8] tracking-[-0.01em] text-white/70 sm:text-[15px] sm:leading-[1.85]"
           >
             {para}
           </p>
