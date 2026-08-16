@@ -270,7 +270,7 @@ export default function ReviewsPage() {
           <p className="reveal mx-auto mt-5 max-w-xl break-keep text-[13.5px] font-medium leading-[1.75] text-white/55 sm:text-[16px]">
             저희가 진짜로 증명해야 하는 건 승인 사례가 아니라,
             <br className="hidden sm:block" />{" "}
-            그 자금이 기업을{" "}
+            우리의 자문이 기업을{" "}
             <b className="font-bold text-white/90">어디에서 어디로 데려갔는가</b>입니다.
           </p>
         </section>
