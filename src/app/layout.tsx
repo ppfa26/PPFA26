@@ -400,6 +400,16 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css"
         />
+        {/* ── Google AdSense (구글 애드센스) ──
+            퍼블리셔 ID: ca-pub-4251222240715852
+            · 사이트 소유권 확인 + 광고 게재용 로더 스크립트.
+            · 애드센스 심사/광고 표시는 이 한 줄이 모든 페이지 <head>에 있어야 동작.
+            · async 로 비동기 로딩하므로 첫 화면 렌더를 막지 않는다. */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4251222240715852"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="theme-dark">
         <ScrollToTop />
