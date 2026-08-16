@@ -344,8 +344,8 @@ export default function MatchingPreview() {
                   {analyzePct}%
                 </span>
               </div>
-              {/* 배경 트랙은 연한 회색, 차오르는 바는 선명한 주황 단색으로 통일해 대비를 확실히 준다 */}
-              <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
+              {/* 배경 트랙은 연한 주황(반투명) - 다크 배경에서도 튀지 않고, 차오르는 주황 단색 바가 선명하게 보인다 */}
+              <div className="h-3 w-full overflow-hidden rounded-full bg-brand-orange/15">
                 <div
                   className="h-full rounded-full bg-brand-orange transition-all duration-300 ease-out"
                   style={{ width: `${analyzePct}%` }}
