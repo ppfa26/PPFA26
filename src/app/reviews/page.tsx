@@ -399,19 +399,19 @@ export default function ReviewsPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4">
+          <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3">
             {REVIEWS.map((r, i) => (
               <div
                 key={i}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-5 backdrop-blur-sm sm:px-6 sm:py-6"
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 backdrop-blur-sm sm:px-5 sm:py-5"
               >
-                <span className="text-[13px] tracking-[0.15em] text-brand-yellow" aria-label="별점 5점">
+                <span className="text-[12px] tracking-[0.12em] text-brand-yellow" aria-label="별점 5점">
                   ★★★★★
                 </span>
-                <p className="mt-3 flex-1 break-keep text-[13px] font-medium leading-[1.75] text-white/80 sm:text-[14.5px]">
+                <p className="mt-2.5 flex-1 break-keep text-[12px] font-medium leading-[1.65] text-white/80 sm:text-[13.5px]">
                   “{r.body}”
                 </p>
-                <p className="mt-4 border-t border-white/[0.06] pt-3.5 text-[11.5px] font-semibold text-white/40 sm:text-[12.5px]">
+                <p className="mt-3 border-t border-white/[0.06] pt-3 text-[11px] font-semibold text-white/40 sm:text-[12px]">
                   <span className="text-white/70">{r.nick}</span> · {r.sector}
                 </p>
               </div>
