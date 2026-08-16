@@ -133,7 +133,7 @@ export default function ReviewsPage() {
               </div>
 
               {/* 카드 본문: Before / Strategy / Result / 승인내역 / Beyond */}
-              <div className="flex flex-col gap-7 border-t border-white/[0.06] bg-black/20 px-6 py-8 sm:gap-8 sm:px-9 sm:py-10">
+              <div className="flex flex-col gap-7 border-t border-white/[0.06] bg-black/20 px-5 py-8 sm:gap-8 sm:px-9 sm:py-10">
                 <Step label="Before" tone="slate" title="신청 전 상황" body={c.before} />
                 <Divider />
                 <Step label="Strategy" tone="orange" title="어떻게 접근했나" body={c.strategy} />
@@ -236,11 +236,11 @@ function Step({
           {title}
         </p>
       </div>
-      <div className="mt-3.5 flex flex-col gap-3">
+      <div className="mt-3.5 flex w-full flex-col gap-3.5">
         {body.map((para, i) => (
           <p
             key={i}
-            className="mx-auto max-w-[62ch] break-keep text-[13.5px] font-normal leading-[1.85] tracking-[-0.01em] text-white/70 sm:text-[15px] sm:leading-[1.9]"
+            className="mx-auto w-full max-w-[38rem] break-keep text-[13.5px] font-normal leading-[1.8] tracking-[-0.01em] text-white/70 sm:text-[15px] sm:leading-[1.85]"
           >
             {para}
           </p>
