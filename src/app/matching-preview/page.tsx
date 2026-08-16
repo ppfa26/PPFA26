@@ -209,7 +209,7 @@ export default function MatchingPreview() {
   const total = shownSupports + shownProducts + shownBenefits + shownAnnouncements;
   const isBlocked = blockReasons.length > 0;
 
-  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 3.0초 후 ready) ──
+  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 3.8초 후 ready) ──
   //  · 상단 진행률(%)이 0→100 으로 부드럽게 차오르고,
   //  · 4단계 카드가 순차 점등되며,
   //  · 1줄 안내 문구가 회전한다.  끝나면 결과 공개 + '본 적 있음' 표시.
@@ -219,7 +219,7 @@ export default function MatchingPreview() {
     setAnalyzePct(0);
     setAnalyzeMsgIdx(0);
 
-    const DURATION = 3000; // 전체 연출 시간(ms)
+    const DURATION = 3800; // 전체 연출 시간(ms) - 살짝 여유있게(신뢰감 ↑)
 
     // (1) 진행률(%) 부드럽게 증가 - 약 60ms 간격으로 목표치까지 이동
     //     실제 완료 전엔 96%에서 잠깐 멈춘 듯 보이다가, 마지막에 100%로 채워 '완료' 쾌감을 준다.
@@ -233,15 +233,15 @@ export default function MatchingPreview() {
       setAnalyzePct((prev) => (pct > prev ? pct : prev));
     }, 60);
 
-    // (2) 4단계 카드 순차 점등
-    const t1 = setTimeout(() => setAnalyzeStep(1), 750);
-    const t2 = setTimeout(() => setAnalyzeStep(2), 1450);
-    const t3 = setTimeout(() => setAnalyzeStep(3), 2150);
+    // (2) 4단계 카드 순차 점등 (연출시간 3.8초에 맞춰 여유있게)
+    const t1 = setTimeout(() => setAnalyzeStep(1), 950);
+    const t2 = setTimeout(() => setAnalyzeStep(2), 1850);
+    const t3 = setTimeout(() => setAnalyzeStep(3), 2750);
 
-    // (3) 1줄 안내 문구 회전(약 0.9초마다 교체)
-    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 900);
-    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 1800);
-    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 2500);
+    // (3) 1줄 안내 문구 회전(약 1.1초마다 교체)
+    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 1100);
+    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 2200);
+    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 3200);
 
     // (4) 완료 - 100% 채우고 결과 공개
     const done = setTimeout(() => {
@@ -344,9 +344,10 @@ export default function MatchingPreview() {
                   {analyzePct}%
                 </span>
               </div>
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-brand-orange/10">
+              {/* 배경 트랙은 연한 회색, 차오르는 바는 선명한 주황 단색으로 통일해 대비를 확실히 준다 */}
+              <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-brand-yellow to-brand-orange transition-all duration-300 ease-out"
+                  className="h-full rounded-full bg-brand-orange transition-all duration-300 ease-out"
                   style={{ width: `${analyzePct}%` }}
                 />
               </div>
