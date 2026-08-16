@@ -432,7 +432,7 @@ function SignupInner() {
           <Editable id="signup-desc" as="p" className="mt-2 text-sm text-brand-gray">
             {mode === "signup" ? (
               <>
-                이메일로 간편하게 가입하고
+                1초 만에 간편하게 가입하고
                 <br />
                 나만의 AI 매칭 리포트를 받아보세요.
               </>
