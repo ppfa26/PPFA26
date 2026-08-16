@@ -262,22 +262,17 @@ export default function ReviewsPage() {
           <p className="reveal inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
             Growth Stories
           </p>
-          <h1 className="reveal mt-5 break-keep text-center text-[25px] font-black leading-[1.35] tracking-[-0.035em] text-white sm:text-[40px] sm:leading-[1.25]">
-            정부지원사업 신청과
-            <br />
-            그 과정의 이야기,
+          <h1 className="reveal mt-5 break-keep text-center text-[25px] font-black leading-[1.4] tracking-[-0.035em] text-white sm:text-[40px] sm:leading-[1.3]">
+            정부지원사업 신청과 그 과정의 이야기,
             <br />
             그 후 기업은{" "}
             <span className="text-brand-orange">어떻게 달라졌을까요?</span>
           </h1>
-          <p className="reveal mx-auto mt-5 max-w-xl break-keep text-center text-[14px] font-medium leading-[1.9] text-white/60 sm:text-[16.5px]">
-            저희가 진짜로 증명하려는 건
+          <p className="reveal mx-auto mt-5 max-w-2xl break-keep text-center text-[14px] font-medium leading-[1.9] text-white/60 sm:text-[16.5px]">
+            저희가 진짜로 증명하려는 건 승인 사례가 아니라,
             <br />
-            승인 사례가 아니라,
-            <br />
-            우리의 자문이 기업을 어디에서
-            <br />
-            어디로 <b className="font-bold text-white/90">데려갔는가</b>입니다.
+            우리의 자문이 기업을{" "}
+            <b className="font-bold text-white/90">어디에서 어디로 데려갔는가</b>입니다.
           </p>
         </section>
 
@@ -452,12 +447,10 @@ export default function ReviewsPage() {
             <br />
             <span className="text-brand-orange">대표님</span>일 수 있습니다
           </h3>
-          <p className="mx-auto mt-4 max-w-md break-keep text-center text-[14px] font-medium leading-[1.8] text-white/60 sm:text-[16px]">
+          <p className="mx-auto mt-4 max-w-md break-keep text-center text-[14px] font-medium leading-[1.85] text-white/60 sm:text-[16px]">
             정부지원사업 AI 통합 매칭 플랫폼이
             <br />
-            대표님 사업장에 딱 맞는 정부지원사업을
-            <br />
-            무료로 찾아드립니다.
+            대표님 사업장에 딱 맞는 정부지원사업을 무료로 찾아드립니다.
           </p>
           <Link
             href="/diagnosis-chat"
