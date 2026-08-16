@@ -364,23 +364,21 @@ export default function ReviewsPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4">
+          <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3">
             {MORE_CASES.map((m, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3.5 backdrop-blur-sm sm:px-5 sm:py-4"
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] px-3.5 py-3.5 backdrop-blur-sm sm:px-5 sm:py-4"
               >
-                <div className="min-w-0">
-                  <p className="truncate text-[13.5px] font-bold text-white sm:text-[15px]">
-                    {m.sector}
-                  </p>
-                  <p className="mt-0.5 truncate text-[11.5px] font-medium text-white/45 sm:text-[12.5px]">
-                    {m.org}
-                  </p>
-                </div>
-                <span className="shrink-0 text-[15px] font-black tracking-[-0.02em] text-brand-yellow sm:text-[17px]">
+                <span className="text-[16px] font-black leading-none tracking-[-0.02em] text-brand-yellow sm:text-[20px]">
                   {m.amount}
                 </span>
+                <p className="mt-2 break-keep text-[12.5px] font-bold leading-[1.35] text-white sm:text-[14px]">
+                  {m.sector}
+                </p>
+                <p className="mt-1 break-keep text-[10.5px] font-medium leading-[1.4] text-white/45 sm:text-[11.5px]">
+                  {m.org}
+                </p>
               </div>
             ))}
           </div>
@@ -401,19 +399,19 @@ export default function ReviewsPage() {
             </p>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-3.5 sm:mt-10 sm:grid-cols-2 sm:gap-4">
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4">
             {REVIEWS.map((r, i) => (
               <div
                 key={i}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm sm:p-6"
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-5 backdrop-blur-sm sm:px-6 sm:py-6"
               >
-                <div className="flex items-center gap-1 text-[13px] text-brand-yellow" aria-label="별점 5점">
-                  <span aria-hidden="true">★★★★★</span>
-                </div>
-                <p className="mt-3 flex-1 break-keep text-[13.5px] font-medium leading-[1.7] text-white/80 sm:text-[15px]">
+                <span className="text-[13px] tracking-[0.15em] text-brand-yellow" aria-label="별점 5점">
+                  ★★★★★
+                </span>
+                <p className="mt-3 flex-1 break-keep text-[13px] font-medium leading-[1.75] text-white/80 sm:text-[14.5px]">
                   “{r.body}”
                 </p>
-                <p className="mt-4 text-[12px] font-semibold text-white/45 sm:text-[13px]">
+                <p className="mt-4 border-t border-white/[0.06] pt-3.5 text-[11.5px] font-semibold text-white/40 sm:text-[12.5px]">
                   <span className="text-white/70">{r.nick}</span> · {r.sector}
                 </p>
               </div>
