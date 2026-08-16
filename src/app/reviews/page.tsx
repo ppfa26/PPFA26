@@ -133,7 +133,7 @@ export default function ReviewsPage() {
               </div>
 
               {/* 카드 본문: Before / Strategy / Result / 승인내역 / Beyond */}
-              <div className="flex flex-col gap-6 border-t border-white/[0.06] bg-black/20 px-6 py-7 sm:px-9 sm:py-9">
+              <div className="flex flex-col gap-7 border-t border-white/[0.06] bg-black/20 px-6 py-8 sm:gap-8 sm:px-9 sm:py-10">
                 <Step label="Before" tone="slate" title="신청 전 상황" body={c.before} />
                 <Divider />
                 <Step label="Strategy" tone="orange" title="어떻게 접근했나" body={c.strategy} />
@@ -228,19 +228,19 @@ function Step({
     <div>
       <div className="flex items-center gap-2.5">
         <span
-          className={`rounded-md px-2.5 py-1 text-[10.5px] font-extrabold uppercase tracking-[0.08em] ${toneMap[tone]}`}
+          className={`rounded-md px-2.5 py-[3px] text-[10px] font-extrabold uppercase tracking-[0.1em] ${toneMap[tone]}`}
         >
           {label}
         </span>
-        <p className="text-[13px] font-extrabold tracking-[-0.01em] text-white/90 sm:text-[14.5px]">
+        <p className="text-[13.5px] font-bold tracking-[-0.01em] text-white/95 sm:text-[15px]">
           {title}
         </p>
       </div>
-      <div className="mt-3 flex flex-col gap-2.5 pl-0.5">
+      <div className="mt-3.5 flex flex-col gap-3 pl-0.5">
         {body.map((para, i) => (
           <p
             key={i}
-            className="break-keep text-[13.5px] font-medium leading-[1.8] text-white/65 sm:text-[14.5px]"
+            className="max-w-[52ch] break-keep text-[13px] font-normal leading-[1.85] tracking-[-0.01em] text-white/70 sm:text-[14.5px] sm:leading-[1.9]"
           >
             {para}
           </p>
