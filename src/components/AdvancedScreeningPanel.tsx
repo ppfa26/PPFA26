@@ -820,7 +820,7 @@ function AdvancedResult({
   const jaedanLinks = resolveJaedanLinks(company?.region);
 
   // ★ 기관별 상품 아코디언 - 클릭 시 해당 기관의 여러 상품이 쭈르륵 펼쳐짐 ★
-  //  (대표님 요청) 모든 기관 카테고리를 처음부터 '펼쳐진' 상태로 통일 → 위아래 오픈 정도 차이 없음.
+  //  (대표님 요청) 모든 기관 카테고리를 처음부터 '접힌' 상태로 통일 → 다른 카테고리처럼 깔끔.
   const [openProducts, setOpenProducts] = useState<Record<number, boolean>>({});
   const toggleProducts = (i: number) =>
     setOpenProducts((prev) => ({ ...prev, [i]: !prev[i] }));
@@ -843,11 +843,12 @@ function AdvancedResult({
   //   자격 없는 신분·연령 사업(예비·재도전·청년·도약)은 '더 보기'로도 안 보이게 완전 제외.
   //   판정은 isPreFounderEligible(진단 프로필)로만. ⚠️ matching.ts 스코어링과 무관한 표시 필터.
 
-  // report(=creditMatches)가 준비/갱신되면 모든 기관 아코디언을 기본 오픈으로 초기화
+  // report(=creditMatches)가 준비/갱신되면 모든 기관 아코디언을 기본 '접힘'으로 초기화
+  //  (대표님 요청) 다른 카테고리처럼 깔끔하게 → 기관별 상품 리스트는 기본 접고 'N개 보기' 클릭 시 펼침.
   useEffect(() => {
     const all: Record<number, boolean> = {};
     creditMatches.forEach((_, i) => {
-      all[i] = true;
+      all[i] = false;
     });
     setOpenProducts(all);
     // eslint-disable-next-line react-hooks/exhaustive-deps

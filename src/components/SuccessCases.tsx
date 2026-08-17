@@ -341,7 +341,7 @@ export default function SuccessCases({
 
       {/* ── 고객 후기 ── */}
       <section className="reveal mt-10 sm:mt-12">
-        <div className="text-center">
+        <div className="mx-auto max-w-md rounded-2xl border border-white/[0.10] bg-[#161d2e]/60 px-5 py-5 text-center backdrop-blur-[6px] sm:px-6 sm:py-6">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[23px]">
             먼저 경험한 <span className="text-brand-orange">대표님들의 후기</span>
           </h3>
