@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "정부지원사업 AI 매칭 플랫폼, 모두의사업친구",
   description:
-    "내 사업장에 딱 맞는 정부지원사업을 매칭하고 신청 방법까지 한번에 안내 AI 매칭 플랫폼, 모두의사업친구",
+    "내 사업장에 딱 맞는 정부지원사업을 매칭하고 신청 방법까지 한번에 안내 AI 매칭 플랫폼",
   keywords: [
     // ── 핵심 키워드 ──
     "정책자금",
@@ -289,7 +289,7 @@ const structuredData = {
         "정부지원사업 AI 매칭 플랫폼",
       ],
       description:
-        "내 사업장에 딱 맞는 정부지원사업을 매칭하고 신청 방법까지 한번에 안내 AI 매칭 플랫폼, 모두의사업친구",
+        "내 사업장에 딱 맞는 정부지원사업을 매칭하고 신청 방법까지 한번에 안내 AI 매칭 플랫폼",
       inLanguage: "ko-KR",
       publisher: { "@id": `${SITE_URL}/#organization` },
       // ★ 사이트링크 검색창(Sitelinks Searchbox) ★
@@ -302,38 +302,6 @@ const structuredData = {
         },
         "query-input": "required name=search_term_string",
       },
-    },
-    {
-      // ★ 빵부스러기(BreadcrumbList) ★
-      //  검색엔진이 사이트 계층 구조를 이해해 '사이트링크(하위 메뉴)'를 뽑기 쉽게 한다.
-      "@type": "BreadcrumbList",
-      "@id": `${SITE_URL}/#breadcrumb`,
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "홈",
-          item: SITE_URL,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "무료 진단",
-          item: `${SITE_URL}/diagnosis-chat`,
-        },
-        {
-          "@type": "ListItem",
-          position: 3,
-          name: "정부지원사업 정보",
-          item: `${SITE_URL}/business-info`,
-        },
-        {
-          "@type": "ListItem",
-          position: 4,
-          name: "요금 안내",
-          item: `${SITE_URL}/pricing`,
-        },
-      ],
     },
     {
       // 검색결과 사이트링크용 주요 메뉴
