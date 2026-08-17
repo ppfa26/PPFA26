@@ -271,7 +271,7 @@ export default function SuccessCases({
               <Divider />
               <Step label="Strategy" tone="orange" title="어떻게 접근했나" body={c.strategy} />
               <Divider />
-              <Step label="Result" tone="red" title="확보한 결과" body={c.result} />
+              <Step label="Result" tone="emerald" title="확보한 결과" body={c.result} />
 
               <div className="rounded-2xl border border-brand-orange/25 bg-[#121724]/50 p-4 backdrop-blur-[14px] sm:p-5">
                 <p className="mb-3 flex items-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.12em] text-brand-orange">
@@ -286,7 +286,7 @@ export default function SuccessCases({
                       <span className="break-keep text-[12.5px] font-semibold text-white/85 sm:text-[14px]">
                         {f.name}
                       </span>
-                      <span className="shrink-0 text-[14px] font-black tracking-[-0.02em] text-brand-yellow sm:text-[16px]">
+                      <span className="shrink-0 text-[14px] font-black tracking-[-0.02em] text-brand-orange sm:text-[16px]">
                         {f.amount}
                       </span>
                     </li>
@@ -299,9 +299,9 @@ export default function SuccessCases({
       </section>
 
       {/* ── 그 외 승인 사례 (작은 카드 그리드) ── */}
-      <section className="reveal mt-14 sm:mt-16">
+      <section className="reveal mt-10 sm:mt-12">
         <div className="text-center">
-          <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
+          <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[23px]">
             그 외에도 이어지는 <span className="text-brand-orange">승인 사례</span>
           </h3>
           <p className="mx-auto mt-3 max-w-md break-keep text-center text-[13px] font-medium leading-[1.75] text-white/55 sm:text-[14.5px]">
@@ -317,7 +317,7 @@ export default function SuccessCases({
               key={i}
               className="flex min-h-[124px] flex-col rounded-2xl border border-white/[0.12] bg-[#121724]/50 px-3 py-3.5 backdrop-blur-[14px] transition-colors hover:border-brand-orange/30 sm:min-h-[140px] sm:px-4 sm:py-4"
             >
-              <span className="text-[15px] font-black leading-none tracking-[-0.03em] text-brand-yellow sm:text-[19px]">
+              <span className="text-[15px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[19px]">
                 {m.amount}
               </span>
               <p className="mt-2 break-keep text-[11.5px] font-bold leading-[1.35] tracking-[-0.01em] text-white/95 sm:text-[13.5px]">
@@ -335,10 +335,10 @@ export default function SuccessCases({
       {/* ── 고객 후기 ── */}
       <section className="reveal mt-10 sm:mt-12">
         <div className="text-center">
-          <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
+          <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[23px]">
             먼저 경험한 <span className="text-brand-orange">대표님들의 후기</span>
           </h3>
-          <p className="mx-auto mt-3 max-w-md break-keep text-[12.5px] font-medium leading-[1.7] text-white/50 sm:text-[14.5px]">
+          <p className="mx-auto mt-3 max-w-md break-keep text-center text-[13px] font-medium leading-[1.75] text-white/55 sm:text-[14.5px]">
             숫자보다 진솔한, 직접 겪은 이야기입니다.
           </p>
         </div>
@@ -350,7 +350,7 @@ export default function SuccessCases({
               className="rounded-2xl border border-white/[0.12] bg-[#121724]/50 px-5 py-[18px] backdrop-blur-[14px] transition-colors hover:border-brand-orange/30 sm:px-6 sm:py-5"
             >
               <div className="flex items-center gap-2.5">
-                <span className="text-[12.5px] leading-none tracking-[0.14em] text-brand-yellow" aria-label="별점 5점">
+                <span className="text-[12.5px] leading-none tracking-[0.14em] text-brand-orange" aria-label="별점 5점">
                   ★★★★★
                 </span>
                 <span className="text-[11.5px] font-semibold tracking-[-0.005em] text-white/40 sm:text-[12.5px]">
