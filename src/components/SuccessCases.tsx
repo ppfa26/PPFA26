@@ -275,9 +275,7 @@ export default function SuccessCases({
 
             <div className="flex flex-col gap-6 border-t border-white/[0.12] bg-[#0d1119]/40 px-5 py-7 sm:gap-7 sm:px-9 sm:py-8">
               <Step label="Before" tone="slate" title="신청 전 상황" body={c.before} />
-              <Divider />
               <Step label="Strategy" tone="orange" title="어떻게 접근했나" body={c.strategy} />
-              <Divider />
               <Step label="Result" tone="emerald" title="확보한 결과" body={c.result} />
 
               <div className="rounded-2xl border border-brand-orange/25 bg-[#121724]/50 p-4 backdrop-blur-[14px] sm:p-5">
@@ -423,10 +421,6 @@ export default function SuccessCases({
 }
 
 /* ── 헬퍼 ── */
-function Divider() {
-  return <div className="h-px w-full bg-white/[0.06]" aria-hidden="true" />;
-}
-
 function Step({
   label,
   tone,
