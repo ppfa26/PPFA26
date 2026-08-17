@@ -12,8 +12,6 @@ import { TIER_MAP } from "@/lib/products";
 import { getCapturedUtmSource } from "@/components/UtmCapture";
 import { trackConversion } from "@/components/KarrotPixel";
 
-type Mode = "signup" | "login";
-
 function SignupInner() {
   const router = useRouter();
   const params = useSearchParams();
@@ -46,15 +44,9 @@ function SignupInner() {
   })();
   const nextPath = rawNext.startsWith("/") ? rawNext : "";
 
-  const [mode, setMode] = useState<Mode>("signup");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  // 가입 방식은 카카오/구글 소셜 로그인만 제공(대표님 요청).
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  // 이메일 가입 폼 아코디언 (기본 닫힘 - 소셜 로그인 우선 노출, 대표님 요청)
-  const [emailOpen, setEmailOpen] = useState(false);
 
   // ── 약관 동의 (삼쩜삼式 필수/선택 분리, 대표님 요청) ──
   //  필수 4종 + 선택(마케팅) 1종. '전체 동의' 마스터 체크 제공.
@@ -89,8 +81,7 @@ function SignupInner() {
   const requireAgreementOrBlock = (): boolean => {
     if (!allRequiredChecked) {
       setMsg("아래 필수 약관에 동의하시면 바로 시작할 수 있어요.");
-      // 동의 박스로 스크롤 + 강조 (모드가 signup일 때만 박스가 렌더됨 - 안전하게 signup으로 전환)
-      if (mode !== "signup") setMode("signup");
+      // 동의 박스로 스크롤 + 강조
       if (typeof window !== "undefined") {
         // 렌더 반영 후 스크롤되도록 다음 틱에 실행
         setTimeout(() => {
@@ -177,11 +168,6 @@ function SignupInner() {
     };
   }, [router, tier, nextPath]);
 
-  const goNext = () => {
-    // 결제 흐름(tier)이 우선, 그다음 next(진단 결과 등), 없으면 마이페이지
-    router.push(tier ? `/payment?tier=${tier}` : nextPath || "/mypage");
-  };
-
   // 소셜 로그인 (카카오 / 구글) - Supabase OAuth
   const handleOAuth = async (provider: "kakao" | "google", label = "") => {
     setMsg(null);
@@ -247,107 +233,6 @@ function SignupInner() {
         setLoading(false);
       }
       // 성공 시 소셜 로그인 페이지로 리다이렉트되므로 별도 처리 불필요
-    } catch {
-      setMsg("잠시 후 다시 시도해 주세요.");
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMsg(null);
-
-    if (!email || !password) {
-      setMsg("이메일과 비밀번호를 입력해 주세요.");
-      return;
-    }
-    if (mode === "signup" && password.length < 6) {
-      setMsg("비밀번호는 6자 이상으로 입력해 주세요.");
-      return;
-    }
-    // 회원가입 시 필수 동의를 이용자가 직접 체크했는지 검사 (미동의 시 차단 - 로그인 모드는 불필요)
-    if (mode === "signup" && !requireAgreementOrBlock()) return;
-
-    setLoading(true);
-    try {
-      if (mode === "signup") {
-        // 유입경로(광고 채널) - 방문 시 UtmCapture 가 저장해 둔 값을 가입 정보에 함께 기록
-        const utm_source = getCapturedUtmSource();
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              name,
-              phone,
-              tier: tier || "",
-              utm_source,
-              // ── 약관 동의 기록 (이용자가 실제 체크한 상태를 그대로 보관 - 동의 근거) ──
-              agree_age: agreeAge,             // [필수] 만 14세 이상
-              agree_terms: agreeTerms,         // [필수] 이용약관
-              agree_privacy: agreePrivacy,     // [필수] 개인정보 수집·이용
-              agree_third_party: agreeThird,   // 개인정보 제3자 제공
-              consent_at: new Date().toISOString(),
-              // 마케팅 수신 동의 (동의 시각 함께 기록 - 향후 정식 오픈 안내 발송 근거)
-              marketing_agree: marketingAgree,
-              marketing_agree_at: marketingAgree ? new Date().toISOString() : null,
-            },
-          },
-        });
-        if (error) {
-          const em = error.message.toLowerCase();
-          // 이미 가입된 경우 로그인 탭으로 전환
-          if (
-            em.includes("already") ||
-            em.includes("registered") ||
-            em.includes("exists")
-          ) {
-            setMode("login");
-            setMsg("이미 가입된 이메일입니다. 아래에 비밀번호를 입력하고 로그인해 주세요.");
-            setLoading(false);
-            return;
-          }
-          if (em.includes("password")) {
-            setMsg("비밀번호는 6자 이상으로 입력해 주세요.");
-            setLoading(false);
-            return;
-          }
-          if (em.includes("email") && (em.includes("invalid") || em.includes("valid"))) {
-            setMsg("이메일 형식을 확인해 주세요.");
-            setLoading(false);
-            return;
-          }
-          setMsg(`가입 오류: ${error.message}`);
-          setLoading(false);
-          return;
-        }
-        // 세션이 바로 생기면 다음 단계로, 이메일 인증이 필요하면 로그인 유도
-        if (data.session) {
-          goNext();
-        } else {
-          setMode("login");
-          setMsg("가입이 완료되었습니다. 로그인해 주세요.");
-          setLoading(false);
-        }
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) {
-          const em = error.message.toLowerCase();
-          if (em.includes("invalid") || em.includes("credentials")) {
-            setMsg("비밀번호가 일치하지 않습니다. 다시 확인해 주세요.");
-          } else if (em.includes("not confirmed") || em.includes("confirm")) {
-            setMsg("이메일 인증이 필요합니다. 메일함을 확인해 주세요.");
-          } else {
-            setMsg(`로그인 오류: ${error.message}`);
-          }
-          setLoading(false);
-          return;
-        }
-        goNext();
-      }
     } catch {
       setMsg("잠시 후 다시 시도해 주세요.");
       setLoading(false);
@@ -427,18 +312,14 @@ function SignupInner() {
 
         <div className="mb-6 text-center">
           <Editable id="signup-title" as="h1" className="text-2xl font-extrabold text-brand-dark">
-            {mode === "signup" ? "회원가입" : "로그인"}
+            회원가입 · 로그인
           </Editable>
           <Editable id="signup-desc" as="p" className="mt-2 text-sm text-brand-gray">
-            {mode === "signup" ? (
-              <>
-                클릭 한번으로 간편하게 가입하고
-                <br />
-                나만의 AI 매칭 리포트를 받아보세요.
-              </>
-            ) : (
-              "가입하신 이메일로 로그인해 주세요."
-            )}
+            <>
+              카카오톡·구글로 클릭 한번에 간편하게 시작하고
+              <br />
+              나만의 AI 매칭 리포트를 받아보세요.
+            </>
           </Editable>
         </div>
 
@@ -473,128 +354,16 @@ function SignupInner() {
           </button>
         </div>
 
-        {/* 이메일 가입 아코디언 토글 (기본 닫힘 - 소셜 로그인 우선, 대표님 요청) */}
-        <button
-          type="button"
-          onClick={() => setEmailOpen((v) => !v)}
-          aria-expanded={emailOpen}
-          className="mb-5 flex w-full items-center gap-3 text-brand-gray"
-        >
-          <span className="h-px flex-1 bg-gray-200" />
-          <span className="flex items-center gap-1 text-xs font-semibold">
-            또는 이메일로 {mode === "login" ? "로그인" : "가입"}
-            <svg
-              className={`h-3.5 w-3.5 transition-transform duration-200 ${emailOpen ? "rotate-180" : ""}`}
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-              strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </span>
-          <span className="h-px flex-1 bg-gray-200" />
-        </button>
-
-        {emailOpen && (
-        <>
-        {/* 모드 전환 탭 */}
-        <div className="mb-5 grid grid-cols-2 gap-1 rounded-xl bg-gray-100 p-1">
-          <button
-            type="button"
-            onClick={() => { setMode("signup"); setMsg(null); }}
-            className={`rounded-lg py-2 text-sm font-bold transition ${
-              mode === "signup" ? "bg-white text-brand-dark shadow" : "text-brand-gray"
-            }`}
-          >
-            회원가입
-          </button>
-          <button
-            type="button"
-            onClick={() => { setMode("login"); setMsg(null); }}
-            className={`rounded-lg py-2 text-sm font-bold transition ${
-              mode === "login" ? "bg-white text-brand-dark shadow" : "text-brand-gray"
-            }`}
-          >
-            로그인
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === "signup" && (
-            <>
-              <div>
-                <label className="mb-1 block text-sm font-semibold text-brand-dark">이름</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="홍길동"
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-brand-dark"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-semibold text-brand-dark">연락처</label>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="010-0000-0000"
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-brand-dark"
-                />
-              </div>
-            </>
-          )}
-          <div>
-            <label className="mb-1 block text-sm font-semibold text-brand-dark">이메일</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="example@email.com"
-              autoComplete="email"
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-brand-dark"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-semibold text-brand-dark">비밀번호</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="6자 이상"
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-brand-dark"
-            />
-          </div>
-
-          {msg && (
-            <p className="rounded-lg bg-gray-50 px-3 py-2 text-center text-sm text-brand-dark">
-              {msg}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-brand-dark py-3.5 text-base font-extrabold text-white transition hover:opacity-90 disabled:opacity-60"
-          >
-            {loading
-              ? "처리 중..."
-              : mode === "signup"
-              ? selected
-                ? "가입하고 결제 진행하기"
-                : "가입하고 시작하기"
-              : selected
-              ? "로그인하고 결제 진행하기"
-              : "로그인"}
-          </button>
-        </form>
-        </>
+        {/* 안내/오류 메시지 (소셜 로그인 공통) */}
+        {msg && (
+          <p className="mb-4 rounded-lg bg-gray-50 px-3 py-2 text-center text-sm text-brand-dark">
+            {msg}
+          </p>
         )}
 
-        {/* ── 약관 동의 영역 (삼쩜삼式, 회원가입 시 노출) ──
-            소셜/이메일 공통. 가입 버튼을 누르면 필수 항목이 자동 체크되어 진행됩니다. */}
-        {mode === "signup" && (
-          <div
+        {/* ── 약관 동의 영역 (삼쩜삼式) ──
+            카카오/구글 소셜 로그인 공통. 필수 항목에 직접 동의하셔야 진행됩니다. */}
+        <div
             id="signup-consent-box"
             className={`mt-5 rounded-2xl border bg-gray-50/70 p-4 transition ${
               highlightConsent
@@ -699,15 +468,7 @@ function SignupInner() {
               </label>
             </div>
           </div>
-        )}
 
-        {mode === "login" && (
-          <p className="mt-5 text-center text-xs text-brand-gray">
-            로그인 시{" "}
-            <Link href="/terms" className="underline">이용약관</Link> 및{" "}
-            <Link href="/privacy" className="underline">개인정보처리방침</Link>에 동의하게 됩니다.
-          </p>
-        )}
         </main>
         </div>
       </div>
