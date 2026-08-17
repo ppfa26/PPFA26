@@ -36,9 +36,9 @@ const CASES: CaseItem[] = [
     tag: "도소매 · 수출업 · 창업 3년차 · 매출 70억",
     headline: (
       <>
-        자본잠식으로 <span className="text-brand-orange">전부 부결</span>되던 기업이
+        <span className="text-brand-orange">전부 부결</span>되던 자본잠식 기업이,
         <br />
-        흑자전환 후 <span className="text-brand-orange">8억 5천만 원</span>을 확보하기까지
+        <span className="text-brand-orange">8억 5천만 원</span>을 확보하기까지
       </>
     ),
     metric: "8.5억",
@@ -103,9 +103,9 @@ const CASES: CaseItem[] = [
     tag: "제조업 · 육류 가공(포장육·냉동육) · 창업 2년차",
     headline: (
       <>
-        명절 운영자금이 급했던 청년 대표님,
+        운영자금이 급했던 청년 대표님,
         <br />
-        기대의 2배 <span className="text-brand-orange">2억 4천만 원</span>을 확보하기까지
+        기대의 2배 <span className="text-brand-orange">2억 4천만 원</span> 확보까지
       </>
     ),
     metric: "2.4억",
@@ -133,9 +133,9 @@ const CASES: CaseItem[] = [
     tag: "제조업 · 실사출력 옥외간판물 설치·제작",
     headline: (
       <>
-        대출 과다·낮은 신용도였지만
+        대출 과다·낮은 신용도였지만,
         <br />
-        특허를 살려 <span className="text-brand-orange">1억 7천만 원</span>을 확보하기까지
+        특허를 살려 <span className="text-brand-orange">1억 7천만 원</span> 확보까지
       </>
     ),
     metric: "1.7억",
