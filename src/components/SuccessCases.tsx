@@ -181,4 +181,291 @@ const REVIEWS: MiniReview[] = [
   { nick: "PD****", sector: "방송 콘텐츠 제작", body: "어디서도 안 된다던 상황, 벤처인증부터 순서대로 잡아주셔서 자금길이 다시 열렸습니다." },
   { nick: "간***", sector: "간판 제작 · 제조업", body: "특허가 이렇게 쓰일 줄 몰랐어요. 하나하나 짚어주셔서 IP보증까지 받았습니다." },
   { nick: "카페**", sector: "스터디카페 운영", body: "뭐부터 할지 막막했는데 진단 한 번에 방향이 잡혔어요. 상담도 부담 없어 좋았습니다.", stars: 4 },
-  { nick: "미용실**", sector: "미용업", body: "필요한 서류만 딱 짚어주셔서 수월했어요. 승인까지 생�
+  { nick: "미용실**", sector: "미용업", body: "필요한 서류만 딱 짚어주셔서 수월했어요. 승인까지 생각보다 훨씬 빨랐습니다." },
+  { nick: "수출***", sector: "도소매 · 수출업", body: "자본잠식으로 다 부결이었는데 재무 정리부터 길게 봐주셨어요. 결국 큰 금액을 확보했습니다." },
+  { nick: "노래***", sector: "노래연습장 운영", body: "정부지원사업은 남 얘긴 줄 알았어요. 우리 같은 곳도 된다는 걸 처음 알았습니다.", stars: 4 },
+  { nick: "부동산**", sector: "부동산 중개업", body: "다른 곳에선 안 된다던 조건, 여기선 되는 방법을 찾아주셨어요. 설명도 쉽고 명확합니다." },
+];
+
+/* ────────────────────────────────────────────────────────────
+ *  본문 컴포넌트
+ *  - variant="page"    : reviews 전용 페이지 (히어로 노출)
+ *  - variant="section" : 홈 하단 삽입용 (히어로 대신 간결한 섹션 타이틀)
+ * ──────────────────────────────────────────────────────────── */
+export default function SuccessCases({
+  variant = "page",
+}: {
+  variant?: "page" | "section";
+}) {
+  return (
+    <div className="mx-auto w-full max-w-3xl">
+      {/* ── 히어로 / 섹션 타이틀 ── */}
+      {variant === "page" ? (
+        <section className="text-center">
+          <p className="reveal inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
+            Growth Stories
+          </p>
+          <h1 className="reveal mt-5 break-keep text-center text-[25px] font-black leading-[1.4] tracking-[-0.035em] text-white sm:text-[40px] sm:leading-[1.3]">
+            정부지원사업 신청과 그 과정 이야기
+            <br />이 기업들은 자문 후{" "}
+            <span className="text-brand-orange">어떻게 달라졌을까요?</span>
+          </h1>
+          <p className="reveal mx-auto mt-5 max-w-2xl break-keep text-center text-[14px] font-medium leading-[1.9] text-white/60 sm:text-[16.5px]">
+            저희가 진짜로 증명하려는 건 승인 사례가 아니라,
+            <br />
+            우리의 자문이 기업을{" "}
+            <b className="font-bold text-white/90">어디에서 어디로 데려갔는가</b>입니다.
+          </p>
+        </section>
+      ) : (
+        <section className="reveal mx-auto flex w-full flex-col items-center rounded-[1.25rem] border border-white/[0.12] bg-[#121724]/50 px-6 py-7 text-center shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-[14px] sm:px-9 sm:py-8">
+          <p className="inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
+            Growth Stories
+          </p>
+          <h2 className="mt-5 break-keep text-center text-[22px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[26px] sm:leading-[1.35]">
+            실제 자문 승인 사례
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl break-keep text-center text-[13.5px] font-medium leading-[1.8] text-white/60 sm:text-[15px]">
+            저희가 진짜로 증명하려는 건 승인 사례가 아니라,
+            <br />
+            우리의 자문이 기업을{" "}
+            <b className="font-bold text-white/90">어디에서 어디로 데려갔는가</b>입니다.
+          </p>
+        </section>
+      )}
+
+      {/* ── 사례 카드 ── */}
+      <section className="mt-7 flex flex-col gap-8 sm:mt-8 sm:gap-10">
+        {CASES.map((c) => (
+          <article
+            key={c.no}
+            className="reveal overflow-hidden rounded-[26px] border border-white/[0.12] bg-[#121724]/50 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-[14px]"
+          >
+            <div className="relative overflow-hidden px-6 pb-6 pt-7 sm:px-9 sm:pb-6 sm:pt-9">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-orange/50 to-transparent" />
+              <div
+                className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-brand-orange/20 blur-3xl"
+                aria-hidden="true"
+              />
+              <div className="relative rounded-2xl border border-white/[0.10] bg-[#161d2e]/60 px-5 py-5 backdrop-blur-[6px] sm:px-6 sm:py-6">
+                <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
+                  <span className="rounded-md bg-brand-orange px-2.5 py-1 text-[11px] font-black tracking-[0.06em] text-brand-dark">
+                    {c.no}
+                  </span>
+                  <span className="break-keep text-[11.5px] font-semibold text-white/50 sm:text-[13px]">
+                    <span className="mr-1 text-[14px] sm:text-[15px]" aria-hidden="true">
+                      {c.icon}
+                    </span>
+                    {c.tag}
+                  </span>
+                </div>
+                <h3 className="mx-auto mt-4 max-w-[26ch] break-keep text-center text-[19px] font-black leading-[1.45] tracking-[-0.02em] text-white sm:text-[25px] sm:leading-[1.4]">
+                  {c.headline}
+                </h3>
+                <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/[0.12] pt-6">
+                  <span className="text-[38px] font-black leading-none tracking-[-0.03em] text-brand-orange [text-shadow:0_2px_20px_rgba(255,149,0,0.45)] sm:text-[48px]">
+                    {c.metric}
+                  </span>
+                  <span className="mb-1 text-[13px] font-semibold text-white/60 sm:text-[15px]">
+                    {c.metricSub}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-6 border-t border-white/[0.12] bg-[#0d1119]/40 px-5 py-7 sm:gap-7 sm:px-9 sm:py-8">
+              <Step label="Before" tone="slate" title="신청 전 상황" body={c.before} />
+              <Divider />
+              <Step label="Strategy" tone="orange" title="어떻게 접근했나" body={c.strategy} />
+              <Divider />
+              <Step label="Result" tone="emerald" title="확보한 결과" body={c.result} />
+
+              <div className="rounded-2xl border border-brand-orange/25 bg-[#121724]/50 p-4 backdrop-blur-[14px] sm:p-5">
+                <p className="mb-3 flex items-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.12em] text-brand-orange">
+                  <span aria-hidden="true">📌</span> 승인 내역
+                </p>
+                <ul className="flex flex-col gap-2">
+                  {c.funds.map((f) => (
+                    <li
+                      key={f.name}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.12] bg-[#0d1119]/45 px-3.5 py-2.5"
+                    >
+                      <span className="break-keep text-[12.5px] font-semibold text-white/85 sm:text-[14px]">
+                        {f.name}
+                      </span>
+                      <span className="shrink-0 text-[14px] font-black tracking-[-0.02em] text-brand-orange sm:text-[16px]">
+                        {f.amount}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      {/* ── 그 외 승인 사례 (작은 카드 그리드) ── */}
+      <section className="reveal mt-10 sm:mt-12">
+        <div className="text-center">
+          <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[23px]">
+            그 외에도 이어지는 <span className="text-brand-orange">승인 사례</span>
+          </h3>
+          <p className="mx-auto mt-3 max-w-md break-keep text-center text-[13px] font-medium leading-[1.75] text-white/55 sm:text-[14.5px]">
+            업종도, 지역도, 자금 용도도 모두 다릅니다.
+            <br />
+            대표님 사업장 역시 대상이 될 수 있습니다.
+          </p>
+        </div>
+
+        <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:grid-cols-3 sm:gap-3">
+          {MORE_CASES.map((m, i) => (
+            <div
+              key={i}
+              className="flex min-h-[124px] flex-col rounded-2xl border border-white/[0.10] bg-[#161d2e]/60 px-3 py-3.5 backdrop-blur-[14px] transition-colors hover:border-brand-orange/30 sm:min-h-[140px] sm:px-4 sm:py-4"
+            >
+              <span className="text-[15px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[19px]">
+                {m.amount}
+              </span>
+              <p className="mt-2 break-keep text-[11.5px] font-bold leading-[1.35] tracking-[-0.01em] text-white/95 sm:text-[13.5px]">
+                {m.sector}
+              </p>
+              <p className="mt-auto break-keep pt-1.5 text-[9.5px] font-medium leading-[1.4] text-white/40 sm:text-[10.5px]">
+                {m.org}
+              </p>
+            </div>
+          ))}
+        </div>
+
+      </section>
+
+      {/* ── 고객 후기 ── */}
+      <section className="reveal mt-10 sm:mt-12">
+        <div className="text-center">
+          <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[23px]">
+            먼저 경험한 <span className="text-brand-orange">대표님들의 후기</span>
+          </h3>
+          <p className="mx-auto mt-3 max-w-md break-keep text-center text-[13px] font-medium leading-[1.75] text-white/55 sm:text-[14.5px]">
+            숫자보다 진솔한, 직접 겪은 이야기입니다.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-8 flex max-w-2xl flex-col gap-3 sm:mt-10 sm:gap-3.5">
+          {REVIEWS.map((r, i) => (
+            <div
+              key={i}
+              className="rounded-2xl border border-white/[0.10] bg-[#161d2e]/60 px-5 py-[18px] backdrop-blur-[14px] transition-colors hover:border-brand-orange/30 sm:px-6 sm:py-5"
+            >
+              <div className="flex items-center gap-2.5">
+                <span
+                  className="text-[12.5px] leading-none tracking-[0.14em]"
+                  aria-label={`별점 ${r.stars ?? 5}점`}
+                >
+                  <span className="text-brand-orange">{"★".repeat(r.stars ?? 5)}</span>
+                  <span className="text-white/20">{"★".repeat(5 - (r.stars ?? 5))}</span>
+                </span>
+                <span className="text-[11.5px] font-semibold tracking-[-0.005em] text-white/40 sm:text-[12.5px]">
+                  <span className="text-brand-orange/90">{r.nick}</span>
+                  <span className="px-1 text-white/25">·</span>
+                  {r.sector}
+                </span>
+              </div>
+              <p className="mt-3 break-keep text-[13.5px] font-medium leading-[1.7] tracking-[-0.005em] text-white/85 sm:text-[15px]">
+                {r.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── 하단 CTA (reviews 전용 페이지에서만 노출) ──
+          홈(section) 삽입 시에는 첫 페이지 하단의 통일 CTA 박스를 재사용하므로 생략 */}
+      {variant === "page" && (
+        <section className="reveal mt-12 rounded-3xl bg-brand-dark px-6 py-9 text-center ring-1 ring-white/10 sm:mt-16 sm:px-10 sm:py-11">
+          <h3 className="break-keep text-xl font-extrabold leading-[1.35] text-white sm:text-2xl">
+            다음 성공 사례의 주인공은
+            <br />
+            <span className="text-brand-orange">대표님</span>일 수 있습니다
+          </h3>
+          <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-gray-300 sm:text-base">
+            정부지원사업 AI 통합 매칭 플랫폼 모두의사업친구가
+            <br />
+            대표님 사업장에 딱 맞는 정부지원사업을 무료로 찾아드립니다.
+          </p>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/diagnosis-chat"
+              className="btn-red w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
+            >
+              지금 내 지원사업 확인하기 →
+            </Link>
+            <a
+              href="https://pf.kakao.com/_VxfWxan/chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-bold text-white hover:bg-white/10 sm:w-auto"
+            >
+              💬 1:1 채널톡 상담하기
+            </a>
+          </div>
+          <p className="mx-auto mt-7 max-w-md break-keep text-[10.5px] leading-[1.7] text-gray-400/70 sm:text-[11.5px]">
+            ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다.
+            <br />
+            승인 여부·금액·기간은 기업별 상황에 따라 달라질 수 있으며 동일한 결과를 보장하지 않습니다.
+            <br />
+            출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
+          </p>
+        </section>
+      )}
+
+    </div>
+  );
+}
+
+/* ── 헬퍼 ── */
+function Divider() {
+  return <div className="h-px w-full bg-white/[0.06]" aria-hidden="true" />;
+}
+
+function Step({
+  label,
+  tone,
+  title,
+  body,
+}: {
+  label: string;
+  tone: "slate" | "orange" | "red" | "emerald";
+  title: string;
+  body: string[];
+}) {
+  const toneMap: Record<string, string> = {
+    slate: "bg-white/10 text-white/60",
+    orange: "bg-brand-orange/15 text-brand-orange",
+    red: "bg-brand-red/15 text-brand-red",
+    emerald: "bg-emerald-500/15 text-emerald-400",
+  };
+  return (
+    <div className="mx-auto flex w-full max-w-[38rem] flex-col items-start text-left">
+      <div className="flex items-center gap-2.5">
+        <span
+          className={`rounded-md px-2.5 py-[3px] text-[10px] font-extrabold uppercase tracking-[0.1em] ${toneMap[tone]}`}
+        >
+          {label}
+        </span>
+        <p className="text-[13.5px] font-bold tracking-[-0.01em] text-white/95 sm:text-[15px]">
+          {title}
+        </p>
+      </div>
+      <div className="mt-3 flex w-full flex-col gap-3 rounded-2xl border border-white/[0.10] bg-[#161d2e]/60 px-4 py-4 backdrop-blur-[6px] sm:px-5 sm:py-5">
+        {body.map((para, i) => (
+          <p
+            key={i}
+            className="w-full whitespace-pre-line break-keep text-left text-[13.5px] font-normal leading-[1.8] tracking-[-0.01em] text-white/80 sm:text-[15px] sm:leading-[1.85]"
+          >
+            {para}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
