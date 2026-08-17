@@ -13,6 +13,7 @@ import Link from "next/link";
 /* ── 데이터 타입 ── */
 type CaseItem = {
   no: string;
+  icon: string;
   tag: string;
   headline: React.ReactNode;
   metric: string;
@@ -23,7 +24,7 @@ type CaseItem = {
   funds: { name: string; amount: string }[];
 };
 type MiniCase = { sector: string; org: string; amount: string };
-type MiniReview = { nick: string; sector: string; body: string };
+type MiniReview = { nick: string; sector: string; body: string; stars?: number };
 
 /* ────────────────────────────────────────────────────────────
  *  성공 사례 데이터 (실제 승인 사례 기반 · 기업명 익명 처리)
@@ -31,6 +32,7 @@ type MiniReview = { nick: string; sector: string; body: string };
 const CASES: CaseItem[] = [
   {
     no: "CASE 01",
+    icon: "🌐",
     tag: "도소매 · 수출업 · 창업 3년차 · 매출 70억",
     headline: (
       <>
@@ -64,6 +66,7 @@ const CASES: CaseItem[] = [
 
   {
     no: "CASE 02",
+    icon: "🎬",
     tag: "방송 프로그램 제작 · 창업 3년차 · 매출 10억대",
     headline: (
       <>
@@ -96,6 +99,7 @@ const CASES: CaseItem[] = [
 
   {
     no: "CASE 03",
+    icon: "🥩",
     tag: "제조업 · 육류 가공(포장육·냉동육) · 창업 2년차",
     headline: (
       <>
@@ -125,6 +129,7 @@ const CASES: CaseItem[] = [
 
   {
     no: "CASE 04",
+    icon: "🪟",
     tag: "제조업 · 실사출력 옥외간판물 설치·제작",
     headline: (
       <>
@@ -175,10 +180,10 @@ const REVIEWS: MiniReview[] = [
   { nick: "육****", sector: "육류 가공 · 창업 2년차", body: "1억만 돼도 감사했는데 나눠서 2억 넘게 승인됐어요. 운영자금 걱정 없이 위기를 잘 넘겼습니다." },
   { nick: "PD****", sector: "방송 콘텐츠 제작", body: "어디서도 안 된다던 상황, 벤처인증부터 순서대로 잡아주셔서 자금길이 다시 열렸습니다." },
   { nick: "간***", sector: "간판 제작 · 제조업", body: "특허가 이렇게 쓰일 줄 몰랐어요. 하나하나 짚어주셔서 IP보증까지 받았습니다." },
-  { nick: "카페**", sector: "스터디카페 운영", body: "뭐부터 할지 막막했는데 진단 한 번에 방향이 잡혔어요. 상담도 부담 없어 좋았습니다." },
+  { nick: "카페**", sector: "스터디카페 운영", body: "뭐부터 할지 막막했는데 진단 한 번에 방향이 잡혔어요. 상담도 부담 없어 좋았습니다.", stars: 4 },
   { nick: "미용실**", sector: "미용업", body: "필요한 서류만 딱 짚어주셔서 수월했어요. 승인까지 생각보다 훨씬 빨랐습니다." },
   { nick: "수출***", sector: "도소매 · 수출업", body: "자본잠식으로 다 부결이었는데 재무 정리부터 길게 봐주셨어요. 결국 큰 금액을 확보했습니다." },
-  { nick: "노래***", sector: "노래연습장 운영", body: "정부지원사업은 남 얘긴 줄 알았어요. 우리 같은 곳도 된다는 걸 처음 알았습니다." },
+  { nick: "노래***", sector: "노래연습장 운영", body: "정부지원사업은 남 얘긴 줄 알았어요. 우리 같은 곳도 된다는 걸 처음 알았습니다.", stars: 4 },
   { nick: "부동산**", sector: "부동산 중개업", body: "다른 곳에선 안 된다던 조건, 여기선 되는 방법을 찾아주셨어요. 설명도 쉽고 명확합니다." },
 ];
 
@@ -242,7 +247,13 @@ export default function SuccessCases({
                 className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-brand-orange/20 blur-3xl"
                 aria-hidden="true"
               />
-              <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
+              <div
+                className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-orange/25 bg-brand-orange/10 text-[28px] shadow-[0_4px_16px_rgba(255,149,0,0.15)] sm:h-16 sm:w-16 sm:text-[32px]"
+                aria-hidden="true"
+              >
+                {c.icon}
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
                 <span className="rounded-md bg-brand-orange px-2.5 py-1 text-[11px] font-black tracking-[0.06em] text-brand-dark">
                   {c.no}
                 </span>
@@ -308,7 +319,7 @@ export default function SuccessCases({
           </p>
         </div>
 
-        <div className="mt-8 grid grid-cols-3 gap-2 sm:mt-10 sm:gap-3">
+        <div className="mt-8 grid grid-cols-2 gap-2.5 sm:mt-10 sm:grid-cols-3 sm:gap-3">
           {MORE_CASES.map((m, i) => (
             <div
               key={i}
@@ -347,8 +358,12 @@ export default function SuccessCases({
               className="rounded-2xl border border-white/[0.12] bg-[#121724]/50 px-5 py-[18px] backdrop-blur-[14px] transition-colors hover:border-brand-orange/30 sm:px-6 sm:py-5"
             >
               <div className="flex items-center gap-2.5">
-                <span className="text-[12.5px] leading-none tracking-[0.14em] text-brand-orange" aria-label="별점 5점">
-                  ★★★★★
+                <span
+                  className="text-[12.5px] leading-none tracking-[0.14em]"
+                  aria-label={`별점 ${r.stars ?? 5}점`}
+                >
+                  <span className="text-brand-orange">{"★".repeat(r.stars ?? 5)}</span>
+                  <span className="text-white/20">{"★".repeat(5 - (r.stars ?? 5))}</span>
                 </span>
                 <span className="text-[11.5px] font-semibold tracking-[-0.005em] text-white/40 sm:text-[12.5px]">
                   <span className="text-brand-orange/90">{r.nick}</span>
@@ -383,7 +398,7 @@ export default function SuccessCases({
               href="/diagnosis-chat"
               className="btn-red w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
             >
-              3분 무료 진단 시작하기 →
+              지금 내 지원사업 확인하기 →
             </Link>
             <a
               href="https://pf.kakao.com/_VxfWxan/chat"

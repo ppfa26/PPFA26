@@ -781,19 +781,23 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 구간 구분 - 결과예시(밝음)↔승인사례(city-night) 경계 */}
-        <div className="section-divider" aria-hidden="true" />
+        {/* 구간 페이드 - 결과예시(밝음 bg-gray-50)에서 승인사례(city-night 다크)로 부드럽게 전환.
+            gray-50 → 투명 그라데이션 띠로 밝음이 다크 배경에 서서히 녹아들게 함. */}
+        <div
+          className="h-16 w-full bg-gradient-to-b from-gray-50 to-transparent sm:h-24"
+          aria-hidden="true"
+        />
         {/* ── 실제 자문 승인 사례 (reviews 내용 통합) ──
             상단 '후기' 클릭 시 이 섹션(#success-cases)으로 바로 스크롤됨.
             배경은 별도 지정 없이 첫 페이지 body(city-night)와 동일하게 유지 → 상·하단과 톤 통일. */}
         <section
           id="success-cases"
-          className="scroll-mt-20 px-4 py-8 sm:scroll-mt-24 sm:py-10"
+          className="scroll-mt-20 px-4 pb-8 pt-2 sm:scroll-mt-24 sm:pb-10 sm:pt-4"
         >
           <SuccessCases variant="section" />
         </section>
 
-        {/* 구간 구분 - 얇은 회색 가로줄 (대표님 요청: 결과예시↔이용료 사이에도 구분선 추가) */}
+        {/* 구간 구분 - 승인사례↔가격표 (둘 다 다크 body라 얇은 선으로만 구분) */}
         <div className="section-divider" aria-hidden="true" />
         {/* 가격표 */}
         <section
