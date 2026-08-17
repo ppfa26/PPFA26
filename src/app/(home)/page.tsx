@@ -79,7 +79,7 @@ const FAQS = [
       <>
         열람 후에는 관련 법령에 따라 환불이 불가합니다.
         <br />
-        단, 열람 전에는 7일 이내는 100% 환불됩니다.
+        단, 열람 전이라면 7일 이내 100% 환불됩니다.
         <br />
         본 사이트는 전자상거래법을 따릅니다.
       </>
@@ -320,7 +320,7 @@ export default function Home() {
                 as="span"
                 className="break-keep text-[13px] font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm"
               >
-                이런걸 알려드려요
+                이런 걸 알려드려요
               </Editable>
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
             </div>
