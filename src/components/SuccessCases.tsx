@@ -42,7 +42,7 @@ const CASES: CaseItem[] = [
     metric: "8.5억",
     metricSub: "확보한 정부지원사업",
     before: [
-      "매출은 70억이었지만 당기순이익이 마이너스인 자본잠식 상태였습니다.\n재무제표상 자본잠식 때문에 모든 기관에서 당연히 부결받던 상황이었습니다.",
+      "매출은 70억이었지만 당기순이익이 마이너스인 자본잠식 상태였습니다. 재무제표상 자본잠식 때문에 모든 기관에서 당연히 부결받던 상황이었습니다.",
       "기존 대출도 많은 상태였고, 대표님은 반쯤 포기한 심정으로 저희에게 문의를 주셨던 사례입니다.",
     ],
     strategy: [
@@ -109,7 +109,7 @@ const CASES: CaseItem[] = [
     metricSub: "확보한 정부지원사업",
     before: [
       "청년 사업자 대표님이 사업을 시작해 매출은 늘고 있었지만 남는 것이 많지 않던 상태였습니다.",
-      "설 명절 시즌 고기 매입을 위한 운영자금이 필요해 문의를 주셨습니다. 창업 2년차,\n대출은 없는 상태였고 신용점수도 나쁘지 않아 수월하게 자문을 시작할 수 있었습니다.",
+      "설 명절 시즌 고기 매입을 위한 운영자금이 필요해 문의를 주셨습니다. 창업 2년차, 대출은 없는 상태였고 신용점수도 나쁘지 않아 수월하게 자문을 시작할 수 있었습니다.",
     ],
     strategy: [
       "재무제표상 당기순이익이 낮은 점이 유일한 단점이었습니다. 목표한 설 명절 시즌 운영자금은\n시점상 준비가 어려워 보여, 작년도 재무제표 결산 수정 후 그해 4월부터 정부지원사업을\n하나씩 신청하는 방향으로 잡았습니다.",
@@ -139,7 +139,7 @@ const CASES: CaseItem[] = [
     metricSub: "확보한 정부지원사업",
     before: [
       "기존 대출이 매우 많은 상태로 만난 케이스로, 신용도도 낮고 매출도 미비한 편이었습니다.",
-      "다만 기존 대출이 전부 담보 대출 형태였고 정부지원사업으로 받은 자금은 전혀 없는\n상태였으며, 매출이 낮아도 3년간 꾸준히 늘고 있었고 간판 제작 관련 특허 IP를\n보유한 점을 눈여겨봤습니다.",
+      "다만 기존 대출이 전부 담보 대출 형태였고 정부지원사업으로 받은 자금은 전혀 없는 상태였으며, 매출이 낮아도 3년간 꾸준히 늘고 있었고 간판 제작 관련 특허 IP를\n보유한 점을 눈여겨봤습니다.",
     ],
     strategy: [
       "신용도 향상을 위해 KCB·나이스 신용도 시뮬레이션을 추천드렸고, 작은 카드론과\n대출들을 상환해 신용도를 끌어올려 드렸습니다. 꾸준히 늘어나는 매출을 장점으로\n부각해 사업계획서 첨삭을 도왔고, 소상공인시장진흥공단 2년 연속 매출 신장\n소상공인 자금 2억 신청 후 7,000만 원을 승인받았습니다.",
@@ -216,14 +216,14 @@ export default function SuccessCases({
           </p>
         </section>
       ) : (
-        <section className="text-center">
-          <p className="reveal inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
+        <section className="reveal mx-auto flex max-w-xl flex-col items-center rounded-[1.25rem] border border-white/[0.12] bg-[#121724]/50 px-6 py-7 text-center shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-[14px] sm:px-9 sm:py-8">
+          <p className="inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
             Growth Stories
           </p>
-          <h2 className="reveal mt-5 break-keep text-center text-[22px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[26px] sm:leading-[1.35]">
+          <h2 className="mt-5 break-keep text-center text-[22px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[26px] sm:leading-[1.35]">
             실제 자문 승인 사례
           </h2>
-          <p className="reveal mx-auto mt-4 max-w-2xl break-keep text-center text-[13.5px] font-medium leading-[1.8] text-white/60 sm:text-[15px]">
+          <p className="mx-auto mt-4 max-w-2xl break-keep text-center text-[13.5px] font-medium leading-[1.8] text-white/60 sm:text-[15px]">
             저희가 진짜로 증명하려는 건 승인 사례가 아니라,
             <br />
             우리의 자문이 기업을{" "}
@@ -239,7 +239,7 @@ export default function SuccessCases({
             key={c.no}
             className="reveal overflow-hidden rounded-[26px] border border-white/[0.12] bg-[#121724]/50 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-[14px]"
           >
-            <div className="relative overflow-hidden px-6 pb-7 pt-7 sm:px-9 sm:pb-9 sm:pt-9">
+            <div className="relative overflow-hidden px-6 pb-6 pt-7 sm:px-9 sm:pb-6 sm:pt-9">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-orange/50 to-transparent" />
               <div
                 className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-brand-orange/20 blur-3xl"
@@ -256,7 +256,7 @@ export default function SuccessCases({
               <h3 className="mx-auto mt-4 max-w-[26ch] break-keep text-center text-[19px] font-black leading-[1.45] tracking-[-0.02em] text-white sm:text-[25px] sm:leading-[1.4]">
                 {c.headline}
               </h3>
-              <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/[0.12] pt-5">
+              <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/[0.12] pt-6">
                 <span className="text-[38px] font-black leading-none tracking-[-0.03em] text-brand-orange [text-shadow:0_2px_20px_rgba(255,149,0,0.45)] sm:text-[48px]">
                   {c.metric}
                 </span>
@@ -299,7 +299,7 @@ export default function SuccessCases({
       </section>
 
       {/* ── 그 외 승인 사례 (작은 카드 그리드) ── */}
-      <section className="reveal mt-9 sm:mt-12">
+      <section className="reveal mt-14 sm:mt-16">
         <div className="text-center">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
             그 외에도 이어지는 <span className="text-brand-orange">승인 사례</span>
@@ -330,13 +330,10 @@ export default function SuccessCases({
           ))}
         </div>
 
-        <p className="mt-5 text-center text-[11px] font-medium text-white/35 sm:text-[12px]">
-          ※ 지면상 대표 사례만 발췌했으며, 실제 진행 건은 이보다 훨씬 많습니다.
-        </p>
       </section>
 
       {/* ── 고객 후기 ── */}
-      <section className="reveal mt-12 sm:mt-16">
+      <section className="reveal mt-14 sm:mt-16">
         <div className="text-center">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
             먼저 경험한 <span className="text-brand-orange">대표님들의 후기</span>
@@ -403,24 +400,13 @@ export default function SuccessCases({
           <p className="mx-auto mt-7 max-w-md break-keep text-[10.5px] leading-[1.7] text-gray-400/70 sm:text-[11.5px]">
             ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다.
             <br />
-            승인 여부·금액·기간은 정부 기관 심사 및 기업별 상황에 따라 달라질 수 있으며,
+            승인 여부·금액·기간은 기업별 상황에 따라 달라질 수 있으며 동일한 결과를 보장하지 않습니다.
             <br />
-            동일한 결과를 보장하지 않습니다.
-          </p>
-          <p className="mx-auto mt-2.5 break-keep text-[10px] leading-[1.6] text-gray-500 sm:text-[10.5px]">
             출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
           </p>
         </section>
       )}
 
-      {/* 홈 삽입 시: 출처 문구만 간결히 노출 (CTA는 첫 페이지 하단 박스로 대체) */}
-      {variant === "section" && (
-        <p className="mx-auto mt-10 max-w-md break-keep text-center text-[10px] leading-[1.7] text-white/35 sm:mt-12 sm:text-[10.5px]">
-          ※ 자문 일부 사례만 발췌했으며, 실제 진행 건은 이보다 몇배는 많습니다.
-          <br />
-          출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
-        </p>
-      )}
     </div>
   );
 }
