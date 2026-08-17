@@ -13,6 +13,7 @@ import InstallAppButton from "@/components/InstallAppButton";
 import StickyDiagnosisBar from "@/components/StickyDiagnosisBar";
 import TrustBadges from "@/components/home/TrustBadges";
 import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import SuccessCases from "@/components/SuccessCases";
 import { BETA_FREE } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
@@ -778,6 +779,16 @@ export default function Home() {
             </div>
 
           </div>
+        </section>
+
+        {/* ── 실제 자문 승인 사례 (reviews 내용 통합) ──
+            상단 '후기' 클릭 시 이 섹션(#success-cases)으로 바로 스크롤됨.
+            라이트 테마 홈 안에서 독립된 다크 블록으로 자연스럽게 구분. */}
+        <section
+          id="success-cases"
+          className="scroll-mt-20 bg-[#0b1020] px-4 py-12 sm:scroll-mt-24 sm:py-16"
+        >
+          <SuccessCases variant="section" />
         </section>
 
         {/* 구간 구분 - 얇은 회색 가로줄 (대표님 요청: 결과예시↔이용료 사이에도 구분선 추가) */}

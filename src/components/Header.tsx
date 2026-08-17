@@ -73,9 +73,10 @@ export default function Header() {
 
         {/* 네비 + CTA */}
         <nav className="flex shrink-0 items-center gap-2 xs:gap-3.5 sm:gap-5">
-          {/* '후기'는 관리자 로그인 시 모바일에서 숨김(메뉴 과밀 방지) · PC에선 항상 노출 */}
+          {/* '후기'는 관리자 로그인 시 모바일에서 숨김(메뉴 과밀 방지) · PC에선 항상 노출.
+              대표님 요청: 별도 페이지 없이 첫 페이지의 '실제 자문 승인 사례' 섹션으로 바로 이동. */}
           <Link
-            href="/community"
+            href="/#success-cases"
             className={`whitespace-nowrap text-[12px] font-semibold text-brand-dark transition-colors hover:text-brand-orange xs:text-[12.5px] sm:text-sm ${
               isAdmin ? "hidden sm:inline" : ""
             }`}
