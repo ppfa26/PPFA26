@@ -220,10 +220,10 @@ export default function SuccessCases({
           <p className="reveal inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
             Growth Stories
           </p>
-          <h2 className="reveal mt-4 break-keep text-center text-[22px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[26px] sm:leading-[1.35]">
+          <h2 className="reveal mt-5 break-keep text-center text-[22px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[26px] sm:leading-[1.35]">
             실제 자문 승인 사례
           </h2>
-          <p className="reveal mx-auto mt-3 max-w-2xl break-keep text-center text-[13.5px] font-medium leading-[1.8] text-white/60 sm:text-[15px]">
+          <p className="reveal mx-auto mt-4 max-w-2xl break-keep text-center text-[13.5px] font-medium leading-[1.8] text-white/60 sm:text-[15px]">
             저희가 진짜로 증명하려는 건 승인 사례가 아니라,
             <br />
             우리의 자문이 기업을{" "}
@@ -233,11 +233,11 @@ export default function SuccessCases({
       )}
 
       {/* ── 사례 카드 ── */}
-      <section className="mt-8 flex flex-col gap-8 sm:mt-10 sm:gap-10">
+      <section className="mt-7 flex flex-col gap-8 sm:mt-8 sm:gap-10">
         {CASES.map((c) => (
           <article
             key={c.no}
-            className="reveal overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.03] shadow-[0_24px_70px_-30px_rgba(0,0,0,0.9)] backdrop-blur-sm"
+            className="reveal overflow-hidden rounded-[26px] border border-white/[0.12] bg-[#121724]/50 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-[14px]"
           >
             <div className="relative overflow-hidden px-6 pb-7 pt-7 sm:px-9 sm:pb-9 sm:pt-9">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-orange/50 to-transparent" />
@@ -256,7 +256,7 @@ export default function SuccessCases({
               <h3 className="mx-auto mt-4 max-w-[26ch] break-keep text-center text-[19px] font-black leading-[1.45] tracking-[-0.02em] text-white sm:text-[25px] sm:leading-[1.4]">
                 {c.headline}
               </h3>
-              <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/10 pt-5">
+              <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/[0.12] pt-5">
                 <span className="text-[38px] font-black leading-none tracking-[-0.03em] text-brand-orange [text-shadow:0_2px_20px_rgba(255,149,0,0.45)] sm:text-[48px]">
                   {c.metric}
                 </span>
@@ -266,14 +266,14 @@ export default function SuccessCases({
               </div>
             </div>
 
-            <div className="flex flex-col gap-6 border-t border-white/[0.06] bg-black/20 px-5 py-7 sm:gap-7 sm:px-9 sm:py-8">
+            <div className="flex flex-col gap-6 border-t border-white/[0.12] bg-[#0d1119]/40 px-5 py-7 sm:gap-7 sm:px-9 sm:py-8">
               <Step label="Before" tone="slate" title="신청 전 상황" body={c.before} />
               <Divider />
               <Step label="Strategy" tone="orange" title="어떻게 접근했나" body={c.strategy} />
               <Divider />
               <Step label="Result" tone="red" title="확보한 결과" body={c.result} />
 
-              <div className="rounded-2xl border border-brand-orange/20 bg-brand-orange/[0.06] p-4 sm:p-5">
+              <div className="rounded-2xl border border-brand-orange/25 bg-[#121724]/50 p-4 backdrop-blur-[14px] sm:p-5">
                 <p className="mb-3 flex items-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.12em] text-brand-orange">
                   <span aria-hidden="true">📌</span> 승인 내역
                 </p>
@@ -281,7 +281,7 @@ export default function SuccessCases({
                   {c.funds.map((f) => (
                     <li
                       key={f.name}
-                      className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5"
+                      className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.12] bg-[#0d1119]/45 px-3.5 py-2.5"
                     >
                       <span className="break-keep text-[12.5px] font-semibold text-white/85 sm:text-[14px]">
                         {f.name}
@@ -299,7 +299,7 @@ export default function SuccessCases({
       </section>
 
       {/* ── 그 외 승인 사례 (작은 카드 그리드) ── */}
-      <section className="reveal mt-12 sm:mt-16">
+      <section className="reveal mt-9 sm:mt-12">
         <div className="text-center">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
             그 외에도 이어지는 <span className="text-brand-orange">승인 사례</span>
@@ -315,7 +315,7 @@ export default function SuccessCases({
           {MORE_CASES.map((m, i) => (
             <div
               key={i}
-              className="flex min-h-[124px] flex-col rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3.5 backdrop-blur-sm transition-colors hover:border-brand-orange/25 sm:min-h-[140px] sm:px-4 sm:py-4"
+              className="flex min-h-[124px] flex-col rounded-2xl border border-white/[0.12] bg-[#121724]/50 px-3 py-3.5 backdrop-blur-[14px] transition-colors hover:border-brand-orange/30 sm:min-h-[140px] sm:px-4 sm:py-4"
             >
               <span className="text-[15px] font-black leading-none tracking-[-0.03em] text-brand-yellow sm:text-[19px]">
                 {m.amount}
@@ -350,7 +350,7 @@ export default function SuccessCases({
           {REVIEWS.map((r, i) => (
             <div
               key={i}
-              className="rounded-2xl border border-white/10 bg-white/[0.035] px-5 py-[18px] backdrop-blur-sm transition-colors hover:border-brand-orange/25 sm:px-6 sm:py-5"
+              className="rounded-2xl border border-white/[0.12] bg-[#121724]/50 px-5 py-[18px] backdrop-blur-[14px] transition-colors hover:border-brand-orange/30 sm:px-6 sm:py-5"
             >
               <div className="flex items-center gap-2.5">
                 <span className="text-[12.5px] leading-none tracking-[0.14em] text-brand-yellow" aria-label="별점 5점">
@@ -416,8 +416,7 @@ export default function SuccessCases({
       {/* 홈 삽입 시: 출처 문구만 간결히 노출 (CTA는 첫 페이지 하단 박스로 대체) */}
       {variant === "section" && (
         <p className="mx-auto mt-10 max-w-md break-keep text-center text-[10px] leading-[1.7] text-white/35 sm:mt-12 sm:text-[10.5px]">
-          ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다. 승인 여부·금액·기간은
-          기업별 상황에 따라 달라질 수 있으며 동일한 결과를 보장하지 않습니다.
+          ※ 자문 일부 사례만 발췌했으며, 실제 진행 건은 이보다 몇배는 많습니다.
           <br />
           출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
         </p>
