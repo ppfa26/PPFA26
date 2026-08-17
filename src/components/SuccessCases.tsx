@@ -70,7 +70,7 @@ const CASES: CaseItem[] = [
     tag: "방송 프로그램 제작 · 창업 3년차 · 매출 10억대",
     headline: (
       <>
-        대출 한도를 <span className="text-brand-orange">모두 소진</span>한 청년 PD 기업이,
+        대출 한도를 <span className="text-brand-orange">모두 소진</span>한 기업이,
         <br />
         <span className="text-brand-orange">3억 7천만 원</span>을 확보하기까지
       </>
