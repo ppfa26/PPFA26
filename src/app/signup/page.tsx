@@ -246,11 +246,9 @@ function SignupInner() {
       <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-12">
         <div className="grid grid-cols-1 overflow-hidden rounded-3xl border border-gray-200 shadow-card lg:grid-cols-2">
         {/* 좌측 브랜드 패널 - 데스크톱 전용(모바일 숨김) · 로고 중복 없음(상단 헤더에 이미 있음) */}
-        <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-between lg:p-10">
+        <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-center lg:gap-8 lg:p-10">
           <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-yellow/20 blur-3xl" />
           <div className="absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-brand-orange/20 blur-3xl" />
-          {/* 상단 여백용 (로고 자리 - 헤더에 이미 있어 중복 표기하지 않음) */}
-          <div className="relative h-4" />
           <div className="relative">
             <span className="inline-block rounded-full bg-brand-yellow/15 px-3 py-1 text-[11px] font-bold text-brand-yellow">
               정부지원사업 AI 통합 매칭 플랫폼
@@ -278,7 +276,7 @@ function SignupInner() {
                 <span className="font-bold text-brand-yellow">지금 바로 신청 가능한</span> 정부지원사업만 큐레이션
               </>,
               <>
-                신청 순서·<span className="font-bold text-brand-yellow">필요 서류·콜센터</span>까지 한 번에 안내
+                <span className="break-keep">신청 순서·<span className="font-bold text-brand-yellow">필요 서류·콜센터</span>까지 한 번에 안내</span>
               </>,
             ].map((t, i) => (
               <li key={i} className="flex items-center gap-2 text-sm font-semibold text-white/90">
