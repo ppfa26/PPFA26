@@ -247,17 +247,14 @@ export default function SuccessCases({
                 className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-brand-orange/20 blur-3xl"
                 aria-hidden="true"
               />
-              <div
-                className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-orange/25 bg-brand-orange/10 text-[28px] shadow-[0_4px_16px_rgba(255,149,0,0.15)] sm:h-16 sm:w-16 sm:text-[32px]"
-                aria-hidden="true"
-              >
-                {c.icon}
-              </div>
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
+              <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
                 <span className="rounded-md bg-brand-orange px-2.5 py-1 text-[11px] font-black tracking-[0.06em] text-brand-dark">
                   {c.no}
                 </span>
                 <span className="break-keep text-[11.5px] font-semibold text-white/50 sm:text-[13px]">
+                  <span className="mr-1 text-[14px] sm:text-[15px]" aria-hidden="true">
+                    {c.icon}
+                  </span>
                   {c.tag}
                 </span>
               </div>

@@ -784,7 +784,7 @@ export default function Home() {
         {/* 구간 페이드 - 결과예시(밝음 bg-gray-50)에서 승인사례(city-night 다크)로 부드럽게 전환.
             gray-50 → 투명 그라데이션 띠로 밝음이 다크 배경에 서서히 녹아들게 함. */}
         <div
-          className="h-16 w-full bg-gradient-to-b from-gray-50 to-transparent sm:h-24"
+          className="h-7 w-full bg-gradient-to-b from-gray-50 to-transparent sm:h-10"
           aria-hidden="true"
         />
         {/* ── 실제 자문 승인 사례 (reviews 내용 통합) ──
