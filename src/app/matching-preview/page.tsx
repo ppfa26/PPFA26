@@ -447,9 +447,6 @@ export default function MatchingPreview() {
       { icon: "💰", label: "정책금융 상품", n: counts?.products ?? 0 },
       { icon: "🎁", label: "추가 감면·혜택", n: counts?.benefits ?? 0 },
     ].filter((c) => c.n > 0);
-    // 맛보기 리스트: 실제 매칭 제목 앞 3개만 흐리게 노출(나머지는 가입 후)
-    const teaser = matchedTitles.slice(0, 3);
-    const restCount = Math.max(0, total - teaser.length);
     // ★ 미래 결제 전환 대비 세팅 ★
     //   지금(BETA_FREE=true): '무료 가입'으로 유도. 상세는 가입만 하면 전부 무료 공개.
     //   나중(BETA_FREE=false): 동일 UI에서 문구/버튼이 '가입 후 결제'로 자동 전환된다.
@@ -498,50 +495,40 @@ export default function MatchingPreview() {
               )}
             </div>
 
-            {/* ── 맛보기 리스트: 실제 매칭 항목 3개를 흐리게 → '진짜 결과가 있다' 증명 ── */}
-            {teaser.length > 0 && (
-              <div className="relative mt-4 overflow-hidden rounded-3xl border-2 border-brand-orange/30 bg-white p-5 shadow-card">
-                <p className="mb-3 flex items-center gap-1.5 text-sm font-extrabold text-brand-dark">
-                  <span>🔎</span> 이런 항목들이 매칭됐어요
-                </p>
-                <ul className="space-y-2.5">
-                  {teaser.map((t, i) => (
+            {/* ── 가입 유도(CTA) : 흐릿한 맛보기 대신, 숫자로 확인시킨 뒤 '가입해야 열린다'를 명확히 ── */}
+            <div className="mt-4 rounded-3xl border-2 border-brand-orange/50 bg-white p-6 text-center shadow-card sm:p-7">
+              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-brand-orange/10 text-2xl">
+                🔒
+              </div>
+              <h2 className="mt-3 break-keep text-lg font-extrabold leading-snug text-brand-dark sm:text-xl">
+                전체 결과는 <span className="text-brand-orange">회원가입</span> 후 열립니다
+              </h2>
+              <p className="mt-2 break-keep text-sm leading-relaxed text-brand-dark/70">
+                <b className="text-brand-dark">각 사업의 기관명·신청방법·필요서류</b>까지
+                <br />
+                지금 바로 확인하실 수 있어요.
+              </p>
+
+              {/* 가입하면 열리는 것 - 히어로 개수와 이어지는 '가치' 요약 */}
+              {catCards.length > 0 && (
+                <ul className="mt-5 space-y-2 text-left">
+                  {catCards.map((c) => (
                     <li
-                      key={`${t.kind}-${i}`}
-                      className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3"
+                      key={c.label}
+                      className="flex items-center gap-3 break-keep rounded-2xl border border-brand-orange/20 bg-brand-yellow/[0.08] px-4 py-3"
                     >
-                      <span className="text-lg">{t.icon}</span>
-                      <div className="min-w-0 flex-1 text-left">
-                        <span className="block text-[11px] font-bold text-brand-orange">
-                          {t.kind}
-                        </span>
-                        {/* 제목만 흐리게 - '내용은 있는데 정확히 뭔지는 가입해야 안다' */}
-                        <span className="preview-lock-text block truncate text-sm font-bold text-brand-dark">
-                          {t.title}
-                        </span>
-                      </div>
-                      <span className="text-sm">🔒</span>
+                      <span className="text-lg">{c.icon}</span>
+                      <span className="flex-1 text-sm font-bold text-brand-dark">
+                        {c.label}
+                      </span>
+                      <span className="text-sm font-extrabold text-brand-orange">
+                        {c.n}건
+                      </span>
                     </li>
                   ))}
                 </ul>
-                {restCount > 0 && (
-                  <p className="mt-3 break-keep text-center text-xs font-bold text-brand-dark/60">
-                    + 나머지 <span className="text-brand-orange">{restCount}개</span> 결과가 더
-                    기다리고 있어요
-                  </p>
-                )}
-                {/* 아래쪽 페이드로 '더 있다'는 느낌 강조 */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent" />
-              </div>
-            )}
+              )}
 
-            {/* ── 가입 유도(CTA) ── */}
-            <div className="mt-4 rounded-3xl border-2 border-brand-orange/50 bg-white p-6 text-center shadow-card">
-              <p className="break-keep text-sm leading-relaxed text-brand-dark/75">
-                <b className="text-brand-dark">기관명·신청방법·필요서류</b>까지 전체 결과는
-                <br />
-                <b className="text-brand-orange">카카오·구글·이메일</b> 10초 가입 후 바로 열립니다.
-              </p>
               <Link
                 href="/signup?next=%2Fmatching-preview"
                 className="btn-brand mt-5 block rounded-full py-3.5 text-center text-base font-bold"
