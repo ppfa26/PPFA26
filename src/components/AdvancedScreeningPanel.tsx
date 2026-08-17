@@ -1234,44 +1234,51 @@ function AdvancedResult({
                 key={i}
                 className="border-t border-brand-dark/10 py-3 first:border-t-0 first:pt-0"
               >
-                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                  <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
-                  {m.loan_type && (
-                    <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${natureBadgeCls(m.loan_type)}`}
-                    >
-                      {m.loan_type}
-                    </span>
-                  )}
-                  {/* 이미 이용 중인 기관 표시 (중복배제 참고 - 대표님 요청) */}
-                  {m.alreadyUsing && (
-                    <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
-                      현재 이용 중
-                    </span>
-                  )}
-                </div>
-                <p className="mt-1.5 whitespace-pre-line break-keep text-[12px] leading-relaxed text-brand-gray">{m.criteria}</p>
-
-                {/* ★ 신보·기보·재단 = 대리대출(보증) 안내 (대표님 요청) ★
-                     "여긴 공단이 직접 주는 게 아니라 보증서 받아 은행에서 대출받는 곳"임을 초보 고객도 바로 알게. */}
-                {(m.institution.includes("신용보증기금") ||
-                  m.institution.includes("기술보증기금") ||
-                  m.institution.includes("재단")) && (
-                  <p className="mt-1.5 break-keep rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-[11px] leading-relaxed text-brand-dark/80">
-                    <b>ℹ️ 대리대출</b> · 이 상품은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요.
-                  </p>
-                )}
-
-                {/* ★ 직접대출 기관(중진공·소진공) 안내 (대표님 요청) ★
-                     "여긴 은행 안 거치고 공단이 바로 대출해 주는 곳"임을 초보 고객도 바로 알게. */}
-                {(m.institution.includes("중소벤처기업진흥공단") ||
-                  m.institution.includes("소상공인시장진흥공단") ||
-                  m.institution.includes("중진공") ||
-                  m.institution.includes("소진공")) && (
-                  <p className="mt-1.5 break-keep rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-[11px] leading-relaxed text-brand-dark/80">
-                    <b>ℹ️ 직접대출</b> · 이 상품은 <b>은행을 거치지 않고</b> 기관에서 <b>대출이 바로 실행</b>돼요.
-                  </p>
-                )}
+                {/* ★ 대출방식 인라인 설명 (대표님 예시본 반영): 파란 박스 대신 기관명 옆 한 줄로 ★
+                     대리대출(신보·기보·재단) vs 직접대출(중진공·소진공) 문구를 기관 헤더에 붙여 공간 절약·가독성 향상. */}
+                {(() => {
+                  const isDae =
+                    m.institution.includes("신용보증기금") ||
+                    m.institution.includes("기술보증기금") ||
+                    m.institution.includes("재단");
+                  const isDirect =
+                    m.institution.includes("중소벤처기업진흥공단") ||
+                    m.institution.includes("소상공인시장진흥공단") ||
+                    m.institution.includes("중진공") ||
+                    m.institution.includes("소진공");
+                  const loanNote = isDae ? (
+                    <>이 상품은 <b className="font-bold">보증서를 발급</b>해 드리면 그 보증서로 <b className="font-bold">은행에서 대출</b>이 실행돼요.</>
+                  ) : isDirect ? (
+                    <>이 상품은 <b className="font-bold">은행을 거치지 않고</b> 기관에서 <b className="font-bold">대출이 바로 실행</b>돼요.</>
+                  ) : null;
+                  return (
+                    <>
+                      <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                        <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
+                        {m.loan_type && (
+                          <span
+                            className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${natureBadgeCls(m.loan_type)}`}
+                          >
+                            {m.loan_type}
+                          </span>
+                        )}
+                        {/* 이미 이용 중인 기관 표시 (중복배제 참고 - 대표님 요청) */}
+                        {m.alreadyUsing && (
+                          <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                            현재 이용 중
+                          </span>
+                        )}
+                        {/* 대출방식 설명 - 기관명 옆 인라인 한 줄 (대표님 예시본) */}
+                        {loanNote && (
+                          <span className="min-w-0 break-keep text-[11px] leading-relaxed text-brand-dark/55">
+                            {loanNote}
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1.5 whitespace-pre-line break-keep text-[12px] leading-relaxed text-brand-gray">{m.criteria}</p>
+                    </>
+                  );
+                })()}
 
                 {/* 신보·기보 둘 다 자격일 때 → 중복 신청 불가 안내 (대표님 요청) */}
                 {m.exclusiveNote && (
