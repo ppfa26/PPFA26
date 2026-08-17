@@ -781,12 +781,14 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 구간 구분 - 결과예시(밝음)↔승인사례(city-night) 경계 */}
+        <div className="section-divider" aria-hidden="true" />
         {/* ── 실제 자문 승인 사례 (reviews 내용 통합) ──
             상단 '후기' 클릭 시 이 섹션(#success-cases)으로 바로 스크롤됨.
-            라이트 테마 홈 안에서 독립된 다크 블록으로 자연스럽게 구분. */}
+            배경은 별도 지정 없이 첫 페이지 body(city-night)와 동일하게 유지 → 상·하단과 톤 통일. */}
         <section
           id="success-cases"
-          className="scroll-mt-20 bg-[#0b1020] px-4 py-12 sm:scroll-mt-24 sm:py-16"
+          className="scroll-mt-20 px-4 py-8 sm:scroll-mt-24 sm:py-10"
         >
           <SuccessCases variant="section" />
         </section>

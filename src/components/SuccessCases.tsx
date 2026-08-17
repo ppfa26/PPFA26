@@ -220,10 +220,10 @@ export default function SuccessCases({
           <p className="reveal inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
             Growth Stories
           </p>
-          <h2 className="reveal mt-4 break-keep text-center text-[22px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[32px] sm:leading-[1.3]">
+          <h2 className="reveal mt-4 break-keep text-center text-[22px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[26px] sm:leading-[1.35]">
             실제 자문 승인 사례
           </h2>
-          <p className="reveal mx-auto mt-4 max-w-2xl break-keep text-center text-[14px] font-medium leading-[1.85] text-white/60 sm:text-[16px]">
+          <p className="reveal mx-auto mt-3 max-w-2xl break-keep text-center text-[13.5px] font-medium leading-[1.8] text-white/60 sm:text-[15px]">
             저희가 진짜로 증명하려는 건 승인 사례가 아니라,
             <br />
             우리의 자문이 기업을{" "}
@@ -233,7 +233,7 @@ export default function SuccessCases({
       )}
 
       {/* ── 사례 카드 ── */}
-      <section className="mt-10 flex flex-col gap-10 sm:mt-14 sm:gap-14">
+      <section className="mt-8 flex flex-col gap-8 sm:mt-10 sm:gap-10">
         {CASES.map((c) => (
           <article
             key={c.no}
@@ -266,7 +266,7 @@ export default function SuccessCases({
               </div>
             </div>
 
-            <div className="flex flex-col gap-7 border-t border-white/[0.06] bg-black/20 px-5 py-8 sm:gap-8 sm:px-9 sm:py-10">
+            <div className="flex flex-col gap-6 border-t border-white/[0.06] bg-black/20 px-5 py-7 sm:gap-7 sm:px-9 sm:py-8">
               <Step label="Before" tone="slate" title="신청 전 상황" body={c.before} />
               <Divider />
               <Step label="Strategy" tone="orange" title="어떻게 접근했나" body={c.strategy} />
@@ -299,7 +299,7 @@ export default function SuccessCases({
       </section>
 
       {/* ── 그 외 승인 사례 (작은 카드 그리드) ── */}
-      <section className="reveal mt-14 sm:mt-20">
+      <section className="reveal mt-12 sm:mt-16">
         <div className="text-center">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
             그 외에도 이어지는 <span className="text-brand-orange">승인 사례</span>
@@ -336,7 +336,7 @@ export default function SuccessCases({
       </section>
 
       {/* ── 고객 후기 ── */}
-      <section className="reveal mt-14 sm:mt-20">
+      <section className="reveal mt-12 sm:mt-16">
         <div className="text-center">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
             먼저 경험한 <span className="text-brand-orange">대표님들의 후기</span>
@@ -368,59 +368,60 @@ export default function SuccessCases({
             </div>
           ))}
         </div>
-
-        <div className="mt-12 text-center sm:mt-14">
-          <a
-            href="https://pf.kakao.com/_VxfWxan/chat"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 rounded-full bg-[#FEE500] px-9 py-[17px] text-[15px] font-extrabold tracking-[-0.01em] text-[#191600] shadow-[0_16px_44px_-14px_rgba(254,229,0,0.55)] transition-transform hover:-translate-y-0.5 sm:text-[16px]"
-          >
-            <i className="fas fa-comment" aria-hidden="true" />
-            카카오톡으로 1:1 상담하기
-          </a>
-        </div>
       </section>
 
-      {/* ── 하단 CTA (전 페이지 통일 디자인) ── */}
-      <section className="reveal mt-12 rounded-3xl bg-brand-dark px-6 py-9 text-center ring-1 ring-white/10 sm:mt-16 sm:px-10 sm:py-11">
-        <h3 className="break-keep text-xl font-extrabold leading-[1.35] text-white sm:text-2xl">
-          다음 성공 사례의 주인공은
+      {/* ── 하단 CTA (reviews 전용 페이지에서만 노출) ──
+          홈(section) 삽입 시에는 첫 페이지 하단의 통일 CTA 박스를 재사용하므로 생략 */}
+      {variant === "page" && (
+        <section className="reveal mt-12 rounded-3xl bg-brand-dark px-6 py-9 text-center ring-1 ring-white/10 sm:mt-16 sm:px-10 sm:py-11">
+          <h3 className="break-keep text-xl font-extrabold leading-[1.35] text-white sm:text-2xl">
+            다음 성공 사례의 주인공은
+            <br />
+            <span className="text-brand-orange">대표님</span>일 수 있습니다
+          </h3>
+          <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-gray-300 sm:text-base">
+            정부지원사업 AI 통합 매칭 플랫폼 모두의사업친구가
+            <br />
+            대표님 사업장에 딱 맞는 정부지원사업을 무료로 찾아드립니다.
+          </p>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/diagnosis-chat"
+              className="btn-red w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
+            >
+              3분 무료 진단 시작하기 →
+            </Link>
+            <a
+              href="https://pf.kakao.com/_VxfWxan/chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-bold text-white hover:bg-white/10 sm:w-auto"
+            >
+              💬 1:1 채널톡 상담하기
+            </a>
+          </div>
+          <p className="mx-auto mt-7 max-w-md break-keep text-[10.5px] leading-[1.7] text-gray-400/70 sm:text-[11.5px]">
+            ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다.
+            <br />
+            승인 여부·금액·기간은 정부 기관 심사 및 기업별 상황에 따라 달라질 수 있으며,
+            <br />
+            동일한 결과를 보장하지 않습니다.
+          </p>
+          <p className="mx-auto mt-2.5 break-keep text-[10px] leading-[1.6] text-gray-500 sm:text-[10.5px]">
+            출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
+          </p>
+        </section>
+      )}
+
+      {/* 홈 삽입 시: 출처 문구만 간결히 노출 (CTA는 첫 페이지 하단 박스로 대체) */}
+      {variant === "section" && (
+        <p className="mx-auto mt-10 max-w-md break-keep text-center text-[10px] leading-[1.7] text-white/35 sm:mt-12 sm:text-[10.5px]">
+          ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다. 승인 여부·금액·기간은
+          기업별 상황에 따라 달라질 수 있으며 동일한 결과를 보장하지 않습니다.
           <br />
-          <span className="text-brand-orange">대표님</span>일 수 있습니다
-        </h3>
-        <p className="mx-auto mt-3 max-w-xl break-keep text-sm leading-relaxed text-gray-300 sm:text-base">
-          정부지원사업 AI 통합 매칭 플랫폼 모두의사업친구가
-          <br />
-          대표님 사업장에 딱 맞는 정부지원사업을 무료로 찾아드립니다.
-        </p>
-        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link
-            href="/diagnosis-chat"
-            className="btn-red w-full rounded-full px-8 py-3 text-sm font-bold sm:w-auto"
-          >
-            3분 무료 진단 시작하기 →
-          </Link>
-          <a
-            href="https://pf.kakao.com/_VxfWxan/chat"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-sm font-bold text-white hover:bg-white/10 sm:w-auto"
-          >
-            💬 1:1 채널톡 상담하기
-          </a>
-        </div>
-        <p className="mx-auto mt-7 max-w-md break-keep text-[10.5px] leading-[1.7] text-gray-400/70 sm:text-[11.5px]">
-          ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다.
-          <br />
-          승인 여부·금액·기간은 정부 기관 심사 및 기업별 상황에 따라 달라질 수 있으며,
-          <br />
-          동일한 결과를 보장하지 않습니다.
-        </p>
-        <p className="mx-auto mt-2.5 break-keep text-[10px] leading-[1.6] text-gray-500 sm:text-[10.5px]">
           출처: 모두의사업친구(모두의사업친구.kr) · 무단 복제·도용 금지
         </p>
-      </section>
+      )}
     </div>
   );
 }
@@ -448,7 +449,7 @@ function Step({
     emerald: "bg-emerald-500/15 text-emerald-400",
   };
   return (
-    <div className="flex flex-col items-center text-center">
+    <div className="mx-auto flex w-full max-w-[38rem] flex-col items-start text-left">
       <div className="flex items-center gap-2.5">
         <span
           className={`rounded-md px-2.5 py-[3px] text-[10px] font-extrabold uppercase tracking-[0.1em] ${toneMap[tone]}`}
@@ -459,7 +460,7 @@ function Step({
           {title}
         </p>
       </div>
-      <div className="mx-auto mt-3.5 flex w-full max-w-[38rem] flex-col gap-3.5">
+      <div className="mt-3 flex w-full flex-col gap-3">
         {body.map((para, i) => (
           <p
             key={i}
