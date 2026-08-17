@@ -222,8 +222,8 @@ export default function SuccessCases({
           <p className="inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
             Growth Stories
           </p>
-          <h2 className="mt-5 break-keep text-center text-[22px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[26px] sm:leading-[1.35]">
-            실제 자문 승인 사례
+          <h2 className="mt-5 break-keep text-center text-[21px] font-black leading-[1.4] tracking-[-0.03em] text-white sm:text-[25px] sm:leading-[1.35]">
+            실제 이용자 자문 승인 사례
           </h2>
           <p className="mx-auto mt-4 max-w-2xl break-keep text-center text-[13.5px] font-medium leading-[1.8] text-white/60 sm:text-[15px]">
             저희가 진짜로 증명하려는 건 승인 사례가 아니라,
