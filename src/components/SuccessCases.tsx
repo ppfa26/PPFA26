@@ -247,27 +247,29 @@ export default function SuccessCases({
                 className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-brand-orange/20 blur-3xl"
                 aria-hidden="true"
               />
-              <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
-                <span className="rounded-md bg-brand-orange px-2.5 py-1 text-[11px] font-black tracking-[0.06em] text-brand-dark">
-                  {c.no}
-                </span>
-                <span className="break-keep text-[11.5px] font-semibold text-white/50 sm:text-[13px]">
-                  <span className="mr-1 text-[14px] sm:text-[15px]" aria-hidden="true">
-                    {c.icon}
+              <div className="relative rounded-2xl border border-white/[0.08] bg-[#0b0f17]/70 px-5 py-5 backdrop-blur-[6px] sm:px-6 sm:py-6">
+                <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1">
+                  <span className="rounded-md bg-brand-orange px-2.5 py-1 text-[11px] font-black tracking-[0.06em] text-brand-dark">
+                    {c.no}
                   </span>
-                  {c.tag}
-                </span>
-              </div>
-              <h3 className="mx-auto mt-4 max-w-[26ch] break-keep text-center text-[19px] font-black leading-[1.45] tracking-[-0.02em] text-white sm:text-[25px] sm:leading-[1.4]">
-                {c.headline}
-              </h3>
-              <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/[0.12] pt-6">
-                <span className="text-[38px] font-black leading-none tracking-[-0.03em] text-brand-orange [text-shadow:0_2px_20px_rgba(255,149,0,0.45)] sm:text-[48px]">
-                  {c.metric}
-                </span>
-                <span className="mb-1 text-[13px] font-semibold text-white/60 sm:text-[15px]">
-                  {c.metricSub}
-                </span>
+                  <span className="break-keep text-[11.5px] font-semibold text-white/50 sm:text-[13px]">
+                    <span className="mr-1 text-[14px] sm:text-[15px]" aria-hidden="true">
+                      {c.icon}
+                    </span>
+                    {c.tag}
+                  </span>
+                </div>
+                <h3 className="mx-auto mt-4 max-w-[26ch] break-keep text-center text-[19px] font-black leading-[1.45] tracking-[-0.02em] text-white sm:text-[25px] sm:leading-[1.4]">
+                  {c.headline}
+                </h3>
+                <div className="mt-6 flex items-end justify-center gap-2.5 border-t border-white/[0.12] pt-6">
+                  <span className="text-[38px] font-black leading-none tracking-[-0.03em] text-brand-orange [text-shadow:0_2px_20px_rgba(255,149,0,0.45)] sm:text-[48px]">
+                    {c.metric}
+                  </span>
+                  <span className="mb-1 text-[13px] font-semibold text-white/60 sm:text-[15px]">
+                    {c.metricSub}
+                  </span>
+                </div>
               </div>
             </div>
 
