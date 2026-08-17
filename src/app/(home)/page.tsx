@@ -646,9 +646,9 @@ export default function Home() {
                     {/* 기관별 상세 - 실제 결과창(기관명+대리/직접대출 배지 → 안내 → 상품 보기 버튼) */}
                     <div className={`mt-2 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
                       {[
-                        { inst: "기술보증기금", nature: "대리대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: true, criteria: "기술력 보유 중소·벤처기업 대상 기술보증서 발급. 보증서로 은행 대출 실행.", prodCount: 3, siteLabel: "기술보증기금 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1544-****", telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다." },
-                        { inst: "중소벤처기업진흥공단", nature: "직접대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: false, criteria: "신성장기반자금·신시장진출자금 등 공단이 직접 저금리로 융자. 시설·운전자금 모두 가능.", prodCount: 3, siteLabel: "중소벤처기업진흥공단 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1811-****", telNote: "정책자금 전용번호가 일반문의보다 대기가 짧습니다." },
-                        { inst: "소상공인시장진흥공단", nature: "직접대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: false, criteria: "혁신성장촉진자금·대환대출 등 소상공인 전용 저금리 정책자금.", prodCount: 2, siteLabel: "소상공인정책자금 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1533-****", telNote: "중진공·소진공·중기부 통합상담도 가능합니다." },
+                        { inst: "기술보증기금", nature: "대리대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: true, natDesc: "보증서를 발급해 드리면 그 보증서로 은행에서 대출이 실행돼요.", criteria: "기술력 보유 중소·벤처기업 대상 기술보증서 발급. 보증서로 은행 대출 실행.", prodCount: 3, siteLabel: "기술보증기금 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1544-****", telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다." },
+                        { inst: "중소벤처기업진흥공단", nature: "직접대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: false, natDesc: "은행을 거치지 않고 기관에서 대출이 바로 실행돼요.", criteria: "신성장기반자금·신시장진출자금 등 공단이 직접 저금리로 융자. 시설·운전자금 모두 가능.", prodCount: 3, siteLabel: "중소벤처기업진흥공단 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1811-****", telNote: "정책자금 전용번호가 일반문의보다 대기가 짧습니다." },
+                        { inst: "소상공인시장진흥공단", nature: "직접대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: false, natDesc: "은행을 거치지 않고 기관에서 대출이 바로 실행돼요.", criteria: "혁신성장촉진자금·대환대출 등 소상공인 전용 저금리 정책자금.", prodCount: 2, siteLabel: "소상공인정책자금 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1533-****", telNote: "중진공·소진공·중기부 통합상담도 가능합니다." },
                       ].map((m, i) => (
                         <div key={i} className="py-4 first:pt-0">
                           <div className="flex flex-wrap items-center gap-1.5">
@@ -656,16 +656,10 @@ export default function Home() {
                             <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${m.natCls}`}>{m.nature}</span>
                             <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">✅ 신청 가능</span>
                           </div>
+                          <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/55">
+                            <b className="text-brand-dark/70">ℹ️ {m.nature}</b> · {m.natDesc}
+                          </p>
                           <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray">{m.criteria}</p>
-                          {m.isGuarantee ? (
-                            <p className="mt-2 break-keep rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs leading-relaxed text-brand-dark/80">
-                              <b>ℹ️ 대리대출</b> · 이 상품은 <b>보증서를 발급</b>해 드리면 그 보증서로 <b>은행에서 대출</b>이 실행돼요.
-                            </p>
-                          ) : (
-                            <p className="mt-2 break-keep rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs leading-relaxed text-brand-dark/80">
-                              <b>ℹ️ 직접대출</b> · 이 상품은 <b>은행을 거치지 않고</b> 기관에서 <b>대출이 바로 실행</b>돼요.
-                            </p>
-                          )}
                           <div className="mt-2.5 flex w-full items-center justify-between gap-2 rounded-xl border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2">
                             <span className="break-keep text-[12px] font-extrabold text-brand-orange">💳 신청 가능 상품 {m.prodCount}개 보기</span>
                             <span className="shrink-0 text-brand-orange">▼</span>
