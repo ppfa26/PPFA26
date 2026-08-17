@@ -454,11 +454,11 @@ function Step({
           {title}
         </p>
       </div>
-      <div className="mt-3 flex w-full flex-col gap-3">
+      <div className="mt-3 flex w-full flex-col gap-3 rounded-2xl border border-white/[0.08] bg-[#0b0f17]/70 px-4 py-4 backdrop-blur-[6px] sm:px-5 sm:py-5">
         {body.map((para, i) => (
           <p
             key={i}
-            className="w-full whitespace-pre-line break-keep text-left text-[13.5px] font-normal leading-[1.8] tracking-[-0.01em] text-white/70 sm:text-[15px] sm:leading-[1.85]"
+            className="w-full whitespace-pre-line break-keep text-left text-[13.5px] font-normal leading-[1.8] tracking-[-0.01em] text-white/80 sm:text-[15px] sm:leading-[1.85]"
           >
             {para}
           </p>
