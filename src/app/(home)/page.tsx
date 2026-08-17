@@ -782,7 +782,7 @@ export default function Home() {
             배경은 별도 지정 없이 첫 페이지 body(city-night)와 동일하게 유지 → 상·하단과 톤 통일. */}
         <section
           id="success-cases"
-          className="scroll-mt-20 px-4 pb-8 pt-2 sm:scroll-mt-24 sm:pb-10 sm:pt-4"
+          className="scroll-mt-20 px-4 py-6 sm:scroll-mt-24 sm:py-10"
         >
           <SuccessCases variant="section" />
         </section>
