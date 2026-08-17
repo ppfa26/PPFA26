@@ -310,11 +310,11 @@ function SignupInner() {
 
         <div className="mb-6 text-center">
           <Editable id="signup-title" as="h1" className="text-2xl font-extrabold text-brand-dark">
-            회원가입 · 로그인
+            로그인 · 회원가입
           </Editable>
           <Editable id="signup-desc" as="p" className="mt-2 text-sm text-brand-gray">
             <>
-              카카오톡·구글로 클릭 한번에 간편하게 시작하고
+              클릭 한번에 간편하게 시작하고
               <br />
               나만의 AI 매칭 리포트를 받아보세요.
             </>
