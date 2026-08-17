@@ -216,7 +216,7 @@ export default function SuccessCases({
           </p>
         </section>
       ) : (
-        <section className="reveal mx-auto flex max-w-xl flex-col items-center rounded-[1.25rem] border border-white/[0.12] bg-[#121724]/50 px-6 py-7 text-center shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-[14px] sm:px-9 sm:py-8">
+        <section className="reveal mx-auto flex w-full flex-col items-center rounded-[1.25rem] border border-white/[0.12] bg-[#121724]/50 px-6 py-7 text-center shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-[14px] sm:px-9 sm:py-8">
           <p className="inline-block rounded-full border border-brand-orange/30 bg-brand-orange/10 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-brand-orange sm:text-[12.5px]">
             Growth Stories
           </p>
@@ -333,7 +333,7 @@ export default function SuccessCases({
       </section>
 
       {/* ── 고객 후기 ── */}
-      <section className="reveal mt-14 sm:mt-16">
+      <section className="reveal mt-10 sm:mt-12">
         <div className="text-center">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[26px]">
             먼저 경험한 <span className="text-brand-orange">대표님들의 후기</span>
