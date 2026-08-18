@@ -11,11 +11,15 @@ export default function LegalLayout({
   pageKey,
   title,
   children,
+  bottomSlot,
 }: {
   pageKey: string;
   title: string;
   updatedAt?: string; // 시행일 표기는 노출하지 않음(호환용 · 선택)
   children: ReactNode;
+  /** 카드(article) 밖, 전체 폭 영역에 렌더링할 하단 슬롯(예: 광고 배너).
+   *  카드 안(max-w-3xl)에 넣으면 728px 광고가 잘리므로 전체폭에서 렌더링한다. */
+  bottomSlot?: ReactNode;
 }) {
   return (
     <PageShell pageKey={pageKey}>
@@ -33,6 +37,9 @@ export default function LegalLayout({
             {children}
           </div>
         </article>
+
+        {/* 카드 밖 전체폭 하단 슬롯(광고 등) - 728px 광고가 잘리지 않도록 */}
+        {bottomSlot && <div className="mx-auto mt-6 w-full">{bottomSlot}</div>}
       </main>
       <Footer />
     </PageShell>

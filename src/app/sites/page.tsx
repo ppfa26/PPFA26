@@ -11,6 +11,12 @@ export default function SitesPage() {
       pageKey="sites"
       title="정부지원사업 관련 공식 사이트 모음"
       updatedAt="2026년 8월 2일"
+      bottomSlot={
+        <AdFitBanner
+          adUnitPc={ADFIT_UNIT_PC_728x90}
+          adUnitMobile={ADFIT_UNIT_MOBILE_320x100}
+        />
+      }
     >
       <p className="text-sm leading-relaxed text-brand-gray">
         창업·정책자금·보증·인증·조회 등 실무에서 자주 쓰이는 공식 사이트를 분야별로 모았습니다.
@@ -57,16 +63,6 @@ export default function SitesPage() {
           ※ 각 기관 사정에 따라 연결된 URL이 변경될 수 있습니다.
         </p>
       </section>
-
-      {/* ── 카카오 애드핏 광고 (사이트 모음 하단) ──
-           LegalLayout 카드(흰 배경) 안이라 배너에 회색 배경을 덮어 카드가 구분되게 함 */}
-      <div className="mt-6 border-t border-brand-dark/5 pt-5">
-        <AdFitBanner
-          adUnitPc={ADFIT_UNIT_PC_728x90}
-          adUnitMobile={ADFIT_UNIT_MOBILE_320x100}
-          className="!bg-gray-50"
-        />
-      </div>
     </LegalLayout>
   );
 }

@@ -46,11 +46,15 @@ function AdFitUnit({
     const cbName = `__adfit_fail_${adUnit.replace(/[^a-zA-Z0-9]/g, "")}`;
     (window as any)[cbName] = () => setFailed(true);
 
-    // 1) <ins> 광고 영역 (공식 권장: width:100% 포함)
+    // 1) <ins> 광고 영역 (공식 표준: 지정 크기 그대로 · width:100% 강제 금지)
+    //    ★ 애드핏 심사 보류 대응 ★
+    //    - width:100% 를 주면 부모 폭에 맞춰 축소되어 728x90 광고가 좌/우 잘림.
+    //    - 그래서 data-ad-width/height 와 동일한 '고정 px' 로 <ins> 를 그린다.
     const ins = document.createElement("ins");
     ins.className = "kakao_ad_area";
     ins.style.display = "none";
-    ins.style.width = "100%";
+    ins.style.width = `${width}px`;
+    ins.style.height = `${height}px`;
     ins.setAttribute("data-ad-unit", adUnit);
     ins.setAttribute("data-ad-width", String(width));
     ins.setAttribute("data-ad-height", String(height));
@@ -76,11 +80,17 @@ function AdFitUnit({
     };
   }, [adUnit, width, height]);
 
+  // 지정 크기를 정확히 확보(좌우 잘림 방지). 좁은 화면에서는 가로 스크롤 대신
+  // 슬롯 자체를 중앙 정렬하고, 컨테이너가 최소 광고폭을 보장하도록 한다.
   return (
     <div
       ref={containerRef}
-      className="flex w-full items-center justify-center overflow-hidden"
-      style={{ minHeight: failed ? 0 : height }}
+      className="mx-auto flex items-center justify-center"
+      style={{
+        width: width,
+        maxWidth: "100%",
+        minHeight: failed ? 0 : height,
+      }}
     />
   );
 }
@@ -90,9 +100,7 @@ type Props = {
   adUnitPc?: string;
   /** 모바일(<768px)용 320x100 광고단위 ID. 미입력 시 렌더 안 함 */
   adUnitMobile?: string;
-  /** 배너 카드 최대 폭(Tailwind max-w-* 클래스). 페이지 콘텐츠 폭에 맞출 때 사용. 기본 max-w-3xl */
-  maxWidthClass?: string;
-  /** 상단 여백 등 조정 */
+  /** 상단 여백/배경 등 조정 */
   className?: string;
 };
 
@@ -103,7 +111,6 @@ function isValid(id?: string) {
 export default function AdFitBanner({
   adUnitPc,
   adUnitMobile,
-  maxWidthClass = "max-w-3xl",
   className = "",
 }: Props) {
   const hasPc = isValid(adUnitPc);
@@ -116,26 +123,29 @@ export default function AdFitBanner({
     <aside
       id="adfit-banner"
       aria-label="카카오 애드핏 광고"
-      className={`mx-auto w-full ${maxWidthClass} rounded-2xl border border-black/5 bg-white px-4 py-3 shadow-sm ${className}`}
+      // ★ 심사 보류 대응 ★ maxWidthClass 로 카드를 좁히면 728px 광고가 잘리므로,
+      //   카드 자체는 폭을 강제하지 않고(w-fit) 내부 광고 크기에 맞춰 감싼다.
+      //   좌우 패딩도 최소화해 728px 슬롯이 온전히 들어가게 한다.
+      className={`mx-auto w-fit max-w-full rounded-2xl border border-black/5 bg-white px-3 py-3 shadow-sm ${className}`}
     >
       {/* ── "광고" 라벨 (상단 명시) ── */}
-      <div className="mb-1.5 flex items-center justify-between">
+      <div className="mb-1.5 flex items-center justify-between gap-4">
         <span className="inline-flex items-center gap-1 rounded-md bg-gray-800 px-2 py-0.5 text-[11px] font-bold text-white">
           광고
         </span>
         <span className="text-[11px] font-medium text-gray-400">Kakao AdFit</span>
       </div>
 
-      {/* ── PC(≥768px) 전용: 728x90 ── */}
+      {/* ── PC(≥768px) 전용: 728x90 (고정 크기 · 잘림 방지) ── */}
       {hasPc && (
-        <div className="hidden md:flex md:justify-center">
+        <div className="hidden md:block">
           <AdFitUnit adUnit={adUnitPc as string} width={728} height={90} />
         </div>
       )}
 
-      {/* ── 모바일(<768px) 전용: 320x100 ── */}
+      {/* ── 모바일(<768px) 전용: 320x100 (고정 크기) ── */}
       {hasMobile && (
-        <div className="flex justify-center md:hidden">
+        <div className="block md:hidden">
           <AdFitUnit adUnit={adUnitMobile as string} width={320} height={100} />
         </div>
       )}
