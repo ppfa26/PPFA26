@@ -220,7 +220,7 @@ export default function MatchingPreview() {
     setAnalyzePct(0);
     setAnalyzeMsgIdx(0);
 
-    const DURATION = 3750; // 전체 연출 시간(ms) - 3.75초(대표님 요청, 신뢰+빠릿 균형)
+    const DURATION = 2600; // 전체 연출 시간(ms) - 2.6초(대표님 요청, 조금 더 빠릿하게)
 
     // (1) 진행률(%) 부드럽게 증가 - 약 60ms 간격으로 목표치까지 이동
     //     실제 완료 전엔 96%에서 잠깐 멈춘 듯 보이다가, 마지막에 100%로 채워 '완료' 쾌감을 준다.
@@ -234,15 +234,15 @@ export default function MatchingPreview() {
       setAnalyzePct((prev) => (pct > prev ? pct : prev));
     }, 60);
 
-    // (2) 4단계 카드 순차 점등 (연출시간 3.75초에 맞춰 비율 조정)
-    const t1 = setTimeout(() => setAnalyzeStep(1), 900);
-    const t2 = setTimeout(() => setAnalyzeStep(2), 1830);
-    const t3 = setTimeout(() => setAnalyzeStep(3), 2770);
+    // (2) 4단계 카드 순차 점등 (연출시간 2.6초에 맞춰 비율 조정)
+    const t1 = setTimeout(() => setAnalyzeStep(1), 620);
+    const t2 = setTimeout(() => setAnalyzeStep(2), 1270);
+    const t3 = setTimeout(() => setAnalyzeStep(3), 1920);
 
-    // (3) 1줄 안내 문구 회전(약 0.9초마다 교체)
-    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 900);
-    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 1950);
-    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 3000);
+    // (3) 1줄 안내 문구 회전(약 0.65초마다 교체)
+    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 620);
+    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 1350);
+    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 2080);
 
     // (4) 완료 - 100% 채우고 결과 공개
     const done = setTimeout(() => {
