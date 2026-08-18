@@ -303,6 +303,19 @@ const COLS_CLASS: Record<1 | 2 | 3, string> = {
   3: "grid-cols-3",
 };
 
+// ── 진행 중 응원 문구(대표님 요청) ─────────────────────────────
+//  질문에 답할수록 봇이 짧게 격려해 완주율을 높인다.
+//  ※ 순수 표시용. 저장 form 값·매칭 로직과 전혀 무관(정확도 100% 불변).
+//  cur = 현재 몇 번째 질문(1-base), total = 전체 노출 질문 수.
+function encourageText(cur: number, total: number): string | null {
+  if (cur <= 0 || total <= 0) return null;
+  if (cur >= total) return "마지막 질문이에요, 대표님! 🙌";
+  const ratio = cur / total;
+  if (ratio >= 0.8) return "거의 다 왔어요, 대표님! 💪";
+  if (ratio >= 0.5) return "절반 넘었어요, 조금만 더요! 👍";
+  return null; // 초반엔 굳이 노출하지 않음(깔끔하게)
+}
+
 // ── 옵션 라벨 "본문 [상태]" 2줄 분리 표시 (diagnosis-form 방식과 동일) ──
 //  예) "해당 없음 [신청 가능]" → 모바일: '해당 없음' / '[신청 가능]' 2줄 · PC(sm↑): 한 줄 그대로.
 //  · 대괄호가 없는 옵션은 원문 그대로 표시.
@@ -868,6 +881,14 @@ export default function DiagnosisChat() {
             <div className="h-1.5 w-full rounded-full bg-gray-200">
               <div className="h-1.5 rounded-full bg-brand-grad transition-all" style={{ width: `${progress}%` }} />
             </div>
+            {/* ★ 응원 문구(대표님 요청) ★ 절반·막바지·마지막에만 짧게 격려 → 완주율↑.
+                순수 표시용이라 매칭 결과와 무관. */}
+            {!finished && (() => {
+              const cheer = encourageText(curStepNo, totalSteps);
+              return cheer ? (
+                <p className="mt-1.5 break-keep text-center text-xs font-semibold text-brand-orange">{cheer}</p>
+              ) : null;
+            })()}
           </div>
 
           {/* 대화 영역 — 질문은 위에서부터 순서대로(오래된 것 위 → 새 질문 아래)
@@ -971,7 +992,7 @@ export default function DiagnosisChat() {
                           key={o}
                           // singleSelect면 하나만 즉시 선택·다음으로(라디오), 아니면 복수 토글.
                           onClick={() => (curStep.singleSelect ? answerMultiSingle(o) : toggleMulti(o))}
-                          className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
+                          className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
                             active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                           }`}
                         >
@@ -985,7 +1006,7 @@ export default function DiagnosisChat() {
                     <button
                       onClick={confirmMulti}
                       disabled={multiTemp.length === 0}
-                      className="mt-3 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                      className="mt-3 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
                     >
                       {multiTemp.length > 0 ? `${multiTemp.length}개 선택 완료 →` : "하나 이상 선택해 주세요"}
                     </button>
@@ -1000,7 +1021,7 @@ export default function DiagnosisChat() {
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition active:scale-95 hover:border-brand-orange hover:bg-brand-orange/5"
                     >
                       {renderOptLabel(o)}
                     </button>
@@ -1022,7 +1043,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
+                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                               }`}
                             >
@@ -1036,7 +1057,7 @@ export default function DiagnosisChat() {
                   <button
                     onClick={confirmYesnoGroup}
                     disabled={(curStep.subs || []).some((s) => !groupTemp[s.key])}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
                   >
                     다음 →
                   </button>
@@ -1060,7 +1081,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border py-2.5 text-center font-semibold transition ${
+                              className={`break-keep rounded-full border py-2.5 text-center font-semibold transition active:scale-95 ${
                                 sub.compact ? "px-1.5 text-[12px]" : "px-3 text-[13px]"
                               } ${
                                 active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
@@ -1076,7 +1097,7 @@ export default function DiagnosisChat() {
                   <button
                     onClick={confirmYesnoGroup}
                     disabled={(curStep.subs || []).some((s) => !groupTemp[s.key])}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
                   >
                     다음 →
                   </button>
@@ -1107,7 +1128,7 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => (radio ? pickGroupMultiSingle(sub.key, o) : toggleGroupMulti(sub.key, o))}
-                                className={`break-keep rounded-full border py-2.5 text-center text-[13px] font-semibold transition ${
+                                className={`break-keep rounded-full border py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
                                   sub.compact ? "px-1.5" : "px-3"
                                 } ${
                                   active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
@@ -1139,7 +1160,7 @@ export default function DiagnosisChat() {
                         .some((s) => !(groupMultiTemp[s.key] && groupMultiTemp[s.key][0])) ||
                       (groupMultiTemp["region"]?.[0] === "기타" && !groupRegionEtc.trim())
                     }
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
                   >
                     다음 →
                   </button>
@@ -1155,7 +1176,7 @@ export default function DiagnosisChat() {
                       <button
                         key={sub.key}
                         onClick={() => toggleCheck(sub.key)}
-                        className={`flex items-center gap-3 break-keep rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition ${
+                        className={`flex items-center gap-3 break-keep rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition active:scale-[0.98] ${
                           active ? "border-brand-orange bg-brand-orange/10 text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
                         }`}
                       >
@@ -1177,7 +1198,7 @@ export default function DiagnosisChat() {
                   })}
                   <button
                     onClick={confirmCheckGroup}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark"
+                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98]"
                   >
                     {checkTemp.length > 0 ? `${checkTemp.length}개 선택 완료 →` : "해당 없음 →"}
                   </button>
@@ -1193,7 +1214,7 @@ export default function DiagnosisChat() {
                         <button
                           key={o}
                           onClick={() => answerRegion(o)}
-                          className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition hover:border-brand-orange hover:bg-brand-orange/5"
+                          className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition active:scale-95 hover:border-brand-orange hover:bg-brand-orange/5"
                         >
                           {renderOptLabel(o)}
                         </button>
@@ -1260,7 +1281,7 @@ export default function DiagnosisChat() {
                             <button
                               key={t}
                               onClick={() => setForm((f: any) => ({ ...f, businessType: t }))}
-                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
+                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
                                 active
                                   ? "border-brand-orange bg-brand-grad text-brand-dark"
                                   : "border-white bg-white text-brand-dark hover:border-brand-orange"
@@ -1288,7 +1309,7 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => pickGroup(sub.key, o)}
-                                className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition ${
+                                className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
                                   active
                                     ? "border-brand-orange bg-brand-grad text-brand-dark"
                                     : "border-white bg-white text-brand-dark hover:border-brand-orange"
@@ -1304,7 +1325,7 @@ export default function DiagnosisChat() {
                     <button
                       onClick={confirmBizEligibility}
                       disabled={!canNext}
-                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
                     >
                       다음 →
                     </button>
@@ -1376,7 +1397,7 @@ export default function DiagnosisChat() {
                     <button
                       onClick={confirmBnoContact}
                       disabled={!canSubmit || bnoLoading}
-                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40"
+                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
                     >
                       {bnoLoading ? "확인 중…" : "진단 결과 확인하기 →"}
                     </button>
