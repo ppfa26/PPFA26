@@ -142,7 +142,7 @@ export default function Home() {
         {/* 히어로 */}
         <section
           id="hero-section"
-          className="relative overflow-hidden px-4 pb-4 pt-4 sm:pb-8 sm:pt-8"
+          className="relative overflow-hidden px-4 py-6 sm:py-10"
         >
           <div className="hero-glass mx-auto max-w-3xl rounded-3xl px-6 py-6 text-center animate-fadeUp sm:px-12 sm:py-12">
             {/* 상단 배지 (노란색 서비스 소개 배지) */}
@@ -795,7 +795,7 @@ export default function Home() {
           id="pricing-section"
           className="scroll-mt-20 px-4 py-6 sm:scroll-mt-24 sm:py-10"
         >
-          <div className="reveal mx-auto max-w-5xl">
+          <div className="reveal mx-auto max-w-3xl">
             {/* (대표님 요청) 상단 헤더 박스 - 가로폭 조금 축소(is-wide-pricing=38rem) */}
             <div className="section-title-glass is-wide-pricing mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm">
@@ -827,7 +827,7 @@ export default function Home() {
         <div className="section-divider" aria-hidden="true" />
         {/* 섹션 상하 여백 - 하단 여백 축소(대표님 요청) */}
         <section className="bg-gray-50 px-4 py-6 sm:py-10">
-          <div className="reveal mx-auto max-w-4xl">
+          <div className="reveal mx-auto max-w-3xl">
             <div className="section-title-glass is-wide mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm">
                 💬 자주 묻는 질문
@@ -881,7 +881,7 @@ export default function Home() {
 
         {/* 하단 CTA - 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
             카드 아래(Footer 사이) 세로 공백을 조금 줄여 답답하지 않게 조정 (대표님 요청) */}
-        <section className="px-4 pt-3 pb-3 sm:pt-4 sm:pb-5">
+        <section className="px-4 py-6 sm:py-10">
           <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
