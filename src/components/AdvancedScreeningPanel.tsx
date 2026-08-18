@@ -882,7 +882,7 @@ function AdvancedResult({
   }, [eligibleSupport.length, productsShownCount, benefitsCount, announcementsCount]);
 
   return (
-    <div id="advanced-result" className="mt-2 space-y-3">
+    <div id="advanced-result" className="mt-2 space-y-3.5">
       {/* autoRun(결제 후 대시보드)에서는 상단 dashboard-hero 제목과 중복되므로 h2를 숨긴다.
           정밀 추가진단(수동 실행) 화면에서만 제목을 표기. */}
       {!autoRun && (

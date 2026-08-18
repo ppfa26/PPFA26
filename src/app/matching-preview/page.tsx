@@ -631,7 +631,7 @@ export default function MatchingPreview() {
       <Header />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
           상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`flex-1 overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-0" : "pb-40"}`}>
+      <main className={`flex-1 overflow-x-hidden px-4 pt-6 sm:pt-8 ${adminView || BETA_FREE ? "pb-0" : "pb-40"}`}>
         {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
             max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
             좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}
@@ -761,7 +761,7 @@ export default function MatchingPreview() {
           </p>
           )}
           {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 - 화면 간결화 ── */}
-          <div className="relative mt-4 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <div className="relative mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white sm:mt-8">
             {/* 실제 대시보드 결과창 - 내용은 열고 이름/버튼만 부분 잠금(previewLock).
                 관리자 열람 모드 또는 오픈 베타(무료) 모드에서는 previewLock을 꺼서
                 전체 결과를 그대로 보여준다. (베타: 결제 없이 전부 무료 공개) */}
@@ -776,7 +776,7 @@ export default function MatchingPreview() {
           {/* ── (대표님 요청) 오픈 베타(무료) 안내 한 줄 문구 삭제 ── */}
 
           {/* ── 결과창 맨 하단 CTA - 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
-          <section className="mt-4 px-0 pb-0">
+          <section className="mt-6 px-0 pb-0 sm:mt-8">
             <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
               <Editable
                 id="preview-bottom-cta-title"
@@ -859,7 +859,7 @@ export default function MatchingPreview() {
       {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
            미입력 시 placeholder(광고 자리) 로만 노출 → 빈 광고 방지. */}
-      <div className="border-t border-brand-dark/5 px-4 py-2.5">
+      <div className="mt-6 border-t border-brand-dark/5 px-4 py-6 sm:mt-8">
         <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
       </div>
 
