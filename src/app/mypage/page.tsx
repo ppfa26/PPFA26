@@ -153,7 +153,7 @@ export default function MyPage() {
   return (
     <PageShell pageKey="mypage">
       <Header />
-      <main className="bg-gray-50 px-4 pt-6 pb-4 sm:pt-10 sm:pb-6">
+      <main className="bg-gray-50 px-4 pt-6 pb-6 sm:pt-10 sm:pb-6">
         <div className="mx-auto max-w-3xl">
           <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">
             마이페이지
@@ -386,7 +386,7 @@ export default function MyPage() {
 
               {/* 🧾 결제 내역 섹션 삭제됨 (대표님 요청) */}
 
-              <p className="mt-5 break-keep text-center text-xs leading-relaxed text-brand-gray">
+              <p className="mt-6 break-keep text-center text-xs leading-relaxed text-brand-gray">
                 ⚠️ 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스이며, 정부지원사업
                 승인을 보장하지 않습니다.
               </p>
@@ -398,8 +398,8 @@ export default function MyPage() {
       {/* ── 카카오 애드핏 광고 (마이페이지 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
            광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬.
-           첫 페이지와 동일한 규격(상단 pt-5/6, 하단 pb-8/10)으로 통일. */}
-      <div className="border-t border-brand-dark/5 px-4 pt-3 pb-8 sm:pt-4 sm:pb-10">
+           하단 흐름의 세로 공백을 py-6(24px)으로 균일화(대표님 요청). */}
+      <div className="border-t border-brand-dark/5 px-4 py-6">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
         </div>
