@@ -7,7 +7,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
-import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import AdFitBanner from "@/components/AdFitBanner";
+import { ADFIT_UNIT_300x250 } from "@/lib/adfitConfig";
 // (성능) 결과 상세 패널은 페이지에서 가장 무거운 컴포넌트(약 1.6천 줄).
 //  next/dynamic 으로 별도 청크로 분리해 초기 First Load JS 를 줄인다.
 //  ssr: true(기본) 유지 → SEO·초기 콘텐츠·결과 계산 로직은 100% 동일.
@@ -855,14 +856,11 @@ export default function MatchingPreview() {
         </div>
       </main>
 
-      {/* ── 쿠팡 파트너스 광고 (결과 하단 · 푸터 위) ──
-           partnersId 를 넣으면 다이나믹 위젯 광고가 표시됩니다.
-           승인/발급 전에는 placeholder(광고 자리) 로만 노출 → 가짜 광고 방지. */}
+      {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
+           광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
+           미입력 시 placeholder(광고 자리) 로만 노출 → 빈 광고 방지. */}
       <div className="border-t border-brand-dark/5 px-4 py-2.5">
-        <CoupangPartnersBanner
-          iframeSrc="https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=680&height=140&tsource="
-          iframeHeight={140}
-        />
+        <AdFitBanner adUnit={ADFIT_UNIT_300x250} width={300} height={250} />
       </div>
 
       {/* 오픈 베타(무료) 기간에는 하단 고정 바 없이 깔끔하게 둔다. */}

@@ -394,12 +394,18 @@ export default function MyPage() {
         </div>
       </main>
 
-      {/* ── 쿠팡 파트너스 광고 (마이페이지 하단 · 푸터 위) ──
-           partnersId 를 넣으면 다이나믹 위젯 광고가 표시됩니다.
-           승인/발급 전에는 placeholder(광고 자리) 로만 노출 → 가짜 광고 방지. */}
+      {/* ── 카카오 애드핏 광고 (마이페이지 하단 · 푸터 위) ──
+           광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
+           미입력 시 placeholder(광고 자리) 로만 노출 → 빈 광고 방지. */}
       <div className="border-t border-brand-dark/5 px-4 py-2.5">
-        <CoupangPartnersBanner
-          iframeSrc="https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=680&height=140&tsource="
+        <AdFitBanner adUnit={ADFIT_UNIT_300x250} width={300} height={250} />
+      </div>
+
+      <Footer />
+    </PageShell>
+  );
+}
+ang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=680&height=140&tsource="
           iframeHeight={140}
         />
       </div>
