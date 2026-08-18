@@ -303,8 +303,9 @@ export default function SuccessCases({
         ))}
       </section>
 
-      {/* ── 그 외 승인 사례 (작은 카드 그리드) ── */}
-      <section className="reveal mt-10 sm:mt-12">
+      {/* ── 그 외 승인 사례 (작은 카드 그리드) ──
+          제목 박스의 위(섹션 상단)·아래(본문까지) 공백을 동일하게 맞춤(대표님 요청). */}
+      <section className="reveal mt-8 sm:mt-10">
         <div className="mx-auto max-w-md rounded-2xl border border-white/[0.10] bg-[#161d2e]/60 px-5 py-5 text-center backdrop-blur-[6px] sm:px-6 sm:py-6">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[23px]">
             그 외에도 이어지는 <span className="text-brand-orange">승인 사례</span>
@@ -337,8 +338,9 @@ export default function SuccessCases({
 
       </section>
 
-      {/* ── 고객 후기 ── */}
-      <section className="reveal mt-10 sm:mt-12">
+      {/* ── 고객 후기 ──
+          제목 박스의 위(섹션 상단)·아래(본문까지) 공백을 동일하게 맞춤(대표님 요청). */}
+      <section className="reveal mt-8 sm:mt-10">
         <div className="mx-auto max-w-md rounded-2xl border border-white/[0.10] bg-[#161d2e]/60 px-5 py-5 text-center backdrop-blur-[6px] sm:px-6 sm:py-6">
           <h3 className="break-keep text-[20px] font-black leading-[1.35] tracking-[-0.02em] text-white sm:text-[23px]">
             먼저 경험한 <span className="text-brand-orange">대표님들의 후기</span>
