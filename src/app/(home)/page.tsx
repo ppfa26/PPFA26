@@ -15,7 +15,7 @@ import TrustBadges from "@/components/home/TrustBadges";
 import AdFitBanner from "@/components/AdFitBanner";
 import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
 import SuccessCases from "@/components/SuccessCases";
-import { BETA_FREE } from "@/lib/betaConfig";
+import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
 const TRUST_BADGES = [
   { icon: "🏛️", text: "공식 정부 사이트 매일 크롤링" },
@@ -226,7 +226,22 @@ export default function Home() {
               </span>
             </div>
 
-            <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:mt-6 sm:flex-row sm:gap-3">
+            {/* ── 무료 베타 강조 라인 (대표님 요청 · BETA_FREE일 때만 노출) ──
+                클릭 직전에 "지금은 무료"를 각인시켜 진입 장벽을 낮춤. 정식가는 취소선으로 대비. */}
+            {BETA_FREE && (
+              <div className="mx-auto mt-6 flex w-fit items-center gap-2 rounded-full bg-brand-green/10 px-4 py-1.5 sm:mt-6">
+                <span className="inline-flex items-center gap-1 rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-black text-white">
+                  🎁 무료 베타
+                </span>
+                <span className="break-keep text-[12.5px] font-bold text-brand-dark sm:text-sm">
+                  지금 진단하면{" "}
+                  <span className="text-gray-400 line-through">{OFFICIAL_PRICE_LABEL}</span>{" "}
+                  <span className="font-black text-brand-green">전액 무료</span>
+                </span>
+              </div>
+            )}
+
+            <div className="mt-3 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
               {/* 주 CTA - 최우선 행동. 부 버튼보다 살짝 크고 굵게(위계 강화) */}
               <Editable
                 id="hero-cta-primary"
