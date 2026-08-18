@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
+import AdFitBanner from "@/components/AdFitBanner";
+import { ADFIT_UNIT_PC_728x90, ADFIT_UNIT_MOBILE_320x100 } from "@/lib/adfitConfig";
 
 const PRICING_FAQ = [
   {
@@ -104,6 +106,12 @@ export default function PricingPage() {
           </div>
         </div>
       </main>
+
+      {/* ── 카카오 애드핏 광고 (요금 안내 하단 · 푸터 위) ── */}
+      <div className="border-t border-brand-dark/5 px-4 py-2.5">
+        <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
+      </div>
+
       <Footer />
     </PageShell>
   );

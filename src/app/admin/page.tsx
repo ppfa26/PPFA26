@@ -1154,7 +1154,7 @@ export default function AdminPage() {
         <div className="mx-auto max-w-6xl">
           {/* 상단 헤더 */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
+            <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
               <h1 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
                 🛠️ 관리자 대시보드
               </h1>
@@ -1341,7 +1341,7 @@ export default function AdminPage() {
                   >
                     ⬇️ 회원 엑셀 다운
                   </button>
-                  <span className="whitespace-nowrap rounded-xl bg-white/5 px-3 py-2.5 text-[13px] font-semibold text-gray-400 ring-1 ring-white/10">
+                  <span className="whitespace-nowrap rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-[13px] font-semibold text-gray-600">
                     {userSearch || userSourceFilter !== "all"
                       ? `결과 ${sortedUsers.length}명`
                       : `전체 ${users.length}명`}

@@ -2,6 +2,8 @@
 
 import LegalLayout from "@/components/LegalLayout";
 import { USEFUL_SITE_CATEGORIES } from "@/lib/usefulSites";
+import AdFitBanner from "@/components/AdFitBanner";
+import { ADFIT_UNIT_PC_728x90, ADFIT_UNIT_MOBILE_320x100 } from "@/lib/adfitConfig";
 
 export default function SitesPage() {
   return (
@@ -55,6 +57,16 @@ export default function SitesPage() {
           ※ 각 기관 사정에 따라 연결된 URL이 변경될 수 있습니다.
         </p>
       </section>
+
+      {/* ── 카카오 애드핏 광고 (사이트 모음 하단) ──
+           LegalLayout 카드(흰 배경) 안이라 배너에 회색 배경을 덮어 카드가 구분되게 함 */}
+      <div className="mt-6 border-t border-brand-dark/5 pt-5">
+        <AdFitBanner
+          adUnitPc={ADFIT_UNIT_PC_728x90}
+          adUnitMobile={ADFIT_UNIT_MOBILE_320x100}
+          className="!bg-gray-50"
+        />
+      </div>
     </LegalLayout>
   );
 }
