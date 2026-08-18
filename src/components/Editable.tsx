@@ -45,13 +45,6 @@ export function setSelected(t: SelectedTarget) {
   currentSelected = t;
   listeners.forEach((l) => l(t));
 }
-export function subscribeSelected(fn: (t: SelectedTarget) => void) {
-  listeners.add(fn);
-  fn(currentSelected);
-  return () => {
-    listeners.delete(fn);
-  };
-}
 
 export default function Editable({
   id,
