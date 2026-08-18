@@ -229,7 +229,7 @@ export default function Home() {
             {/* ── 무료 베타 강조 라인 (대표님 요청 · BETA_FREE일 때만 노출) ──
                 클릭 직전에 "지금은 무료"를 각인시켜 진입 장벽을 낮춤. 정식가는 취소선으로 대비. */}
             {BETA_FREE && (
-              <div className="mx-auto mt-6 flex w-fit items-center gap-2 rounded-full bg-brand-orange/10 px-4 py-1.5 sm:mt-6">
+              <div className="mx-auto mt-5 flex w-fit items-center gap-2 rounded-full bg-brand-orange/10 px-4 py-1.5 sm:mt-5">
                 <span className="inline-flex items-center gap-1 rounded-full bg-brand-orange px-2 py-0.5 text-[11px] font-black text-white">
                   🎁 무료 베타
                 </span>
@@ -241,7 +241,7 @@ export default function Home() {
               </div>
             )}
 
-            <div className="mt-3 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
+            <div className="mt-5 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
               {/* 주 CTA - 최우선 행동. 부 버튼보다 살짝 크고 굵게(위계 강화) */}
               <Editable
                 id="hero-cta-primary"
