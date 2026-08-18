@@ -11,7 +11,7 @@ import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
 import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
 import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90, ADFIT_UNIT_MOBILE_320x100 } from "@/lib/adfitConfig";
+import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
 
 type Payment = {
   order_id: string;
@@ -397,9 +397,11 @@ export default function MyPage() {
 
       {/* ── 카카오 애드핏 광고 (마이페이지 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-           미입력 시 placeholder(광고 자리) 로만 노출 → 빈 광고 방지. */}
-      <div className="border-t border-brand-dark/5 px-4 py-2.5">
-        <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
+           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬. */}
+      <div className="border-t border-brand-dark/5 px-4 py-6 sm:py-8">
+        <div className="mx-auto max-w-3xl">
+          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
+        </div>
       </div>
 
       <Footer />

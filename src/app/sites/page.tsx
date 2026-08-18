@@ -3,7 +3,7 @@
 import LegalLayout from "@/components/LegalLayout";
 import { USEFUL_SITE_CATEGORIES } from "@/lib/usefulSites";
 import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90, ADFIT_UNIT_MOBILE_320x100 } from "@/lib/adfitConfig";
+import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
 
 export default function SitesPage() {
   return (
@@ -11,12 +11,7 @@ export default function SitesPage() {
       pageKey="sites"
       title="정부지원사업 관련 공식 사이트 모음"
       updatedAt="2026년 8월 2일"
-      bottomSlot={
-        <AdFitBanner
-          adUnitPc={ADFIT_UNIT_PC_728x90}
-          adUnitMobile={ADFIT_UNIT_MOBILE_320x100}
-        />
-      }
+      bottomSlot={<AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />}
     >
       <p className="text-sm leading-relaxed text-brand-gray">
         창업·정책자금·보증·인증·조회 등 실무에서 자주 쓰이는 공식 사이트를 분야별로 모았습니다.

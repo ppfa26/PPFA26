@@ -6,7 +6,7 @@ import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
 import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90, ADFIT_UNIT_MOBILE_320x100 } from "@/lib/adfitConfig";
+import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
 
 const PRICING_FAQ = [
   {
@@ -101,8 +101,9 @@ export default function PricingPage() {
                 결제 전 가장 많이 묻는 질문들을 모았습니다.
               </Editable>
             </div>
-            {/* 아코디언 목록 - 홈과 동일(faq-accordion + 화살표 회전) */}
-            <div className="mx-auto mt-6 max-w-2xl space-y-3">
+            {/* 아코디언 목록 - 홈과 동일(faq-accordion + 화살표 회전).
+                광고(728px) 가로폭과 어울리도록 본문과 같은 max-w-3xl 로 정렬. */}
+            <div className="mx-auto mt-6 max-w-3xl space-y-3">
               {PRICING_FAQ.map((f, i) => (
                 <details
                   key={i}
@@ -134,9 +135,13 @@ export default function PricingPage() {
         </section>
       </main>
 
-      {/* ── 카카오 애드핏 광고 (요금 안내 하단 · 푸터 위) ── */}
-      <div className="border-t border-brand-dark/5 px-4 py-2.5">
-        <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
+      {/* ── 카카오 애드핏 광고 (요금 안내 하단 · 푸터 위) ──
+          광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬 →
+          요금·FAQ 콘텐츠와 세로 라인이 맞아 깔끔하게 이어진다. */}
+      <div className="border-t border-brand-dark/5 px-4 py-6 sm:py-8">
+        <div className="mx-auto max-w-3xl">
+          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
+        </div>
       </div>
 
       <Footer />

@@ -3,14 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 
 // ════════════════════════════════════════════════════════════════
-//  카카오 애드핏(Kakao AdFit) 반응형 광고 배너
+//  카카오 애드핏(Kakao AdFit) 광고 배너 — PC 728x90 단일 노출
 //
 //  ★ 대표님 안내 ★
-//  - 화면 폭에 따라 아래 두 광고 중 하나만 자동 노출됩니다:
-//      · PC(≥768px)   → 728x90  가로 긴 배너
-//      · 모바일(<768px) → 320x100 가로 채움 배너
+//  - 우리 사이트는 "한 번에 많은 정보를 보여주려" 모바일에서도 PC 화면을
+//    축소해 그대로 보여주는 설계(viewport width:820 고정)입니다.
+//  - 따라서 모바일 전용 광고(320x100)는 쓰지 않고, 어느 화면에서든
+//    728x90 PC 배너 하나만 노출합니다. (모바일 광고단위 제거 → 애드핏
+//    "모바일 최적화" 보류 사유도 함께 해소)
 //  - 광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-//  - 광고가 없을 때(NO-AD)는 자리를 접어 라벨만 덩그러니 남지 않게 처리.
+//  - 광고가 없을 때(NO-AD)는 자리를 접어 라벨만 남지 않게 처리.
 //
 //  ※ 애드핏 SDK(ba.min.js)는 "스크립트 로드 시점에 페이지의 <ins> 를
 //    스캔"하는 방식이라, React(SPA)에서 페이지 이동 후 새로 마운트된
@@ -26,25 +28,24 @@ function AdFitUnit({
   adUnit,
   width,
   height,
+  onFail,
 }: {
   adUnit: string;
   width: number;
   height: number;
+  onFail: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  // NO-AD(광고 없음) 콜백이 오면 자리를 접는다.
-  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    setFailed(false);
     container.innerHTML = "";
 
-    // NO-AD 콜백: 광고를 못 채우면 자리를 접는다.
+    // NO-AD 콜백: 광고를 못 채우면 부모에게 알려 자리를 접는다.
     const cbName = `__adfit_fail_${adUnit.replace(/[^a-zA-Z0-9]/g, "")}`;
-    (window as any)[cbName] = () => setFailed(true);
+    (window as any)[cbName] = () => onFail();
 
     // 1) <ins> 광고 영역 (공식 표준: 지정 크기 그대로 · width:100% 강제 금지)
     //    ★ 애드핏 심사 보류 대응 ★
@@ -78,27 +79,25 @@ function AdFitUnit({
       }
       container.innerHTML = "";
     };
-  }, [adUnit, width, height]);
+  }, [adUnit, width, height, onFail]);
 
-  // 지정 크기를 정확히 확보(좌우 잘림 방지). 좁은 화면에서는 가로 스크롤 대신
-  // 슬롯 자체를 중앙 정렬하고, 컨테이너가 최소 광고폭을 보장하도록 한다.
+  // 지정 크기(728x90)를 정확히 확보해 좌우 잘림을 방지한다.
   return (
     <div
       ref={containerRef}
       className="mx-auto flex items-center justify-center"
-      style={{
-        width: width,
-        maxWidth: "100%",
-        minHeight: failed ? 0 : height,
-      }}
+      style={{ width, height }}
     />
   );
 }
 
 type Props = {
-  /** PC(≥768px)용 728x90 광고단위 ID. 미입력 시 렌더 안 함 */
+  /** PC 728x90 광고단위 ID. 미입력 시 렌더 안 함 */
   adUnitPc?: string;
-  /** 모바일(<768px)용 320x100 광고단위 ID. 미입력 시 렌더 안 함 */
+  /**
+   * (호환용) 모바일 광고단위 ID — 더 이상 사용하지 않습니다.
+   * 기존 호출부와의 호환을 위해 prop 만 남겨두고 렌더에는 쓰지 않습니다.
+   */
   adUnitMobile?: string;
   /** 상단 여백/배경 등 조정 */
   className?: string;
@@ -108,24 +107,19 @@ function isValid(id?: string) {
   return typeof id === "string" && id.startsWith("DAN-");
 }
 
-export default function AdFitBanner({
-  adUnitPc,
-  adUnitMobile,
-  className = "",
-}: Props) {
+export default function AdFitBanner({ adUnitPc, className = "" }: Props) {
+  const [failed, setFailed] = useState(false);
   const hasPc = isValid(adUnitPc);
-  const hasMobile = isValid(adUnitMobile);
 
-  // 유효한 광고단위가 하나도 없으면 아무것도 렌더하지 않는다.
-  if (!hasPc && !hasMobile) return null;
+  // 유효한 PC 광고단위가 없거나, NO-AD 이면 아무것도 렌더하지 않는다.
+  if (!hasPc || failed) return null;
 
   return (
     <aside
       id="adfit-banner"
       aria-label="카카오 애드핏 광고"
-      // ★ 심사 보류 대응 ★ maxWidthClass 로 카드를 좁히면 728px 광고가 잘리므로,
-      //   카드 자체는 폭을 강제하지 않고(w-fit) 내부 광고 크기에 맞춰 감싼다.
-      //   좌우 패딩도 최소화해 728px 슬롯이 온전히 들어가게 한다.
+      // 광고(728px) 가로폭에 딱 맞춰 카드를 감싼다(w-fit). 좌우 패딩은
+      // 광고가 온전히 들어가도록 최소화. 본문(max-w-3xl≈768px)에 자연스럽게 정렬.
       className={`mx-auto w-fit max-w-full rounded-2xl border border-black/5 bg-white px-3 py-3 shadow-sm ${className}`}
     >
       {/* ── "광고" 라벨 (상단 명시) ── */}
@@ -136,19 +130,13 @@ export default function AdFitBanner({
         <span className="text-[11px] font-medium text-gray-400">Kakao AdFit</span>
       </div>
 
-      {/* ── PC(≥768px) 전용: 728x90 (고정 크기 · 잘림 방지) ── */}
-      {hasPc && (
-        <div className="hidden md:block">
-          <AdFitUnit adUnit={adUnitPc as string} width={728} height={90} />
-        </div>
-      )}
-
-      {/* ── 모바일(<768px) 전용: 320x100 (고정 크기) ── */}
-      {hasMobile && (
-        <div className="block md:hidden">
-          <AdFitUnit adUnit={adUnitMobile as string} width={320} height={100} />
-        </div>
-      )}
+      {/* ── 728x90 (고정 크기 · 잘림 방지 · 전 화면 공통) ── */}
+      <AdFitUnit
+        adUnit={adUnitPc as string}
+        width={728}
+        height={90}
+        onFail={() => setFailed(true)}
+      />
     </aside>
   );
 }

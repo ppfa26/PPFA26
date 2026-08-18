@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90, ADFIT_UNIT_MOBILE_320x100 } from "@/lib/adfitConfig";
+import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
 // (성능) 결과 상세 패널은 페이지에서 가장 무거운 컴포넌트(약 1.6천 줄).
 //  next/dynamic 으로 별도 청크로 분리해 초기 First Load JS 를 줄인다.
 //  ssr: true(기본) 유지 → SEO·초기 콘텐츠·결과 계산 로직은 100% 동일.
@@ -858,9 +858,11 @@ export default function MatchingPreview() {
 
       {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-           미입력 시 placeholder(광고 자리) 로만 노출 → 빈 광고 방지. */}
-      <div className="mt-6 border-t border-brand-dark/5 px-4 py-6 sm:mt-8">
-        <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
+           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬. */}
+      <div className="mt-6 border-t border-brand-dark/5 px-4 py-6 sm:mt-8 sm:py-8">
+        <div className="mx-auto max-w-3xl">
+          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
+        </div>
       </div>
 
       {/* 오픈 베타(무료) 기간에는 하단 고정 바 없이 깔끔하게 둔다. */}

@@ -13,7 +13,7 @@ import InstallAppButton from "@/components/InstallAppButton";
 import StickyDiagnosisBar from "@/components/StickyDiagnosisBar";
 import TrustBadges from "@/components/home/TrustBadges";
 import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90, ADFIT_UNIT_MOBILE_320x100 } from "@/lib/adfitConfig";
+import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
 import SuccessCases from "@/components/SuccessCases";
 import { BETA_FREE } from "@/lib/betaConfig";
 
@@ -934,9 +934,12 @@ export default function Home() {
         </section>
       </main>
       {/* ── 카카오 애드핏 광고 (첫 페이지 하단 · 푸터 위) ──
-           광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리. */}
-      <div className="border-t border-brand-dark/5 px-4 py-2.5">
-        <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
+           광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
+           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬. */}
+      <div className="border-t border-brand-dark/5 px-4 py-6 sm:py-8">
+        <div className="mx-auto max-w-3xl">
+          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
+        </div>
       </div>
       <Footer />
       {/* 오른쪽 하단 고정 - 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
