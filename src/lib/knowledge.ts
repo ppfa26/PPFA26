@@ -1,10 +1,15 @@
 import { OFFICIAL_DOCS } from "./officialDocs";
 import { CRAWL_SITES } from "./crawlSites";
 import { PROGRAMS } from "./programs";
+import { expandQuery } from "./searchSynonyms";
 
 // 간단한 키워드 기반 검색 (RAG의 retrieval 단계)
 // 실제 임베딩 벡터 검색은 Supabase pgvector로 확장 가능하나,
 // 여기서는 안정적이고 비용이 없는 키워드 매칭으로 관련 문서를 찾습니다.
+//
+// ★ 정확도 보강(대표님 요청 C) ★
+//  1) 동의어 사전(searchSynonyms)으로 질문을 확장 → "보조금"으로 물어도 "정부지원사업"을 찾음
+//  2) 공백 제거 매칭 병행 → "정책 자금"(띄어쓰기)도 "정책자금"과 매칭
 
 function tokenize(s: string): string[] {
   return s
@@ -21,10 +26,21 @@ export type Retrieved = {
 };
 
 export function retrieve(query: string): Retrieved {
-  const tokens = tokenize(query);
+  // 1) 동의어 확장: "보조금" 질문에도 "정부지원사업/지원금..." 정식 용어를 붙여 검색 누락 방지
+  const expanded = expandQuery(query);
+  const tokens = tokenize(expanded);
+  // 중복 토큰 제거(같은 확장어가 여러 번 붙어 점수가 과하게 튀는 것 방지)
+  const uniqTokens = Array.from(new Set(tokens));
+
   const score = (text: string) => {
     const lower = text.toLowerCase();
-    return tokens.reduce((acc, t) => acc + (lower.includes(t) ? 1 : 0), 0);
+    // 2) 공백 제거본도 함께 비교 → "정책 자금" 질문이 "정책자금" 데이터와도 매칭되게 함
+    const compact = lower.replace(/\s/g, "");
+    return uniqTokens.reduce((acc, t) => {
+      const tCompact = t.replace(/\s/g, "");
+      const hit = lower.includes(t) || (tCompact.length >= 2 && compact.includes(tCompact));
+      return acc + (hit ? 1 : 0);
+    }, 0);
   };
 
   const docs = OFFICIAL_DOCS.map((d) => ({ d, s: score(d.title) }))
