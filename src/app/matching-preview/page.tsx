@@ -860,7 +860,7 @@ export default function MatchingPreview() {
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
            광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬.
            첫 페이지와 동일한 규격(상단 pt-5/6, 하단 pb-8/10)으로 통일. */}
-      <div className="border-t border-brand-dark/5 px-4 pt-5 pb-8 sm:pt-6 sm:pb-10">
+      <div className="border-t border-brand-dark/5 px-4 pt-3 pb-5 sm:pt-4 sm:pb-6">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
         </div>
