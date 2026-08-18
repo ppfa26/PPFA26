@@ -69,24 +69,27 @@ export default function AccessLogger() {
         role="alertdialog"
         aria-label="접속이 제한되었습니다"
       >
-        <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center shadow-card">
+        <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.04] px-7 py-9 text-center shadow-card sm:px-8">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-red/15 text-3xl">
             🚫
           </div>
-          <h1 className="break-keep text-xl font-black text-white sm:text-2xl">
+          <h1 className="break-keep text-[22px] font-black leading-tight text-white sm:text-2xl">
             접속이 제한되었습니다
           </h1>
-          <p className="mx-auto mt-3 max-w-sm break-keep text-sm leading-relaxed text-gray-300">
-            비정상적인 이용이 감지되어 현재 접속이 제한된 상태입니다.
-            {blockReason ? (
-              <>
-                <br />
-                <span className="text-gray-400">사유: {blockReason}</span>
-              </>
-            ) : null}
+          <p className="mx-auto mt-3.5 max-w-[19rem] break-keep text-[13.5px] leading-relaxed text-gray-300 sm:text-sm">
+            비정상적인 이용이 감지되어
+            <br />
+            현재 접속이 제한된 상태입니다.
           </p>
-          <p className="mx-auto mt-5 max-w-sm break-keep text-[13px] leading-relaxed text-gray-400">
-            착오로 제한되었다고 판단되시면 아래로 문의해 주세요.
+          {blockReason ? (
+            <p className="mx-auto mt-2.5 w-fit max-w-[19rem] break-keep rounded-full bg-white/[0.06] px-3.5 py-1 text-xs text-gray-400">
+              사유 · {blockReason}
+            </p>
+          ) : null}
+          <p className="mx-auto mt-5 max-w-[19rem] break-keep text-xs leading-relaxed text-gray-500">
+            착오로 제한되었다고 판단되시면
+            <br />
+            아래로 문의해 주세요.
           </p>
           <div className="mt-6 flex flex-col items-center gap-2.5">
             <a
