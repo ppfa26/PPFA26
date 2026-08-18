@@ -14,7 +14,7 @@ export type Tier = {
   priceLabel: string;
   originalPrice: number;
   originalPriceLabel: string;
-  discountLabel: string; // 할인율 표기 (예: "30% 할인")
+  discountLabel: string; // 할인율 표기 (예: "40% 할인")
   monthlyLabel: string;
   period: string;
   popular: boolean;
@@ -30,9 +30,9 @@ export const TIERS: Tier[] = [
     subtitle: "AI로 내 사업장에서 받을 수 있는 정부지원사업 찾기",
     price: 29700,
     priceLabel: "29,700원",
-    originalPrice: 42000,
-    originalPriceLabel: "42,000원",
-    discountLabel: "30% 할인",
+    originalPrice: 49700,
+    originalPriceLabel: "49,700원",
+    discountLabel: "40% 할인",
     monthlyLabel: "",
     period: "1개월",
     popular: true,
