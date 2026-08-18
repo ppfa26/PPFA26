@@ -858,8 +858,9 @@ export default function MatchingPreview() {
 
       {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬. */}
-      <div className="mt-6 border-t border-brand-dark/5 px-4 py-6 sm:mt-8 sm:py-8">
+           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬.
+           첫 페이지와 동일한 규격(상단 pt-5/6, 하단 pb-8/10)으로 통일. */}
+      <div className="border-t border-brand-dark/5 px-4 pt-5 pb-8 sm:pt-6 sm:pb-10">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
         </div>
@@ -900,8 +901,8 @@ export default function MatchingPreview() {
       </div>
       )}
 
-      {/* (대표님 요청) 결과창 하단 CTA와 푸터 사이 세로 빈 공간 축소 → 푸터 상단 여백 줄임 (너무 좁아 아주 살짝 넓힘) */}
-      <Footer topGap="mt-5" />
+      {/* 광고 래퍼가 이미 하단 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(첫 페이지와 동일). */}
+      <Footer topGap="mt-0" />
     </PageShell>
   );
 }
