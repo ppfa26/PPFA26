@@ -809,7 +809,7 @@ export default function Home() {
             긴 랜딩 중간(성공사례 직후)에 부담 없는 얇은 배너형 CTA 배치.
             하단 대형 CTA와 톤은 통일하되 높이를 낮춰 중복감을 줄임. */}
         <section className="px-4 py-6 sm:py-8">
-          <div className="reveal hover-lift mx-auto flex max-w-3xl flex-col items-center gap-4 rounded-3xl bg-brand-dark px-6 py-6 text-center shadow-card sm:flex-row sm:justify-between sm:px-8 sm:text-left">
+          <div className="reveal hover-lift mx-auto flex max-w-xl flex-col items-center gap-4 rounded-3xl bg-brand-dark px-6 py-6 text-center shadow-card sm:flex-row sm:justify-between sm:px-8 sm:text-left">
             <div className="min-w-0">
               <p className="break-keep text-base font-black tracking-[-0.02em] text-white sm:text-lg">
                 내 사업장은 어떤 지원사업을 받을 수 있을까?
