@@ -775,8 +775,9 @@ export default function MatchingPreview() {
 
           {/* ── (대표님 요청) 오픈 베타(무료) 안내 한 줄 문구 삭제 ── */}
 
-          {/* ── 결과창 맨 하단 CTA - 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ── */}
-          <section className="mt-6 px-0 pb-0 sm:mt-8">
+          {/* ── 결과창 맨 하단 CTA - 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ──
+              CTA 박스 위 여백과 아래 광고 영역 상하 여백을 동일하게 맞춤(대표님 요청). */}
+          <section className="mt-6 px-0 pb-0 sm:mt-6">
             <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
               <Editable
                 id="preview-bottom-cta-title"
@@ -859,8 +860,8 @@ export default function MatchingPreview() {
       {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
            광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬.
-           첫 페이지와 동일한 규격(상단 pt-5/6, 하단 pb-8/10)으로 통일. */}
-      <div className="border-t border-brand-dark/5 px-4 pt-3 pb-5 sm:pt-4 sm:pb-6">
+           CTA 박스 위 여백(mt-6)과 균일하게 광고 상·하 여백을 py-6 으로 통일(대표님 요청). */}
+      <div className="border-t border-brand-dark/5 px-4 py-6">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
         </div>
