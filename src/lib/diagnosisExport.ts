@@ -73,31 +73,65 @@ function buildLabelMap(): Record<string, string> {
 export const DIAGNOSIS_LABELS = buildLabelMap();
 
 // ════════════════════════════════════════════════════════════════
-//  정식 "질문 순서" (대표님 요청 - 진단서·엑셀을 실제 질문 순서와 동일하게)
-//    diagnosisConfig.ts 의 필드 정의 순서를 그대로 사용한다.
-//    · 기본정보(이름·연락처·이메일·사업자번호 관련)를 맨 앞에
-//    · 이어서 1단계 → 2단계 → 3단계 조건부 → 전화상담 → 3단계 심층 순서
+//  상담용 "보기 편한 순서" (대표님 요청 - 질문지 순서 대신 상담 흐름에 맞게 재배치)
+//    상담원이 위→아래로 훑을 때 관련 항목이 모여 있도록 5개 그룹으로 묶는다.
+//    ① 기본/연락 정보  ② 사업 개요  ③ 자금·신용 상태  ④ 자격·강점  ⑤ 니즈
+//    · 진단서 화면 표와 엑셀(CSV/xlsx) 다운로드가 모두 이 순서를 따른다.
 //    ※ 여기 없는 예상 밖 키는 정렬 시 맨 뒤로 밀린다(누락 방지).
+//    ※ 표시 순서만 바꾸는 것 - 진단/매칭 로직에는 전혀 영향 없음.
 // ════════════════════════════════════════════════════════════════
 export const DIAGNOSIS_KEY_ORDER: string[] = [
-  // ── 기본 정보 ──
-  "name",
-  "phone",
-  "email",
-  "bno",
-  "bnoStatus",
-  "bnoVerified",
-  // ── 1단계 · 기본 정보 ──
+  // ── ① 기본 · 연락 정보 ──
+  "name",              // 이름
+  "phone",             // 연락처
+  "email",             // 이메일
+  "bno",               // 사업자등록번호
+  "bnoStatus",         // 사업자 상태
+  "bnoVerified",       // 사업자번호 국세청 검증
+  "region",            // 지역
+  "age",               // 대표자 연령
+  "phoneConsult",      // 전화 무료 상담 희망
+
+  // ── ② 사업 개요 ──
+  "businessType",      // 사업자 구분(개인/법인)
+  "industries",        // 업종
+  "revenue",           // 연매출 규모
+  "years",             // 업력(사업자등록증명원상)
+  "employees",         // 직원 수
+  "revenueGrowth2y",   // 최근 2년 매출 매년 10%↑
+
+  // ── ③ 자금 · 신용 상태 ──
+  "credit",            // 대표자 개인 신용점수
+  "capitalImpairment", // 자본잠식 상태[법인]
+  "bankruptcy",        // 대표자 회생·파산 상태
+  "taxDelinquent",     // 국세·지방세 완납 여부
+  "collateral",        // 담보 보유 여부
+  "wantsRefinance",    // 저금리 대환 희망
+
+  // ── ④ 자격 · 강점 ──
+  "certifications",    // 특허·인증 보유
+  "innovation",        // 혁신성장 분야 해당
+  "smartFactory",      // 스마트공장 구축·도입
+  "smartDevice",       // 매장 스마트기기 사용
+  "govSelected",       // 정부 선정 프로그램 이력
+  "reFounder",         // 재창업[재도전] 여부
+  "privateInvestment", // 민간 투자(엔젤·VC) 여부
+
+  // ── ⑤ 니즈 ──
+  "purposes",          // 필요한 지원 항목(필요한 정부지원사업)
+  "currentInstitutions", // 현재 이용 정책기관
+];
+
+// ↓ 참조 유지용(빌드 경고 방지) - 위 명시 순서에 빠진 키가 생기면 자동으로 뒤에 붙여 누락을 막는다.
+const _ALL_FIELD_KEYS: string[] = [
   ...Object.keys(STEP1_FIELDS),
-  // ── 2단계 · 회사 정보 ──
   ...Object.keys(STEP2_FIELDS),
-  // ── 3단계 · 조건부(맞춤 매칭 추가 질문) ──
   ...Object.keys(STEP3_CONDITIONAL_FIELDS),
-  // ── 전화 상담 희망 ──
-  "phoneConsult",
-  // ── 3단계 · 심층 질문 ──
   ...Object.keys(STEP3_FIELDS),
 ];
+for (const k of _ALL_FIELD_KEYS) {
+  if (!DIAGNOSIS_KEY_ORDER.includes(k)) DIAGNOSIS_KEY_ORDER.push(k);
+}
 
 const KEY_ORDER_INDEX: Record<string, number> = DIAGNOSIS_KEY_ORDER.reduce(
   (acc, k, i) => {
