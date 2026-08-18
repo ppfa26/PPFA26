@@ -788,7 +788,31 @@ export default function Home() {
           <SuccessCases variant="section" />
         </section>
 
-        {/* 구간 구분 - 승인사례↔가격표 (둘 다 다크 body라 얇은 선으로만 구분) */}
+        {/* 구간 구분 - 승인사례↔중간CTA */}
+        <div className="section-divider" aria-hidden="true" />
+        {/* ── 중간 진단 유도 배너 (대표님 요청 · 디자인 미세조정) ──
+            긴 랜딩 중간(성공사례 직후)에 부담 없는 얇은 배너형 CTA 배치.
+            하단 대형 CTA와 톤은 통일하되 높이를 낮춰 중복감을 줄임. */}
+        <section className="px-4 py-6 sm:py-8">
+          <div className="reveal hover-lift mx-auto flex max-w-3xl flex-col items-center gap-4 rounded-3xl bg-brand-dark px-6 py-6 text-center shadow-card sm:flex-row sm:justify-between sm:px-8 sm:text-left">
+            <div className="min-w-0">
+              <p className="break-keep text-base font-black tracking-[-0.02em] text-white sm:text-lg">
+                내 사업장은 어떤 지원사업을 받을 수 있을까?
+              </p>
+              <p className="mt-1.5 break-keep text-[13px] font-medium text-gray-300 sm:text-sm">
+                무료 베타 진행 중 · 1분이면 확인됩니다.
+              </p>
+            </div>
+            <a
+              href="/diagnosis-chat"
+              className="btn-red w-full shrink-0 rounded-full px-7 py-3 text-sm font-bold sm:w-auto sm:text-base"
+            >
+              1분 무료 진단 시작
+            </a>
+          </div>
+        </section>
+
+        {/* 구간 구분 - 중간CTA↔가격표 (둘 다 다크 body라 얇은 선으로만 구분) */}
         <div className="section-divider" aria-hidden="true" />
         {/* 가격표 */}
         <section
