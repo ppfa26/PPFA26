@@ -294,7 +294,6 @@ export default function MyPage() {
               {/* 추가 신청 (전문가 도움 요청) - 결제 내역 '위'로 배치 (대표님 요청) */}
               <section
                 id="mypage-extra-services"
-                className="mt-4 ro    id="mypage-extra-services"
                 className="mt-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-card"
               >
                 <h2 className="text-base font-extrabold text-brand-dark sm:text-lg">
@@ -302,7 +301,10 @@ export default function MyPage() {
                 </h2>
                 <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
                   직접 하기 어려운 부분을 아래 항목과 같이 구분하고{" "}
-                  <b className="text-brand-dark">신청을 원하시는 분에 한해</b>           <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                  <b className="text-brand-dark">신청을 원하시는 분에 한해</b> 별도로 상담을 진행합니다.
+                </p>
+
+                <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
                   {[
                     { icon: "📊", name: "회사 IR 자료 제작", price: "30만원", accent: true },
                     { icon: "📝", name: "사업계획서 첨삭", price: "30만원", accent: true },
@@ -399,21 +401,6 @@ export default function MyPage() {
       <div className="border-t border-brand-dark/5 px-4 py-2.5">
         <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
       </div>
-
-      <Footer />
-    </PageShell>
-  );
-}
-ang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=680&height=140&tsource="
-          iframeHeight={140}
-        />
-      </div>
-
-      <Footer />
-    </PageShell>
-  );
-}
-v>
 
       <Footer />
     </PageShell>

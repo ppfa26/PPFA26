@@ -14,4 +14,4 @@
 export const ADFIT_UNIT_PC_728x90 = "DAN-ekOomFo1w7RO8ccU";
 
 /** 모바일용 320x100 광고단위 ID (예: "DAN-xxxxxxxxxxxx") — 발급받은 값으로 교체 */
-export const ADFIT_UNIT_MOBILE_320x100 = "";
+export const ADFIT_UNIT_MOBILE_320x100 = "DAN-sgKK0AL1YqcU5nZH";
