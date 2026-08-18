@@ -825,8 +825,9 @@ export default function Home() {
         {/* FAQ */}
         {/* 구간 구분 - 얇은 회색 가로줄 */}
         <div className="section-divider" aria-hidden="true" />
-        {/* 섹션 상하 여백 - 하단 세로 공백 추가 축소(대표님 요청) */}
-        <section className="bg-gray-50 px-4 py-6 sm:py-7">
+        {/* 섹션 상하 여백 - 위쪽 다른 섹션들과 동일한 리듬(py-8 sm:py-10)으로 통일해
+            FAQ↔CTA 사이 세로 공백을 균형있게 맞춤(대표님 요청) */}
+        <section className="bg-gray-50 px-4 py-8 sm:py-10">
           <div className="reveal mx-auto max-w-3xl">
             <div className="section-title-glass is-wide mx-auto flex flex-col items-center text-center">
               <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm">
@@ -880,8 +881,8 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA - 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
-            섹션 상하 여백을 광고 래퍼와 동일한 24px(py-6)로 균일하게 통일(대표님 요청) */}
-        <section className="px-4 py-6">
+            CTA↔광고↔푸터 하단 흐름을 py-6 sm:py-8 리듬으로 균형있게 통일(대표님 요청) */}
+        <section className="px-4 py-6 sm:py-8">
           {/* 박스 상하단 내부 여백만 아주 살짝 축소(대표님 요청): 좌우(px)는 유지, py만 -1단계 */}
           <div className="reveal hover-lift mx-auto max-w-3xl rounded-3xl bg-brand-dark px-6 py-5 text-center shadow-card sm:px-8 sm:py-7">
             <Editable
@@ -937,8 +938,8 @@ export default function Home() {
       {/* ── 카카오 애드핏 광고 (첫 페이지 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
            광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬.
-           상하 여백을 24px(py-6)로 균일하게 통일(대표님 요청). */}
-      <div className="border-t border-brand-dark/5 px-4 py-6">
+           CTA 섹션과 동일한 py-6 sm:py-8 리듬으로 균형있게 통일(대표님 요청). */}
+      <div className="border-t border-brand-dark/5 px-4 py-6 sm:py-8">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
         </div>
