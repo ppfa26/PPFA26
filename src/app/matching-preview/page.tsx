@@ -860,7 +860,7 @@ export default function MatchingPreview() {
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
            미입력 시 placeholder(광고 자리) 로만 노출 → 빈 광고 방지. */}
       <div className="border-t border-brand-dark/5 px-4 py-2.5">
-        <AdFitBanner adUnit={ADFIT_UNIT_300x250} width={300} height={250} />
+        <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
       </div>
 
       {/* 오픈 베타(무료) 기간에는 하단 고정 바 없이 깔끔하게 둔다. */}

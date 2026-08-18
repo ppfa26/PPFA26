@@ -13,7 +13,7 @@ import { useEffect, useRef } from "react";
 //  - ID 가 없으면(placeholder) "광고 준비 중" 안내만 노출 → 빈 광고 방지.
 // ════════════════════════════════════════════════════════════════
 
-const ADFIT_SCRIPT_SRC = "//t1.daumcdn.net/kas/static/ba.min.js";
+const ADFIT_SCRIPT_SRC = "//t1.kakaocdn.net/kas/static/ba.min.js";
 
 /** 단일 애드핏 광고 슬롯 (지정한 사이즈로 <ins> 생성 + 스크립트 주입) */
 function AdFitUnit({
