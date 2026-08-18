@@ -847,8 +847,8 @@ export default function Home() {
                 결제 전 가장 많이 묻는 질문들을 모았습니다.
               </Editable>
             </div>
-            {/* (대표님 요청) 아코디언 목록 가로폭 축소 - 제목 박스(is-wide=max-w-2xl)와 통일 */}
-            <div className="mx-auto mt-6 max-w-2xl space-y-3">
+            {/* 아코디언 목록 - 광고(728px) 가로폭과 어울리도록 본문과 같은 max-w-3xl 로 통일 */}
+            <div className="mx-auto mt-6 max-w-3xl space-y-3">
               {FAQS.map((f, i) => (
                 <details
                   key={i}
@@ -882,7 +882,7 @@ export default function Home() {
         {/* 하단 CTA - 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
             카드 아래(Footer 사이) 세로 공백을 조금 줄여 답답하지 않게 조정 (대표님 요청) */}
         <section className="px-4 py-6 sm:py-10">
-          <div className="reveal hover-lift mx-auto max-w-2xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
+          <div className="reveal hover-lift mx-auto max-w-3xl rounded-3xl bg-brand-dark p-6 text-center shadow-card sm:p-8">
             <Editable
               id="home-cta-title"
               as="h2"
