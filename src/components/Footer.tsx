@@ -32,16 +32,13 @@ const CHANNELS = [
   { href: "https://link.inpock.co.kr/ppfa25", label: "인포크링크", fa: "fa-solid fa-link", hover: "hover:border-brand-orange/70 hover:bg-brand-orange/15 hover:text-brand-orange" },
 ];
 
-// ── 푸터 링크: 대기업(토스·카카오·네이버) 방식으로 '서비스'와 '약관·정책'을
-//    두 그룹으로 분리. 성격이 다른 링크가 한 줄에 섞이지 않아 훨씬 깔끔하다.
-//    서비스 메뉴: 이용자가 실제로 쓰는 순서(진단 → 요금 → 참고사이트).
-const MENU_SERVICE = [
+// ── 푸터 링크: (대표님 요청) 서비스·약관을 한 줄로 합쳐 배치.
+//    이용 흐름 순(진단 → 요금 → 사이트) → 법적 고지(약관/정책) 순으로 나열.
+//    개인정보처리방침은 관례상 강조(bold) 표기.
+const MENU = [
   { href: "/diagnosis-chat", label: "무료 진단" },
   { href: "/pricing", label: "요금 안내" },
   { href: "/sites", label: "정부 사이트" },
-];
-// 약관·정책 메뉴: 법적 고지 성격. 개인정보처리방침은 관례상 강조(volb) 표기.
-const MENU_LEGAL = [
   { href: "/terms", label: "이용약관" },
   { href: "/privacy", label: "개인정보처리방침", emphasize: true },
   { href: "/refund", label: "환불정책" },
@@ -100,31 +97,18 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           </ul>
         </div>
 
-        {/* ── 2줄: 메뉴 네비 - 서비스/약관 두 그룹으로 분리 (대기업 방식) ───
-            · 위: 서비스 링크(밝은 회색, 조금 크게) - 이용 흐름 순서
-            · 아래: 약관·정책 링크(더 옅은 색, 작게) - 법적 고지 성격
-            성격이 다른 링크를 분리해 시선이 정돈되고 클릭 목적이 뚜렷해진다. */}
+        {/* ── 2줄: 메뉴 네비 - (대표님 요청) 전체 링크를 한 줄로 배치 ───
+            7개 항목이 한 줄에 들어가도록 글자 크기를 살짝 줄이고(13px)
+            가운뎃점 간격을 좁혀 정돈. 개인정보처리방침만 강조(bold). */}
         <nav className="mt-5" aria-label="푸터 메뉴">
-          {/* 서비스 링크 */}
-          <ul className="flex flex-wrap items-center gap-x-1 gap-y-2 text-[14px] font-medium text-gray-300">
-            {MENU_SERVICE.map((m, i) => (
+          <ul className="flex flex-wrap items-center gap-y-2 whitespace-nowrap text-[12.5px] font-medium text-gray-300 sm:text-[13px]">
+            {MENU.map((m, i) => (
               <li key={m.href} className="flex items-center">
-                {i > 0 && <span className="mx-2.5 text-white/15" aria-hidden="true">·</span>}
-                <Link href={m.href} className="transition hover:text-white">
-                  {m.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          {/* 약관·정책 링크 */}
-          <ul className="mt-2.5 flex flex-wrap items-center gap-x-1 gap-y-2 text-[13px] text-gray-500">
-            {MENU_LEGAL.map((m, i) => (
-              <li key={m.href} className="flex items-center">
-                {i > 0 && <span className="mx-2.5 text-white/15" aria-hidden="true">·</span>}
+                {i > 0 && <span className="mx-2 text-white/15 sm:mx-2.5" aria-hidden="true">·</span>}
                 <Link
                   href={m.href}
-                  className={`transition hover:text-gray-200 ${
-                    m.emphasize ? "font-bold text-gray-300" : ""
+                  className={`transition hover:text-white ${
+                    m.emphasize ? "font-bold text-white" : ""
                   }`}
                 >
                   {m.label}
