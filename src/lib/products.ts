@@ -1,6 +1,7 @@
-// 상품 구성 - AI 진단 리포트 단일 상품 (정식 오픈 예정가: 49,700원, 1회성 결제·부가세 포함가)
+// 상품 구성 - AI 진단 리포트 단일 상품 (정식 오픈 예정가: 29,700원, 1회성 결제·부가세 포함가)
 // ※ 결과창 자체가 심화 진단 리포트이므로 상품명을 "AI 진단 리포트"로 정의.
-// ※ 자문+SaaS 전환 전략에 맞춰 단일 가격 49,700원(1회성)으로 통일 (대표님 요청, C안).
+// ※ 자문+SaaS 전환 전략에 맞춰 단일 가격 29,700원(1회성·부가세 포함)으로 확정 (대표님 결정).
+// ※ 리포트는 '자문 고객 필터 + 전파용' 성격. 실질 수익은 기보·신보 등 큰 건 후속 자문에서 회수.
 // ※ 현재는 오픈 베타(무료) 운영 중이라 실제 과금은 없으며, 이 가격은 "정식 오픈 예정가" 표시용.
 // ※ id는 기존 "basic"을 그대로 재사용해 결제(?tier=basic) 흐름·기존 결제내역 표기를 유지한다.
 // originalPrice = 정가(앵커링용 취소선)
@@ -13,7 +14,7 @@ export type Tier = {
   priceLabel: string;
   originalPrice: number;
   originalPriceLabel: string;
-  discountLabel: string; // 할인율 표기 (예: "28% 할인")
+  discountLabel: string; // 할인율 표기 (예: "57% 할인")
   monthlyLabel: string;
   period: string;
   popular: boolean;
@@ -27,11 +28,11 @@ export const TIERS: Tier[] = [
     icon: "🎯",
     name: "AI 진단 리포트",
     subtitle: "AI로 내 사업장에서 받을 수 있는 정부지원사업 찾기",
-    price: 49700,
-    priceLabel: "49,700원",
+    price: 29700,
+    priceLabel: "29,700원",
     originalPrice: 69000,
     originalPriceLabel: "69,000원",
-    discountLabel: "28% 할인",
+    discountLabel: "57% 할인",
     monthlyLabel: "",
     period: "1개월",
     popular: true,
