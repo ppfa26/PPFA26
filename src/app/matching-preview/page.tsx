@@ -778,7 +778,7 @@ export default function MatchingPreview() {
           {/* ── 결과창 맨 하단 CTA - 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ──
               CTA 박스 위 여백과 아래 광고 영역 상하 여백을 동일하게 맞춤(대표님 요청). */}
           <section className="mt-6 px-0 pb-0 sm:mt-6">
-            <div className="mx-auto max-w-2xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
+            <div className="mx-auto max-w-3xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
               <Editable
                 id="preview-bottom-cta-title"
                 as="h2"
