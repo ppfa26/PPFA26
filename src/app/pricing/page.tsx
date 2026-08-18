@@ -43,60 +43,87 @@ export default function PricingPage() {
   return (
     <PageShell pageKey="pricing">
       <Header />
-      <main className="px-4 py-10 sm:py-14">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center">
-            <Editable
-              id="pricing-title"
-              as="h1"
-              className="text-3xl font-black text-brand-dark sm:text-4xl"
-            >
-              AI 진단 리포트
-            </Editable>
-            <Editable
-              id="pricing-sub"
-              as="p"
-              className="mx-auto mt-3 max-w-xl text-brand-gray"
-            >
-              1회성 결제이며 월 구독 결제가 아닙니다.
-            </Editable>
-            <p className="mx-auto mt-4 inline-block break-keep rounded-full bg-brand-yellow/40 px-4 py-2 text-sm font-semibold text-brand-dark">
-              💡 모든 가격은 부가세가 포함된 금액입니다
-            </p>
+      <main>
+        {/* 요금 안내 - 홈 첫 화면 요금 섹션과 동일한 디자인 (대표님 요청) */}
+        <section className="px-4 py-6 sm:py-10">
+          <div className="mx-auto max-w-3xl">
+            {/* 상단 헤더 박스 - 홈과 동일(section-title-glass + 뱃지) */}
+            <div className="section-title-glass is-wide-pricing mx-auto flex flex-col items-center text-center">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm">
+                💳 서비스 이용 플랜
+              </span>
+              <Editable
+                id="pricing-title"
+                as="h1"
+                className="break-keep text-[22px] font-black tracking-[-0.03em] text-brand-dark sm:text-[26px]"
+              >
+                AI 진단 리포트
+              </Editable>
+              <Editable
+                id="pricing-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium text-brand-gray"
+              >
+                1회성 결제이며, 월 구독이 아닙니다.
+              </Editable>
+              <p className="mt-4 inline-block break-keep rounded-full bg-brand-yellow/40 px-4 py-2 text-sm font-semibold text-brand-dark">
+                💡 모든 가격은 부가세가 포함된 금액입니다
+              </p>
+            </div>
+            <div className="mt-6">
+              <PricingCards prefix="pricing" />
+            </div>
           </div>
+        </section>
 
-          <div className="mt-12">
-            <PricingCards prefix="pricing" />
-          </div>
+        {/* 구간 구분 - 얇은 회색 가로줄 (홈과 동일) */}
+        <div className="section-divider" aria-hidden="true" />
 
-          {/* 가격 FAQ */}
-          <div className="mx-auto mt-10 max-w-3xl sm:mt-16">
-            <Editable
-              id="pricing-faq-title"
-              as="h2"
-              className="text-center text-2xl font-extrabold text-brand-dark"
-            >
-              자주 묻는 질문
-            </Editable>
-            <div className="mt-6 space-y-3">
+        {/* FAQ - 홈 첫 화면 FAQ 섹션과 동일한 디자인 (대표님 요청) */}
+        <section className="bg-gray-50 px-4 py-6 sm:py-10">
+          <div className="mx-auto max-w-3xl">
+            <div className="section-title-glass is-wide mx-auto flex flex-col items-center text-center">
+              <span className="mb-3 inline-block rounded-full bg-brand-orange/10 px-4 py-1.5 text-xs font-extrabold tracking-[0.02em] text-brand-orange sm:text-sm">
+                💬 자주 묻는 질문
+              </span>
+              <Editable
+                id="pricing-faq-title"
+                as="h2"
+                className="break-keep text-[22px] font-black tracking-[-0.03em] text-brand-dark sm:text-[26px]"
+              >
+                궁금한 점, 미리 확인하세요
+              </Editable>
+              <Editable
+                id="pricing-faq-sub"
+                as="p"
+                className="mx-auto mt-3 max-w-xl break-keep text-sm font-medium text-brand-gray"
+              >
+                결제 전 가장 많이 묻는 질문들을 모았습니다.
+              </Editable>
+            </div>
+            {/* 아코디언 목록 - 홈과 동일(faq-accordion + 화살표 회전) */}
+            <div className="mx-auto mt-6 max-w-2xl space-y-3">
               {PRICING_FAQ.map((f, i) => (
                 <details
                   key={i}
-                  className="group rounded-xl border border-gray-200 bg-white p-5"
+                  className="faq-accordion group rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition open:border-brand-orange/40"
                 >
-                  <summary className="cursor-pointer list-none">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
                     <Editable
                       id={`pricing-faq-q-${i}`}
                       as="span"
-                      className="font-bold text-brand-dark"
+                      className="break-keep text-sm font-bold text-brand-dark sm:text-base"
                     >
                       {f.q}
                     </Editable>
+                    <span className="shrink-0 text-brand-orange transition group-open:rotate-180">
+                      ▾
+                    </span>
                   </summary>
                   <Editable
                     id={`pricing-faq-a-${i}`}
                     as="p"
-                    className="mt-3 whitespace-pre-line text-sm leading-relaxed text-brand-gray"
+                    className="mt-3 whitespace-pre-line break-keep text-sm leading-relaxed text-brand-gray"
                   >
                     {f.a}
                   </Editable>
@@ -104,7 +131,7 @@ export default function PricingPage() {
               ))}
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
       {/* ── 카카오 애드핏 광고 (요금 안내 하단 · 푸터 위) ── */}
