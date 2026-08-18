@@ -90,6 +90,8 @@ type Props = {
   adUnitPc?: string;
   /** 모바일(<768px)용 320x100 광고단위 ID. 미입력 시 렌더 안 함 */
   adUnitMobile?: string;
+  /** 배너 카드 최대 폭(Tailwind max-w-* 클래스). 페이지 콘텐츠 폭에 맞출 때 사용. 기본 max-w-3xl */
+  maxWidthClass?: string;
   /** 상단 여백 등 조정 */
   className?: string;
 };
@@ -101,6 +103,7 @@ function isValid(id?: string) {
 export default function AdFitBanner({
   adUnitPc,
   adUnitMobile,
+  maxWidthClass = "max-w-3xl",
   className = "",
 }: Props) {
   const hasPc = isValid(adUnitPc);
@@ -113,7 +116,7 @@ export default function AdFitBanner({
     <aside
       id="adfit-banner"
       aria-label="카카오 애드핏 광고"
-      className={`mx-auto w-full max-w-3xl rounded-2xl border border-black/5 bg-white px-4 py-3 shadow-sm ${className}`}
+      className={`mx-auto w-full ${maxWidthClass} rounded-2xl border border-black/5 bg-white px-4 py-3 shadow-sm ${className}`}
     >
       {/* ── "광고" 라벨 (상단 명시) ── */}
       <div className="mb-1.5 flex items-center justify-between">

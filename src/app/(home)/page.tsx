@@ -936,7 +936,7 @@ export default function Home() {
       {/* ── 카카오 애드핏 광고 (첫 페이지 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리. */}
       <div className="border-t border-brand-dark/5 px-4 py-2.5">
-        <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} />
+        <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} adUnitMobile={ADFIT_UNIT_MOBILE_320x100} maxWidthClass="max-w-2xl" />
       </div>
       <Footer />
       {/* 오른쪽 하단 고정 - 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
