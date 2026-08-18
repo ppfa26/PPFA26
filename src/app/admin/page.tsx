@@ -82,6 +82,13 @@ type AccessRow = {
   created_at: string;
 };
 type IpRow = { ip: string; hits: number; users: number; last_seen: string };
+/**
+ * IP별 어뷰징 판단용 파생 데이터 (프론트에서 접속 로그로 직접 계산).
+ *  - diagCount : 이 IP가 진단 관련 페이지(/diagnosis*, /matching-preview)를 연 횟수
+ *  - isMember  : 이 IP에서 로그인(이메일 있는) 접속이 한 번이라도 있었는지
+ *  ※ Supabase RPC를 건드리지 않고, 이미 로드된 access 로그만으로 계산한다.
+ */
+type IpDerived = { diagCount: number; isMember: boolean };
 type BlockRow = {
   kind: string;
   value: string;
@@ -263,6 +270,28 @@ export default function AdminPage() {
     }
     setTimeout(() => setMsg(null), 3500);
   };
+
+  // 🕵️ IP별 어뷰징 판단 데이터 - 접속 로그(access)를 IP 기준으로 훑어
+  //   ① 진단 페이지를 몇 번 열었는지(diagCount), ② 로그인(회원) 접속이 있었는지(isMember)를 계산.
+  //   ※ '회원가입 안 하고 진단 조회만 반복'하는 IP를 관리자가 눈으로 골라 차단하기 위함.
+  //     서버 RPC를 건드리지 않고, 이미 불러온 access 로그만으로 만든다.
+  const ipDerived = useMemo(() => {
+    // 진단 관련 경로 판정 (/diagnosis, /diagnosis-chat, /diagnosis-form, /matching-preview)
+    const isDiagPath = (p: string | null) => {
+      if (!p) return false;
+      return p.startsWith("/diagnosis") || p.startsWith("/matching-preview");
+    };
+    const map = new Map<string, IpDerived>();
+    for (const row of access) {
+      if (!row.ip) continue;
+      const cur = map.get(row.ip) ?? { diagCount: 0, isMember: false };
+      if (isDiagPath(row.path)) cur.diagCount += 1;
+      // 이메일이 채워진 접속 로그가 하나라도 있으면 = 이 IP에서 로그인한 회원.
+      if (row.email && row.email !== "-") cur.isMember = true;
+      map.set(row.ip, cur);
+    }
+    return map;
+  }, [access]);
 
   // 📊 요약 리포트 - 오늘/이번주/이번달 신규가입·진단접수·결제·매출을 집계한다.
   //  (관리자 계정은 회원 수에서 제외하지 않고, 실제 유입 판단은 대표님이 직접 확인)
@@ -2208,7 +2237,7 @@ export default function AdminPage() {
                       🌐 IP별 접속 집계 ({ipSummary.length}개)
                     </h3>
                     <p className="mt-0.5 text-xs text-gray-400">
-                      접속수가 유난히 많거나, 한 IP에 여러 계정이 붙으면 의심해 보세요.
+                      <span className="font-semibold text-amber-600">비회원 ⚠️</span> 표시는 회원가입 없이 진단만 여러 번 조회한 IP입니다. 반복 어뷰징이 의심되면 차단하세요.
                     </p>
                   </div>
                   <span className="shrink-0 text-sm font-bold text-gray-400">
@@ -2222,6 +2251,8 @@ export default function AdminPage() {
                     <tr>
                       <th className="px-4 py-2">IP</th>
                       <th className="px-4 py-2 text-center">접속수</th>
+                      <th className="px-4 py-2 text-center">진단조회</th>
+                      <th className="px-4 py-2 text-center">회원</th>
                       <th className="px-4 py-2 text-center">계정수</th>
                       <th className="px-4 py-2">마지막</th>
                       <th className="px-4 py-2 text-center">관리</th>
@@ -2230,7 +2261,7 @@ export default function AdminPage() {
                   <tbody className="divide-y divide-gray-50">
                     {ipSummary.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
+                        <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
                           접속 기록이 없습니다.
                         </td>
                       </tr>
@@ -2239,13 +2270,17 @@ export default function AdminPage() {
                       // ★대표님 요청★ 데이터센터/클라우드 서버(봇 의심) IP는 뱃지로 "표시만" 한다.
                       //   실제 차단은 대표님이 아래 'IP차단' 버튼으로 직접 판단. (자동 차단 아님)
                       const cls = classifyIp(r.ip);
+                      const der = ipDerived.get(r.ip) ?? { diagCount: 0, isMember: false };
+                      // 어뷰징 의심: 회원가입 없이(비회원) 진단 페이지를 3번 넘게 연 IP.
+                      //  → 컨설턴트/반복 조회 어뷰저를 눈에 띄게 표시(주황 강조).
+                      const abuseSuspect = !der.isMember && der.diagCount > 3;
                       return (
                       <tr
                         key={r.ip}
                         className={
                           cls.isDataCenter
                             ? "bg-rose-50/60"
-                            : r.users > 3 || r.hits > 30
+                            : abuseSuspect || r.users > 3 || r.hits > 30
                               ? "bg-amber-50/60"
                               : ""
                         }
@@ -2262,6 +2297,43 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td className="px-4 py-2 text-center text-gray-600">{r.hits}</td>
+                        <td className="px-4 py-2 text-center">
+                          <span
+                            className={
+                              der.diagCount > 3
+                                ? "font-bold text-amber-600"
+                                : der.diagCount > 0
+                                  ? "text-gray-700"
+                                  : "text-gray-300"
+                            }
+                            title="이 IP가 진단 페이지(진단하기/매칭 미리보기)를 연 횟수"
+                          >
+                            {der.diagCount}회
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 text-center">
+                          {der.isMember ? (
+                            <span className="inline-flex items-center rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-600">
+                              회원
+                            </span>
+                          ) : (
+                            <span
+                              className={
+                                "inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-bold " +
+                                (abuseSuspect
+                                  ? "bg-amber-100 text-amber-700"
+                                  : "bg-gray-100 text-gray-400")
+                              }
+                              title={
+                                abuseSuspect
+                                  ? "회원가입 없이 진단을 여러 번 조회한 IP입니다. 반복 어뷰징이 의심되면 차단하세요."
+                                  : "이 IP에서 로그인(회원) 접속 기록이 없습니다."
+                              }
+                            >
+                              비회원{abuseSuspect ? " ⚠️" : ""}
+                            </span>
+                          )}
+                        </td>
                         <td className="px-4 py-2 text-center font-semibold text-gray-800">
                           {r.users}
                         </td>
