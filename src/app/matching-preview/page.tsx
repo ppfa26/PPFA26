@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_300x250 } from "@/lib/adfitConfig";
+import { ADFIT_UNIT_PC_728x90, ADFIT_UNIT_MOBILE_320x100 } from "@/lib/adfitConfig";
 // (성능) 결과 상세 패널은 페이지에서 가장 무거운 컴포넌트(약 1.6천 줄).
 //  next/dynamic 으로 별도 청크로 분리해 초기 First Load JS 를 줄인다.
 //  ssr: true(기본) 유지 → SEO·초기 콘텐츠·결과 계산 로직은 100% 동일.
