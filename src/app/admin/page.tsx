@@ -998,6 +998,21 @@ export default function AdminPage() {
     return acc;
   }, {});
 
+  // ── 실무자용 오늘 지표(상단 KPI) ──────────────────────────
+  // 오늘(로컬 기준) 새로 들어온 진단서 = 오늘 생긴 신규 리드
+  const todayLeadCount = (() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth();
+    const d = now.getDate();
+    const start = new Date(y, m, d).getTime();
+    const end = start + 86400000;
+    return diagnoses.filter((x) => {
+      const t = new Date(x.created_at).getTime();
+      return !Number.isNaN(t) && t >= start && t < end;
+    }).length;
+  })();
+
   // 회원 검색 필터 - 이메일·이름·연락처 어디에 걸려도 검색됨
   const filteredUsers = users.filter((u) => {
     const q = userSearch.trim().toLowerCase();
@@ -1479,29 +1494,68 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* 통계 카드 */}
-          <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {/* 통계 카드 - 실무(영업/상담) 우선 지표.
+              클릭하면 고객 관리 › 통합보기에서 해당 통화상태로 바로 필터된다.
+              (매출/회원 숫자는 매출 리포트 탭에서 상세 확인) */}
+          <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {/* 오늘 신규 리드 - '오늘 전화할 대상' */}
+            <button
+              onClick={() => {
+                setTab("customers");
+                setCustView("diags");
+              }}
+              className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              title="오늘 새로 접수된 진단(신규 리드) - 진단서 목록으로 이동"
+            >
+              <div className="text-[12px] font-semibold text-blue-500">🆕 오늘 신규 리드</div>
+              <div className="mt-1 text-2xl font-extrabold text-blue-700">{todayLeadCount}건</div>
+            </button>
+            {/* 미접촉 - 아직 전화 안 한 사람(가장 급한 액션) */}
+            <button
+              onClick={() => {
+                setTab("customers");
+                setCustView("unified");
+                setUnifiedCall("none");
+              }}
+              className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              title="아직 통화하지 않은 고객 - 통합보기에서 미접촉만 필터"
+            >
+              <div className="text-[12px] font-semibold text-rose-500">📞 미접촉(전화 필요)</div>
+              <div className="mt-1 text-2xl font-extrabold text-rose-600">{unifiedCallCounts["none"] ?? 0}명</div>
+            </button>
+            {/* 통화완료 */}
+            <button
+              onClick={() => {
+                setTab("customers");
+                setCustView("unified");
+                setUnifiedCall("done");
+              }}
+              className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              title="통화 완료한 고객 - 통합보기에서 통화완료만 필터"
+            >
+              <div className="text-[12px] font-semibold text-emerald-500">✅ 통화완료</div>
+              <div className="mt-1 text-2xl font-extrabold text-emerald-600">{unifiedCallCounts["done"] ?? 0}명</div>
+            </button>
+            {/* 계약 - 성과 */}
+            <button
+              onClick={() => {
+                setTab("customers");
+                setCustView("unified");
+                setUnifiedCall("contract");
+              }}
+              className="rounded-2xl border border-brand-orange/40 bg-brand-orange/10 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              title="계약 완료 고객 - 통합보기에서 계약만 필터"
+            >
+              <div className="text-[12px] font-semibold text-brand-orange">🏆 계약</div>
+              <div className="mt-1 text-2xl font-extrabold text-brand-orange">{unifiedCallCounts["contract"] ?? 0}명</div>
+            </button>
+            {/* 전체 회원 */}
             <StatCard
               label="전체 회원"
               value={`${stats?.total_users ?? 0}명`}
               accent="text-gray-900"
             />
-            <StatCard
-              label="유효 회원"
-              value={`${stats?.active_members ?? 0}명`}
-              sub="열람 기한 내"
-              accent="text-emerald-600"
-            />
-            <StatCard
-              label="누적 결제"
-              value={`${stats?.total_paid ?? 0}건`}
-              accent="text-gray-900"
-            />
-            <StatCard
-              label="총 매출"
-              value={won(stats?.total_revenue ?? 0)}
-              accent="text-brand-primary"
-            />
+            {/* 이번 달 매출 */}
             <StatCard
               label="이번 달 매출"
               value={won(stats?.month_revenue ?? 0)}
@@ -1510,59 +1564,47 @@ export default function AdminPage() {
             />
           </section>
 
-          {/* 탭 + 빠른 실행 버튼 - 한 줄에 균등 분배해 빈 공간 없이 꽉 채운다
-              순서: 고객관리(회원+진단서+통합) · 결제조회권 · 요약매출리포트 · 접속기기차단 · 진단서엑셀 · 진단링크복사 */}
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            {/* 1~3: 앞쪽 탭 3개(map) — 고객 관리 하나로 통합 */}
+          {/* 탭(4개) - 성격이 같은 '보는 화면'끼리 한 줄에 균등 배치.
+              고객관리(회원+진단서+통합) · 결제조회권 · 매출리포트 · 접속차단 */}
+          <div className="mb-3 flex flex-wrap items-center gap-2">
             {(
               [
                 ["customers", `👤 고객 관리 (${unifiedCustomers.length})`],
-                ["payments", `💳 결제 조회권 (${payments.length})`],
-                ["revenue", "📊 요약 매출 리포트"],
+                ["payments", `💳 결제·조회권 (${payments.length})`],
+                ["revenue", "📊 매출 리포트"],
+                ["access", "🛡️ 접속 차단"],
               ] as [Tab, string][]
             ).map(([key, label]) => (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-center text-[14px] font-bold transition hover:scale-[1.02] ${
+                className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2.5 text-center text-[14px] font-bold transition hover:scale-[1.02] ${
                   tab === key
-                    ? "bg-brand-dark text-white"
+                    ? "bg-brand-dark text-white shadow"
                     : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
                 }`}
               >
                 {label}
               </button>
             ))}
+          </div>
 
-            {/* 5: 접속 기기 차단(탭) */}
-            <button
-              onClick={() => setTab("access")}
-              className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2 text-center text-[14px] font-bold transition hover:scale-[1.02] ${
-                tab === "access"
-                  ? "bg-brand-dark text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
-              }`}
-            >
-              🛡️ 접속 기기 차단
-            </button>
-
-            {/* 6: 진단서 엑셀(실행) - 흰/회색 통일 */}
-            <button
-              onClick={downloadAllDiag}
-              disabled={diagnoses.length === 0}
-              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
-              title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
-            >
-              📋 진단서 엑셀
-            </button>
-
-            {/* 7: 진단링크 복사(실행) - 흰/회색 통일 */}
+          {/* 실행 버튼(누르면 바로 동작하는 것) - 탭과 시각적으로 구분해 아래 줄에 배치 */}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
             <button
               onClick={copyDiagnosisLink}
-              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50"
+              className="whitespace-nowrap rounded-xl bg-brand-orange px-4 py-2 text-[13px] font-bold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
               title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
             >
               🔗 진단링크 복사
+            </button>
+            <button
+              onClick={downloadAllDiag}
+              disabled={diagnoses.length === 0}
+              className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-4 py-2 text-[13px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
+              title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
+            >
+              📋 진단서 엑셀
             </button>
           </div>
 
@@ -1666,10 +1708,18 @@ export default function AdminPage() {
                         c.isMember ? "border-emerald-200 bg-white" : "border-gray-200 bg-gray-50"
                       }`}
                     >
-                      {/* 카드 헤더 - 한 줄 요약 */}
-                      <button
+                      {/* 카드 헤더 - 한 줄 요약 (클릭 시 펼침) */}
+                      <div
+                        role="button"
+                        tabIndex={0}
                         onClick={() => setOpenUnified(isOpen ? null : c.key)}
-                        className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left hover:bg-gray-50"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setOpenUnified(isOpen ? null : c.key);
+                          }
+                        }}
+                        className="flex w-full cursor-pointer items-start justify-between gap-3 px-4 py-3 text-left hover:bg-gray-50"
                       >
                         <div className="min-w-0 flex-1">
                           {/* 1줄: 이름 + 통화상태 + 회원/비회원 + 진단상태 */}
@@ -1761,7 +1811,18 @@ export default function AdminPage() {
                             </div>
                           )}
                         </div>
-                        <div className="shrink-0 text-right">
+                        <div className="flex shrink-0 flex-col items-end gap-1.5">
+                          {/* 목록에서 바로 전화(카드 펼치지 않고도) */}
+                          {c.phone && (
+                            <a
+                              href={`tel:${c.phone.replace(/[^0-9]/g, "")}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 rounded-lg bg-brand-dark px-3 py-1.5 text-[12px] font-bold text-white shadow-sm transition hover:opacity-90"
+                              title={`${c.phone} 로 전화 걸기`}
+                            >
+                              📞 전화
+                            </a>
+                          )}
                           <div className="text-[11px] text-gray-400">
                             {fmtDateTime(c.latestAt)}
                           </div>
@@ -1770,11 +1831,11 @@ export default function AdminPage() {
                               {c.totalAmount.toLocaleString()}원
                             </div>
                           )}
-                          <div className="mt-1 text-[11px] text-gray-400">
+                          <div className="text-[11px] text-gray-400">
                             {isOpen ? "▲ 접기" : "▼ 상세"}
                           </div>
                         </div>
-                      </button>
+                      </div>
 
                       {/* 펼침: 영업 컨트롤 + 진단서 목록 + 결과 열람 버튼 */}
                       {isOpen && (
