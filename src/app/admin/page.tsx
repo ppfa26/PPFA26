@@ -86,10 +86,11 @@ type IpRow = { ip: string; hits: number; users: number; last_seen: string };
 /**
  * IP별 어뷰징 판단용 파생 데이터 (프론트에서 접속 로그로 직접 계산).
  *  - diagCount : 이 IP가 진단 관련 페이지(/diagnosis*, /matching-preview)를 연 횟수
+ *  - hitCount  : 이 IP의 전체 접속(로그) 횟수
  *  - isMember  : 이 IP에서 로그인(이메일 있는) 접속이 한 번이라도 있었는지
  *  ※ Supabase RPC를 건드리지 않고, 이미 로드된 access 로그만으로 계산한다.
  */
-type IpDerived = { diagCount: number; isMember: boolean };
+type IpDerived = { diagCount: number; hitCount: number; isMember: boolean };
 type BlockRow = {
   kind: string;
   value: string;
@@ -283,7 +284,8 @@ export default function AdminPage() {
     const map = new Map<string, IpDerived>();
     for (const row of access) {
       if (!row.ip) continue;
-      const cur = map.get(row.ip) ?? { diagCount: 0, isMember: false };
+      const cur = map.get(row.ip) ?? { diagCount: 0, hitCount: 0, isMember: false };
+      cur.hitCount += 1; // 전체 접속 횟수(모든 경로 포함)
       if (isDiagPath(row.path)) cur.diagCount += 1;
       // 이메일이 채워진 접속 로그가 하나라도 있으면 = 이 IP에서 로그인한 회원.
       if (row.email && row.email !== "-") cur.isMember = true;
@@ -1669,18 +1671,27 @@ export default function AdminPage() {
                               <span className="text-gray-400">🌐</span>
                               {c.ips.slice(0, 2).map((ip) => {
                                 const shared = emailCountByIp(ip) >= 2;
+                                const hits = ipDerived.get(ip)?.hitCount ?? 0; // 이 IP 전체 접속 횟수
                                 return (
                                   <span
                                     key={ip}
-                                    className={`rounded px-1.5 py-0.5 font-mono ${
+                                    className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono ${
                                       shared
                                         ? "bg-red-100 font-bold text-red-600"
                                         : "bg-gray-100 text-gray-500"
                                     }`}
-                                    title={shared ? `이 IP를 ${emailCountByIp(ip)}개 계정이 공유(어뷰징 의심)` : ""}
+                                    title={
+                                      (shared ? `이 IP를 ${emailCountByIp(ip)}개 계정이 공유(어뷰징 의심) · ` : "") +
+                                      `총 ${hits}회 접속`
+                                    }
                                   >
                                     {ip}
                                     {shared ? ` ⚠️${emailCountByIp(ip)}` : ""}
+                                    {hits > 0 && (
+                                      <span className="rounded-sm bg-white/70 px-1 text-[10px] font-semibold text-gray-500">
+                                        {hits}회
+                                      </span>
+                                    )}
                                   </span>
                                 );
                               })}
@@ -2405,7 +2416,7 @@ export default function AdminPage() {
                       // ★대표님 요청★ 데이터센터/클라우드 서버(봇 의심) IP는 뱃지로 "표시만" 한다.
                       //   실제 차단은 대표님이 아래 'IP차단' 버튼으로 직접 판단. (자동 차단 아님)
                       const cls = classifyIp(r.ip);
-                      const der = ipDerived.get(r.ip) ?? { diagCount: 0, isMember: false };
+                      const der = ipDerived.get(r.ip) ?? { diagCount: 0, hitCount: 0, isMember: false };
                       // 어뷰징 의심: 회원가입 없이(비회원) 진단 페이지를 3번 넘게 연 IP.
                       //  → 컨설턴트/반복 조회 어뷰저를 눈에 띄게 표시(주황 강조).
                       const abuseSuspect = !der.isMember && der.diagCount > 3;
