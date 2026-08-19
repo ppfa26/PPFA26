@@ -1580,10 +1580,12 @@ export default function AdminPage() {
                   return (
                     <div
                       key={c.key}
-                      className={`overflow-hidden rounded-2xl border shadow-sm ${
+                      className={`overflow-hidden rounded-2xl border bg-white shadow-sm transition-transform duration-150 ${
+                        isOpen ? "" : "hover:scale-[1.01]"
+                      } ${
                         c.paidCount > 0
-                          ? "border-brand-orange/50 bg-white ring-1 ring-brand-orange/20"
-                          : "border-gray-200 bg-white"
+                          ? "border-brand-orange/50 ring-1 ring-brand-orange/20"
+                          : "border-gray-200"
                       }`}
                     >
                       {/* 카드 헤더 - 한 줄 요약 (클릭 시 펼침) */}
@@ -1597,7 +1599,7 @@ export default function AdminPage() {
                             setOpenUnified(isOpen ? null : c.key);
                           }
                         }}
-                        className="flex w-full cursor-pointer items-start justify-between gap-3 px-4 py-3 text-left hover:bg-gray-50"
+                        className="flex w-full cursor-pointer items-start justify-between gap-3 px-4 py-3 text-left"
                       >
                         <div className="min-w-0 flex-1">
                           {/* 1줄: 이름 + 통화상태 + 진단상태 (전원 회원이므로 회원뱃지는 생략) */}
