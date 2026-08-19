@@ -98,7 +98,10 @@ type BlockRow = {
 };
 
 type Phase = "loading" | "denied" | "ready";
-type Tab = "unified" | "users" | "payments" | "diagnoses" | "revenue" | "access";
+// 상단 탭: '고객 관리'(회원+진단서+통합) 하나로 합치고, 그 안에서 CustView 토글로 전환
+type Tab = "customers" | "payments" | "revenue" | "access";
+// 고객 관리 탭 내부 보기 모드
+type CustView = "unified" | "members" | "diags";
 
 /* ------------------------------------------------------------------ */
 /*  유틸                                                               */
@@ -215,7 +218,8 @@ export default function AdminPage() {
   }, []);
 
   const [phase, setPhase] = useState<Phase>("loading");
-  const [tab, setTab] = useState<Tab>("unified");
+  const [tab, setTab] = useState<Tab>("customers");
+  const [custView, setCustView] = useState<CustView>("unified"); // 고객 관리 내부 보기
 
   const [stats, setStats] = useState<Stats | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -1106,19 +1110,21 @@ export default function AdminPage() {
         .sort(byCreatedDesc);
     }
 
-    // ④ 그래도 못 찾으면 진단서 탭으로 이동 + 검색창에 이름 자동 입력
+    // ④ 그래도 못 찾으면 진단서 보기로 이동 + 검색창에 이름 자동 입력
     if (matched.length === 0) {
-      setTab("diagnoses");
+      setTab("customers");
+      setCustView("diags");
       setDiagSearch(fullName?.trim() || "");
       setMsg(
-        "정확히 일치하는 진단서를 못 찾아 '고객 진단서' 탭으로 이동했어요. 검색창에 이름을 넣어뒀으니 직접 확인해 주세요."
+        "정확히 일치하는 진단서를 못 찾아 '고객 관리 › 진단서' 보기로 이동했어요. 검색창에 이름을 넣어뒀으니 직접 확인해 주세요."
       );
       setTimeout(() => setMsg(null), 4000);
       return;
     }
 
     const target = matched[0];
-    setTab("diagnoses");
+    setTab("customers");
+    setCustView("diags");
     setOpenDiag(target.id);
     // 탭 전환 렌더 후 해당 진단서로 스크롤 + 잠깐 강조
     setTimeout(() => {
@@ -1505,14 +1511,12 @@ export default function AdminPage() {
           </section>
 
           {/* 탭 + 빠른 실행 버튼 - 한 줄에 균등 분배해 빈 공간 없이 꽉 채운다
-              순서: 회원목록 · 고객진단서 · 결제조회권 · 매출통계 · [요약매출리포트] · 접속기기차단 · 진단서엑셀 · 진단링크복사 */}
+              순서: 고객관리(회원+진단서+통합) · 결제조회권 · 요약매출리포트 · 접속기기차단 · 진단서엑셀 · 진단링크복사 */}
           <div className="mb-4 flex flex-wrap items-center gap-2">
-            {/* 1~4: 앞쪽 탭 4개(map) */}
+            {/* 1~3: 앞쪽 탭 3개(map) — 고객 관리 하나로 통합 */}
             {(
               [
-                ["unified", `👤 통합 고객 (${unifiedCustomers.length})`],
-                ["users", `👥 회원 목록 (${users.length})`],
-                ["diagnoses", `📋 고객 진단서 (${diagnoses.length})`],
+                ["customers", `👤 고객 관리 (${unifiedCustomers.length})`],
                 ["payments", `💳 결제 조회권 (${payments.length})`],
                 ["revenue", "📊 요약 매출 리포트"],
               ] as [Tab, string][]
@@ -1562,8 +1566,33 @@ export default function AdminPage() {
             </button>
           </div>
 
+          {/* ======== 고객 관리 탭: 통합/회원/진단서 세그먼트 토글 ======== */}
+          {tab === "customers" && (
+            <div className="mb-4 inline-flex rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
+              {(
+                [
+                  ["unified", `👤 통합보기 (${unifiedCustomers.length})`],
+                  ["members", `👥 회원 (${users.length})`],
+                  ["diags", `📋 진단서 (${diagnoses.length})`],
+                ] as [CustView, string][]
+              ).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setCustView(key)}
+                  className={`whitespace-nowrap rounded-lg px-4 py-2 text-[13px] font-bold transition ${
+                    custView === key
+                      ? "bg-brand-dark text-white"
+                      : "text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* ------- 통합 고객(회원+진단서+결제+IP를 사람 단위로 합침) ------- */}
-          {tab === "unified" && (
+          {tab === "customers" && custView === "unified" && (
             <div>
               {/* 🔍 통합 검색 - 이름·이메일·전화·사업자번호로 한 번에 */}
               <div className="mb-4 flex w-full flex-wrap items-center gap-2">
@@ -1886,7 +1915,7 @@ export default function AdminPage() {
           )}
 
           {/* ------- 회원 목록 ------- */}
-          {tab === "users" && (
+          {tab === "customers" && custView === "members" && (
             <div>
               {/* 🔍 회원 검색 - 이름·이메일·연락처로 즉시 검색 */}
               <div className="mb-4 flex w-full flex-wrap items-center gap-2">
@@ -2252,7 +2281,7 @@ export default function AdminPage() {
           )}
 
           {/* ------- 고객 진단서 (질문지 + 결과) ------- */}
-          {tab === "diagnoses" && (
+          {tab === "customers" && custView === "diags" && (
             <div className="space-y-3">
               {/* ★ 완료 / 미완료(중간이탈) 요약 - 대표님이 전화 돌릴 리드 한눈에 파악 ★ */}
               {diagnoses.length > 0 && (
@@ -2437,7 +2466,8 @@ export default function AdminPage() {
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setTab("users");
+                                  setTab("customers");
+                                  setCustView("members");
                                   setUserSearch(memberEmail);
                                 }}
                                 title="클릭하면 이 회원 계정으로 이동합니다"
