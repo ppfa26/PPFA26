@@ -245,6 +245,8 @@ export default function AdminPage() {
   const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
   const [unifiedSearch, setUnifiedSearch] = useState(""); // 통합 고객 뷰 검색어
   const [openUnified, setOpenUnified] = useState<string | null>(null); // 통합 카드 펼침(key)
+  const [unifiedCall, setUnifiedCall] = useState<"all" | CallStatus>("all"); // 통화상태 필터
+  const [unifiedMemoDraft, setUnifiedMemoDraft] = useState<Record<string, string>>({}); // 통합 카드 메모 입력
 
   // IP 집계·접속 로그 표가 세로로 너무 길어서 기본은 접어두고, 헤더 클릭 시 펼침.
   const [ipListOpen, setIpListOpen] = useState(false); // 🌐 IP별 접속 집계 접기/펼치기
@@ -846,6 +848,8 @@ export default function AdminPage() {
     diagDone: boolean;            // 완료 진단 존재 여부
     ips: string[];                // 접속 IP(최근순)
     latestAt: string;            // 정렬용 최신 활동 시각
+    noteKey: string | null;       // 상담메모/통화상태 저장 키(대표 진단서 id)
+    expiry: string | null;        // 열람 기한(latest_expiry)
   };
 
   const unifiedCustomers: UnifiedCustomer[] = (() => {
@@ -899,6 +903,8 @@ export default function AdminPage() {
         diagDone: done,
         ips,
         latestAt: latest || u.joined_at || "",
+        noteKey: top?.id || null,
+        expiry: u.latest_expiry,
       });
     }
 
@@ -932,6 +938,8 @@ export default function AdminPage() {
         diagDone: sorted.some((d) => (d.status || "completed") === "completed"),
         ips: [],
         latestAt: top.created_at || "",
+        noteKey: top?.id || null,
+        expiry: null,
       });
     });
 
@@ -939,8 +947,14 @@ export default function AdminPage() {
     return list.sort((a, b) => (a.latestAt < b.latestAt ? 1 : -1));
   })();
 
+  // 통합 카드의 통화 상태(대표 진단서의 leadNote 기준)
+  const callStatusOf = (c: UnifiedCustomer): CallStatus =>
+    (c.noteKey && leadNotes[c.noteKey]?.status) || "none";
+
   // 통합 뷰 검색: 이름(회원/실명)·이메일·전화·사업자번호·업종 어디에 걸려도 검색
+  //  + 통화상태 필터(미접촉/통화완료/부재중/계약)
   const filteredUnified = unifiedCustomers.filter((c) => {
+    if (unifiedCall !== "all" && callStatusOf(c) !== unifiedCall) return false;
     const q = unifiedSearch.trim().toLowerCase();
     if (!q) return true;
     const hay = [c.email, c.memberName, c.realName, c.phone, c.bno, c.bizType]
@@ -951,6 +965,13 @@ export default function AdminPage() {
     const digitsQ = q.replace(/[^0-9]/g, "");
     return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
   });
+
+  // 통화상태별 인원 집계(필터 버튼 옆 숫자용)
+  const unifiedCallCounts = unifiedCustomers.reduce<Record<string, number>>((acc, c) => {
+    const s = callStatusOf(c);
+    acc[s] = (acc[s] || 0) + 1;
+    return acc;
+  }, {});
 
   // 회원 검색 필터 - 이메일·이름·연락처 어디에 걸려도 검색됨
   const filteredUsers = users.filter((u) => {
@@ -1546,9 +1567,33 @@ export default function AdminPage() {
                   </button>
                 )}
               </div>
+              {/* 통화상태 필터 - 영업 우선순위: 미접촉만 골라 보기 등 */}
+              <div className="mb-3 flex flex-wrap items-center gap-1.5">
+                {([["all", "전체"], ...CALL_STATUS_ORDER.map((s) => [s, CALL_STATUS_META[s].label])] as [
+                  "all" | CallStatus,
+                  string,
+                ][]).map(([key, label]) => {
+                  const cnt =
+                    key === "all" ? unifiedCustomers.length : unifiedCallCounts[key] || 0;
+                  const active = unifiedCall === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setUnifiedCall(key)}
+                      className={`rounded-full border px-3 py-1 text-[12px] font-bold transition ${
+                        active
+                          ? "border-brand-dark bg-brand-dark text-white"
+                          : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      {label} {cnt}
+                    </button>
+                  );
+                })}
+              </div>
               <p className="mb-3 text-xs text-gray-500">
-                한 사람의 <b>회원 계정 · 진단서 · 결제 · 접속 IP</b>를 카드 하나에 모았습니다.
-                총 <b>{filteredUnified.length}</b>명 · 초록=회원 / 회색=비회원 리드
+                한 사람의 <b>회원 · 진단서 · 결제 · 상담메모 · IP</b>를 카드 하나에.
+                표시 <b>{filteredUnified.length}</b>명 · 초록=회원 / 회색=비회원 리드
               </p>
 
               <div className="space-y-3">
@@ -1561,6 +1606,9 @@ export default function AdminPage() {
                   const isOpen = openUnified === c.key;
                   const dupCount = c.diagList.length;
                   const sharedIp = c.ips.find((ip) => emailCountByIp(ip) >= 2) || null;
+                  const cs = callStatusOf(c);
+                  const csMeta = CALL_STATUS_META[cs];
+                  const dLeft = daysLeft(c.expiry);
                   return (
                     <div
                       key={c.key}
@@ -1574,10 +1622,15 @@ export default function AdminPage() {
                         className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left hover:bg-gray-50"
                       >
                         <div className="min-w-0 flex-1">
-                          {/* 1줄: 이름 + 회원/비회원 + 진단상태 */}
+                          {/* 1줄: 이름 + 통화상태 + 회원/비회원 + 진단상태 */}
                           <div className="flex flex-wrap items-center gap-1.5">
                             <span className="text-[15px] font-extrabold text-brand-dark">
                               {c.realName || c.memberName || "이름없음"}
+                            </span>
+                            {/* 통화상태 - 영업 핵심(미접촉/통화완료/부재중/계약) */}
+                            <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold ${csMeta.cls}`}>
+                              <span className={`inline-block h-1.5 w-1.5 rounded-full ${csMeta.dot}`} />
+                              {csMeta.short}
                             </span>
                             {c.isMember ? (
                               <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
@@ -1585,7 +1638,7 @@ export default function AdminPage() {
                               </span>
                             ) : (
                               <span className="rounded-full bg-gray-300/60 px-2 py-0.5 text-[11px] font-bold text-gray-600">
-                                비회원 리드
+                                비회원
                               </span>
                             )}
                             {c.diagDone ? (
@@ -1603,12 +1656,12 @@ export default function AdminPage() {
                             )}
                             {dupCount > 1 && (
                               <span className="rounded-full bg-purple-500/15 px-2 py-0.5 text-[11px] font-bold text-purple-700">
-                                🔁 진단 {dupCount}건
+                                🔁 {dupCount}건
                               </span>
                             )}
                             {c.paidCount > 0 && (
                               <span className="rounded-full bg-brand-orange/15 px-2 py-0.5 text-[11px] font-bold text-brand-orange">
-                                💳 결제 {c.paidCount}건
+                                💳 결제
                               </span>
                             )}
                             {c.creditsLeft > 0 && (
@@ -1616,25 +1669,26 @@ export default function AdminPage() {
                                 조회권 {c.creditsLeft}
                               </span>
                             )}
+                            {/* 열람 기한 D-day (결제 회원만) */}
+                            {c.expiry && dLeft !== null && (
+                              <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
+                                dLeft <= 3 ? "bg-red-100 text-red-600" : "bg-gray-100 text-gray-500"
+                              }`}>
+                                {dLeft > 0 ? `D-${dLeft}` : "만료"}
+                              </span>
+                            )}
                           </div>
-                          {/* 2줄: 연락처·업종·사업자번호 */}
+                          {/* 2줄: 연락처·업종·사업자번호 (상담 시 바로 보는 핵심) */}
                           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-gray-600">
-                            {c.phone && <span>📞 {c.phone}</span>}
+                            {c.phone && <span className="font-bold text-gray-800">📞 {c.phone}</span>}
                             {c.bizType && <span>🏢 {c.bizType}</span>}
                             {c.bno && <span>#{c.bno}</span>}
                           </div>
-                          {/* 3줄: 이메일(회원) + 카카오닉네임 */}
-                          <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-[11px] text-gray-400">
-                            {c.email && <span>✉️ {c.email}</span>}
-                            {c.memberName && c.memberName !== c.realName && (
-                              <span>닉네임: {c.memberName}</span>
-                            )}
-                          </div>
-                          {/* 4줄: IP (공유 IP 경고) */}
+                          {/* 3줄: IP (최대 2개, 공유 IP만 빨강 강조) */}
                           {c.ips.length > 0 && (
                             <div className="mt-0.5 flex flex-wrap items-center gap-1 text-[11px]">
                               <span className="text-gray-400">🌐</span>
-                              {c.ips.slice(0, 3).map((ip) => {
+                              {c.ips.slice(0, 2).map((ip) => {
                                 const shared = emailCountByIp(ip) >= 2;
                                 return (
                                   <span
@@ -1651,8 +1705,8 @@ export default function AdminPage() {
                                   </span>
                                 );
                               })}
-                              {c.ips.length > 3 && (
-                                <span className="text-gray-400">+{c.ips.length - 3}</span>
+                              {c.ips.length > 2 && (
+                                <span className="text-gray-400">+{c.ips.length - 2}</span>
                               )}
                             </div>
                           )}
@@ -1672,7 +1726,7 @@ export default function AdminPage() {
                         </div>
                       </button>
 
-                      {/* 펼침: 진단서 목록 + 결과 열람 버튼 */}
+                      {/* 펼침: 영업 컨트롤 + 진단서 목록 + 결과 열람 버튼 */}
                       {isOpen && (
                         <div className="border-t border-gray-100 bg-gray-50/60 px-4 py-3">
                           {sharedIp && (
@@ -1680,6 +1734,83 @@ export default function AdminPage() {
                               ⚠️ 공유 IP({sharedIp}) 감지 - 같은 IP로 여러 계정이 접속했습니다. 무료 남용 의심.
                             </p>
                           )}
+
+                          {/* 연락처 · 이메일 (상담 바로 실행) */}
+                          <div className="mb-3 flex flex-wrap items-center gap-2 text-[12px]">
+                            {c.phone && (
+                              <a
+                                href={`tel:${c.phone.replace(/[^0-9]/g, "")}`}
+                                className="inline-flex items-center gap-1 rounded-lg bg-brand-dark px-3 py-1.5 font-bold text-white hover:opacity-90"
+                              >
+                                📞 전화걸기
+                              </a>
+                            )}
+                            {c.phone && (
+                              <span className="font-mono text-gray-700">{c.phone}</span>
+                            )}
+                            {c.email && (
+                              <a
+                                href={`mailto:${c.email}`}
+                                className="text-gray-500 underline decoration-dotted hover:text-brand-dark"
+                              >
+                                ✉️ {c.email}
+                              </a>
+                            )}
+                          </div>
+
+                          {/* 영업 컨트롤: 통화상태 + 상담메모 (noteKey = 대표 진단서 id) */}
+                          {c.noteKey ? (
+                            <div className="mb-3 rounded-xl border border-gray-200 bg-white p-3">
+                              <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                                <span className="mr-1 text-[11px] font-bold text-gray-400">통화상태</span>
+                                {CALL_STATUS_ORDER.map((st) => {
+                                  const meta = CALL_STATUS_META[st];
+                                  const on = cs === st;
+                                  return (
+                                    <button
+                                      key={st}
+                                      onClick={() => setCallStatus(c.noteKey!, st)}
+                                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold transition ${
+                                        on
+                                          ? meta.cls
+                                          : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
+                                      }`}
+                                    >
+                                      <span className={`inline-block h-1.5 w-1.5 rounded-full ${on ? meta.dot : "bg-gray-300"}`} />
+                                      {meta.label}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <textarea
+                                  value={unifiedMemoDraft[c.noteKey] ?? leadNotes[c.noteKey]?.memo ?? ""}
+                                  onChange={(e) =>
+                                    setUnifiedMemoDraft((prev) => ({ ...prev, [c.noteKey!]: e.target.value }))
+                                  }
+                                  placeholder="💬 상담 메모 (통화 내용, 니즈, 다음 액션 등)"
+                                  rows={2}
+                                  className="min-w-0 flex-1 resize-y rounded-lg border border-gray-200 px-3 py-2 text-[12px] text-gray-800 outline-none focus:border-brand-orange"
+                                />
+                                <button
+                                  onClick={() => {
+                                    const memo = unifiedMemoDraft[c.noteKey!] ?? leadNotes[c.noteKey!]?.memo ?? "";
+                                    setLeadNotes(saveLeadNote(c.noteKey!, { memo }));
+                                    setMsg("메모를 저장했어요.");
+                                    setTimeout(() => setMsg(null), 2000);
+                                  }}
+                                  className="shrink-0 self-stretch rounded-lg bg-brand-orange px-3 text-[12px] font-bold text-white hover:opacity-90"
+                                >
+                                  저장
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="mb-3 text-[11px] text-gray-400">
+                              진단서가 없어 상담 메모를 저장할 수 없습니다.
+                            </p>
+                          )}
+
                           {c.diagList.length === 0 ? (
                             <p className="text-[12px] text-gray-400">
                               작성한 진단서가 없습니다. (가입만 하고 진단 전)
