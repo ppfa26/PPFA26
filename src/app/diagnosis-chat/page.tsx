@@ -323,22 +323,15 @@ function encourageText(cur: number, total: number): string | null {
 function renderOptLabel(label: string): ReactNode {
   const m = label.match(/^(.*?)\s*(\[[^\]]*\])\s*$/);
   if (!m) return label;
-  // ── [상태] 색상 힌트(대표님 요청 UX 개선) ──
-  //  "[신청 가능]"은 은은한 초록, "[신청 불가]"는 은은한 빨강으로 한눈에 구분.
-  //  ※ 순수 '표시' 색상만 바꿀 뿐, onClick 에 넘어가는 원본 문자열 값·판정 로직은 100% 불변.
-  const bracket = m[2];
-  const badgeColor = bracket.includes("불가")
-    ? "text-red-400"
-    : bracket.includes("가능")
-    ? "text-emerald-400"
-    : "text-brand-orange";
+  // ── (대표님 요청) 신청 가능/불가 포인트 색상 제거 → 본문과 동일한 색으로 통일 ──
+  //  ※ 표시(줄바꿈)만 남기고 색상은 넣지 않음. onClick 원본 값·판정 로직은 100% 불변.
   return (
     <>
       {m[1]}
       {/* 모바일: 줄바꿈 · PC(sm 이상): 공백 한 칸으로 한 줄 유지 */}
       <br className="sm:hidden" />
       <span className="hidden sm:inline"> </span>
-      <span className={`${badgeColor} font-bold`}>{bracket}</span>
+      {m[2]}
     </>
   );
 }
