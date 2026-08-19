@@ -973,6 +973,26 @@ export default function DiagnosisChat() {
               스크롤·질문 전환 때 따로 흔들리거나 빈 공백이 생기지 않는다. */}
           {showInput && curStep && (
             <div ref={answerRef} className="mt-3 rounded-xl border border-white bg-white p-3 shadow-sm">
+              {/* ★ 이탈 방지 넛지(대표님 요청 업그레이드) ★
+                  막바지(마지막/거의 다 온 질문)에서 답변 버튼 바로 위에 '조금만 더' 배너를 띄워
+                  완주(=결과 확인·회원가입 전환)를 유도한다. 순수 표시용 → 매칭 결과·저장값 100% 불변.
+                  · 마지막 질문: 남은 개수 0 → "이 질문만 답하면 결과 확인!"
+                  · 그 외 막바지: 남은 개수 안내 → "N개만 더 답하면 대표님 맞춤 결과 완성!" */}
+              {(() => {
+                if (curStepNo <= 0 || totalSteps <= 0) return null;
+                const remain = totalSteps - curStepNo; // 이 질문 포함 이후 남은 질문 수(현재 질문 제외)
+                // 마지막 질문(remain=0) 또는 막바지(남은 1개)에서만 강조 배너 노출
+                if (remain > 1) return null;
+                const msg =
+                  remain <= 0
+                    ? "🎉 이 질문만 답하면 대표님 맞춤 결과가 열려요!"
+                    : "🔥 1개만 더 답하면 대표님 맞춤 결과 완성!";
+                return (
+                  <div className="mb-2.5 flex items-center justify-center gap-1.5 rounded-lg border border-brand-orange/30 bg-brand-orange/10 px-3 py-2 text-center text-[13px] font-extrabold text-brand-dark">
+                    {msg}
+                  </div>
+                );
+              })()}
               {/* ★ 답변영역 헤더(대표님 요청) ★
                   '이전 질문 수정' 버튼 옆에 현재 질문 문구를 항상 함께 보여준다.
                   → 화면을 확대해 위쪽 채팅 말풍선이 안 보여도, 답변영역만 보고
