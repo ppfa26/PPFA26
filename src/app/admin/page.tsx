@@ -152,8 +152,8 @@ const utmBadge = (src: string | null) => {
 
 const statusBadge = (status: string) => {
   const map: Record<string, { label: string; cls: string }> = {
-    paid: { label: "결제완료", cls: "bg-emerald-100 text-emerald-700" },
-    pending: { label: "대기중", cls: "bg-amber-100 text-amber-700" },
+    paid: { label: "결제완료", cls: "bg-gray-100 text-gray-600" },
+    pending: { label: "대기중", cls: "bg-orange-100 text-orange-700" },
     cancelled: { label: "취소됨", cls: "bg-gray-200 text-gray-600" },
     refunded: { label: "환불됨", cls: "bg-rose-100 text-rose-700" },
   };
@@ -1380,11 +1380,11 @@ export default function AdminPage() {
                 setTab("customers");
                 setUnifiedCall("all");
               }}
-              className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
               title="오늘 새로 접수된 진단(신규 리드) - 고객 관리로 이동"
             >
-              <div className="text-[12px] font-semibold text-blue-500">🆕 오늘 신규 리드</div>
-              <div className="mt-1 text-2xl font-extrabold text-blue-700">{todayLeadCount}건</div>
+              <div className="text-[12px] font-semibold text-gray-500">🆕 오늘 신규 리드</div>
+              <div className="mt-1 text-2xl font-extrabold text-gray-900">{todayLeadCount}건</div>
             </button>
             {/* 미접촉 - 아직 전화 안 한 사람(가장 급한 액션) */}
             <button
@@ -1404,11 +1404,11 @@ export default function AdminPage() {
                 setTab("customers");
                 setUnifiedCall("done");
               }}
-              className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
               title="통화 완료한 고객 - 통합보기에서 통화완료만 필터"
             >
-              <div className="text-[12px] font-semibold text-emerald-500">✅ 통화완료</div>
-              <div className="mt-1 text-2xl font-extrabold text-emerald-600">{unifiedCallCounts["done"] ?? 0}명</div>
+              <div className="text-[12px] font-semibold text-gray-500">✅ 통화완료</div>
+              <div className="mt-1 text-2xl font-extrabold text-gray-900">{unifiedCallCounts["done"] ?? 0}명</div>
             </button>
             {/* 계약 - 성과 */}
             <button
@@ -1612,11 +1612,11 @@ export default function AdminPage() {
                               {csMeta.short}
                             </span>
                             {c.diagDone ? (
-                              <span className="rounded-full bg-blue-500/15 px-2 py-0.5 text-[11px] font-bold text-blue-700">
+                              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-600">
                                 진단완료
                               </span>
                             ) : c.diagList.length > 0 ? (
-                              <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-bold text-amber-700">
+                              <span className="rounded-full bg-brand-orange/15 px-2 py-0.5 text-[11px] font-bold text-brand-orange">
                                 진단중단
                               </span>
                             ) : (
@@ -1625,7 +1625,7 @@ export default function AdminPage() {
                               </span>
                             )}
                             {dupCount > 1 && (
-                              <span className="rounded-full bg-purple-500/15 px-2 py-0.5 text-[11px] font-bold text-purple-700">
+                              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-600">
                                 🔁 {dupCount}건
                               </span>
                             )}
@@ -1635,7 +1635,7 @@ export default function AdminPage() {
                               </span>
                             )}
                             {c.creditsLeft > 0 && (
-                              <span className="rounded-full bg-teal-500/15 px-2 py-0.5 text-[11px] font-bold text-teal-700">
+                              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-600">
                                 조회권 {c.creditsLeft}
                               </span>
                             )}
@@ -1847,7 +1847,7 @@ export default function AdminPage() {
                                 {c.creditsTotal > 0 && c.creditsUsed >= c.creditsTotal ? (
                                   <button
                                     onClick={() => restoreCredits(c.email)}
-                                    className="whitespace-nowrap rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1.5 text-center text-[11px] font-bold text-emerald-700 transition hover:bg-emerald-100"
+                                    className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-center text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
                                   >
                                     ↩️ 조회권복구
                                   </button>
@@ -2054,7 +2054,7 @@ export default function AdminPage() {
                         <td className="px-4 py-3">
                           {p.expires_at ? (
                             dl !== null && dl > 0 ? (
-                              <span className="text-emerald-600 font-semibold">
+                              <span className="text-gray-700 font-semibold">
                                 {fmtDate(p.expires_at)}
                                 <span className="ml-1 text-xs text-gray-400">({dl}일)</span>
                               </span>
@@ -2459,7 +2459,7 @@ export default function AdminPage() {
                         </td>
                         <td className="px-4 py-2 text-center">
                           {der.isMember ? (
-                            <span className="inline-flex items-center rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-600">
+                            <span className="inline-flex items-center rounded-md bg-gray-100 px-1.5 py-0.5 text-[11px] font-bold text-gray-600">
                               회원
                             </span>
                           ) : (

@@ -20,29 +20,34 @@ export const CALL_STATUS_META: Record<
   CallStatus,
   { label: string; short: string; cls: string; dot: string }
 > = {
+  // 포인트색은 레드·주황·화이트(그레이) 위주로 통일한다.
   none: {
+    // 미접촉 = 가장 급한 액션 → 레드로 강조
     label: "미접촉",
     short: "미접촉",
-    cls: "bg-gray-100 text-gray-500 border-gray-200",
-    dot: "bg-gray-300",
+    cls: "bg-red-100 text-red-600 border-red-200",
+    dot: "bg-red-500",
   },
   done: {
+    // 통화완료 = 완료된 정상상태 → 뉴트럴 그레이(튀지 않게)
     label: "통화 완료",
     short: "통화완료",
-    cls: "bg-sky-100 text-sky-700 border-sky-200",
-    dot: "bg-sky-500",
+    cls: "bg-gray-100 text-gray-600 border-gray-200",
+    dot: "bg-gray-400",
   },
   absent: {
+    // 부재중 = 재통화 필요(주의) → 주황
     label: "부재중",
     short: "부재중",
-    cls: "bg-amber-100 text-amber-700 border-amber-200",
-    dot: "bg-amber-500",
+    cls: "bg-orange-100 text-orange-700 border-orange-200",
+    dot: "bg-orange-500",
   },
   contract: {
+    // 계약 = 성과(강조) → 진한 주황
     label: "계약",
     short: "계약",
-    cls: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    dot: "bg-emerald-500",
+    cls: "bg-orange-500/15 text-brand-orange border-orange-300",
+    dot: "bg-brand-orange",
   },
 };
 
