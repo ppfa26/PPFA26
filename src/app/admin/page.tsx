@@ -1569,28 +1569,11 @@ export default function AdminPage() {
             ))}
           </div>
 
-          {/* 실행 버튼(누르면 바로 동작하는 것) - 탭과 시각적으로 구분해 아래 줄에 배치 */}
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <button
-              onClick={copyDiagnosisLink}
-              className="whitespace-nowrap rounded-xl bg-brand-orange px-4 py-2 text-[13px] font-bold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
-              title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
-            >
-              🔗 진단링크 복사
-            </button>
-            <button
-              onClick={downloadAllDiag}
-              disabled={diagnoses.length === 0}
-              className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-4 py-2 text-[13px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
-              title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
-            >
-              📋 진단서 엑셀
-            </button>
-          </div>
-
-          {/* ======== 고객 관리 탭: 통합/회원/진단서 세그먼트 토글 ======== */}
+          {/* ======== 2번째 줄: 고객 관리 탭 - 보기 토글(고객·진단서) + 실행버튼(엑셀·링크복사)
+              상단 탭줄과 같은 버튼 스타일·높이로 통일하고 flex-1 로 가로 폭을 맞춘다. ======== */}
           {tab === "customers" && (
-            <div className="mb-4 inline-flex rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              {/* 보기 토글 - 활성 시 네이비, 비활성 시 흰색(상단 탭과 동일 규격) */}
               {(
                 [
                   ["unified", `👤 고객 (${unifiedCustomers.length})`],
@@ -1600,15 +1583,52 @@ export default function AdminPage() {
                 <button
                   key={key}
                   onClick={() => setCustView(key)}
-                  className={`whitespace-nowrap rounded-lg px-4 py-2 text-[13px] font-bold transition ${
+                  className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2.5 text-center text-[14px] font-bold transition hover:scale-[1.02] ${
                     custView === key
-                      ? "bg-brand-dark text-white"
-                      : "text-gray-500 hover:bg-gray-50"
+                      ? "bg-brand-dark text-white shadow"
+                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
                   }`}
                 >
                   {label}
                 </button>
               ))}
+              {/* 실행 버튼 - 진단서 엑셀 → 진단링크 복사 순서, 같은 규격 */}
+              <button
+                onClick={downloadAllDiag}
+                disabled={diagnoses.length === 0}
+                className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
+                title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
+              >
+                📋 진단서 엑셀
+              </button>
+              <button
+                onClick={copyDiagnosisLink}
+                className="flex-1 whitespace-nowrap rounded-xl bg-brand-orange px-3 py-2.5 text-center text-[14px] font-bold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
+                title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
+              >
+                🔗 진단링크 복사
+              </button>
+            </div>
+          )}
+
+          {/* 고객 관리가 아닌 탭(결제/매출/접속차단)에서도 진단서 엑셀·링크복사는 바로 쓰도록 유지 */}
+          {tab !== "customers" && (
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <button
+                onClick={downloadAllDiag}
+                disabled={diagnoses.length === 0}
+                className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
+                title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
+              >
+                📋 진단서 엑셀
+              </button>
+              <button
+                onClick={copyDiagnosisLink}
+                className="flex-1 whitespace-nowrap rounded-xl bg-brand-orange px-3 py-2.5 text-center text-[14px] font-bold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
+                title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
+              >
+                🔗 진단링크 복사
+              </button>
             </div>
           )}
 
@@ -1949,38 +1969,39 @@ export default function AdminPage() {
                                   조회권 {c.creditsUsed}/{c.creditsTotal}
                                 </span>
                               </div>
-                              {/* 관리 버튼 */}
-                              <div className="flex flex-wrap gap-1.5">
+                              {/* 관리 버튼 - 일하는 순서(기기초기화 → 조회권 → 차단 → 삭제)로
+                                  4등분 그리드에 균일한 크기로 배치 */}
+                              <div className="grid grid-cols-4 gap-1.5">
                                 <button
                                   onClick={() => resetDevice(c.email!)}
-                                  className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                  className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-center text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
                                 >
-                                  기기초기화
+                                  🔄 기기초기화
                                 </button>
                                 {c.creditsTotal > 0 && c.creditsUsed >= c.creditsTotal ? (
                                   <button
                                     onClick={() => restoreCredits(c.email)}
-                                    className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                    className="whitespace-nowrap rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1.5 text-center text-[11px] font-bold text-emerald-700 transition hover:bg-emerald-100"
                                   >
-                                    ↩️ 조회권 복구
+                                    ↩️ 조회권복구
                                   </button>
                                 ) : (
                                   <button
                                     onClick={() => refundCredits(c.email)}
-                                    className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                    className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-center text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
                                   >
-                                    💸 조회권 환불
+                                    💸 조회권환불
                                   </button>
                                 )}
                                 <button
                                   onClick={() => doBlock("email", c.email!)}
-                                  className="whitespace-nowrap rounded-lg bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-600 transition hover:bg-red-100"
+                                  className="whitespace-nowrap rounded-lg bg-red-50 px-2 py-1.5 text-center text-[11px] font-bold text-red-600 transition hover:bg-red-100"
                                 >
-                                  계정차단
+                                  🚫 계정차단
                                 </button>
                                 <button
                                   onClick={() => deleteUser(c.email)}
-                                  className="whitespace-nowrap rounded-lg bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white transition hover:bg-red-700"
+                                  className="whitespace-nowrap rounded-lg bg-red-600 px-2 py-1.5 text-center text-[11px] font-bold text-white transition hover:bg-red-700"
                                 >
                                   🗑️ 삭제
                                 </button>
