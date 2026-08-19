@@ -1785,89 +1785,10 @@ export default function AdminPage() {
                             </p>
                           )}
 
-                          {/* 연락처 · 이메일 (상담 바로 실행) */}
-                          <div className="mb-3 flex flex-wrap items-center gap-2 text-[12px]">
-                            {c.phone && (
-                              <a
-                                href={`tel:${c.phone.replace(/[^0-9]/g, "")}`}
-                                className="inline-flex items-center gap-1 rounded-lg bg-brand-dark px-3 py-1.5 font-bold text-white hover:opacity-90"
-                              >
-                                📞 전화걸기
-                              </a>
-                            )}
-                            {c.phone && (
-                              <span className="font-mono text-gray-700">{c.phone}</span>
-                            )}
-                            {c.email && (
-                              <a
-                                href={`mailto:${c.email}`}
-                                className="text-gray-500 underline decoration-dotted hover:text-brand-dark"
-                              >
-                                ✉️ {c.email}
-                              </a>
-                            )}
-                            {/* 회원 계정 닉네임(실명과 다를 때만 매칭 근거로 참고 표시) */}
-                            {c.isMember && c.memberName && c.memberName !== c.realName && (
-                              <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-400">
-                                회원계정: {c.memberName}
-                              </span>
-                            )}
-                          </div>
+                          {/* ▼ 대표님 요청 순서(세로): ① 회원 관리 → ② 진단서 → ③ 통화상태(+전화걸기·연락처).
+                              그래야 위→아래로 훑으며 일하기 편함. */}
 
-                          {/* 영업 컨트롤: 통화상태 + 상담메모 (noteKey = 대표 진단서 id) */}
-                          {c.noteKey ? (
-                            <div className="mb-3 rounded-xl border border-gray-200 bg-white p-3">
-                              <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                                <span className="mr-1 text-[11px] font-bold text-gray-400">통화상태</span>
-                                {CALL_STATUS_ORDER.map((st) => {
-                                  const meta = CALL_STATUS_META[st];
-                                  const on = cs === st;
-                                  return (
-                                    <button
-                                      key={st}
-                                      onClick={() => setCallStatus(c.noteKey!, st)}
-                                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold transition ${
-                                        on
-                                          ? meta.cls
-                                          : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
-                                      }`}
-                                    >
-                                      <span className={`inline-block h-1.5 w-1.5 rounded-full ${on ? meta.dot : "bg-gray-300"}`} />
-                                      {meta.label}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                              <div className="flex items-start gap-2">
-                                <textarea
-                                  value={unifiedMemoDraft[c.noteKey] ?? leadNotes[c.noteKey]?.memo ?? ""}
-                                  onChange={(e) =>
-                                    setUnifiedMemoDraft((prev) => ({ ...prev, [c.noteKey!]: e.target.value }))
-                                  }
-                                  placeholder="💬 상담 메모 (통화 내용, 니즈, 다음 액션 등)"
-                                  rows={2}
-                                  className="min-w-0 flex-1 resize-y rounded-lg border border-gray-200 px-3 py-2 text-[12px] text-gray-800 outline-none focus:border-brand-orange"
-                                />
-                                <button
-                                  onClick={() => {
-                                    const memo = unifiedMemoDraft[c.noteKey!] ?? leadNotes[c.noteKey!]?.memo ?? "";
-                                    setLeadNotes(saveLeadNote(c.noteKey!, { memo }));
-                                    setMsg("메모를 저장했어요.");
-                                    setTimeout(() => setMsg(null), 2000);
-                                  }}
-                                  className="shrink-0 self-stretch rounded-lg bg-brand-orange px-3 text-[12px] font-bold text-white hover:opacity-90"
-                                >
-                                  저장
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <p className="mb-3 text-[11px] text-gray-400">
-                              진단서가 없어 상담 메모를 저장할 수 없습니다.
-                            </p>
-                          )}
-
-                          {/* 회원 관리(구 '회원' 탭 기능을 카드로 흡수) - 회원(email)일 때만 */}
+                          {/* ① 회원 관리(구 '회원' 탭 기능을 카드로 흡수) - 회원(email)일 때만 */}
                           {c.email && (
                             <div className="mb-3 rounded-xl border border-gray-200 bg-white p-3">
                               {/* 회원 요약 한 줄: 가입일 · 최근접속 · 유입경로 · 조회권 */}
@@ -1927,6 +1848,8 @@ export default function AdminPage() {
                             </div>
                           )}
 
+                          {/* ② 진단서 */}
+                          <p className="mb-1.5 mt-1 text-[11px] font-bold text-gray-400">진단서</p>
                           {c.diagList.length === 0 ? (
                             <p className="text-[12px] text-gray-400">
                               작성한 진단서가 없습니다. (가입만 하고 진단 전)
@@ -2038,6 +1961,90 @@ export default function AdminPage() {
                                 );
                               })}
                             </div>
+                          )}
+
+                          {/* ③ 통화상태 + 전화걸기·연락처·이메일·회원계정 (상담 실행부).
+                              대표님 요청: 전화걸기 버튼을 통화상태 옆으로 배치. 순서상 맨 아래. */}
+                          {c.noteKey ? (
+                            <div className="mt-3 rounded-xl border border-gray-200 bg-white p-3">
+                              {/* 통화상태 + 전화걸기 버튼 한 줄 */}
+                              <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                                <span className="mr-1 text-[11px] font-bold text-gray-400">통화상태</span>
+                                {CALL_STATUS_ORDER.map((st) => {
+                                  const meta = CALL_STATUS_META[st];
+                                  const on = cs === st;
+                                  return (
+                                    <button
+                                      key={st}
+                                      onClick={() => setCallStatus(c.noteKey!, st)}
+                                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold transition ${
+                                        on
+                                          ? meta.cls
+                                          : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
+                                      }`}
+                                    >
+                                      <span className={`inline-block h-1.5 w-1.5 rounded-full ${on ? meta.dot : "bg-gray-300"}`} />
+                                      {meta.label}
+                                    </button>
+                                  );
+                                })}
+                                {/* 전화걸기 버튼 - 통화상태 바로 옆 */}
+                                {c.phone && (
+                                  <a
+                                    href={`tel:${c.phone.replace(/[^0-9]/g, "")}`}
+                                    className="ml-1 inline-flex items-center gap-1 rounded-full bg-brand-dark px-3 py-1 text-[11px] font-bold text-white hover:opacity-90"
+                                  >
+                                    📞 전화걸기
+                                  </a>
+                                )}
+                              </div>
+                              {/* 연락처 · 이메일 · 회원계정 */}
+                              <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">
+                                {c.phone && (
+                                  <span className="font-mono text-gray-700">{c.phone}</span>
+                                )}
+                                {c.email && (
+                                  <a
+                                    href={`mailto:${c.email}`}
+                                    className="text-gray-500 underline decoration-dotted hover:text-brand-dark"
+                                  >
+                                    ✉️ {c.email}
+                                  </a>
+                                )}
+                                {c.isMember && c.memberName && c.memberName !== c.realName && (
+                                  <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-400">
+                                    회원계정: {c.memberName}
+                                  </span>
+                                )}
+                              </div>
+                              {/* 상담 메모 */}
+                              <div className="flex items-start gap-2">
+                                <textarea
+                                  value={unifiedMemoDraft[c.noteKey] ?? leadNotes[c.noteKey]?.memo ?? ""}
+                                  onChange={(e) =>
+                                    setUnifiedMemoDraft((prev) => ({ ...prev, [c.noteKey!]: e.target.value }))
+                                  }
+                                  placeholder="💬 상담 메모 (통화 내용, 니즈, 다음 액션 등)"
+                                  rows={2}
+                                  className="min-w-0 flex-1 resize-y rounded-lg border border-gray-200 px-3 py-2 text-[12px] text-gray-800 outline-none focus:border-brand-orange"
+                                />
+                                <button
+                                  onClick={() => {
+                                    const memo = unifiedMemoDraft[c.noteKey!] ?? leadNotes[c.noteKey!]?.memo ?? "";
+                                    setLeadNotes(saveLeadNote(c.noteKey!, { memo }));
+                                    setMsg("메모를 저장했어요.");
+                                    setTimeout(() => setMsg(null), 2000);
+                                  }}
+                                  className="shrink-0 self-stretch rounded-lg bg-brand-orange px-3 text-[12px] font-bold text-white hover:opacity-90"
+                                >
+                                  저장
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="mt-3 text-[11px] text-gray-400">
+                              진단서가 없어 상담 메모를 저장할 수 없습니다.
+                            </p>
                           )}
                         </div>
                       )}
