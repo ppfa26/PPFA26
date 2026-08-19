@@ -98,7 +98,7 @@ type BlockRow = {
 };
 
 type Phase = "loading" | "denied" | "ready";
-type Tab = "users" | "payments" | "diagnoses" | "revenue" | "access";
+type Tab = "unified" | "users" | "payments" | "diagnoses" | "revenue" | "access";
 
 /* ------------------------------------------------------------------ */
 /*  유틸                                                               */
@@ -215,7 +215,7 @@ export default function AdminPage() {
   }, []);
 
   const [phase, setPhase] = useState<Phase>("loading");
-  const [tab, setTab] = useState<Tab>("users");
+  const [tab, setTab] = useState<Tab>("unified");
 
   const [stats, setStats] = useState<Stats | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -243,6 +243,8 @@ export default function AdminPage() {
     dir: "asc" | "desc";
   }>({ key: "joined_at", dir: "desc" });
   const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
+  const [unifiedSearch, setUnifiedSearch] = useState(""); // 통합 고객 뷰 검색어
+  const [openUnified, setOpenUnified] = useState<string | null>(null); // 통합 카드 펼침(key)
 
   // IP 집계·접속 로그 표가 세로로 너무 길어서 기본은 접어두고, 헤더 클릭 시 펼침.
   const [ipListOpen, setIpListOpen] = useState(false); // 🌐 IP별 접속 집계 접기/펼치기
@@ -819,6 +821,137 @@ export default function AdminPage() {
     return null;
   };
 
+  // ════════════════════════════════════════════════════════════════
+  //  ★ 통합 고객 뷰(대표님 요청: "한눈에 다 보이게 합치기") ★
+  //  회원 + 그 회원의 진단서 + 결제 + 접속 IP 를 '사람 단위'로 하나로 합친다.
+  //  · 기준(그룹 키): 회원은 email, 회원 없는 진단서는 전화번호(digits).
+  //  · 회원↔진단서 연결: user_id(가장 확실) → 이메일 → (회원 없으면 전화번호).
+  //  탭을 오가며 대조할 필요 없이 카드 한 장에서 전부 보이게 하는 것이 목적.
+  // ════════════════════════════════════════════════════════════════
+  type UnifiedCustomer = {
+    key: string;
+    email: string | null;         // 회원 가입 이메일(있으면)
+    memberName: string | null;    // 회원 계정 이름(카카오 닉네임 등)
+    realName: string | null;      // 진단서의 실제 대표자명
+    phone: string | null;         // 진단서 연락처
+    bizType: string | null;       // 업종(개인/법인 등)
+    bno: string | null;           // 사업자번호
+    joinedAt: string | null;      // 가입일
+    lastSignIn: string | null;    // 최근 접속
+    paidCount: number;            // 결제 건수
+    totalAmount: number;          // 누적 결제액
+    creditsLeft: number;          // 남은 조회권
+    diagList: AdminDiagnosis[];   // 이 사람의 진단서(최신순)
+    isMember: boolean;            // 회원 계정 존재 여부
+    diagDone: boolean;            // 완료 진단 존재 여부
+    ips: string[];                // 접속 IP(최근순)
+    latestAt: string;            // 정렬용 최신 활동 시각
+  };
+
+  const unifiedCustomers: UnifiedCustomer[] = (() => {
+    const onlyDigits = (v: string | null | undefined) => (v || "").replace(/[^0-9]/g, "");
+    const byCreatedDesc = (a: AdminDiagnosis, b: AdminDiagnosis) =>
+      a.created_at < b.created_at ? 1 : -1;
+
+    // 진단서를 회원별로 배분(각 진단서는 한 명에게만). 남는 건 전화번호 그룹으로.
+    const usedDiagIds = new Set<string>();
+    const list: UnifiedCustomer[] = [];
+
+    // 1) 회원 기준 카드
+    for (const u of users) {
+      const acctUid = u.user_id ? String(u.user_id) : null;
+      const mine = diagnoses
+        .filter((d) => {
+          // user_id 직접 매칭이 최우선
+          if (acctUid && d.user_id && String(d.user_id) === acctUid) return true;
+          // 이메일 매칭(진단서에 이메일이 실제로 있는 경우)
+          const dEmail = (d.email || (d.profile as any)?.email || "").trim();
+          if (dEmail && dEmail === u.email) return true;
+          return false;
+        })
+        .sort(byCreatedDesc);
+      mine.forEach((d) => usedDiagIds.add(d.id));
+
+      const top = mine[0];
+      const p = (top?.profile || {}) as any;
+      const ips = ipsByEmail(u.email);
+      const done = mine.some((d) => (d.status || "completed") === "completed");
+      const latest = [u.last_sign_in, u.joined_at, top?.created_at]
+        .filter(Boolean)
+        .sort()
+        .pop() as string | undefined;
+
+      list.push({
+        key: `u:${u.email}`,
+        email: u.email,
+        memberName: u.full_name || null,
+        realName: top?.name || p?.name || null,
+        phone: top?.phone || p?.phone || null,
+        bizType: p?.businessType || null,
+        bno: p?.bno || null,
+        joinedAt: u.joined_at,
+        lastSignIn: u.last_sign_in,
+        paidCount: u.paid_count || 0,
+        totalAmount: u.total_amount || 0,
+        creditsLeft: Math.max(0, (u.credits_total || 0) - (u.credits_used || 0)),
+        diagList: mine,
+        isMember: true,
+        diagDone: done,
+        ips,
+        latestAt: latest || u.joined_at || "",
+      });
+    }
+
+    // 2) 어느 회원에도 안 붙은 진단서 → 전화번호 기준으로 묶어 '비회원 리드' 카드
+    const orphanByPhone = new Map<string, AdminDiagnosis[]>();
+    for (const d of diagnoses) {
+      if (usedDiagIds.has(d.id)) continue;
+      const ph = onlyDigits(d.phone || (d.profile as any)?.phone) || `noph:${d.id}`;
+      if (!orphanByPhone.has(ph)) orphanByPhone.set(ph, []);
+      orphanByPhone.get(ph)!.push(d);
+    }
+    orphanByPhone.forEach((arr, ph) => {
+      const sorted = arr.slice().sort(byCreatedDesc);
+      const top = sorted[0];
+      const p = (top?.profile || {}) as any;
+      list.push({
+        key: `p:${ph}`,
+        email: (top.email || p?.email || null) as string | null,
+        memberName: null,
+        realName: top.name || p?.name || null,
+        phone: top.phone || p?.phone || null,
+        bizType: p?.businessType || null,
+        bno: p?.bno || null,
+        joinedAt: null,
+        lastSignIn: null,
+        paidCount: 0,
+        totalAmount: 0,
+        creditsLeft: 0,
+        diagList: sorted,
+        isMember: false,
+        diagDone: sorted.some((d) => (d.status || "completed") === "completed"),
+        ips: [],
+        latestAt: top.created_at || "",
+      });
+    });
+
+    // 최신 활동순 정렬
+    return list.sort((a, b) => (a.latestAt < b.latestAt ? 1 : -1));
+  })();
+
+  // 통합 뷰 검색: 이름(회원/실명)·이메일·전화·사업자번호·업종 어디에 걸려도 검색
+  const filteredUnified = unifiedCustomers.filter((c) => {
+    const q = unifiedSearch.trim().toLowerCase();
+    if (!q) return true;
+    const hay = [c.email, c.memberName, c.realName, c.phone, c.bno, c.bizType]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    const digitsHay = `${c.phone || ""} ${c.bno || ""}`.replace(/[^0-9]/g, "");
+    const digitsQ = q.replace(/[^0-9]/g, "");
+    return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
+  });
+
   // 회원 검색 필터 - 이메일·이름·연락처 어디에 걸려도 검색됨
   const filteredUsers = users.filter((u) => {
     const q = userSearch.trim().toLowerCase();
@@ -1335,6 +1468,7 @@ export default function AdminPage() {
             {/* 1~4: 앞쪽 탭 4개(map) */}
             {(
               [
+                ["unified", `👤 통합 고객 (${unifiedCustomers.length})`],
                 ["users", `👥 회원 목록 (${users.length})`],
                 ["diagnoses", `📋 고객 진단서 (${diagnoses.length})`],
                 ["payments", `💳 결제 조회권 (${payments.length})`],
@@ -1385,6 +1519,213 @@ export default function AdminPage() {
               🔗 진단링크 복사
             </button>
           </div>
+
+          {/* ------- 통합 고객(회원+진단서+결제+IP를 사람 단위로 합침) ------- */}
+          {tab === "unified" && (
+            <div>
+              {/* 🔍 통합 검색 - 이름·이메일·전화·사업자번호로 한 번에 */}
+              <div className="mb-4 flex w-full flex-wrap items-center gap-2">
+                <div className="relative w-full min-w-0 sm:w-auto sm:flex-1">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    🔍
+                  </span>
+                  <input
+                    type="text"
+                    value={unifiedSearch}
+                    onChange={(e) => setUnifiedSearch(e.target.value)}
+                    placeholder="통합 검색 - 이름 · 이메일 · 전화번호 · 사업자번호 (한 번에 찾기)"
+                    className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 outline-none focus:border-brand-orange"
+                  />
+                </div>
+                {unifiedSearch && (
+                  <button
+                    onClick={() => setUnifiedSearch("")}
+                    className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50"
+                  >
+                    ✕ 초기화
+                  </button>
+                )}
+              </div>
+              <p className="mb-3 text-xs text-gray-500">
+                한 사람의 <b>회원 계정 · 진단서 · 결제 · 접속 IP</b>를 카드 하나에 모았습니다.
+                총 <b>{filteredUnified.length}</b>명 · 초록=회원 / 회색=비회원 리드
+              </p>
+
+              <div className="space-y-3">
+                {filteredUnified.length === 0 && (
+                  <div className="rounded-xl border border-gray-200 bg-white p-6 text-center text-sm text-gray-400">
+                    표시할 고객이 없습니다.
+                  </div>
+                )}
+                {filteredUnified.map((c) => {
+                  const isOpen = openUnified === c.key;
+                  const dupCount = c.diagList.length;
+                  const sharedIp = c.ips.find((ip) => emailCountByIp(ip) >= 2) || null;
+                  return (
+                    <div
+                      key={c.key}
+                      className={`overflow-hidden rounded-2xl border shadow-sm ${
+                        c.isMember ? "border-emerald-200 bg-white" : "border-gray-200 bg-gray-50"
+                      }`}
+                    >
+                      {/* 카드 헤더 - 한 줄 요약 */}
+                      <button
+                        onClick={() => setOpenUnified(isOpen ? null : c.key)}
+                        className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left hover:bg-gray-50"
+                      >
+                        <div className="min-w-0 flex-1">
+                          {/* 1줄: 이름 + 회원/비회원 + 진단상태 */}
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-[15px] font-extrabold text-brand-dark">
+                              {c.realName || c.memberName || "이름없음"}
+                            </span>
+                            {c.isMember ? (
+                              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                                회원
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-gray-300/60 px-2 py-0.5 text-[11px] font-bold text-gray-600">
+                                비회원 리드
+                              </span>
+                            )}
+                            {c.diagDone ? (
+                              <span className="rounded-full bg-blue-500/15 px-2 py-0.5 text-[11px] font-bold text-blue-700">
+                                진단완료
+                              </span>
+                            ) : c.diagList.length > 0 ? (
+                              <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-bold text-amber-700">
+                                진단중단
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[11px] font-bold text-gray-500">
+                                진단없음
+                              </span>
+                            )}
+                            {dupCount > 1 && (
+                              <span className="rounded-full bg-purple-500/15 px-2 py-0.5 text-[11px] font-bold text-purple-700">
+                                🔁 진단 {dupCount}건
+                              </span>
+                            )}
+                            {c.paidCount > 0 && (
+                              <span className="rounded-full bg-brand-orange/15 px-2 py-0.5 text-[11px] font-bold text-brand-orange">
+                                💳 결제 {c.paidCount}건
+                              </span>
+                            )}
+                            {c.creditsLeft > 0 && (
+                              <span className="rounded-full bg-teal-500/15 px-2 py-0.5 text-[11px] font-bold text-teal-700">
+                                조회권 {c.creditsLeft}
+                              </span>
+                            )}
+                          </div>
+                          {/* 2줄: 연락처·업종·사업자번호 */}
+                          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-gray-600">
+                            {c.phone && <span>📞 {c.phone}</span>}
+                            {c.bizType && <span>🏢 {c.bizType}</span>}
+                            {c.bno && <span>#{c.bno}</span>}
+                          </div>
+                          {/* 3줄: 이메일(회원) + 카카오닉네임 */}
+                          <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-[11px] text-gray-400">
+                            {c.email && <span>✉️ {c.email}</span>}
+                            {c.memberName && c.memberName !== c.realName && (
+                              <span>닉네임: {c.memberName}</span>
+                            )}
+                          </div>
+                          {/* 4줄: IP (공유 IP 경고) */}
+                          {c.ips.length > 0 && (
+                            <div className="mt-0.5 flex flex-wrap items-center gap-1 text-[11px]">
+                              <span className="text-gray-400">🌐</span>
+                              {c.ips.slice(0, 3).map((ip) => {
+                                const shared = emailCountByIp(ip) >= 2;
+                                return (
+                                  <span
+                                    key={ip}
+                                    className={`rounded px-1.5 py-0.5 font-mono ${
+                                      shared
+                                        ? "bg-red-100 font-bold text-red-600"
+                                        : "bg-gray-100 text-gray-500"
+                                    }`}
+                                    title={shared ? `이 IP를 ${emailCountByIp(ip)}개 계정이 공유(어뷰징 의심)` : ""}
+                                  >
+                                    {ip}
+                                    {shared ? ` ⚠️${emailCountByIp(ip)}` : ""}
+                                  </span>
+                                );
+                              })}
+                              {c.ips.length > 3 && (
+                                <span className="text-gray-400">+{c.ips.length - 3}</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <div className="shrink-0 text-right">
+                          <div className="text-[11px] text-gray-400">
+                            {fmtDateTime(c.latestAt)}
+                          </div>
+                          {c.totalAmount > 0 && (
+                            <div className="text-[13px] font-bold text-brand-dark">
+                              {c.totalAmount.toLocaleString()}원
+                            </div>
+                          )}
+                          <div className="mt-1 text-[11px] text-gray-400">
+                            {isOpen ? "▲ 접기" : "▼ 상세"}
+                          </div>
+                        </div>
+                      </button>
+
+                      {/* 펼침: 진단서 목록 + 결과 열람 버튼 */}
+                      {isOpen && (
+                        <div className="border-t border-gray-100 bg-gray-50/60 px-4 py-3">
+                          {sharedIp && (
+                            <p className="mb-2 rounded-lg bg-red-50 px-3 py-2 text-[12px] font-semibold text-red-600">
+                              ⚠️ 공유 IP({sharedIp}) 감지 - 같은 IP로 여러 계정이 접속했습니다. 무료 남용 의심.
+                            </p>
+                          )}
+                          {c.diagList.length === 0 ? (
+                            <p className="text-[12px] text-gray-400">
+                              작성한 진단서가 없습니다. (가입만 하고 진단 전)
+                            </p>
+                          ) : (
+                            <div className="space-y-2">
+                              {c.diagList.map((d, i) => {
+                                const p = (d.profile || {}) as any;
+                                const done = (d.status || "completed") === "completed";
+                                return (
+                                  <div
+                                    key={d.id}
+                                    className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
+                                  >
+                                    <div className="min-w-0 flex-1 text-[12px]">
+                                      <span className="font-bold text-gray-700">
+                                        {dupCount > 1 ? `${i + 1}번째 · ` : ""}
+                                        {done ? "완료" : "중단"}
+                                      </span>
+                                      <span className="ml-2 text-gray-500">
+                                        {p?.businessType || ""}
+                                        {p?.bno ? ` · #${p.bno}` : ""}
+                                      </span>
+                                      <span className="ml-2 text-gray-400">
+                                        {fmtDateTime(d.created_at)}
+                                      </span>
+                                    </div>
+                                    <button
+                                      onClick={() => openResultForDiag(d)}
+                                      className="shrink-0 rounded-lg bg-brand-dark px-3 py-1.5 text-[12px] font-bold text-white hover:opacity-90"
+                                    >
+                                      결과 열람
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* ------- 회원 목록 ------- */}
           {tab === "users" && (
