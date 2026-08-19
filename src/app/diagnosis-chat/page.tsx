@@ -583,7 +583,9 @@ export default function DiagnosisChat() {
     const next: any = { ...form, name, phone };
 
     // 사업자번호가 새로 입력됐고 아직 검증 전이면 → 국세청 조회를 '한 번' 시도(3.5초 제한).
-    // 성공하면 검증정보 저장, 실패/타임아웃이면 '미조회(입력만)'으로 그대로 접수. 어느 경우든 진행은 계속.
+    // ★ 대표님 요청(어뷰징 차단) ★ '국세청에 등록되지 않은(존재하지 않는) 사업자번호'는
+    //   여기서 진행을 막는다(가짜 사업자번호로 결과 열람 방지). 단, 국세청 서버 장애/타임아웃
+    //   같은 '우리 잘못이 아닌 경우'까지 막으면 정상 고객이 억울하니, 그때는 미조회로 통과시킨다.
     if (!isPre && !form.bno && bnoDigits.length === 10) {
       next.bno = bnoDigits;
       setBnoLoading(true);
@@ -593,7 +595,13 @@ export default function DiagnosisChat() {
           next.bnoStatus = r.data.status;
           next.bnoTaxType = r.data.taxType;
           next.bnoVerified = true;
+        } else if (r.kind === "answered") {
+          // 국세청이 정상 응답했는데 등록되지 않은 번호 → 가짜/오타. 진행 차단.
+          setBnoLoading(false);
+          setBnoMsg({ tone: "err", text: BNO_TEXT.errorNotFound });
+          return; // 다음 스텝으로 넘어가지 않음
         } else {
+          // serverDown: 국세청 서버 장애/타임아웃 → 정상 고객 보호 차원에서 미조회로 통과
           next.bnoStatus = "미조회(입력만)";
           next.bnoTaxType = "";
           next.bnoVerified = false;
@@ -1357,11 +1365,26 @@ export default function DiagnosisChat() {
                           inputMode="numeric"
                           maxLength={12}
                           value={textTemp}
-                          onChange={(e) => setTextTemp(e.target.value)}
+                          onChange={(e) => {
+                            setTextTemp(e.target.value);
+                            if (bnoMsg) setBnoMsg(null); // 번호 고치면 이전 오류 메시지 지움
+                          }}
                           onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
                           placeholder={curStep.placeholder}
-                          className="w-full rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                          className={`w-full rounded-full border bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange ${
+                            bnoMsg?.tone === "err" ? "border-red-400" : "border-white"
+                          }`}
                         />
+                        {/* ★ 대표님 요청 ★ 국세청 미등록(가짜/오타) 사업자번호 안내 — 진행 차단됨 */}
+                        {bnoMsg && (
+                          <p
+                            className={`mt-1.5 break-keep px-1 text-xs font-semibold leading-relaxed ${
+                              bnoMsg.tone === "err" ? "text-red-500" : "text-brand-gray"
+                            }`}
+                          >
+                            {bnoMsg.text}
+                          </p>
+                        )}
                       </div>
                     )}
 

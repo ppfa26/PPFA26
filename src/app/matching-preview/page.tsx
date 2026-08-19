@@ -45,7 +45,7 @@ export default function MatchingPreview() {
   // 로그인(회원가입) 게이트 상태:
   //   "checking" = 세션 확인 중 · "guest" = 비로그인(결과 잠금) · "ready" = 로그인 완료(결과 공개)
   //   ※ 관리자 열람 모드(?admin=1)는 게이트를 통과시켜 항상 "ready".
-  const [gate, setGate] = useState<"checking" | "guest" | "analyzing" | "ready" | "limited">("checking");
+  const [gate, setGate] = useState<"checking" | "guest" | "analyzing" | "ready" | "limited" | "invalidBno">("checking");
   // 무료 조회 한도 초과 시 안내 문구(계정당 서로 다른 사업자 N곳 제한)
   const [limitMsg, setLimitMsg] = useState("");
   // 분석 연출 진행 단계(0~3) - "AI가 실제로 판독 중"이라는 신뢰감을 주기 위한 짧은 연출
@@ -169,6 +169,53 @@ export default function MatchingPreview() {
     })();
   }, []);
 
+  // ── [어뷰징 차단 #1] 유효하지 않은 사업자번호면 결과 열람 차단 (대표님 요청) ──
+  //   가짜/오타 사업자번호로 결과를 열람하는 것을 서버(국세청 조회)에서 다시 막는다.
+  //   · 예비창업자(사업자번호 없음)는 대상 아님 → 통과.
+  //   · 10자리 사업자번호가 국세청에 '등록됨(found)'이면 통과, '미등록'이면 차단.
+  //   · 국세청 서버 장애/타임아웃 등 '우리 잘못이 아닌 경우'는 정상 고객 보호 위해 통과.
+  //   · 관리자 열람(?admin=1)은 제외.
+  useEffect(() => {
+    if (adminView) return;
+    if (gate !== "analyzing" && gate !== "ready") return;
+    if (!profileData) return;
+    const isPre = (profileData as any).businessType === "예비";
+    if (isPre) return; // 예비창업자는 사업자번호 검증 대상 아님
+    const bnoDigits = String((profileData as any).bno ?? "").replace(/[^0-9]/g, "");
+    // 사업자번호 자체가 없거나 10자리가 아니면 → 진단 자체를 다시 받도록 차단
+    if (bnoDigits.length !== 10) {
+      setGate("invalidBno");
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 3500);
+        const res = await fetch("/api/business-status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ bno: bnoDigits }),
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+        const data = await res.json();
+        // found=false 이고 서버오류가 아니면 → 국세청 미등록(가짜/오타) → 차단
+        if (!cancelled && data && data.ok && data.found === false) {
+          setGate("invalidBno");
+        }
+        // found=true(정상) / serverError(장애) 는 통과(오탐 방지)
+      } catch {
+        /* 네트워크·타임아웃 등은 국세청 장애로 간주 → 통과 */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // profileData 도착 시 1회 검증하면 충분.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileData, adminView]);
+
   // ── [무료 베타 어뷰징 차단] 계정당 서로 다른 사업자 N곳까지만 열람 허용 ──
   //   한 아이디로 사업자만 바꿔가며 무제한 조회하는 도용/수집을 서버(RPC)에서 차단.
   //   · profileData(사업자 지문)를 서버로 판정 → 한도 초과면 결과 대신 안내 화면.
@@ -253,7 +300,12 @@ export default function MatchingPreview() {
         /* 무시 */
       }
       // 100% 채워진 걸 잠깐(0.25초) 보여준 뒤 결과로 전환
-      setTimeout(() => setGate("ready"), 250);
+      //  ★ 어뷰징 차단 가드 ★ 연출 도중 사업자번호 검증/조회한도 판정이 먼저 차단
+      //    상태(invalidBno·limited)로 바꿨다면, 여기서 'ready'로 되돌리지 않는다.
+      setTimeout(
+        () => setGate((g) => (g === "analyzing" ? "ready" : g)),
+        250
+      );
     }, DURATION);
 
     return () => {
@@ -382,6 +434,52 @@ export default function MatchingPreview() {
                 );
               })}
             </ul>
+          </div>
+        </main>
+        <Footer />
+      </PageShell>
+    );
+  }
+
+  // ── [어뷰징 차단 #1] 유효하지 않은 사업자번호 안내 화면 (대표님 요청) ──
+  //  국세청에 등록되지 않은(가짜/오타) 사업자번호로 결과를 열람하려 할 때 노출.
+  //  정확한 사업자번호로 다시 진단하도록 유도. (예비창업자는 이 화면에 오지 않음)
+  if (gate === "invalidBno") {
+    return (
+      <PageShell pageKey="matching-preview" stickyFooter>
+        <Header />
+        <main className="flex flex-1 min-h-[60vh] items-center justify-center px-4 py-16">
+          <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-7 text-center shadow-card sm:p-9">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-orange/10 text-3xl">
+              🧾
+            </div>
+            <h1 className="break-keep text-lg font-extrabold leading-snug text-brand-dark sm:text-xl">
+              사업자등록번호를 확인해 주세요
+            </h1>
+            <p className="mt-3 break-keep text-sm leading-relaxed text-brand-dark/70">
+              국세청에 등록되지 않은 사업자등록번호예요.
+              정확한 번호로 다시 진단하시면 결과를 바로 확인하실 수 있어요.
+            </p>
+            <p className="mt-3 break-keep text-xs leading-relaxed text-brand-dark/50">
+              정상 영업 중인 사업자만 정부지원사업 매칭 결과를 제공해 드립니다.
+              번호가 맞는데도 이 화면이 나온다면 아래 채널로 문의해 주세요.
+            </p>
+            <div className="mt-6 flex flex-col gap-2">
+              <Link
+                href="/diagnosis-chat"
+                className="btn-red inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold sm:text-base"
+              >
+                사업자번호 다시 입력하기
+              </Link>
+              <a
+                href="http://pf.kakao.com/_VxfWxan/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-brand-dark/15 bg-white px-6 py-2.5 text-sm font-bold text-brand-dark/70 transition hover:bg-gray-50 sm:text-base"
+              >
+                💬 카카오톡으로 문의하기
+              </a>
+            </div>
           </div>
         </main>
         <Footer />
