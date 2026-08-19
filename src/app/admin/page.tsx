@@ -933,40 +933,11 @@ export default function AdminPage() {
       });
     }
 
-    // 2) 어느 회원에도 안 붙은 진단서 → 전화번호 기준으로 묶어 '비회원 리드' 카드
-    const orphanByPhone = new Map<string, AdminDiagnosis[]>();
-    for (const d of diagnoses) {
-      if (usedDiagIds.has(d.id)) continue;
-      const ph = onlyDigits(d.phone || (d.profile as any)?.phone) || `noph:${d.id}`;
-      if (!orphanByPhone.has(ph)) orphanByPhone.set(ph, []);
-      orphanByPhone.get(ph)!.push(d);
-    }
-    orphanByPhone.forEach((arr, ph) => {
-      const sorted = arr.slice().sort(byCreatedDesc);
-      const top = sorted[0];
-      const p = (top?.profile || {}) as any;
-      list.push({
-        key: `p:${ph}`,
-        email: (top.email || p?.email || null) as string | null,
-        memberName: null,
-        realName: top.name || p?.name || null,
-        phone: top.phone || p?.phone || null,
-        bizType: p?.businessType || null,
-        bno: p?.bno || null,
-        joinedAt: null,
-        lastSignIn: null,
-        paidCount: 0,
-        totalAmount: 0,
-        creditsLeft: 0,
-        diagList: sorted,
-        isMember: false,
-        diagDone: sorted.some((d) => (d.status || "completed") === "completed"),
-        ips: [],
-        latestAt: top.created_at || "",
-        noteKey: top?.id || null,
-        expiry: null,
-      });
-    });
+    // 2) 정책: 결과 열람은 '회원가입 필수'이므로 실제 고객 = 전원 회원.
+    //    가입하지 않고 진단만 하다 이탈한 비회원 진단서는 실고객이 아니므로
+    //    통합보기에서 제외한다(고객 수 착시 제거). 이 이탈 진단서는 '진단서' 보기 탭에
+    //    그대로 남아 있어 팔로우업/엑셀에는 계속 활용할 수 있다.
+    //    → 통합보기 = 회원(users) 기준 그대로. usedDiagIds 로 회원에 흡수된 진단서만 카드에 포함됨.
 
     // 최신 활동순 정렬
     return list.sort((a, b) => (a.latestAt < b.latestAt ? 1 : -1));
@@ -1684,8 +1655,11 @@ export default function AdminPage() {
                 })}
               </div>
               <p className="mb-3 text-xs text-gray-500">
-                한 사람의 <b>회원 · 진단서 · 결제 · 상담메모 · IP</b>를 카드 하나에.
-                표시 <b>{filteredUnified.length}</b>명 · 초록=회원 / 회색=비회원 리드
+                한 사람의 <b>진단서 · 결제 · 상담메모 · IP</b>를 카드 하나에. 표시{" "}
+                <b>{filteredUnified.length}</b>명 (실제 고객 = 가입 회원 기준).{" "}
+                <span className="text-gray-400">
+                  결과 열람은 회원가입 필수라, 가입 안 한 진단은 여기서 제외됩니다(‘진단서’ 보기에서 확인).
+                </span>
               </p>
 
               <div className="space-y-3">
@@ -1705,7 +1679,9 @@ export default function AdminPage() {
                     <div
                       key={c.key}
                       className={`overflow-hidden rounded-2xl border shadow-sm ${
-                        c.isMember ? "border-emerald-200 bg-white" : "border-gray-200 bg-gray-50"
+                        c.paidCount > 0
+                          ? "border-brand-orange/50 bg-white ring-1 ring-brand-orange/20"
+                          : "border-gray-200 bg-white"
                       }`}
                     >
                       {/* 카드 헤더 - 한 줄 요약 (클릭 시 펼침) */}
@@ -1722,7 +1698,7 @@ export default function AdminPage() {
                         className="flex w-full cursor-pointer items-start justify-between gap-3 px-4 py-3 text-left hover:bg-gray-50"
                       >
                         <div className="min-w-0 flex-1">
-                          {/* 1줄: 이름 + 통화상태 + 회원/비회원 + 진단상태 */}
+                          {/* 1줄: 이름 + 통화상태 + 진단상태 (전원 회원이므로 회원뱃지는 생략) */}
                           <div className="flex flex-wrap items-center gap-1.5">
                             <span className="text-[15px] font-extrabold text-brand-dark">
                               {c.realName || c.memberName || "이름없음"}
@@ -1732,15 +1708,6 @@ export default function AdminPage() {
                               <span className={`inline-block h-1.5 w-1.5 rounded-full ${csMeta.dot}`} />
                               {csMeta.short}
                             </span>
-                            {c.isMember ? (
-                              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
-                                회원
-                              </span>
-                            ) : (
-                              <span className="rounded-full bg-gray-300/60 px-2 py-0.5 text-[11px] font-bold text-gray-600">
-                                비회원
-                              </span>
-                            )}
                             {c.diagDone ? (
                               <span className="rounded-full bg-blue-500/15 px-2 py-0.5 text-[11px] font-bold text-blue-700">
                                 진단완료
@@ -1751,7 +1718,7 @@ export default function AdminPage() {
                               </span>
                             ) : (
                               <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[11px] font-bold text-gray-500">
-                                진단없음
+                                가입만(진단전)
                               </span>
                             )}
                             {dupCount > 1 && (
