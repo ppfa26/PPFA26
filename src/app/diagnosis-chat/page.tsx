@@ -323,13 +323,22 @@ function encourageText(cur: number, total: number): string | null {
 function renderOptLabel(label: string): ReactNode {
   const m = label.match(/^(.*?)\s*(\[[^\]]*\])\s*$/);
   if (!m) return label;
+  // ── [상태] 색상 힌트(대표님 요청 UX 개선) ──
+  //  "[신청 가능]"은 은은한 초록, "[신청 불가]"는 은은한 빨강으로 한눈에 구분.
+  //  ※ 순수 '표시' 색상만 바꿀 뿐, onClick 에 넘어가는 원본 문자열 값·판정 로직은 100% 불변.
+  const bracket = m[2];
+  const badgeColor = bracket.includes("불가")
+    ? "text-red-400"
+    : bracket.includes("가능")
+    ? "text-emerald-400"
+    : "text-brand-orange";
   return (
     <>
       {m[1]}
       {/* 모바일: 줄바꿈 · PC(sm 이상): 공백 한 칸으로 한 줄 유지 */}
       <br className="sm:hidden" />
       <span className="hidden sm:inline"> </span>
-      {m[2]}
+      <span className={`${badgeColor} font-bold`}>{bracket}</span>
     </>
   );
 }
@@ -1001,7 +1010,7 @@ export default function DiagnosisChat() {
                           // singleSelect면 하나만 즉시 선택·다음으로(라디오), 아니면 복수 토글.
                           onClick={() => (curStep.singleSelect ? answerMultiSingle(o) : toggleMulti(o))}
                           className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
-                            active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
+                            active ? "border-brand-orange bg-brand-grad text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:-translate-y-0.5 hover:border-brand-orange hover:shadow-md"
                           }`}
                         >
                           {renderOptLabel(curStep.labelFull?.[o] || o)}
@@ -1029,7 +1038,7 @@ export default function DiagnosisChat() {
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition active:scale-95 hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition active:scale-95 hover:-translate-y-0.5 hover:border-brand-orange hover:bg-brand-orange/5 hover:shadow-md"
                     >
                       {renderOptLabel(o)}
                     </button>
@@ -1052,7 +1061,7 @@ export default function DiagnosisChat() {
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
                               className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
-                                active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
+                                active ? "border-brand-orange bg-brand-grad text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:-translate-y-0.5 hover:border-brand-orange hover:shadow-md"
                               }`}
                             >
                               {renderOptLabel(o)}
@@ -1092,7 +1101,7 @@ export default function DiagnosisChat() {
                               className={`break-keep rounded-full border py-2.5 text-center font-semibold transition active:scale-95 ${
                                 sub.compact ? "px-1.5 text-[12px]" : "px-3 text-[13px]"
                               } ${
-                                active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
+                                active ? "border-brand-orange bg-brand-grad text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:-translate-y-0.5 hover:border-brand-orange hover:bg-brand-orange/5 hover:shadow-md"
                               }`}
                             >
                               {renderOptLabel(o)}
@@ -1139,7 +1148,7 @@ export default function DiagnosisChat() {
                                 className={`break-keep rounded-full border py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
                                   sub.compact ? "px-1.5" : "px-3"
                                 } ${
-                                  active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:bg-brand-orange/5"
+                                  active ? "border-brand-orange bg-brand-grad text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:-translate-y-0.5 hover:border-brand-orange hover:bg-brand-orange/5 hover:shadow-md"
                                 }`}
                               >
                                 {renderOptLabel(sub.labelFull?.[o] || o)}
@@ -1185,7 +1194,7 @@ export default function DiagnosisChat() {
                         key={sub.key}
                         onClick={() => toggleCheck(sub.key)}
                         className={`flex items-center gap-3 break-keep rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition active:scale-[0.98] ${
-                          active ? "border-brand-orange bg-brand-orange/10 text-brand-dark" : "border-white bg-white text-brand-dark hover:border-brand-orange"
+                          active ? "border-brand-orange bg-brand-orange/10 text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:shadow-md"
                         }`}
                       >
                         <span
@@ -1222,7 +1231,7 @@ export default function DiagnosisChat() {
                         <button
                           key={o}
                           onClick={() => answerRegion(o)}
-                          className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition active:scale-95 hover:border-brand-orange hover:bg-brand-orange/5"
+                          className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition active:scale-95 hover:-translate-y-0.5 hover:border-brand-orange hover:bg-brand-orange/5 hover:shadow-md"
                         >
                           {renderOptLabel(o)}
                         </button>
