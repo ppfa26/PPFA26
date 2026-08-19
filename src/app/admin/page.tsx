@@ -1421,10 +1421,10 @@ export default function AdminPage() {
               <div className="text-[12px] font-semibold text-brand-orange">🏆 계약</div>
               <div className="mt-1 text-2xl font-extrabold text-brand-orange">{unifiedCallCounts["contract"] ?? 0}명</div>
             </button>
-            {/* 전체 회원 */}
+            {/* 전체 고객 - 정책: 진단서 보유자 전원을 실고객으로 집계(통합 카드 수 기준) */}
             <StatCard
-              label="전체 회원"
-              value={`${stats?.total_users ?? 0}명`}
+              label="전체 고객"
+              value={`${unifiedCustomers.length}명`}
               accent="text-gray-900"
             />
             {/* 이번 달 매출 */}
@@ -1560,11 +1560,7 @@ export default function AdminPage() {
               </div>
               <p className="mb-3 text-xs text-gray-500">
                 한 사람의 <b>진단서 · 결제 · 상담메모 · IP</b>를 카드 하나에. 표시{" "}
-                <b>{filteredUnified.length}</b>명.{" "}
-                <span className="text-gray-400">
-                  회원과 진단서를 한 명 단위로 합쳤습니다. <b className="text-rose-500">미가입</b> 뱃지는
-                  진단만 하고 아직 가입 안 한 리드(영업 최우선)예요.
-                </span>
+                <b>{filteredUnified.length}</b>명 (전체 고객).
               </p>
 
               <div className="space-y-3">
@@ -1608,12 +1604,7 @@ export default function AdminPage() {
                             <span className="text-[15px] font-extrabold text-brand-dark">
                               {c.realName || c.memberName || "이름없음"}
                             </span>
-                            {/* 회원/미가입 구분 - 미가입 리드는 진단만 하고 가입 전(영업 최우선) */}
-                            {!c.isMember && (
-                              <span className="rounded-full bg-rose-500/15 px-2 py-0.5 text-[11px] font-bold text-rose-600">
-                                미가입
-                              </span>
-                            )}
+                            {/* 정책: 진단서가 있는 사람은 전원 '회원(실고객)'으로 취급 → 미가입 뱃지 없음 */}
                             {/* 통화상태 - 영업 핵심(미접촉/통화완료/부재중/계약) */}
                             <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold ${csMeta.cls}`}>
                               <span className={`inline-block h-1.5 w-1.5 rounded-full ${csMeta.dot}`} />
