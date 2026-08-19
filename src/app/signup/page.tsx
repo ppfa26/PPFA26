@@ -314,7 +314,7 @@ function SignupInner() {
           </Editable>
           <Editable id="signup-desc" as="p" className="mt-2 text-sm text-brand-gray">
             <>
-              클릭 한번에 간편하게 시작하고
+              클릭 한 번에 간편하게 시작하고
               <br />
               나만의 AI 매칭 리포트를 받아보세요.
             </>
