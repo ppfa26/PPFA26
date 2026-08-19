@@ -471,3 +471,35 @@ export async function sendCompletionAlimtalk(
     /* 발송 실패해도 진단 흐름엔 영향 없음 */
   }
 }
+
+// ────────────────────────────────────────────────────────────────
+//  진단서 ↔ 회원 연결 (대표님 요청)
+//
+//  ★ 문제 ★ 가장 흔한 흐름(비회원 진단 → 회원가입 → 결과화면)에서는
+//    진단서가 저장될 때 아직 로그인 전이라 user_id 가 NULL 로 저장된다.
+//    그래서 관리자 대시보드에서 "이 진단서가 어느 회원 건지" 알 수 없었다.
+//
+//  ★ 해결 ★ 결과화면(matching-preview)은 회원(uid)·진단(phone)이 함께
+//    확정되는 유일한 지점이다. 이때 진단 phone 으로 그 회원의 진단서를 찾아
+//    user_id 를 채운다(link_diagnosis_user RPC). → 앞으로 결과를 보는
+//    회원은 자동으로 진단서에 연결된다.
+//
+//  · security definer RPC 로 서버에서 처리(RLS 우회, 안전).
+//  · 실패해도 조용히 무시 - 결과 화면 진입에는 절대 영향 없음.
+// ────────────────────────────────────────────────────────────────
+export async function linkDiagnosisToUser(
+  profile: Record<string, unknown>,
+  userId: string | null
+): Promise<void> {
+  if (!userId) return;
+  const phoneDigits = String((profile.phone as string) || "").replace(/[^0-9]/g, "");
+  if (!/^010\d{8}$/.test(phoneDigits)) return;
+  try {
+    await supabase.rpc("link_diagnosis_user", {
+      p_user_id: userId,
+      p_phone: phoneDigits,
+    });
+  } catch {
+    /* 연결 실패해도 결과 화면엔 영향 없음 */
+  }
+}

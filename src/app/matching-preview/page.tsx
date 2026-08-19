@@ -29,7 +29,7 @@ import {
   type PaymentBlockReason,
 } from "@/lib/diagnosisConfig";
 import { BETA_FREE } from "@/lib/betaConfig";
-import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer, sendCompletionAlimtalk } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer, sendCompletionAlimtalk, linkDiagnosisToUser } from "@/lib/diagnosisStore";
 import { supabase } from "@/lib/supabaseClient";
 import { checkFreeView } from "@/lib/viewCredits";
 import { isStatsExcludedEmail } from "@/lib/admin";
@@ -144,6 +144,19 @@ export default function MatchingPreview() {
         if (memberUid && !isStatsExcludedEmail(memberEmail)) {
           try {
             void sendCompletionAlimtalk(profile, memberUid);
+          } catch {
+            /* noop */
+          }
+        }
+
+        // ★ 진단서 ↔ 회원 연결(대표님 요청) ★
+        //   비회원 진단 → 회원가입 → 결과화면 흐름에서 진단서 user_id 가
+        //   NULL 로 남는 문제를 해결한다. 이 시점에 회원(uid)·진단(phone)이
+        //   함께 확정되므로, phone 기준으로 진단서에 user_id 를 채운다.
+        //   (관리자 열람은 memberUid=null 이라 실행 안 됨.)
+        if (memberUid) {
+          try {
+            void linkDiagnosisToUser(profile, memberUid);
           } catch {
             /* noop */
           }
