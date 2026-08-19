@@ -861,11 +861,17 @@ export default function AdminPage() {
     const usedDiagIds = new Set<string>();
     const list: UnifiedCustomer[] = [];
 
+    // 진단서 전화번호 인덱스(과거 데이터는 전화번호가 유일한 공통키)
+    const diagPhone = (d: AdminDiagnosis) =>
+      onlyDigits(d.phone || (d.profile as any)?.phone);
+
     // 1) 회원 기준 카드
     for (const u of users) {
       const acctUid = u.user_id ? String(u.user_id) : null;
+      // 1-1) user_id / 이메일 직접 매칭
       const mine = diagnoses
         .filter((d) => {
+          if (usedDiagIds.has(d.id)) return false;
           // user_id 직접 매칭이 최우선
           if (acctUid && d.user_id && String(d.user_id) === acctUid) return true;
           // 이메일 매칭(진단서에 이메일이 실제로 있는 경우)
@@ -874,6 +880,21 @@ export default function AdminPage() {
           return false;
         })
         .sort(byCreatedDesc);
+
+      // 1-2) 전화번호 매칭 — 위에서 붙은 진단서들의 전화번호로 나머지 과거 진단서까지 끌어옴
+      //  (닉네임≠실명이라 이름 매칭은 불가하지만, 전화번호는 진단서에 100% 존재)
+      const myPhones = new Set(mine.map(diagPhone).filter((p) => /^010\d{8}$/.test(p)));
+      if (myPhones.size > 0) {
+        const byPhone = diagnoses.filter((d) => {
+          if (usedDiagIds.has(d.id)) return false;
+          if (mine.some((m) => m.id === d.id)) return false;
+          const ph = diagPhone(d);
+          return /^010\d{8}$/.test(ph) && myPhones.has(ph);
+        });
+        byPhone.forEach((d) => mine.push(d));
+        mine.sort(byCreatedDesc);
+      }
+
       mine.forEach((d) => usedDiagIds.add(d.id));
 
       const top = mine[0];
@@ -1755,6 +1776,12 @@ export default function AdminPage() {
                               >
                                 ✉️ {c.email}
                               </a>
+                            )}
+                            {/* 회원 계정 닉네임(실명과 다를 때만 매칭 근거로 참고 표시) */}
+                            {c.isMember && c.memberName && c.memberName !== c.realName && (
+                              <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-400">
+                                회원계정: {c.memberName}
+                              </span>
                             )}
                           </div>
 
