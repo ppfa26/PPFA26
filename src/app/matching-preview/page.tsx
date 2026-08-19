@@ -29,9 +29,10 @@ import {
   type PaymentBlockReason,
 } from "@/lib/diagnosisConfig";
 import { BETA_FREE } from "@/lib/betaConfig";
-import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer, sendCompletionAlimtalk } from "@/lib/diagnosisStore";
 import { supabase } from "@/lib/supabaseClient";
 import { checkFreeView } from "@/lib/viewCredits";
+import { isStatsExcludedEmail } from "@/lib/admin";
 
 export default function MatchingPreview() {
   const [name, setName] = useState("");
@@ -101,9 +102,13 @@ export default function MatchingPreview() {
 
         // ★ 계정 분리 ★ 관리자 열람이 아닐 때만, 현재 로그인 계정이 저장된 진단의
         //   소유자와 다르면(남의 기기에 남은 진단) 즉시 삭제한다.
+        let memberUid: string | null = null;
+        let memberEmail: string | null = null;
         if (!isAdmin) {
           const { data } = await supabase.auth.getSession();
           const uid = data.session?.user?.id ?? null;
+          memberUid = uid;
+          memberEmail = data.session?.user?.email ?? null;
           // 비회원 진단 후 로그인한 경우 → 지금 계정을 소유자로 연결(입양)해 결과 유지
           adoptDiagnosisIfOwnerless(uid);
           clearDiagnosisIfNotOwner(uid);
@@ -128,6 +133,21 @@ export default function MatchingPreview() {
           setMatchedTitles([]);
         }
         setProfileData(profile);
+
+        // ★ 카카오 알림톡 발송(대표님 요청) ★
+        //   "회원가입 + 진단완료"가 모두 확정되는 유일한 지점이 바로 여기다.
+        //   (비회원이 진단 → 회원가입 → 결과화면으로 오는 가장 흔한 흐름에서도
+        //    이 시점엔 회원(uid)·진단(profile.phone)이 함께 존재한다.)
+        //   · 관리자 열람(?admin=1)은 발송 안 함(memberUid=null 유지).
+        //   · 같은 번호 1회만 발송(localStorage + 서버 이중 중복방지).
+        //   · fire-and-forget: 실패해도 결과 화면엔 전혀 영향 없음.
+        if (memberUid && !isStatsExcludedEmail(memberEmail)) {
+          try {
+            void sendCompletionAlimtalk(profile, memberUid);
+          } catch {
+            /* noop */
+          }
+        }
       } catch {
         setCounts(null);
       }

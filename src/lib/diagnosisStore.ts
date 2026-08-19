@@ -413,4 +413,61 @@ export async function saveCompletedDiagnosis(
   } catch {
     /* 실패해도 결과 화면 진입은 계속 진행 */
   }
+  // ※ 카카오 알림톡 발송은 여기서 하지 않는다.
+  //   가장 흔한 흐름(비회원 진단 → 회원가입 → 결과화면)에서는 이 함수가
+  //   userId=null(비회원)로 불리므로, 여기서 보내면 정작 신규 가입자에게
+  //   발송을 놓친다. → 발송은 '회원+진단완료'가 함께 확정되는 결과 화면
+  //   (matching-preview)에서 sendCompletionAlimtalk 로 1회만 수행한다.
+}
+
+// ────────────────────────────────────────────────────────────────
+//  진단 완료 카카오 알림톡 발송 (대표님 요청)
+//
+//  ★ 호출 지점 ★ 결과 화면(matching-preview)이 '회원 + 진단완료'로
+//    정상 진입할 때 1회 호출된다. (진단만 하고 결과 화면에 안 온 비회원,
+//    회원가입만 하고 진단 안 한 사람에겐 애초에 호출되지 않음.)
+//
+//  ★ 발송 조건 (셋 다 만족해야 발송) ★
+//   1) 회원(userId 존재) — "회원가입 + 진단완료"만 발송.
+//      · 비회원(진단만 하고 로그인 안 함)에겐 발송 안 함(userId 없음).
+//   2) 유효한 휴대폰 번호(진단에서 수집한 010 11자리)가 있을 것.
+//   3) 같은 번호로 아직 안 보냈을 것 — localStorage 로 1차 중복 방지
+//      (같은 브라우저 재진단 시 재발송 차단). 서버에서도 2차로 한번 더 방어.
+//
+//   → 비용(건당 과금) 절감 + 고객이 같은 안내를 반복 수신하는 위화감 방지.
+//   ※ 실제 발송/키 관리는 서버 라우트(/api/notify/kakao)에서만 수행.
+// ────────────────────────────────────────────────────────────────
+const ALIMTALK_SENT_PREFIX = "mpp_alimtalk_sent_";
+
+export async function sendCompletionAlimtalk(
+  profile: Record<string, unknown>,
+  userId: string | null
+): Promise<void> {
+  // 회원만 발송
+  if (!userId) return;
+
+  const phoneDigits = String((profile.phone as string) || "").replace(/[^0-9]/g, "");
+  // 010 으로 시작하는 11자리 휴대폰만
+  if (!/^010\d{8}$/.test(phoneDigits)) return;
+
+  // localStorage 1차 중복 방지(같은 번호는 1번만)
+  try {
+    const key = ALIMTALK_SENT_PREFIX + phoneDigits;
+    if (localStorage.getItem(key)) return;
+    // 먼저 마킹해 두어(요청 직전) 동시 중복 요청도 차단
+    localStorage.setItem(key, String(Date.now()));
+  } catch {
+    /* localStorage 접근 불가 시엔 마킹 없이 진행(서버 2차 방어에 의존) */
+  }
+
+  try {
+    await fetch("/api/notify/kakao", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: phoneDigits }),
+      keepalive: true, // 페이지 이동 중에도 요청 유지
+    });
+  } catch {
+    /* 발송 실패해도 진단 흐름엔 영향 없음 */
+  }
 }
