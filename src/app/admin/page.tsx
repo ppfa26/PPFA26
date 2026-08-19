@@ -101,7 +101,7 @@ type Phase = "loading" | "denied" | "ready";
 // 상단 탭: '고객 관리'(회원+진단서+통합) 하나로 합치고, 그 안에서 CustView 토글로 전환
 type Tab = "customers" | "payments" | "revenue" | "access";
 // 고객 관리 탭 내부 보기 모드
-type CustView = "unified" | "members" | "diags";
+type CustView = "unified" | "diags";
 
 /* ------------------------------------------------------------------ */
 /*  유틸                                                               */
@@ -854,6 +854,10 @@ export default function AdminPage() {
     latestAt: string;            // 정렬용 최신 활동 시각
     noteKey: string | null;       // 상담메모/통화상태 저장 키(대표 진단서 id)
     expiry: string | null;        // 열람 기한(latest_expiry)
+    // ↓ 회원 관리(구 '회원' 탭)를 통합 카드로 흡수하기 위한 필드
+    creditsTotal: number;         // 결제한 조회권 총량
+    creditsUsed: number;          // 사용한 조회권
+    utmSource: string | null;     // 유입경로(광고 채널)
   };
 
   const unifiedCustomers: UnifiedCustomer[] = (() => {
@@ -930,6 +934,9 @@ export default function AdminPage() {
         latestAt: latest || u.joined_at || "",
         noteKey: top?.id || null,
         expiry: u.latest_expiry,
+        creditsTotal: u.credits_total || 0,
+        creditsUsed: u.credits_used || 0,
+        utmSource: u.utm_source || null,
       });
     }
 
@@ -951,6 +958,8 @@ export default function AdminPage() {
   //  + 통화상태 필터(미접촉/통화완료/부재중/계약)
   const filteredUnified = unifiedCustomers.filter((c) => {
     if (unifiedCall !== "all" && callStatusOf(c) !== unifiedCall) return false;
+    // 유입경로 필터(구 회원 탭 필터를 통합보기에 적용)
+    if (userSourceFilter !== "all" && (c.utmSource || "direct").toLowerCase() !== userSourceFilter) return false;
     const q = unifiedSearch.trim().toLowerCase();
     if (!q) return true;
     const hay = [c.email, c.memberName, c.realName, c.phone, c.bno, c.bizType]
@@ -1584,8 +1593,7 @@ export default function AdminPage() {
             <div className="mb-4 inline-flex rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
               {(
                 [
-                  ["unified", `👤 통합보기 (${unifiedCustomers.length})`],
-                  ["members", `👥 회원 (${users.length})`],
+                  ["unified", `👤 고객 (${unifiedCustomers.length})`],
                   ["diags", `📋 진단서 (${diagnoses.length})`],
                 ] as [CustView, string][]
               ).map(([key, label]) => (
@@ -1629,6 +1637,32 @@ export default function AdminPage() {
                     ✕ 초기화
                   </button>
                 )}
+                {/* 오른쪽: 유입경로 필터 + 회원 명단 엑셀(구 회원 탭 기능 이관) */}
+                <div className="ml-auto flex shrink-0 items-center gap-2">
+                  <select
+                    value={userSourceFilter}
+                    onChange={(e) => setUserSourceFilter(e.target.value)}
+                    className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-[13px] font-semibold text-gray-700 outline-none focus:border-brand-orange"
+                    title="유입경로(광고 채널)별로 걸러 봅니다"
+                  >
+                    <option value="all">🌐 전체 유입경로</option>
+                    {Object.entries(userSourceCounts)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([key, cnt]) => (
+                        <option key={key} value={key}>
+                          {utmBadge(key).label} ({cnt})
+                        </option>
+                      ))}
+                  </select>
+                  <button
+                    onClick={downloadUsersCsv}
+                    disabled={users.length === 0}
+                    className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-gray-50 disabled:opacity-40"
+                    title="회원 명단을 엑셀(CSV)로 내려받습니다 - 이름·연락처·유입경로 포함"
+                  >
+                    ⬇️ 회원 엑셀
+                  </button>
+                </div>
               </div>
               {/* 통화상태 필터 - 영업 우선순위: 미접촉만 골라 보기 등 */}
               <div className="mb-3 flex flex-wrap items-center gap-1.5">
@@ -1895,6 +1929,65 @@ export default function AdminPage() {
                             </p>
                           )}
 
+                          {/* 회원 관리(구 '회원' 탭 기능을 카드로 흡수) - 회원(email)일 때만 */}
+                          {c.email && (
+                            <div className="mb-3 rounded-xl border border-gray-200 bg-white p-3">
+                              {/* 회원 요약 한 줄: 가입일 · 최근접속 · 유입경로 · 조회권 */}
+                              <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-500">
+                                <span className="font-bold text-gray-400">회원 관리</span>
+                                {(() => {
+                                  const b = utmBadge(c.utmSource);
+                                  return (
+                                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${b.cls}`}>
+                                      {b.label}
+                                    </span>
+                                  );
+                                })()}
+                                {c.joinedAt && <span>가입 {fmtDate(c.joinedAt)}</span>}
+                                {c.lastSignIn && <span>최근접속 {fmtDate(c.lastSignIn)}</span>}
+                                <span>
+                                  조회권 {c.creditsUsed}/{c.creditsTotal}
+                                </span>
+                              </div>
+                              {/* 관리 버튼 */}
+                              <div className="flex flex-wrap gap-1.5">
+                                <button
+                                  onClick={() => resetDevice(c.email!)}
+                                  className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                >
+                                  기기초기화
+                                </button>
+                                {c.creditsTotal > 0 && c.creditsUsed >= c.creditsTotal ? (
+                                  <button
+                                    onClick={() => restoreCredits(c.email)}
+                                    className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                  >
+                                    ↩️ 조회권 복구
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => refundCredits(c.email)}
+                                    className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                  >
+                                    💸 조회권 환불
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => doBlock("email", c.email!)}
+                                  className="whitespace-nowrap rounded-lg bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-600 transition hover:bg-red-100"
+                                >
+                                  계정차단
+                                </button>
+                                <button
+                                  onClick={() => deleteUser(c.email)}
+                                  className="whitespace-nowrap rounded-lg bg-red-600 px-2.5 py-1 text-[11px] font-bold text-white transition hover:bg-red-700"
+                                >
+                                  🗑️ 삭제
+                                </button>
+                              </div>
+                            </div>
+                          )}
+
                           {c.diagList.length === 0 ? (
                             <p className="text-[12px] text-gray-400">
                               작성한 진단서가 없습니다. (가입만 하고 진단 전)
@@ -1938,290 +2031,6 @@ export default function AdminPage() {
                     </div>
                   );
                 })}
-              </div>
-            </div>
-          )}
-
-          {/* ------- 회원 목록 ------- */}
-          {tab === "customers" && custView === "members" && (
-            <div>
-              {/* 🔍 회원 검색 - 이름·이메일·연락처로 즉시 검색 */}
-              <div className="mb-4 flex w-full flex-wrap items-center gap-2">
-                <div className="relative w-full min-w-0 sm:w-auto sm:flex-1">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                    🔍
-                  </span>
-                  <input
-                    type="text"
-                    value={userSearch}
-                    onChange={(e) => setUserSearch(e.target.value)}
-                    placeholder="회원 검색 - 이름 · 이메일 · 연락처 (예: 홍길동 / 010 / hong@)"
-                    className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 outline-none focus:border-brand-orange"
-                  />
-                </div>
-                {userSearch && (
-                  <button
-                    onClick={() => setUserSearch("")}
-                    className="shrink-0 rounded-xl bg-gray-100 px-3 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-200"
-                  >
-                    ✕ 초기화
-                  </button>
-                )}
-                {/* 오른쪽 정렬: 유입경로 필터 + 엑셀 다운 + N명 배지 */}
-                <div className="ml-auto flex shrink-0 items-center gap-2">
-                  {/* 유입경로 필터 - 채널별로 걸러보기(어느 채널이 돈이 되는지 판단) */}
-                  <select
-                    value={userSourceFilter}
-                    onChange={(e) => setUserSourceFilter(e.target.value)}
-                    className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-[13px] font-semibold text-gray-700 outline-none focus:border-brand-orange"
-                    title="유입경로(광고 채널)별로 회원을 걸러 봅니다"
-                  >
-                    <option value="all">🌐 전체 유입경로</option>
-                    {Object.entries(userSourceCounts)
-                      .sort((a, b) => b[1] - a[1])
-                      .map(([key, cnt]) => (
-                        <option key={key} value={key}>
-                          {utmBadge(key).label} ({cnt})
-                        </option>
-                      ))}
-                  </select>
-                  {/* 회원 목록 CSV 다운로드 - 세무·백업·문자발송 명단용 */}
-                  <button
-                    onClick={downloadUsersCsv}
-                    disabled={users.length === 0}
-                    className="whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
-                    title="회원 명단을 엑셀(CSV)로 내려받습니다 - 이름·연락처·유입경로 포함"
-                  >
-                    ⬇️ 회원 엑셀 다운
-                  </button>
-                  <span className="whitespace-nowrap rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-[13px] font-semibold text-gray-600">
-                    {userSearch || userSourceFilter !== "all"
-                      ? `결과 ${sortedUsers.length}명`
-                      : `전체 ${users.length}명`}
-                  </span>
-                </div>
-              </div>
-
-              <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <table className="w-full min-w-[920px] text-left text-sm">
-                <thead className="whitespace-nowrap border-b border-gray-100 bg-gray-50 text-[13px] text-gray-500">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold">회원 (이름·유입경로)</th>
-                    <th
-                      onClick={() => toggleUserSort("joined_at")}
-                      className="cursor-pointer select-none px-4 py-3 font-semibold hover:text-brand-orange"
-                      title="클릭 시 가입일 기준 정렬"
-                    >
-                      가입일{sortArrow("joined_at")}
-                    </th>
-                    <th
-                      onClick={() => toggleUserSort("last_sign_in")}
-                      className="cursor-pointer select-none px-4 py-3 font-semibold hover:text-brand-orange"
-                      title="클릭 시 최근접속 기준 정렬"
-                    >
-                      최근접속{sortArrow("last_sign_in")}
-                    </th>
-                    <th
-                      onClick={() => toggleUserSort("paid_count")}
-                      className="cursor-pointer select-none px-4 py-3 text-center font-semibold hover:text-brand-orange"
-                      title="클릭 시 결제 건수 기준 정렬"
-                    >
-                      결제{sortArrow("paid_count")}
-                    </th>
-                    <th
-                      onClick={() => toggleUserSort("total_amount")}
-                      className="cursor-pointer select-none px-4 py-3 text-right font-semibold hover:text-brand-orange"
-                      title="클릭 시 누적금액 기준 정렬"
-                    >
-                      누적금액{sortArrow("total_amount")}
-                    </th>
-                    <th className="px-4 py-3 font-semibold text-center">조회권</th>
-                    <th className="px-4 py-3 font-semibold">열람기한</th>
-                    <th className="px-4 py-3 font-semibold text-center">관리</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {sortedUsers.length === 0 && (
-                    <tr>
-                      <td colSpan={8} className="px-4 py-10 text-center text-gray-400">
-                        {userSearch || userSourceFilter !== "all"
-                          ? "조건에 맞는 회원이 없습니다."
-                          : "회원이 없습니다."}
-                      </td>
-                    </tr>
-                  )}
-                  {sortedUsers.map((u) => {
-                    const dl = daysLeft(u.latest_expiry);
-                    const active = dl !== null && dl > 0;
-                    const info = userInfoByEmail(u.email);
-                    const badge = utmBadge(u.utm_source);
-                    // 조회권을 결제한 적이 있고(total>0) 남은 게 0이면 = 환불(차단)된 상태
-                    const isRefunded = u.credits_total > 0 && u.credits_used >= u.credits_total;
-                    // 이 회원이 진단(설문)을 완료했는지 → 결과보기 버튼 활성/비활성 판단
-                    const hasDiag = !!findUserDiagnosis(u.email);
-                    return (
-                      <tr key={u.user_id} className="hover:bg-gray-50/60">
-                        <td className="whitespace-nowrap px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            {/* 회원 이름 = 클릭하면 그 회원의 진단서로 바로 이동 (연결성) */}
-                            <button
-                              onClick={() => goToUserDiag(u.email, u.full_name)}
-                              className={`font-bold text-gray-800 ${
-                                hasDiag
-                                  ? "cursor-pointer hover:text-brand-primary hover:underline"
-                                  : "cursor-default"
-                              }`}
-                              title={hasDiag ? "클릭하면 이 회원의 진단서로 이동합니다" : undefined}
-                            >
-                              {/* ① 계정 자체 이름(소셜 로그인 닉네임) → ② 진단서 역추적 이름 → ③ 미입력 순 */}
-                              {(u.full_name && u.full_name.trim()) || info.name || "이름 미입력"}
-                            </button>
-                            {/* 진단 완료 여부 미니 점 - 회원↔진단서 연결 상태 한눈에 */}
-                            {hasDiag ? (
-                              <span
-                                title="진단 완료 - 클릭 가능"
-                                className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
-                              />
-                            ) : (
-                              <span
-                                title="아직 진단(설문) 전"
-                                className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-gray-300"
-                              />
-                            )}
-                            <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${badge.cls}`}>
-                              {badge.label}
-                            </span>
-                            <span className="text-xs text-gray-400">{u.email}</span>
-                            {info.phone && (
-                              <>
-                                <span className="text-gray-300">·</span>
-                                <span className="text-xs text-gray-400">{info.phone}</span>
-                              </>
-                            )}
-                          </div>
-                          {/* 🌐 이 회원이 접속에 쓴 IP - "누가 어떤 IP 쓰는지" 한눈에.
-                              같은 IP를 2계정 이상이 쓰면 빨갛게(공유 IP 의심) 표시. */}
-                          {(() => {
-                            const ips = ipsByEmail(u.email);
-                            if (ips.length === 0) return null;
-                            return (
-                              <div className="mt-1 flex flex-wrap items-center gap-1">
-                                <span className="text-[10px] text-gray-400">🌐</span>
-                                {ips.slice(0, 4).map((ip) => {
-                                  const shared = emailCountByIp(ip) >= 2;
-                                  return (
-                                    <span
-                                      key={ip}
-                                      title={
-                                        shared
-                                          ? "이 IP를 2개 이상 계정이 사용 - 중복가입/어뷰징 의심"
-                                          : "이 회원의 접속 IP"
-                                      }
-                                      className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
-                                        shared
-                                          ? "bg-red-100 text-red-700"
-                                          : "bg-gray-100 text-gray-500"
-                                      }`}
-                                    >
-                                      {ip}
-                                      {shared ? ` ⚠️${emailCountByIp(ip)}` : ""}
-                                    </span>
-                                  );
-                                })}
-                                {ips.length > 4 && (
-                                  <span className="text-[10px] text-gray-400">+{ips.length - 4}</span>
-                                )}
-                              </div>
-                            );
-                          })()}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-gray-500">{fmtDate(u.joined_at)}</td>
-                        <td className="whitespace-nowrap px-4 py-3 text-gray-500">{fmtDate(u.last_sign_in)}</td>
-                        <td className="whitespace-nowrap px-4 py-3 text-center text-gray-700">{u.paid_count}건</td>
-                        <td className="whitespace-nowrap px-4 py-3 text-right font-semibold text-gray-800">
-                          {won(u.total_amount)}
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <span className="font-semibold text-gray-700">
-                            {u.credits_used}/{u.credits_total}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3">
-                          {u.latest_expiry ? (
-                            active ? (
-                              <span className="text-emerald-600 font-semibold">
-                                {dl}일 남음
-                              </span>
-                            ) : (
-                              <span className="text-gray-400">만료됨</span>
-                            )
-                          ) : (
-                            <span className="text-gray-300">-</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="grid w-[280px] grid-cols-3 gap-1.5">
-                            <button
-                              onClick={() => goToUserDiag(u.email, u.full_name)}
-                              className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                            >
-                              📇 고객진단서
-                            </button>
-                            {hasDiag ? (
-                              <button
-                                onClick={() => viewUserResult(u.email)}
-                                className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                              >
-                                📊 결과보기
-                              </button>
-                            ) : (
-                              <span
-                                title="가입만 하고 아직 진단(설문)을 완료하지 않은 회원입니다"
-                                className="cursor-not-allowed whitespace-nowrap rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-bold text-gray-400"
-                              >
-                                📊 진단 전
-                              </span>
-                            )}
-                            <button
-                              onClick={() => u.email && resetDevice(u.email)}
-                              className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                            >
-                              기기초기화
-                            </button>
-                            {isRefunded ? (
-                              <button
-                                onClick={() => restoreCredits(u.email)}
-                                className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                              >
-                                ↩️ 조회권 복구
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => refundCredits(u.email)}
-                                className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                              >
-                                💸 조회권 환불
-                              </button>
-                            )}
-                            <button
-                              onClick={() => u.email && doBlock("email", u.email)}
-                              className="whitespace-nowrap rounded-lg bg-red-50 px-2.5 py-1 text-xs font-bold text-red-600 transition hover:scale-[1.02] hover:bg-red-100"
-                            >
-                              계정차단
-                            </button>
-                            <button
-                              onClick={() => deleteUser(u.email)}
-                              className="whitespace-nowrap rounded-lg bg-red-600 px-2.5 py-1 text-xs font-bold text-white transition hover:scale-[1.02] hover:bg-red-700"
-                            >
-                              🗑️ 삭제
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
               </div>
             </div>
           )}
@@ -2495,10 +2304,11 @@ export default function AdminPage() {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setTab("customers");
-                                  setCustView("members");
-                                  setUserSearch(memberEmail);
+                                  setCustView("unified");
+                                  setUnifiedCall("all");
+                                  setUnifiedSearch(memberEmail);
                                 }}
-                                title="클릭하면 이 회원 계정으로 이동합니다"
+                                title="클릭하면 이 회원 카드(고객 보기)로 이동합니다"
                                 className="ml-2 inline-flex max-w-full items-center gap-1 truncate rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20"
                               >
                                 👤 {memberEmail}
