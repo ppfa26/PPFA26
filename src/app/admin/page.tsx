@@ -1410,6 +1410,12 @@ export default function AdminPage() {
               <div className="text-[12px] font-semibold text-gray-500">✅ 통화완료</div>
               <div className="mt-1 text-2xl font-extrabold text-gray-900">{unifiedCallCounts["done"] ?? 0}명</div>
             </button>
+            {/* 전체 고객 - 정책: 진단서 보유자 전원을 실고객으로 집계(통합 카드 수 기준) */}
+            <StatCard
+              label="전체 고객"
+              value={`${unifiedCustomers.length}명`}
+              accent="text-gray-900"
+            />
             {/* 계약 - 성과 */}
             <button
               onClick={() => {
@@ -1422,12 +1428,6 @@ export default function AdminPage() {
               <div className="text-[12px] font-semibold text-brand-orange">🏆 계약</div>
               <div className="mt-1 text-2xl font-extrabold text-brand-orange">{unifiedCallCounts["contract"] ?? 0}명</div>
             </button>
-            {/* 전체 고객 - 정책: 진단서 보유자 전원을 실고객으로 집계(통합 카드 수 기준) */}
-            <StatCard
-              label="전체 고객"
-              value={`${unifiedCustomers.length}명`}
-              accent="text-gray-900"
-            />
             {/* 이번 달 매출 */}
             <StatCard
               label="이번 달 매출"
