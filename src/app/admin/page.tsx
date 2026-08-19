@@ -791,6 +791,15 @@ export default function AdminPage() {
     return (ip: string) => map.get(ip)?.size ?? 0;
   })();
 
+  // 현재 차단된 IP 목록(빠른 조회용 Set). 카드에서 '차단됨/차단하기'를 즉시 판단.
+  const blockedIpSet = (() => {
+    const s = new Set<string>();
+    for (const b of blocks) {
+      if (b.kind === "ip" && b.value) s.add(b.value.trim());
+    }
+    return s;
+  })();
+
   // user_id → 회원 가입 이메일 (진단서↔회원 연결의 가장 확실한 키)
   const emailByUserId = (() => {
     const map = new Map<string, string>();
@@ -1672,25 +1681,55 @@ export default function AdminPage() {
                               {c.ips.slice(0, 2).map((ip) => {
                                 const shared = emailCountByIp(ip) >= 2;
                                 const hits = ipDerived.get(ip)?.hitCount ?? 0; // 이 IP 전체 접속 횟수
+                                const isBlocked = blockedIpSet.has(ip.trim()); // 현재 차단 여부
                                 return (
-                                  <span
-                                    key={ip}
-                                    className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono ${
-                                      shared
-                                        ? "bg-red-100 font-bold text-red-600"
-                                        : "bg-gray-100 text-gray-500"
-                                    }`}
-                                    title={
-                                      (shared ? `이 IP를 ${emailCountByIp(ip)}개 계정이 공유(어뷰징 의심) · ` : "") +
-                                      `총 ${hits}회 접속`
-                                    }
-                                  >
-                                    {ip}
-                                    {shared ? ` ⚠️${emailCountByIp(ip)}` : ""}
-                                    {hits > 0 && (
-                                      <span className="rounded-sm bg-white/70 px-1 text-[10px] font-semibold text-gray-500">
-                                        {hits}회
-                                      </span>
+                                  <span key={ip} className="inline-flex items-center gap-1">
+                                    <span
+                                      className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono ${
+                                        isBlocked
+                                          ? "bg-red-600 font-bold text-white line-through"
+                                          : shared
+                                          ? "bg-red-100 font-bold text-red-600"
+                                          : "bg-gray-100 text-gray-500"
+                                      }`}
+                                      title={
+                                        (isBlocked ? "🚫 차단된 IP · " : "") +
+                                        (shared ? `이 IP를 ${emailCountByIp(ip)}개 계정이 공유(어뷰징 의심) · ` : "") +
+                                        `총 ${hits}회 접속`
+                                      }
+                                    >
+                                      {ip}
+                                      {shared ? ` ⚠️${emailCountByIp(ip)}` : ""}
+                                      {hits > 0 && (
+                                        <span className="rounded-sm bg-white/70 px-1 text-[10px] font-semibold text-gray-500">
+                                          {hits}회
+                                        </span>
+                                      )}
+                                    </span>
+                                    {/* IP 차단/해제 버튼 — 카드 클릭(펼침)과 분리(stopPropagation).
+                                        차단하면 log_access RPC가 blocked=true를 내려 사이트 전체가 차단 안내로 막힘. */}
+                                    {isBlocked ? (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          doUnblock("ip", ip);
+                                        }}
+                                        className="rounded border border-gray-300 bg-white px-1.5 py-0.5 text-[10px] font-bold text-gray-600 transition hover:bg-gray-50"
+                                        title={`${ip} 차단 해제`}
+                                      >
+                                        차단해제
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          doBlock("ip", ip);
+                                        }}
+                                        className="rounded border border-red-200 bg-red-50 px-1.5 py-0.5 text-[10px] font-bold text-red-600 transition hover:bg-red-100"
+                                        title={`${ip} 접속 차단`}
+                                      >
+                                        🚫 차단
+                                      </button>
                                     )}
                                   </span>
                                 );
