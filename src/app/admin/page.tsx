@@ -1653,6 +1653,13 @@ export default function AdminPage() {
                             {c.bizType && <span>🏢 {c.bizType}</span>}
                             {c.bno && <span>#{c.bno}</span>}
                           </div>
+                          {/* 2줄-보강: 이메일·계정이름을 펼치지 않아도 바로 노출(대표님 요청) */}
+                          {(c.email || c.memberName) && (
+                            <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-gray-500">
+                              {c.email && <span>✉️ {c.email}</span>}
+                              {c.memberName && <span className="text-gray-400">👤 {c.memberName}</span>}
+                            </div>
+                          )}
                           {/* 3줄: IP (최대 2개, 공유 IP만 빨강 강조) */}
                           {c.ips.length > 0 && (
                             <div className="mt-0.5 flex flex-wrap items-center gap-1 text-[11px]">
@@ -1681,17 +1688,27 @@ export default function AdminPage() {
                           )}
                         </div>
                         <div className="flex shrink-0 flex-col items-end gap-1.5">
-                          {/* 목록에서 바로 전화(카드 펼치지 않고도) */}
-                          {c.phone && (
+                          {/* 목록에서 바로 연락(카드 펼치지 않고도) — 전화 우선, 없으면 이메일.
+                              포인트색을 줄이려 은은한 아웃라인 버튼으로 통일. */}
+                          {c.phone ? (
                             <a
                               href={`tel:${c.phone.replace(/[^0-9]/g, "")}`}
                               onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1 rounded-lg bg-brand-dark px-3 py-1.5 text-[12px] font-bold text-white shadow-sm transition hover:opacity-90"
+                              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
                               title={`${c.phone} 로 전화 걸기`}
                             >
                               📞 전화
                             </a>
-                          )}
+                          ) : c.email ? (
+                            <a
+                              href={`mailto:${c.email}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
+                              title={`${c.email} 로 메일 보내기`}
+                            >
+                              ✉️ 메일
+                            </a>
+                          ) : null}
                           <div className="text-[11px] text-gray-400">
                             {fmtDateTime(c.latestAt)}
                           </div>
