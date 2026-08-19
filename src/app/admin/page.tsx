@@ -809,20 +809,13 @@ export default function AdminPage() {
   //  회원 이름은 카카오 닉네임, 진단서 이름은 실제 대표자명이라 서로 달라
   //  '이름 매칭'은 신뢰할 수 없으므로 쓰지 않는다.
   const memberEmailForDiagnosis = (d: AdminDiagnosis): string | null => {
-    // 1) user_id 직접 연결 (가장 확실)
+    // 1) user_id 직접 연결 (가장 확실 - link_diagnosis_user 로 채워진 값)
     const byUid = emailByUserId(d.user_id);
     if (byUid) return byUid;
-    // 2) 진단서에 이메일이 있으면 그대로
+    // 2) 진단서에 이메일이 실제로 있으면 그대로 (소셜 로그인은 대부분 비어있음)
     const direct = d.email || ((d.profile as any)?.email as string) || "";
     if (direct.trim()) return direct.trim();
-    // 3) 전화번호로 회원 역추적
-    const phone = String(d.phone || (d.profile as any)?.phone || "").replace(/[^0-9]/g, "");
-    if (phone.length < 10) return null;
-    for (const u of users) {
-      const info = userInfoByEmail(u.email);
-      const uPhone = (info.phone || "").replace(/[^0-9]/g, "");
-      if (uPhone && uPhone === phone) return u.email;
-    }
+    // 3) 그 외에는 억지로 잇지 않는다(오연결 방지). null 반환 → 뱃지 미표시.
     return null;
   };
 
@@ -1933,33 +1926,26 @@ export default function AdminPage() {
                               진단서에 로그인 회원의 user_id 가 저장돼 있으면 그 회원의 가입 이메일을 표시.
                               연결됨: 초록 뱃지(클릭 시 해당 회원 목록으로 이동). 미연결: 회색 안내. */}
                           {(() => {
+                            // ★ 확실히 연결된 회원(user_id 매칭)만 초록 뱃지로 표시.
+                            //   과거 데이터는 매칭 키가 없어 억지로 잇지 않고(오연결 방지)
+                            //   아무 문구도 표시하지 않는다. 고객 식별은 위의 이름·전화·
+                            //   사업자번호로 충분하다. 앞으로 결과를 보는 회원부터
+                            //   자동으로 이 초록 뱃지가 붙는다.
                             const memberEmail = memberEmailForDiagnosis(d);
-                            if (memberEmail) {
-                              return (
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setTab("users");
-                                    setUserSearch(memberEmail);
-                                  }}
-                                  title="클릭하면 이 회원 계정으로 이동합니다"
-                                  className="ml-2 inline-flex max-w-full items-center gap-1 truncate rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20"
-                                >
-                                  👤 {memberEmail}
-                                </button>
-                              );
-                            }
-                            // 미연결: completed 인데도 회원 매칭이 안 된 경우만 표시
-                            //  (partial 은 애초에 비회원 리드라 표시 생략)
-                            if ((d.status || "completed") !== "completed") return null;
+                            if (!memberEmail) return null;
                             return (
-                              <span
-                                title="이 진단서에 연결된 회원 계정을 찾지 못했습니다(구 데이터일 수 있음)"
-                                className="ml-2 inline-flex items-center gap-1 rounded-full border border-slate-600 bg-slate-700/40 px-2 py-0.5 text-[11px] font-semibold text-slate-400"
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setTab("users");
+                                  setUserSearch(memberEmail);
+                                }}
+                                title="클릭하면 이 회원 계정으로 이동합니다"
+                                className="ml-2 inline-flex max-w-full items-center gap-1 truncate rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20"
                               >
-                                👤 회원 미연결
-                              </span>
+                                👤 {memberEmail}
+                              </button>
                             );
                           })()}
                         </div>
