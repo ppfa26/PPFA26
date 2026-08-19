@@ -98,10 +98,8 @@ type BlockRow = {
 };
 
 type Phase = "loading" | "denied" | "ready";
-// 상단 탭: '고객 관리'(회원+진단서+통합) 하나로 합치고, 그 안에서 CustView 토글로 전환
+// 상단 탭: '고객 관리'(회원+진단서+통합)를 하나의 리스트로 완전히 합침(내부 토글 없음)
 type Tab = "customers" | "payments" | "revenue" | "access";
-// 고객 관리 탭 내부 보기 모드
-type CustView = "unified" | "diags";
 
 /* ------------------------------------------------------------------ */
 /*  유틸                                                               */
@@ -219,7 +217,7 @@ export default function AdminPage() {
 
   const [phase, setPhase] = useState<Phase>("loading");
   const [tab, setTab] = useState<Tab>("customers");
-  const [custView, setCustView] = useState<CustView>("unified"); // 고객 관리 내부 보기
+
 
   const [stats, setStats] = useState<Stats | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -230,7 +228,6 @@ export default function AdminPage() {
   const [access, setAccess] = useState<AccessRow[]>([]);
   const [ipSummary, setIpSummary] = useState<IpRow[]>([]);
   const [blocks, setBlocks] = useState<BlockRow[]>([]);
-  const [openDiag, setOpenDiag] = useState<string | null>(null);
   const [selectedDiag, setSelectedDiag] = useState<Set<string>>(new Set()); // 체크선택 다운로드용
   const [openDay, setOpenDay] = useState<string | null>(null); // 매출-일별 펼침 (YYYY-MM-DD)
   const [openMonth, setOpenMonth] = useState<string | null>(null); // 매출-월별 펼침 (YYYY-MM)
@@ -239,14 +236,7 @@ export default function AdminPage() {
   const [crawling, setCrawling] = useState(false); // 정부공고 수집 진행중
   // 데이터 로딩 진단 - RPC가 실패하면 (권한/함수누락 등) 원인을 화면에 그대로 표시한다.
   const [loadDebug, setLoadDebug] = useState<string | null>(null);
-  const [userSearch, setUserSearch] = useState(""); // 회원 검색어(이름·이메일·연락처)
   const [userSourceFilter, setUserSourceFilter] = useState("all"); // 유입경로 필터(all=전체)
-  // 회원 목록 정렬: 키 + 방향(desc=내림차순 기본). 기본은 가입일 최신순.
-  const [userSort, setUserSort] = useState<{
-    key: "joined_at" | "last_sign_in" | "paid_count" | "total_amount";
-    dir: "asc" | "desc";
-  }>({ key: "joined_at", dir: "desc" });
-  const [diagSearch, setDiagSearch] = useState(""); // 진단서 검색어(이름·이메일·연락처·업종·사업자번호)
   const [unifiedSearch, setUnifiedSearch] = useState(""); // 통합 고객 뷰 검색어
   const [openUnified, setOpenUnified] = useState<string | null>(null); // 통합 카드 펼침(key)
   const [unifiedCall, setUnifiedCall] = useState<"all" | CallStatus>("all"); // 통화상태 필터
@@ -940,11 +930,48 @@ export default function AdminPage() {
       });
     }
 
-    // 2) 정책: 결과 열람은 '회원가입 필수'이므로 실제 고객 = 전원 회원.
-    //    가입하지 않고 진단만 하다 이탈한 비회원 진단서는 실고객이 아니므로
-    //    통합보기에서 제외한다(고객 수 착시 제거). 이 이탈 진단서는 '진단서' 보기 탭에
-    //    그대로 남아 있어 팔로우업/엑셀에는 계속 활용할 수 있다.
-    //    → 통합보기 = 회원(users) 기준 그대로. usedDiagIds 로 회원에 흡수된 진단서만 카드에 포함됨.
+    // 2) 미가입 리드 카드 — 진단만 하고 아직 회원가입 안 한 사람(가입 전 이탈).
+    //    '진단서' 탭을 없애고 고객 관리 하나로 합치기 위해, 회원에 흡수되지 않은
+    //    진단서를 전화번호 단위로 묶어 '미가입' 카드로 만든다. 연락처가 있으니 영업 대상.
+    //    (전화번호가 없는 진단서는 사람 단위로 묶을 수 없어 진단서 id 단위로 개별 카드)
+    const leftover = diagnoses.filter((d) => !usedDiagIds.has(d.id));
+    const phoneGroups: Record<string, AdminDiagnosis[]> = {};
+    for (const d of leftover) {
+      const ph = diagPhone(d);
+      const gkey = /^010\d{8}$/.test(ph) ? `p:${ph}` : `d:${d.id}`;
+      (phoneGroups[gkey] ||= []).push(d);
+    }
+    for (const gkey of Object.keys(phoneGroups)) {
+      const group = phoneGroups[gkey];
+      group.sort(byCreatedDesc);
+      const top = group[0];
+      const p = (top?.profile || {}) as any;
+      const done = group.some((d: AdminDiagnosis) => (d.status || "completed") === "completed");
+      list.push({
+        key: `lead:${gkey}`,
+        email: null,
+        memberName: null,
+        realName: top?.name || p?.name || null,
+        phone: top?.phone || p?.phone || null,
+        bizType: p?.businessType || null,
+        bno: p?.bno || null,
+        joinedAt: null,
+        lastSignIn: null,
+        paidCount: 0,
+        totalAmount: 0,
+        creditsLeft: 0,
+        diagList: group,
+        isMember: false,
+        diagDone: done,
+        ips: [],
+        latestAt: top?.created_at || "",
+        noteKey: top?.id || null,
+        expiry: null,
+        creditsTotal: 0,
+        creditsUsed: 0,
+        utmSource: null,
+      });
+    }
 
     // 최신 활동순 정렬
     return list.sort((a, b) => (a.latestAt < b.latestAt ? 1 : -1));
@@ -993,144 +1020,12 @@ export default function AdminPage() {
     }).length;
   })();
 
-  // 회원 검색 필터 - 이메일·이름·연락처 어디에 걸려도 검색됨
-  const filteredUsers = users.filter((u) => {
-    const q = userSearch.trim().toLowerCase();
-    if (!q) return true;
-    const info = userInfoByEmail(u.email);
-    const hay = [u.email, u.full_name, info.name, info.phone]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
-    // 연락처는 숫자만으로도 검색되게
-    const digitsHay = (info.phone || "").replace(/[^0-9]/g, "");
-    const digitsQ = q.replace(/[^0-9]/g, "");
-    return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
-  });
-
   // 유입경로별 회원 수 집계 - 드롭다운에 "인스타 (3)"처럼 개수 표시용
   const userSourceCounts = users.reduce<Record<string, number>>((acc, u) => {
     const key = (u.utm_source || "direct").toLowerCase();
     acc[key] = (acc[key] || 0) + 1;
     return acc;
   }, {});
-
-  // 검색 결과에 유입경로 필터 + 정렬을 순서대로 얹는다. (원본 검색 로직은 그대로 유지)
-  const sortedUsers = filteredUsers
-    .filter((u) =>
-      userSourceFilter === "all"
-        ? true
-        : (u.utm_source || "direct").toLowerCase() === userSourceFilter
-    )
-    .slice() // 원본 배열 훼손 방지
-    .sort((a, b) => {
-      const k = userSort.key;
-      let av: number;
-      let bv: number;
-      if (k === "joined_at" || k === "last_sign_in") {
-        av = a[k] ? new Date(a[k] as string).getTime() : 0;
-        bv = b[k] ? new Date(b[k] as string).getTime() : 0;
-      } else {
-        av = (a[k] as number) || 0;
-        bv = (b[k] as number) || 0;
-      }
-      return userSort.dir === "asc" ? av - bv : bv - av;
-    });
-
-  // 헤더 클릭 시 정렬 토글: 같은 키면 방향 반전, 다른 키면 그 키로 내림차순 시작
-  const toggleUserSort = (key: typeof userSort.key) => {
-    setUserSort((prev) =>
-      prev.key === key
-        ? { key, dir: prev.dir === "asc" ? "desc" : "asc" }
-        : { key, dir: "desc" }
-    );
-  };
-  // 정렬 화살표 표시(현재 정렬 중인 열에만)
-  const sortArrow = (key: typeof userSort.key) =>
-    userSort.key === key ? (userSort.dir === "asc" ? " ▲" : " ▼") : "";
-
-  // 진단서 검색 필터 - 이름·이메일·연락처·업종·사업자번호 어디에 걸려도 검색됨
-  const filteredDiagnoses = diagnoses.filter((d) => {
-    const q = diagSearch.trim().toLowerCase();
-    if (!q) return true;
-    const p = (d.profile || {}) as Record<string, unknown>;
-    const name = (d.name || (p.name as string) || "") + "";
-    const email = (d.email || (p.email as string) || "") + "";
-    const phone = (d.phone || (p.phone as string) || "") + "";
-    const bizType = (p.businessType as string) || "";
-    const bno = (p.bno as string) || "";
-    const hay = [name, email, phone, bizType, bno]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
-    // 연락처·사업자번호는 숫자만으로도 검색되게
-    const digitsHay = `${phone} ${bno}`.replace(/[^0-9]/g, "");
-    const digitsQ = q.replace(/[^0-9]/g, "");
-    return hay.includes(q) || (digitsQ.length >= 2 && digitsHay.includes(digitsQ));
-  });
-
-  // 회원 목록 → 그 회원의 고객 진단서로 바로 이동
-  //  소셜 로그인(카카오/구글) 이메일과 진단서 작성 이메일/표기가 다를 수 있어
-  //  ① 이메일 정확일치 → ② 이름 정확일치 → ③ 이름 부분일치 순으로 매칭하고,
-  //  그래도 못 찾으면 무조건 '고객 진단서' 탭으로 이동하고 검색창에 이름을 넣어
-  //  버튼이 '아무 반응 없는' 느낌을 없앤다(대표님 요청).
-  const goToUserDiag = (email: string | null, fullName?: string | null) => {
-    // 공백 제거 + 소문자로 통일(표기 차이 흡수)
-    const norm = (v: unknown) =>
-      String(v ?? "").replace(/\s+/g, "").toLowerCase();
-    const emailKey = norm(email);
-    const nameKey = norm(fullName);
-
-    const byCreatedDesc = (a: AdminDiagnosis, b: AdminDiagnosis) =>
-      a.created_at < b.created_at ? 1 : -1;
-    const dEmail = (d: AdminDiagnosis) =>
-      norm(d.email || (d.profile as any)?.email);
-    const dName = (d: AdminDiagnosis) =>
-      norm(d.name || (d.profile as any)?.name);
-
-    // ① 이메일 정확 일치
-    let matched = emailKey
-      ? diagnoses.filter((d) => dEmail(d) === emailKey).sort(byCreatedDesc)
-      : [];
-
-    // ② 이름 정확 일치
-    if (matched.length === 0 && nameKey) {
-      matched = diagnoses.filter((d) => dName(d) === nameKey).sort(byCreatedDesc);
-    }
-
-    // ③ 이름 부분 일치(표기·오타·공백 차이까지 흡수)
-    if (matched.length === 0 && nameKey.length >= 2) {
-      matched = diagnoses
-        .filter((d) => dName(d).includes(nameKey) || nameKey.includes(dName(d)))
-        .sort(byCreatedDesc);
-    }
-
-    // ④ 그래도 못 찾으면 진단서 보기로 이동 + 검색창에 이름 자동 입력
-    if (matched.length === 0) {
-      setTab("customers");
-      setCustView("diags");
-      setDiagSearch(fullName?.trim() || "");
-      setMsg(
-        "정확히 일치하는 진단서를 못 찾아 '고객 관리 › 진단서' 보기로 이동했어요. 검색창에 이름을 넣어뒀으니 직접 확인해 주세요."
-      );
-      setTimeout(() => setMsg(null), 4000);
-      return;
-    }
-
-    const target = matched[0];
-    setTab("customers");
-    setCustView("diags");
-    setOpenDiag(target.id);
-    // 탭 전환 렌더 후 해당 진단서로 스크롤 + 잠깐 강조
-    setTimeout(() => {
-      const el = document.getElementById(`diag-${target.id}`);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-        el.classList.add("ring-2", "ring-brand-orange");
-        setTimeout(() => el.classList.remove("ring-2", "ring-brand-orange"), 2500);
-      }
-    }, 150);
-  };
 
   // 진단서 하나(AdminDiagnosis)를 받아 그 '결과창'을 관리자 모드로 새 탭에서 연다.
   //   진단서에 저장된 profile(진단 원본)을 sessionStorage(mpp_diagnosis)에 심고
@@ -1482,10 +1377,10 @@ export default function AdminPage() {
             <button
               onClick={() => {
                 setTab("customers");
-                setCustView("diags");
+                setUnifiedCall("all");
               }}
               className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
-              title="오늘 새로 접수된 진단(신규 리드) - 진단서 목록으로 이동"
+              title="오늘 새로 접수된 진단(신규 리드) - 고객 관리로 이동"
             >
               <div className="text-[12px] font-semibold text-blue-500">🆕 오늘 신규 리드</div>
               <div className="mt-1 text-2xl font-extrabold text-blue-700">{todayLeadCount}건</div>
@@ -1494,7 +1389,6 @@ export default function AdminPage() {
             <button
               onClick={() => {
                 setTab("customers");
-                setCustView("unified");
                 setUnifiedCall("none");
               }}
               className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
@@ -1507,7 +1401,6 @@ export default function AdminPage() {
             <button
               onClick={() => {
                 setTab("customers");
-                setCustView("unified");
                 setUnifiedCall("done");
               }}
               className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
@@ -1520,7 +1413,6 @@ export default function AdminPage() {
             <button
               onClick={() => {
                 setTab("customers");
-                setCustView("unified");
                 setUnifiedCall("contract");
               }}
               className="rounded-2xl border border-brand-orange/40 bg-brand-orange/10 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
@@ -1569,71 +1461,29 @@ export default function AdminPage() {
             ))}
           </div>
 
-          {/* ======== 2번째 줄: 고객 관리 탭 - 보기 토글(고객·진단서) + 실행버튼(엑셀·링크복사)
-              상단 탭줄과 같은 버튼 스타일·높이로 통일하고 flex-1 로 가로 폭을 맞춘다. ======== */}
-          {tab === "customers" && (
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              {/* 보기 토글 - 활성 시 네이비, 비활성 시 흰색(상단 탭과 동일 규격) */}
-              {(
-                [
-                  ["unified", `👤 고객 (${unifiedCustomers.length})`],
-                  ["diags", `📋 진단서 (${diagnoses.length})`],
-                ] as [CustView, string][]
-              ).map(([key, label]) => (
-                <button
-                  key={key}
-                  onClick={() => setCustView(key)}
-                  className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2.5 text-center text-[14px] font-bold transition hover:scale-[1.02] ${
-                    custView === key
-                      ? "bg-brand-dark text-white shadow"
-                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-              {/* 실행 버튼 - 진단서 엑셀 → 진단링크 복사 순서, 같은 규격 */}
-              <button
-                onClick={downloadAllDiag}
-                disabled={diagnoses.length === 0}
-                className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
-                title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
-              >
-                📋 진단서 엑셀
-              </button>
-              <button
-                onClick={copyDiagnosisLink}
-                className="flex-1 whitespace-nowrap rounded-xl bg-brand-orange px-3 py-2.5 text-center text-[14px] font-bold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
-                title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
-              >
-                🔗 진단링크 복사
-              </button>
-            </div>
-          )}
-
-          {/* 고객 관리가 아닌 탭(결제/매출/접속차단)에서도 진단서 엑셀·링크복사는 바로 쓰도록 유지 */}
-          {tab !== "customers" && (
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              <button
-                onClick={downloadAllDiag}
-                disabled={diagnoses.length === 0}
-                className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
-                title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
-              >
-                📋 진단서 엑셀
-              </button>
-              <button
-                onClick={copyDiagnosisLink}
-                className="flex-1 whitespace-nowrap rounded-xl bg-brand-orange px-3 py-2.5 text-center text-[14px] font-bold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
-                title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
-              >
-                🔗 진단링크 복사
-              </button>
-            </div>
-          )}
+          {/* ======== 2번째 줄: 실행 버튼(진단서 엑셀 · 진단링크 복사)
+              '고객'과 '진단서'를 하나의 고객 관리 리스트로 합쳤으므로 보기 토글은 제거.
+              상단 탭줄과 같은 규격(flex-1)으로 폭을 맞춘다. ======== */}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <button
+              onClick={downloadAllDiag}
+              disabled={diagnoses.length === 0}
+              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
+              title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
+            >
+              📋 진단서 엑셀
+            </button>
+            <button
+              onClick={copyDiagnosisLink}
+              className="flex-1 whitespace-nowrap rounded-xl bg-brand-orange px-3 py-2.5 text-center text-[14px] font-bold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
+              title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
+            >
+              🔗 진단링크 복사
+            </button>
+          </div>
 
           {/* ------- 통합 고객(회원+진단서+결제+IP를 사람 단위로 합침) ------- */}
-          {tab === "customers" && custView === "unified" && (
+          {tab === "customers" && (
             <div>
               {/* 🔍 통합 검색 - 이름·이메일·전화·사업자번호로 한 번에 */}
               <div className="mb-4 flex w-full flex-wrap items-center gap-2">
@@ -1710,9 +1560,10 @@ export default function AdminPage() {
               </div>
               <p className="mb-3 text-xs text-gray-500">
                 한 사람의 <b>진단서 · 결제 · 상담메모 · IP</b>를 카드 하나에. 표시{" "}
-                <b>{filteredUnified.length}</b>명 (실제 고객 = 가입 회원 기준).{" "}
+                <b>{filteredUnified.length}</b>명.{" "}
                 <span className="text-gray-400">
-                  결과 열람은 회원가입 필수라, 가입 안 한 진단은 여기서 제외됩니다(‘진단서’ 보기에서 확인).
+                  회원과 진단서를 한 명 단위로 합쳤습니다. <b className="text-rose-500">미가입</b> 뱃지는
+                  진단만 하고 아직 가입 안 한 리드(영업 최우선)예요.
                 </span>
               </p>
 
@@ -1757,6 +1608,12 @@ export default function AdminPage() {
                             <span className="text-[15px] font-extrabold text-brand-dark">
                               {c.realName || c.memberName || "이름없음"}
                             </span>
+                            {/* 회원/미가입 구분 - 미가입 리드는 진단만 하고 가입 전(영업 최우선) */}
+                            {!c.isMember && (
+                              <span className="rounded-full bg-rose-500/15 px-2 py-0.5 text-[11px] font-bold text-rose-600">
+                                미가입
+                              </span>
+                            )}
                             {/* 통화상태 - 영업 핵심(미접촉/통화완료/부재중/계약) */}
                             <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold ${csMeta.cls}`}>
                               <span className={`inline-block h-1.5 w-1.5 rounded-full ${csMeta.dot}`} />
@@ -2135,330 +1992,6 @@ export default function AdminPage() {
                   })}
                 </tbody>
               </table>
-            </div>
-          )}
-
-          {/* ------- 고객 진단서 (질문지 + 결과) ------- */}
-          {tab === "customers" && custView === "diags" && (
-            <div className="space-y-3">
-              {/* ★ 완료 / 미완료(중간이탈) 요약 - 대표님이 전화 돌릴 리드 한눈에 파악 ★ */}
-              {diagnoses.length > 0 && (
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500">✅ 진단 완료</p>
-                    <p className="text-2xl font-extrabold text-gray-900">
-                      {diagnoses.filter((d) => d.status !== "partial").length}
-                      <span className="ml-1 text-sm font-bold text-gray-500">명</span>
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center shadow-sm">
-                    <p className="text-xs font-semibold text-gray-500">
-                      ⏳ 미완료(중간이탈) · 전화 추천
-                    </p>
-                    <p className="text-2xl font-extrabold text-gray-900">
-                      {diagnoses.filter((d) => d.status === "partial").length}
-                      <span className="ml-1 text-sm font-bold text-gray-500">명</span>
-                    </p>
-                  </div>
-                </div>
-              )}
-              {/* 🔍 진단서 검색 - 이름·이메일·연락처·업종·사업자번호로 즉시 검색 */}
-              {diagnoses.length > 0 && (
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <div className="relative flex-1">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                      🔍
-                    </span>
-                    <input
-                      type="text"
-                      value={diagSearch}
-                      onChange={(e) => setDiagSearch(e.target.value)}
-                      placeholder="진단서 검색 - 이름 · 이메일 · 연락처 · 업종으로 찾기 (예: 홍길동 / 010 / hong@)"
-                      className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 outline-none focus:border-brand-orange"
-                    />
-                  </div>
-                  {diagSearch && (
-                    <button
-                      onClick={() => setDiagSearch("")}
-                      className="rounded-xl bg-gray-100 px-3 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-200"
-                    >
-                      ✕ 초기화
-                    </button>
-                  )}
-                  <span className="whitespace-nowrap text-xs text-gray-400">
-                    {diagSearch
-                      ? `검색결과 ${filteredDiagnoses.length}건`
-                      : `전체 ${diagnoses.length}건`}
-                  </span>
-                </div>
-              )}
-              {/* 다운로드 툴바 - 전체 / 선택 다운로드 + 전체선택 체크 */}
-              {diagnoses.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
-                  <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-600">
-                    <input
-                      type="checkbox"
-                      checked={selectedDiag.size === diagnoses.length && diagnoses.length > 0}
-                      onChange={toggleSelectAllDiag}
-                      className="h-4 w-4 rounded border-gray-300"
-                    />
-                    전체 선택
-                  </label>
-                  <span className="text-xs text-gray-400">
-                    ({selectedDiag.size}건 선택 / 총 {diagnoses.length}건)
-                  </span>
-                  <div className="ml-auto flex flex-wrap gap-2">
-                    <button
-                      onClick={downloadSelectedDiag}
-                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                    >
-                      ⬇️ 선택 진단서 엑셀 다운
-                    </button>
-                    <button
-                      onClick={downloadAllDiag}
-                      className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                    >
-                      ⬇️ 전체 진단서 엑셀 다운
-                    </button>
-                    <button
-                      onClick={deleteSelectedDiag}
-                      disabled={selectedDiag.size === 0}
-                      className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600 transition hover:scale-[1.02] hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      🗑️ 선택 삭제
-                    </button>
-                  </div>
-                </div>
-              )}
-              {diagnoses.length === 0 && (
-                <div className="rounded-2xl border border-gray-100 bg-white px-4 py-10 text-center text-gray-400 shadow-sm">
-                  아직 접수된 진단서가 없습니다.
-                </div>
-              )}
-              {diagnoses.length > 0 && filteredDiagnoses.length === 0 && (
-                <div className="rounded-2xl border border-gray-100 bg-white px-4 py-10 text-center text-gray-400 shadow-sm">
-                  “{diagSearch}” 검색 결과가 없습니다.
-                </div>
-              )}
-              {filteredDiagnoses.map((d) => {
-                const isOpen = openDiag === d.id;
-                const p = d.profile || {};
-                const dupIdx = dupIndexMap.get(d.id) ?? 1;
-                const isDup = dupIdx > 1;
-                const checked = selectedDiag.has(d.id);
-                return (
-                  <div
-                    key={d.id}
-                    id={`diag-${d.id}`}
-                    className="rounded-2xl border border-gray-100 bg-white shadow-sm transition-all"
-                  >
-                    <div className="flex items-center gap-2 px-4 py-3">
-                      {/* 체크박스 (다운로드 선택용) */}
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => toggleSelectDiag(d.id)}
-                        className="h-4 w-4 shrink-0 rounded border-gray-300"
-                      />
-                      <button
-                        onClick={() => setOpenDiag(isOpen ? null : d.id)}
-                        className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left"
-                      >
-                        <div className="min-w-0">
-                          <span className="font-bold text-gray-800">
-                            {(p as any)?.name || d.name || "이름 미입력"}
-                          </span>
-                          {/* ★ 완료 / 미완료(중간이탈) 상태 뱃지 ★
-                              partial = 사업자번호·연락처는 남겼지만 진단을 끝까지 안 함
-                              → 이 고객에게 전화해서 진단 이어서 도와주면 계약 확률↑ */}
-                          {d.status === "partial" ? (
-                            <span className="ml-2 inline-block rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-bold text-orange-700">
-                              ⏳ 미완료(중간이탈)
-                            </span>
-                          ) : (
-                            <span className="ml-2 inline-block rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-bold text-green-700">
-                              ✅ 완료
-                            </span>
-                          )}
-                          {/* ☎️ 통화 상태 뱃지 - 미접촉이 아닐 때만 표시 (전화 진행상황 한눈에) */}
-                          {(() => {
-                            const st = leadNotes[d.id]?.status ?? "none";
-                            if (st === "none") return null;
-                            const m = CALL_STATUS_META[st];
-                            return (
-                              <span
-                                className={`ml-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold ${m.cls}`}
-                              >
-                                <span className={`inline-block h-1.5 w-1.5 rounded-full ${m.dot}`} />
-                                {m.label}
-                              </span>
-                            );
-                          })()}
-                          <span className="ml-2 text-sm text-gray-500">
-                            {(p as any)?.businessType || ""}
-                          </span>
-                          {/* 중복 신청 뱃지 - 몇 번째 신청인지 (동일 연락처/이메일) */}
-                          {isDup && (
-                            <span className="ml-2 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-700">
-                              🔁 {dupIdx}번째 신청
-                            </span>
-                          )}
-                          <span className="ml-2 block truncate text-xs text-gray-400 sm:ml-2 sm:inline">
-                            {d.email || (p as any)?.email || "-"}
-                            {d.phone || (p as any)?.phone ? ` · ${d.phone || (p as any)?.phone}` : ""}
-                            {(p as any)?.bno ? ` · ${(p as any).bno}` : ""}
-                          </span>
-                          {/* 👤 회원 계정(가입 이메일) - user_id 로 회원과 직접 매칭.
-                              진단서에 로그인 회원의 user_id 가 저장돼 있으면 그 회원의 가입 이메일을 표시.
-                              연결됨: 초록 뱃지(클릭 시 해당 회원 목록으로 이동). 미연결: 회색 안내. */}
-                          {(() => {
-                            // ★ 확실히 연결된 회원(user_id 매칭)만 초록 뱃지로 표시.
-                            //   과거 데이터는 매칭 키가 없어 억지로 잇지 않고(오연결 방지)
-                            //   아무 문구도 표시하지 않는다. 고객 식별은 위의 이름·전화·
-                            //   사업자번호로 충분하다. 앞으로 결과를 보는 회원부터
-                            //   자동으로 이 초록 뱃지가 붙는다.
-                            const memberEmail = memberEmailForDiagnosis(d);
-                            if (!memberEmail) return null;
-                            return (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setTab("customers");
-                                  setCustView("unified");
-                                  setUnifiedCall("all");
-                                  setUnifiedSearch(memberEmail);
-                                }}
-                                title="클릭하면 이 회원 카드(고객 보기)로 이동합니다"
-                                className="ml-2 inline-flex max-w-full items-center gap-1 truncate rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20"
-                              >
-                                👤 {memberEmail}
-                              </button>
-                            );
-                          })()}
-                        </div>
-                        <span className="shrink-0 text-xs text-gray-400">
-                          {fmtDateTime(d.created_at)} {isOpen ? "▲" : "▼"}
-                        </span>
-                      </button>
-                    </div>
-                    {isOpen && (
-                      <div className="border-t border-slate-700 bg-slate-900 px-4 py-4">
-                        <p className="mb-2 text-xs font-bold text-slate-300">
-                          📝 작성한 질문지 전체
-                        </p>
-                        {/* ★ 대표님 요청 ★ 진단서 항목을 (1) 실제 질문 순서대로 정렬하고
-                            (2) 가로 2줄 유지하되 세로(칼럼) 우선으로 채운다 - 신문 칼럼처럼
-                            왼쪽 열을 위→아래로 다 읽고, 이어서 오른쪽 열을 위→아래로 읽는다.
-                            CSS grid는 가로 우선이라, 정렬된 항목을 왼/오 두 배열로 나눠 각 열을 세로로 렌더한다. */}
-                        {(() => {
-                          // 예전 질문지 전용 항목(과세유형·관심 분야) 제외 후, 정식 질문 순서로 정렬
-                          const entries = sortKeysByQuestionOrder(
-                            Object.keys(p).filter(
-                              (k) => !["bnoTaxType", "interests"].includes(k)
-                            )
-                          ).map((k) => [k, (p as any)[k]] as const);
-                          // 세로 우선(칼럼) 채움: 앞 절반 = 왼쪽 열, 뒤 절반 = 오른쪽 열
-                          const half = Math.ceil(entries.length / 2);
-                          const columns = [entries.slice(0, half), entries.slice(half)];
-                          const renderItem = ([k, v]: readonly [string, unknown]) => (
-                            <div
-                              key={k}
-                              className="flex gap-2 border-b border-slate-700/60 py-1 text-sm"
-                            >
-                              <span className="shrink-0 font-semibold text-slate-400">
-                                {labelForKey(k)}
-                              </span>
-                              <span className="break-all font-semibold text-white">
-                                {valueToText(v)}
-                              </span>
-                            </div>
-                          );
-                          return (
-                            <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-                              {columns.map((col, ci) => (
-                                <div key={ci} className="flex flex-col">
-                                  {col.map(renderItem)}
-                                </div>
-                              ))}
-                            </div>
-                          );
-                        })()}
-                        {/* ☎️ 상담 관리 - 통화 상태 + 메모 (localStorage 저장, DB 불필요) */}
-                        <div className="mt-4 rounded-xl border border-slate-700 bg-slate-800/60 p-3">
-                          <p className="mb-2 text-xs font-bold text-slate-300">☎️ 상담 관리</p>
-                          {/* 통화 상태 선택 */}
-                          <div className="mb-3 flex flex-wrap gap-1.5">
-                            {CALL_STATUS_ORDER.map((st) => {
-                              const m = CALL_STATUS_META[st];
-                              const cur = (leadNotes[d.id]?.status ?? "none") === st;
-                              return (
-                                <button
-                                  key={st}
-                                  onClick={() => setCallStatus(d.id, st)}
-                                  className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-bold transition ${
-                                    cur
-                                      ? m.cls + " ring-2 ring-offset-1 ring-offset-slate-800"
-                                      : "border-slate-600 bg-slate-700 text-slate-300 hover:bg-slate-600"
-                                  }`}
-                                >
-                                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${m.dot}`} />
-                                  {m.label}
-                                </button>
-                              );
-                            })}
-                          </div>
-                          {/* 상담 메모 */}
-                          <div className="flex flex-col gap-2 sm:flex-row">
-                            <textarea
-                              value={memoDraft[d.id] ?? leadNotes[d.id]?.memo ?? ""}
-                              onChange={(e) =>
-                                setMemoDraft((prev) => ({ ...prev, [d.id]: e.target.value }))
-                              }
-                              placeholder="상담 메모 - 예: 5천만 필요, 소진공 직접대출 안내함 / 다음 주 재통화"
-                              rows={2}
-                              className="flex-1 resize-none rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-brand-orange"
-                            />
-                            <button
-                              onClick={() => saveMemo(d.id)}
-                              className="shrink-0 self-start rounded-lg bg-brand-primary/20 px-3 py-2 text-xs font-bold text-brand-primary hover:bg-brand-primary/30 sm:self-stretch"
-                            >
-                              💾 저장
-                            </button>
-                          </div>
-                          {leadNotes[d.id]?.updatedAt && (
-                            <p className="mt-1.5 text-[10px] text-slate-500">
-                              마지막 수정 {fmtDateTime(leadNotes[d.id].updatedAt)}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* 결과보기 + 개별 다운로드 + 삭제 버튼 */}
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          <button
-                            onClick={() => openResultForDiag(d)}
-                            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                          >
-                            📊 결과보기 (새 창)
-                          </button>
-                          <button
-                            onClick={() => downloadOneDiag(d)}
-                            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 transition hover:scale-[1.02] hover:bg-gray-50"
-                          >
-                            ⬇️ 이 진단서 엑셀 다운
-                          </button>
-                          <button
-                            onClick={() => deleteDiag(d)}
-                            className="rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-100"
-                          >
-                            🗑️ 진단서 삭제
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
             </div>
           )}
 
