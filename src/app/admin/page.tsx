@@ -760,6 +760,54 @@ export default function AdminPage() {
     };
   };
 
+  // 회원 이메일 → 그 회원이 접속에 쓴 IP 목록(중복 제거, 최근 순). 접속 로그(access) 기반.
+  //  · "누가 어떤 IP를 쓰는지" 한눈에 보고, 같은 IP를 여러 계정이 쓰면 어뷰징 의심용.
+  const ipsByEmail = (email: string | null): string[] => {
+    if (!email) return [];
+    const seen = new Set<string>();
+    const list: string[] = [];
+    for (const a of access) {
+      if (a.email !== email) continue;
+      const ip = (a.ip || "").trim();
+      if (!ip || seen.has(ip)) continue;
+      seen.add(ip);
+      list.push(ip);
+    }
+    return list;
+  };
+
+  // 한 IP를 몇 개의 서로 다른 회원(이메일)이 썼는지 → 2 이상이면 '공유 IP(의심)'.
+  //  (같은 사람이 여러 계정 만들어 무료로 여러 번 쓰는지 빠르게 감지)
+  const emailCountByIp = (() => {
+    const map = new Map<string, Set<string>>();
+    for (const a of access) {
+      const ip = (a.ip || "").trim();
+      const em = (a.email || "").trim();
+      if (!ip || !em) continue;
+      if (!map.has(ip)) map.set(ip, new Set());
+      map.get(ip)!.add(em);
+    }
+    return (ip: string) => map.get(ip)?.size ?? 0;
+  })();
+
+  // 진단서 → 어느 '회원 계정(가입 이메일)'의 것인지 역추적.
+  //  진단서 자체 이메일이 비어있는 경우가 많아(소셜 로그인), 진단서 전화번호와
+  //  같은 전화번호를 가진 회원을 찾아 그 회원의 가입 이메일을 돌려준다.
+  const memberEmailForDiagnosis = (d: AdminDiagnosis): string | null => {
+    // 1) 진단서에 이메일이 이미 있으면 그대로
+    const direct = d.email || ((d.profile as any)?.email as string) || "";
+    if (direct.trim()) return direct.trim();
+    // 2) 전화번호로 회원 역추적 (회원의 진단서 전화번호와 대조)
+    const phone = String(d.phone || (d.profile as any)?.phone || "").replace(/[^0-9]/g, "");
+    if (phone.length < 10) return null;
+    for (const u of users) {
+      const info = userInfoByEmail(u.email);
+      const uPhone = (info.phone || "").replace(/[^0-9]/g, "");
+      if (uPhone && uPhone === phone) return u.email;
+    }
+    return null;
+  };
+
   // 회원 검색 필터 - 이메일·이름·연락처 어디에 걸려도 검색됨
   const filteredUsers = users.filter((u) => {
     const q = userSearch.trim().toLowerCase();
@@ -1475,6 +1523,41 @@ export default function AdminPage() {
                               </>
                             )}
                           </div>
+                          {/* 🌐 이 회원이 접속에 쓴 IP - "누가 어떤 IP 쓰는지" 한눈에.
+                              같은 IP를 2계정 이상이 쓰면 빨갛게(공유 IP 의심) 표시. */}
+                          {(() => {
+                            const ips = ipsByEmail(u.email);
+                            if (ips.length === 0) return null;
+                            return (
+                              <div className="mt-1 flex flex-wrap items-center gap-1">
+                                <span className="text-[10px] text-gray-400">🌐</span>
+                                {ips.slice(0, 4).map((ip) => {
+                                  const shared = emailCountByIp(ip) >= 2;
+                                  return (
+                                    <span
+                                      key={ip}
+                                      title={
+                                        shared
+                                          ? "이 IP를 2개 이상 계정이 사용 - 중복가입/어뷰징 의심"
+                                          : "이 회원의 접속 IP"
+                                      }
+                                      className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                                        shared
+                                          ? "bg-red-100 text-red-700"
+                                          : "bg-gray-100 text-gray-500"
+                                      }`}
+                                    >
+                                      {ip}
+                                      {shared ? ` ⚠️${emailCountByIp(ip)}` : ""}
+                                    </span>
+                                  );
+                                })}
+                                {ips.length > 4 && (
+                                  <span className="text-[10px] text-gray-400">+{ips.length - 4}</span>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-gray-500">{fmtDate(u.joined_at)}</td>
                         <td className="whitespace-nowrap px-4 py-3 text-gray-500">{fmtDate(u.last_sign_in)}</td>
@@ -1819,6 +1902,23 @@ export default function AdminPage() {
                             {d.phone || (p as any)?.phone ? ` · ${d.phone || (p as any)?.phone}` : ""}
                             {(p as any)?.bno ? ` · ${(p as any).bno}` : ""}
                           </span>
+                          {/* 👤 회원 계정(가입 이메일) - 전화번호로 회원 역추적해 '어느 회원인지' 표시.
+                              진단서 이메일이 비어도(소셜 로그인) 회원을 찾아 연결해 준다. */}
+                          {(() => {
+                            const memberEmail = memberEmailForDiagnosis(d);
+                            if (!memberEmail) {
+                              return (
+                                <span className="ml-2 block truncate text-[11px] text-gray-300 sm:ml-2 sm:inline">
+                                  👤 회원 미연결(비회원 진단)
+                                </span>
+                              );
+                            }
+                            return (
+                              <span className="ml-2 block truncate text-[11px] font-semibold text-brand-primary sm:ml-2 sm:inline">
+                                👤 {memberEmail}
+                              </span>
+                            );
+                          })()}
                         </div>
                         <span className="shrink-0 text-xs text-gray-400">
                           {fmtDateTime(d.created_at)} {isOpen ? "▲" : "▼"}
