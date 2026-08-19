@@ -23,6 +23,7 @@ import PageShell from "@/components/PageShell";
 import { trackConversion } from "@/components/KarrotPixel";
 import { supabase } from "@/lib/supabaseClient";
 import { isStatsExcludedEmail } from "@/lib/admin";
+import { isValidName, isValidPhone } from "@/lib/validators";
 import {
   saveDiagnosis,
   clearDiagnosisDraft,
@@ -576,8 +577,16 @@ export default function DiagnosisChat() {
     const isPre = form.businessType === "예비";
     const name = nameTemp.trim();
     const phone = phoneTemp.trim();
-    const phoneDigits = phone.replace(/[^0-9]/g, "");
-    if (!name || phoneDigits.length < 10) return; // 성함·연락처는 필수
+    // ★ (대표님 요청) 성함·연락처 '막쓰기' 차단 ★
+    //  가짜 이름("000"·"ㅁㅁ")·엉터리 번호("000 00000000"·"01000000000")는 여기서 막는다.
+    if (!isValidName(name)) {
+      setBnoMsg({ tone: "err", text: "성함을 정확히 입력해 주세요. (한글/영문 2자 이상)" });
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      setBnoMsg({ tone: "err", text: "연락처를 정확히 입력해 주세요. (010으로 시작하는 휴대폰 번호 11자리)" });
+      return;
+    }
     const bnoDigits = textTemp.replace(/[^0-9]/g, "");
     // 예비창업자가 아니면 사업자번호가 (이미 저장됨 or 10자리 입력) 준비돼야 진행
     if (!isPre && !form.bno && bnoDigits.length !== 10) return;
@@ -1369,8 +1378,9 @@ export default function DiagnosisChat() {
               {curStep.type === "bnoContact" && (() => {
                 const isPre = form.businessType === "예비"; // 예비창업자면 사업자번호 입력칸 숨김
                 const bnoReady = textTemp.replace(/[^0-9]/g, "").length === 10;
-                const contactReady =
-                  nameTemp.trim().length > 0 && phoneTemp.replace(/[^0-9]/g, "").length >= 10;
+                // ★ (대표님 요청) 성함·연락처 유효성까지 통과해야 버튼 활성화 ★
+                //  '000'·'ㅁㅁ' 같은 가짜 이름, '010 00000000' 같은 엉터리 번호면 버튼이 눌리지 않는다.
+                const contactReady = isValidName(nameTemp) && isValidPhone(phoneTemp);
                 // 진행 가능: (예비 or 사업자번호 준비됨) AND 성함·연락처 준비됨
                 const bnoOk = isPre || form.bnoVerified || form.bno || bnoReady;
                 const canSubmit = bnoOk && contactReady;
@@ -1419,7 +1429,7 @@ export default function DiagnosisChat() {
                         <input
                           type="text"
                           value={nameTemp}
-                          onChange={(e) => setNameTemp(e.target.value)}
+                          onChange={(e) => { setNameTemp(e.target.value); if (bnoMsg) setBnoMsg(null); }}
                           placeholder={CONTACT_TEXT.namePlaceholder}
                           className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
                         />
@@ -1427,13 +1437,21 @@ export default function DiagnosisChat() {
                           type="tel"
                           inputMode="numeric"
                           value={phoneTemp}
-                          onChange={(e) => setPhoneTemp(e.target.value)}
+                          onChange={(e) => { setPhoneTemp(e.target.value); if (bnoMsg) setBnoMsg(null); }}
                           onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
                           // chat 화면은 성함·연락처가 반칸씩 나뉘어 좁으므로 짧은 placeholder 사용(잘림 방지). config는 diagnosis-form과 공유되어 미변경.
                           placeholder="연락처"
                           className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
                         />
                       </div>
+                      {/* ★ 성함·연락처 오류 메시지(대표님 요청) ★
+                          confirmBnoContact 에서 isValidName/isValidPhone 실패 시 bnoMsg 에 담기며,
+                          예비창업자(사업자번호칸 없음)도 여기서 오류를 볼 수 있도록 이 블록에도 렌더한다. */}
+                      {bnoMsg?.tone === "err" && (
+                        <p className="mt-2 break-keep px-1 text-xs font-semibold leading-relaxed text-red-500">
+                          {bnoMsg.text}
+                        </p>
+                      )}
                       {/* ★ 개인정보 안심 한 줄(대표님 요청) ★ */}
                       <p className="mt-2 break-keep px-1 text-[11px] leading-relaxed text-brand-gray">
                         🔒 입력하신 정보는 진단 결과 안내·매칭 용도로만 사용됩니다.

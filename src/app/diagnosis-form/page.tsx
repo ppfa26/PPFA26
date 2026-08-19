@@ -9,6 +9,7 @@ import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 import { trackConversion } from "@/components/KarrotPixel";
 import { supabase } from "@/lib/supabaseClient";
 import { isStatsExcludedEmail } from "@/lib/admin";
+import { isValidName, isValidPhone } from "@/lib/validators";
 import {
   saveDiagnosis,
   saveDiagnosisDraft,
@@ -328,14 +329,14 @@ export default function Diagnosis() {
         if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
+      // (대표님 요청) 성함·연락처 '막쓰기' 방어 — 가짜 이름/번호 차단(chat과 동일 기준).
       const name = (form.name || "").trim();
-      const phoneDigits = (form.phone || "").replace(/[^0-9]/g, "");
-      if (!name) {
-        setContactErr(CONTACT_TEXT.errorName);
+      if (!isValidName(name)) {
+        setContactErr("성함을 정확히 입력해 주세요. (한글/영문 2자 이상)");
         return;
       }
-      if (phoneDigits.length < 10) {
-        setContactErr(CONTACT_TEXT.errorPhone);
+      if (!isValidPhone(form.phone || "")) {
+        setContactErr("연락처를 정확히 입력해 주세요. (010으로 시작하는 휴대폰 번호 11자리)");
         return;
       }
       // 제3자 제공 동의는 회원가입 단계에서 받으므로 진단 질문지에서는 검사하지 않는다(대표님 요청).
