@@ -5,7 +5,7 @@ import Editable from "@/components/Editable";
 
 export default function TermsPage() {
   return (
-    <LegalLayout pageKey="terms" title="이용약관" updatedAt="2026년 8월 2일">
+    <LegalLayout pageKey="terms" title="이용약관" updatedAt="2026년 8월 19일">
       <section id="terms-1">
         <h2 className="text-lg font-extrabold text-brand-dark">제1조 (목적)</h2>
         <Editable id="terms-1-body-v2" as="p" className="mt-2">
@@ -96,7 +96,9 @@ export default function TermsPage() {
           </li>
           <li>
             다수의 사업장을 실제로 운영하는 경우에 한하여{" "}
-            <b>최대 3개 사업자까지</b> 조회할 수 있습니다.
+            <b>최대 2개 사업자까지</b> 조회할 수 있으며, 그 이상은 이용이 제한될
+            수 있습니다. <span className="text-brand-gray">(동일한 사업자를
+            다시 조회하는 것은 제한 대상이 아닙니다.)</span>
           </li>
           <li>
             타인 또는 제3의 사업체를 대신하여 반복적으로 조회하는 등{" "}
