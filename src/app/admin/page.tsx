@@ -1902,17 +1902,11 @@ export default function AdminPage() {
                             {d.phone || (p as any)?.phone ? ` · ${d.phone || (p as any)?.phone}` : ""}
                             {(p as any)?.bno ? ` · ${(p as any).bno}` : ""}
                           </span>
-                          {/* 👤 회원 계정(가입 이메일) - 전화번호로 회원 역추적해 '어느 회원인지' 표시.
-                              진단서 이메일이 비어도(소셜 로그인) 회원을 찾아 연결해 준다. */}
+                          {/* 👤 회원 계정(가입 이메일) - user_id 로 회원과 직접 매칭.
+                              진단서에 로그인 회원의 user_id 가 저장돼 있으면 그 회원의 가입 이메일을 표시. */}
                           {(() => {
                             const memberEmail = memberEmailForDiagnosis(d);
-                            if (!memberEmail) {
-                              return (
-                                <span className="ml-2 block truncate text-[11px] text-gray-300 sm:ml-2 sm:inline">
-                                  👤 회원 미연결(비회원 진단)
-                                </span>
-                              );
-                            }
+                            if (!memberEmail) return null;
                             return (
                               <span className="ml-2 block truncate text-[11px] font-semibold text-brand-primary sm:ml-2 sm:inline">
                                 👤 {memberEmail}
