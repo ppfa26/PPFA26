@@ -1660,6 +1660,15 @@ export default function AdminPage() {
                                 {dLeft > 0 ? `D-${dLeft}` : "만료"}
                               </span>
                             )}
+                            {/* 유입경로(UTM) — 펼치지 않아도 바로 노출(대표님 요청, 채널 색상 유지) */}
+                            {(() => {
+                              const b = utmBadge(c.utmSource);
+                              return (
+                                <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${b.cls}`}>
+                                  {b.label}
+                                </span>
+                              );
+                            })()}
                           </div>
                           {/* 2줄: 연락처·업종·사업자번호 (상담 시 바로 보는 핵심) */}
                           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-gray-600">
@@ -1717,7 +1726,7 @@ export default function AdminPage() {
                                         className="rounded border border-gray-300 bg-white px-1.5 py-0.5 text-[10px] font-bold text-gray-600 transition hover:bg-gray-50"
                                         title={`${ip} 차단 해제`}
                                       >
-                                        차단해제
+                                        해제하기
                                       </button>
                                     ) : (
                                       <button
@@ -1725,10 +1734,10 @@ export default function AdminPage() {
                                           e.stopPropagation();
                                           doBlock("ip", ip);
                                         }}
-                                        className="rounded border border-red-200 bg-red-50 px-1.5 py-0.5 text-[10px] font-bold text-red-600 transition hover:bg-red-100"
+                                        className="rounded border border-gray-300 bg-white px-1.5 py-0.5 text-[10px] font-bold text-gray-600 transition hover:bg-gray-50"
                                         title={`${ip} 접속 차단`}
                                       >
-                                        🚫 차단
+                                        차단하기
                                       </button>
                                     )}
                                   </span>
