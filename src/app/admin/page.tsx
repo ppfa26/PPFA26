@@ -239,7 +239,6 @@ export default function AdminPage() {
   const [userSourceFilter, setUserSourceFilter] = useState("all"); // 유입경로 필터(all=전체)
   const [unifiedSearch, setUnifiedSearch] = useState(""); // 통합 고객 뷰 검색어
   const [openUnified, setOpenUnified] = useState<string | null>(null); // 통합 카드 펼침(key)
-  const [openUnifiedDiag, setOpenUnifiedDiag] = useState<string | null>(null); // 카드 안 진단서 상세 펼침(diag id)
   const [unifiedCall, setUnifiedCall] = useState<"all" | CallStatus>("all"); // 통화상태 필터
   const [unifiedMemoDraft, setUnifiedMemoDraft] = useState<Record<string, string>>({}); // 통합 카드 메모 입력
 
@@ -1373,30 +1372,33 @@ export default function AdminPage() {
           {/* 통계 카드 - 실무(영업/상담) 우선 지표.
               클릭하면 고객 관리 › 통합보기에서 해당 통화상태로 바로 필터된다.
               (매출/회원 숫자는 매출 리포트 탭에서 상세 확인) */}
-          <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {/* 6개 KPI 카드 - 크기(가로·세로) 완전 균일.
+              items-stretch + 각 카드 h-full 로 높이 통일, 패딩·폰트도 동일하게 맞춤.
+              포인트색은 계약(주황)만, 나머지는 뉴트럴(화이트/그레이). */}
+          <section className="mb-6 grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {/* 오늘 신규 리드 - '오늘 전화할 대상' */}
             <button
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("all");
               }}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="오늘 새로 접수된 진단(신규 리드) - 고객 관리로 이동"
             >
               <div className="text-[12px] font-semibold text-gray-500">🆕 오늘 신규 리드</div>
               <div className="mt-1 text-2xl font-extrabold text-gray-900">{todayLeadCount}건</div>
             </button>
-            {/* 미접촉 - 아직 전화 안 한 사람(가장 급한 액션) */}
+            {/* 미접촉 - 아직 전화 안 한 사람(포인트색 제거, 다른 카드와 동일) */}
             <button
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("none");
               }}
-              className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="아직 통화하지 않은 고객 - 통합보기에서 미접촉만 필터"
             >
-              <div className="text-[12px] font-semibold text-rose-500">📞 미접촉(전화 필요)</div>
-              <div className="mt-1 text-2xl font-extrabold text-rose-600">{unifiedCallCounts["none"] ?? 0}명</div>
+              <div className="text-[12px] font-semibold text-gray-500">📞 미접촉(전화 필요)</div>
+              <div className="mt-1 text-2xl font-extrabold text-gray-900">{unifiedCallCounts["none"] ?? 0}명</div>
             </button>
             {/* 통화완료 */}
             <button
@@ -1404,37 +1406,35 @@ export default function AdminPage() {
                 setTab("customers");
                 setUnifiedCall("done");
               }}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="통화 완료한 고객 - 통합보기에서 통화완료만 필터"
             >
               <div className="text-[12px] font-semibold text-gray-500">✅ 통화완료</div>
               <div className="mt-1 text-2xl font-extrabold text-gray-900">{unifiedCallCounts["done"] ?? 0}명</div>
             </button>
             {/* 전체 고객 - 정책: 진단서 보유자 전원을 실고객으로 집계(통합 카드 수 기준) */}
-            <StatCard
-              label="전체 고객"
-              value={`${unifiedCustomers.length}명`}
-              accent="text-gray-900"
-            />
-            {/* 계약 - 성과 */}
+            <div className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm">
+              <div className="text-[12px] font-semibold text-gray-500">전체 고객</div>
+              <div className="mt-1 text-2xl font-extrabold text-gray-900">{unifiedCustomers.length}명</div>
+            </div>
+            {/* 계약 - 성과(유일한 포인트색: 주황) */}
             <button
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("contract");
               }}
-              className="rounded-2xl border border-brand-orange/40 bg-brand-orange/10 px-4 py-3 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full flex-col rounded-2xl border border-brand-orange/40 bg-brand-orange/10 p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="계약 완료 고객 - 통합보기에서 계약만 필터"
             >
               <div className="text-[12px] font-semibold text-brand-orange">🏆 계약</div>
               <div className="mt-1 text-2xl font-extrabold text-brand-orange">{unifiedCallCounts["contract"] ?? 0}명</div>
             </button>
             {/* 이번 달 매출 */}
-            <StatCard
-              label="이번 달 매출"
-              value={won(stats?.month_revenue ?? 0)}
-              sub={`${new Date().getMonth() + 1}월`}
-              accent="text-brand-primary"
-            />
+            <div className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm">
+              <div className="text-[12px] font-semibold text-gray-500">이번 달 매출</div>
+              <div className="mt-1 text-2xl font-extrabold text-gray-900">{won(stats?.month_revenue ?? 0)}</div>
+              <div className="mt-0.5 text-xs text-gray-400">{new Date().getMonth() + 1}월</div>
+            </div>
           </section>
 
           {/* 탭(4개) - 성격이 같은 '보는 화면'끼리 한 줄에 균등 배치.
@@ -1886,7 +1886,6 @@ export default function AdminPage() {
                               {c.diagList.map((d, i) => {
                                 const p = (d.profile || {}) as any;
                                 const done = (d.status || "completed") === "completed";
-                                const diagOpen = openUnifiedDiag === d.id;
                                 return (
                                   <div
                                     key={d.id}
@@ -1907,19 +1906,8 @@ export default function AdminPage() {
                                         </span>
                                       </div>
                                       <div className="flex shrink-0 items-center gap-1.5">
-                                        {/* 진단서: 클릭 시 하단에 작성 질문지 전체 인라인 표시 */}
-                                        <button
-                                          onClick={() =>
-                                            setOpenUnifiedDiag(diagOpen ? null : d.id)
-                                          }
-                                          className={`rounded-lg border px-3 py-1.5 text-[12px] font-bold transition ${
-                                            diagOpen
-                                              ? "border-brand-dark bg-brand-dark/5 text-brand-dark"
-                                              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                          }`}
-                                        >
-                                          📋 진단서
-                                        </button>
+                                        {/* 진단서 질문지는 카드 펼치면 아래에 바로 표시됨(별도 토글 없음).
+                                            여기서는 결과 페이지(새 창)만 열 수 있게 유지. */}
                                         <button
                                           onClick={() => openResultForDiag(d)}
                                           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
@@ -1929,9 +1917,9 @@ export default function AdminPage() {
                                       </div>
                                     </div>
 
-                                    {/* 진단서 상세: 작성한 질문지 전체(라이트 테마, 2단 세로우선) */}
-                                    {diagOpen && (
-                                      <div className="border-t border-gray-200 bg-gray-50 px-3 py-3">
+                                    {/* 진단서 상세: 카드 펼치면 질문지 전체를 바로 표시(라이트 테마, 2단 세로우선).
+                                        - 대표님 요청: 진단서를 또 클릭할 필요 없이, 보면서 바로 메모 작성 */}
+                                    <div className="border-t border-gray-200 bg-gray-50 px-3 py-3">
                                         <p className="mb-2 text-[11px] font-bold text-gray-500">
                                           📝 작성한 질문지 전체
                                         </p>
@@ -1995,8 +1983,7 @@ export default function AdminPage() {
                                             🗑️ 진단서 삭제
                                           </button>
                                         </div>
-                                      </div>
-                                    )}
+                                    </div>
                                   </div>
                                 );
                               })}
