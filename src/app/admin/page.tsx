@@ -239,6 +239,7 @@ export default function AdminPage() {
   const [userSourceFilter, setUserSourceFilter] = useState("all"); // 유입경로 필터(all=전체)
   const [unifiedSearch, setUnifiedSearch] = useState(""); // 통합 고객 뷰 검색어
   const [openUnified, setOpenUnified] = useState<string | null>(null); // 통합 카드 펼침(key)
+  const [openUnifiedDiag, setOpenUnifiedDiag] = useState<string | null>(null); // 카드 안 진단서 상세 펼침(diag id)
   const [unifiedCall, setUnifiedCall] = useState<"all" | CallStatus>("all"); // 통화상태 필터
   const [unifiedMemoDraft, setUnifiedMemoDraft] = useState<Record<string, string>>({}); // 통합 카드 메모 입력
 
@@ -1883,30 +1884,117 @@ export default function AdminPage() {
                               {c.diagList.map((d, i) => {
                                 const p = (d.profile || {}) as any;
                                 const done = (d.status || "completed") === "completed";
+                                const diagOpen = openUnifiedDiag === d.id;
                                 return (
                                   <div
                                     key={d.id}
-                                    className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
+                                    className="overflow-hidden rounded-lg border border-gray-200 bg-white"
                                   >
-                                    <div className="min-w-0 flex-1 text-[12px]">
-                                      <span className="font-bold text-gray-700">
-                                        {dupCount > 1 ? `${i + 1}번째 · ` : ""}
-                                        {done ? "완료" : "중단"}
-                                      </span>
-                                      <span className="ml-2 text-gray-500">
-                                        {p?.businessType || ""}
-                                        {p?.bno ? ` · #${p.bno}` : ""}
-                                      </span>
-                                      <span className="ml-2 text-gray-400">
-                                        {fmtDateTime(d.created_at)}
-                                      </span>
+                                    <div className="flex items-center justify-between gap-2 px-3 py-2">
+                                      <div className="min-w-0 flex-1 text-[12px]">
+                                        <span className="font-bold text-gray-700">
+                                          {dupCount > 1 ? `${i + 1}번째 · ` : ""}
+                                          {done ? "완료" : "중단"}
+                                        </span>
+                                        <span className="ml-2 text-gray-500">
+                                          {p?.businessType || ""}
+                                          {p?.bno ? ` · #${p.bno}` : ""}
+                                        </span>
+                                        <span className="ml-2 text-gray-400">
+                                          {fmtDateTime(d.created_at)}
+                                        </span>
+                                      </div>
+                                      <div className="flex shrink-0 items-center gap-1.5">
+                                        {/* 진단서: 클릭 시 하단에 작성 질문지 전체 인라인 표시 */}
+                                        <button
+                                          onClick={() =>
+                                            setOpenUnifiedDiag(diagOpen ? null : d.id)
+                                          }
+                                          className={`rounded-lg border px-3 py-1.5 text-[12px] font-bold transition ${
+                                            diagOpen
+                                              ? "border-brand-dark bg-brand-dark/5 text-brand-dark"
+                                              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                                          }`}
+                                        >
+                                          📋 진단서
+                                        </button>
+                                        <button
+                                          onClick={() => openResultForDiag(d)}
+                                          className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                        >
+                                          결과 열람
+                                        </button>
+                                      </div>
                                     </div>
-                                    <button
-                                      onClick={() => openResultForDiag(d)}
-                                      className="shrink-0 rounded-lg bg-brand-dark px-3 py-1.5 text-[12px] font-bold text-white hover:opacity-90"
-                                    >
-                                      결과 열람
-                                    </button>
+
+                                    {/* 진단서 상세: 작성한 질문지 전체(라이트 테마, 2단 세로우선) */}
+                                    {diagOpen && (
+                                      <div className="border-t border-gray-200 bg-gray-50 px-3 py-3">
+                                        <p className="mb-2 text-[11px] font-bold text-gray-500">
+                                          📝 작성한 질문지 전체
+                                        </p>
+                                        {(() => {
+                                          const entries = sortKeysByQuestionOrder(
+                                            Object.keys(p).filter(
+                                              (k) =>
+                                                !["bnoTaxType", "interests"].includes(k)
+                                            )
+                                          ).map((k) => [k, (p as any)[k]] as const);
+                                          if (entries.length === 0) {
+                                            return (
+                                              <p className="text-[12px] text-gray-400">
+                                                저장된 질문지 항목이 없습니다.
+                                              </p>
+                                            );
+                                          }
+                                          const half = Math.ceil(entries.length / 2);
+                                          const columns = [
+                                            entries.slice(0, half),
+                                            entries.slice(half),
+                                          ];
+                                          const renderItem = ([k, v]: readonly [
+                                            string,
+                                            unknown
+                                          ]) => (
+                                            <div
+                                              key={k}
+                                              className="flex gap-2 border-b border-gray-200 py-1 text-[12px]"
+                                            >
+                                              <span className="shrink-0 font-semibold text-gray-500">
+                                                {labelForKey(k)}
+                                              </span>
+                                              <span className="break-all font-semibold text-gray-800">
+                                                {valueToText(v)}
+                                              </span>
+                                            </div>
+                                          );
+                                          return (
+                                            <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+                                              {columns.map((col, ci) => (
+                                                <div key={ci} className="flex flex-col">
+                                                  {col.map(renderItem)}
+                                                </div>
+                                              ))}
+                                            </div>
+                                          );
+                                        })()}
+                                        {/* 진단서 개별 액션 */}
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                          <button
+                                            onClick={() => downloadOneDiag(d)}
+                                            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                          >
+                                            ⬇️ 이 진단서 엑셀 다운
+                                          </button>
+                                          <button
+                                            onClick={() => deleteDiag(d)}
+                                            className="rounded-lg bg-rose-50 px-3 py-1.5 text-[11px] font-bold text-rose-600 hover:bg-rose-100"
+                                          >
+                                            🗑️ 진단서 삭제
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
                                   </div>
                                 );
                               })}
