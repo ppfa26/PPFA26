@@ -304,6 +304,27 @@ const COLS_CLASS: Record<1 | 2 | 3, string> = {
   3: "grid-cols-3",
 };
 
+// ── 토스/카뱅식 미니멀 선택지·버튼 공통 스타일 (대표님 요청 UI 업그레이드) ──
+//  · 비활성: 흰 배경 + 연회색 테두리, 눌림감(active:scale)만. 과한 hover 이동·그림자 제거로 차분하게.
+//  · 활성: 골드 그라디언트 대신 '연한 브랜드 배경 + 진한 브랜드 테두리 + 브랜드 텍스트'로 미니멀하게 강조.
+//  · 제출(주 액션): 사이트 메인 톤(레드)로 통일해 '진짜 다음 단계'임을 분명히.
+const OPT_BASE =
+  "break-keep rounded-2xl border text-center font-semibold transition duration-150 active:scale-[0.97]";
+const OPT_ON = "border-brand-orange bg-brand-orange/10 text-brand-dark ring-1 ring-brand-orange/30";
+const OPT_OFF =
+  "border-gray-200 bg-white text-brand-dark hover:border-brand-orange/60 hover:bg-brand-orange/[0.04]";
+// 개별 선택지(칩) — 위 조합 + 기본 패딩. 필요 시 py/px를 뒤에서 덮어씀.
+const optClass = (active: boolean, extra = "") =>
+  `${OPT_BASE} px-3 py-3 text-[13px] ${active ? OPT_ON : OPT_OFF} ${extra}`;
+// 주 제출 버튼(다음/완료/입력) — 사이트 메인 레드 CTA로 통일.
+const SUBMIT_BTN =
+  "w-full rounded-2xl btn-red py-3.5 text-[15px] font-extrabold transition active:scale-[0.98] disabled:opacity-40 disabled:saturate-50";
+const SUBMIT_BTN_INLINE =
+  "shrink-0 rounded-2xl btn-red px-5 py-3.5 text-[15px] font-extrabold transition active:scale-[0.98] disabled:opacity-40 disabled:saturate-50";
+// 텍스트 입력 — 토스식: 큰 폰트 + 넉넉한 높이 + 포커스 시 브랜드 보더/링.
+const INPUT_CLASS =
+  "min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-base text-brand-dark outline-none transition focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20";
+
 // ── 진행 중 응원 문구(대표님 요청) ─────────────────────────────
 //  질문에 답할수록 봇이 짧게 격려해 완주율을 높인다.
 //  ※ 순수 표시용. 저장 form 값·매칭 로직과 전혀 무관(정확도 100% 불변).
@@ -884,21 +905,24 @@ export default function DiagnosisChat() {
           단계마다 푸터 위치가 오르락내리락하지 않는다. */}
       <main className="flex flex-1 flex-col px-4 pb-4 pt-6">
         <div className="mx-auto flex w-full max-w-3xl flex-col">
-          {/* 진행률 바 */}
+          {/* 진행률 바 — 토스식 미니멀(스텝 표기 + 얇은 단색 바, %는 은은하게) */}
           <div className="mb-3">
             <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-brand-gray">
               <span>
                 맞춤 진단
                 {curStepNo > 0 && !finished && (
-                  <span className="ml-1.5 text-brand-orange">
-                    {curStepNo}번째 질문 <span className="text-brand-gray/70">/ 전체 {totalSteps}개</span>
+                  <span className="ml-1.5 font-extrabold text-brand-dark">
+                    {curStepNo}<span className="text-brand-gray/60"> / {totalSteps}</span>
                   </span>
                 )}
               </span>
-              <span>{progress}%</span>
+              <span className="tabular-nums text-brand-gray/60">{progress}%</span>
             </div>
-            <div className="h-1.5 w-full rounded-full bg-gray-200">
-              <div className="h-1.5 rounded-full bg-brand-grad transition-all" style={{ width: `${progress}%` }} />
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+              <div
+                className="h-1.5 rounded-full bg-brand-orange transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              />
             </div>
             {/* ★ 응원 문구(대표님 요청) ★ 절반·막바지·마지막에만 짧게 격려 → 완주율↑.
                 순수 표시용이라 매칭 결과와 무관. */}
@@ -922,7 +946,7 @@ export default function DiagnosisChat() {
                  → 화면 크기와 무관한 '고정 최소 높이(420px)'로 바꿔 큰 화면에서도
                    카드가 필요 이상 늘어나지 않게 하고 하단 빈 공간을 없앤다.
                  (대화가 길어지면 콘텐츠가 이 최소값을 넘겨 자연스럽게 늘어난다.) */}
-          <div className="flex min-h-[420px] flex-col rounded-2xl border border-gray-100 bg-gray-50/60 p-4 shadow-card">
+          <div className="flex min-h-[420px] flex-col rounded-3xl border border-gray-100 bg-white/70 p-4 shadow-card">
             <div className="flex flex-col gap-3">
               {(() => {
                 // 최근 N개만 노출(=현재 질문 위주). 나머지는 접어서 위로 올린다.
@@ -950,12 +974,17 @@ export default function DiagnosisChat() {
                     {visible.map((m, i) => {
                       const realIdx = (showAll ? 0 : hiddenCount) + i;
                       const isLastBot = realIdx === messages.length - 1 && m.who === "bot";
+                      // 토스식 포커스: 현재(마지막) 질문만 또렷하게, 지난 대화는 은은하게 흐림 처리.
+                      const isCurrent = realIdx >= messages.length - 1;
+                      const dim = !isCurrent ? "opacity-60" : "";
                       return m.who === "bot" ? (
-                        <div key={realIdx} ref={isLastBot ? focusRef : undefined}>
+                        <div key={realIdx} ref={isLastBot ? focusRef : undefined} className={`transition-opacity duration-300 ${dim}`}>
                           <BotBubble text={m.text} wide={m.wide} />
                         </div>
                       ) : (
-                        <UserBubble key={realIdx} text={m.text} />
+                        <div key={realIdx} className={`transition-opacity duration-300 ${dim}`}>
+                          <UserBubble text={m.text} />
+                        </div>
                       );
                     })}
                   </>
@@ -974,7 +1003,7 @@ export default function DiagnosisChat() {
               대화창이 함께 늘었다 줄었다 한다. 화면 고정(fixed)이 아니므로
               스크롤·질문 전환 때 따로 흔들리거나 빈 공백이 생기지 않는다. */}
           {showInput && curStep && (
-            <div ref={answerRef} className="mt-3 rounded-xl border border-white bg-white p-3 shadow-sm">
+            <div ref={answerRef} className="mt-3 rounded-2xl border border-gray-100 bg-white p-3.5 shadow-sm">
               {/* ★ 이탈 방지 넛지(대표님 요청 업그레이드) ★
                   막바지(마지막/거의 다 온 질문)에서 답변 버튼 바로 위에 '조금만 더' 배너를 띄워
                   완주(=결과 확인·회원가입 전환)를 유도한다. 순수 표시용 → 매칭 결과·저장값 100% 불변.
@@ -1031,9 +1060,7 @@ export default function DiagnosisChat() {
                           key={o}
                           // singleSelect면 하나만 즉시 선택·다음으로(라디오), 아니면 복수 토글.
                           onClick={() => (curStep.singleSelect ? answerMultiSingle(o) : toggleMulti(o))}
-                          className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
-                            active ? "border-brand-orange bg-brand-grad text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:-translate-y-0.5 hover:border-brand-orange hover:shadow-md"
-                          }`}
+                          className={optClass(active)}
                         >
                           {renderOptLabel(curStep.labelFull?.[o] || o)}
                         </button>
@@ -1045,7 +1072,7 @@ export default function DiagnosisChat() {
                     <button
                       onClick={confirmMulti}
                       disabled={multiTemp.length === 0}
-                      className="mt-3 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
+                      className={`${SUBMIT_BTN} mt-3`}
                     >
                       {multiTemp.length > 0 ? `${multiTemp.length}개 선택 완료 →` : "하나 이상 선택해 주세요"}
                     </button>
@@ -1060,7 +1087,7 @@ export default function DiagnosisChat() {
                     <button
                       key={o}
                       onClick={() => answerSingle(o)}
-                      className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition active:scale-95 hover:-translate-y-0.5 hover:border-brand-orange hover:bg-brand-orange/5 hover:shadow-md"
+                      className={optClass(false)}
                     >
                       {renderOptLabel(o)}
                     </button>
@@ -1082,9 +1109,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
-                                active ? "border-brand-orange bg-brand-grad text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:-translate-y-0.5 hover:border-brand-orange hover:shadow-md"
-                              }`}
+                              className={optClass(active)}
                             >
                               {renderOptLabel(o)}
                             </button>
@@ -1096,7 +1121,7 @@ export default function DiagnosisChat() {
                   <button
                     onClick={confirmYesnoGroup}
                     disabled={(curStep.subs || []).some((s) => !groupTemp[s.key])}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
+                    className={`${SUBMIT_BTN} mt-1`}
                   >
                     다음 →
                   </button>
@@ -1120,11 +1145,7 @@ export default function DiagnosisChat() {
                             <button
                               key={o}
                               onClick={() => pickGroup(sub.key, o)}
-                              className={`break-keep rounded-full border py-2.5 text-center font-semibold transition active:scale-95 ${
-                                sub.compact ? "px-1.5 text-[12px]" : "px-3 text-[13px]"
-                              } ${
-                                active ? "border-brand-orange bg-brand-grad text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:-translate-y-0.5 hover:border-brand-orange hover:bg-brand-orange/5 hover:shadow-md"
-                              }`}
+                              className={`${OPT_BASE} py-3 ${sub.compact ? "px-1.5 text-[12px]" : "px-3 text-[13px]"} ${active ? OPT_ON : OPT_OFF}`}
                             >
                               {renderOptLabel(o)}
                             </button>
@@ -1136,7 +1157,7 @@ export default function DiagnosisChat() {
                   <button
                     onClick={confirmYesnoGroup}
                     disabled={(curStep.subs || []).some((s) => !groupTemp[s.key])}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
+                    className={`${SUBMIT_BTN} mt-1`}
                   >
                     다음 →
                   </button>
@@ -1167,11 +1188,7 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => (radio ? pickGroupMultiSingle(sub.key, o) : toggleGroupMulti(sub.key, o))}
-                                className={`break-keep rounded-full border py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
-                                  sub.compact ? "px-1.5" : "px-3"
-                                } ${
-                                  active ? "border-brand-orange bg-brand-grad text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:-translate-y-0.5 hover:border-brand-orange hover:bg-brand-orange/5 hover:shadow-md"
-                                }`}
+                                className={`${OPT_BASE} py-3 text-[13px] ${sub.compact ? "px-1.5" : "px-3"} ${active ? OPT_ON : OPT_OFF}`}
                               >
                                 {renderOptLabel(sub.labelFull?.[o] || o)}
                               </button>
@@ -1185,7 +1202,7 @@ export default function DiagnosisChat() {
                             value={groupRegionEtc}
                             onChange={(e) => setGroupRegionEtc(e.target.value)}
                             placeholder="지역을 직접 입력해 주세요 (예: 부산 해운대구)"
-                            className="mt-2 w-full rounded-xl border border-white bg-white px-3.5 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                            className={`${INPUT_CLASS} mt-2 w-full`}
                           />
                         )}
                       </div>
@@ -1199,7 +1216,7 @@ export default function DiagnosisChat() {
                         .some((s) => !(groupMultiTemp[s.key] && groupMultiTemp[s.key][0])) ||
                       (groupMultiTemp["region"]?.[0] === "기타" && !groupRegionEtc.trim())
                     }
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
+                    className={`${SUBMIT_BTN} mt-1`}
                   >
                     다음 →
                   </button>
@@ -1215,13 +1232,13 @@ export default function DiagnosisChat() {
                       <button
                         key={sub.key}
                         onClick={() => toggleCheck(sub.key)}
-                        className={`flex items-center gap-3 break-keep rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition active:scale-[0.98] ${
-                          active ? "border-brand-orange bg-brand-orange/10 text-brand-dark shadow-md" : "border-white bg-white text-brand-dark hover:border-brand-orange hover:shadow-md"
+                        className={`flex items-center gap-3 break-keep rounded-2xl border px-4 py-3.5 text-left text-sm font-semibold transition duration-150 active:scale-[0.98] ${
+                          active ? "border-brand-orange bg-brand-orange/10 text-brand-dark ring-1 ring-brand-orange/30" : "border-gray-200 bg-white text-brand-dark hover:border-brand-orange/60 hover:bg-brand-orange/[0.04]"
                         }`}
                       >
                         <span
-                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border text-xs ${
-                            active ? "border-brand-orange bg-brand-grad text-brand-dark" : "border-white bg-white text-transparent"
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border text-xs transition ${
+                            active ? "border-brand-orange bg-brand-orange text-white" : "border-gray-300 bg-white text-transparent"
                           }`}
                         >
                           ✓
@@ -1237,7 +1254,7 @@ export default function DiagnosisChat() {
                   })}
                   <button
                     onClick={confirmCheckGroup}
-                    className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98]"
+                    className={`${SUBMIT_BTN} mt-1`}
                   >
                     {checkTemp.length > 0 ? `${checkTemp.length}개 선택 완료 →` : "해당 없음 →"}
                   </button>
@@ -1253,7 +1270,7 @@ export default function DiagnosisChat() {
                         <button
                           key={o}
                           onClick={() => answerRegion(o)}
-                          className="break-keep rounded-full border border-white bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-brand-dark transition active:scale-95 hover:-translate-y-0.5 hover:border-brand-orange hover:bg-brand-orange/5 hover:shadow-md"
+                          className={optClass(false, "px-2")}
                         >
                           {renderOptLabel(o)}
                         </button>
@@ -1268,9 +1285,9 @@ export default function DiagnosisChat() {
                         onKeyDown={(e) => e.key === "Enter" && confirmRegionEtc()}
                         placeholder="지역을 직접 입력해 주세요 (예: 00도 00시)"
                         autoFocus
-                        className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                        className={INPUT_CLASS}
                       />
-                      <button onClick={confirmRegionEtc} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40">
+                      <button onClick={confirmRegionEtc} disabled={!textTemp.trim()} className={SUBMIT_BTN_INLINE}>
                         입력 →
                       </button>
                     </div>
@@ -1289,9 +1306,9 @@ export default function DiagnosisChat() {
                     onKeyDown={(e) => e.key === "Enter" && confirmText()}
                     placeholder={curStep.placeholder}
                     autoFocus
-                    className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-base text-brand-dark outline-none focus:border-brand-orange"
+                    className={INPUT_CLASS}
                   />
-                  <button onClick={confirmText} disabled={!textTemp.trim()} className="shrink-0 rounded-full bg-brand-grad px-5 py-3 text-[15px] font-extrabold text-brand-dark disabled:opacity-40">
+                  <button onClick={confirmText} disabled={!textTemp.trim()} className={SUBMIT_BTN_INLINE}>
                     입력 →
                   </button>
                 </div>
@@ -1320,11 +1337,7 @@ export default function DiagnosisChat() {
                             <button
                               key={t}
                               onClick={() => setForm((f: any) => ({ ...f, businessType: t }))}
-                              className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
-                                active
-                                  ? "border-brand-orange bg-brand-grad text-brand-dark"
-                                  : "border-white bg-white text-brand-dark hover:border-brand-orange"
-                              }`}
+                              className={optClass(active)}
                             >
                               {label}
                             </button>
@@ -1348,11 +1361,7 @@ export default function DiagnosisChat() {
                               <button
                                 key={o}
                                 onClick={() => pickGroup(sub.key, o)}
-                                className={`break-keep rounded-full border px-3 py-2.5 text-center text-[13px] font-semibold transition active:scale-95 ${
-                                  active
-                                    ? "border-brand-orange bg-brand-grad text-brand-dark"
-                                    : "border-white bg-white text-brand-dark hover:border-brand-orange"
-                                }`}
+                                className={optClass(active)}
                               >
                                 {renderOptLabel(o)}
                               </button>
@@ -1364,7 +1373,7 @@ export default function DiagnosisChat() {
                     <button
                       onClick={confirmBizEligibility}
                       disabled={!canNext}
-                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
+                      className={`${SUBMIT_BTN} mt-1`}
                     >
                       다음 →
                     </button>
@@ -1403,8 +1412,8 @@ export default function DiagnosisChat() {
                           }}
                           onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
                           placeholder={curStep.placeholder}
-                          className={`w-full rounded-full border bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange ${
-                            bnoMsg?.tone === "err" ? "border-red-400" : "border-white"
+                          className={`w-full rounded-2xl border bg-white px-4 py-3.5 text-base text-brand-dark outline-none transition focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 ${
+                            bnoMsg?.tone === "err" ? "border-red-400" : "border-gray-200"
                           }`}
                         />
                         {/* ★ 대표님 요청 ★ 국세청 미등록(가짜/오타) 사업자번호 안내 — 진행 차단됨 */}
@@ -1431,7 +1440,7 @@ export default function DiagnosisChat() {
                           value={nameTemp}
                           onChange={(e) => { setNameTemp(e.target.value); if (bnoMsg) setBnoMsg(null); }}
                           placeholder={CONTACT_TEXT.namePlaceholder}
-                          className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                          className={INPUT_CLASS}
                         />
                         <input
                           type="tel"
@@ -1441,7 +1450,7 @@ export default function DiagnosisChat() {
                           onKeyDown={(e) => e.key === "Enter" && canSubmit && confirmBnoContact()}
                           // chat 화면은 성함·연락처가 반칸씩 나뉘어 좁으므로 짧은 placeholder 사용(잘림 방지). config는 diagnosis-form과 공유되어 미변경.
                           placeholder="연락처"
-                          className="min-w-0 flex-1 rounded-full border border-white bg-white px-4 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+                          className={INPUT_CLASS}
                         />
                       </div>
                       {/* ★ 성함·연락처 오류 메시지(대표님 요청) ★
@@ -1460,7 +1469,7 @@ export default function DiagnosisChat() {
                     <button
                       onClick={confirmBnoContact}
                       disabled={!canSubmit || bnoLoading}
-                      className="mt-1 w-full rounded-full bg-brand-grad py-3 text-[15px] font-extrabold text-brand-dark transition active:scale-[0.98] disabled:opacity-40"
+                      className={`${SUBMIT_BTN} mt-1`}
                     >
                       {bnoLoading ? "확인 중…" : "진단 결과 확인하기 →"}
                     </button>
