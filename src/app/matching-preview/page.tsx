@@ -946,7 +946,7 @@ export default function MatchingPreview() {
             </p>
             <a
               href="/payment?tier=basic"
-              className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
+              className="btn-red mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
             >
               💳 지금 결제하고 전체 결과 확인하기
             </a>

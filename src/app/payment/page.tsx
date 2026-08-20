@@ -309,8 +309,8 @@ function PaymentInner() {
           />
           <span className="break-keep leading-relaxed">
             1회성 결제(자동결제 없음)이며,{" "}
-            <strong>결제 즉시 콘텐츠 열람이 시작되어 열람 후에는 환불(청약철회)이 제한될 수 있음</strong>을
-            확인했습니다. 본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스로{" "}
+            <strong>결제 즉시 콘텐츠 열람이 시작되어 열람 후에는 환불(청약철회)이 제한될 수 있으며</strong>{" "}
+            본 서비스는 안내·추천·매칭하는 AI 통합 매칭 서비스로{" "}
             <strong>정부지원사업 승인을 보장하지 않음</strong>을 확인했습니다.
           </span>
         </label>
