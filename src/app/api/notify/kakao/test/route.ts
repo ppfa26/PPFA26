@@ -90,6 +90,45 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // ── 접수 실패(failedMessageList) 상세 추출 ──
+    //  솔라피는 로그인/IP 가 통과해도, 개별 메시지가 거부되면 send 가 '성공 응답'을
+    //  주면서 failedMessageList 에 실패 사유(statusCode/statusMessage)를 담는다.
+    //  그래서 여기서 실패건을 꺼내 화면에 그대로 보여준다.
+    const r = (result ?? {}) as Record<string, unknown>;
+    const groupInfo = (r.groupInfo as Record<string, unknown>) || {};
+    const count =
+      (groupInfo.count as Record<string, unknown>) ||
+      (r.count as Record<string, unknown>) ||
+      {};
+    const failedList =
+      (r.failedMessageList as unknown[]) ||
+      (r.failedMessages as unknown[]) ||
+      [];
+    const hasFailed =
+      (Array.isArray(failedList) && failedList.length > 0) ||
+      Number(count?.registeredFailed ?? 0) > 0 ||
+      Number(count?.failed ?? 0) > 0;
+
+    if (hasFailed) {
+      return NextResponse.json(
+        {
+          ok: false,
+          reason: "message_rejected",
+          message:
+            "접수 거부됨. 아래 상세(statusCode/statusMessage)를 확인하세요. " +
+            "주로: 발신번호 미인증, pfId·templateId 불일치, 템플릿 내용 불일치, 채널-템플릿 미연결.",
+          to,
+          from: FROM,
+          pfId: PF_ID,
+          templateId: TEMPLATE_ID,
+          count,
+          failedMessageList: failedList,
+          solapi: result ?? null,
+        },
+        { status: 200 }
+      );
+    }
+
     // 솔라피 응답을 요약해 그대로 반환 → 성공/부분실패를 화면에서 확인
     return NextResponse.json(
       {

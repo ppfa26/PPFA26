@@ -287,12 +287,19 @@ export default function AdminPage() {
           typeof data?.error === "object"
             ? JSON.stringify(data.error)
             : data?.error || "";
+        // 접수 거부(failedMessageList)·카운트도 함께 노출 → 진짜 원인 파악
+        const failed = data?.failedMessageList
+          ? JSON.stringify(data.failedMessageList)
+          : "";
+        const cnt = data?.count ? JSON.stringify(data.count) : "";
         setAlimtalkTestResult({
           ok: false,
           text:
             "❌ " +
             (data?.message || "발송 실패") +
-            (detail ? "\n[상세] " + detail : ""),
+            (detail ? "\n[상세] " + detail : "") +
+            (failed ? "\n[실패목록] " + failed : "") +
+            (cnt ? "\n[카운트] " + cnt : ""),
         });
       }
     } catch (e) {
