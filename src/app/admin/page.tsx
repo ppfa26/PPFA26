@@ -181,7 +181,7 @@ function StatCard({
   accent: string;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+    <div className="rounded-3xl border border-gray-100 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-card sm:p-5">
       {/* 라벨·금액이 좁은 카드에서 세로로 쪼개지지 않도록 한 줄 고정(whitespace-nowrap) */}
       <p className="whitespace-nowrap text-xs font-semibold text-gray-500 sm:text-sm">
         {label}
@@ -1313,7 +1313,7 @@ export default function AdminPage() {
       <>
         <Header />
         <main className="flex min-h-[60vh] items-center justify-center bg-gray-50 px-4">
-          <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
+          <div className="w-full max-w-md rounded-3xl border border-gray-100 bg-white p-8 text-center shadow-sm">
             <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-2xl">
               🔒
             </div>
@@ -1324,7 +1324,7 @@ export default function AdminPage() {
             <div className="mt-6 flex flex-col gap-2">
               <Link
                 href="/signup"
-                className="rounded-xl bg-brand-primary px-4 py-3 text-sm font-bold text-white hover:opacity-90"
+                className="rounded-2xl bg-brand-primary px-4 py-3 text-sm font-bold text-white transition duration-150 hover:opacity-90 active:scale-[0.98]"
               >
                 관리자 로그인
               </Link>
@@ -1349,7 +1349,7 @@ export default function AdminPage() {
         <div className="mx-auto max-w-6xl">
           {/* 상단 헤더 */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+            <div className="rounded-3xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
               <h1 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
                 🛠️ 관리자 대시보드
               </h1>
@@ -1413,7 +1413,7 @@ export default function AdminPage() {
                 setUnifiedCall("all");
                 setUnifiedTodayOnly(true);
               }}
-              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full min-h-[104px] flex-col rounded-3xl border border-gray-200 bg-white p-4 text-left shadow-sm transition duration-150 hover:scale-[1.02] hover:shadow-card active:scale-[0.98]"
               title="오늘(00~24시) 새로 접수된 진단(신규 리드)만 보기"
             >
               <div className="text-[12px] font-semibold text-gray-500">🆕 오늘 신규 리드</div>
@@ -1426,7 +1426,7 @@ export default function AdminPage() {
                 setUnifiedCall("none");
                 setUnifiedTodayOnly(false);
               }}
-              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full min-h-[104px] flex-col rounded-3xl border border-gray-200 bg-white p-4 text-left shadow-sm transition duration-150 hover:scale-[1.02] hover:shadow-card active:scale-[0.98]"
               title="아직 통화하지 않은 고객 - 통합보기에서 미접촉만 필터"
             >
               <div className="text-[12px] font-semibold text-gray-500">📞 미접촉(전화 필요)</div>
@@ -1439,7 +1439,7 @@ export default function AdminPage() {
                 setUnifiedCall("done");
                 setUnifiedTodayOnly(false);
               }}
-              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full min-h-[104px] flex-col rounded-3xl border border-gray-200 bg-white p-4 text-left shadow-sm transition duration-150 hover:scale-[1.02] hover:shadow-card active:scale-[0.98]"
               title="통화 완료한 고객 - 통합보기에서 통화완료만 필터"
             >
               <div className="text-[12px] font-semibold text-gray-500">✅ 통화완료</div>
@@ -1452,7 +1452,7 @@ export default function AdminPage() {
                 setUnifiedCall("all");
                 setUnifiedTodayOnly(false);
               }}
-              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full min-h-[104px] flex-col rounded-3xl border border-gray-200 bg-white p-4 text-left shadow-sm transition duration-150 hover:scale-[1.02] hover:shadow-card active:scale-[0.98]"
               title="전체 고객 - 고객 관리에서 전체 리스트 보기"
             >
               <div className="text-[12px] font-semibold text-gray-500">👥 전체 고객</div>
@@ -1465,7 +1465,7 @@ export default function AdminPage() {
                 setUnifiedCall("contract");
                 setUnifiedTodayOnly(false);
               }}
-              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full min-h-[104px] flex-col rounded-3xl border border-gray-200 bg-white p-4 text-left shadow-sm transition duration-150 hover:scale-[1.02] hover:shadow-card active:scale-[0.98]"
               title="계약 완료 고객 - 통합보기에서 계약만 필터"
             >
               <div className="text-[12px] font-semibold text-gray-500">🏆 계약</div>
@@ -1474,7 +1474,7 @@ export default function AdminPage() {
             {/* ⑥ 이번 달 매출 - 클릭 시 매출 리포트 탭으로 이동. 월 표기를 레이블로 합쳐 높이(2줄) 통일 */}
             <button
               onClick={() => setTab("revenue")}
-              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full min-h-[104px] flex-col rounded-3xl border border-gray-200 bg-white p-4 text-left shadow-sm transition duration-150 hover:scale-[1.02] hover:shadow-card active:scale-[0.98]"
               title="이번 달 매출 - 매출 리포트 보기"
             >
               <div className="text-[12px] font-semibold text-gray-500">💰 {new Date().getMonth() + 1}월 매출</div>
@@ -1496,7 +1496,7 @@ export default function AdminPage() {
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex-1 whitespace-nowrap rounded-xl px-3 py-2.5 text-center text-[14px] font-bold transition hover:scale-[1.02] ${
+                className={`flex-1 whitespace-nowrap rounded-2xl px-3 py-2.5 text-center text-[14px] font-bold transition duration-150 hover:scale-[1.02] active:scale-[0.97] ${
                   tab === key
                     ? "bg-brand-dark text-white shadow"
                     : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
@@ -1514,14 +1514,14 @@ export default function AdminPage() {
             <button
               onClick={downloadAllDiag}
               disabled={diagnoses.length === 0}
-              className="flex-1 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-center text-[14px] font-bold text-gray-700 shadow-sm transition hover:scale-[1.02] hover:bg-gray-50 disabled:opacity-40"
+              className="flex-1 whitespace-nowrap rounded-2xl border border-gray-200 bg-white px-3 py-2.5 text-center text-[14px] font-bold text-gray-700 shadow-sm transition duration-150 hover:scale-[1.02] hover:bg-gray-50 active:scale-[0.97] disabled:opacity-40"
               title="접수된 모든 고객 진단서를 엑셀(.xlsx)로 내려받습니다"
             >
               📋 진단서 엑셀
             </button>
             <button
               onClick={copyDiagnosisLink}
-              className="flex-1 whitespace-nowrap rounded-xl bg-brand-orange px-3 py-2.5 text-center text-[14px] font-bold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
+              className="flex-1 whitespace-nowrap rounded-2xl bg-brand-orange px-3 py-2.5 text-center text-[14px] font-bold text-white shadow-sm transition duration-150 hover:scale-[1.02] hover:opacity-90 active:scale-[0.97]"
               title="고객에게 보낼 무료진단 링크를 클립보드에 복사합니다"
             >
               🔗 진단링크 복사
@@ -1640,8 +1640,8 @@ export default function AdminPage() {
                   return (
                     <div
                       key={c.key}
-                      className={`overflow-hidden rounded-2xl border bg-white shadow-sm transition-transform duration-150 ${
-                        isOpen ? "" : "hover:scale-[1.01]"
+                      className={`overflow-hidden rounded-3xl border bg-white shadow-sm transition-transform duration-150 ${
+                        isOpen ? "" : "hover:scale-[1.01] active:scale-[0.997]"
                       } ${
                         c.paidCount > 0
                           ? "border-brand-orange/50 ring-1 ring-brand-orange/20"

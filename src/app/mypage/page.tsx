@@ -170,7 +170,7 @@ export default function MyPage() {
                   className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3"
                 >
                   {/* ① 진단 결과 매칭 개수 */}
-                  <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center shadow-card sm:p-3.5">
+                  <div className="rounded-3xl border border-gray-200 bg-white p-3 text-center shadow-card transition-shadow duration-200 hover:shadow-cardHover sm:p-3.5">
                     <span className="text-xl sm:text-2xl">🎯</span>
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       진단 결과
@@ -180,7 +180,7 @@ export default function MyPage() {
                     </p>
                   </div>
                   {/* ② 이용권(열람) 상태 */}
-                  <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center shadow-card sm:p-3.5">
+                  <div className="rounded-3xl border border-gray-200 bg-white p-3 text-center shadow-card transition-shadow duration-200 hover:shadow-cardHover sm:p-3.5">
                     <span className="text-xl sm:text-2xl">🎟️</span>
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       이용권
@@ -194,7 +194,7 @@ export default function MyPage() {
                     </p>
                   </div>
                   {/* ③ 결제 건수 */}
-                  <div className="rounded-2xl border border-gray-200 bg-white p-3 text-center shadow-card sm:p-3.5">
+                  <div className="rounded-3xl border border-gray-200 bg-white p-3 text-center shadow-card transition-shadow duration-200 hover:shadow-cardHover sm:p-3.5">
                     <span className="text-xl sm:text-2xl">🧾</span>
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       결제 내역
@@ -222,7 +222,7 @@ export default function MyPage() {
                     </p>
                     <button
                       onClick={handleLogout}
-                      className="rounded-full border border-gray-300 px-5 py-2 text-sm font-semibold text-brand-gray transition hover:scale-[1.02] hover:bg-gray-50"
+                      className="rounded-full border border-gray-300 px-5 py-2 text-sm font-semibold text-brand-gray transition duration-150 hover:scale-[1.02] hover:bg-gray-50 active:scale-[0.97]"
                     >
                       로그아웃
                     </button>

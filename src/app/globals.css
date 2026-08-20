@@ -948,3 +948,24 @@ body.theme-dark {
     touch-action: manipulation; /* 더블탭 확대 지연(300ms) 제거 → 버튼 반응 즉각 */
   }
 }
+
+/* ── 법적 고지 페이지(이용약관·개인정보·환불·사업자정보) 소제목 액센트 ──
+   무료진단 톤과 통일: 소제목 왼쪽에 은은한 골드 바를 붙여 가독성/세련도 향상 */
+.legal-body h2 {
+  position: relative;
+  padding-left: 0.85rem;
+}
+.legal-body h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #ffd500 0%, #ff9500 100%);
+}
+/* 목록 항목에 부드러운 여백/줄간격 통일 */
+.legal-body ul li {
+  line-height: 1.65;
+}

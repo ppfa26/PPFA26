@@ -32,7 +32,7 @@ export default function BusinessInfoPage() {
       updatedAt="2026년 7월 15일"
     >
       <section id="business-table">
-        <div className="overflow-hidden rounded-2xl border border-gray-200">
+        <div className="overflow-hidden rounded-3xl border border-gray-200 transition-shadow duration-200 hover:shadow-card">
           <table className="w-full text-left text-sm">
             <tbody className="divide-y divide-gray-100">
               {ROWS.map((row) => (

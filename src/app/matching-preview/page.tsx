@@ -384,7 +384,8 @@ export default function MatchingPreview() {
     return (
       <PageShell pageKey="matching-preview" stickyFooter>
         <Header />
-        <main className="flex flex-1 min-h-[50vh] items-center justify-center px-4 py-20">
+        <main className="flex flex-1 min-h-[50vh] flex-col items-center justify-center gap-3 px-4 py-20">
+          <span className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
           <p className="text-sm font-semibold text-brand-gray">불러오는 중...</p>
         </main>
         <Footer />
@@ -412,8 +413,8 @@ export default function MatchingPreview() {
         <Header />
         {/* 로딩 화면 — 화면 정중앙 정렬 (대표님 요청: 상단으로 살짝, 좌우 완전 중앙) */}
         <main className="flex flex-1 min-h-[85vh] items-center justify-center px-4 pb-16 pt-4">
-          <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-6 text-center shadow-card sm:p-9">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10">
+          <div className="mx-auto w-full max-w-md rounded-3xl border-2 border-brand-orange/40 bg-white p-6 text-center shadow-card transition-shadow duration-300 sm:p-9">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10 ring-4 ring-brand-orange/5">
               <span className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-brand-orange/20 border-t-brand-orange" />
             </div>
             <p className="whitespace-nowrap text-[17px] font-extrabold leading-snug text-brand-dark sm:text-2xl">
@@ -433,7 +434,7 @@ export default function MatchingPreview() {
               {/* 배경 트랙은 연한 주황(반투명) - 다크 배경에서도 튀지 않고, 차오르는 주황 단색 바가 선명하게 보인다 */}
               <div className="h-3 w-full overflow-hidden rounded-full bg-brand-orange/15">
                 <div
-                  className="h-full rounded-full bg-brand-orange transition-all duration-300 ease-out"
+                  className="h-full rounded-full bg-brand-orange transition-all duration-500 ease-out"
                   style={{ width: `${analyzePct}%` }}
                 />
               </div>
@@ -450,10 +451,10 @@ export default function MatchingPreview() {
                 return (
                   <li
                     key={s.label}
-                    className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition-all duration-300 ${
+                    className={`flex items-center gap-3 rounded-2xl border px-4 py-3 transition-all duration-500 ease-out ${
                       active
-                        ? "border-brand-orange/40 bg-brand-yellow/10 opacity-100"
-                        : "border-gray-100 bg-gray-50 opacity-40"
+                        ? "border-brand-orange/40 bg-brand-yellow/10 opacity-100 scale-100"
+                        : "border-gray-100 bg-gray-50 opacity-40 scale-[0.98]"
                     }`}
                   >
                     <span className="text-xl">{s.icon}</span>

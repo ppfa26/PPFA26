@@ -25,7 +25,7 @@ export default function LegalLayout({
     <PageShell pageKey={pageKey}>
       <Header />
       <main className="bg-gray-50 px-4 py-10">
-        <article className="mx-auto max-w-3xl rounded-3xl border border-gray-200 bg-white p-6 shadow-card sm:p-10">
+        <article className="mx-auto max-w-3xl rounded-3xl border border-gray-200 bg-white p-6 shadow-card transition-shadow duration-300 hover:shadow-cardHover sm:p-10">
           <Editable
             id={`${pageKey}-title`}
             as="h1"
@@ -33,6 +33,7 @@ export default function LegalLayout({
           >
             {title}
           </Editable>
+          <div className="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-brand-orange to-brand-yellow" />
           <div className="legal-body mt-8 space-y-7 text-[15px] leading-relaxed text-brand-dark">
             {children}
           </div>

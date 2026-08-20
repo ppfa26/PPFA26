@@ -107,9 +107,9 @@ export default function PricingPage() {
               {PRICING_FAQ.map((f, i) => (
                 <details
                   key={i}
-                  className="faq-accordion group rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition open:border-brand-orange/40"
+                  className="faq-accordion group rounded-3xl border border-gray-200 bg-white p-5 shadow-card transition duration-200 open:border-brand-orange/40"
                 >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 transition active:scale-[0.99]">
                     <Editable
                       id={`pricing-faq-q-${i}`}
                       as="span"

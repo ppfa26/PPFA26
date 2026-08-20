@@ -24,13 +24,13 @@ export default function SitesPage() {
           <h2 className="text-lg font-extrabold text-brand-dark">
             {cat.emoji} {cat.label}
           </h2>
-          <div className="mt-3 overflow-hidden rounded-2xl border border-gray-200">
+          <div className="mt-3 overflow-hidden rounded-3xl border border-gray-200 transition-shadow duration-200 hover:shadow-card">
             <table className="w-full table-fixed text-left text-sm">
               <tbody className="divide-y divide-gray-100">
                 {cat.sites.map((site, i) => (
                   <tr
                     key={i}
-                    className="align-top transition-transform duration-150 ease-out hover:scale-[1.02]"
+                    className="align-top transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.99]"
                   >
                     <td className="w-9 bg-gray-50 px-2 py-3 text-center font-semibold text-brand-gray sm:w-10 sm:px-3">
                       {i + 1}
