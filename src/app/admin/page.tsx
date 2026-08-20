@@ -283,23 +283,43 @@ export default function AdminPage() {
           text: "✅ " + (data.message || "발송 요청 성공. 카카오톡을 확인하세요."),
         });
       } else {
+        // ── 실패 상세를 최대한 다 긁어서 화면에 그대로 노출 ──
+        //  테스트 API 의 catch 블록은 다음 필드를 돌려준다:
+        //   errName, errMessage, totalCount, failedMessageList, error, raw
+        //  (성공-경로 실패는 count/failedMessageList/error)
+        const lines: string[] = [];
+        lines.push("❌ " + (data?.message || "발송 실패"));
+        if (data?.errName) lines.push("[에러종류] " + String(data.errName));
+        if (data?.errMessage) lines.push("[에러메시지] " + String(data.errMessage));
         const detail =
-          typeof data?.error === "object"
+          typeof data?.error === "object" && data?.error !== null
             ? JSON.stringify(data.error)
             : data?.error || "";
-        // 접수 거부(failedMessageList)·카운트도 함께 노출 → 진짜 원인 파악
-        const failed = data?.failedMessageList
-          ? JSON.stringify(data.failedMessageList)
-          : "";
-        const cnt = data?.count ? JSON.stringify(data.count) : "";
+        if (detail) lines.push("[상세] " + detail);
+        // 접수 거부(failedMessageList) — 진짜 원인(statusCode/statusMessage)이 여기 있음
+        if (
+          Array.isArray(data?.failedMessageList) &&
+          data.failedMessageList.length > 0
+        ) {
+          lines.push("[실패목록] " + JSON.stringify(data.failedMessageList));
+        }
+        if (data?.count) lines.push("[카운트] " + JSON.stringify(data.count));
+        if (data?.totalCount != null)
+          lines.push("[총건수] " + JSON.stringify(data.totalCount));
+        if (data?.missing)
+          lines.push("[누락환경변수] " + JSON.stringify(data.missing));
+        // 위에서 아무 상세도 못 찾았으면 raw 를 통째로 보여준다(최후의 수단)
+        const hasDetail =
+          data?.errMessage ||
+          detail ||
+          (Array.isArray(data?.failedMessageList) &&
+            data.failedMessageList.length > 0);
+        if (!hasDetail && data?.raw) {
+          lines.push("[RAW] " + JSON.stringify(data.raw));
+        }
         setAlimtalkTestResult({
           ok: false,
-          text:
-            "❌ " +
-            (data?.message || "발송 실패") +
-            (detail ? "\n[상세] " + detail : "") +
-            (failed ? "\n[실패목록] " + failed : "") +
-            (cnt ? "\n[카운트] " + cnt : ""),
+          text: lines.join("\n"),
         });
       }
     } catch (e) {

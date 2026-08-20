@@ -144,26 +144,59 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (e: unknown) {
-    // 솔라피가 준 진짜 에러(발신번호/템플릿/pfId 문제 등)를 그대로 노출
-    const err = e as { message?: string; name?: string; [k: string]: unknown };
-    let detail: unknown = err?.message || String(e);
-    // solapi 에러는 응답 본문이 붙어오는 경우가 많음 → 최대한 담아 보여준다
-    const anyErr = e as Record<string, unknown>;
-    if (anyErr && typeof anyErr === "object") {
-      const resp = (anyErr.response as Record<string, unknown>) || null;
-      const data =
-        (resp && (resp.data as unknown)) ||
-        (anyErr.data as unknown) ||
-        null;
-      if (data) detail = data;
+    // ── solapi 에러 상세 추출 ──
+    //  · 접수 거부 시 solapi SDK 는 MessageNotReceivedError 를 throw 하며,
+    //    그 객체에 failedMessageList / totalCount 가 직접 붙어 있다.
+    //  · 인증/요청 오류는 response.data 등에 본문이 담겨 온다.
+    //  어느 경우든 최대한 다 긁어 화면에 그대로 보여준다.
+    const anyErr = (e ?? {}) as Record<string, unknown>;
+    const errName =
+      (anyErr._tag as string) || (anyErr.name as string) || "Error";
+    let message: string;
+    try {
+      message = String((anyErr.message as string) ?? e);
+    } catch {
+      message = "(message 읽기 실패)";
     }
+
+    // MessageNotReceivedError 계열 — 실패목록 직접 추출
+    const failedList =
+      (anyErr.failedMessageList as unknown[]) ||
+      (anyErr.failedMessages as unknown[]) ||
+      [];
+    const totalCount = anyErr.totalCount ?? null;
+
+    // 인증/요청 오류 본문
+    const resp = (anyErr.response as Record<string, unknown>) || null;
+    const respData =
+      (resp && (resp.data as unknown)) || (anyErr.data as unknown) || null;
+
+    // 에러 객체 전체를 안전 직렬화(순환참조 방지)해서 raw 로도 담아준다
+    let raw: unknown = null;
+    try {
+      raw = JSON.parse(
+        JSON.stringify(anyErr, (_k, v) =>
+          typeof v === "bigint" ? v.toString() : v
+        )
+      );
+    } catch {
+      raw = null;
+    }
+
     return NextResponse.json(
       {
         ok: false,
         reason: "send_failed",
         message:
-          "발송 실패. 아래 상세 원인을 확인하세요(발신번호 미등록/템플릿 불일치/pfId 오류 등).",
-        error: detail,
+          "발송 실패(" +
+          errName +
+          "). 아래 상세를 확인하세요(발신번호 미등록/템플릿·pfId 불일치/미승인 등).",
+        errName,
+        errMessage: message,
+        totalCount,
+        failedMessageList: Array.isArray(failedList) ? failedList : [],
+        error: respData,
+        raw,
       },
       { status: 200 }
     );
