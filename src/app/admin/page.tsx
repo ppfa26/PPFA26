@@ -1458,18 +1458,18 @@ export default function AdminPage() {
               <div className="text-[12px] font-semibold text-gray-500">👥 전체 고객</div>
               <div className="mt-auto text-2xl font-extrabold text-gray-900">{unifiedCustomers.length}명</div>
             </button>
-            {/* ⑤ 계약 - 성과(유일한 포인트색: 주황) */}
+            {/* ⑤ 계약 - 다른 카드와 동일한 기본색으로 통일(포인트색 제거) */}
             <button
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("contract");
                 setUnifiedTodayOnly(false);
               }}
-              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-brand-orange/40 bg-brand-orange/10 p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="계약 완료 고객 - 통합보기에서 계약만 필터"
             >
-              <div className="text-[12px] font-semibold text-brand-orange">🏆 계약</div>
-              <div className="mt-auto text-2xl font-extrabold text-brand-orange">{unifiedCallCounts["contract"] ?? 0}명</div>
+              <div className="text-[12px] font-semibold text-gray-500">🏆 계약</div>
+              <div className="mt-auto text-2xl font-extrabold text-gray-900">{unifiedCallCounts["contract"] ?? 0}명</div>
             </button>
             {/* ⑥ 이번 달 매출 - 클릭 시 매출 리포트 탭으로 이동. 월 표기를 레이블로 합쳐 높이(2줄) 통일 */}
             <button
