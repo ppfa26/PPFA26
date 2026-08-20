@@ -31,7 +31,7 @@ import {
 import { BETA_FREE } from "@/lib/betaConfig";
 import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer, sendCompletionAlimtalk, linkDiagnosisToUser } from "@/lib/diagnosisStore";
 import { supabase } from "@/lib/supabaseClient";
-import { checkFreeView } from "@/lib/viewCredits";
+import { checkFreeView, fetchViewStatus } from "@/lib/viewCredits";
 import { isStatsExcludedEmail } from "@/lib/admin";
 
 export default function MatchingPreview() {
@@ -77,6 +77,12 @@ export default function MatchingPreview() {
   } | null>(null);
   // 관련 실공고(기업마당) 매칭용 - 진단 프로필 원본을 보관
   const [profileData, setProfileData] = useState<Record<string, unknown> | null>(null);
+  // ★ 결제(열람권) 완료 여부 ★ 결제한 고객은 블러(previewLock)를 전부 풀고 결제 유도 박스도 숨긴다.
+  //   판정 기준(둘 중 하나라도 참이면 '결제 완료'로 간주):
+  //    1) 서버(Supabase RPC get_view_status)의 isActive = 유효(미만료) 결제 보유  ← 신뢰 기준
+  //    2) 방금 결제 성공 페이지가 저장한 localStorage("mpp_paid") = "true"        ← 즉시 반영(서버 반영 지연 대비)
+  //   → "결제했는데도 블러가 남는" 문제를 방지한다. (대표님 요청)
+  const [paid, setPaid] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -201,6 +207,37 @@ export default function MatchingPreview() {
       }
     })();
   }, []);
+
+  // ── [결제 완료 감지] 결제(열람권)한 고객이면 블러를 전부 풀고 결제 유도 박스를 숨긴다 ──
+  //   · 관리자 열람(?admin=1) / 무료 베타(BETA_FREE)는 이미 previewLock 이 꺼져 있으므로 판정 불필요.
+  //   · 서버(get_view_status) isActive 또는 방금 결제 성공이 남긴 localStorage("mpp_paid")로 판정.
+  //   · "방금 결제했는데도 블러가 남는" 문제 방지: 로컬 표시로 즉시 해제 + 서버 값으로 재확인.
+  useEffect(() => {
+    if (adminView || BETA_FREE) return;
+    let cancelled = false;
+    // 1) 즉시 반영: 결제 성공 페이지가 남긴 로컬 표시 (서버 RPC 반영 지연 대비)
+    try {
+      if (localStorage.getItem("mpp_paid") === "true") {
+        setPaid(true);
+      }
+    } catch {
+      /* localStorage 접근 불가 시 무시 */
+    }
+    // 2) 서버 기준 재확인: 유효(미만료) 결제 보유 여부
+    (async () => {
+      try {
+        const vs = await fetchViewStatus();
+        if (!cancelled && vs?.isActive) setPaid(true);
+      } catch {
+        /* 서버 판정 실패 시 로컬 표시 값 유지 */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // 진입 시 1회 판정하면 충분.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminView]);
 
   // ── [어뷰징 차단 #1] 유효하지 않은 사업자번호면 결과 열람 차단 (대표님 요청) ──
   //   가짜/오타 사업자번호로 결과를 열람하는 것을 서버(국세청 조회)에서 다시 막는다.
@@ -866,7 +903,7 @@ export default function MatchingPreview() {
           {/* ── 중간 결제 유도 박스 (정식 유료 모드 전용) ──
                결과를 스크롤하기 전, 화면 중간에서 바로 '어디서 결제하는지' 찾을 수 있게 배치.
                최하단 박스·하단 sticky 바와 함께 3중으로 결제 진입점을 노출 */}
-          {!adminView && !BETA_FREE && (
+          {!adminView && !BETA_FREE && !paid && (
           <div className="mt-6 rounded-2xl border-2 border-brand-orange bg-gradient-to-br from-brand-orange/10 to-white p-4 text-center shadow-[0_8px_28px_rgba(255,140,0,0.18)] sm:p-5">
             <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
               🔓 지금 결제하면 위 <span className="text-brand-orange">{total}개</span> 항목의 상세 내용이 모두 공개됩니다
@@ -886,10 +923,16 @@ export default function MatchingPreview() {
           {/* ── 실제 결과 전체를 그대로 렌더링 (내용 대부분 공개) ──
                제목·설명·안내는 선명하게 열어 '무엇을 알려주는지' 충분히 이해시키고,
                기관명·상품명·신청 방법(버튼/링크)만 흐리게 + 클릭 차단으로 잠금 표시 */}
-          {!adminView && !BETA_FREE && (
+          {!adminView && !BETA_FREE && !paid && (
           <p className="mt-4 break-keep text-center text-xs text-brand-gray sm:mt-5">
             👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면</b>입니다. 어떤 내용을 알려드리는지 대부분 열어뒀고,
             <b className="text-brand-orange"> 기관명·상품명·신청 방법</b>만 결제 후 공개됩니다.
+          </p>
+          )}
+          {/* ── 결제 완료 고객 안내 (블러 전부 해제 상태) ── */}
+          {!adminView && !BETA_FREE && paid && (
+          <p className="mt-4 break-keep text-center text-xs text-brand-green sm:mt-5">
+            ✅ 결제가 확인되어 <b>모든 상세 내용(기관명·상품명·신청 방법)</b>이 전체 공개되었습니다.
           </p>
           )}
           {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 - 화면 간결화 ── */}
@@ -900,7 +943,7 @@ export default function MatchingPreview() {
                 전체 결과를 그대로 보여준다. (베타: 결제 없이 전부 무료 공개) */}
             <AdvancedScreeningPanel
               autoRun
-              previewLock={!adminView && !BETA_FREE}
+              previewLock={!adminView && !BETA_FREE && !paid}
               relatedProfile={profileData}
               onCounts={setLiveCounts}
             />
@@ -951,10 +994,7 @@ export default function MatchingPreview() {
             </div>
           </section>
 
-          {/* ── (대표님 요청) CTA 카드 아래 얇은 회색 구분선 ──
-               홈 화면과 동일한 section-divider 로 GROWTH STORIES(푸터)와
-               자연스럽게 구획을 나누고, 위·아래 여백을 my-6 으로 균형있게 준다. */}
-          <div className="section-divider mt-6 mb-2" aria-hidden="true" />
+          {/* ── (대표님 요청) CTA 카드 아래 얇은 회색 가로줄(section-divider) 삭제 ── */}
 
           {/* ── (대표님 요청) 최하단 결제 유도 박스 삭제 ──
                결제 박스는 상단(요약 배너 아래)에 이미 있으므로 중복 제거. ── */}
