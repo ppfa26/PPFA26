@@ -101,6 +101,7 @@ export default function RelatedAnnouncements({
   onCount,
   bucket = "etc",
   variant = "card",
+  previewLock = false,
 }: {
   profile: Record<string, unknown> | null;
   // ★ 실제 매칭돼 화면에 표시된 공고 '실측 갯수'를 부모(요약 배너)로 올려 숫자 100% 일치 (대표님 요청) ★
@@ -110,7 +111,11 @@ export default function RelatedAnnouncements({
   bucket?: Bucket;
   // "card"=자체 아코디언 카드(그 외/📢) · "inline"=상위 아코디언 안에 소제목+목록만
   variant?: "card" | "inline";
+  // 결제 전 미리보기 잠금 - 아코디언 제목·펼치기 버튼은 그대로 두고 '안쪽 공고 목록'만 부분 블러 (대표님 요청)
+  previewLock?: boolean;
 }) {
+  // 안쪽 공고 목록에만 거는 부분 블러 클래스 (제목·클릭버튼은 블러 X)
+  const lockClick = previewLock ? "preview-lock-click" : "";
   const [items, setItems] = useState<Item[] | null>(null);
   // fallback=true → 프로필과 딱 맞는 공고가 부족해 '최근 열린 공고 참고용'으로 보여주는 상태
   const [fallback, setFallback] = useState(false);
@@ -183,7 +188,7 @@ export default function RelatedAnnouncements({
               )}
             </p>
           </div>
-          <div className="mt-3 space-y-3">
+          <div className={`mt-3 space-y-3 ${lockClick}`}>
             {(showAll ? (items || []) : (items || []).slice(0, PREVIEW_COUNT)).map((it, i) => {
               // 헤더(항상 보임): 제목 + 지원분야 태그 + 신청기간 배지
               const header = (

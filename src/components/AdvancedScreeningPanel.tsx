@@ -1693,8 +1693,8 @@ function AdvancedResult({
              AI 해설 없이 공고명·신청기간·기관만 보여주고 원문으로 링크.
              ★ 요약 배너의 '그 외 정부지원사업' 숫자는 이 etc 버킷 갯수(onCount)만 반영. */}
       {autoRun && (
-        <div className={lockClick}>
-          <RelatedAnnouncements profile={relatedProfile} bucket="etc" onCount={setAnnouncementsCount} />
+        <div>
+          <RelatedAnnouncements profile={relatedProfile} bucket="etc" onCount={setAnnouncementsCount} previewLock={previewLock} />
         </div>
       )}
 
