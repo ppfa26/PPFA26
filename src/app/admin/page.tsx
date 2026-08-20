@@ -1278,6 +1278,41 @@ export default function AdminPage() {
     setTimeout(() => setMsg(null), 4000);
   };
 
+  // 고객 카드 통째로 삭제 (목록에서 바로 한 번에) — 대표님 요청.
+  //  · 회원(이메일 있음)  : 계정·진단서·결제·기기까지 admin_delete_user 로 전부 삭제
+  //  · 미가입 리드(이메일 X): 이 카드에 묶인 진단서를 admin_delete_diagnosis 로 모두 삭제
+  const deleteCustomer = async (c: UnifiedCustomer) => {
+    const who = c.realName || c.memberName || c.email || c.phone || "이 고객";
+    if (c.email) {
+      // 회원 → 계정 전체 삭제 (deleteUser 안에서 별도 confirm)
+      await deleteUser(c.email);
+      return;
+    }
+    // 미가입 리드 → 진단서 전부 삭제
+    const diags = c.diagList || [];
+    if (diags.length === 0) {
+      setMsg("삭제할 데이터가 없습니다.");
+      setTimeout(() => setMsg(null), 3000);
+      return;
+    }
+    if (
+      !window.confirm(
+        `${who} 님(미가입 · 진단서만 있음)을 삭제할까요?\n\n` +
+          `· 진단서 ${diags.length}건이 모두 삭제됩니다.\n` +
+          `· 되돌릴 수 없습니다.\n\n정말 삭제하려면 [확인]을 눌러 주세요.`
+      )
+    )
+      return;
+    let ok = 0;
+    for (const d of diags) {
+      const { data, error } = await supabase.rpc("admin_delete_diagnosis", { p_id: d.id });
+      if (!error && Number(data ?? 0) >= 1) ok += 1;
+    }
+    setMsg(`${who} 님의 진단서 ${ok}건을 삭제했습니다.`);
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
+
   // 개별 결제 건 삭제 (매출 통계 · 결제내역에서 1건씩 정리)
   const deletePayment = async (orderId: string) => {
     if (
@@ -1880,6 +1915,17 @@ export default function AdminPage() {
                               {c.totalAmount.toLocaleString()}원
                             </div>
                           )}
+                          {/* 목록에서 바로 삭제 (카드 펼치지 않고 한 번에) — 대표님 요청 */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteCustomer(c);
+                            }}
+                            className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-[12px] font-bold text-white transition hover:bg-red-700"
+                            title={`${c.realName || c.memberName || c.email || "이 고객"} 삭제`}
+                          >
+                            🗑️ 삭제
+                          </button>
                           <div className="text-[11px] text-gray-400">
                             {isOpen ? "▲ 접기" : "▼ 상세"}
                           </div>
