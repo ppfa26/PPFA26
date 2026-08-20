@@ -824,15 +824,38 @@ export default function Home() {
                   </div>
 
                   {/* 잠긴 예시본 직후 CTA (대표님 요청) - '이만큼 상세히 알려주는구나 → 지금 바로 진단'
-                      결제/진단 유도. 사이트 메인 레드 CTA 톤과 통일. */}
-                  <div className="mt-6 flex justify-center">
+                      레드 진단 CTA + 카카오톡 상담(다크 글래스) 2단 + 하단 보조 링크로 깔끔하게 구성. */}
+                  <div className="mt-6 flex flex-col items-center gap-3">
+                    <div className="flex w-full flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
+                      {/* 주 CTA - 레드 (진단 시작) */}
+                      <Editable
+                        id="result-sample-cta"
+                        as="a"
+                        href="/diagnosis-chat"
+                        className="btn-red w-full whitespace-nowrap rounded-full px-6 py-3.5 text-center text-[16px] font-extrabold tracking-[-0.02em] sm:w-auto sm:px-10 sm:py-4 sm:text-[17px]"
+                      >
+                        지금 내 지원사업 확인하기
+                      </Editable>
+                      {/* 부 CTA - 카카오톡 1:1 상담 (다크 글래스 캡슐) */}
+                      <Editable
+                        id="result-sample-cta-kakao"
+                        as="a"
+                        href="http://pf.kakao.com/_VxfWxan/chat"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full whitespace-nowrap rounded-full border border-brand-dark/15 bg-brand-dark px-6 py-3.5 text-center text-[16px] font-bold text-white transition hover:bg-brand-dark/90 sm:w-auto sm:px-10 sm:py-4 sm:text-[17px]"
+                      >
+                        💬 1:1 카카오톡 상담하기
+                      </Editable>
+                    </div>
+                    {/* 하단 보조 링크 */}
                     <Editable
-                      id="result-sample-cta"
+                      id="result-sample-cta-more"
                       as="a"
-                      href="/diagnosis-chat"
-                      className="btn-red w-full whitespace-nowrap rounded-full px-6 py-3.5 text-center text-[16px] font-extrabold tracking-[-0.02em] sm:w-auto sm:px-10 sm:py-4 sm:text-[18px]"
+                      href="/community"
+                      className="inline-flex items-center gap-1 text-[13px] font-semibold text-brand-dark/70 underline-offset-4 transition hover:text-brand-dark hover:underline sm:text-sm"
                     >
-                      지금 내 지원사업 확인하기
+                      🔎 모두의사업친구 더 알아보기
                     </Editable>
                   </div>
                 </div>
