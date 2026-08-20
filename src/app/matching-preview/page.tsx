@@ -956,42 +956,8 @@ export default function MatchingPreview() {
                자연스럽게 구획을 나누고, 위·아래 여백을 my-6 으로 균형있게 준다. */}
           <div className="section-divider my-6" aria-hidden="true" />
 
-          {/* ── 결제 유도 박스 (최하단, 정식 유료 모드 전용) ── */}
-          {!adminView && !BETA_FREE && (
-          <div className="mt-8 rounded-2xl border-2 border-brand-orange bg-white p-4 text-center shadow-[0_8px_28px_rgba(0,0,0,0.12)] sm:p-5">
-            <Editable
-              id="preview-lock-title"
-              as="p"
-              className="break-keep text-base font-extrabold text-brand-dark sm:text-lg"
-            >
-              🔒 결제하면 위 모든 항목의 상세 내용이 공개됩니다
-            </Editable>
-            <Editable
-              id="preview-lock-sub"
-              as="p"
-              className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm"
-            >
-              내 사업장에 맞는 모든 정부지원사업을 찾아보세요.
-              <br />
-              기관·상품·신청 사이트·필요 서류·승인 전략까지 한 번에 확인하실 수 있습니다.
-            </Editable>
-            <Editable
-              id="preview-lock-cta"
-              as="a"
-              href="/payment?tier=basic"
-              className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
-            >
-              지금 결제하고 전체 결과 확인하기
-            </Editable>
-            <Editable
-              id="preview-lock-note"
-              as="p"
-              className="mt-2.5 break-keep text-[11px] text-brand-dark/50"
-            >
-              ⚠️ 안내·추천·매칭 서비스 · 승인 보장 없음
-            </Editable>
-          </div>
-          )}
+          {/* ── (대표님 요청) 최하단 결제 유도 박스 삭제 ──
+               결제 박스는 상단(요약 배너 아래)에 이미 있으므로 중복 제거. ── */}
         </div>
       </main>
 
