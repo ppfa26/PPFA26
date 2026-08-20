@@ -121,9 +121,10 @@ export default function AdFitBanner({ adUnitPc, className = "" }: Props) {
     <aside
       id="adfit-banner"
       aria-label="카카오 애드핏 광고"
-      // 광고(728px) 가로폭에 딱 맞춰 카드를 감싼다(w-fit). 좌우 패딩은
-      // 광고가 온전히 들어가도록 최소화. 본문(max-w-3xl≈768px)에 자연스럽게 정렬.
-      className={`mx-auto flex w-fit max-w-full flex-col rounded-3xl border border-black/5 bg-white px-3 py-3 shadow-sm ${className}`}
+      // (대표님 요청) 광고 카드를 본문 박스들과 '동일한 가로폭'으로 맞춘다.
+      //   기본을 w-full 로 둬서 부모 컨테이너(max-w-3xl) 폭에 꽉 차게 하고,
+      //   안쪽 광고(728px 고정)는 가운데 정렬되어 위 박스들과 좌우 라인이 일치한다.
+      className={`mx-auto flex w-full max-w-full flex-col rounded-3xl border border-black/5 bg-white px-3 py-3 shadow-sm ${className}`}
     >
       {/* ── "광고" 라벨 (상단 명시) ── */}
       <div className="mb-1.5 flex items-center justify-between gap-4">
