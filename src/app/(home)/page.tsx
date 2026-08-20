@@ -134,10 +134,10 @@ export default function Home() {
     const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
     const daysPassed = Math.max(0, Math.floor((t0 - BASE_DATE.getTime()) / 86400000));
 
-    // 지난 날짜만큼 하루치 증가폭(23~36)을 누적
+    // 지난 날짜만큼 하루치 증가폭(8~15)을 누적 - 너무 빠르지 않게 꾸준히 상승
     let users = BASE_USERS;
     for (let i = 1; i <= daysPassed; i++) {
-      users += 23 + Math.floor(seeded(i) * 14); // 23 ~ 36
+      users += 8 + Math.floor(seeded(i) * 8); // 8 ~ 15
     }
     setUsedCompanies(users);
 
