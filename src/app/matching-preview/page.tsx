@@ -835,7 +835,7 @@ export default function MatchingPreview() {
     <PageShell pageKey="matching-preview">
       <Header />
       {/* 상단 여백(pt-4/5)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminOpen || BETA_FREE ? "pb-0" : "pb-6"}`}>
+      <main className="overflow-x-hidden px-4 pb-0 pt-4 sm:pt-5">
         {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
             max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
             좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}
@@ -1038,11 +1038,10 @@ export default function MatchingPreview() {
 
         {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
              광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-             (대표님 요청) 모바일 하단 공백 제거 최종: 광고 래퍼를 <main> 안으로 옮기고
-             mt-auto 를 줘, 콘텐츠가 짧을 때 남는 세로 공간을 '광고 위 여백'이 흡수하게 한다.
-             → CTA 카드는 위에서부터 자연 높이로 쌓이고, 광고는 항상 화면 하단(푸터 바로 위)에
-               붙어 CTA 카드 밑 배경 공백이 사라진다. 위·아래 패딩은 py-6 으로 대칭. */}
-        <div className="mt-auto px-0 pt-6">
+             (대표님 요청) 억지 트릭(mt-auto) 없이, 광고 배너 위·아래에 적당하고 균일한
+             여백(py-6)만 둬서 CTA 카드 아래 자연스럽게 이어지게 한다. 화면이 짧아 푸터가
+             위로 올라와도 이 균일 여백 덕에 어색하지 않게 보인다. */}
+        <div className="px-4 py-6">
           <div className="mx-auto max-w-3xl">
             <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
           </div>
