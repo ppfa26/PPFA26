@@ -241,6 +241,7 @@ export default function AdminPage() {
   const [unifiedSearch, setUnifiedSearch] = useState(""); // 통합 고객 뷰 검색어
   const [openUnified, setOpenUnified] = useState<string | null>(null); // 통합 카드 펼침(key)
   const [unifiedCall, setUnifiedCall] = useState<"all" | CallStatus>("all"); // 통화상태 필터
+  const [unifiedTodayOnly, setUnifiedTodayOnly] = useState(false); // 오늘(00~24시) 접수 신규 리드만 보기
   const [unifiedMemoDraft, setUnifiedMemoDraft] = useState<Record<string, string>>({}); // 통합 카드 메모 입력
 
   // IP 집계·접속 로그 표가 세로로 너무 길어서 기본은 접어두고, 헤더 클릭 시 펼침.
@@ -994,7 +995,22 @@ export default function AdminPage() {
 
   // 통합 뷰 검색: 이름(회원/실명)·이메일·전화·사업자번호·업종 어디에 걸려도 검색
   //  + 통화상태 필터(미접촉/통화완료/부재중/계약)
+  // 오늘 00시~24시(로컬) 경계 - '오늘 신규 리드' 필터에 사용
+  const todayStartMs = (() => {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime();
+  })();
+  const todayEndMs = todayStartMs + 86400000;
+  // 이 고객이 '오늘 접수된 신규 리드'인지(진단서 중 오늘 생성된 게 하나라도 있으면 true)
+  const isTodayLead = (c: UnifiedCustomer) =>
+    (c.diagList || []).some((x) => {
+      const t = new Date(x.created_at).getTime();
+      return !Number.isNaN(t) && t >= todayStartMs && t < todayEndMs;
+    });
+
   const filteredUnified = unifiedCustomers.filter((c) => {
+    // 오늘 신규 리드만 보기(KPI '오늘 신규 리드' 클릭 시)
+    if (unifiedTodayOnly && !isTodayLead(c)) return false;
     if (unifiedCall !== "all" && callStatusOf(c) !== unifiedCall) return false;
     // 유입경로 필터(구 회원 탭 필터를 통합보기에 적용)
     if (userSourceFilter !== "all" && (c.utmSource || "direct").toLowerCase() !== userSourceFilter) return false;
@@ -1390,14 +1406,15 @@ export default function AdminPage() {
               · 순서: 오늘 신규 → 미접촉 → 통화완료 → 전체 고객 → 계약 → 매출
               · 포인트색은 계약(주황)만, 나머지는 뉴트럴(화이트/그레이). */}
           <section className="mb-6 grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {/* ① 오늘 신규 리드 - '오늘 전화할 대상' */}
+            {/* ① 오늘 신규 리드 - 클릭 시 오늘(00~24시) 접수분만 필터 */}
             <button
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("all");
+                setUnifiedTodayOnly(true);
               }}
               className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
-              title="오늘 새로 접수된 진단(신규 리드) - 고객 관리로 이동"
+              title="오늘(00~24시) 새로 접수된 진단(신규 리드)만 보기"
             >
               <div className="text-[12px] font-semibold text-gray-500">🆕 오늘 신규 리드</div>
               <div className="mt-auto text-2xl font-extrabold text-gray-900">{todayLeadCount}건</div>
@@ -1407,6 +1424,7 @@ export default function AdminPage() {
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("none");
+                setUnifiedTodayOnly(false);
               }}
               className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="아직 통화하지 않은 고객 - 통합보기에서 미접촉만 필터"
@@ -1419,6 +1437,7 @@ export default function AdminPage() {
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("done");
+                setUnifiedTodayOnly(false);
               }}
               className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="통화 완료한 고객 - 통합보기에서 통화완료만 필터"
@@ -1431,6 +1450,7 @@ export default function AdminPage() {
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("all");
+                setUnifiedTodayOnly(false);
               }}
               className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="전체 고객 - 고객 관리에서 전체 리스트 보기"
@@ -1443,6 +1463,7 @@ export default function AdminPage() {
               onClick={() => {
                 setTab("customers");
                 setUnifiedCall("contract");
+                setUnifiedTodayOnly(false);
               }}
               className="flex h-full min-h-[104px] flex-col rounded-2xl border border-brand-orange/40 bg-brand-orange/10 p-4 text-left shadow-sm transition hover:scale-[1.02]"
               title="계약 완료 고객 - 통합보기에서 계약만 필터"
@@ -1571,7 +1592,10 @@ export default function AdminPage() {
                   return (
                     <button
                       key={key}
-                      onClick={() => setUnifiedCall(key)}
+                      onClick={() => {
+                        setUnifiedCall(key);
+                        setUnifiedTodayOnly(false);
+                      }}
                       className={`rounded-full border px-3 py-1 text-[12px] font-bold transition ${
                         active
                           ? "border-brand-dark bg-brand-dark text-white"
@@ -1583,6 +1607,18 @@ export default function AdminPage() {
                   );
                 })}
               </div>
+              {/* '오늘 신규 리드만 보기' 활성 안내 + 해제 - 지금 왜 리스트가 줄었는지 명확히 */}
+              {unifiedTodayOnly && (
+                <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-600">
+                  <span>🆕 오늘(00~24시) 접수된 신규 리드만 보는 중</span>
+                  <button
+                    onClick={() => setUnifiedTodayOnly(false)}
+                    className="rounded-full border border-gray-300 bg-white px-2.5 py-0.5 text-[11px] font-bold text-gray-600 transition hover:bg-gray-100"
+                  >
+                    ✕ 전체 보기
+                  </button>
+                </div>
+              )}
               <p className="mb-3 text-xs text-gray-500">
                 한 사람의 <b>진단서 · 결제 · 상담메모 · IP</b>를 카드 하나에. 표시{" "}
                 <b>{filteredUnified.length}</b>명 (전체 고객).
