@@ -1886,27 +1886,39 @@ export default function AdminPage() {
                           )}
                         </div>
                         <div className="flex shrink-0 flex-col items-end gap-1.5">
-                          {/* 목록에서 바로 연락(카드 펼치지 않고도) — 전화 우선, 없으면 이메일.
-                              포인트색을 줄이려 은은한 아웃라인 버튼으로 통일. */}
-                          {c.phone ? (
-                            <a
-                              href={`tel:${c.phone.replace(/[^0-9]/g, "")}`}
-                              onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
-                              title={`${c.phone} 로 전화 걸기`}
+                          {/* 목록에서 바로 연락 + 삭제 (카드 펼치지 않고도) — 전화 우측에 삭제 버튼 가로 배치(대표님 요청). */}
+                          <div className="flex items-center gap-1.5">
+                            {c.phone ? (
+                              <a
+                                href={`tel:${c.phone.replace(/[^0-9]/g, "")}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                title={`${c.phone} 로 전화 걸기`}
+                              >
+                                📞 전화
+                              </a>
+                            ) : c.email ? (
+                              <a
+                                href={`mailto:${c.email}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
+                                title={`${c.email} 로 메일 보내기`}
+                              >
+                                ✉️ 메일
+                              </a>
+                            ) : null}
+                            {/* 전화 버튼 우측 삭제 버튼 (하단 X, 가로 배치) */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteCustomer(c);
+                              }}
+                              className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-[12px] font-bold text-white transition hover:bg-red-700"
+                              title={`${c.realName || c.memberName || c.email || "이 고객"} 삭제`}
                             >
-                              📞 전화
-                            </a>
-                          ) : c.email ? (
-                            <a
-                              href={`mailto:${c.email}`}
-                              onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
-                              title={`${c.email} 로 메일 보내기`}
-                            >
-                              ✉️ 메일
-                            </a>
-                          ) : null}
+                              🗑️ 삭제
+                            </button>
+                          </div>
                           <div className="text-[11px] text-gray-400">
                             {fmtDateTime(c.latestAt)}
                           </div>
@@ -1915,17 +1927,6 @@ export default function AdminPage() {
                               {c.totalAmount.toLocaleString()}원
                             </div>
                           )}
-                          {/* 목록에서 바로 삭제 (카드 펼치지 않고 한 번에) — 대표님 요청 */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteCustomer(c);
-                            }}
-                            className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-[12px] font-bold text-white transition hover:bg-red-700"
-                            title={`${c.realName || c.memberName || c.email || "이 고객"} 삭제`}
-                          >
-                            🗑️ 삭제
-                          </button>
                           <div className="text-[11px] text-gray-400">
                             {isOpen ? "▲ 접기" : "▼ 상세"}
                           </div>
