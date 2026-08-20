@@ -17,7 +17,7 @@ import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 //     → 실제 돈은 빠지지 않는 테스트 결제로 처리됩니다.
 //     심사 통과 후 운영 클라이언트 키를 배포 환경변수(NEXT_PUBLIC_TOSS_CLIENT_KEY)에 넣으면 그 값이 우선 사용됩니다.
 //     ※ 서버(confirm 라우트)의 시크릿 키와 반드시 '세트'여야 합니다. (테스트-테스트 / 운영-운영)
-const TOSS_TEST_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+const TOSS_TEST_CLIENT_KEY = "test_ck_BX7zk2yd8y2dQXxv6GD03x9POLqK";
 
 // ★ 키 방어 로직 ★
 //   v2 결제창 SDK(tossPayments.payment)는 'API 개별 연동 키'(client: test_ck_ / live_ck_)만 지원합니다.

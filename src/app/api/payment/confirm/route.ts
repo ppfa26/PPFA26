@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 //  ★ 폴백 ★ 배포 환경변수가 비어 있으면 토스 '공식 문서 테스트 시크릿 키'로 자동 대체합니다.
 //     → 실제 돈은 빠지지 않는 테스트 결제로 처리됩니다. (클라이언트 키와 반드시 세트여야 함)
 //     심사 통과 후 운영 시크릿 키를 배포 환경변수(TOSS_SECRET_KEY)에 넣으면 그 값이 우선 사용됩니다.
-const TOSS_TEST_SECRET_KEY = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R";
+const TOSS_TEST_SECRET_KEY = "test_sk_pP2YxJ4K87qo5mA1GExzVRGZwXLO";
 
 // ★ 키 방어 로직 ★
 //   클라이언트 키(page.tsx)와 시크릿 키는 반드시 '같은 종류'의 세트여야 합니다.
