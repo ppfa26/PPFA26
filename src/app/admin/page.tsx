@@ -1060,7 +1060,10 @@ export default function AdminPage() {
   //   진단서에 저장된 profile(진단 원본)을 sessionStorage(mpp_diagnosis)에 심고
   //   /matching-preview?admin=1 로 열면 잠금 없이 전체 결과가 노출된다.
   //   (결제·조회권 차감이 없는 미리보기 페이지를 재사용 → 부작용 없음)
-  const openResultForDiag = (target: AdminDiagnosis) => {
+  // paidView=true → 결제(유효 조회권) 고객: 블러 없이 전부 열람
+  // paidView=false → 미결제 고객: 관리자가 열어도 '실제 고객이 보는 화면'과 동일하게 블러 처리
+  //   (대표님 요청: 결제 안 한 사람은 관리자도 블러로 보이게)
+  const openResultForDiag = (target: AdminDiagnosis, paidView = true) => {
     // name/phone/email이 profile에 누락돼 있으면 컬럼값으로 보완한다.
     const profile: Record<string, unknown> = {
       ...(target.profile || {}),
@@ -1089,8 +1092,13 @@ export default function AdminPage() {
       setTimeout(() => setMsg(null), 3000);
       return;
     }
-    // 새 탭에서 관리자 열람 모드로 결과창 열기
-    window.open("/matching-preview?admin=1", "_blank", "noopener");
+    // 새 탭에서 관리자 열람 모드로 결과창 열기.
+    //   · 결제 고객(paidView=true)  → ?admin=1        (블러 없이 전부 열람)
+    //   · 미결제 고객(paidView=false) → ?admin=1&paid=0 (실제 고객 화면처럼 블러 처리)
+    const url = paidView
+      ? "/matching-preview?admin=1"
+      : "/matching-preview?admin=1&paid=0";
+    window.open(url, "_blank", "noopener");
   };
 
   // 회원 목록 → 그 고객의 '결과창'을 관리자 모드로 새 탭에서 열기.
@@ -2071,7 +2079,18 @@ export default function AdminPage() {
                                         {/* 진단서 질문지는 카드 펼치면 아래에 바로 표시됨(별도 토글 없음).
                                             여기서는 결과 페이지(새 창)만 열 수 있게 유지. */}
                                         <button
-                                          onClick={() => openResultForDiag(d)}
+                                          onClick={() => {
+                                            // 이 고객이 '실제로 결과를 볼 수 있는 상태'인지 판정
+                                            //  = 유효 조회권 남음(used<total) AND 미만료(expiry 미래)
+                                            //  → 미결제/만료/소진 고객은 관리자도 블러로 보게 한다.
+                                            const hasCredit =
+                                              c.creditsTotal > 0 &&
+                                              c.creditsUsed < c.creditsTotal;
+                                            const notExpired =
+                                              !c.expiry ||
+                                              new Date(c.expiry).getTime() > Date.now();
+                                            openResultForDiag(d, hasCredit && notExpired);
+                                          }}
                                           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
                                         >
                                           결과 열람

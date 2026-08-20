@@ -43,6 +43,9 @@ export default function MatchingPreview() {
   //   전체 결과를 그대로 보여준다. (대표님이 상담 시 고객과 같은 결과창을 보기 위함)
   //   결제·조회권 차감이 없는 이 미리보기 페이지를 재사용하므로 부작용이 없다.
   const [adminView, setAdminView] = useState(false);
+  // 관리자 '미결제 고객' 열람 모드(?admin=1&paid=0): 데이터는 관리자 모드로 로드하되
+  //   블러/결제유도는 실제 고객 화면과 동일하게 유지한다. (대표님 요청)
+  const [adminUnpaid, setAdminUnpaid] = useState(false);
   // 로그인(회원가입) 게이트 상태:
   //   "checking" = 세션 확인 중 · "guest" = 비로그인(결과 잠금) · "ready" = 로그인 완료(결과 공개)
   //   ※ 관리자 열람 모드(?admin=1)는 게이트를 통과시켜 항상 "ready".
@@ -87,9 +90,16 @@ export default function MatchingPreview() {
   useEffect(() => {
     (async () => {
       try {
-        const isAdmin =
-          new URLSearchParams(window.location.search).get("admin") === "1";
+        const sp = new URLSearchParams(window.location.search);
+        // ?admin=1 → 관리자 열람 모드(그 고객 진단 데이터 로드, 대표님 계정 소유자검사 skip).
+        //   여기서 isAdmin 은 '데이터 로딩/계정분리' 목적의 판정이라 admin=1 이면 항상 true.
+        const isAdmin = sp.get("admin") === "1";
+        // ★ 미결제 열람 ★ ?admin=1&paid=0 이면, 관리자가 열어도 '미결제 고객이 실제 보는 화면'
+        //   과 동일하게 블러(previewLock)를 유지한다. (대표님 요청)
+        //   → 데이터는 관리자 모드로 정상 로드하되, 블러/결제유도만 고객과 똑같이 켠다.
+        const isAdminUnpaid = isAdmin && sp.get("paid") === "0";
         setAdminView(isAdmin);
+        setAdminUnpaid(isAdminUnpaid);
 
         // ★ 관리자 결과보기 ★ 새 탭은 sessionStorage 를 공유하지 않으므로,
         //   관리자가 localStorage 임시 키(mpp_diagnosis_admin)에 심어둔 '그 고객'의 진단을
@@ -812,18 +822,24 @@ export default function MatchingPreview() {
     );
   }
 
+  // '관리자 전체 열람(블러 해제)' 상태.
+  //   ?admin=1&paid=0(미결제 고객 열람)일 땐 adminUnpaid=true → adminOpen=false 가 되어
+  //   블러·결제유도가 실제 고객 화면과 똑같이 켜진다. (대표님 요청)
+  const adminOpen = adminView && !adminUnpaid;
+
   return (
     <PageShell pageKey="matching-preview" stickyFooter>
       <Header />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
           상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`flex-1 overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-0" : "pb-6"}`}>
+      <main className={`flex-1 overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminOpen || BETA_FREE ? "pb-0" : "pb-6"}`}>
         {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
             max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
             좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}
         <div className="mx-auto max-w-3xl">
-          {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ── */}
-          {adminView && (
+          {/* ── 관리자 열람 모드 안내 배너 (대표님만 보임) ──
+               미결제 고객 열람(adminUnpaid)일 땐 배너를 숨겨 실제 고객 화면과 동일하게 보인다. */}
+          {adminOpen && (
             <div className="mb-6 rounded-2xl border-2 border-brand-orange bg-brand-orange/10 p-4 text-center">
               <p className="break-keep text-sm font-extrabold text-brand-dark sm:text-base">
                 🔓 관리자 열람 모드 -{" "}
@@ -920,7 +936,7 @@ export default function MatchingPreview() {
           {/* ── 중간 결제 유도 박스 (정식 유료 모드 전용) ──
                결과를 스크롤하기 전, 화면 중간에서 바로 '어디서 결제하는지' 찾을 수 있게 배치.
                최하단 박스·하단 sticky 바와 함께 3중으로 결제 진입점을 노출 */}
-          {!adminView && !BETA_FREE && !paid && (
+          {!adminOpen && !BETA_FREE && !paid && (
           <div className="mt-6 rounded-2xl border-2 border-brand-orange bg-gradient-to-br from-brand-orange/10 to-white p-4 text-center shadow-[0_8px_28px_rgba(255,140,0,0.18)] sm:p-5">
             <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
               🔓 지금 결제하면 위 <span className="text-brand-orange">{total}개</span> 항목의 상세 내용이 모두 공개됩니다
@@ -940,14 +956,14 @@ export default function MatchingPreview() {
           {/* ── 실제 결과 전체를 그대로 렌더링 (내용 대부분 공개) ──
                제목·설명·안내는 선명하게 열어 '무엇을 알려주는지' 충분히 이해시키고,
                기관명·상품명·신청 방법(버튼/링크)만 흐리게 + 클릭 차단으로 잠금 표시 */}
-          {!adminView && !BETA_FREE && !paid && (
+          {!adminOpen && !BETA_FREE && !paid && (
           <p className="mt-4 break-keep text-center text-xs text-brand-gray sm:mt-5">
             👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면</b>입니다. 어떤 내용을 알려드리는지 대부분 열어뒀고,
             <b className="text-brand-orange"> 기관명·상품명·신청 방법</b>만 결제 후 공개됩니다.
           </p>
           )}
           {/* ── 결제 완료 고객 안내 (블러 전부 해제 상태) ── */}
-          {!adminView && !BETA_FREE && paid && (
+          {!adminOpen && !BETA_FREE && paid && (
           <p className="mt-4 break-keep text-center text-xs text-brand-green sm:mt-5">
             ✅ 결제가 확인되어 <b>모든 상세 내용(기관명·상품명·신청 방법)</b>이 전체 공개되었습니다.
           </p>
@@ -960,7 +976,7 @@ export default function MatchingPreview() {
                 전체 결과를 그대로 보여준다. (베타: 결제 없이 전부 무료 공개) */}
             <AdvancedScreeningPanel
               autoRun
-              previewLock={!adminView && !BETA_FREE && !paid}
+              previewLock={!adminOpen && !BETA_FREE && !paid}
               relatedProfile={profileData}
               onCounts={setLiveCounts}
             />
