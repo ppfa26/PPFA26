@@ -2247,6 +2247,12 @@ export default function AdminPage() {
                             >
                               기한연장
                             </button>
+                            <button
+                              onClick={() => deletePayment(p.order_id)}
+                              className="whitespace-nowrap rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 transition hover:scale-[1.02] hover:bg-rose-100"
+                            >
+                              🗑️ 조회권 삭제
+                            </button>
                           </div>
                         </td>
                       </tr>
