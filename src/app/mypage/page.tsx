@@ -318,7 +318,7 @@ export default function MyPage() {
                       href="http://pf.kakao.com/_VxfWxan/chat"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3 transition hover:scale-[1.02] hover:border-brand-orange hover:bg-brand-orange/5"
+                      className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3 transition duration-150 hover:scale-[1.02] hover:border-brand-orange hover:bg-brand-orange/5 active:scale-[0.98]"
                     >
                       <span className="flex min-w-0 flex-1 items-center gap-2">
                         <span className="shrink-0 text-base">{s.icon}</span>

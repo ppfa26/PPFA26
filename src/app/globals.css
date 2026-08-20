@@ -130,7 +130,8 @@ h4 {
   box-shadow: 0 8px 24px rgba(255, 149, 0, 0.35);
 }
 .btn-brand:active {
-  transform: translateY(0) scale(1);
+  /* 무료진단 톤 통일: 누를 때 살짝 눌리는 눌림감 */
+  transform: translateY(0) scale(0.97);
 }
 
 /* 레드 포인트 버튼 (첫페이지 '무료 진단 시작하기'와 동일 · 브랜드 통일용) */
@@ -148,7 +149,8 @@ h4 {
   box-shadow: 0 8px 24px rgba(225, 29, 46, 0.35);
 }
 .btn-red:active {
-  transform: translateY(0) scale(1);
+  /* 무료진단 톤 통일: 누를 때 살짝 눌리는 눌림감 */
+  transform: translateY(0) scale(0.97);
 }
 
 /* 아웃라인 버튼 */
@@ -166,7 +168,8 @@ h4 {
   transform: scale(1.03);
 }
 .btn-outline:active {
-  transform: scale(1);
+  /* 무료진단 톤 통일: 누를 때 살짝 눌리는 눌림감 */
+  transform: scale(0.97);
 }
 
 /* 리본 배지 (가장 인기) */

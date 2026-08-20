@@ -328,7 +328,7 @@ function SignupInner() {
             disabled={loading}
             aria-disabled={!allRequiredChecked}
             onClick={() => handleOAuth("kakao", "카카오")}
-            className={`relative flex w-full items-center justify-center rounded-xl bg-[#FEE500] py-3 text-sm font-bold text-[#191600] transition hover:brightness-95 disabled:opacity-60 ${!allRequiredChecked ? "opacity-70" : ""}`}
+            className={`relative flex w-full items-center justify-center rounded-2xl bg-[#FEE500] py-3.5 text-sm font-bold text-[#191600] transition duration-150 hover:brightness-95 active:scale-[0.98] disabled:opacity-60 ${!allRequiredChecked ? "opacity-70" : ""}`}
           >
             <svg className="absolute left-4 h-5 w-5" viewBox="0 0 24 24" fill="#191600" aria-hidden="true">
               <path d="M12 3C6.48 3 2 6.58 2 11c0 2.84 1.9 5.33 4.76 6.74-.16.57-.86 3.09-.9 3.29 0 0-.02.15.08.21.1.06.22.01.22.01.28-.04 3.23-2.12 3.74-2.48.68.1 1.38.15 2.1.15 5.52 0 10-3.58 10-8S17.52 3 12 3z" />
@@ -340,7 +340,7 @@ function SignupInner() {
             disabled={loading}
             aria-disabled={!allRequiredChecked}
             onClick={() => handleOAuth("google", "구글")}
-            className={`relative flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white py-3 text-sm font-bold text-brand-dark transition hover:bg-gray-50 disabled:opacity-60 ${!allRequiredChecked ? "opacity-70" : ""}`}
+            className={`relative flex w-full items-center justify-center rounded-2xl border border-gray-300 bg-white py-3.5 text-sm font-bold text-brand-dark transition duration-150 hover:bg-gray-50 active:scale-[0.98] disabled:opacity-60 ${!allRequiredChecked ? "opacity-70" : ""}`}
           >
             <svg className="absolute left-4 h-5 w-5" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z" />

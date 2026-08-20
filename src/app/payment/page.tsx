@@ -247,7 +247,7 @@ function PaymentInner() {
         {/* 주문 요약 */}
         <section
           id="payment-summary"
-          className="mb-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
+          className="mb-5 rounded-3xl border border-gray-100 bg-white p-5 shadow-sm"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
@@ -314,9 +314,9 @@ function PaymentInner() {
         <button
           onClick={handlePay}
           disabled={!ready || paying}
-          className={`mt-5 w-full rounded-xl py-4 text-base font-extrabold text-white shadow-md transition disabled:cursor-not-allowed ${
+          className={`mt-5 w-full rounded-2xl py-4 text-base font-extrabold text-white shadow-md transition duration-150 disabled:cursor-not-allowed ${
             agree
-              ? "bg-brand-red shadow-brand-red/30 hover:opacity-90 disabled:opacity-60"
+              ? "bg-brand-red shadow-brand-red/30 hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
               : "bg-gray-300 shadow-none"
           }`}
         >

@@ -514,7 +514,7 @@ export default function Home() {
 
                   {/* ⓪ 🌱 예비·초기·청년창업자 지원사업 (실제 결과창 맨 위 카드) - 기본 펼침.
                       무상 사업화 자금 중심. 실제 PRE_FOUNDER_PROGRAMS 데이터와 동일 문구. */}
-                  <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                  <details open className="result-accordion group overflow-hidden rounded-3xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
@@ -576,7 +576,7 @@ export default function Home() {
                   </details>
 
                   {/* ① 🏅 신청·감면 혜택 한번에 챙기기 (실제 결과창 = 제도 + 감면 통합 카드) - 기본 펼침 */}
-                  <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                  <details open className="result-accordion group overflow-hidden rounded-3xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
@@ -673,7 +673,7 @@ export default function Home() {
                   </details>
 
                   {/* ② 💳 이용 가능한 정책금융상품 (실제 결과창 = 기관별 상세: 기보/중진공/소진공) - 기본 펼침 */}
-                  <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                  <details open className="result-accordion group overflow-hidden rounded-3xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
@@ -738,7 +738,7 @@ export default function Home() {
                   </details>
 
                   {/* ④ 📢 추가적인 그 외 정부지원사업 (실제 결과창 네 번째 카드 · 기업마당 실공고) - 예시라 펼침 */}
-                  <details open className="result-accordion group overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
+                  <details open className="result-accordion group overflow-hidden rounded-3xl border border-brand-dark/10 bg-white shadow-card">
                     <summary className="flex cursor-pointer list-none items-center gap-3 px-5 py-3.5">
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2 text-[16px] font-extrabold leading-snug text-brand-dark">
@@ -970,9 +970,9 @@ export default function Home() {
               {FAQS.map((f, i) => (
                 <details
                   key={i}
-                  className="faq-accordion group rounded-2xl border border-gray-200 bg-white p-5 shadow-card transition open:border-brand-orange/40"
+                  className="faq-accordion group rounded-3xl border border-gray-200 bg-white p-5 shadow-card transition duration-200 open:border-brand-orange/40"
                 >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 transition active:scale-[0.99]">
                     <Editable
                       id={`home-faq-q-${i}`}
                       as="span"

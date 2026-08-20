@@ -19,7 +19,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
         {TIERS.map((tier) => (
           <div
             key={tier.id}
-            className={`pricing-card relative flex flex-col overflow-hidden rounded-2xl border px-6 py-5 shadow-card transition hover:shadow-cardHover ${
+            className={`pricing-card relative flex flex-col overflow-hidden rounded-3xl border px-6 py-5 shadow-card transition duration-200 hover:shadow-cardHover ${
               single ? "w-full" : ""
             } ${
               tier.popular

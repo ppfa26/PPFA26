@@ -44,7 +44,7 @@ export default function SupportDetailPage({ params }: { params: { id: string } }
               href={prog.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-xl bg-brand-orange px-4 py-3 text-sm font-extrabold text-white hover:opacity-90 sm:w-auto"
+              className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-2xl bg-brand-orange px-4 py-3 text-sm font-extrabold text-white transition duration-150 hover:opacity-90 active:scale-[0.98] sm:w-auto"
             >
               🔗 {prog.site} 바로가기
             </a>
