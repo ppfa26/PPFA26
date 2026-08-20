@@ -840,7 +840,22 @@ export default function Home() {
             (대표님 요청) 상단 여백을 하단과 비슷하게 줄이고(py-6→py-5), 박스 가로폭을 넓힘(max-w-xl→max-w-3xl). */}
         <section className="px-4 py-5 sm:py-6">
           <div className="reveal hover-lift mx-auto flex max-w-3xl flex-col items-center gap-3 rounded-3xl bg-brand-dark/95 px-6 py-7 text-center shadow-card sm:px-8">
-            <div className="flex w-full flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
+            {/* (대표님 요청) 하단 CTA처럼 버튼 위에 짧은 유도 문구 추가 */}
+            <Editable
+              id="result-sample-cta-title"
+              as="h2"
+              className="break-keep text-[22px] font-black tracking-[-0.03em] text-white sm:text-[26px]"
+            >
+              내 사업장은 얼마나 받을 수 있을까요?
+            </Editable>
+            <Editable
+              id="result-sample-cta-sub"
+              as="p"
+              className="mx-auto max-w-md break-keep text-sm leading-relaxed text-gray-300"
+            >
+              위 예시처럼 대표님 맞춤 지원사업을 1분 만에 확인해 보세요.
+            </Editable>
+            <div className="mt-2 flex w-full flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
               {/* 주 CTA - 레드 (진단 시작) */}
               <Editable
                 id="result-sample-cta"
