@@ -90,6 +90,81 @@ function SignupInner() {
     }
   };
 
+  // ══════════════════════════════════════════════════════════════
+  //  ★ 이메일 회원가입 (대표님 요청) ★
+  //   · '이메일로 로그인' 옆에 '이메일로 회원가입' 버튼을 두어,
+  //     이메일+비밀번호로 신규 계정을 만들 수 있게 한다.
+  //   · 심사 기간 임시 운영. (필요 시 나중에 버튼만 제거)
+  //   ※ Supabase Authentication > Providers > Email 활성화 필요.
+  //   ※ '이메일 확인(Confirm email)' 설정이 켜져 있으면 가입 후 인증메일이
+  //     발송되고, 인증 완료 전에는 로그인/세션이 안 잡힐 수 있다.
+  //     (이 경우 사용자에게 '메일 확인' 안내를 표시한다)
+  // ══════════════════════════════════════════════════════════════
+  const handleEmailSignup = async () => {
+    setMsg(null);
+    const email = emailId.trim();
+    if (!email || !emailPw) {
+      setMsg("이메일과 비밀번호를 입력해 주세요.");
+      return;
+    }
+    if (emailPw.length < 6) {
+      setMsg("비밀번호는 6자 이상으로 입력해 주세요.");
+      return;
+    }
+    // 회원가입도 '가입 절차'이므로 필수 약관 동의를 먼저 확인(미동의 시 차단·강조).
+    if (!requireAgreementOrBlock()) return;
+    // 동의 근거 기록(소셜과 동일 포맷)
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "mpp_consent",
+          JSON.stringify({
+            age: agreeAge,
+            terms: agreeTerms,
+            privacy: agreePrivacy,
+            third_party: agreeThird,
+            marketing: marketingAgree,
+            at: new Date().toISOString(),
+            method: "email",
+          })
+        );
+      }
+    } catch {
+      /* noop */
+    }
+    setLoading(true);
+    try {
+      const emailRedirectTo =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/signup${tier ? `?tier=${tier}` : nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""}`
+          : undefined;
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password: emailPw,
+        options: {
+          emailRedirectTo,
+          data: { utm_source: getCapturedUtmSource() },
+        },
+      });
+      if (error) {
+        setMsg("회원가입 실패: " + error.message);
+        setLoading(false);
+        return;
+      }
+      // 이메일 확인(Confirm email)이 켜진 경우: 세션이 아직 없고 인증메일이 발송됨.
+      //  → onAuthStateChange 가 안 잡히므로 사용자에게 메일 확인을 안내한다.
+      if (data?.user && !data.session) {
+        setMsg("가입 확인 메일을 보냈어요. 메일함에서 인증을 완료한 뒤 로그인해 주세요.");
+        setLoading(false);
+        return;
+      }
+      // 세션이 바로 생긴 경우(이메일 확인 OFF)엔 onAuthStateChange(SIGNED_IN)가 자동 이동.
+    } catch (e) {
+      setMsg("회원가입 중 오류가 발생했습니다. " + String(e));
+      setLoading(false);
+    }
+  };
+
   // ── 약관 동의 (삼쩜삼式 필수/선택 분리, 대표님 요청) ──
   //  필수 4종 + 선택(마케팅) 1종. '전체 동의' 마스터 체크 제공.
   //  가입/소셜로그인 버튼을 누르면 필수 항목은 자동 체크되어 진행된다.
@@ -400,7 +475,7 @@ function SignupInner() {
             계정은 Supabase Authentication 에서 발급. */}
         <div className="mb-4 rounded-2xl border border-gray-300 bg-white p-4">
           <p className="mb-3 text-center text-xs font-semibold text-brand-dark/70">
-            이메일로 로그인
+            이메일로 로그인 · 회원가입
           </p>
           <div className="space-y-2">
             <input
@@ -415,21 +490,32 @@ function SignupInner() {
               type="password"
               value={emailPw}
               onChange={(e) => setEmailPw(e.target.value)}
-              placeholder="비밀번호"
+              placeholder="비밀번호 (회원가입 시 6자 이상)"
               autoComplete="current-password"
               onKeyDown={(e) => {
                 if (e.key === "Enter") void handleEmailLogin();
               }}
               className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
             />
-            <button
-              type="button"
-              disabled={loading}
-              onClick={() => void handleEmailLogin()}
-              className="w-full rounded-2xl bg-brand-dark py-3.5 text-sm font-bold text-white transition duration-150 hover:bg-black active:scale-[0.98] disabled:opacity-60"
-            >
-              {loading ? "로그인 중…" : "이메일로 로그인"}
-            </button>
+            {/* 로그인 · 회원가입 버튼 나란히 배치 (대표님 요청) */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => void handleEmailLogin()}
+                className="w-full rounded-2xl bg-brand-dark py-3.5 text-sm font-bold text-white transition duration-150 hover:bg-black active:scale-[0.98] disabled:opacity-60"
+              >
+                {loading ? "처리 중…" : "이메일로 로그인"}
+              </button>
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => void handleEmailSignup()}
+                className="w-full rounded-2xl border border-brand-dark bg-white py-3.5 text-sm font-bold text-brand-dark transition duration-150 hover:bg-gray-50 active:scale-[0.98] disabled:opacity-60"
+              >
+                {loading ? "처리 중…" : "이메일로 회원가입"}
+              </button>
+            </div>
           </div>
         </div>
 
