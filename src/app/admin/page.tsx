@@ -1162,22 +1162,42 @@ export default function AdminPage() {
   //   (환불만 받고 정보를 계속 빼가는 것을 방지)
   const refundCredits = async (email: string | null) => {
     if (!email) return;
+    // 이 회원이 가진 '지급(grant)' 행 개수 - 환불과 동시에 자동 삭제 대상 (관리자 임의지급분 · 0원)
+    const grantRows = payments.filter(
+      (p) => (p.email ?? "").toLowerCase() === email.toLowerCase() && p.tier === "grant"
+    );
     if (
       !window.confirm(
         `${email} 님의 조회권을 환불(열람 차단) 처리할까요?\n\n` +
           `· 남은 조회권이 0이 되어 결과 페이지를 더 이상 볼 수 없게 됩니다.\n` +
-          `· 실제 결제 금액 환불은 PG사에서 별도로 진행해 주세요.\n` +
-          `(되돌리려면 초록색 '조회권 복구' 버튼을 누르면 됩니다)`
+          (grantRows.length > 0
+            ? `· 관리자 지급(0원) 조회권 ${grantRows.length}건은 결제·조회권 목록에서 함께 삭제됩니다.\n`
+            : `· 실제 결제 금액 환불은 PG사에서 별도로 진행해 주세요.\n`) +
+          `(실제 결제 건은 삭제하지 않고 열람만 차단됩니다 · 초록색 '조회권 복구'로 되돌릴 수 있어요)`
       )
     )
       return;
     const { data, error } = await supabase.rpc("admin_refund_credits", {
       p_email: email,
     });
+    if (error) {
+      setMsg(`오류: ${error.message}`);
+      await loadAll();
+      setTimeout(() => setMsg(null), 4000);
+      return;
+    }
+    // 환불과 동시에 '지급(grant)' 행은 목록에서 자동 삭제 (실제 결제 건은 매출 보존 위해 삭제하지 않음)
+    let deleted = 0;
+    for (const g of grantRows) {
+      const { error: delErr } = await supabase.rpc("admin_delete_payment", {
+        p_order_id: g.order_id,
+      });
+      if (!delErr) deleted += 1;
+    }
     setMsg(
-      error
-        ? `오류: ${error.message}`
-        : `${email} 님의 조회권을 차단(환불 처리)했습니다. (결제 ${String(data ?? 0)}건 열람 차단)`
+      `${email} 님의 조회권을 차단(환불 처리)했습니다. (결제 ${String(data ?? 0)}건 열람 차단` +
+        (deleted > 0 ? ` · 지급 조회권 ${deleted}건 삭제` : "") +
+        `)`
     );
     await loadAll();
     setTimeout(() => setMsg(null), 4000);
