@@ -187,7 +187,7 @@ export default function MyPage() {
                     </p>
                     <p
                       className={`mt-0.5 text-lg font-black leading-none sm:text-xl ${
-                        viewStatus?.isActive ? "text-brand-green" : "text-brand-dark/40"
+                        viewStatus?.isActive ? "text-brand-red" : "text-brand-dark/40"
                       }`}
                     >
                       {viewStatus?.isActive ? "이용중" : "없음"}
