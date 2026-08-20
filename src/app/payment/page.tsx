@@ -17,12 +17,14 @@ import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 //     → 실제 돈은 빠지지 않는 테스트 결제로 처리됩니다.
 //     심사 통과 후 운영 클라이언트 키를 배포 환경변수(NEXT_PUBLIC_TOSS_CLIENT_KEY)에 넣으면 그 값이 우선 사용됩니다.
 //     ※ 서버(confirm 라우트)의 시크릿 키와 반드시 '세트'여야 합니다. (테스트-테스트 / 운영-운영)
-// ★ 토스페이먼츠 '공식 문서·GitHub 샘플'의 개별 연동 테스트 클라이언트 키 ★
-//   (개발 연동 체험 상점 · 계약이 항상 활성 상태라 결제창이 정상적으로 열립니다)
-//   ※ 이전에 쓰던 test_ck_LlDJaYngro7ajD6Jv2vXrezGdRpX 는 계약 비활성 상점 키라
-//      결제창에서 "업체 사정으로 결제 일시 중지 (2003)" 오류가 발생했습니다. → 공식 키로 교체.
-//   ※ 반드시 confirm 라우트의 시크릿 키(test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R)와 '세트'입니다.
-const TOSS_TEST_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+// ★ 토스페이먼츠 '표준 테스트' API 개별 연동 클라이언트 키 ★
+//   (토스 개발자센터가 모두에게 공개하는 '개발 연동 체험 상점' 표준 테스트 키 · 계약이 항상 활성)
+//   ✅ 실제 브라우저 결제창 테스트로 이 키는 결제창이 '정상적으로 열림'을 확인했습니다.
+//   ⚠️ 우리 상점 키(test_ck_LlDJaYngro7ajD6Jv2vXrezGdRpX · MID: modwoegynr)는 아직
+//      전자결제 계약이 활성화되지 않아 결제창에서 "업체 사정으로 결제 일시 중지 (2003)"가
+//      발생합니다. → 토스와 전자결제 계약(심사)이 완료되면 그때 우리 상점 키로 교체하세요.
+//   ※ 반드시 confirm 라우트의 시크릿 키(test_sk_pP2YxJ4K87qo5mA1GExzVRGZwXLO)와 '세트'입니다.
+const TOSS_TEST_CLIENT_KEY = "test_ck_BX7zk2yd8y2dQXxv6GD03x9POLqK";
 
 // ★ 키 방어 로직 ★
 //   v2 결제창 SDK(tossPayments.payment)는 'API 개별 연동 키'(client: test_ck_ / live_ck_)만 지원합니다.
