@@ -799,10 +799,8 @@ function AdvancedResult({
   // ★ 요약 배너 숫자 100% 일치용 - 비동기로 그려지는 두 카드(감면·그외공고)의 실측 갯수를 자식에서 받아 보관 ★
   const [benefitsCount, setBenefitsCount] = useState<number | null>(null);
   const [announcementsCount, setAnnouncementsCount] = useState<number | null>(null);
-  // 미리보기(previewLock)에서는 '그 외 정부지원사업'(RelatedAnnouncements)이 렌더되지 않으므로 0으로 확정
-  useEffect(() => {
-    if (previewLock) setAnnouncementsCount(0);
-  }, [previewLock]);
+  // (대표님 요청) previewLock(블러 잠금)에서도 '그 외 추가 지원사업'을 렌더하므로
+  // 강제 0 처리를 제거 → 실제 개수가 요약 배너에도 반영된다.
 
   // 미리보기 잠금용 클래스 헬퍼 (기관명·상품명 텍스트 / 클릭요소)
   const lockText = previewLock ? "preview-lock-text" : "";
@@ -1694,8 +1692,10 @@ function AdvancedResult({
              창업(🌱)·융자(💳)로 분류되지 않은 실공고(수출·기술·경영·내수·인력·행사·판로 등).
              AI 해설 없이 공고명·신청기간·기관만 보여주고 원문으로 링크.
              ★ 요약 배너의 '그 외 정부지원사업' 숫자는 이 etc 버킷 갯수(onCount)만 반영. */}
-      {autoRun && !previewLock && (
-        <RelatedAnnouncements profile={relatedProfile} bucket="etc" onCount={setAnnouncementsCount} />
+      {autoRun && (
+        <div className={previewLock ? "preview-lock-click" : ""}>
+          <RelatedAnnouncements profile={relatedProfile} bucket="etc" onCount={setAnnouncementsCount} />
+        </div>
       )}
 
       {/* (기관별 상품 한눈에 보기는 '이용 가능한 정책금융기관' 아코디언 안 하단으로 통합됨 - 대표님 요청) */}
@@ -1709,10 +1709,12 @@ function AdvancedResult({
       {/* (예비창업자 전용 지원사업 아코디언은 최상단으로 이동 - 대표님 요청.
              예비창업 체크한 사람만 보이므로 맨 위(정부지원제도 위)에 노출.) */}
 
-      {/* 대표님들이 알아두면 좋은 정부 사이트 모음으로 이동 - 아코디언과 톤 통일(둥근 모서리·부드러운 그림자) */}
+      {/* 대표님들이 알아두면 좋은 정부 사이트 모음으로 이동 - 아코디언과 톤 통일(둥근 모서리·부드러운 그림자)
+          (대표님 요청) 이 '정부 사이트' 버튼은 결제와 무관한 공개 정보이므로
+          previewLock(블러 잠금) 상태에서도 블러 없이 그대로 클릭 가능하게 둔다. */}
       <a
-        href={previewLock ? undefined : "/sites"}
-        className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-2.5 shadow-card transition hover:opacity-90 ${previewLock ? "pointer-events-none" : ""}`}
+        href="/sites"
+        className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-2.5 shadow-card transition hover:opacity-90"
       >
         <span className="min-w-0">
           <span className="flex items-center gap-2 break-keep text-[16px] font-extrabold leading-snug text-white">
@@ -1722,7 +1724,7 @@ function AdvancedResult({
             정부 기관 공식 사이트예요
           </span>
         </span>
-        <span className={`shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark ${lockClick}`}>
+        <span className="shrink-0 rounded-full bg-brand-yellow px-4 py-2 text-sm font-extrabold text-brand-dark">
           사이트 바로가기
         </span>
       </a>

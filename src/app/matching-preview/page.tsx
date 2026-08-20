@@ -763,7 +763,7 @@ export default function MatchingPreview() {
       <Header />
       {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
           상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`flex-1 overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-0" : "pb-40"}`}>
+      <main className={`flex-1 overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminView || BETA_FREE ? "pb-0" : "pb-6"}`}>
         {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
             max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
             좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}
@@ -966,7 +966,7 @@ export default function MatchingPreview() {
            (대표님 요청) 광고 카드를 위·아래 박스와 동일한 max-w-3xl 폭으로 넓혀
            자연스럽게 연결. 광고가 없을 땐(NO-AD) AdFitBanner 가 null 을 반환하므로
            바깥 세로 패딩은 최소(py-2)만 두어 빈 공백이 남지 않게 한다. */}
-      <div className="px-4 pb-2 pt-2">
+      <div className="px-4 pb-5 pt-0">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
         </div>
@@ -974,38 +974,8 @@ export default function MatchingPreview() {
 
       {/* 오픈 베타(무료) 기간에는 하단 고정 바 없이 깔끔하게 둔다. */}
 
-      {/* ── 스크롤을 따라다니는 하단 고정(sticky) 결제 유도 박스 (정식 유료 모드 전용) ──
-           스크린샷의 오렌지 결제 유도 박스를 그대로 하단에 고정 → 스크롤 내내 결제 유도
-           (관리자 열람 모드에서는 숨김) */}
-      {!adminView && !BETA_FREE && (
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-brand-orange bg-white/97 px-4 py-3 shadow-[0_-6px_24px_rgba(255,140,0,0.22)] backdrop-blur">
-        {/* 결제바도 본문 폭(max-w-3xl)에 맞춰 정렬 */}
-        <div className="mx-auto max-w-3xl">
-          <Editable
-            id="preview-sticky-title"
-            as="p"
-            className="break-keep text-center text-sm font-extrabold text-brand-dark sm:text-base"
-          >
-            🔒 결제하면 위 모든 항목의 상세 내용이 공개됩니다
-          </Editable>
-          <Editable
-            id="preview-sticky-sub"
-            as="p"
-            className="mt-1 hidden break-keep text-center text-[11px] leading-relaxed text-brand-dark/60 sm:block sm:text-xs"
-          >
-            💳 부담 없는 1회성 결제로 내 사업장에 해당되는 모든 정부지원사업을 확인하세요. (VAT 포함)
-          </Editable>
-          <Editable
-            id="preview-sticky-cta"
-            as="a"
-            href="/payment?tier=basic"
-            className="btn-brand mt-2 block w-full rounded-full py-3 text-center text-sm font-bold sm:text-base"
-          >
-            💳 지금 결제하고 전체 결과 확인하기
-          </Editable>
-        </div>
-      </div>
-      )}
+      {/* ── (대표님 요청) 스크롤 따라다니는 하단 고정 결제 바 삭제 ──
+           상단(요약 배너 아래)에 결제 박스가 이미 있으므로 중복 제거. ── */}
 
       {/* 광고 래퍼가 이미 하단 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(첫 페이지와 동일). */}
       <Footer topGap="mt-0" />
