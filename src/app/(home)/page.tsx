@@ -822,6 +822,19 @@ export default function Home() {
                       ))}
                     </ul>
                   </div>
+
+                  {/* 잠긴 예시본 직후 CTA (대표님 요청) - '이만큼 상세히 알려주는구나 → 지금 바로 진단'
+                      결제/진단 유도. 사이트 메인 레드 CTA 톤과 통일. */}
+                  <div className="mt-6 flex justify-center">
+                    <Editable
+                      id="result-sample-cta"
+                      as="a"
+                      href="/diagnosis-chat"
+                      className="btn-red w-full whitespace-nowrap rounded-full px-6 py-3.5 text-center text-[16px] font-extrabold tracking-[-0.02em] sm:w-auto sm:px-10 sm:py-4 sm:text-[18px]"
+                    >
+                      지금 내 지원사업 확인하기
+                    </Editable>
+                  </div>
                 </div>
 
               </div>
