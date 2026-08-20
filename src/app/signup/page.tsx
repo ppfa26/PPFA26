@@ -360,10 +360,10 @@ function SignupInner() {
     <PageShell pageKey="signup">
       <Header />
       {/* 중앙 정렬 · 적당한 폭(max-w-5xl) 좌우 2분할 카드 - 화면 꽉 채우지 않고, 위아래 흰 공백 없이 */}
-      <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-12">
+      <div className="mx-auto w-full max-w-5xl px-4 pt-8 pb-4 sm:pt-12 sm:pb-6">
         <div className="grid grid-cols-1 overflow-hidden rounded-3xl border border-gray-200 shadow-card lg:grid-cols-2">
         {/* 좌측 브랜드 패널 - 데스크톱 전용(모바일 숨김) · 로고 중복 없음(상단 헤더에 이미 있음) */}
-        <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-start lg:gap-8 lg:px-10 lg:py-12">
+        <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-center lg:gap-8 lg:px-10 lg:py-12">
           <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-yellow/20 blur-3xl" />
           <div className="absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-brand-orange/20 blur-3xl" />
           <div className="relative">
