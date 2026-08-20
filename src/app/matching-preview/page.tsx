@@ -828,15 +828,16 @@ export default function MatchingPreview() {
   const adminOpen = adminView && !adminUnpaid;
 
   return (
-    // (대표님 요청) 모바일 결과창 하단 큰 세로 공백 제거:
-    //   stickyFooter(min-h-[100dvh] + main flex-1)를 켜두면 콘텐츠가 화면보다 짧을 때
-    //   <main>이 화면 바닥까지 늘어나, main 밖에 있는 광고 배너 '위'에 배경만 보이는
-    //   빈 공백이 생긴다. stickyFooter를 끄고 main의 flex-1도 빼서 콘텐츠→광고→푸터가
-    //   자연스러운 높이로 딱 붙게 한다.
-    <PageShell pageKey="matching-preview">
+    // (대표님 요청) 모바일 결과창 하단 큰 세로 공백 제거 (최종):
+    //   stickyFooter(min-h-[100dvh] flex-col)로 푸터는 항상 화면 바닥에 붙이되,
+    //   콘텐츠가 짧을 때 남는 세로 공간을 '광고 배너 위 margin(mt-auto)'이 흡수한다.
+    //   → 결과 콘텐츠(CTA 카드)는 자연 높이로 위에서부터 쌓이고, 광고는 항상 푸터 바로
+    //     위(화면 하단)에 고정되어, CTA 카드 밑에 배경만 보이는 빈 공백이 생기지 않는다.
+    //   ※ 광고 배너 래퍼를 <main> 안으로 옮기고 flex-col + mt-auto 처리(아래 참고).
+    <PageShell pageKey="matching-preview" stickyFooter>
       <Header />
       {/* 상단 여백(pt-4/5)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminOpen || BETA_FREE ? "pb-0" : "pb-6"}`}>
+      <main className={`flex flex-1 flex-col overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminOpen || BETA_FREE ? "pb-0" : "pb-6"}`}>
         {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
             max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
             좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}
@@ -1036,20 +1037,19 @@ export default function MatchingPreview() {
           {/* ── (대표님 요청) 최하단 결제 유도 박스 삭제 ──
                결제 박스는 상단(요약 배너 아래)에 이미 있으므로 중복 제거. ── */}
         </div>
-      </main>
 
-      {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
-           광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-           (대표님 요청) 광고 카드를 위·아래 박스와 동일한 max-w-3xl 폭으로 넓혀
-           자연스럽게 연결. 광고가 없을 땐(NO-AD) AdFitBanner 가 null 을 반환하므로
-           바깥 세로 패딩은 최소(py-2)만 두어 빈 공백이 남지 않게 한다. */}
-      {/* (대표님 요청) 광고 세로 공백을 위·아래 동일하게(py-6) 균일 배치 →
-           광고 배너 상단(더 궁금한 점 카드)·하단(푸터) 여백이 대칭이 되도록 통일. */}
-      <div className="px-4 py-6">
-        <div className="mx-auto max-w-3xl">
-          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
+        {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
+             광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
+             (대표님 요청) 모바일 하단 공백 제거 최종: 광고 래퍼를 <main> 안으로 옮기고
+             mt-auto 를 줘, 콘텐츠가 짧을 때 남는 세로 공간을 '광고 위 여백'이 흡수하게 한다.
+             → CTA 카드는 위에서부터 자연 높이로 쌓이고, 광고는 항상 화면 하단(푸터 바로 위)에
+               붙어 CTA 카드 밑 배경 공백이 사라진다. 위·아래 패딩은 py-6 으로 대칭. */}
+        <div className="mt-auto px-0 pt-6">
+          <div className="mx-auto max-w-3xl">
+            <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
+          </div>
         </div>
-      </div>
+      </main>
 
       {/* 오픈 베타(무료) 기간에는 하단 고정 바 없이 깔끔하게 둔다. */}
 
