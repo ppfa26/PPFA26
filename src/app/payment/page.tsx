@@ -234,7 +234,7 @@ function PaymentInner() {
   return (
     <PageShell pageKey="payment">
       <Header />
-      <main className="mx-auto min-h-[70vh] w-full max-w-lg px-4 py-8">
+      <main className="mx-auto min-h-[70vh] w-full max-w-xl px-4 py-8">
         <div className="mb-6 text-center">
           <Editable id="payment-title" as="h1" className="text-2xl font-extrabold text-brand-dark">
             결제하기
@@ -276,9 +276,9 @@ function PaymentInner() {
         </section>
 
         {/* 안내 문구 */}
-        <ul className="mb-5 space-y-1 rounded-2xl bg-gray-50 p-4 text-xs leading-relaxed text-brand-gray">
+        <ul className="mb-5 space-y-2 rounded-2xl bg-gray-50 p-5 text-xs leading-relaxed text-brand-gray">
           {COMMON_NOTES.map((n, i) => (
-            <li key={i}>{n}</li>
+            <li key={i} className="break-keep">{n}</li>
           ))}
         </ul>
 
@@ -299,8 +299,8 @@ function PaymentInner() {
             className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-brand-red"
           />
           <span className="break-keep leading-relaxed">
-            1회성 결제(자동결제 없음)이며, 본 서비스는 안내·추천·매칭하는 AI 통합
-            매칭 서비스로{" "}
+            1회성 결제(자동결제 없음)이며, 본 서비스는 안내·추천·매칭하는
+            AI 통합 매칭 서비스로{" "}
             <strong>정부지원사업 승인을 보장하지 않음</strong>을 확인했습니다.
           </span>
         </label>
