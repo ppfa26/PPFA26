@@ -1693,7 +1693,7 @@ function AdvancedResult({
              AI 해설 없이 공고명·신청기간·기관만 보여주고 원문으로 링크.
              ★ 요약 배너의 '그 외 정부지원사업' 숫자는 이 etc 버킷 갯수(onCount)만 반영. */}
       {autoRun && (
-        <div>
+        <div className={lockClick}>
           <RelatedAnnouncements profile={relatedProfile} bucket="etc" onCount={setAnnouncementsCount} />
         </div>
       )}
@@ -1713,8 +1713,8 @@ function AdvancedResult({
           (대표님 요청) 이 '정부 사이트' 버튼은 결제와 무관한 공개 정보이므로
           previewLock(블러 잠금) 상태에서도 블러 없이 그대로 클릭 가능하게 둔다. */}
       <a
-        href="/sites"
-        className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-2.5 shadow-card transition hover:opacity-90"
+        href={previewLock ? undefined : "/sites"}
+        className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-dark bg-brand-dark px-5 py-2.5 shadow-card transition hover:opacity-90 ${lockNoClick}`}
       >
         <span className="min-w-0">
           <span className="flex items-center gap-2 break-keep text-[16px] font-extrabold leading-snug text-white">
