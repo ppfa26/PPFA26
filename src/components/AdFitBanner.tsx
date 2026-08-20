@@ -81,12 +81,15 @@ function AdFitUnit({
     };
   }, [adUnit, width, height, onFail]);
 
-  // 지정 크기(728x90)를 정확히 확보해 좌우 잘림을 방지한다.
+  // 지정 크기(728x90)를 확보하되, 화면(모바일)보다 넓으면 폭을 넘치지 않게 제한한다.
+  //  · height 는 광고 실제 높이(90px)만 확보 → 위아래 불필요한 빈 공백 방지.
+  //  · maxWidth:100% + overflow-hidden 으로 좁은 화면에서 카드가 화면 밖으로 밀리며
+  //    생기던 큰 세로 공백을 없앤다. (대표님 요청: 모바일 하단 공백 제거)
   return (
     <div
       ref={containerRef}
-      className="mx-auto flex items-center justify-center"
-      style={{ width, height }}
+      className="mx-auto flex items-center justify-center overflow-hidden"
+      style={{ width, maxWidth: "100%", height }}
     />
   );
 }
