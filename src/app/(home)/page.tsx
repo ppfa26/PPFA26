@@ -294,10 +294,10 @@ export default function Home() {
               <Editable
                 id="hero-cta-secondary"
                 as="a"
-                href={BETA_FREE ? "#result-sample-section" : "/pricing"}
+                href="#result-sample-section"
                 className="btn-outline w-full whitespace-nowrap rounded-full px-8 py-3 text-[15px] font-bold sm:w-auto sm:py-3.5 sm:text-base"
               >
-                {BETA_FREE ? "무엇을 알려주나요?" : "상품 자세히 보기"}
+                무엇을 알려주나요?
               </Editable>
             </div>
 
@@ -537,7 +537,7 @@ export default function Home() {
                         갚지 않아도 되는 지원금이니 창업 단계에서 꼭 챙기시길 권장드립니다.
                       </p>
                     </div>
-                    <div className={`mt-3 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`mt-3 space-y-2.5`}>
                       {[
                         { t: "초기창업패키지", amount: "최대 1억원 (평균 약 7,000만원 · 사업화 자금)", target: "창업 3년 이내 초기 창업기업 대표자" },
                         { t: "청년창업사관학교 (창업성공패키지)", amount: "최대 1억원 (총사업비의 70% 이내 · 평균 약 7,000만원)", target: "만 39세 이하 예비창업자 및 창업 3년 이내 대표자" },
@@ -601,7 +601,7 @@ export default function Home() {
                       </p>
                     </div>
                     {/* 개별 제도 카드 - 실제 결과창 카드(흰 배경·얇은 테두리·제목+뱃지→안내→설명→회색 신청방법→버튼 2종) */}
-                    <div className={`mt-4 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`mt-4 space-y-3`}>
                       {[
                         { icon: "🏭", t: "중소기업 혁신바우처", badge: "신청 가능", badgeCls: "bg-brand-green", d: "컨설팅·기술지원·마케팅 등 바우처 형태로 지원(매출 규모별 차등).", hook: "제조 소기업이면 우선 지원 대상이라 선정 확률이 높습니다.", locked: "🔒 신청 사이트 주소 · 제출 서류 목록 · 신청 순서 · 마감일까지 결제 후 공개" },
                         { icon: "🧑‍💼", t: "고용촉진장려금 (고용24)", badge: "조건 충족 시 가능", badgeCls: "bg-brand-orange/90", d: "취업취약계층을 정규직으로 채용하면 1인당 최대 720만원 지원.", hook: "채용 계획이 있으면 채용 전 신청해야 대상이 됩니다.", locked: "🔒 지원 대상 요건 체크 · 신청 순서 · 담당 기관 연락처까지 결제 후 공개" },
@@ -644,7 +644,7 @@ export default function Home() {
                       <span className="mt-1 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
                         세금·수수료를 아낄 수 있는 혜택이에요
                       </span>
-                      <div className={`mt-3 space-y-2.5 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                      <div className={`mt-3 space-y-2.5`}>
                         {[
                           { t: "카드 수수료 우대율", c: "수수료", cCls: "bg-rose-100 text-rose-700", saving: "연 약 60만원 절감", hook: "연매출 30억원 이하 영세·중소가맹점이면 별도 신청 없이 자동 적용됩니다.", applyName: "카드사·여신금융협회" },
                           { t: "청년창업중소기업 세액감면", c: "세액감면", cCls: "bg-rose-100 text-rose-700", saving: "소득세·법인세 최대 100% 감면", hook: "만 34세 이하·창업 5년 이내면 세무신고 때 자동 적용, 경쟁이 없습니다.", applyName: "홈택스" },
@@ -699,7 +699,7 @@ export default function Home() {
                       </p>
                     </div>
                     {/* 기관별 상세 - 실제 결과창(기관명+대리/직접대출 배지 → 안내 → 상품 보기 버튼) */}
-                    <div className={`mt-2 divide-y divide-gray-200 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`mt-2 divide-y divide-gray-200`}>
                       {[
                         { inst: "기술보증기금", nature: "대리대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: true, natDesc: "보증서를 발급해 드리면 그 보증서로 은행에서 대출이 실행돼요.", criteria: "기술력 보유 중소·벤처기업 대상 기술보증서 발급. 보증서로 은행 대출 실행.", prodCount: 3, siteLabel: "기술보증기금 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1544-****", telNote: "기술평가 기반 보증은 기보로 문의하면 상담이 빠릅니다." },
                         { inst: "중소벤처기업진흥공단", nature: "직접대출", natCls: "bg-purple-100 text-purple-700", isGuarantee: false, natDesc: "은행을 거치지 않고 기관에서 대출이 바로 실행돼요.", criteria: "신성장기반자금·신시장진출자금 등 공단이 직접 저금리로 융자. 시설·운전자금 모두 가능.", prodCount: 3, siteLabel: "중소벤처기업진흥공단 사이트", pdfLabel: "정책자금 상품안내 확인하기", tel: "1811-****", telNote: "정책자금 전용번호가 일반문의보다 대기가 짧습니다." },
@@ -755,7 +755,7 @@ export default function Home() {
                     </summary>
                     <div className="px-5 pb-4 pt-0">
                     {/* 실제 결과창 공고 카드(제목+지원규모 태그 → 🗓️신청기간 배지 → 🏛️기관·대상 + 원문 버튼)와 동일 */}
-                    <div className={`mt-2 space-y-3 ${BETA_FREE ? "" : "preview-film"}`} aria-hidden={BETA_FREE ? undefined : true}>
+                    <div className={`mt-2 space-y-3`}>
                       {[
                         { title: "2026년 스마트 제조혁신 지원사업(스마트공장 구축)", scale: "최대 6천만원", deadline: "2026년 통합공고 진행", org: "중소벤처기업부", target: "제조 중소기업" },
                         { title: "2026년 인천 소상공인 경영환경개선 지원사업", scale: "항목별 최대 250만원", deadline: "예산 소진 시 마감", org: "인천광역시", target: "인천 소상공인" },
