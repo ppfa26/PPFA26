@@ -964,7 +964,7 @@ function AdvancedResult({
                       href={previewLock ? undefined : p.siteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-3.5 py-2 text-xs font-extrabold text-white transition hover:brightness-95 ${lockClick}`}
+                      className={`inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-3.5 py-2 text-xs font-extrabold text-white transition duration-150 hover:brightness-95 active:scale-[0.97] ${lockClick}`}
                     >
                       <span aria-hidden>📝</span> 신청하러 가기 <span aria-hidden>→</span>
                     </a>
@@ -973,7 +973,7 @@ function AdvancedResult({
                         href={previewLock ? undefined : p.manualUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-1.5 rounded-lg border border-brand-orange bg-white px-3.5 py-2 text-xs font-extrabold text-brand-orange transition hover:bg-brand-orange/5 ${lockClick}`}
+                        className={`inline-flex items-center gap-1.5 rounded-lg border border-brand-orange bg-white px-3.5 py-2 text-xs font-extrabold text-brand-orange transition duration-150 hover:bg-brand-orange/5 active:scale-[0.97] ${lockClick}`}
                       >
                         <span aria-hidden>📋</span> 신청 방법·서류
                       </a>

@@ -26,14 +26,14 @@ export default function AccordionCard({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    // 세련화: 테두리 얇고 은은하게(PC·모바일 동일), 부드러운 그림자로 카드 입체감.
-    <div className="overflow-hidden rounded-2xl border border-brand-dark/10 bg-white shadow-card">
-      {/* 헤더 (토글 버튼) - PC·모바일 동일 스타일 */}
+    // 세련화(무료진단 톤 통일): 더 둥근 모서리(3xl) + 얇고 은은한 테두리 + 부드러운 그림자.
+    <div className="overflow-hidden rounded-3xl border border-brand-dark/10 bg-white shadow-card transition-shadow duration-200">
+      {/* 헤더 (토글 버튼) - 무료진단 옵션처럼 부드러운 눌림감(active:scale) + 차분한 트랜지션 */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-3 px-5 py-2.5 text-left transition hover:bg-brand-orange/5"
+        className="flex w-full items-center gap-3 px-5 py-3 text-left transition duration-150 hover:bg-brand-orange/5 active:scale-[0.99]"
       >
         <span className="min-w-0 flex-1">
           {/* 제목 - 16px, 아이콘·글자 세로 중앙 정렬로 깔끔하게 */}
@@ -54,9 +54,9 @@ export default function AccordionCard({
             클릭 👆
           </span>
         )}
-        {/* 펼침/접힘 화살표 */}
+        {/* 펼침/접힘 화살표 - 무료진단 톤: 부드러운 회전 트랜지션 */}
         <span
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-200 ${
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange transition-transform duration-300 ease-out ${
             open ? "rotate-180" : ""
           }`}
           aria-hidden

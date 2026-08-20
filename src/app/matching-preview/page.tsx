@@ -931,7 +931,7 @@ export default function MatchingPreview() {
                 <a
                   id="preview-bottom-cta-button"
                   href="/diagnosis-chat"
-                  className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
+                  className="w-full rounded-full border-2 border-white bg-transparent px-8 py-3 text-base font-bold text-white transition duration-150 hover:bg-white/10 active:scale-[0.98] sm:w-auto"
                 >
                   다시 진단하기
                 </a>
@@ -941,7 +941,7 @@ export default function MatchingPreview() {
                   href="http://pf.kakao.com/_VxfWxan/chat"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-red w-full rounded-full px-8 py-3 text-base font-bold sm:w-auto"
+                  className="btn-red w-full rounded-full px-8 py-3 text-base font-bold transition active:scale-[0.98] sm:w-auto"
                 >
                   💬 1:1 채널톡 상담하기
                 </a>
