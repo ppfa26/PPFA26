@@ -828,16 +828,14 @@ export default function MatchingPreview() {
   const adminOpen = adminView && !adminUnpaid;
 
   return (
-    // (대표님 요청) 모바일 결과창 하단 큰 세로 공백 제거 (최종):
-    //   stickyFooter(min-h-[100dvh] flex-col)로 푸터는 항상 화면 바닥에 붙이되,
-    //   콘텐츠가 짧을 때 남는 세로 공간을 '광고 배너 위 margin(mt-auto)'이 흡수한다.
-    //   → 결과 콘텐츠(CTA 카드)는 자연 높이로 위에서부터 쌓이고, 광고는 항상 푸터 바로
-    //     위(화면 하단)에 고정되어, CTA 카드 밑에 배경만 보이는 빈 공백이 생기지 않는다.
-    //   ※ 광고 배너 래퍼를 <main> 안으로 옮기고 flex-col + mt-auto 처리(아래 참고).
-    <PageShell pageKey="matching-preview" stickyFooter>
+    // (대표님 요청) 모바일 결과창 하단 배치를 어색하지 않게:
+    //   억지로 공간을 늘리거나(mt-auto/flex-1) 밀어내는 트릭을 모두 제거하고,
+    //   콘텐츠 → 광고 → 푸터가 순서대로 자연 높이로 딱 붙게 둔다.
+    //   (stickyFooter도 끄는 게 가장 자연스러움 → 짧은 화면에서도 억지 여백이 안 생김)
+    <PageShell pageKey="matching-preview">
       <Header />
       {/* 상단 여백(pt-4/5)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`flex flex-1 flex-col overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminOpen || BETA_FREE ? "pb-0" : "pb-6"}`}>
+      <main className={`overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminOpen || BETA_FREE ? "pb-0" : "pb-6"}`}>
         {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
             max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
             좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}
