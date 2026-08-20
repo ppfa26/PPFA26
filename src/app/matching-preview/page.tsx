@@ -909,8 +909,8 @@ export default function MatchingPreview() {
           {/* ── (대표님 요청) 오픈 베타(무료) 안내 한 줄 문구 삭제 ── */}
 
           {/* ── 결과창 맨 하단 CTA - 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ──
-              CTA 박스 위 여백과 아래 광고 영역 상하 여백을 동일하게 맞춤(대표님 요청). */}
-          <section className="mt-6 px-0 pb-0 sm:mt-6">
+              (대표님 요청) 결과 패널과 CTA 사이 세로 공백 축소: mt-6 → mt-4 */}
+          <section className="mt-4 px-0 pb-0 sm:mt-4">
             <div className="mx-auto max-w-3xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
               <Editable
                 id="preview-bottom-cta-title"
@@ -993,8 +993,9 @@ export default function MatchingPreview() {
       {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
            (대표님 요청) 광고 카드를 위·아래 박스와 동일한 max-w-3xl 폭으로 넓혀
-           자연스럽게 연결하고, 상·하 세로 여백을 py-4 로 균일하게 맞춘다. */}
-      <div className="px-4 pb-4 pt-4">
+           자연스럽게 연결. 광고가 없을 땐(NO-AD) AdFitBanner 가 null 을 반환하므로
+           바깥 세로 패딩은 최소(py-2)만 두어 빈 공백이 남지 않게 한다. */}
+      <div className="px-4 pb-2 pt-2">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
         </div>
