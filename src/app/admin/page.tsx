@@ -1426,11 +1426,18 @@ export default function AdminPage() {
               <div className="text-[12px] font-semibold text-gray-500">✅ 통화완료</div>
               <div className="mt-auto text-2xl font-extrabold text-gray-900">{unifiedCallCounts["done"] ?? 0}명</div>
             </button>
-            {/* ④ 전체 고객 - 정책: 진단서 보유자 전원을 실고객으로 집계(통합 카드 수 기준) */}
-            <div className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm">
+            {/* ④ 전체 고객 - 클릭 시 고객 관리 탭 + '전체' 필터로 전체 리스트 표시 */}
+            <button
+              onClick={() => {
+                setTab("customers");
+                setUnifiedCall("all");
+              }}
+              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              title="전체 고객 - 고객 관리에서 전체 리스트 보기"
+            >
               <div className="text-[12px] font-semibold text-gray-500">👥 전체 고객</div>
               <div className="mt-auto text-2xl font-extrabold text-gray-900">{unifiedCustomers.length}명</div>
-            </div>
+            </button>
             {/* ⑤ 계약 - 성과(유일한 포인트색: 주황) */}
             <button
               onClick={() => {
@@ -1443,11 +1450,15 @@ export default function AdminPage() {
               <div className="text-[12px] font-semibold text-brand-orange">🏆 계약</div>
               <div className="mt-auto text-2xl font-extrabold text-brand-orange">{unifiedCallCounts["contract"] ?? 0}명</div>
             </button>
-            {/* ⑥ 이번 달 매출 - 월 표기를 레이블로 합쳐 높이(2줄) 통일 */}
-            <div className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm">
+            {/* ⑥ 이번 달 매출 - 클릭 시 매출 리포트 탭으로 이동. 월 표기를 레이블로 합쳐 높이(2줄) 통일 */}
+            <button
+              onClick={() => setTab("revenue")}
+              className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm transition hover:scale-[1.02]"
+              title="이번 달 매출 - 매출 리포트 보기"
+            >
               <div className="text-[12px] font-semibold text-gray-500">💰 {new Date().getMonth() + 1}월 매출</div>
               <div className="mt-auto text-2xl font-extrabold text-gray-900">{won(stats?.month_revenue ?? 0)}</div>
-            </div>
+            </button>
           </section>
 
           {/* 탭(4개) - 성격이 같은 '보는 화면'끼리 한 줄에 균등 배치.
