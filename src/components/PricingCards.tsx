@@ -12,7 +12,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
       <div
         className={
           single
-            ? "mx-auto flex max-w-[48rem] justify-center"
+            ? "mx-auto flex max-w-[44rem] justify-center"
             : "mx-auto grid max-w-3xl gap-4 sm:grid-cols-3"
         }
       >
