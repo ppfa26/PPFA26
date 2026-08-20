@@ -830,11 +830,16 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── (대표님 요청) 이 CTA 박스 위에도 얇은 회색 가로선 추가 ──
+             박스 아래엔 이미 section-divider 가 있으므로, 위에도 넣어 위·아래 대칭. */}
+        <div className="section-divider" aria-hidden="true" />
+
         {/* ── 예시본 직후 독립 CTA 박스 (대표님 요청 · 예시본 카드와 분리) ──
             '이만큼 상세히 알려주는구나 → 지금 바로 진단' 유도.
-            레드 진단 CTA + 카카오톡 상담(다크 글래스) 2단 + 하단 보조 링크. */}
-        <section className="px-4 py-6 sm:py-8">
-          <div className="reveal hover-lift mx-auto flex max-w-xl flex-col items-center gap-3 rounded-3xl bg-brand-dark/95 px-6 py-7 text-center shadow-card sm:px-8">
+            레드 진단 CTA + 카카오톡 상담(다크 글래스) 2단 + 하단 보조 링크.
+            (대표님 요청) 상단 여백을 하단과 비슷하게 줄이고(py-6→py-5), 박스 가로폭을 넓힘(max-w-xl→max-w-3xl). */}
+        <section className="px-4 py-5 sm:py-6">
+          <div className="reveal hover-lift mx-auto flex max-w-3xl flex-col items-center gap-3 rounded-3xl bg-brand-dark/95 px-6 py-7 text-center shadow-card sm:px-8">
             <div className="flex w-full flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
               {/* 주 CTA - 레드 (진단 시작) */}
               <Editable
