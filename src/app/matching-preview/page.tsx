@@ -828,11 +828,15 @@ export default function MatchingPreview() {
   const adminOpen = adminView && !adminUnpaid;
 
   return (
-    <PageShell pageKey="matching-preview" stickyFooter>
+    // (대표님 요청) 모바일 결과창 하단 큰 세로 공백 제거:
+    //   stickyFooter(min-h-[100dvh] + main flex-1)를 켜두면 콘텐츠가 화면보다 짧을 때
+    //   <main>이 화면 바닥까지 늘어나, main 밖에 있는 광고 배너 '위'에 배경만 보이는
+    //   빈 공백이 생긴다. stickyFooter를 끄고 main의 flex-1도 빼서 콘텐츠→광고→푸터가
+    //   자연스러운 높이로 딱 붙게 한다.
+    <PageShell pageKey="matching-preview">
       <Header />
-      {/* 하단 여백(pb-40)으로 sticky 결제 박스에 콘텐츠가 가려지지 않게
-          상단 여백(pt-8/pt-10)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
-      <main className={`flex-1 overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminOpen || BETA_FREE ? "pb-0" : "pb-6"}`}>
+      {/* 상단 여백(pt-4/5)으로 헤더와 '분석 완료' 문구 사이에 숨통을 준다 (대표님 요청) */}
+      <main className={`overflow-x-hidden px-4 pt-4 sm:pt-5 ${adminOpen || BETA_FREE ? "pb-0" : "pb-6"}`}>
         {/* 결과창 폭(대표님 재요청: 모바일에서 너무 넓다 → 조금 줄임).
             max-w-5xl(1024) → max-w-3xl(768). 모바일 820→720 확대뷰에서
             좌우 여백이 자연스럽고, 데스크톱에서도 과하게 퍼지지 않는다. */}
