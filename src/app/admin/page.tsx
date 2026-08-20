@@ -1387,7 +1387,7 @@ export default function AdminPage() {
               · grid-cols-6 + items-stretch + 각 카드 h-full 로 가로/세로 통일
               · 내부 구조를 [레이블 / 큰 숫자(flex-1로 아래 고정)] 로 모두 동일하게 맞춰
                 '이번 달 매출'만 3줄이던 높이 불균형 제거(월 표기는 레이블로 합침)
-              · 순서: 일하기 편한 영업 흐름 → 오늘 신규 → 미접촉 → 통화완료 → 계약 → 전체 → 매출
+              · 순서: 오늘 신규 → 미접촉 → 통화완료 → 전체 고객 → 계약 → 매출
               · 포인트색은 계약(주황)만, 나머지는 뉴트럴(화이트/그레이). */}
           <section className="mb-6 grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {/* ① 오늘 신규 리드 - '오늘 전화할 대상' */}
@@ -1426,7 +1426,12 @@ export default function AdminPage() {
               <div className="text-[12px] font-semibold text-gray-500">✅ 통화완료</div>
               <div className="mt-auto text-2xl font-extrabold text-gray-900">{unifiedCallCounts["done"] ?? 0}명</div>
             </button>
-            {/* ④ 계약 - 성과(유일한 포인트색: 주황) */}
+            {/* ④ 전체 고객 - 정책: 진단서 보유자 전원을 실고객으로 집계(통합 카드 수 기준) */}
+            <div className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm">
+              <div className="text-[12px] font-semibold text-gray-500">👥 전체 고객</div>
+              <div className="mt-auto text-2xl font-extrabold text-gray-900">{unifiedCustomers.length}명</div>
+            </div>
+            {/* ⑤ 계약 - 성과(유일한 포인트색: 주황) */}
             <button
               onClick={() => {
                 setTab("customers");
@@ -1438,11 +1443,6 @@ export default function AdminPage() {
               <div className="text-[12px] font-semibold text-brand-orange">🏆 계약</div>
               <div className="mt-auto text-2xl font-extrabold text-brand-orange">{unifiedCallCounts["contract"] ?? 0}명</div>
             </button>
-            {/* ⑤ 전체 고객 - 정책: 진단서 보유자 전원을 실고객으로 집계(통합 카드 수 기준) */}
-            <div className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm">
-              <div className="text-[12px] font-semibold text-gray-500">👥 전체 고객</div>
-              <div className="mt-auto text-2xl font-extrabold text-gray-900">{unifiedCustomers.length}명</div>
-            </div>
             {/* ⑥ 이번 달 매출 - 월 표기를 레이블로 합쳐 높이(2줄) 통일 */}
             <div className="flex h-full min-h-[104px] flex-col rounded-2xl border border-gray-200 bg-white p-4 text-left shadow-sm">
               <div className="text-[12px] font-semibold text-gray-500">💰 {new Date().getMonth() + 1}월 매출</div>
