@@ -887,13 +887,14 @@ export default function MatchingPreview() {
                제목·설명·안내는 선명하게 열어 '무엇을 알려주는지' 충분히 이해시키고,
                기관명·상품명·신청 방법(버튼/링크)만 흐리게 + 클릭 차단으로 잠금 표시 */}
           {!adminView && !BETA_FREE && (
-          <p className="mt-6 break-keep text-center text-xs text-brand-gray">
+          <p className="mt-4 break-keep text-center text-xs text-brand-gray sm:mt-5">
             👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면</b>입니다. 어떤 내용을 알려드리는지 대부분 열어뒀고,
             <b className="text-brand-orange"> 기관명·상품명·신청 방법</b>만 결제 후 공개됩니다.
           </p>
           )}
           {/* ── (대표님 요청) '아래는 실제 결과 화면입니다' 안내 문구 삭제 - 화면 간결화 ── */}
-          <div className="relative mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white sm:mt-8">
+          {/* 요약 배너 바로 아래 세로 공백을 줄임(대표님 요청): mt-6/8 → mt-3/4 */}
+          <div className="relative mt-3 overflow-hidden rounded-3xl border border-gray-200 bg-white sm:mt-4">
             {/* 실제 대시보드 결과창 - 내용은 열고 이름/버튼만 부분 잠금(previewLock).
                 관리자 열람 모드 또는 오픈 베타(무료) 모드에서는 previewLock을 꺼서
                 전체 결과를 그대로 보여준다. (베타: 결제 없이 전부 무료 공개) */}
@@ -991,11 +992,11 @@ export default function MatchingPreview() {
 
       {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
            광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬.
-           CTA 박스 위 여백(mt-6)과 균일하게 광고 상·하 여백을 py-6 으로 통일(대표님 요청). */}
-      <div className="border-t border-brand-dark/5 px-4 py-6">
+           (대표님 요청) 광고 카드를 위·아래 박스와 동일한 max-w-3xl 폭으로 넓혀
+           자연스럽게 연결하고, 상·하 세로 여백을 py-4 로 균일하게 맞춘다. */}
+      <div className="px-4 pb-4 pt-4">
         <div className="mx-auto max-w-3xl">
-          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
+          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
         </div>
       </div>
 

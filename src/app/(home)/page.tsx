@@ -1058,7 +1058,7 @@ export default function Home() {
            위 섹션들과 동일한 py-7 sm:py-9 리듬으로 통일해 광고 위아래 공백 균형(대표님 요청). */}
       <div className="border-t border-brand-dark/5 px-4 py-7 sm:py-9">
         <div className="mx-auto max-w-3xl">
-          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
+          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
         </div>
       </div>
       {/* 광고 래퍼가 이미 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(대표님 요청) */}
