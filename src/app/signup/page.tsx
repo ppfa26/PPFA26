@@ -321,8 +321,8 @@ function SignupInner() {
           </Editable>
         </div>
 
-        {/* 소셜 로그인 (간편 가입) */}
-        <div className="mb-5 space-y-2">
+        {/* 소셜 로그인 (간편 가입) - 아래 안내문구와의 여백을 my-4 로 균형 통일(대표님 요청) */}
+        <div className="mb-4 space-y-2">
           <button
             type="button"
             disabled={loading}
@@ -352,18 +352,19 @@ function SignupInner() {
           </button>
         </div>
 
-        {/* 안내/오류 메시지 (소셜 로그인 공통) */}
+        {/* 안내/오류 메시지 (소셜 로그인 공통) - 위·아래 여백 동일(my-4)하게 균형 배치(대표님 요청) */}
         {msg && (
-          <p className="mb-4 rounded-lg bg-gray-50 px-3 py-2 text-center text-sm text-brand-dark">
+          <p className="my-4 rounded-lg bg-gray-50 px-3 py-2 text-center text-sm text-brand-dark">
             {msg}
           </p>
         )}
 
         {/* ── 약관 동의 영역 (삼쩜삼式) ──
-            카카오/구글 소셜 로그인 공통. 필수 항목에 직접 동의하셔야 진행됩니다. */}
+            카카오/구글 소셜 로그인 공통. 필수 항목에 직접 동의하셔야 진행됩니다.
+            (대표님 요청) 위 안내문구와 이 박스 사이 여백을 소셜버튼 아래 여백과 동일하게 통일 */}
         <div
             id="signup-consent-box"
-            className={`mt-5 rounded-2xl border bg-gray-50/70 p-4 transition ${
+            className={`mt-4 rounded-2xl border bg-gray-50/70 p-4 transition ${
               highlightConsent
                 ? "border-brand-orange ring-2 ring-brand-orange/40"
                 : "border-gray-200"
