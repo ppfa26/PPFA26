@@ -299,8 +299,8 @@ function PaymentInner() {
           </p>
         </div>
 
-        {/* 동의 체크 */}
-        <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-sm text-brand-dark">
+        {/* 동의 체크 (위·아래 여백을 mt-5 로 균일하게 맞춤) */}
+        <label className="mt-5 flex cursor-pointer items-start gap-2.5 text-sm text-brand-dark">
           <input
             type="checkbox"
             checked={agree}
