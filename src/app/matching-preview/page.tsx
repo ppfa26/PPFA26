@@ -210,12 +210,16 @@ export default function MatchingPreview() {
 
   // ── [결제 완료 감지] 결제(열람권)한 고객이면 블러를 전부 풀고 결제 유도 박스를 숨긴다 ──
   //   · 관리자 열람(?admin=1) / 무료 베타(BETA_FREE)는 이미 previewLock 이 꺼져 있으므로 판정 불필요.
-  //   · 서버(get_view_status) isActive 또는 방금 결제 성공이 남긴 localStorage("mpp_paid")로 판정.
-  //   · "방금 결제했는데도 블러가 남는" 문제 방지: 로컬 표시로 즉시 해제 + 서버 값으로 재확인.
+  //   ★ 판정 우선순위 ★
+  //     1) 로컬 힌트: 방금 결제 성공 페이지가 남긴 localStorage("mpp_paid") → 즉시 임시 오픈
+  //        (서버 RPC 반영 지연 동안 "방금 결제했는데 블러 남는" 문제 방지)
+  //     2) 서버(get_view_status)가 최종 진실: 응답이 오면 서버의 isActive 로 '덮어쓴다'.
+  //        → 관리자가 '조회권환불(remaining=0)' 하면 서버 isActive=false 가 되어
+  //          로컬 힌트가 있더라도 다시 잠긴다. stale 해진 로컬 힌트도 함께 정리.
   useEffect(() => {
     if (adminView || BETA_FREE) return;
     let cancelled = false;
-    // 1) 즉시 반영: 결제 성공 페이지가 남긴 로컬 표시 (서버 RPC 반영 지연 대비)
+    // 1) 즉시 반영(임시): 결제 성공 페이지가 남긴 로컬 힌트
     try {
       if (localStorage.getItem("mpp_paid") === "true") {
         setPaid(true);
@@ -223,13 +227,26 @@ export default function MatchingPreview() {
     } catch {
       /* localStorage 접근 불가 시 무시 */
     }
-    // 2) 서버 기준 재확인: 유효(미만료) 결제 보유 여부
+    // 2) 서버 기준 최종 판정: 유효(미만료 & 남은 조회권>0) 결제 보유 여부로 '덮어쓴다'
     (async () => {
       try {
         const vs = await fetchViewStatus();
-        if (!cancelled && vs?.isActive) setPaid(true);
+        if (cancelled || !vs) return; // 비로그인(null)/취소 시 로컬 힌트 유지
+        if (vs.isActive) {
+          setPaid(true);
+        } else {
+          // 서버가 "열람권 없음"이라고 확정 → 로컬 힌트가 있어도 다시 잠근다(환불 반영).
+          setPaid(false);
+          try {
+            localStorage.removeItem("mpp_paid");
+            localStorage.removeItem("mpp_paid_tier");
+            localStorage.removeItem("mpp_paid_at");
+          } catch {
+            /* noop */
+          }
+        }
       } catch {
-        /* 서버 판정 실패 시 로컬 표시 값 유지 */
+        /* 서버 판정 실패(네트워크 오류) 시 로컬 힌트 값 유지 (정상 고객 오탐 방지) */
       }
     })();
     return () => {

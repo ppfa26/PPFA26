@@ -1205,6 +1205,36 @@ export default function AdminPage() {
     setTimeout(() => setMsg(null), 4000);
   };
 
+  // 조회권 지급 - 결제하지 않은 회원에게도 관리자가 임의로 열람권(조회권)을 부여한다.
+  //   · 서버(admin_grant_credits)가 해당 회원에게 '지급 전용' 결제행을 만들어
+  //     결제 없이도 결과 페이지 전체를 볼 수 있게 한다(30일 열람).
+  //   · 지급 후 필요하면 '조회권환불'로 다시 열람을 막을 수 있다.
+  const grantCredits = async (email: string | null) => {
+    if (!email) {
+      setMsg("이 회원은 이메일 정보가 없어 조회권을 지급할 수 없습니다.");
+      setTimeout(() => setMsg(null), 4000);
+      return;
+    }
+    const raw = window.prompt(
+      `${email} 님에게 지급할 조회권 개수를 입력하세요.\n` +
+        `(결제 없이도 결과 페이지 전체를 볼 수 있게 됩니다 · 30일 열람)`,
+      "2"
+    );
+    if (raw === null) return; // 취소
+    const count = Math.max(parseInt(raw, 10) || 0, 1);
+    const { data, error } = await supabase.rpc("admin_grant_credits", {
+      p_email: email,
+      p_count: count,
+    });
+    setMsg(
+      error
+        ? `오류: ${error.message}`
+        : `${email} 님에게 조회권 ${String(data ?? count)}개를 지급했습니다. (30일 열람)`
+    );
+    await loadAll();
+    setTimeout(() => setMsg(null), 4000);
+  };
+
   // 회원 계정 삭제 - 관련 데이터(진단서·결제·기기)와 로그인 계정까지 제거. 되돌릴 수 없음.
   const deleteUser = async (email: string | null) => {
     if (!email) {
@@ -1875,7 +1905,18 @@ export default function AdminPage() {
                                 >
                                   🔄 기기초기화
                                 </button>
-                                {c.creditsTotal > 0 && c.creditsUsed >= c.creditsTotal ? (
+                                {/* 조회권 버튼 - 상태에 따라 3가지로 전환
+                                     · 조회권 없음(결제/지급 안 함) → 🎁 조회권지급
+                                     · 환불되어 소진됨(used>=total)   → ↩️ 조회권복구
+                                     · 조회권 남아있음                → 💸 조회권환불 */}
+                                {c.creditsTotal <= 0 ? (
+                                  <button
+                                    onClick={() => grantCredits(c.email)}
+                                    className="whitespace-nowrap rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1.5 text-center text-[11px] font-bold text-emerald-700 transition hover:bg-emerald-100"
+                                  >
+                                    🎁 조회권지급
+                                  </button>
+                                ) : c.creditsUsed >= c.creditsTotal ? (
                                   <button
                                     onClick={() => restoreCredits(c.email)}
                                     className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-center text-[11px] font-bold text-gray-700 transition hover:bg-gray-50"
