@@ -48,6 +48,50 @@ function SignupInner() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
+  // ══════════════════════════════════════════════════════════════
+  //  ★ 심사용(토스 PG 등) 숨은 이메일 로그인 ★  (대표님 요청)
+  //   · 일반 사용자에게는 절대 보이지 않는다(소셜 전용 UX 유지).
+  //   · URL 에 ?review=1 이 있을 때만 이메일+비밀번호 로그인 폼이 노출된다.
+  //   · 심사팀에는 이 링크(…/signup?review=1)와 발급한 ID/PW 를 함께 전달한다.
+  //   · 심사 통과 후에는 링크만 안 주면 되고(코드는 그대로 두어도 노출 안 됨),
+  //     완전 제거를 원하면 이 블록만 삭제하면 된다.
+  //   ※ Supabase Authentication > Providers > Email 이 켜져 있어야 동작한다.
+  // ══════════════════════════════════════════════════════════════
+  const reviewMode = params.get("review") === "1";
+  const [emailId, setEmailId] = useState("");
+  const [emailPw, setEmailPw] = useState("");
+
+  // 이메일/비밀번호 로그인 (심사 전용)
+  const handleEmailLogin = async () => {
+    setMsg(null);
+    const email = emailId.trim();
+    if (!email || !emailPw) {
+      setMsg("이메일과 비밀번호를 입력해 주세요.");
+      return;
+    }
+    // 심사용 로그인은 필수 동의 4종을 자동 체크 처리(심사자가 매번 체크하지 않도록).
+    setAgreeAge(true);
+    setAgreeTerms(true);
+    setAgreePrivacy(true);
+    setAgreeThird(true);
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password: emailPw,
+      });
+      if (error) {
+        setMsg("로그인 실패: " + error.message);
+        setLoading(false);
+        return;
+      }
+      // 성공 시 onAuthStateChange(SIGNED_IN) 가 잡아 자동 이동한다.
+    } catch (e) {
+      setMsg("로그인 중 오류가 발생했습니다. " + String(e));
+      setLoading(false);
+    }
+  };
+
   // ── 약관 동의 (삼쩜삼式 필수/선택 분리, 대표님 요청) ──
   //  필수 4종 + 선택(마케팅) 1종. '전체 동의' 마스터 체크 제공.
   //  가입/소셜로그인 버튼을 누르면 필수 항목은 자동 체크되어 진행된다.
@@ -351,6 +395,46 @@ function SignupInner() {
             Google로 시작하기
           </button>
         </div>
+
+        {/* ── 심사용(토스 등) 숨은 이메일 로그인 폼 ──
+            일반 사용자에겐 안 보이고, URL 에 ?review=1 이 있을 때만 노출된다.
+            심사팀에 링크(…/signup?review=1)와 ID/PW 를 함께 전달한다. */}
+        {reviewMode && (
+          <div className="mb-4 rounded-2xl border border-gray-300 bg-white p-4">
+            <p className="mb-3 text-center text-xs font-semibold text-brand-dark/70">
+              심사용 로그인 (이메일 · 비밀번호)
+            </p>
+            <div className="space-y-2">
+              <input
+                type="email"
+                value={emailId}
+                onChange={(e) => setEmailId(e.target.value)}
+                placeholder="이메일(아이디)"
+                autoComplete="username"
+                className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+              />
+              <input
+                type="password"
+                value={emailPw}
+                onChange={(e) => setEmailPw(e.target.value)}
+                placeholder="비밀번호"
+                autoComplete="current-password"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void handleEmailLogin();
+                }}
+                className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+              />
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => void handleEmailLogin()}
+                className="w-full rounded-2xl bg-brand-dark py-3.5 text-sm font-bold text-white transition duration-150 hover:bg-black active:scale-[0.98] disabled:opacity-60"
+              >
+                {loading ? "로그인 중…" : "이메일로 로그인"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* 안내/오류 메시지 (소셜 로그인 공통) - 위·아래 여백 동일(my-4)하게 균형 배치(대표님 요청) */}
         {msg && (
