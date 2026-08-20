@@ -175,9 +175,9 @@ export default function MyPage() {
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       진단 결과
                     </p>
-                    <p className="mt-0.5 text-lg font-black leading-none text-brand-dark sm:text-xl">
+                    <span className="mt-1.5 inline-block whitespace-nowrap rounded-full bg-brand-dark px-3 py-1 text-sm font-black leading-none text-white sm:text-base">
                       {matchCount === null ? "–" : `${matchCount}개`}
-                    </p>
+                    </span>
                   </div>
                   {/* ② 이용권(열람) 상태 */}
                   <div className="rounded-3xl border border-gray-200 bg-white p-3 text-center shadow-card transition-shadow duration-200 hover:shadow-cardHover sm:p-3.5">
@@ -185,13 +185,13 @@ export default function MyPage() {
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       이용권
                     </p>
-                    <p
-                      className={`mt-0.5 text-lg font-black leading-none sm:text-xl ${
-                        viewStatus?.isActive ? "text-brand-red" : "text-brand-dark/40"
+                    <span
+                      className={`mt-1.5 inline-block whitespace-nowrap rounded-full px-3 py-1 text-sm font-black leading-none text-white sm:text-base ${
+                        viewStatus?.isActive ? "bg-brand-dark" : "bg-brand-dark/40"
                       }`}
                     >
                       {viewStatus?.isActive ? "이용중" : "없음"}
-                    </p>
+                    </span>
                   </div>
                   {/* ③ 결제 건수 */}
                   <div className="rounded-3xl border border-gray-200 bg-white p-3 text-center shadow-card transition-shadow duration-200 hover:shadow-cardHover sm:p-3.5">
@@ -199,9 +199,9 @@ export default function MyPage() {
                     <p className="mt-1 text-[11px] font-semibold text-brand-gray sm:text-xs">
                       결제 내역
                     </p>
-                    <p className="mt-0.5 text-lg font-black leading-none text-brand-dark sm:text-xl">
+                    <span className="mt-1.5 inline-block whitespace-nowrap rounded-full bg-brand-dark px-3 py-1 text-sm font-black leading-none text-white sm:text-base">
                       {payments.length}건
-                    </p>
+                    </span>
                   </div>
                 </div>
               )}
