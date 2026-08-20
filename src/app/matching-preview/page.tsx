@@ -875,7 +875,7 @@ export default function MatchingPreview() {
               💳 부담 없는 1회성 결제로 내 사업장에 맞는 모든 정부지원사업을 확인하세요. (VAT 포함)
             </p>
             <a
-              href="/pricing"
+              href="/payment?tier=basic"
               className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
             >
               💳 지금 결제하고 전체 결과 확인하기
@@ -978,7 +978,7 @@ export default function MatchingPreview() {
             <Editable
               id="preview-lock-cta"
               as="a"
-              href="/pricing"
+              href="/payment?tier=basic"
               className="btn-brand mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
             >
               지금 결제하고 전체 결과 확인하기
@@ -1032,7 +1032,7 @@ export default function MatchingPreview() {
           <Editable
             id="preview-sticky-cta"
             as="a"
-            href="/pricing"
+            href="/payment?tier=basic"
             className="btn-brand mt-2 block w-full rounded-full py-3 text-center text-sm font-bold sm:text-base"
           >
             💳 지금 결제하고 전체 결과 확인하기

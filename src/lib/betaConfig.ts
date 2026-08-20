@@ -13,7 +13,7 @@
 // ────────────────────────────────────────────────────────────────
 
 /** true = 오픈 베타(무료) 모드 / false = 정식 유료(결제) 모드 */
-export const BETA_FREE = true;
+export const BETA_FREE = false;
 
 /** 정식 오픈가 (정식 유료 전환 시 판매가) - 1회성 결제·부가세 포함. 29,700원으로 확정(대표님 결정) */
 export const OFFICIAL_PRICE = 29700;
