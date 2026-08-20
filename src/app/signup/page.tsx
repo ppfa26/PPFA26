@@ -288,7 +288,7 @@ function SignupInner() {
       <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-12">
         <div className="grid grid-cols-1 overflow-hidden rounded-3xl border border-gray-200 shadow-card lg:grid-cols-2">
         {/* 좌측 브랜드 패널 - 데스크톱 전용(모바일 숨김) · 로고 중복 없음(상단 헤더에 이미 있음) */}
-        <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-center lg:gap-8 lg:p-10">
+        <aside className="relative hidden overflow-hidden bg-brand-dark lg:flex lg:flex-col lg:justify-start lg:gap-8 lg:px-10 lg:py-12">
           <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand-yellow/20 blur-3xl" />
           <div className="absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-brand-orange/20 blur-3xl" />
           <div className="relative">
@@ -330,7 +330,7 @@ function SignupInner() {
         </aside>
 
         {/* 우측 로그인 폼 */}
-        <main className="mx-auto flex w-full max-w-md flex-col justify-center bg-white px-6 py-10 sm:px-8">
+        <main className="mx-auto flex w-full max-w-md flex-col justify-start bg-white px-6 py-12 sm:px-8">
         {/* 선택한 상품 요약 */}
         {selected && (
           <section
