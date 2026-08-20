@@ -118,8 +118,8 @@ export default function Home() {
   //  · 평균 매칭 개수도 26~29 사이에서 하루 단위로 미세하게 흔들어 '살아있는' 느낌.
   //  · SSR(서버)과 첫 렌더가 어긋나면(hydration mismatch) 경고가 나므로,
   //    초기값은 기준값(500/27)으로 두고 마운트 후 useEffect 에서 실제 날짜로 반영한다.
-  const BASE_DATE = new Date(2026, 7, 20); // 2026-08-20 (월은 0부터: 7=8월)
-  const BASE_USERS = 500;
+  const BASE_DATE = new Date(2026, 7, 20); // 2026-08-20 (월은 0부터: 7=8월) - 시작 기준일
+  const BASE_USERS = 512; // 오늘(기준일) 시작값
   const BASE_MATCH = 27;
   const [usedCompanies, setUsedCompanies] = useState(BASE_USERS);
   const [avgMatch, setAvgMatch] = useState(BASE_MATCH);
