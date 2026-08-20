@@ -909,8 +909,8 @@ export default function MatchingPreview() {
           {/* ── (대표님 요청) 오픈 베타(무료) 안내 한 줄 문구 삭제 ── */}
 
           {/* ── 결과창 맨 하단 CTA - 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ──
-              (대표님 요청) 결과 패널과 CTA 사이 세로 공백 축소: mt-6 → mt-4 */}
-          <section className="mt-4 px-0 pb-0 sm:mt-4">
+              (대표님 요청) CTA 카드 위·아래 세로 공백을 동일하게(mt-6=아래 구분선 mt-6) 균형 배치 */}
+          <section className="mt-6 px-0 pb-0 sm:mt-6">
             <div className="mx-auto max-w-3xl rounded-3xl bg-brand-dark p-4 text-center shadow-card sm:p-6">
               <Editable
                 id="preview-bottom-cta-title"
@@ -950,6 +950,11 @@ export default function MatchingPreview() {
               </div>
             </div>
           </section>
+
+          {/* ── (대표님 요청) CTA 카드 아래 얇은 회색 구분선 ──
+               홈 화면과 동일한 section-divider 로 GROWTH STORIES(푸터)와
+               자연스럽게 구획을 나누고, 위·아래 여백을 my-6 으로 균형있게 준다. */}
+          <div className="section-divider my-6" aria-hidden="true" />
 
           {/* ── 결제 유도 박스 (최하단, 정식 유료 모드 전용) ── */}
           {!adminView && !BETA_FREE && (
