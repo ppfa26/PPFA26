@@ -1472,6 +1472,13 @@ export default function DiagnosisChat() {
                             {bnoMsg.text}
                           </p>
                         )}
+                        {/* 오류가 없을 때 상시 안내 — 국세청 실시간 조회로 '실제 등록된' 번호만 진행 가능 */}
+                        {!bnoMsg && (
+                          <p className="mt-1.5 break-keep px-1 text-[11px] leading-relaxed text-brand-gray">
+                            ※ 국세청에 등록된 <b>실제 사업자등록번호</b>를 입력해야 다음(진단
+                            결과)으로 넘어갑니다.
+                          </p>
+                        )}
                       </div>
                     )}
 

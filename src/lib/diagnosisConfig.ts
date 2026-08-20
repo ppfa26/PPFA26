@@ -28,7 +28,7 @@ export const DIAGNOSIS_TEXT = {
 export const BNO_TEXT = {
   title: "🔍 사업자등록번호 국세청 자동 조회",
   badge: "(필수)",
-  placeholder: "숫자 10자리만 입력 (예: 1234567890)",
+  placeholder: "예: 5971202897 (숫자 10자리)",
   button: "조회하기",
   buttonLoading: "조회 중...",
   statusPrefix: "사업자 상태:",
