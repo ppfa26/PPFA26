@@ -123,15 +123,10 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               ))}
             </ul>
 
-            {/* 버튼 - A안(다크 유리) 재디자인: popular 카드는 다크 유리 배경이 되므로
-                버튼을 골드(brand-grad)로 바꿔 유리 위에서 또렷하게 강조 */}
+            {/* 버튼 - 사이트 전체 메인 CTA(빨강 배경 + 흰 글씨, .btn-red)와 통일 (대표님 요청) */}
             <Link
               href={BETA_FREE ? "/diagnosis-chat" : `/signup?tier=${tier.id}`}
-              className={`pricing-cta mt-4 block rounded-full py-2.5 text-center text-base font-bold ${
-                tier.popular
-                  ? "bg-brand-grad text-brand-dark hover:opacity-90"
-                  : "btn-brand"
-              }`}
+              className="pricing-cta btn-red mt-4 block rounded-full py-2.5 text-center text-base font-bold"
             >
               {BETA_FREE ? "오픈 베타 기간 무료 진단 시작하기" : tier.cta}
             </Link>

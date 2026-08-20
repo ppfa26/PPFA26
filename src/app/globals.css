@@ -733,8 +733,12 @@ body.theme-dark {
      골드 CTA 버튼(.pricing-cta) 안 글자는 노랑 위 검정이라 별도로 유지. */
   .bg-brand-grad:not(.pricing-card-popular),
   .bg-brand-grad:not(.pricing-card-popular) * { color: #191919 !important; }
-  .pricing-card-popular .pricing-cta,
-  .pricing-card-popular .pricing-cta * { color: #191919 !important; }
+  /* 단, .btn-red(빨강 배경) CTA 는 흰 글자를 유지해야 하므로 :not(.btn-red) 로 제외 */
+  .pricing-card-popular .pricing-cta:not(.btn-red),
+  .pricing-card-popular .pricing-cta:not(.btn-red) * { color: #191919 !important; }
+  /* 빨강 CTA(.btn-red) 안 글자는 항상 흰색 유지 */
+  .pricing-card-popular .pricing-cta.btn-red,
+  .pricing-card-popular .pricing-cta.btn-red * { color: #ffffff !important; }
   /* 노란 CTA(그라데이션/노랑) 박스 '안'에 놓인 검정 알약 버튼(bg-brand-dark)은
      배경이 검정이므로 글자를 다시 흰색으로 되돌린다. (대표님: 오른쪽 버튼 안 보임)
      bg-brand-grad * 규칙이 자식 검정 버튼 글자까지 검정으로 덮어버리던 문제 해결. */
