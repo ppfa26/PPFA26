@@ -954,7 +954,7 @@ export default function MatchingPreview() {
           {/* ── (대표님 요청) CTA 카드 아래 얇은 회색 구분선 ──
                홈 화면과 동일한 section-divider 로 GROWTH STORIES(푸터)와
                자연스럽게 구획을 나누고, 위·아래 여백을 my-6 으로 균형있게 준다. */}
-          <div className="section-divider my-6" aria-hidden="true" />
+          <div className="section-divider mt-6 mb-2" aria-hidden="true" />
 
           {/* ── (대표님 요청) 최하단 결제 유도 박스 삭제 ──
                결제 박스는 상단(요약 배너 아래)에 이미 있으므로 중복 제거. ── */}
@@ -966,7 +966,9 @@ export default function MatchingPreview() {
            (대표님 요청) 광고 카드를 위·아래 박스와 동일한 max-w-3xl 폭으로 넓혀
            자연스럽게 연결. 광고가 없을 땐(NO-AD) AdFitBanner 가 null 을 반환하므로
            바깥 세로 패딩은 최소(py-2)만 두어 빈 공백이 남지 않게 한다. */}
-      <div className="px-4 pb-5 pt-0">
+      {/* (대표님 요청) 광고 세로 공백 균형 조정: 상단 여백은 줄이고(pt-2) 하단 여백은 넉넉히(pb-10)
+           → 광고가 위 콘텐츠와 너무 떨어지지 않으면서, 아래(푸터)와는 시원하게 간격을 둔다. */}
+      <div className="px-4 pb-10 pt-2">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
         </div>

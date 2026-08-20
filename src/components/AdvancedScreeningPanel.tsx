@@ -941,17 +941,17 @@ function AdvancedResult({
                   <span className="flex flex-wrap items-center justify-between gap-2">
                     {/* ★ 다이어트(대표님 요청) ★ 카드 제목에 이미 '무상 사업화 자금'이라 적혀 있어
                         항목마다 반복되던 '사업화 자금' 배지는 삭제. 대신 금액을 크고 선명하게. */}
-                    <span className="flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark">
+                    <span className={`flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>
                       {p.name}
                     </span>
-                    <span className="shrink-0 break-keep text-sm font-black text-brand-green">{p.amount}</span>
+                    <span className={`shrink-0 break-keep text-sm font-black text-brand-green ${lockTextSoft}`}>{p.amount}</span>
                   </span>
                 }
               >
                 <p className="break-keep text-xs leading-relaxed text-brand-dark/70">
-                  <b className="text-brand-dark/80">대상</b> · {p.target}
+                  <b className="text-brand-dark/80">대상</b> · <span className={lockTextSoft}>{p.target}</span>
                 </p>
-                <p className="mt-1 break-keep text-xs leading-relaxed text-brand-dark/60">
+                <p className={`mt-1 break-keep text-xs leading-relaxed text-brand-dark/60 ${lockTextSoft}`}>
                   {p.detail}
                 </p>
                 {/* ★ 버튼 4종 (대표님 요청) ★ ① 신청하러 가기(사이트) ② 신청 방법·서류(매뉴얼) ③ 소요기간 ④ 연락처

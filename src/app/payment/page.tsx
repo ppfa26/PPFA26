@@ -17,7 +17,12 @@ import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
 //     → 실제 돈은 빠지지 않는 테스트 결제로 처리됩니다.
 //     심사 통과 후 운영 클라이언트 키를 배포 환경변수(NEXT_PUBLIC_TOSS_CLIENT_KEY)에 넣으면 그 값이 우선 사용됩니다.
 //     ※ 서버(confirm 라우트)의 시크릿 키와 반드시 '세트'여야 합니다. (테스트-테스트 / 운영-운영)
-const TOSS_TEST_CLIENT_KEY = "test_ck_LlDJaYngro7ajD6Jv2vXrezGdRpX";
+// ★ 토스페이먼츠 '공식 문서·GitHub 샘플'의 개별 연동 테스트 클라이언트 키 ★
+//   (개발 연동 체험 상점 · 계약이 항상 활성 상태라 결제창이 정상적으로 열립니다)
+//   ※ 이전에 쓰던 test_ck_LlDJaYngro7ajD6Jv2vXrezGdRpX 는 계약 비활성 상점 키라
+//      결제창에서 "업체 사정으로 결제 일시 중지 (2003)" 오류가 발생했습니다. → 공식 키로 교체.
+//   ※ 반드시 confirm 라우트의 시크릿 키(test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R)와 '세트'입니다.
+const TOSS_TEST_CLIENT_KEY = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
 
 // ★ 키 방어 로직 ★
 //   v2 결제창 SDK(tossPayments.payment)는 'API 개별 연동 키'(client: test_ck_ / live_ck_)만 지원합니다.
@@ -234,7 +239,7 @@ function PaymentInner() {
   return (
     <PageShell pageKey="payment">
       <Header />
-      <main className="mx-auto min-h-[70vh] w-full max-w-xl px-4 py-8">
+      <main className="mx-auto min-h-[70vh] w-full max-w-2xl px-4 py-8">
         <div className="mb-6 text-center">
           <Editable id="payment-title" as="h1" className="text-2xl font-extrabold text-brand-dark">
             결제하기
@@ -275,10 +280,10 @@ function PaymentInner() {
           </ul>
         </section>
 
-        {/* 안내 문구 */}
-        <ul className="mb-5 space-y-2 rounded-2xl bg-gray-50 p-5 text-xs leading-relaxed text-brand-gray">
+        {/* 안내 문구 — 각 항목을 '한 줄'로 표시 (박스가 넓어 잘리지 않으며, 아주 좁은 화면에서만 가로 스크롤) */}
+        <ul className="mb-5 space-y-2 overflow-x-auto rounded-2xl bg-gray-50 p-5 text-[11px] leading-relaxed text-brand-gray sm:text-xs">
           {COMMON_NOTES.map((n, i) => (
-            <li key={i} className="break-keep">{n}</li>
+            <li key={i} className="whitespace-nowrap">{n}</li>
           ))}
         </ul>
 
@@ -286,7 +291,9 @@ function PaymentInner() {
         <div className="mb-1 rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-sm">
           <p className="text-sm font-bold text-brand-dark">💳 신용/체크카드 결제</p>
           <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-gray">
-            아래 버튼을 누르면 <strong>토스페이먼츠(TossPayments)</strong> 결제창이 열립니다. 카드사 정식 인증 절차를 거쳐 안전하게 결제됩니다.
+            아래 버튼을 누르면 <strong>토스페이먼츠(TossPayments)</strong> 결제창이 열립니다.
+            <br className="hidden sm:block" />
+            카드사 정식 인증 절차를 거쳐 안전하게 결제됩니다.
           </p>
         </div>
 

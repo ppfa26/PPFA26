@@ -1028,7 +1028,7 @@ export default function Home() {
               <a
                 id="home-cta-button"
                 href="/diagnosis-chat"
-                className="btn-red w-full rounded-full px-8 py-3.5 text-base font-bold sm:w-auto"
+                className="btn-red w-full whitespace-nowrap rounded-full px-8 py-3.5 text-base font-extrabold tracking-[-0.02em] animate-pulseGlow sm:w-auto"
               >
                 지금 내 지원사업 확인하기
               </a>
