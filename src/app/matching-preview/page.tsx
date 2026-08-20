@@ -1039,9 +1039,9 @@ export default function MatchingPreview() {
            (대표님 요청) 광고 카드를 위·아래 박스와 동일한 max-w-3xl 폭으로 넓혀
            자연스럽게 연결. 광고가 없을 땐(NO-AD) AdFitBanner 가 null 을 반환하므로
            바깥 세로 패딩은 최소(py-2)만 두어 빈 공백이 남지 않게 한다. */}
-      {/* (대표님 요청) 광고 세로 공백 균형 조정: 상단 여백은 줄이고(pt-2) 하단 여백은 넉넉히(pb-10)
-           → 광고가 위 콘텐츠와 너무 떨어지지 않으면서, 아래(푸터)와는 시원하게 간격을 둔다. */}
-      <div className="px-4 pb-10 pt-2">
+      {/* (대표님 요청) 광고 세로 공백을 위·아래 동일하게(py-6) 균일 배치 →
+           광고 배너 상단(더 궁금한 점 카드)·하단(푸터) 여백이 대칭이 되도록 통일. */}
+      <div className="px-4 py-6">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
         </div>
