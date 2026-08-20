@@ -934,7 +934,9 @@ export default function AdminPage() {
         diagDone: done,
         ips,
         latestAt: latest || u.joined_at || "",
-        noteKey: top?.id || null,
+        // 진단서가 있으면 진단서 id, 없으면(가입만·진단 전) 회원 고유키로 통화상태·메모 저장
+        //  → 진단서 없어도 통화 상태를 체크·저장할 수 있게 함 (대표님 요청)
+        noteKey: top?.id || `u:${u.email}`,
         expiry: u.latest_expiry,
         creditsTotal: u.credits_total || 0,
         creditsUsed: u.credits_used || 0,
@@ -977,7 +979,7 @@ export default function AdminPage() {
         diagDone: done,
         ips: [],
         latestAt: top?.created_at || "",
-        noteKey: top?.id || null,
+        noteKey: top?.id || `lead:${gkey}`,
         expiry: null,
         creditsTotal: 0,
         creditsUsed: 0,
@@ -2157,14 +2159,18 @@ export default function AdminPage() {
                                   </span>
                                 )}
                               </div>
-                              {/* 상담 메모 */}
+                              {/* 상담 메모 - 통화상태는 진단서 없어도 저장되지만, 메모 입력창은 그대로 사용 가능하게 함 */}
                               <div className="flex items-start gap-2">
                                 <textarea
                                   value={unifiedMemoDraft[c.noteKey] ?? leadNotes[c.noteKey]?.memo ?? ""}
                                   onChange={(e) =>
                                     setUnifiedMemoDraft((prev) => ({ ...prev, [c.noteKey!]: e.target.value }))
                                   }
-                                  placeholder="💬 상담 메모 (통화 내용, 니즈, 다음 액션 등)"
+                                  placeholder={
+                                    c.diagList.length > 0
+                                      ? "💬 상담 메모 (통화 내용, 니즈, 다음 액션 등)"
+                                      : "💬 상담 메모 (가입만·진단 전 회원 · 통화 내용 등)"
+                                  }
                                   rows={2}
                                   className="min-w-0 flex-1 resize-y rounded-lg border border-gray-200 px-3 py-2 text-[12px] text-gray-800 outline-none focus:border-brand-orange"
                                 />
@@ -2180,10 +2186,15 @@ export default function AdminPage() {
                                   저장
                                 </button>
                               </div>
+                              {c.diagList.length === 0 && (
+                                <p className="mt-2 text-[11px] text-gray-400">
+                                  ※ 아직 진단서를 작성하지 않은 회원이에요. 통화 상태·메모는 저장됩니다.
+                                </p>
+                              )}
                             </div>
                           ) : (
                             <p className="mt-3 text-[11px] text-gray-400">
-                              진단서가 없어 상담 메모를 저장할 수 없습니다.
+                              통화 상태를 저장할 수 없습니다.
                             </p>
                           )}
                         </div>
