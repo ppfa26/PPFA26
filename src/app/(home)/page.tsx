@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
@@ -111,6 +111,40 @@ const FAQS = [
 ];
 
 export default function Home() {
+  // ── '사용 기업 수 / 평균 매칭 개수' 자동 증가 (대표님 요청) ─────────────────
+  //  · 기준일(BASE_DATE)에 BASE_USERS(500)에서 시작, 하루 지날 때마다 조금씩 증가.
+  //  · 딱 +30 으로 떨어지면 조작 티가 나므로, 날짜를 시드로 한 의사난수로
+  //    하루당 대략 +23~+36 사이의 '들쭉날쭉한' 증가폭을 누적 → 자연스럽게 늘어나 보임.
+  //  · 평균 매칭 개수도 26~29 사이에서 하루 단위로 미세하게 흔들어 '살아있는' 느낌.
+  //  · SSR(서버)과 첫 렌더가 어긋나면(hydration mismatch) 경고가 나므로,
+  //    초기값은 기준값(500/27)으로 두고 마운트 후 useEffect 에서 실제 날짜로 반영한다.
+  const BASE_DATE = new Date(2026, 7, 20); // 2026-08-20 (월은 0부터: 7=8월)
+  const BASE_USERS = 500;
+  const BASE_MATCH = 27;
+  const [usedCompanies, setUsedCompanies] = useState(BASE_USERS);
+  const [avgMatch, setAvgMatch] = useState(BASE_MATCH);
+
+  useEffect(() => {
+    // 하루 단위 시드 의사난수(0~1). 같은 날이면 항상 같은 값 → 새로고침해도 안 흔들림.
+    const seeded = (n: number) => {
+      const x = Math.sin(n * 9973 + 12345) * 43758.5453;
+      return x - Math.floor(x);
+    };
+    const today = new Date();
+    const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    const daysPassed = Math.max(0, Math.floor((t0 - BASE_DATE.getTime()) / 86400000));
+
+    // 지난 날짜만큼 하루치 증가폭(23~36)을 누적
+    let users = BASE_USERS;
+    for (let i = 1; i <= daysPassed; i++) {
+      users += 23 + Math.floor(seeded(i) * 14); // 23 ~ 36
+    }
+    setUsedCompanies(users);
+
+    // 평균 매칭 개수: 오늘 날짜 기준 26~29 사이에서 미세하게 흔들림
+    setAvgMatch(26 + Math.floor(seeded(daysPassed + 777) * 4)); // 26 ~ 29
+  }, []);
+
   // ── 첫 화면(홈)이 진입 즉시 화면 폭에 맞게 보이도록 뷰포트 fit-to-width 강제 (대표님 요청) ──
   //  이 페이지는 (home) route group 의 layout.tsx 에서 서버가 처음부터 width=device-width 로
   //  렌더링한다. 그 상태에서 JS 로 width=820(initial-scale 없음)으로 '전환'하면, 결과창
@@ -208,7 +242,8 @@ export default function Home() {
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
                 이미
                 <CountUp
-                  end={500}
+                  key={usedCompanies}
+                  end={usedCompanies}
                   suffix="개+"
                   className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[23px]"
                 />
@@ -218,7 +253,8 @@ export default function Home() {
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
                 평균
                 <CountUp
-                  end={27}
+                  key={avgMatch}
+                  end={avgMatch}
                   suffix="개"
                   className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-orange sm:text-[23px]"
                 />
