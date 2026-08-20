@@ -49,19 +49,17 @@ function SignupInner() {
   const [msg, setMsg] = useState<string | null>(null);
 
   // ══════════════════════════════════════════════════════════════
-  //  ★ 심사용(토스 PG 등) 숨은 이메일 로그인 ★  (대표님 요청)
-  //   · 일반 사용자에게는 절대 보이지 않는다(소셜 전용 UX 유지).
-  //   · URL 에 ?review=1 이 있을 때만 이메일+비밀번호 로그인 폼이 노출된다.
-  //   · 심사팀에는 이 링크(…/signup?review=1)와 발급한 ID/PW 를 함께 전달한다.
-  //   · 심사 통과 후에는 링크만 안 주면 되고(코드는 그대로 두어도 노출 안 됨),
-  //     완전 제거를 원하면 이 블록만 삭제하면 된다.
+  //  ★ 이메일 로그인 (상시 노출) ★  (대표님 요청)
+  //   · 카카오/구글 소셜 로그인과 함께, 이메일+비밀번호 로그인도 항상 제공.
+  //   · 심사팀(토스 PG 등)이 별도 링크 없이 일반 로그인 화면에서
+  //     이메일·비밀번호로 바로 로그인할 수 있게 한다.
+  //   · 계정은 Supabase Authentication 에서 발급한다.
   //   ※ Supabase Authentication > Providers > Email 이 켜져 있어야 동작한다.
   // ══════════════════════════════════════════════════════════════
-  const reviewMode = params.get("review") === "1";
   const [emailId, setEmailId] = useState("");
   const [emailPw, setEmailPw] = useState("");
 
-  // 이메일/비밀번호 로그인 (심사 전용)
+  // 이메일/비밀번호 로그인
   const handleEmailLogin = async () => {
     setMsg(null);
     const email = emailId.trim();
@@ -396,45 +394,44 @@ function SignupInner() {
           </button>
         </div>
 
-        {/* ── 심사용(토스 등) 숨은 이메일 로그인 폼 ──
-            일반 사용자에겐 안 보이고, URL 에 ?review=1 이 있을 때만 노출된다.
-            심사팀에 링크(…/signup?review=1)와 ID/PW 를 함께 전달한다. */}
-        {reviewMode && (
-          <div className="mb-4 rounded-2xl border border-gray-300 bg-white p-4">
-            <p className="mb-3 text-center text-xs font-semibold text-brand-dark/70">
-              심사용 로그인 (이메일 · 비밀번호)
-            </p>
-            <div className="space-y-2">
-              <input
-                type="email"
-                value={emailId}
-                onChange={(e) => setEmailId(e.target.value)}
-                placeholder="이메일(아이디)"
-                autoComplete="username"
-                className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
-              />
-              <input
-                type="password"
-                value={emailPw}
-                onChange={(e) => setEmailPw(e.target.value)}
-                placeholder="비밀번호"
-                autoComplete="current-password"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") void handleEmailLogin();
-                }}
-                className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
-              />
-              <button
-                type="button"
-                disabled={loading}
-                onClick={() => void handleEmailLogin()}
-                className="w-full rounded-2xl bg-brand-dark py-3.5 text-sm font-bold text-white transition duration-150 hover:bg-black active:scale-[0.98] disabled:opacity-60"
-              >
-                {loading ? "로그인 중…" : "이메일로 로그인"}
-              </button>
-            </div>
+        {/* ── 이메일 로그인 폼 (상시 노출) ──
+            심사팀(토스 PG 등)이 별도 링크 없이 일반 로그인 화면에서
+            이메일·비밀번호로 로그인할 수 있도록 항상 표시한다(대표님 요청).
+            계정은 Supabase Authentication 에서 발급. */}
+        <div className="mb-4 rounded-2xl border border-gray-300 bg-white p-4">
+          <p className="mb-3 text-center text-xs font-semibold text-brand-dark/70">
+            이메일로 로그인
+          </p>
+          <div className="space-y-2">
+            <input
+              type="email"
+              value={emailId}
+              onChange={(e) => setEmailId(e.target.value)}
+              placeholder="이메일(아이디)"
+              autoComplete="username"
+              className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+            />
+            <input
+              type="password"
+              value={emailPw}
+              onChange={(e) => setEmailPw(e.target.value)}
+              placeholder="비밀번호"
+              autoComplete="current-password"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") void handleEmailLogin();
+              }}
+              className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm text-brand-dark outline-none focus:border-brand-orange"
+            />
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => void handleEmailLogin()}
+              className="w-full rounded-2xl bg-brand-dark py-3.5 text-sm font-bold text-white transition duration-150 hover:bg-black active:scale-[0.98] disabled:opacity-60"
+            >
+              {loading ? "로그인 중…" : "이메일로 로그인"}
+            </button>
           </div>
-        )}
+        </div>
 
         {/* 안내/오류 메시지 (소셜 로그인 공통) - 위·아래 여백 동일(my-4)하게 균형 배치(대표님 요청) */}
         {msg && (
