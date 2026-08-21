@@ -29,11 +29,13 @@ export const CALL_STATUS_META: Record<
     dot: "bg-red-500",
   },
   done: {
-    // 통화완료 = 완료된 정상상태 → 뉴트럴 그레이(튀지 않게)
+    // 통화완료 = 완료된 정상상태 → (대표님 요청) 회색은 활성/비활성 구분이 안 돼
+    //   'ON' 이 잘 안 보였다. 초록으로 바꿔 한눈에 활성 표시가 보이게.
+    //   (미접촉=레드 / 부재중=주황 / 계약=진주황 과 색이 겹치지 않는 초록)
     label: "통화 완료",
     short: "통화완료",
-    cls: "bg-gray-100 text-gray-600 border-gray-200",
-    dot: "bg-gray-400",
+    cls: "bg-green-100 text-green-700 border-green-300",
+    dot: "bg-green-500",
   },
   absent: {
     // 부재중 = 재통화 필요(주의) → 주황

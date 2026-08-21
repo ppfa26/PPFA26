@@ -271,6 +271,10 @@ export default function AdminPage() {
   const [unifiedCall, setUnifiedCall] = useState<"all" | CallStatus>("all"); // 통화상태 필터
   const [unifiedTodayOnly, setUnifiedTodayOnly] = useState(false); // 오늘(00~24시) 접수 신규 리드만 보기
   const [unifiedMemoDraft, setUnifiedMemoDraft] = useState<Record<string, string>>({}); // 통합 카드 메모 입력
+  // (대표님 요청) 메모 저장 직후 '저장됨' 인라인 피드백을 '그 카드 옆'에 보여주기 위한 상태.
+  //   기존엔 저장 안내가 페이지 맨 위 배너로만 떠서, 스크롤 내려서 저장한 직원 눈엔
+  //   안 보여 '저장이 안 된다'는 오해가 있었다. → 저장 버튼 바로 옆에 표시.
+  const [memoSavedKey, setMemoSavedKey] = useState<string | null>(null);
 
   // IP 집계·접속 로그 표가 세로로 너무 길어서 기본은 접어두고, 헤더 클릭 시 펼침.
   const [ipListOpen, setIpListOpen] = useState(false); // 🌐 IP별 접속 집계 접기/펼치기
@@ -2342,15 +2346,28 @@ export default function AdminPage() {
                                 <button
                                   onClick={() => {
                                     const memo = unifiedMemoDraft[c.noteKey!] ?? leadNotes[c.noteKey!]?.memo ?? "";
+                                    // 저장 실행 + 입력 임시값을 확정값으로 반영(재클릭해도 유지)
                                     setLeadNotes(saveLeadNote(c.noteKey!, { memo }));
-                                    setMsg("메모를 저장했어요.");
-                                    setTimeout(() => setMsg(null), 2000);
+                                    setUnifiedMemoDraft((prev) => ({ ...prev, [c.noteKey!]: memo }));
+                                    // ★ 저장 버튼 '바로 옆'에 저장 완료 표시(대표님 요청) ★
+                                    //   맨 위 배너는 스크롤 내려서 저장한 직원 눈에 안 보였음.
+                                    setMemoSavedKey(c.noteKey!);
+                                    setTimeout(
+                                      () => setMemoSavedKey((k) => (k === c.noteKey ? null : k)),
+                                      2000
+                                    );
                                   }}
-                                  className="shrink-0 self-stretch rounded-lg bg-brand-orange px-3 text-[12px] font-bold text-white hover:opacity-90"
+                                  className="shrink-0 self-stretch rounded-lg bg-brand-orange px-3 text-[12px] font-bold text-white transition-transform duration-150 hover:scale-105 hover:opacity-90 active:scale-95"
                                 >
                                   저장
                                 </button>
                               </div>
+                              {/* 저장 완료 인라인 피드백 - 그 카드 안에서 바로 보이게 */}
+                              {memoSavedKey === c.noteKey && (
+                                <p className="mt-1.5 flex items-center gap-1 text-[12px] font-bold text-green-600">
+                                  ✅ 저장되었습니다.
+                                </p>
+                              )}
                               {c.diagList.length === 0 && (
                                 <p className="mt-2 text-[11px] text-gray-400">
                                   ※ 아직 진단서를 작성하지 않은 회원이에요. 통화 상태·메모는 저장됩니다.
