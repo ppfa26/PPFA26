@@ -1243,7 +1243,18 @@ export default function AdminPage() {
       setTimeout(() => setMsg(null), 5000);
       return;
     }
-    openResultForDiag(target);
+    // '결과 열람' 버튼과 동일 기준: payments에 유효(환불 안 된) 결제 조회권이
+    //   실제로 남아있을 때만 전체 열람, 아니면 실제 고객 화면(블러)으로 연다.
+    const em = email.toLowerCase();
+    const now = Date.now();
+    const hasLivePayment = payments.some((p) => {
+      if ((p.email ?? "").toLowerCase() !== em) return false;
+      if (p.status !== "paid") return false;
+      const left = (p.credits_total || 0) - (p.credits_used || 0);
+      if (left <= 0) return false;
+      return !p.expires_at || new Date(p.expires_at).getTime() > now;
+    });
+    openResultForDiag(target, hasLivePayment);
   };
 
   // 조회권 환불(열람 차단) - 실제 결제 환불은 대표님이 PG사에서 처리하고,
@@ -2205,16 +2216,46 @@ export default function AdminPage() {
                                             여기서는 결과 페이지(새 창)만 열 수 있게 유지. */}
                                         <button
                                           onClick={() => {
-                                            // 이 고객이 '실제로 결과를 볼 수 있는 상태'인지 판정
-                                            //  = 유효 조회권 남음(used<total) AND 미만료(expiry 미래)
-                                            //  → 미결제/만료/소진 고객은 관리자도 블러로 보게 한다.
-                                            const hasCredit =
+                                            // 이 고객이 '실제로 결과를 볼 수 있는 상태'인지 판정.
+                                            //  → 관리자도 '고객이 실제 보는 화면 그대로' 보여줘야
+                                            //    영업(블러 보여주며 결제 유도)이 가능하다. (대표님 요청)
+                                            //
+                                            // ★ 핵심 ★ 조회권 요약 숫자(creditsUsed/creditsTotal)만
+                                            //   믿으면, '조회권 환불'을 해도 서버가 그 숫자를 즉시
+                                            //   소진시키지 않는 경우 관리자에게 전부 보여버린다(버그).
+                                            //   → 그래서 payments 원본에서 '유효한(환불 안 된) 결제
+                                            //     조회권이 실제로 남아있는지'를 직접 확인한다.
+                                            const email = (c.email ?? "").toLowerCase();
+                                            const now = Date.now();
+                                            // 이 회원의 결제행 중 '지금 실제로 열람 가능한' 것이 있는가:
+                                            //   · status === "paid" (환불/취소/대기 제외)
+                                            //   · 조회권 남음(credits_used < credits_total)
+                                            //   · 미만료(expires_at 미래 or 없음)
+                                            const hasLivePayment = email
+                                              ? payments.some((p) => {
+                                                  if ((p.email ?? "").toLowerCase() !== email)
+                                                    return false;
+                                                  if (p.status !== "paid") return false;
+                                                  const left =
+                                                    (p.credits_total || 0) -
+                                                    (p.credits_used || 0);
+                                                  if (left <= 0) return false;
+                                                  const notExp =
+                                                    !p.expires_at ||
+                                                    new Date(p.expires_at).getTime() > now;
+                                                  return notExp;
+                                                })
+                                              : false;
+                                            // 요약 숫자 기준(보조): used<total AND 미만료
+                                            const summaryOk =
                                               c.creditsTotal > 0 &&
-                                              c.creditsUsed < c.creditsTotal;
-                                            const notExpired =
-                                              !c.expiry ||
-                                              new Date(c.expiry).getTime() > Date.now();
-                                            openResultForDiag(d, hasCredit && notExpired);
+                                              c.creditsUsed < c.creditsTotal &&
+                                              (!c.expiry ||
+                                                new Date(c.expiry).getTime() > now);
+                                            // ★ 둘 다 만족할 때만 '전체 열람' ★
+                                            //   (payments에 유효 결제가 없으면 = 환불/만료/미결제
+                                            //    → summaryOk가 true여도 블러로 보여준다)
+                                            openResultForDiag(d, hasLivePayment && summaryOk);
                                           }}
                                           className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-700 transition hover:bg-gray-50"
                                         >
