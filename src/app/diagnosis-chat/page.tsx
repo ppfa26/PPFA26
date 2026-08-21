@@ -30,6 +30,7 @@ import {
   savePartialLead,
   saveCompletedDiagnosis,
 } from "@/lib/diagnosisStore";
+import { trackFunnelStep, trackFunnelComplete } from "@/lib/funnelTracker";
 import {
   STEP1_FIELDS,
   STEP2_FIELDS,
@@ -499,6 +500,13 @@ export default function DiagnosisChat() {
       return m;
     });
     setStepIdx(vi);
+    // ★ A안(대표님 요청) ★ 익명 퍼널 진행도 기록(fire-and-forget).
+    //   '어떤 질문(단계)까지 왔는지'를 익명으로 남겨, 관리자 페이지에서
+    //   '무료진단 중 어느 질문에서 이탈했는지'를 볼 수 있게 한다.
+    //   기존 진단 흐름과 완전히 분리 · 실패해도 무시(진단 방해 금지).
+    trackFunnelStep(vi, CHAT_STEPS[vi].key, CHAT_STEPS.length, {
+      bizType: cur.businessType ?? null,
+    });
     setShowAll(false);
     setMultiTemp([]);
     setTextTemp("");
@@ -870,6 +878,16 @@ export default function DiagnosisChat() {
         clearDiagnosisDraft();
         trackConversion("SubmitApplication");
       } catch { /* 로컬 저장 실패해도 이동은 계속 */ }
+      // ★ A안(대표님 요청) ★ 완주(진단 끝) 익명 기록 — fire-and-forget.
+      //   마지막 단계 + completed=true 로 마킹해 관리자 퍼널에서 '완주자'로 집계.
+      try {
+        trackFunnelComplete(
+          CHAT_STEPS.length - 1,
+          CHAT_STEPS[CHAT_STEPS.length - 1].key,
+          CHAT_STEPS.length,
+          payload.businessType ?? null
+        );
+      } catch { /* 진행도 기록 실패는 무시(진단 방해 금지) */ }
       // 서버 저장은 기다리지 않고 백그라운드로만 시도(실패해도 결과엔 영향 없음)
       try {
         if (!isStatsExcludedEmail(user?.email)) {

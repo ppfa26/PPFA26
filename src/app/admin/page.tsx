@@ -100,7 +100,31 @@ type BlockRow = {
 
 type Phase = "loading" | "denied" | "ready";
 // 상단 탭: '고객 관리'(회원+진단서+통합)를 하나의 리스트로 완전히 합침(내부 토글 없음)
-type Tab = "customers" | "payments" | "revenue" | "access";
+type Tab = "customers" | "payments" | "revenue" | "access" | "funnel";
+
+// ★ A안(대표님 요청) ★ 무료진단 퍼널(단계별 이탈) 집계 행 타입
+type FunnelStatRow = {
+  step: number;
+  step_key: string;
+  reached: number;
+  dropped: number;
+  completed_cnt: number;
+};
+type FunnelSummary = { started: number; completed: number; dropped: number };
+
+// 진단 단계 key → 사람이 읽는 질문 라벨(관리자 화면 표시용).
+//  diagnosis-chat 의 CHAT_STEPS 순서/의미와 일치.
+const FUNNEL_STEP_LABELS: Record<string, string> = {
+  bizEligibility: "①  사업자 구분 · 자격확인",
+  ownerGroup: "②  대표자(연령대 · 신용점수)",
+  bizGroup: "③  업종 · 지역",
+  capitalImpairment: "④  자본잠식(법인 전용)",
+  sizeGroup: "⑤  업력 · 연매출 · 직원수",
+  companyGroupA: "⑥  필요 사업 · 정책기관",
+  companyGroupB: "⑦  특허·인증 · 혁신성장",
+  deepChecks: "⑧  심층 체크(6항목)",
+  bnoContact: "⑨  사업자번호 · 성함 · 연락처",
+};
 
 /* ------------------------------------------------------------------ */
 /*  유틸                                                               */
@@ -229,6 +253,10 @@ export default function AdminPage() {
   const [access, setAccess] = useState<AccessRow[]>([]);
   const [ipSummary, setIpSummary] = useState<IpRow[]>([]);
   const [blocks, setBlocks] = useState<BlockRow[]>([]);
+  // ★ A안 ★ 무료진단 퍼널(단계별 이탈) 데이터
+  const [funnelStats, setFunnelStats] = useState<FunnelStatRow[]>([]);
+  const [funnelSummary, setFunnelSummary] = useState<FunnelSummary | null>(null);
+  const [funnelErr, setFunnelErr] = useState<string | null>(null);
   const [selectedDiag, setSelectedDiag] = useState<Set<string>>(new Set()); // 체크선택 다운로드용
   const [openDay, setOpenDay] = useState<string | null>(null); // 매출-일별 펼침 (YYYY-MM-DD)
   const [openMonth, setOpenMonth] = useState<string | null>(null); // 매출-월별 펼침 (YYYY-MM)
@@ -627,7 +655,7 @@ export default function AdminPage() {
   const loadAll = useCallback(async () => {
     setRefreshing(true);
     // ※ 일별/월별 매출은 서버 RPC 대신 payList로 직접 재계산하므로(관리자 제외), 여기서 호출하지 않는다.
-    const [s, u, p, d, ac, ip, bl] = await Promise.all([
+    const [s, u, p, d, ac, ip, bl, fs, fsum] = await Promise.all([
       supabase.rpc("admin_stats"),
       supabase.rpc("admin_list_users"),
       supabase.rpc("admin_list_payments"),
@@ -635,6 +663,10 @@ export default function AdminPage() {
       supabase.rpc("admin_list_access", { p_limit: 200 }),
       supabase.rpc("admin_ip_summary"),
       supabase.rpc("admin_list_blocks"),
+      // ★ A안 ★ 무료진단 퍼널(단계별 이탈) — 0021 마이그레이션 실행 후 동작.
+      //   아직 실행 전이면 error 로 떨어지므로 조용히 빈 값 유지(다른 탭 영향 0).
+      supabase.rpc("admin_funnel_stats"),
+      supabase.rpc("admin_funnel_summary"),
     ]);
 
     // ── 로딩 진단: 어떤 RPC가 실패했는지 정확히 수집 (권한 없음/함수 누락 등) ──
@@ -661,6 +693,25 @@ export default function AdminPage() {
     if (!ac.error && ac.data) setAccess(ac.data as AccessRow[]);
     if (!ip.error && ip.data) setIpSummary(ip.data as IpRow[]);
     if (!bl.error && bl.data) setBlocks(bl.data as BlockRow[]);
+
+    // ── A안: 퍼널 데이터(0021 미실행 시 조용히 안내) ──
+    if (!fs.error && fs.data) {
+      setFunnelStats(fs.data as FunnelStatRow[]);
+      setFunnelErr(null);
+    } else if (fs.error) {
+      // 함수가 없으면(마이그레이션 전) 관리자에게만 부드럽게 안내
+      setFunnelStats([]);
+      setFunnelErr(
+        /function .* does not exist|not exist|schema cache/i.test(fs.error.message)
+          ? "아직 퍼널 집계 함수가 없습니다. Supabase SQL Editor에서 0021 마이그레이션을 실행해 주세요."
+          : `퍼널 통계 로딩 오류: ${fs.error.message}`
+      );
+    }
+    if (!fsum.error && fsum.data?.[0]) {
+      setFunnelSummary(fsum.data[0] as FunnelSummary);
+    } else {
+      setFunnelSummary(null);
+    }
 
     // ★ 매출 통계(일별/월별)를 프론트에서 직접 재계산 (관리자 포함 전체 결제 기준) ★
     const paidRows = payList.filter((r) => r.status === "paid" && r.paid_at);
@@ -1675,6 +1726,7 @@ export default function AdminPage() {
                 ["customers", `👤 고객 관리 (${unifiedCustomers.length})`],
                 ["payments", `💳 결제·조회권 (${payments.length})`],
                 ["revenue", "📊 매출 리포트"],
+                ["funnel", "🔎 진단 이탈 분석"],
                 ["access", "🛡️ 접속 차단"],
               ] as [Tab, string][]
             ).map(([key, label]) => (
@@ -2770,6 +2822,138 @@ export default function AdminPage() {
                     </table>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ------- 🔎 무료진단 이탈 분석(퍼널) — A안(대표님 요청) ------- */}
+          {tab === "funnel" && (
+            <div className="space-y-4">
+              {/* 안내: 마이그레이션 미실행 시 부드럽게 알림 */}
+              {funnelErr && (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-[13px] font-semibold text-amber-800">
+                  ⚠️ {funnelErr}
+                </div>
+              )}
+
+              {/* 상단 요약 카드 3개: 진단 시작 / 완주 / 중간 이탈 */}
+              {(() => {
+                const started = funnelSummary?.started ?? 0;
+                const completed = funnelSummary?.completed ?? 0;
+                const dropped = funnelSummary?.dropped ?? 0;
+                const compRate = started > 0 ? Math.round((completed / started) * 100) : 0;
+                return (
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                    <div className="rounded-2xl border border-gray-100 bg-white p-3 text-center shadow-sm">
+                      <div className="text-[12px] font-semibold text-gray-500">진단 시작</div>
+                      <div className="mt-1 text-2xl font-extrabold text-brand-dark">{started}</div>
+                      <div className="mt-0.5 text-[11px] text-gray-400">명(익명 기준)</div>
+                    </div>
+                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-3 text-center shadow-sm">
+                      <div className="text-[12px] font-semibold text-emerald-600">완주(제출)</div>
+                      <div className="mt-1 text-2xl font-extrabold text-emerald-700">{completed}</div>
+                      <div className="mt-0.5 text-[11px] text-emerald-500">완주율 {compRate}%</div>
+                    </div>
+                    <div className="rounded-2xl border border-rose-100 bg-rose-50 p-3 text-center shadow-sm">
+                      <div className="text-[12px] font-semibold text-rose-600">중간 이탈</div>
+                      <div className="mt-1 text-2xl font-extrabold text-rose-700">{dropped}</div>
+                      <div className="mt-0.5 text-[11px] text-rose-400">
+                        이탈률 {started > 0 ? Math.round((dropped / started) * 100) : 0}%
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 단계별(질문별) 이탈 표 + 막대 */}
+              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                <div className="mb-1 flex items-center justify-between">
+                  <h3 className="text-[15px] font-extrabold text-brand-dark">
+                    질문별 도달 · 이탈
+                  </h3>
+                  <button
+                    onClick={loadAll}
+                    disabled={refreshing}
+                    className="rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[12px] font-bold text-gray-600 hover:bg-gray-50 disabled:opacity-40"
+                  >
+                    {refreshing ? "새로고침 중…" : "🔄 새로고침"}
+                  </button>
+                </div>
+                <p className="mb-3 text-[12px] leading-relaxed text-gray-500">
+                  · <b>도달</b> = 그 질문까지 온 방문자 수 · <b>이 질문에서 이탈</b> = 그 질문을
+                  마지막으로 그만둔 수(익명, 개인정보 없음).
+                  <br />
+                  · 연락처는 마지막 ⑨단계에서만 받으므로, ⑧ 이하 이탈자는 기존 고객목록엔
+                  안 잡히던 사람들입니다.
+                </p>
+
+                {funnelStats.length === 0 ? (
+                  <div className="rounded-xl bg-gray-50 py-8 text-center text-[13px] text-gray-400">
+                    아직 집계된 진단 진행 기록이 없습니다.
+                    {!funnelErr && " (방문자가 무료진단을 시작하면 이곳에 쌓입니다.)"}
+                  </div>
+                ) : (
+                  (() => {
+                    const started = funnelSummary?.started ?? 0;
+                    const maxReached =
+                      funnelStats.reduce((mx, r) => Math.max(mx, Number(r.reached)), 0) || 1;
+                    return (
+                      <div className="space-y-2.5">
+                        {funnelStats.map((r) => {
+                          const reached = Number(r.reached);
+                          const dropped = Number(r.dropped);
+                          const label =
+                            FUNNEL_STEP_LABELS[r.step_key] ||
+                            `${r.step + 1}단계 (${r.step_key ?? "?"})`;
+                          const reachPct = Math.round((reached / maxReached) * 100);
+                          // 이탈률: 그 단계 '도달자' 대비 그 단계에서 그만둔 비율
+                          const dropRate =
+                            reached > 0 ? Math.round((dropped / reached) * 100) : 0;
+                          return (
+                            <div key={`${r.step}-${r.step_key}`}>
+                              <div className="mb-1 flex items-end justify-between gap-2">
+                                <span className="text-[13px] font-bold text-brand-dark">
+                                  {label}
+                                </span>
+                                <span className="shrink-0 text-[12px] text-gray-500">
+                                  도달 <b className="text-brand-dark">{reached}</b>
+                                  {dropped > 0 && (
+                                    <>
+                                      {" · "}
+                                      <span className="text-rose-600">
+                                        이탈 <b>{dropped}</b> ({dropRate}%)
+                                      </span>
+                                    </>
+                                  )}
+                                </span>
+                              </div>
+                              {/* 도달(회색) 바 위에 이탈(빨강) 비율을 겹쳐 표시 */}
+                              <div className="relative h-4 w-full overflow-hidden rounded-full bg-gray-100">
+                                <div
+                                  className="absolute left-0 top-0 h-full rounded-full bg-brand-dark/80"
+                                  style={{ width: `${reachPct}%` }}
+                                />
+                                {dropped > 0 && (
+                                  <div
+                                    className="absolute left-0 top-0 h-full rounded-full bg-rose-500/80"
+                                    style={{
+                                      width: `${Math.round((dropped / maxReached) * 100)}%`,
+                                    }}
+                                    title={`이 질문에서 이탈 ${dropped}명`}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        <div className="pt-1 text-[11px] text-gray-400">
+                          ※ 회색=도달 인원(막대 길수록 많음), 빨강=이 질문에서 이탈한 인원.
+                          {started > 0 && ` 전체 시작 ${started}명 기준.`}
+                        </div>
+                      </div>
+                    );
+                  })()
+                )}
               </div>
             </div>
           )}
