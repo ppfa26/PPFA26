@@ -228,10 +228,18 @@ function SignupInner() {
   //     다음 페이지로 넘어가게 한다. (소셜 로그인 완료가 항상 즉시 반영됨)
   useEffect(() => {
     let done = false;
-    const go = () => {
+    // isNewSignup: 이번에 '새로' 로그인/가입이 일어난 경우(SIGNED_IN)만 true.
+    //  (이미 로그인 상태로 재진입한 INITIAL_SESSION 은 false)
+    const go = (isNewSignup = false) => {
       if (done) return;
       done = true;
-      const dest = tier ? `/payment?tier=${tier}` : nextPath || "/mypage";
+      // ★ 자동 무료진단 진입(대표님 요청) ★
+      //   결제(tier)도 진단결과(next)도 없이 '순수 회원가입'만 한 신규 가입자는
+      //   마이페이지 대신 곧바로 무료진단으로 보낸다. → "가입만 하고 진단 안 함" 방지.
+      //   · 기존 회원 재로그인(isNewSignup=false)은 진단을 이미 했을 수 있으니
+      //     기존대로 마이페이지로.
+      const defaultDest = isNewSignup ? "/diagnosis-chat" : "/mypage";
+      const dest = tier ? `/payment?tier=${tier}` : nextPath || defaultDest;
       // 목적지로 이동하는 순간 next 백업은 소임을 다했으니 정리(다음 로그인에 오염 방지)
       try {
         localStorage.removeItem(NEXT_KEY);
@@ -259,10 +267,11 @@ function SignupInner() {
     };
 
     // 1) 진입 즉시 한 번 확인 (이미 로그인 상태였던 경우)
+    //    → 이미 로그인돼 있던 재진입이므로 '신규 가입'이 아니다(마이페이지로).
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
         void backfillUtm(data.session);
-        go();
+        go(false);
       }
     });
 
@@ -272,11 +281,12 @@ function SignupInner() {
         // ★ 전환 추적 ★ 새로 '로그인/가입'이 일어난 순간(SIGNED_IN)에만
         //   회원가입 완료 전환을 1회 전송한다. (이미 로그인 상태로 페이지에
         //   재진입한 경우엔 INITIAL_SESSION 이라 중복 전송되지 않는다.)
-        if (event === "SIGNED_IN") {
+        const isNewSignup = event === "SIGNED_IN";
+        if (isNewSignup) {
           trackConversion("CompleteRegistration");
         }
         void backfillUtm(session);
-        go();
+        go(isNewSignup);
       }
     });
 

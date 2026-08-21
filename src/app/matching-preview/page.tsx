@@ -727,7 +727,7 @@ export default function MatchingPreview() {
               )}
 
               <Link
-                href="/signup?next=%2Fmatching-preview"
+                href="/signup?next=%2Fmatching-preview%3Fanalyze%3D1"
                 className="btn-brand mt-5 block rounded-full py-3.5 text-center text-base font-bold"
               >
                 {ctaLabel}
@@ -735,7 +735,7 @@ export default function MatchingPreview() {
               <p className="mt-3 break-keep text-xs text-brand-gray">
                 이미 가입하셨나요?{" "}
                 <Link
-                  href="/signup?next=%2Fmatching-preview"
+                  href="/signup?next=%2Fmatching-preview%3Fanalyze%3D1"
                   className="font-bold text-brand-dark underline"
                 >
                   로그인
