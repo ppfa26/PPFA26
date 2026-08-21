@@ -17,8 +17,10 @@ import {
   type DiagnosisRecord,
 } from "@/lib/diagnosisExport";
 import {
-  loadAllLeadNotes,
+  loadCachedLeadNotes,
+  loadLeadNotesFromServer,
   saveLeadNote,
+  saveLeadNoteToServer,
   CALL_STATUS_META,
   CALL_STATUS_ORDER,
   type CallStatus,
@@ -274,13 +276,18 @@ export default function AdminPage() {
   // (대표님 요청) 메모 저장 직후 '저장됨' 인라인 피드백을 '그 카드 옆'에 보여주기 위한 상태.
   //   기존엔 저장 안내가 페이지 맨 위 배너로만 떠서, 스크롤 내려서 저장한 직원 눈엔
   //   안 보여 '저장이 안 된다'는 오해가 있었다. → 저장 버튼 바로 옆에 표시.
-  const [memoSavedKey, setMemoSavedKey] = useState<string | null>(null);
+  //   0022 서버 저장 이후엔 '저장 중 → 저장됨/실패'까지 실제 서버 결과로 표시한다.
+  const [memoSaveState, setMemoSaveState] = useState<{
+    key: string;
+    state: "saving" | "ok" | "fail";
+  } | null>(null);
 
   // IP 집계·접속 로그 표가 세로로 너무 길어서 기본은 접어두고, 헤더 클릭 시 펼침.
   const [ipListOpen, setIpListOpen] = useState(false); // 🌐 IP별 접속 집계 접기/펼치기
   const [accessLogOpen, setAccessLogOpen] = useState(false); // 🕑 최근 접속 로그 접기/펼치기
 
-  // 리드(상담 대상) 메모·통화 상태 - 브라우저 localStorage 기반 (DB 불필요)
+  // 리드(상담 대상) 메모·통화 상태 - 서버(Supabase) 저장 (0022 이후)
+  //   → 어느 PC/직원이 저장해도 동일하게 공유된다. localStorage 는 즉시 표시용 캐시.
   const [leadNotes, setLeadNotes] = useState<Record<string, LeadNote>>({});
   // 메모 입력창 임시 상태 (진단서 id → 입력중인 메모 텍스트)
   const [memoDraft, setMemoDraft] = useState<Record<string, string>>({});
@@ -288,9 +295,12 @@ export default function AdminPage() {
   // (대표님 요청) 카카오 알림톡 테스트 발송 관련 상태/핸들러 제거 —
   //   알림톡 연동 정상 확인되어 테스트 기능이 더 이상 필요 없음.
 
-  // 마운트 시 저장된 리드 메모 로드
+  // 마운트 시 리드 메모 로드
+  //   1) 우선 로컬 캐시로 즉시 화면 채우고(깜빡임 방지),
+  //   2) 서버(Supabase)에서 최신값을 받아 덮어쓴다(= 다른 PC 저장분까지 반영).
   useEffect(() => {
-    setLeadNotes(loadAllLeadNotes());
+    setLeadNotes(loadCachedLeadNotes());
+    void loadLeadNotesFromServer().then((store) => setLeadNotes(store));
   }, []);
 
   // 무료진단 링크 복사 - 고객에게 카톡으로 진단 링크 보낼 때 원클릭
@@ -376,9 +386,15 @@ export default function AdminPage() {
     };
   }, [users, diagnoses, payments]);
 
-  // 통화 상태 변경
+  // 통화 상태 변경 - 로컬 즉시 반영 + 서버 저장(모든 PC 공유). 실패 시 서버 최신값으로 되돌림.
   const setCallStatus = (id: string, status: CallStatus) => {
-    setLeadNotes(saveLeadNote(id, { status }));
+    setLeadNotes(saveLeadNote(id, { status })); // 낙관적 업데이트
+    void saveLeadNoteToServer(id, { status }).then((ok) => {
+      if (!ok) {
+        // 서버 저장 실패 → 서버 최신값으로 재동기화(가짜 성공 방지)
+        void loadLeadNotesFromServer().then((store) => setLeadNotes(store));
+      }
+    });
   };
   // 메모 저장
   const saveMemo = (id: string) => {
@@ -2344,30 +2360,51 @@ export default function AdminPage() {
                                   className="min-w-0 flex-1 resize-y rounded-lg border border-gray-200 px-3 py-2 text-[12px] text-gray-800 outline-none focus:border-brand-orange"
                                 />
                                 <button
-                                  onClick={() => {
-                                    const memo = unifiedMemoDraft[c.noteKey!] ?? leadNotes[c.noteKey!]?.memo ?? "";
-                                    // 저장 실행 + 입력 임시값을 확정값으로 반영(재클릭해도 유지)
-                                    setLeadNotes(saveLeadNote(c.noteKey!, { memo }));
-                                    setUnifiedMemoDraft((prev) => ({ ...prev, [c.noteKey!]: memo }));
-                                    // ★ 저장 버튼 '바로 옆'에 저장 완료 표시(대표님 요청) ★
-                                    //   맨 위 배너는 스크롤 내려서 저장한 직원 눈에 안 보였음.
-                                    setMemoSavedKey(c.noteKey!);
+                                  disabled={
+                                    memoSaveState?.key === c.noteKey &&
+                                    memoSaveState.state === "saving"
+                                  }
+                                  onClick={async () => {
+                                    const key = c.noteKey!;
+                                    const memo =
+                                      unifiedMemoDraft[key] ?? leadNotes[key]?.memo ?? "";
+                                    // (1) 로컬 즉시 반영 + 입력 임시값을 확정값으로 반영(재클릭해도 유지)
+                                    setLeadNotes(saveLeadNote(key, { memo }));
+                                    setUnifiedMemoDraft((prev) => ({ ...prev, [key]: memo }));
+                                    // (2) '저장 중…' 표시 → 서버 저장 결과를 실제로 확인(대표님 요청)
+                                    //     맨 위 배너는 스크롤 내려서 저장한 직원 눈에 안 보였음 → 버튼 옆 표시.
+                                    setMemoSaveState({ key, state: "saving" });
+                                    const ok = await saveLeadNoteToServer(key, { memo });
+                                    setMemoSaveState({ key, state: ok ? "ok" : "fail" });
                                     setTimeout(
-                                      () => setMemoSavedKey((k) => (k === c.noteKey ? null : k)),
-                                      2000
+                                      () =>
+                                        setMemoSaveState((s) =>
+                                          s?.key === key ? null : s
+                                        ),
+                                      ok ? 2000 : 4000
                                     );
                                   }}
-                                  className="shrink-0 self-stretch rounded-lg bg-brand-orange px-3 text-[12px] font-bold text-white transition-transform duration-150 hover:scale-105 hover:opacity-90 active:scale-95"
+                                  className="shrink-0 self-stretch rounded-lg bg-brand-orange px-3 text-[12px] font-bold text-white transition-transform duration-150 hover:scale-105 hover:opacity-90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
-                                  저장
+                                  {memoSaveState?.key === c.noteKey &&
+                                  memoSaveState.state === "saving"
+                                    ? "저장 중…"
+                                    : "저장"}
                                 </button>
                               </div>
-                              {/* 저장 완료 인라인 피드백 - 그 카드 안에서 바로 보이게 */}
-                              {memoSavedKey === c.noteKey && (
-                                <p className="mt-1.5 flex items-center gap-1 text-[12px] font-bold text-green-600">
-                                  ✅ 저장되었습니다.
-                                </p>
-                              )}
+                              {/* 저장 결과 인라인 피드백 - 그 카드 안에서 바로 보이게 */}
+                              {memoSaveState?.key === c.noteKey &&
+                                memoSaveState.state === "ok" && (
+                                  <p className="mt-1.5 flex items-center gap-1 text-[12px] font-bold text-green-600">
+                                    ✅ 저장되었습니다. (모든 PC 공유)
+                                  </p>
+                                )}
+                              {memoSaveState?.key === c.noteKey &&
+                                memoSaveState.state === "fail" && (
+                                  <p className="mt-1.5 flex items-center gap-1 text-[12px] font-bold text-red-600">
+                                    ⚠️ 서버 저장 실패 — 네트워크 확인 후 다시 저장해 주세요.
+                                  </p>
+                                )}
                               {c.diagList.length === 0 && (
                                 <p className="mt-2 text-[11px] text-gray-400">
                                   ※ 아직 진단서를 작성하지 않은 회원이에요. 통화 상태·메모는 저장됩니다.
