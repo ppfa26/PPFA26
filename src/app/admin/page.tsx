@@ -281,84 +281,8 @@ export default function AdminPage() {
   // 메모 입력창 임시 상태 (진단서 id → 입력중인 메모 텍스트)
   const [memoDraft, setMemoDraft] = useState<Record<string, string>>({});
 
-  // ── 카카오 알림톡 테스트 발송 (대표님 전용) ──
-  const [alimtalkTestPhone, setAlimtalkTestPhone] = useState("");
-  const [alimtalkTesting, setAlimtalkTesting] = useState(false);
-  const [alimtalkTestResult, setAlimtalkTestResult] = useState<
-    { ok: boolean; text: string } | null
-  >(null);
-  const runAlimtalkTest = useCallback(async () => {
-    const phone = alimtalkTestPhone.replace(/[^0-9]/g, "");
-    if (!/^010\d{8}$/.test(phone)) {
-      setAlimtalkTestResult({
-        ok: false,
-        text: "010으로 시작하는 11자리 번호를 입력하세요.",
-      });
-      return;
-    }
-    setAlimtalkTesting(true);
-    setAlimtalkTestResult(null);
-    try {
-      const res = await fetch("/api/notify/kakao/test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (data?.ok) {
-        setAlimtalkTestResult({
-          ok: true,
-          text: "✅ " + (data.message || "발송 요청 성공. 카카오톡을 확인하세요."),
-        });
-      } else {
-        // ── 실패 상세를 최대한 다 긁어서 화면에 그대로 노출 ──
-        //  테스트 API 의 catch 블록은 다음 필드를 돌려준다:
-        //   errName, errMessage, totalCount, failedMessageList, error, raw
-        //  (성공-경로 실패는 count/failedMessageList/error)
-        const lines: string[] = [];
-        lines.push("❌ " + (data?.message || "발송 실패"));
-        if (data?.errName) lines.push("[에러종류] " + String(data.errName));
-        if (data?.errMessage) lines.push("[에러메시지] " + String(data.errMessage));
-        const detail =
-          typeof data?.error === "object" && data?.error !== null
-            ? JSON.stringify(data.error)
-            : data?.error || "";
-        if (detail) lines.push("[상세] " + detail);
-        // 접수 거부(failedMessageList) — 진짜 원인(statusCode/statusMessage)이 여기 있음
-        if (
-          Array.isArray(data?.failedMessageList) &&
-          data.failedMessageList.length > 0
-        ) {
-          lines.push("[실패목록] " + JSON.stringify(data.failedMessageList));
-        }
-        if (data?.count) lines.push("[카운트] " + JSON.stringify(data.count));
-        if (data?.totalCount != null)
-          lines.push("[총건수] " + JSON.stringify(data.totalCount));
-        if (data?.missing)
-          lines.push("[누락환경변수] " + JSON.stringify(data.missing));
-        // 위에서 아무 상세도 못 찾았으면 raw 를 통째로 보여준다(최후의 수단)
-        const hasDetail =
-          data?.errMessage ||
-          detail ||
-          (Array.isArray(data?.failedMessageList) &&
-            data.failedMessageList.length > 0);
-        if (!hasDetail && data?.raw) {
-          lines.push("[RAW] " + JSON.stringify(data.raw));
-        }
-        setAlimtalkTestResult({
-          ok: false,
-          text: lines.join("\n"),
-        });
-      }
-    } catch (e) {
-      setAlimtalkTestResult({
-        ok: false,
-        text: "❌ 요청 자체가 실패했습니다(네트워크/서버). " + String(e),
-      });
-    } finally {
-      setAlimtalkTesting(false);
-    }
-  }, [alimtalkTestPhone]);
+  // (대표님 요청) 카카오 알림톡 테스트 발송 관련 상태/핸들러 제거 —
+  //   알림톡 연동 정상 확인되어 테스트 기능이 더 이상 필요 없음.
 
   // 마운트 시 저장된 리드 메모 로드
   useEffect(() => {
@@ -1768,51 +1692,8 @@ export default function AdminPage() {
           {/* ------- 통합 고객(회원+진단서+결제+IP를 사람 단위로 합침) ------- */}
           {tab === "customers" && (
             <div>
-              {/* ── 카카오 알림톡 테스트 발송 (대표님 전용) ──
-                   번호만 넣어 즉시 발송. 성공/실패의 진짜 원인을 그대로 보여준다.
-                   (제외 이메일·중복차단 무시 → 순수 연동 테스트용) */}
-              <div className="mb-4 rounded-2xl border border-brand-orange/40 bg-brand-orange/[0.06] p-3 sm:p-4">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="text-sm font-extrabold text-brand-dark">
-                    💬 카카오 알림톡 테스트 발송
-                  </span>
-                  <span className="rounded-md bg-gray-800 px-2 py-0.5 text-[11px] font-bold text-white">
-                    관리자 전용
-                  </span>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={alimtalkTestPhone}
-                    onChange={(e) => setAlimtalkTestPhone(e.target.value)}
-                    placeholder="테스트 받을 번호 (예: 01012345678)"
-                    className="w-full max-w-xs rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:border-brand-orange"
-                  />
-                  <button
-                    onClick={runAlimtalkTest}
-                    disabled={alimtalkTesting}
-                    className="rounded-xl bg-brand-dark px-4 py-2 text-sm font-bold text-white transition hover:bg-black disabled:opacity-50"
-                  >
-                    {alimtalkTesting ? "발송 중…" : "테스트 발송"}
-                  </button>
-                </div>
-                {alimtalkTestResult && (
-                  <pre
-                    className={`mt-2 whitespace-pre-wrap break-all rounded-xl border p-3 text-xs leading-relaxed ${
-                      alimtalkTestResult.ok
-                        ? "border-green-300 bg-green-50 text-green-800"
-                        : "border-red-300 bg-red-50 text-red-700"
-                    }`}
-                  >
-                    {alimtalkTestResult.text}
-                  </pre>
-                )}
-                <p className="mt-2 text-[11px] leading-relaxed text-brand-dark/60">
-                  ※ 이 테스트는 제외 이메일·중복(평생 1회) 차단을 무시하고 무조건 발송합니다.
-                  실패 시 위에 솔라피가 준 실제 오류가 표시됩니다.
-                </p>
-              </div>
+              {/* (대표님 요청) 카카오 알림톡 테스트 발송 블록 제거 — 알림톡 연동이
+                  정상 작동 확인되어 더 이상 테스트 UI가 필요 없음. */}
 
               {/* 🔍 통합 검색 - 이름·이메일·전화·사업자번호로 한 번에 */}
               <div className="mb-4 flex w-full flex-wrap items-center gap-2">
