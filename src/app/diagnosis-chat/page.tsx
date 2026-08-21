@@ -22,7 +22,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import { trackConversion } from "@/components/KarrotPixel";
 import { supabase } from "@/lib/supabaseClient";
-import { isStatsExcludedEmail } from "@/lib/admin";
+import { isStatsExcludedEmail, isAdminEmail } from "@/lib/admin";
 import { isValidName, isValidPhone } from "@/lib/validators";
 import {
   saveDiagnosis,
@@ -410,6 +410,12 @@ export default function DiagnosisChat() {
   const focusRef = useRef<HTMLDivElement>(null);
   const answerRef = useRef<HTMLDivElement>(null);
 
+  // ★ 관리자 제외(대표님 요청) ★ 로그인한 계정이 관리자면 '진단 이탈 분석(퍼널)'에
+  //  기록을 남기지 않는다. 진입 시 세션으로 판별해 여기 저장 → 트래킹 직전 검사.
+  //  (비회원 상태로 진단 중이면 판별 불가하므로 기본은 기록함. 관리자는 보통 로그인
+  //   상태로 테스트하므로 이 판별로 대부분 걸러진다.)
+  const funnelExcludeRef = useRef(false);
+
   // ★ 스크롤 모션 최소화(대표님 요청: 질문↔답변 왔다갔다 해서 눈 아픔) ★
   //  기존엔 messages·botTyping·bnoMsg 가 바뀔 때마다(=봇 타이핑 시작/끝, 줄마다)
   //  화면을 center 로 다시 맞춰, 질문지↔답변지로 화면이 위아래로 튀었다.
@@ -459,6 +465,19 @@ export default function DiagnosisChat() {
   //  · 진단 완료 시점(제출)에서 비회원이면 그때 회원가입으로 유도한다.
   useEffect(() => {
     setAuthOk(true); // 항상 진단 화면을 바로 렌더(로그인 여부와 무관)
+    // ★ 관리자 제외 ★ 로그인 상태면 이메일을 확인해 관리자면 퍼널 기록을 끈다.
+    //   (실패/비로그인이면 기본값 false → 정상 기록. 진단 흐름엔 영향 없음.)
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const email = data.session?.user?.email ?? null;
+        if (isAdminEmail(email) || isStatsExcludedEmail(email)) {
+          funnelExcludeRef.current = true;
+        }
+      } catch {
+        /* 세션 확인 실패는 무시(기록 기본 동작 유지) */
+      }
+    })();
   }, []);
 
   // 인트로 자동 시작
@@ -504,9 +523,12 @@ export default function DiagnosisChat() {
     //   '어떤 질문(단계)까지 왔는지'를 익명으로 남겨, 관리자 페이지에서
     //   '무료진단 중 어느 질문에서 이탈했는지'를 볼 수 있게 한다.
     //   기존 진단 흐름과 완전히 분리 · 실패해도 무시(진단 방해 금지).
-    trackFunnelStep(vi, CHAT_STEPS[vi].key, CHAT_STEPS.length, {
-      bizType: cur.businessType ?? null,
-    });
+    //   ★ 관리자(운영자) 계정은 제외(대표님 요청) → 순수 고객 데이터만 집계.
+    if (!funnelExcludeRef.current) {
+      trackFunnelStep(vi, CHAT_STEPS[vi].key, CHAT_STEPS.length, {
+        bizType: cur.businessType ?? null,
+      });
+    }
     setShowAll(false);
     setMultiTemp([]);
     setTextTemp("");
@@ -880,13 +902,20 @@ export default function DiagnosisChat() {
       } catch { /* 로컬 저장 실패해도 이동은 계속 */ }
       // ★ A안(대표님 요청) ★ 완주(진단 끝) 익명 기록 — fire-and-forget.
       //   마지막 단계 + completed=true 로 마킹해 관리자 퍼널에서 '완주자'로 집계.
+      //   ★ 관리자 제외 ★ 진입 시 판별(ref) + 방금 잡은 세션 이메일로 이중 확인.
       try {
-        trackFunnelComplete(
-          CHAT_STEPS.length - 1,
-          CHAT_STEPS[CHAT_STEPS.length - 1].key,
-          CHAT_STEPS.length,
-          payload.businessType ?? null
-        );
+        const isAdminUser =
+          funnelExcludeRef.current ||
+          isAdminEmail(user?.email) ||
+          isStatsExcludedEmail(user?.email);
+        if (!isAdminUser) {
+          trackFunnelComplete(
+            CHAT_STEPS.length - 1,
+            CHAT_STEPS[CHAT_STEPS.length - 1].key,
+            CHAT_STEPS.length,
+            payload.businessType ?? null
+          );
+        }
       } catch { /* 진행도 기록 실패는 무시(진단 방해 금지) */ }
       // 서버 저장은 기다리지 않고 백그라운드로만 시도(실패해도 결과엔 영향 없음)
       try {
