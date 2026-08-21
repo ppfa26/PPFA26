@@ -114,10 +114,13 @@ function SuccessInner() {
     setStatus("success");
     setMessage("결제가 완료되었습니다!");
 
-    // 잠시 후 마이페이지로 이동
-    //    ★ 대표님 요청 ★ 결제 직후 곧바로 대시보드로 튕기면 "설문을 다시 해야 하나?"
-    //    오해가 생김. → 마이페이지에서 결과를 '클릭해서' 확인하도록 유도한다.
-    setTimeout(() => router.replace("/mypage"), 2200);
+    // ★ 결제 완료 후 결과창으로 자동 이동(대표님 요청) ★
+    //   결제 전 결과창(블러)까지 이미 본 뒤 결제한 흐름이므로, 결제 직후엔
+    //   '잠금 해제된 전체 결과창'을 바로 보여주는 게 자연스럽다.
+    //   · 위에서 mpp_paid=true 를 저장했으므로 matching-preview 가 블러를 전부 풀고
+    //     결제 후 전체 결과(⑥)를 렌더한다.
+    //   · analyze=1 없이 이동 → 불필요한 'AI 분석 중' 로딩 연출 없이 곧장 결과 표시.
+    setTimeout(() => router.replace("/matching-preview"), 2200);
   };
 
   useEffect(() => {
