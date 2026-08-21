@@ -1,12 +1,57 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { TIERS, COMMON_NOTES } from "@/lib/products";
 import { BETA_FREE } from "@/lib/betaConfig";
+import { supabase } from "@/lib/supabaseClient";
+import { loadDiagnosis, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
 import Editable from "./Editable";
 
 export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
   const single = TIERS.length === 1;
+  const router = useRouter();
+  // CTA 클릭 판정 중(세션·진단 조회) 로딩 표시용 - 어느 tier 를 누르는 중인지
+  const [busyTier, setBusyTier] = useState<string | null>(null);
+
+  // ★ 가격표 CTA 스마트 분기(대표님 요청) ★
+  //   "AI 진단 리포트 받기"를 누르면 상태에 따라 목적지를 다르게 한다.
+  //   · 베타(BETA_FREE): 항상 무료진단.
+  //   · 비회원            → 무료진단(/diagnosis-chat). (진단·결과 안 보고 결제 유도하면 이탈)
+  //   · 회원 + 진단 없음  → 무료진단(/diagnosis-chat).
+  //   · 회원 + 진단 완료  → 바로 결제창(/payment?tier=...). (이미 결과를 본 사람)
+  const handleCtaClick = async (tierId: string) => {
+    if (BETA_FREE) {
+      router.push("/diagnosis-chat");
+      return;
+    }
+    if (busyTier) return; // 중복 클릭 방지
+    setBusyTier(tierId);
+    try {
+      const { data } = await supabase.auth.getSession();
+      const uid = data.session?.user?.id ?? null;
+      // 비회원 → 무료진단부터
+      if (!uid) {
+        router.push("/diagnosis-chat");
+        return;
+      }
+      // 회원 → 진단 완료 여부 판정(로컬 우선, 없으면 서버 조회)
+      let hasDiagnosis = !!loadDiagnosis();
+      if (!hasDiagnosis) {
+        const server = await loadDiagnosisFromServer(uid);
+        hasDiagnosis = !!server;
+      }
+      // 진단 완료 회원만 곧장 결제창, 그 외엔 무료진단부터
+      router.push(hasDiagnosis ? `/payment?tier=${tierId}` : "/diagnosis-chat");
+    } catch {
+      // 판정 실패 시 안전하게 무료진단으로(거부감 최소화 우선)
+      router.push("/diagnosis-chat");
+    } finally {
+      setBusyTier(null);
+    }
+  };
+
   return (
     <div>
       <div
@@ -126,12 +171,18 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                 항상 무료진단(/diagnosis-chat)으로 보낸다. 결제는 진단 후 결과화면
                 (matching-preview)에서 유도한다. → 무료진단 → 로그인 → 로딩 → 결제 전 결과
                 → 결제 유도 → 결제 후 결과 순서가 지켜진다. */}
-            <Link
-              href="/diagnosis-chat"
-              className="pricing-cta btn-red mt-4 block rounded-full py-2.5 text-center text-base font-bold"
+            <button
+              type="button"
+              onClick={() => handleCtaClick(tier.id)}
+              disabled={busyTier === tier.id}
+              className="pricing-cta btn-red mt-4 block w-full rounded-full py-2.5 text-center text-base font-bold disabled:opacity-70"
             >
-              {BETA_FREE ? "오픈 베타 기간 무료 진단 시작하기" : tier.cta}
-            </Link>
+              {busyTier === tier.id
+                ? "확인 중…"
+                : BETA_FREE
+                ? "오픈 베타 기간 무료 진단 시작하기"
+                : tier.cta}
+            </button>
           </div>
         ))}
       </div>
