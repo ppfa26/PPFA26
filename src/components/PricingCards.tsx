@@ -7,6 +7,7 @@ import { TIERS, COMMON_NOTES } from "@/lib/products";
 import { BETA_FREE } from "@/lib/betaConfig";
 import { supabase } from "@/lib/supabaseClient";
 import { loadDiagnosis, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
+import { fetchViewStatus } from "@/lib/viewCredits";
 import Editable from "./Editable";
 
 export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
@@ -18,9 +19,11 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
   // ★ 가격표 CTA 스마트 분기(대표님 요청) ★
   //   "AI 진단 리포트 받기"를 누르면 상태에 따라 목적지를 다르게 한다.
   //   · 베타(BETA_FREE): 항상 무료진단.
-  //   · 비회원            → 무료진단(/diagnosis-chat). (진단·결과 안 보고 결제 유도하면 이탈)
-  //   · 회원 + 진단 없음  → 무료진단(/diagnosis-chat).
-  //   · 회원 + 진단 완료  → 바로 결제창(/payment?tier=...). (이미 결과를 본 사람)
+  //   · 비회원                    → 무료진단(/diagnosis-chat). (진단·결과 안 보고 결제 유도하면 이탈)
+  //   · 회원 + 이미 결제(조회권)   → 마이페이지(/mypage). ★재결제 방지(대표님 요청)★
+  //                                  이미 산 사람을 또 결제창으로 보내면 헛돈다.
+  //   · 회원 + 진단 없음          → 무료진단(/diagnosis-chat).
+  //   · 회원 + 진단 완료          → 바로 결제창(/payment?tier=...). (이미 결과를 본 사람)
   const handleCtaClick = async (tierId: string) => {
     if (BETA_FREE) {
       router.push("/diagnosis-chat");
@@ -35,6 +38,17 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
       if (!uid) {
         router.push("/diagnosis-chat");
         return;
+      }
+      // ★ 재결제 방지(대표님 요청) ★ 이미 유효한 결제(조회권)가 있는 회원이면
+      //   결제창으로 보내지 않고 마이페이지로. (서버 기준 판정 → 브라우저 조작 불가)
+      try {
+        const vs = await fetchViewStatus();
+        if (vs?.isActive) {
+          router.push("/mypage");
+          return;
+        }
+      } catch {
+        /* 조회권 확인 실패는 무시하고 아래 기본 분기로 진행 */
       }
       // 회원 → 진단 완료 여부 판정(로컬 우선, 없으면 서버 조회)
       let hasDiagnosis = !!loadDiagnosis();

@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP, COMMON_NOTES } from "@/lib/products";
 import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
 import { loadDiagnosisRaw, loadDiagnosis, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
+import { fetchViewStatus } from "@/lib/viewCredits";
 
 // 토스페이먼츠(TossPayments) 클라이언트 키 (공개 키). 브라우저에 노출되어도 안전한 값입니다.
 //  ★ 폴백 ★ 환경변수가 비어있으면(예: 배포 환경변수 미설정) 토스 '공식 문서 테스트 클라이언트 키'로 자동 대체.
@@ -144,6 +145,20 @@ function PaymentInner() {
         return;
       }
       const user = data.session.user;
+
+      // ── 재결제 방지(대표님 요청) ───────────────────────────────────
+      //   이미 유효한 결제(조회권)가 있는 회원이 URL 직접 접근·뒤로가기 등으로
+      //   결제창에 다시 들어오면, 결제시키지 않고 마이페이지로 돌려보낸다.
+      //   (서버 기준 판정 get_view_status → 브라우저 조작 불가.)
+      try {
+        const vs = await fetchViewStatus();
+        if (vs?.isActive) {
+          router.replace("/mypage");
+          return;
+        }
+      } catch {
+        /* 조회권 확인 실패는 무시하고 정상 결제 흐름 진행 */
+      }
 
       // ── 진단 완료 필수(대표님 요청) ────────────────────────────────
       //   결제창은 '진단·결과를 이미 본' 사람만 도달해야 한다. 진단 없이
