@@ -120,8 +120,14 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             </ul>
 
             {/* 버튼 - 사이트 전체 메인 CTA(빨강 배경 + 흰 글씨, .btn-red)와 통일 (대표님 요청) */}
+            {/* ★ 퍼널 정정(대표님 요청) ★
+                예전엔 유료 상태에서 이 버튼이 곧장 /signup?tier=...(→ 결제창)으로 가서
+                '진단도 안 하고 결제창 → 이탈'이 발생했다. 이제 BETA_FREE 여부와 무관하게
+                항상 무료진단(/diagnosis-chat)으로 보낸다. 결제는 진단 후 결과화면
+                (matching-preview)에서 유도한다. → 무료진단 → 로그인 → 로딩 → 결제 전 결과
+                → 결제 유도 → 결제 후 결과 순서가 지켜진다. */}
             <Link
-              href={BETA_FREE ? "/diagnosis-chat" : `/signup?tier=${tier.id}`}
+              href="/diagnosis-chat"
               className="pricing-cta btn-red mt-4 block rounded-full py-2.5 text-center text-base font-bold"
             >
               {BETA_FREE ? "오픈 베타 기간 무료 진단 시작하기" : tier.cta}
