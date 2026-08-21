@@ -42,6 +42,44 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
+/* 채널 전체(제목+본문+태그 등 모든 블록)를 한 번에 복사하는 버튼.
+   블록 사이에 라벨을 [대괄호]로 넣어, 붙여넣은 뒤 제목/본문/태그를 쉽게 구분할 수 있게 한다. */
+function CopyAllButton({ blocks }: { blocks: SnsBlock[] }) {
+  const [done, setDone] = useState(false);
+  // 라벨에서 "채널명 - " 접두어(예: "블로그 - 제목")를 떼어 "제목"만 남긴다.
+  const shortLabel = (label: string) => {
+    const idx = label.indexOf(" - ");
+    return idx >= 0 ? label.slice(idx + 3) : label;
+  };
+  const buildAllText = () =>
+    blocks
+      .map((b) => `[${shortLabel(b.label)}]\n${b.text}`)
+      .join("\n\n──────────\n\n");
+  const onCopy = async () => {
+    const text = buildAllText();
+    try {
+      await navigator.clipboard.writeText(text);
+      setDone(true);
+      setTimeout(() => setDone(false), 1600);
+    } catch {
+      window.prompt("아래 내용을 직접 복사하세요 (Ctrl+C)", text);
+    }
+  };
+  return (
+    <button
+      type="button"
+      onClick={onCopy}
+      className={`shrink-0 rounded-lg px-4 py-2 text-sm font-bold transition ${
+        done
+          ? "bg-emerald-500 text-white"
+          : "bg-brand-dark text-white hover:opacity-90"
+      }`}
+    >
+      {done ? "전체 복사됨 ✓" : "📋 제목+본문+태그 한번에 복사"}
+    </button>
+  );
+}
+
 function BlockCard({ block }: { block: SnsBlock }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white">
@@ -392,11 +430,15 @@ export default function SnsHubPage() {
 
               {active && (
                 <div className="space-y-3">
-                  <div className="rounded-xl bg-gray-100 px-4 py-2.5 text-sm text-gray-600">
-                    <b>
-                      {active.emoji} {active.channel}
-                    </b>{" "}
-                    - 아래 블록을 위에서부터 순서대로 올리시면 됩니다.
+                  <div className="flex flex-col gap-2 rounded-xl bg-gray-100 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm text-gray-600">
+                      <b>
+                        {active.emoji} {active.channel}
+                      </b>{" "}
+                      - 아래 블록을 위에서부터 순서대로 올리시면 됩니다.
+                    </p>
+                    {/* 제목+본문+태그(=이 채널의 모든 블록)를 한 번에 복사 (대표님 요청) */}
+                    <CopyAllButton blocks={active.blocks} />
                   </div>
                   {active.blocks.map((b, i) => (
                     <BlockCard key={b.key + i} block={b} />
