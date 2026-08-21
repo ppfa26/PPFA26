@@ -134,7 +134,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
          홈페이지 다크 유리 톤과 어울리도록 아이콘/문구 정렬을 정돈.
          이모지(✅/⚠️)는 앞부분을 아이콘 컬럼으로 분리해 문구를 가지런히,
          마지막 ⚠️ 안내는 상단 구분선으로 시각적으로 떼어 세련되게. */}
-      <div className={`mx-auto mt-5 rounded-2xl bg-gray-50 p-5 sm:p-6 ${single ? "max-w-xl" : "max-w-xl"}`}>
+      <div className={`mx-auto mt-5 rounded-2xl bg-gray-50 p-5 sm:p-6 ${single ? "max-w-2xl" : "max-w-2xl"}`}>
         <ul className="space-y-2.5 text-[12px] text-brand-dark sm:text-[13px]">
           {COMMON_NOTES.map((n, i) => {
             const isNotice = n.trimStart().startsWith("⚠️");
