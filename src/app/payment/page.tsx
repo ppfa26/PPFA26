@@ -10,7 +10,7 @@ import Editable from "@/components/Editable";
 import { supabase } from "@/lib/supabaseClient";
 import { TIER_MAP, COMMON_NOTES } from "@/lib/products";
 import { getPaymentBlockReasons } from "@/lib/diagnosisConfig";
-import { loadDiagnosisRaw } from "@/lib/diagnosisStore";
+import { loadDiagnosisRaw, loadDiagnosis, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
 
 // 토스페이먼츠(TossPayments) 클라이언트 키 (공개 키). 브라우저에 노출되어도 안전한 값입니다.
 //  ★ 폴백 ★ 환경변수가 비어있으면(예: 배포 환경변수 미설정) 토스 '공식 문서 테스트 클라이언트 키'로 자동 대체.
@@ -144,6 +144,22 @@ function PaymentInner() {
         return;
       }
       const user = data.session.user;
+
+      // ── 진단 완료 필수(대표님 요청) ────────────────────────────────
+      //   결제창은 '진단·결과를 이미 본' 사람만 도달해야 한다. 진단 없이
+      //   결제 유도하면 거부감에 이탈하므로, 어떤 경로(URL 직접 접근·
+      //   비회원 → 로그인 후 복귀 등)로 왔든 진단이 없으면 무료진단으로 돌려보낸다.
+      //   · 로컬 진단 우선 확인 → 없으면 서버(user_id)로 조회(다른 기기 진단 대응).
+      let hasDiagnosis = !!loadDiagnosis();
+      if (!hasDiagnosis) {
+        const server = await loadDiagnosisFromServer(user.id);
+        hasDiagnosis = !!server;
+      }
+      if (!hasDiagnosis) {
+        router.replace("/diagnosis-chat");
+        return;
+      }
+
       if (mounted) {
         setEmail(user.email || "");
         setUserName((user.user_metadata?.name as string) || "");

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -35,6 +36,7 @@ import { checkFreeView, fetchViewStatus } from "@/lib/viewCredits";
 import { isStatsExcludedEmail } from "@/lib/admin";
 
 export default function MatchingPreview() {
+  const router = useRouter();
   const [name, setName] = useState("");
   // 관리자 열람 배너 전용 식별 라벨(이름→연락처→이메일). name이 비어도 '누구 결과'인지 표시.
   const [adminLabel, setAdminLabel] = useState("");
@@ -136,6 +138,16 @@ export default function MatchingPreview() {
         }
 
         const raw = isAdmin ? (loadAdminDiagnosisRaw() ?? loadDiagnosisRaw()) : loadDiagnosisRaw();
+
+        // ── 진단 필수(대표님 요청) ──────────────────────────────────
+        //   결과 미리보기는 '진단을 한' 사람만 봐야 한다. 진단 없이(URL 직접 접근 등)
+        //   결과·결제 유도 화면에 도달하면 매칭 0개짜리 빈 화면이 뜨므로,
+        //   관리자 열람이 아닌데 진단서가 없으면 무료진단으로 돌려보낸다.
+        if (!isAdmin && !raw) {
+          router.replace("/diagnosis-chat");
+          return;
+        }
+
         const profile = raw ? JSON.parse(raw) : {};
         setName(profile.name || "");
         setAdminLabel(
