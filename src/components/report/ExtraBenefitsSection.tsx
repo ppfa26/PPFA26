@@ -655,25 +655,28 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                   )}
                 </div>
 
-                {/* 데드라인 경고 (빨강) - 목차성 경고라 노출 유지 */}
+                {/* 신청하러 가기 버튼 - 정책금융기관 카드와 '버튼이 먼저' 배치 통일 (대표님 요청) */}
+                <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                  <a
+                    href={previewLock ? undefined : b.applyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex w-fit items-center gap-1.5 break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white transition hover:opacity-90 ${lockClick}`}
+                  >
+                    🔗 {b.applyName} 신청하러 가기
+                    <span>→</span>
+                  </a>
+                </div>
+
+                {/* 데드라인 경고 (빨강) - 버튼 '뒤(아래)'로 이동해 상·하단 카드 배치를 통일 */}
                 {b.warning && (
                   <p
-                    className="mr-2 mt-3 inline-block max-w-full break-keep rounded-lg px-3 py-2 text-[12px] font-semibold leading-relaxed"
+                    className="mt-2 inline-block max-w-full break-keep rounded-lg px-3 py-2 text-[12px] font-semibold leading-relaxed"
                     style={{ backgroundColor: "#FEF2F2", color: "#EF4444" }}
                   >
                     ⚠️ {b.deadline} · {b.warning}
                   </p>
                 )}
-
-                {/* 신청하러 가기 버튼 - 정책금융기관 카드와 동일 위치·크기 (색은 감면 카드 포인트색 유지) */}
-                <a
-                  href={previewLock ? undefined : b.applyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`mt-2.5 inline-block break-keep rounded-lg bg-brand-orange px-3 py-2 text-[11px] font-bold text-white hover:opacity-90 ${lockClick}`}
-                >
-                  🔗 {b.applyName} 신청하러 가기 →
-                </a>
               </CollapsibleItem>
             );
           };
