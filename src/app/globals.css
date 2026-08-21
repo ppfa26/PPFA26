@@ -506,6 +506,13 @@ body.theme-dark {
   .pricing-card-popular .pricing-check { color: #34e39b !important; }
   /* '오픈 베타 기간 0원' 빨강 강조는 유리 위에서 더 밝은 코랄로 */
   .pricing-card-popular .text-brand-red { color: #ff7a6e !important; }
+  /* 가격 문구 - 다크 유리 위에서 또렷하게 (정가 39,700원이 색상 때문에
+     안 보이던 문제 해결: 취소선 정가는 밝은 회색, 판매가는 흰색) */
+  .pricing-card-popular .pricing-original-price { color: rgba(226, 232, 240, 0.6) !important; }
+  .pricing-card-popular .pricing-sale-price { color: #ffffff !important; }
+  .pricing-card-popular .pricing-sale-period { color: rgba(226, 232, 240, 0.78) !important; }
+  .pricing-card-popular .pricing-sale-period span { color: rgba(226, 232, 240, 0.6) !important; }
+  .pricing-card-popular .pricing-vat-note { color: rgba(226, 232, 240, 0.7) !important; }
 
   /* 오픈 베타 0원 블록 - 코랄/골드 톤으로 은은하게 감싼 정돈된 박스(클릭 시 무료 진단 CTA) */
   .pricing-beta-box {
