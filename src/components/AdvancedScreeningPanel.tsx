@@ -962,7 +962,7 @@ function AdvancedResult({
                       href={p.siteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-3.5 py-2 text-xs font-extrabold text-white transition duration-150 hover:brightness-95 active:scale-[0.97]"
+                      className={`inline-flex items-center gap-1.5 rounded-lg bg-brand-orange px-3.5 py-2 text-xs font-extrabold text-white transition duration-150 hover:brightness-95 active:scale-[0.97] ${lockClick}`}
                     >
                       <span aria-hidden>📝</span> 신청하러 가기 <span aria-hidden>→</span>
                     </a>
@@ -971,23 +971,23 @@ function AdvancedResult({
                         href={p.manualUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-brand-orange bg-white px-3.5 py-2 text-xs font-extrabold text-brand-orange transition duration-150 hover:bg-brand-orange/5 active:scale-[0.97]"
+                        className={`inline-flex items-center gap-1.5 rounded-lg border border-brand-orange bg-white px-3.5 py-2 text-xs font-extrabold text-brand-orange transition duration-150 hover:bg-brand-orange/5 active:scale-[0.97] ${lockClick}`}
                       >
                         <span aria-hidden>📋</span> 신청 방법·서류
                       </a>
                     )}
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2 text-xs font-bold text-brand-orange">
+                    <span className={`inline-flex items-center gap-1.5 rounded-lg border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2 text-xs font-bold text-brand-orange ${lockText}`}>
                       <span aria-hidden>⏱️</span> 소요기간 통상 6~10주
                     </span>
                   </div>
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <a
                       href="tel:1357"
-                      className="inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20"
+                      className={`inline-flex items-center gap-1 rounded-lg border border-brand-green/40 bg-brand-green/10 px-2.5 py-1 text-[11px] font-bold text-brand-green hover:bg-brand-green/20 ${lockClick}`}
                     >
                       📞 1357
                     </a>
-                    <span className="break-keep text-[11px] leading-relaxed text-brand-dark/45">
+                    <span className={`break-keep text-[11px] leading-relaxed text-brand-dark/45 ${lockText}`}>
                       창업·정부지원 통합콜센터(1357)로 문의하면 K-Startup 신청 안내가 빠릅니다.
                     </span>
                   </div>
