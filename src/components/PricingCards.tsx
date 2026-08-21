@@ -205,7 +205,10 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
          홈페이지 다크 유리 톤과 어울리도록 아이콘/문구 정렬을 정돈.
          이모지(✅/⚠️)는 앞부분을 아이콘 컬럼으로 분리해 문구를 가지런히,
          마지막 ⚠️ 안내는 상단 구분선으로 시각적으로 떼어 세련되게. */}
-      <div className={`mx-auto mt-5 rounded-2xl bg-gray-50 p-5 sm:p-6 ${single ? "max-w-2xl" : "max-w-2xl"}`}>
+      {/* ★ 폭 정렬(대표님 요청) ★ 아래 안내 박스를 위 제목 박스(is-wide-pricing 36rem)·
+          가격 카드(single=max-w-xl 36rem)와 '같은 가로폭'으로 통일해 좌우 라인을 맞춘다.
+          (기존 max-w-2xl=42rem 이라 안내 박스만 넓게 튀어나와 어색했음) */}
+      <div className={`mx-auto mt-5 rounded-2xl bg-gray-50 p-5 sm:p-6 ${single ? "max-w-xl" : "max-w-2xl"}`}>
         <ul className="space-y-2.5 text-[12px] text-brand-dark sm:text-[13px]">
           {COMMON_NOTES.map((n, i) => {
             const isNotice = n.trimStart().startsWith("⚠️");
