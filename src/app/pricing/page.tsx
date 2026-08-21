@@ -57,7 +57,7 @@ export default function PricingPage() {
                 as="h1"
                 className="break-keep text-[22px] font-black tracking-[-0.03em] text-brand-dark sm:text-[26px]"
               >
-                AI 진단 리포트
+                PRO AI 진단 리포트
               </Editable>
               <Editable
                 id="pricing-sub"
@@ -66,9 +66,6 @@ export default function PricingPage() {
               >
                 1회성 결제이며, 월 구독이 아닙니다.
               </Editable>
-              <p className="mt-4 inline-block break-keep rounded-full bg-brand-yellow/40 px-4 py-2 text-sm font-semibold text-brand-dark">
-                💡 모든 가격은 부가세가 포함된 금액입니다
-              </p>
             </div>
             <div className="mt-6">
               <PricingCards prefix="pricing" />
