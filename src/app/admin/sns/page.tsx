@@ -46,15 +46,10 @@ function CopyButton({ text }: { text: string }) {
    블록 사이에 라벨을 [대괄호]로 넣어, 붙여넣은 뒤 제목/본문/태그를 쉽게 구분할 수 있게 한다. */
 function CopyAllButton({ blocks }: { blocks: SnsBlock[] }) {
   const [done, setDone] = useState(false);
-  // 라벨에서 "채널명 - " 접두어(예: "블로그 - 제목")를 떼어 "제목"만 남긴다.
-  const shortLabel = (label: string) => {
-    const idx = label.indexOf(" - ");
-    return idx >= 0 ? label.slice(idx + 3) : label;
-  };
+  // 라벨/구분선 없이 각 블록 내용만 빈 줄로 이어붙인다(제목 → 본문 → 태그).
+  //   → 네이버 블로그에 붙여넣으면 바로 쓸 수 있게 깔끔하게. (대표님 요청)
   const buildAllText = () =>
-    blocks
-      .map((b) => `[${shortLabel(b.label)}]\n${b.text}`)
-      .join("\n\n──────────\n\n");
+    blocks.map((b) => b.text.trim()).join("\n\n");
   const onCopy = async () => {
     const text = buildAllText();
     try {
