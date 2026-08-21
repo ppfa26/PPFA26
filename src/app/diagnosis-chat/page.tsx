@@ -450,27 +450,19 @@ export default function DiagnosisChat() {
     showNext();
   };
 
-  // ★ 로그인 게이트(대표님 요청) ★
-  //  무료진단은 '로그인/회원가입 후'에만 시작. 비로그인 상태로 들어오면 회원가입 화면으로 보내고,
-  //  가입/로그인 완료 시 next=/diagnosis-chat 덕분에 자동으로 다시 이 화면으로 돌아와 진단이 시작된다.
+  // ★ 무료진단 진입(대표님 요청: '진단 먼저 → 로그인 나중') ★
+  //  예전엔 비로그인이면 회원가입 화면으로 튕겼지만, 이제 로그인 게이트를 제거한다.
+  //  · 비회원도 진단을 바로 시작 → 진단서는 user_id=NULL 로 저장됨.
+  //  · 결과화면(matching-preview)에서 로그인하면 link_diagnosis_user 가 phone 으로
+  //    진단서에 user_id 를 자동 backfill 한다. → "가입만 하고 진단 안 함" 방지.
+  //  · 진단 완료 시점(제출)에서 비회원이면 그때 회원가입으로 유도한다.
   useEffect(() => {
-    let alive = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!alive) return;
-      if (data.session) {
-        setAuthOk(true);
-      } else {
-        setAuthOk(false);
-        // 가입/로그인 완료 후 이 화면으로 자동 복귀 → 진단 자동 시작
-        router.replace(`/signup?next=${encodeURIComponent("/diagnosis-chat")}`);
-      }
-    });
-    return () => { alive = false; };
-  }, [router]);
+    setAuthOk(true); // 항상 진단 화면을 바로 렌더(로그인 여부와 무관)
+  }, []);
 
-  // 인트로 자동 시작 (로그인 확인 완료 후에만)
+  // 인트로 자동 시작
   useEffect(() => {
-    if (authOk !== true) return; // 로그인 확인 전/비로그인이면 인트로 시작 안 함
+    if (authOk !== true) return; // 초기 렌더(null) 직후 1회만 방어
     // ★ 대표님 요청 ★ 인트로 안내를 '한 말풍선'으로(줄바꿈은 의미 단위로 직접 \n).
     //   이어지는 bno 안내(말풍선 2)와 함께 가로 폭을 동일(wide)하게 맞춘다.
     pushBotLines(
@@ -914,9 +906,9 @@ export default function DiagnosisChat() {
     goBack();
   };
 
-  // ★ 로그인 게이트 화면(대표님 요청) ★
-  //  로그인 확인 전(null)엔 로딩, 비로그인(false)엔 회원가입으로 이동 중 안내.
-  //  로그인됨(true)일 때만 아래 실제 진단 화면이 렌더된다.
+  // ★ 초기 렌더 로딩(대표님 요청: 진단 먼저) ★
+  //  로그인 게이트는 제거됨. authOk 가 null 인 '초기 렌더 한 틱' 동안만 로딩을 보여주고,
+  //  곧바로(항상) 진단 화면이 렌더된다. → 비회원도 로그인 없이 바로 진단 시작.
   if (authOk !== true) {
     return (
       <PageShell pageKey="diagnosis" stickyFooter>
@@ -925,12 +917,7 @@ export default function DiagnosisChat() {
           <div className="mx-auto flex max-w-sm flex-col items-center gap-3">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-brand-orange/25 border-t-brand-orange" aria-hidden="true" />
             <p className="break-keep text-[15px] font-bold text-brand-dark">
-              {authOk === false ? "무료 진단은 로그인 후 이용하실 수 있어요" : "잠시만요, 준비하고 있어요…"}
-            </p>
-            <p className="break-keep text-[13px] leading-relaxed text-brand-gray">
-              {authOk === false
-                ? "회원가입/로그인 화면으로 이동할게요. 가입하시면 바로 진단이 시작돼요!"
-                : "로그인 정보를 확인하고 있어요."}
+              잠시만요, 진단을 준비하고 있어요…
             </p>
           </div>
         </main>
