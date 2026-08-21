@@ -113,14 +113,15 @@ const FAQS = [
 export default function Home() {
   // ── '사용 기업 수 / 평균 매칭 개수' 자동 증가 (대표님 요청) ─────────────────
   //  · 기준일(BASE_DATE)에 BASE_USERS(500)에서 시작, 하루 지날 때마다 조금씩 증가.
-  //  · 딱 +30 으로 떨어지면 조작 티가 나므로, 날짜를 시드로 한 의사난수로
-  //    하루당 대략 +23~+36 사이의 '들쭉날쭉한' 증가폭을 누적 → 자연스럽게 늘어나 보임.
-  //  · 평균 매칭 개수도 26~29 사이에서 하루 단위로 미세하게 흔들어 '살아있는' 느낌.
+  //  · 너무 빨리 늘면 안 믿기므로(대표님 요청) 하루당 '평균 +8'만 천천히 증가.
+  //    딱 +8 로 떨어지면 조작 티가 나므로, 날짜 시드 의사난수로 하루당 +7~+9 로
+  //    아주 미세하게만 흔들며 누적 → 하루 8개 정도씩 자연스럽게 상승.
+  //  · 평균 매칭 개수는 '21개'로 고정(대표님 요청).
   //  · SSR(서버)과 첫 렌더가 어긋나면(hydration mismatch) 경고가 나므로,
-  //    초기값은 기준값(500/27)으로 두고 마운트 후 useEffect 에서 실제 날짜로 반영한다.
+  //    초기값은 기준값(BASE_USERS/BASE_MATCH)으로 두고 마운트 후 useEffect 에서 실제 날짜로 반영한다.
   const BASE_DATE = new Date(2026, 7, 20); // 2026-08-20 (월은 0부터: 7=8월) - 시작 기준일
-  const BASE_USERS = 512; // 오늘(기준일) 시작값
-  const BASE_MATCH = 27;
+  const BASE_USERS = 539; // 오늘(기준일) 시작값
+  const BASE_MATCH = 21; // 평균 매칭 개수(고정)
   const [usedCompanies, setUsedCompanies] = useState(BASE_USERS);
   const [avgMatch, setAvgMatch] = useState(BASE_MATCH);
 
@@ -134,15 +135,15 @@ export default function Home() {
     const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
     const daysPassed = Math.max(0, Math.floor((t0 - BASE_DATE.getTime()) / 86400000));
 
-    // 지난 날짜만큼 하루치 증가폭(10~30)을 누적 - 적당한 속도로 꾸준히 상승
+    // 지난 날짜만큼 하루치 증가폭(7~9, 평균 8)을 누적 - 천천히 꾸준히 상승(대표님 요청)
     let users = BASE_USERS;
     for (let i = 1; i <= daysPassed; i++) {
-      users += 10 + Math.floor(seeded(i) * 21); // 10 ~ 30
+      users += 7 + Math.floor(seeded(i) * 3); // 7 ~ 9 (평균 8)
     }
     setUsedCompanies(users);
 
-    // 평균 매칭 개수: 오늘 날짜 기준 26~29 사이에서 미세하게 흔들림
-    setAvgMatch(26 + Math.floor(seeded(daysPassed + 777) * 4)); // 26 ~ 29
+    // 평균 매칭 개수: 21개로 고정(대표님 요청)
+    setAvgMatch(BASE_MATCH);
   }, []);
 
   // ── 첫 화면(홈)이 진입 즉시 화면 폭에 맞게 보이도록 뷰포트 fit-to-width 강제 (대표님 요청) ──
