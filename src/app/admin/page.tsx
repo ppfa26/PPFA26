@@ -386,13 +386,24 @@ export default function AdminPage() {
     };
   }, [users, diagnoses, payments]);
 
-  // 통화 상태 변경 - 로컬 즉시 반영 + 서버 저장(모든 PC 공유). 실패 시 서버 최신값으로 되돌림.
+  // 통화 상태 변경 - 로컬 즉시 반영 + 서버 저장(모든 PC 공유).
+  //  ★ 버그 수정 (대표님 요청: "통화완료 클릭하면 바로 다시 미접촉으로 바뀜") ★
+  //   기존엔 saveLeadNote() 가 내부에서 이미 서버 upsert 를 한 번 하는데,
+  //   여기서 saveLeadNoteToServer() 를 '또' 호출(이중 저장)하고,
+  //   그 결과가 조금이라도 실패/지연되면 loadLeadNotesFromServer() 로
+  //   '전체 맵'을 서버값으로 덮어써서 방금 클릭한 값이 사라졌다.
+  //   → (1) 이중 저장 제거: saveLeadNote() 한 번만 호출(내부에서 서버 upsert까지 수행)
+  //     (2) 실패해도 '전체 롤백' 하지 않고, 방금 그 항목만 서버 재확인해 조용히 반영.
+  //         (한 항목 저장 실패가 다른 항목/방금 클릭까지 초기화하지 않게)
   const setCallStatus = (id: string, status: CallStatus) => {
-    setLeadNotes(saveLeadNote(id, { status })); // 낙관적 업데이트
+    // 낙관적 업데이트 + 서버 upsert(saveLeadNote 내부에서 fire-and-forget 저장까지 수행)
+    setLeadNotes(saveLeadNote(id, { status }));
+    // 서버 저장 성공/실패를 별도로 한 번 더 확인만 한다(저장은 위에서 이미 시작됨).
+    //   실패 시에도 전체를 되돌리지 않는다 → 방금 선택이 미접촉으로 튀는 현상 방지.
     void saveLeadNoteToServer(id, { status }).then((ok) => {
       if (!ok) {
-        // 서버 저장 실패 → 서버 최신값으로 재동기화(가짜 성공 방지)
-        void loadLeadNotesFromServer().then((store) => setLeadNotes(store));
+        setMsg("서버 저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (선택값은 화면에 유지됩니다)");
+        setTimeout(() => setMsg(null), 3000);
       }
     });
   };

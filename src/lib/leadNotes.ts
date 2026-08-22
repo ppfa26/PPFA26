@@ -178,7 +178,12 @@ export async function saveLeadNoteToServer(
     });
     if (error) throw error;
     return true;
-  } catch {
+  } catch (e) {
+    // 저장 실패 원인(권한/RPC 미배포/네트워크)을 콘솔에서 바로 알 수 있게 남긴다.
+    if (typeof window !== "undefined") {
+      // eslint-disable-next-line no-console
+      console.error("[leadNotes] admin_save_lead_note 실패:", id, e);
+    }
     return false;
   }
 }
