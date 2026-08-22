@@ -80,7 +80,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
           <div className="pricing-card pricing-card-free relative flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white px-6 py-5 pt-9 shadow-card transition duration-200 hover:shadow-cardHover sm:pt-10">
             {/* 상단 띠(무료 강조) */}
             <div className="ribbon ribbon-free" aria-hidden="true">
-              👍 결제 없이 이용
+              👍 결제 없이 조회 가능
             </div>
 
             {/* 제목줄: 오른쪽 tier.name/tier.subtitle 과 동일한 높이(큰 제목 제거 → 아이콘+설명만) */}
@@ -108,7 +108,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                 </span>
               </div>
               <p className="pricing-vat-note mt-1 text-[11px] text-brand-gray">
-                * 결제·회원가입 없이 바로 이용
+                * 결제 없이 조회 가능 (회원가입만 하면 이용)
               </p>
             </div>
 
