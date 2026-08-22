@@ -162,6 +162,13 @@ export function saveLeadNote(
   return { ...store };
 }
 
+// 마지막 저장 실패 사유(사람이 읽을 수 있는 문자열). 화면 배너에서 참조한다.
+//   예) "권한이 없습니다." / "function admin_save_lead_note ... does not exist" / 네트워크 오류
+let _lastSaveError = "";
+export function getLastLeadNoteError(): string {
+  return _lastSaveError;
+}
+
 /**
  * 서버에 저장하고 결과를 기다린다(성공/실패 반환).
  * 저장 버튼처럼 "정말 저장됐는지" 확인이 필요한 곳에서 await 해서 쓴다.
@@ -177,9 +184,13 @@ export async function saveLeadNoteToServer(
       p_memo: patch.memo ?? null,
     });
     if (error) throw error;
+    _lastSaveError = "";
     return true;
-  } catch (e) {
-    // 저장 실패 원인(권한/RPC 미배포/네트워크)을 콘솔에서 바로 알 수 있게 남긴다.
+  } catch (e: unknown) {
+    // 실패 원인(권한/RPC 미배포/네트워크)을 문자열로 보관 + 콘솔 로깅.
+    const err = e as { message?: string; code?: string; details?: string; hint?: string };
+    _lastSaveError =
+      err?.message || err?.details || err?.hint || err?.code || "알 수 없는 오류";
     if (typeof window !== "undefined") {
       // eslint-disable-next-line no-console
       console.error("[leadNotes] admin_save_lead_note 실패:", id, e);

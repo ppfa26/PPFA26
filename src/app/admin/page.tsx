@@ -21,6 +21,7 @@ import {
   loadLeadNotesFromServer,
   saveLeadNote,
   saveLeadNoteToServer,
+  getLastLeadNoteError,
   CALL_STATUS_META,
   CALL_STATUS_ORDER,
   type CallStatus,
@@ -402,8 +403,9 @@ export default function AdminPage() {
     //   실패 시에도 전체를 되돌리지 않는다 → 방금 선택이 미접촉으로 튀는 현상 방지.
     void saveLeadNoteToServer(id, { status }).then((ok) => {
       if (!ok) {
-        setMsg("서버 저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (선택값은 화면에 유지됩니다)");
-        setTimeout(() => setMsg(null), 3000);
+        // 실제 실패 사유(권한/함수없음/네트워크)를 그대로 노출해 원인 파악이 쉽게.
+        setMsg(`서버 저장 실패: ${getLastLeadNoteError()} (선택값은 화면에 유지됩니다)`);
+        setTimeout(() => setMsg(null), 6000);
       }
     });
   };
