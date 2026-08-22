@@ -138,9 +138,9 @@ export default function AdGateModal({
             결과를 <span className="text-brand-orange">무료</span>로 확인할 수 있어요
           </p>
           <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray">
-            광고를 클릭해 확인 후 돌아오시거나, 잠시 기다리시면
+            광고를 클릭해 확인 후 돌아오시거나,
             <br />
-            결과 보기 버튼이 열립니다.
+            기다리시면 결과 보기 버튼이 열립니다.
           </p>
         </div>
 
