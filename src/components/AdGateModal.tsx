@@ -24,8 +24,9 @@ const ADFIT_SCRIPT_SRC = "https://t1.kakaocdn.net/kas/static/ba.min.js";
 
 // 광고를 클릭하지 않아도 이 시간(초)이 지나면 "결과 보기"를 열 수 있게 한다.
 //  (클릭 강요 방지 · 정책 안전). 광고를 클릭하고 복귀하면 즉시 활성화.
-//  대기 3초: 광고 노출 수익은 이미 확보되고, 이탈을 줄이기 위해 짧게 유지(대표님 요청).
-const MIN_WATCH_SEC = 3;
+//  대기 8초: 너무 빠르면 광고를 볼 새 없이 넘어가 클릭이 안 나오므로,
+//  사용자 시선이 광고에 머물며 클릭을 고려할 시간을 확보(대표님 요청).
+const MIN_WATCH_SEC = 8;
 
 export default function AdGateModal({
   open,
