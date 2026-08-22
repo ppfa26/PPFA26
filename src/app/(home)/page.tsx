@@ -1019,8 +1019,8 @@ export default function Home() {
         </section>
 
         {/* 하단 CTA - 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
-            박스 위·아래 바깥 공백 추가 축소(대표님 요청): py-2 sm:py-3 → py-1 sm:py-2 */}
-        <section className="px-4 py-1 sm:py-2">
+            위 FAQ·아래 광고 섹션과 세로 리듬을 균일하게(대표님 요청): py-1 sm:py-2 → py-3 sm:py-4 */}
+        <section className="px-4 py-3 sm:py-4">
           {/* 박스 상하단 내부 여백 축소(대표님 요청): 좌우(px)는 유지, 상하 여백을 광고 하단 공백 수준으로 균일하게 줄임(py-5 sm:py-7 → py-4 sm:py-5) */}
           <div className="reveal hover-lift mx-auto max-w-3xl rounded-3xl bg-brand-dark px-6 py-4 text-center shadow-card sm:px-8 sm:py-5">
             <Editable
@@ -1066,7 +1066,7 @@ export default function Home() {
               href="https://link.inpock.co.kr/ppfa25"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-1 break-keep text-[13px] font-bold text-gray-300 underline decoration-gray-500 underline-offset-4 transition hover:text-white"
+              className="mt-5 inline-flex items-center gap-1 break-keep text-[13px] font-bold text-gray-300 underline decoration-gray-500 underline-offset-4 transition hover:text-white"
             >
               🔎 모두의사업친구 더 알아보기
             </Editable>
