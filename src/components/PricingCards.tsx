@@ -84,7 +84,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             </div>
 
             {/* 제목줄: 오른쪽 tier.name/tier.subtitle 과 동일한 높이(큰 제목 제거 → 아이콘+설명만) */}
-            <h3 className="pricing-title flex items-center gap-2 text-2xl font-extrabold text-brand-dark sm:text-[26px]">
+            <h3 className="pricing-title flex items-center gap-1.5 whitespace-nowrap text-lg font-extrabold text-brand-dark sm:text-xl">
               <span aria-hidden="true">🎬</span>
               <span>PRO AI 진단 리포트 (무료)</span>
             </h3>
@@ -158,7 +158,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <Editable
               id={`${prefix}-tier-${tier.id}-name`}
               as="h3"
-              className="pricing-title flex items-center gap-2 text-2xl font-extrabold text-brand-dark sm:text-[26px]"
+              className="pricing-title flex items-center gap-1.5 whitespace-nowrap text-lg font-extrabold text-brand-dark sm:text-xl"
             >
               <span aria-hidden="true">{tier.icon}</span>
               <span>{tier.name}</span>
