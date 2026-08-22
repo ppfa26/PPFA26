@@ -90,7 +90,7 @@ export default function MyPage() {
       //   (예: 공용 PC에서 다른 사람이 진단 후 내가 로그인) → 남의 진단을 즉시 삭제.
       clearDiagnosisIfNotOwner(user?.id ?? null);
 
-      // ★ 서버(Supabase) 동기화 ★ 로그인 계정이 있으면 서버에 저장된 본인 최근 진단(30일 이내)을
+      // ★ 서버(Supabase) 동기화 ★ 로그인 계정이 있으면 서버에 저장된 본인 최근 진단(7일 이내)을
       //   먼저 불러와 localStorage 에 심는다. → 같은 PC에서 다른 계정으로 로그인했다 돌아와도,
       //   폰↔PC 다른 기기에서 봐도, 로그인 순서와 무관하게 본인 진단이 항상 보인다.
       //   (관리자 '결과보기' 임시 데이터가 떠 있으면 그건 건드리지 않는다.)
@@ -115,7 +115,7 @@ export default function MyPage() {
 
       if (!mounted) return;
 
-      // 3) 진단 결과 요약 (localStorage · 30일 유지)
+      // 3) 진단 결과 요약 (localStorage · 7일 유지)
       //   ★ 관리자 '결과보기'로 심어둔 고객 임시 데이터(_adminLabel 존재)는
       //      대표님 본인 마이페이지에 섞이면 안 되므로 여기서는 무시한다. ★
       try {
@@ -126,7 +126,7 @@ export default function MyPage() {
             setDiagName(profile.name || "");
             // 대시보드에 실제 안내되는 항목 전부 합산(기관 + 기관별 상품 + 지원제도)
             setMatchCount(countMatchedItems(profile).total);
-            // 진단 결과 유지 만료일(저장 후 30일)
+            // 진단 결과 유지 만료일(저장 후 7일)
             if (mounted) setDiagExpiry(getDiagnosisExpiry());
           }
         }
@@ -143,7 +143,7 @@ export default function MyPage() {
   }, []);
 
   async function handleLogout() {
-    // ★ 진단 결과 30일 유지 ★ 로그아웃해도 진단 결과를 삭제하지 않는다.
+    // ★ 진단 결과 7일 유지 ★ 로그아웃해도 진단 결과를 삭제하지 않는다.
     //   같은 계정으로 다시 로그인하면 그대로 볼 수 있고(owner 일치),
     //   다른 계정이 로그인하면 clearDiagnosisIfNotOwner()가 자동으로 정리한다.
     await supabase.auth.signOut();

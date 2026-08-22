@@ -32,7 +32,7 @@ export default function Header() {
   }, []);
 
   const handleLogout = async () => {
-    // ★ 진단 결과 30일 유지 ★ 로그아웃해도 진단 결과를 삭제하지 않는다.
+    // ★ 진단 결과 7일 유지 ★ 로그아웃해도 진단 결과를 삭제하지 않는다.
     //   같은 계정으로 다시 로그인하면 그대로 볼 수 있고(owner 일치),
     //   다른 계정이 로그인하면 clearDiagnosisIfNotOwner()가 자동으로 정리하므로
     //   계정 분리는 그대로 보장된다.

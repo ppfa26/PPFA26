@@ -151,7 +151,7 @@ export default function MatchingPreview() {
           // 비회원 진단 후 로그인한 경우 → 지금 계정을 소유자로 연결(입양)해 결과 유지
           adoptDiagnosisIfOwnerless(uid);
           clearDiagnosisIfNotOwner(uid);
-          // ★ 서버 동기화 ★ 로그인 계정이면 서버에 저장된 본인 최근 진단(30일 이내)을
+          // ★ 서버 동기화 ★ 로그인 계정이면 서버에 저장된 본인 최근 진단(7일 이내)을
           //   불러와 localStorage 에 심는다. → 기기·로그인 순서 무관하게 결과 유지.
           if (uid) {
             await loadDiagnosisFromServer(uid);

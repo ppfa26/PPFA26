@@ -217,7 +217,7 @@ function SignupInner() {
   // 이미 로그인된 경우 이동:
   //  · 결제 진행 중(tier 있음) → 결제 페이지
   //  · 그 외(순수 로그인) → 마이페이지(결과를 클릭해서 확인하도록 유도 · 대표님 요청)
-  //  ※ 진단 데이터(mpp_diagnosis)는 localStorage에 30일간 보관되므로 로그인/이동해도 유지됨
+  //  ※ 진단 데이터(mpp_diagnosis)는 localStorage에 7일간 보관되므로 로그인/이동해도 유지됨
   //
   //  ★ 카카오/구글 소셜 로그인 콜백 안정화 (대표님 요청 - 가입 이탈 방지) ★
   //   OAuth 로 돌아오면 세션이 URL(#access_token=...)로 넘어오는데, supabase-js 가

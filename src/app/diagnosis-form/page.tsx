@@ -381,7 +381,7 @@ export default function Diagnosis() {
     DEEP_KEYS.forEach((k) => {
       if (!form[k]) form[k] = "아니요";
     });
-    // 진단 결과를 localStorage 에 30일간 저장 (탭 닫아도 유지 · 1달 후 자동 만료)
+    // 진단 결과를 localStorage 에 7일간 저장 (탭 닫아도 유지 · 7일 후 자동 만료)
     // ★ 어느 로그인 계정의 진단인지 '소유자'를 함께 저장 → 다른 계정으로 로그인하면
     //    이 진단이 따라오지 않도록 한다. (계정별 데이터 분리)
     (async () => {

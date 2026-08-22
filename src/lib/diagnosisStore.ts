@@ -1,14 +1,14 @@
 // ════════════════════════════════════════════════════════════════
-//  진단 결과 저장소 (localStorage · 30일 유지)
+//  진단 결과 저장소 (localStorage · 7일 유지)
 //
 //  ★ 대표님 안내 ★
 //  예전에는 진단 결과를 sessionStorage(임시 저장소)에 담아서
 //  브라우저 탭/창을 닫으면 바로 사라졌습니다.
 //  → 이제 localStorage(탭을 닫아도 유지)에 "저장한 시각"과 함께 담아서
-//     30일(1달) 동안 계속 확인할 수 있게 바뀌었습니다.
+//     7일(1주일) 동안 계속 확인할 수 있게 바뀌었습니다.
 //
 //  ─ 규칙 ─
-//   • 아래 DIAGNOSIS_TTL_DAYS 숫자만 바꾸면 유지 기간이 바뀝니다. (기본 30일)
+//   • 아래 DIAGNOSIS_TTL_DAYS 숫자만 바꾸면 유지 기간이 바뀝니다. (기본 7일)
 //   • 다른 파일에서는 이 파일의 saveDiagnosis / loadDiagnosis / clearDiagnosis
 //     세 함수만 쓰면 됩니다.
 // ════════════════════════════════════════════════════════════════
@@ -38,7 +38,7 @@ const DRAFT_STAMP_KEY = "mpp_diagnosis_draft_savedAt";
 const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
 
 // 진단 결과 유지 기간 (일) - 여기 숫자만 바꾸면 됩니다.
-export const DIAGNOSIS_TTL_DAYS = 30;
+export const DIAGNOSIS_TTL_DAYS = 7;
 const TTL_MS = DIAGNOSIS_TTL_DAYS * 24 * 60 * 60 * 1000;
 
 /**
@@ -199,7 +199,7 @@ export function clearAdminDiagnosis(): void {
 
 /**
  * 저장된 진단 결과의 원본 문자열(JSON)을 돌려줍니다.
- *  - 없거나 30일이 지났으면 자동으로 지우고 null 반환.
+ *  - 없거나 7일이 지났으면 자동으로 지우고 null 반환.
  *
  *  ★ 관리자 '결과보기' 우선 규칙 ★
  *  관리자(admin)가 고객 결과를 임시로 열어볼 때는 sessionStorage 에 데이터를 심습니다.
@@ -304,15 +304,15 @@ export function getDiagnosisExpiry(): Date | null {
 //  진단 결과를 브라우저(localStorage)에만 두면, 같은 PC에서 다른 계정으로
 //  로그인했다가 돌아오거나(계정 분리 로직이 지움), 다른 기기(폰↔PC)에서 보면
 //  결과가 안 보입니다. 진단 시점에 Supabase `diagnoses` 테이블에 계정별로
-//  이미 저장되고 있으므로, "로그인 계정 기준 최근 진단(30일 이내)"을 서버에서
+//  이미 저장되고 있으므로, "로그인 계정 기준 최근 진단(7일 이내)"을 서버에서
 //  다시 불러와 화면에 항상 뿌려줄 수 있습니다. (기기·로그인 순서 무관)
 // ════════════════════════════════════════════════════════════════
 
 /**
- * 로그인한 계정의 최근 진단(30일 이내)을 서버에서 불러옵니다.
+ * 로그인한 계정의 최근 진단(7일 이내)을 서버에서 불러옵니다.
  *  · 서버에 있으면 그 profile 을 반환하고, 동시에 localStorage 에도 심어
  *    (owner=본인) 이후 오프라인/빠른 조회에도 대비합니다.
- *  · 서버에 없거나(비회원·기록없음) 30일 초과면 null 을 반환합니다.
+ *  · 서버에 없거나(비회원·기록없음) 7일 초과면 null 을 반환합니다.
  * @param currentUserId 현재 로그인 계정 user.id (없으면 서버 조회 생략)
  */
 export async function loadDiagnosisFromServer(
@@ -338,7 +338,7 @@ export async function loadDiagnosisFromServer(
 
     const row = data[0] as { profile: unknown; created_at: string };
     const savedAtMs = new Date(row.created_at).getTime();
-    // 30일(TTL) 초과한 진단은 보여주지 않는다.
+    // 7일(TTL) 초과한 진단은 보여주지 않는다.
     if (!Number.isFinite(savedAtMs) || Date.now() - savedAtMs > TTL_MS) {
       return null;
     }
