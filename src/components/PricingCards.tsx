@@ -73,6 +73,9 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
           (결과 내용 자체는 100% 동일 — 결제를 강요하지 않고 선택지를 이해시키는 목적) */}
       <div className="mx-auto grid max-w-3xl items-stretch gap-4 sm:grid-cols-2">
         {/* ──────────── 왼쪽: 🎬 무료 이용 박스 ──────────── */}
+        {/* ★ 대표님 요청 ★ 두 박스의 높낮이·위치를 완전히 동일하게(대칭) 맞춘다.
+            큰 제목("무료 이용")은 삭제하고 작은 설명만 남긴다.
+            제목줄=아이콘+한줄설명, 가격블록(배지줄/가격줄/부가세줄), 기능4줄, 버튼 → 오른쪽과 동일 라인. */}
         {!BETA_FREE && (
           <div className="pricing-card pricing-card-free relative flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white px-6 py-5 pt-9 shadow-card transition duration-200 hover:shadow-cardHover sm:pt-10">
             {/* 상단 띠(무료 강조) */}
@@ -80,21 +83,28 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               👍 결제 없이 이용
             </div>
 
+            {/* 제목줄: 오른쪽 tier.name/tier.subtitle 과 동일한 높이(큰 제목 제거 → 아이콘+설명만) */}
             <h3 className="pricing-title flex items-center gap-2 text-2xl font-extrabold text-brand-dark sm:text-[26px]">
               <span aria-hidden="true">🎬</span>
-              <span>무료 이용</span>
+              <span>무료</span>
             </h3>
             <p className="pricing-sub text-[13px] font-semibold text-brand-gray">
               광고 한 번만 보면 결과 전체를 무료로 확인
             </p>
 
+            {/* 가격블록: 오른쪽과 라인 정렬 위해 '배지줄 → 가격줄 → 안내줄' 3단 동일 구성 */}
             <div className="mt-4">
-              <div className="flex items-end gap-1">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">
+                  광고 시청 시
+                </span>
+              </div>
+              <div className="mt-0.5 flex items-end gap-1">
                 <span className="pricing-sale-price text-[26px] font-black leading-none text-brand-green">
                   0원
                 </span>
                 <span className="pricing-sale-period mb-1 text-sm text-brand-gray">
-                  / 광고 시청 시
+                  / 무료 <span className="text-[11px] text-brand-gray/80">[광고 시청]</span>
                 </span>
               </div>
               <p className="pricing-vat-note mt-1 text-[11px] text-brand-gray">
@@ -102,12 +112,13 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
               </p>
             </div>
 
+            {/* 기능 4줄: 오른쪽과 개수·높이 동일 */}
             <ul className="mt-3 flex-1 space-y-1.5">
               {[
                 "AI로 찾은 내 사업장 기준 정부지원사업 리스트",
-                "정부지원사업 신청 방법 및 관련 사이트 링크",
-                "공식 카카오 채널 톡 상담",
                 "결과 조회 전 전면 광고 1회 (건너뛰기 5초)",
+                "1개 아이디로 최대 2개 사업자 무제한 조회",
+                "공식 카카오 채널 톡 상담",
               ].map((f, i) => (
                 <li key={i} className="flex items-start gap-2 text-[13px]">
                   <span className="pricing-check mt-0.5 text-brand-green">✓</span>
