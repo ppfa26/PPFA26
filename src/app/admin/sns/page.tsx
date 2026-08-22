@@ -270,7 +270,8 @@ export default function SnsHubPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-8">
+      {/* SNS 글쓰기 허브 상·하단 여백 축소(대표님 요청): py-6 sm:py-8 → py-3 sm:py-4 */}
+      <main className="min-h-screen bg-gray-50 px-3 py-3 sm:px-6 sm:py-4">
         <div className="mx-auto max-w-5xl">
           {/* 상단 헤더 */}
           <header className="mb-5">
