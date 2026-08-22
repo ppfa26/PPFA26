@@ -197,7 +197,7 @@ function SignupInner() {
   //   주황 테두리로 잠깐 강조해, 한 번의 '전체 동의' 클릭으로 바로 진행할 수 있게 시선을 유도한다.
   const requireAgreementOrBlock = (): boolean => {
     if (!allRequiredChecked) {
-      setMsg("아래 필수 약관에 동의하시면 바로 시작할 수 있어요.");
+      setMsg("아래 필수 약관에 동의 후 시작할 수 있어요.");
       // 동의 박스로 스크롤 + 강조
       if (typeof window !== "undefined") {
         // 렌더 반영 후 스크롤되도록 다음 틱에 실행
