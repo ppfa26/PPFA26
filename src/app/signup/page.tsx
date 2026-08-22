@@ -414,13 +414,13 @@ function SignupInner() {
           </ul>
         </aside>
 
-        {/* 우측 로그인 폼 */}
-        <main className="mx-auto flex w-full max-w-md flex-col justify-start bg-white px-6 py-12 sm:px-8">
+        {/* 우측 로그인 폼 - 섹션 간 간격을 space-y-4 로 부모에서 일괄 통일(대표님 요청: 균일한 여백) */}
+        <main className="mx-auto flex w-full max-w-md flex-col justify-start space-y-4 bg-white px-6 py-12 sm:px-8">
         {/* 선택한 상품 요약 */}
         {selected && (
           <section
             id="signup-selected-tier"
-            className="mb-6 rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4"
+            className="rounded-2xl border border-brand-yellow/60 bg-brand-yellow/10 p-4"
           >
             <p className="text-xs font-semibold text-brand-gray">선택하신 플랜</p>
             <div className="mt-1 flex items-center justify-between">
