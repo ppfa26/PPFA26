@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import AdFitBanner from "@/components/AdFitBanner";
+import AdGateModal from "@/components/AdGateModal";
 import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
 // (성능) 결과 상세 패널은 페이지에서 가장 무거운 컴포넌트(약 1.6천 줄).
 //  next/dynamic 으로 별도 청크로 분리해 초기 First Load JS 를 줄인다.
@@ -34,6 +35,18 @@ import { loadDiagnosisRaw, clearDiagnosisIfNotOwner, loadAdminDiagnosisRaw, adop
 import { supabase } from "@/lib/supabaseClient";
 import { checkFreeView, fetchViewStatus } from "@/lib/viewCredits";
 import { isStatsExcludedEmail } from "@/lib/admin";
+
+// ── 광고 무료 열람(옵션 A) 세션 키 ──
+//   진단 프로필의 '사업자 지문'(사업자번호 우선, 없으면 상호+업종)으로 고유 키를 만든다.
+//   같은 진단이면 같은 키 → 세션 동안 열림 유지. 새 진단이면 다른 키 → 다시 블러(광고 재시청).
+function adUnlockKeyOf(profile: Record<string, unknown> | null): string {
+  if (!profile) return "";
+  const p = profile as any;
+  const bno = String(p.bno ?? "").replace(/[^0-9]/g, "");
+  const base = bno || `${p.companyName ?? p.name ?? ""}|${p.industry ?? p.businessType ?? ""}`;
+  if (!base.trim()) return "";
+  return `mpp_ad_unlocked:${base}`;
+}
 
 export default function MatchingPreview() {
   const router = useRouter();
@@ -88,6 +101,14 @@ export default function MatchingPreview() {
   //    2) 방금 결제 성공 페이지가 저장한 localStorage("mpp_paid") = "true"        ← 즉시 반영(서버 반영 지연 대비)
   //   → "결제했는데도 블러가 남는" 문제를 방지한다. (대표님 요청)
   const [paid, setPaid] = useState(false);
+
+  // ★ 광고 시청으로 '이 진단 1건'을 무료 열람했는지 여부 ★ (대표님 확정: 옵션 A)
+  //   · 블러 상태에서 "🎬 광고 보고 무료로 결과 보기" → 전면 광고 모달(AdGateModal) → 시청 후 해제.
+  //   · 해제 범위 = 지금 이 진단 결과 1건만, 브라우저 세션(sessionStorage) 동안 유지.
+  //     새 진단(다른 사업자번호)으로 오면 키가 달라져 다시 블러 → 광고를 또 봐야 한다.
+  const [adUnlocked, setAdUnlocked] = useState(false);
+  // 광고 게이트 모달 열림 여부
+  const [adGateOpen, setAdGateOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -277,6 +298,24 @@ export default function MatchingPreview() {
     // 진입 시 1회 판정하면 충분.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adminView]);
+
+  // ── [광고 무료 열람] 세션 복원 (대표님 확정: 옵션 A) ──
+  //   진단 프로필(사업자 지문)마다 고유 키를 만들어 sessionStorage 에 저장한다.
+  //   같은 진단이면 새로고침해도 열려 있고, 새 진단(다른 사업자번호)이면 키가 달라 다시 잠긴다.
+  //   ※ 결제(paid)/관리자/베타는 애초에 블러가 없으므로 여기서 신경 쓸 필요 없다.
+  useEffect(() => {
+    if (adminView || BETA_FREE || paid) return;
+    if (!profileData) return;
+    try {
+      const key = adUnlockKeyOf(profileData);
+      if (key && sessionStorage.getItem(key) === "1") {
+        setAdUnlocked(true);
+      }
+    } catch {
+      /* sessionStorage 접근 불가 시 무시 */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileData, adminView, paid]);
 
   // ── [어뷰징 차단 #1] 유효하지 않은 사업자번호면 결과 열람 차단 (대표님 요청) ──
   //   가짜/오타 사업자번호로 결과를 열람하는 것을 서버(국세청 조회)에서 다시 막는다.
@@ -951,19 +990,29 @@ export default function MatchingPreview() {
           {/* ── 중간 결제 유도 박스 (정식 유료 모드 전용) ──
                결과를 스크롤하기 전, 화면 중간에서 바로 '어디서 결제하는지' 찾을 수 있게 배치.
                최하단 박스·하단 sticky 바와 함께 3중으로 결제 진입점을 노출 */}
-          {!adminOpen && !BETA_FREE && !paid && (
+          {!adminOpen && !BETA_FREE && !paid && !adUnlocked && (
           <div className="mt-6 rounded-2xl border-2 border-brand-orange bg-gradient-to-br from-brand-orange/10 to-white p-4 text-center shadow-[0_8px_28px_rgba(255,140,0,0.18)] sm:p-5">
             <p className="break-keep text-base font-extrabold text-brand-dark sm:text-lg">
-              🔓 지금 결제하면 위 <span className="text-brand-orange">{total}개</span> 항목의 상세 내용이 모두 공개됩니다
+              🔓 위 <span className="text-brand-orange">{total}개</span> 항목의 상세 내용을 지금 바로 확인하세요
             </p>
             <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-dark/70 sm:text-sm">
-              💳 부담 없는 1회성 결제로 내 사업장에 맞는 모든 정부지원사업을 확인하세요. (VAT 포함)
+              🎬 <b>광고를 보시면 이번 진단 결과를 무료로</b> 확인할 수 있어요.
+              광고 없이 편하게 보시려면 결제(1개월 자유 조회)를 이용하세요.
             </p>
+            {/* 1순위 CTA: 광고 보고 무료로 결과 보기 (전면 광고 모달 열기) */}
+            <button
+              type="button"
+              onClick={() => setAdGateOpen(true)}
+              className="btn-red mt-3.5 block w-full rounded-full py-3 text-center text-sm font-bold sm:text-base"
+            >
+              🎬 광고 보고 무료로 결과 보기
+            </button>
+            {/* 2순위: 광고 없이 결제 (작게, 아래) */}
             <a
               href="/payment?tier=basic"
-              className="btn-red mt-3.5 block rounded-full py-3 text-center text-sm font-bold sm:text-base"
+              className="mt-2.5 block break-keep text-center text-xs font-semibold text-brand-gray underline decoration-gray-300 underline-offset-2 sm:text-sm"
             >
-              💳 지금 결제하고 전체 결과 확인하기
+              💳 광고 없이 볼래요 · 1개월 자유 조회 결제 (29,700원 · VAT 포함)
             </a>
           </div>
           )}
@@ -971,10 +1020,16 @@ export default function MatchingPreview() {
           {/* ── 실제 결과 전체를 그대로 렌더링 (내용 대부분 공개) ──
                제목·설명·안내는 선명하게 열어 '무엇을 알려주는지' 충분히 이해시키고,
                기관명·상품명·신청 방법(버튼/링크)만 흐리게 + 클릭 차단으로 잠금 표시 */}
-          {!adminOpen && !BETA_FREE && !paid && (
+          {!adminOpen && !BETA_FREE && !paid && !adUnlocked && (
           <p className="mt-4 break-keep text-center text-xs text-brand-gray sm:mt-5">
             👇 아래는 대표님만을 위해 분석된 <b>실제 결과 화면</b>입니다. 어떤 내용을 알려드리는지 대부분 열어뒀고,
             <b className="text-brand-orange"> 기관명·상품명·신청 방법</b>만 결제 후 공개됩니다.
+          </p>
+          )}
+          {/* ── 광고 무료 열람 안내 (광고 보고 이 진단을 무료로 연 상태) ── */}
+          {!adminOpen && !BETA_FREE && !paid && adUnlocked && (
+          <p className="mt-4 break-keep text-center text-xs text-brand-green sm:mt-5">
+            🎬 광고를 시청해주셔서 <b>이 진단 결과의 전체 내용</b>이 공개되었습니다. (이번 진단 한정)
           </p>
           )}
           {/* ── 결제 완료 고객 안내 (블러 전부 해제 상태) ── */}
@@ -991,7 +1046,7 @@ export default function MatchingPreview() {
                 전체 결과를 그대로 보여준다. (베타: 결제 없이 전부 무료 공개) */}
             <AdvancedScreeningPanel
               autoRun
-              previewLock={!adminOpen && !BETA_FREE && !paid}
+              previewLock={!adminOpen && !BETA_FREE && !paid && !adUnlocked}
               relatedProfile={profileData}
               onCounts={setLiveCounts}
             />
@@ -1067,6 +1122,24 @@ export default function MatchingPreview() {
 
       {/* 광고 래퍼가 이미 하단 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(첫 페이지와 동일). */}
       <Footer topGap="mt-0" />
+
+      {/* ── 결과 조회 '전면 광고' 게이트 모달 (대표님 확정 방식) ──
+           블러 상태에서 "🎬 광고 보고 무료로 결과 보기" → 이 모달 → 광고 시청 후 onUnlock 으로 해제.
+           해제 상태는 이 진단(사업자 지문)에 한해 sessionStorage 에 저장(옵션 A). */}
+      <AdGateModal
+        open={adGateOpen}
+        onClose={() => setAdGateOpen(false)}
+        onUnlock={() => {
+          setAdUnlocked(true);
+          try {
+            const key = adUnlockKeyOf(profileData);
+            if (key) sessionStorage.setItem(key, "1");
+          } catch {
+            /* sessionStorage 접근 불가 시 무시 (상태는 이미 열림) */
+          }
+          setAdGateOpen(false);
+        }}
+      />
     </PageShell>
   );
 }
