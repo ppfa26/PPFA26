@@ -153,7 +153,8 @@ export default function MyPage() {
   return (
     <PageShell pageKey="mypage">
       <Header />
-      <main className="bg-gray-50 px-4 pt-6 pb-0 sm:pt-10 sm:pb-0">
+      {/* "마이페이지" 제목 위 상단 공백 축소(대표님 요청: 광고 하단 여백과 비슷하게) */}
+      <main className="bg-gray-50 px-4 pt-3 pb-0 sm:pt-5 sm:pb-0">
         <div className="mx-auto max-w-3xl">
           <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">
             마이페이지
