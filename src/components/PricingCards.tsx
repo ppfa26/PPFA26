@@ -11,7 +11,6 @@ import { fetchViewStatus } from "@/lib/viewCredits";
 import Editable from "./Editable";
 
 export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
-  const single = TIERS.length === 1;
   const router = useRouter();
   // CTA 클릭 판정 중(세션·진단 조회) 로딩 표시용 - 어느 tier 를 누르는 중인지
   const [busyTier, setBusyTier] = useState<string | null>(null);
@@ -68,19 +67,69 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
 
   return (
     <div>
-      <div
-        className={
-          single
-            ? "mx-auto flex max-w-xl justify-center"
-            : "mx-auto grid max-w-3xl gap-4 sm:grid-cols-3"
-        }
-      >
+      {/* ★ 가로 2박스(대표님 요청) ★
+          왼쪽 = 🎬 무료 이용(광고 보고 열람) · 오른쪽 = 🎯 광고 제거(29,700원/1개월).
+          두 박스의 '유일한 차이 = 결과 조회 전 전면 광고 유무'임을 명확히 보여준다.
+          (결과 내용 자체는 100% 동일 — 결제를 강요하지 않고 선택지를 이해시키는 목적) */}
+      <div className="mx-auto grid max-w-3xl items-stretch gap-4 sm:grid-cols-2">
+        {/* ──────────── 왼쪽: 🎬 무료 이용 박스 ──────────── */}
+        {!BETA_FREE && (
+          <div className="pricing-card pricing-card-free relative flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white px-6 py-5 pt-9 shadow-card transition duration-200 hover:shadow-cardHover sm:pt-10">
+            {/* 상단 띠(무료 강조) */}
+            <div className="ribbon ribbon-free" aria-hidden="true">
+              👍 결제 없이 이용
+            </div>
+
+            <h3 className="pricing-title flex items-center gap-2 text-2xl font-extrabold text-brand-dark sm:text-[26px]">
+              <span aria-hidden="true">🎬</span>
+              <span>무료 이용</span>
+            </h3>
+            <p className="pricing-sub text-[13px] font-semibold text-brand-gray">
+              광고 한 번만 보면 결과 전체를 무료로 확인
+            </p>
+
+            <div className="mt-4">
+              <div className="flex items-end gap-1">
+                <span className="pricing-sale-price text-[26px] font-black leading-none text-brand-green">
+                  0원
+                </span>
+                <span className="pricing-sale-period mb-1 text-sm text-brand-gray">
+                  / 광고 시청 시
+                </span>
+              </div>
+              <p className="pricing-vat-note mt-1 text-[11px] text-brand-gray">
+                * 결제·회원가입 없이 바로 이용
+              </p>
+            </div>
+
+            <ul className="mt-3 flex-1 space-y-1.5">
+              {[
+                "AI로 찾은 내 사업장 기준 정부지원사업 리스트",
+                "정부지원사업 신청 방법 및 관련 사이트 링크",
+                "공식 카카오 채널 톡 상담",
+                "결과 조회 전 전면 광고 1회 (건너뛰기 5초)",
+              ].map((f, i) => (
+                <li key={i} className="flex items-start gap-2 text-[13px]">
+                  <span className="pricing-check mt-0.5 text-brand-green">✓</span>
+                  <span className="pricing-feat break-keep text-brand-dark">{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/diagnosis-chat"
+              className="pricing-cta mt-4 block w-full rounded-full border-2 border-brand-dark/25 bg-white py-2.5 text-center text-base font-bold text-brand-dark transition hover:bg-gray-50 active:scale-[0.99]"
+            >
+              🎬 광고 보고 무료로 이용하기
+            </Link>
+          </div>
+        )}
+
+        {/* ──────────── 오른쪽: 🎯 광고 제거(결제) 박스 = 기존 TIERS ──────────── */}
         {TIERS.map((tier) => (
           <div
             key={tier.id}
-            className={`pricing-card relative flex flex-col overflow-hidden rounded-3xl border px-6 py-5 shadow-card transition duration-200 hover:shadow-cardHover ${
-              single ? "w-full" : ""
-            } ${
+            className={`pricing-card relative flex w-full flex-col overflow-hidden rounded-3xl border px-6 py-5 shadow-card transition duration-200 hover:shadow-cardHover ${
               tier.popular
                 ? "pricing-card-popular border-brand-orange bg-brand-grad pt-9 sm:pt-10"
                 : "border-gray-200 bg-white"
@@ -89,7 +138,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             {/* (대표님 요청) 빨간 띠는 남기고 안의 문구만 삭제 → 빈 띠(장식용)만 상단에 유지 */}
             {tier.popular && (
               <div className="ribbon" aria-hidden="true">
-                {BETA_FREE ? "" : `🔥 ${single ? "런칭 특가" : "가장 인기"}`}
+                {BETA_FREE ? "" : "🔥 런칭 특가 25%"}
               </div>
             )}
 
@@ -208,7 +257,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
       {/* ★ 폭 정렬(대표님 요청) ★ 아래 안내 박스를 위 제목 박스(is-wide-pricing 36rem)·
           가격 카드(single=max-w-xl 36rem)와 '같은 가로폭'으로 통일해 좌우 라인을 맞춘다.
           (기존 max-w-2xl=42rem 이라 안내 박스만 넓게 튀어나와 어색했음) */}
-      <div className={`mx-auto mt-5 rounded-2xl bg-gray-50 p-5 sm:p-6 ${single ? "max-w-xl" : "max-w-2xl"}`}>
+      <div className="mx-auto mt-5 max-w-3xl rounded-2xl bg-gray-50 p-5 sm:p-6">
         <ul className="space-y-2.5 text-[12px] text-brand-dark sm:text-[13px]">
           {COMMON_NOTES.map((n, i) => {
             const isNotice = n.trimStart().startsWith("⚠️");

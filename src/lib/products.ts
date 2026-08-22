@@ -26,8 +26,8 @@ export const TIERS: Tier[] = [
   {
     id: "basic",
     icon: "🎯",
-    name: "AI 진단 리포트",
-    subtitle: "AI로 내 사업장에서 받을 수 있는 정부지원사업 찾기",
+    name: "광고 제거",
+    subtitle: "광고 없이 1개월 동안 편하게 무제한 조회",
     price: 29700,
     priceLabel: "29,700원",
     originalPrice: 39700,
@@ -37,11 +37,12 @@ export const TIERS: Tier[] = [
     period: "1개월",
     popular: true,
     features: [
-      "AI로 찾은 내 사업장 기준 정부지원사업 리스트",
-      "정부지원사업 신청 방법 및 관련 사이트 링크",
+      "왼쪽 '무료 이용'의 모든 기능 그대로",
+      "결과 조회 전 전면 광고 완전 제거",
+      "1개월 동안 광고 없이 무제한 조회",
       "공식 카카오 채널 톡 상담",
     ],
-    cta: "PRO AI 진단 리포트 받기",
+    cta: "💳 광고 없이 이용하기",
   },
 ];
 
