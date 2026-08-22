@@ -10,18 +10,28 @@
 --    함수의 RETURNS TABLE 출력 컬럼명(note_key, status, memo, updated_at)이
 --    실제 lead_notes 테이블 컬럼명과 동일해서, 함수 본문 SELECT 에서
 --    PostgreSQL 이 "출력변수냐 테이블컬럼이냐"를 구분 못 해 모호성(42702) 발생.
+--    (create or replace 만으로는 옛 오버로드 함수가 남아 계속 호출될 수 있어
+--     아래처럼 DROP 후 재생성한다.)
 --
 --  ★ 해결 ★
---    출력 컬럼명을 out_ 접두어로 바꿔 이름 충돌을 제거한다.
---    (프론트엔드는 select alias 로 원래 이름(note_key 등)을 그대로 받는다.)
+--    (1) 기존 함수를 DROP (오버로드 잔재까지 제거)
+--    (2) RETURNS TABLE 출력 컬럼명을 o_ 접두어로 완전히 다르게 → 모호성 원천 차단
+--    (3) 프론트엔드는 예전처럼 note_key/status/memo/updated_at 를 그대로 받도록
+--        select alias 로 되돌려 반환한다.
 --
 --  0001 ~ 0022 실행 후 이 파일을 Supabase SQL Editor에서 실행하세요. (재실행 안전)
 -- ============================================================
 
 -- ------------------------------------------------------------
+-- (0) 기존 함수 제거 — 오버로드(같은 이름 다른 시그니처)까지 모두 삭제
+-- ------------------------------------------------------------
+drop function if exists admin_load_lead_notes();
+drop function if exists admin_save_lead_note(text, text, text);
+
+-- ------------------------------------------------------------
 -- (2') admin_load_lead_notes : 전체 상담 메모 로드 (관리자 전용) — 모호성 제거판
 -- ------------------------------------------------------------
-create or replace function admin_load_lead_notes()
+create function admin_load_lead_notes()
 returns table (
   note_key   text,
   status     text,
@@ -50,17 +60,18 @@ $$;
 
 -- ------------------------------------------------------------
 -- (3') admin_save_lead_note : 상담 메모/상태 저장(upsert) (관리자 전용) — 모호성 제거판
+--      ★ 반환 테이블의 출력 컬럼명을 o_ 접두어로 완전히 분리해 42702 를 원천 차단 ★
 -- ------------------------------------------------------------
-create or replace function admin_save_lead_note(
+create function admin_save_lead_note(
   p_note_key text,
   p_status   text default null,
   p_memo     text default null
 )
 returns table (
-  note_key   text,
-  status     text,
-  memo       text,
-  updated_at timestamptz
+  o_note_key   text,
+  o_status     text,
+  o_memo       text,
+  o_updated_at timestamptz
 )
 language plpgsql
 security definer
@@ -92,13 +103,12 @@ begin
         memo       = coalesce(p_memo,   t.memo),
         updated_at = now();
 
-  -- ★ 핵심 수정 ★ 테이블 alias(l.컬럼) 를 명시하고 select alias 로 결과명을 맞춘다.
   return query
     select
-      l.note_key   as note_key,
-      l.status     as status,
-      l.memo       as memo,
-      l.updated_at as updated_at
+      l.note_key   as o_note_key,
+      l.status     as o_status,
+      l.memo       as o_memo,
+      l.updated_at as o_updated_at
     from lead_notes l
     where l.note_key = p_note_key;
 end;
