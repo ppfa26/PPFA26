@@ -86,10 +86,10 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             {/* 제목줄: 오른쪽 tier.name/tier.subtitle 과 동일한 높이(큰 제목 제거 → 아이콘+설명만) */}
             <h3 className="pricing-title flex items-center gap-2 text-2xl font-extrabold text-brand-dark sm:text-[26px]">
               <span aria-hidden="true">🎬</span>
-              <span>무료</span>
+              <span>PRO AI 진단 리포트 (무료)</span>
             </h3>
             <p className="pricing-sub text-[13px] font-semibold text-brand-gray">
-              광고 한 번만 보면 결과 전체를 무료로 확인
+              광고 보고 결과 전체를 무료로 확인하기
             </p>
 
             {/* 가격블록: 오른쪽과 라인 정렬 위해 '배지줄 → 가격줄 → 안내줄' 3단 동일 구성 */}

@@ -26,8 +26,8 @@ export const TIERS: Tier[] = [
   {
     id: "basic",
     icon: "🎯",
-    name: "광고 제거",
-    subtitle: "광고 없이 1개월 동안 편하게 조회",
+    name: "PRO AI 진단 리포트 (광고 제거)",
+    subtitle: "광고 없이 편하게 결과 전체를 확인하기",
     price: 29700,
     priceLabel: "29,700원",
     originalPrice: 39700,
