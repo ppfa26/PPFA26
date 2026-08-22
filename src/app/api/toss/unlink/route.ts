@@ -36,6 +36,22 @@ const BASIC_PASS = process.env.TOSS_UNLINK_BASIC_PASS || "";
 // 완성형(base64) 을 직접 넣은 경우 우선 사용
 const BASIC_AUTH_RAW = process.env.TOSS_UNLINK_BASIC_AUTH || "";
 
+// ── CORS 헤더 ────────────────────────────────────────────────────
+//  토스 콘솔 "테스트하기" 는 브라우저에서 직접 fetch 하므로,
+//  CORS 허용 헤더가 없으면 브라우저가 응답을 차단("Failed to fetch")한다.
+//  콜백은 공개 인증(Basic Auth)으로 보호되므로 Origin 은 전체 허용해도 안전.
+const CORS_HEADERS: Record<string, string> = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS, HEAD",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+  "Access-Control-Max-Age": "86400",
+};
+
+// JSON 응답에 CORS 헤더를 붙여서 반환하는 헬퍼
+function jsonWithCors(body: unknown, status: number) {
+  return NextResponse.json(body, { status, headers: CORS_HEADERS });
+}
+
 // 콘솔에 등록할 기대 Basic Auth 헤더값(base64) 계산
 function expectedBasicToken(): string {
   if (BASIC_AUTH_RAW) return BASIC_AUTH_RAW.trim();
@@ -110,10 +126,15 @@ async function handleUnlink(params: {
   };
 }
 
+// ── OPTIONS: 브라우저 CORS preflight 응답 ───────────────────────
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+}
+
 // ── GET: 토스 기본 콜백(쿼리스트링으로 전달) ─────────────────────
 export async function GET(req: NextRequest) {
   if (!isAuthorized(req)) {
-    return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+    return jsonWithCors({ ok: false, reason: "unauthorized" }, 401);
   }
   const sp = req.nextUrl.searchParams;
   const result = await handleUnlink({
@@ -121,7 +142,7 @@ export async function GET(req: NextRequest) {
     userKey: sp.get("userKey") || sp.get("user_key") || sp.get("userId"),
     email: sp.get("email"),
   });
-  return NextResponse.json(result, { status: 200 });
+  return jsonWithCors(result, 200);
 }
 
 // ── POST: 토스가 POST 로 보낼 수도 있어 함께 지원 ────────────────
@@ -129,7 +150,7 @@ export async function GET(req: NextRequest) {
 //    본문을 유연하게 파싱)
 export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
-    return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+    return jsonWithCors({ ok: false, reason: "unauthorized" }, 401);
   }
 
   // 본문 파싱: JSON 우선, 실패 시 form/텍스트/쿼리 순으로 관대하게 처리
@@ -158,5 +179,5 @@ export async function POST(req: NextRequest) {
     userKey: pick("userKey") || pick("user_key") || pick("userId"),
     email: pick("email"),
   });
-  return NextResponse.json(result, { status: 200 });
+  return jsonWithCors(result, 200);
 }
