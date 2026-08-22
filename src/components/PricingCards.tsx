@@ -108,7 +108,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                 </span>
               </div>
               <p className="pricing-vat-note mt-1 text-[11px] text-brand-gray">
-                * 결제 없이 조회 가능 (회원가입만 하면 이용)
+                * 결제 없이 조회 가능
               </p>
             </div>
 
@@ -116,7 +116,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             <ul className="mt-3 flex-1 space-y-1.5">
               {[
                 "AI로 찾은 내 사업장 기준 정부지원사업 리스트",
-                "결과 조회 전 전면 광고 1회 (건너뛰기 5초)",
+                "결과 조회 전 전면 광고 1회",
                 "1개 아이디로 최대 2개 사업자 무제한 조회",
                 "공식 카카오 채널 톡 상담",
               ].map((f, i) => (
