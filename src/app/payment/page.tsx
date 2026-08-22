@@ -241,7 +241,7 @@ function PaymentInner() {
         method: "CARD",
         amount: { currency: "KRW", value: product.price },
         orderId,
-        orderName: `모두의사업친구 ${product.name} 플랜`,
+        orderName: `모두의사업친구 ${product.name} 이용권`,
         // 결제 성공 시 successUrl(/payment/success)로 리다이렉트되며
         //  paymentKey·orderId·amount 쿼리가 붙어 옵니다.
         //  → success 페이지의 '토스 경로'가 /api/payment/confirm 을 호출해 승인 확정합니다.
@@ -290,7 +290,7 @@ function PaymentInner() {
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <p className="break-keep text-base font-extrabold leading-snug text-brand-dark">
-                {product.icon} {product.name} 플랜
+                {product.icon} {product.name} 이용권
               </p>
               <p className="mt-1 break-keep text-xs leading-relaxed text-brand-gray">
                 {product.subtitle} · {product.period}
@@ -324,9 +324,9 @@ function PaymentInner() {
         <div className="mb-1 rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-sm">
           <p className="text-sm font-bold text-brand-dark">💳 신용/체크카드 결제</p>
           <p className="mt-1.5 break-keep text-xs leading-relaxed text-brand-gray">
-            아래 버튼을 누르면 <strong>토스페이먼츠(TossPayments)</strong> 결제창이 열립니다.
+            결제하시면 <strong>1개월 동안 전면 광고 없이</strong> 편하게 조회할 수 있습니다.
             <br className="hidden sm:block" />
-            카드사 정식 인증 절차를 거쳐 안전하게 결제됩니다.
+            아래 버튼을 누르면 <strong>토스페이먼츠(TossPayments)</strong> 결제창이 열리며, 카드사 정식 인증을 거쳐 안전하게 결제됩니다.
           </p>
         </div>
 
