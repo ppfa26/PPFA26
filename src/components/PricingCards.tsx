@@ -95,12 +95,12 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
             {/* 가격블록: 오른쪽과 라인 정렬 위해 '배지줄 → 가격줄 → 안내줄' 3단 동일 구성 */}
             <div className="mt-4">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">
+                <span className="rounded-full bg-brand-blue px-2 py-0.5 text-[11px] font-bold text-white">
                   광고 시청 시
                 </span>
               </div>
               <div className="mt-0.5 flex items-end gap-1">
-                <span className="pricing-sale-price text-[26px] font-black leading-none text-brand-green">
+                <span className="pricing-sale-price text-[26px] font-black leading-none text-brand-blue">
                   0원
                 </span>
                 <span className="pricing-sale-period mb-1 text-sm text-brand-gray">
@@ -121,7 +121,7 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
                 "공식 카카오 채널 톡 상담",
               ].map((f, i) => (
                 <li key={i} className="flex items-start gap-2 text-[13px]">
-                  <span className="pricing-check mt-0.5 text-brand-green">✓</span>
+                  <span className="pricing-check mt-0.5 text-brand-blue">✓</span>
                   <span className="pricing-feat break-keep text-brand-dark">{f}</span>
                 </li>
               ))}
