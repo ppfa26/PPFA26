@@ -1535,7 +1535,8 @@ export default function AdminPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gray-50 px-3 py-6 sm:px-6 sm:py-8">
+      {/* 관리자 대시보드 상·하단 여백 축소(대표님 요청): py-6 sm:py-8 → py-3 sm:py-4 */}
+      <main className="min-h-screen bg-gray-50 px-3 py-3 sm:px-6 sm:py-4">
         {/* 대시보드 전체 최대폭(대표님 요청).
             회원 목록 테이블(min-w-920px + 관리 버튼 열)이 가로 스크롤 없이 들어가도록
             max-w-5xl(1024px)→max-w-6xl(1152px)로 넓힘. */}
