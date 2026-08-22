@@ -134,8 +134,9 @@ export default function PricingPage() {
 
       {/* ── 카카오 애드핏 광고 (요금 안내 하단 · 푸터 위) ──
           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬 →
-          요금·FAQ 콘텐츠와 세로 라인이 맞아 깔끔하게 이어진다. */}
-      <div className="border-t border-brand-dark/5 px-4 py-6 sm:py-8">
+          요금·FAQ 콘텐츠와 세로 라인이 맞아 깔끔하게 이어진다.
+          광고 위·아래 여백 축소(대표님 요청): py-6 sm:py-8 → py-3 sm:py-4 */}
+      <div className="border-t border-brand-dark/5 px-4 py-3 sm:py-4">
         <div className="mx-auto max-w-3xl">
           <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
         </div>
