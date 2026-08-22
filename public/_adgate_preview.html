@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>광고 게이트 미리보기 진입</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    background:#141A28;color:#fff;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0;padding:24px;box-sizing:border-box}
+  .card{max-width:420px;width:100%;text-align:center;background:#1c2436;border:1px solid #2a3550;border-radius:20px;padding:28px}
+  h1{font-size:18px;margin:0 0 8px}
+  p{font-size:13px;color:#aab3c5;line-height:1.6;margin:0 0 20px}
+  .btn{display:block;width:100%;box-sizing:border-box;padding:14px;border-radius:999px;border:none;
+    font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;text-decoration:none}
+  .primary{background:#e11d2a;color:#fff}
+  .sub{background:transparent;color:#aab3c5;border:1px solid #2a3550}
+  small{color:#6b7690;font-size:11px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>🎬 광고 게이트 미리보기</h1>
+    <p>샘플 진단 데이터를 심은 뒤 결과 페이지로 이동합니다.<br>미결제 고객이 보는 <b>블러 + 광고 버튼</b> 화면이 뜹니다.</p>
+    <a href="#" class="btn primary" id="go-customer">👤 미결제 고객 화면으로 보기</a>
+    <a href="#" class="btn sub" id="go-admin">🔓 관리자 전체 열람으로 보기</a>
+    <small>※ 이 페이지는 미리보기 전용입니다. 실제 배포에는 포함되지 않습니다.</small>
+  </div>
+<script>
+  var sample = {
+    name: "홍길동",
+    companyName: "길동상사",
+    bno: "123-45-67890",
+    businessType: "법인사업자",
+    industry: "제조업",
+    industries: ["제조업"],
+    region: "서울",
+    revenue: "10억 미만",
+    employees: "5명 미만",
+    foundYear: "2020"
+  };
+  function seed(){
+    try{
+      sessionStorage.setItem("mpp_diagnosis", JSON.stringify(sample));
+      sessionStorage.setItem("mpp_diagnosis_savedAt", String(Date.now()));
+      localStorage.setItem("mpp_diagnosis", JSON.stringify(sample));
+    }catch(e){}
+  }
+  document.getElementById("go-customer").addEventListener("click", function(e){
+    e.preventDefault(); seed();
+    location.href = "/matching-preview?admin=1&paid=0"; // 미결제 고객이 보는 블러 화면
+  });
+  document.getElementById("go-admin").addEventListener("click", function(e){
+    e.preventDefault(); seed();
+    location.href = "/matching-preview?admin=1"; // 관리자 전체 열람
+  });
+</script>
+</body>
+</html>
