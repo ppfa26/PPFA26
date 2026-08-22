@@ -168,7 +168,7 @@ export default function AdGateModal({
                 : "block w-full rounded-full bg-gray-200 py-3 text-center text-[15px] font-bold text-gray-500"
             }
           >
-            {canView ? "✅ 결과 보기" : `결과 보기 (${countdown}초)`}
+            {canView ? "✅ PRO AI 진단 리포트 결과 확인하기" : `PRO AI 진단 리포트 결과 확인하기 (${countdown}초)`}
           </button>
 
           {/* 광고 없이 보기 = 결제 안내 */}
