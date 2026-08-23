@@ -5,6 +5,26 @@ import { enforceRateLimit } from "@/lib/rateLimit";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+// ── CORS ──────────────────────────────────────────────────────────
+//  토스 미니앱 등 다른 오리진에서도 이 공개 공고 매칭 API를 호출할 수 있도록 허용.
+//  반환 데이터는 공개된 정부지원사업 공고뿐이라 '*' 개방이 안전하다(민감정보 없음).
+const CORS_HEADERS: Record<string, string> = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Max-Age": "86400",
+};
+
+// NextResponse.json + CORS 헤더를 한 번에.
+function jsonCors(body: unknown, init?: { status?: number }) {
+  return NextResponse.json(body as any, { status: init?.status, headers: CORS_HEADERS });
+}
+
+// 프리플라이트(OPTIONS) 응답
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS_HEADERS });
+}
+
 // ────────────────────────────────────────────────────────────────
 // 진단 프로필과 관련 있는 "지금 열려있는 실제 정부지원사업 공고"를 추려서 반환.
 //   출처: crawled_announcements (기업마당 · K-Startup · 중소벤처24)
@@ -299,12 +319,17 @@ export async function POST(req: Request) {
       { namespace: "match", windowMs: 60_000, max: 30 },
       "요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요."
     );
-    if (blocked) return blocked;
+    if (blocked) {
+      // 레이트리밋 응답에도 CORS 헤더를 실어 크로스오리진에서 상태를 읽을 수 있게.
+      const h = new Headers(blocked.headers);
+      for (const [k, v] of Object.entries(CORS_HEADERS)) h.set(k, v);
+      return new Response(blocked.body, { status: blocked.status, headers: h });
+    }
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!url || !key) {
-      return NextResponse.json({ items: [], startup: [], loan: [], etc: [], note: "DB 미설정" });
+      return jsonCors({ items: [], startup: [], loan: [], etc: [], note: "DB 미설정" });
     }
 
     const profile = (await req.json().catch(() => ({}))) as Record<string, unknown>;
@@ -377,7 +402,7 @@ export async function POST(req: Request) {
       .limit(700);
 
     if (error) {
-      return NextResponse.json({ items: [], startup: [], loan: [], etc: [], note: error.message });
+      return jsonCors({ items: [], startup: [], loan: [], etc: [], note: error.message });
     }
     const allRows: Announcement[] = data || [];
 
@@ -409,7 +434,7 @@ export async function POST(req: Request) {
     const loanPick = pickTop(loanRows, flags, 3);
     const etcPick = pickTop(etcRows, flags, 5);
 
-    return NextResponse.json({
+    return jsonCors({
       // ★ 하위호환: 기존 프론트가 items(=그 외)를 읽어도 동작하도록 etc를 items로도 노출
       items: etcPick.top,
       startup: startupPick.top,
@@ -428,6 +453,6 @@ export async function POST(req: Request) {
       },
     });
   } catch (e: any) {
-    return NextResponse.json({ items: [], startup: [], loan: [], etc: [], note: e?.message || "매칭 실패" });
+    return jsonCors({ items: [], startup: [], loan: [], etc: [], note: e?.message || "매칭 실패" });
   }
 }
