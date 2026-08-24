@@ -815,10 +815,15 @@ export const REGION_SINBO: RegionSinbo[] = [
 //  판독 로직(matches[].institution)은 지역 무관하게 "지역신용보증재단"으로 통일되어 있으나,
 //  결과 카드/아코디언 라벨에는 대표님 지역 재단명(예: 서울→서울신용보증재단)을 보여준다.
 //  ⚠️ 표시 전용. isJaedan / .includes("재단") 등 판정 로직에는 원본 institution을 그대로 쓴다.
+//
+//  ★ 대표님 요청: 전용 안내는 '서울 / 경기' 2곳만.
+//    그 외 전 지역(인천 포함)은 통합("지역신용보증재단" / 보증드림 앱)으로 안내한다.
+const REGION_DEDICATED = ["서울", "경기"]; // 전용 재단명·전용 앱으로 안내하는 지역
 export function displayInstitutionName(institution: string, region?: string): string {
   if (institution !== "지역신용보증재단") return institution;
   const r = (region || "").trim();
   if (!r) return institution;
+  if (!REGION_DEDICATED.some((k) => r.includes(k))) return institution; // 인천 등 나머지 → 통합명 유지
   const matched = REGION_SINBO.find((s) => r.includes(s.region));
   return matched ? matched.name : institution;
 }
@@ -1513,33 +1518,25 @@ export const JAEDAN_SITE_LINKS: {
     regionKey: "경기",
   },
   {
-    label: "인천신용보증재단",
-    url: "https://www.icsinbo.or.kr",
-    manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf",
-    productUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
-    productLabel: "정책자금 상품안내 확인하기",
-    regionKey: "인천",
-  },
-  {
     label: "지역신용보증재단(통합)",
     url: "https://untact.koreg.or.kr/web/index.do",
     manualUrl: "/manuals/regional-sinbo-bojumdream-guide.pdf",
     productUrl: "https://www.koreg.or.kr/haedream/gu/gurt/selectGurtList.do?mi=1124",
     productLabel: "정책자금 상품안내 확인하기",
-    // regionKey 없음 = 서울·경기·인천 외 전 지역의 기본(통합) 안내
+    // regionKey 없음 = 서울·경기 외 전 지역(인천 포함)의 기본(통합) 안내
   },
 ];
 
 // 사용자 지역에 맞는 재단 링크만 골라준다.
-//  ★ 대표님 요청: 인천이면 인천재단만, 서울이면 서울, 경기면 경기,
-//    그 외 지방이면 지역신용보증재단(통합)만 안내(3개 다 노출 X). ★
+//  ★ 대표님 요청: 전용 안내는 서울/경기 2곳만. 서울이면 서울, 경기면 경기,
+//    그 외 전 지역(인천 포함)은 지역신용보증재단(통합)만 안내(중복 노출 X). ★
 export function resolveJaedanLinks(region?: string): typeof JAEDAN_SITE_LINKS {
   const r = (region || "").trim();
   if (r) {
     const matched = JAEDAN_SITE_LINKS.filter(
       (l) => l.regionKey && r.includes(l.regionKey)
     );
-    if (matched.length > 0) return matched; // 서울/경기/인천 → 해당 재단만
+    if (matched.length > 0) return matched; // 서울/경기 → 해당 재단만
   }
   // 그 외 지역(충청·강원·전라·경상·세종·제주 등) 또는 미선택 → 통합만
   return JAEDAN_SITE_LINKS.filter((l) => !l.regionKey);
