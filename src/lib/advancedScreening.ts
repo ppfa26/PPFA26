@@ -811,6 +811,18 @@ export const REGION_SINBO: RegionSinbo[] = [
   { region: "제주", name: "제주신용보증재단", url: "https://www.jcgf.or.kr/pages.php?p=2_2_5_1#Sub2Link", app: "보증드림 앱" },
 ];
 
+// ── 결과 화면 표시용: 일반명("지역신용보증재단")을 대표님 지역 재단 정식명으로 치환 ──
+//  판독 로직(matches[].institution)은 지역 무관하게 "지역신용보증재단"으로 통일되어 있으나,
+//  결과 카드/아코디언 라벨에는 대표님 지역 재단명(예: 서울→서울신용보증재단)을 보여준다.
+//  ⚠️ 표시 전용. isJaedan / .includes("재단") 등 판정 로직에는 원본 institution을 그대로 쓴다.
+export function displayInstitutionName(institution: string, region?: string): string {
+  if (institution !== "지역신용보증재단") return institution;
+  const r = (region || "").trim();
+  if (!r) return institution;
+  const matched = REGION_SINBO.find((s) => r.includes(s.region));
+  return matched ? matched.name : institution;
+}
+
 // ── 정책금융 기관별 신청 채널(앱/사이트/PDF) 안내 ─────────────────
 //  기관명(부분일치)으로 매칭. 재단은 지역별로 다르므로 여기서 제외(REGION_SINBO 사용).
 // ── 기관 내 개별 상품(아코디언으로 펼쳐지는 상품 카드) ─────────────

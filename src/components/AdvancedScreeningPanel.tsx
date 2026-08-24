@@ -25,6 +25,7 @@ import {
   INSTITUTION_PRODUCT_LINKS,
   filterProducts,
   resolveJaedanLinks,
+  displayInstitutionName,
   loanNatureOf,
   PRE_FOUNDER_PROGRAMS,
   isPreFounderEligible,
@@ -1293,7 +1294,7 @@ function AdvancedResult({
                       className={`flex w-full items-center justify-between gap-2 rounded-xl border border-brand-orange/70 bg-brand-orange/[0.07] px-3 py-2 text-left transition hover:bg-brand-orange/20 ${lockNoClick}`}
                     >
                       <span className="break-keep text-[12px] font-extrabold text-brand-orange">
-                        💳 {previewLock ? "신청 가능 상품" : `${m.institution} 신청 가능 상품 ${products.length}개`} 보기
+                        💳 {previewLock ? "신청 가능 상품" : `${displayInstitutionName(m.institution, company?.region)} 신청 가능 상품 ${products.length}개`} 보기
                       </span>
                       <span
                         className={`shrink-0 text-brand-orange transition-transform ${
