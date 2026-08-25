@@ -1835,6 +1835,16 @@ export default function AdminPage() {
                   const cs = callStatusOf(c);
                   const csMeta = CALL_STATUS_META[cs];
                   const dLeft = daysLeft(c.expiry);
+                  // 토스 미니앱 유입 여부: 진단서 profile.source(또는 channel/utm_source)에 'toss'
+                  const isToss = c.diagList.some((d) => {
+                    const p = (d.profile || {}) as any;
+                    return (
+                      p?.source === "toss" ||
+                      p?.channel === "toss" ||
+                      p?.utm_source === "toss" ||
+                      p?.submittedFrom === "toss-miniapp"
+                    );
+                  });
                   return (
                     <div
                       key={c.key}
@@ -1865,6 +1875,12 @@ export default function AdminPage() {
                             <span className="text-[15px] font-extrabold text-brand-dark">
                               {c.realName || c.memberName || "이름없음"}
                             </span>
+                            {/* 토스 미니앱 유입 배지 (진단서 source=toss) */}
+                            {isToss && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-[#0064FF] px-2 py-0.5 text-[11px] font-bold text-white">
+                                📱 토스 미니앱
+                              </span>
+                            )}
                             {/* 정책: 진단서가 있는 사람은 전원 '회원(실고객)'으로 취급 → 미가입 뱃지 없음 */}
                             {/* 통화상태 - 영업 핵심(미접촉/통화완료/부재중/계약) */}
                             <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold ${csMeta.cls}`}>
