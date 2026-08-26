@@ -125,7 +125,9 @@ export default function Home() {
   //  · 평균 매칭 개수는 '21개'로 고정(대표님 요청).
   //  · SSR(서버)과 첫 렌더가 어긋나면(hydration mismatch) 경고가 나므로,
   //    초기값은 기준값(BASE_USERS/BASE_MATCH)으로 두고 마운트 후 useEffect 에서 실제 날짜로 반영한다.
-  const BASE_DATE = new Date(2026, 7, 26); // 2026-08-26 (월은 0부터: 7=8월) - 시작 기준일
+  // ★ 시간대(UTC/로컬) 차이로 "오늘"이 하루 밀려 +8이 조기 반영되던 문제 방지:
+  //   Date 객체 뺄셈 대신, 로컬 기준 '자정 타임스탬프'끼리 비교해 지난 '일수'만 센다.
+  const BASE_YMD = { y: 2026, m: 7, d: 26 }; // 2026-08-26 (월 0부터: 7=8월) → 이 날 딱 6,308
   const BASE_USERS = 6308; // 오늘(기준일) 시작값 - 매출 역산 누적(대표님 지정)
   const BASE_MATCH = 21; // 평균 매칭 개수(고정)
   const [usedCompanies, setUsedCompanies] = useState(BASE_USERS);
@@ -138,8 +140,10 @@ export default function Home() {
       return x - Math.floor(x);
     };
     const today = new Date();
+    // 둘 다 '로컬 자정' 타임스탬프로 맞춰서 계산 → 시간대에 따라 하루 밀리는 오차 제거.
     const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-    const daysPassed = Math.max(0, Math.floor((t0 - BASE_DATE.getTime()) / 86400000));
+    const baseT = new Date(BASE_YMD.y, BASE_YMD.m, BASE_YMD.d).getTime();
+    const daysPassed = Math.max(0, Math.round((t0 - baseT) / 86400000));
 
     // 지난 날짜만큼 하루치 증가폭(7~9, 평균 8)을 누적 - 천천히 꾸준히 상승(대표님 요청)
     let users = BASE_USERS;
