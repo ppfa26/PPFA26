@@ -37,9 +37,9 @@ body {
        승격시키지 않아 body 가 스크롤 컨테이너가 되지 않는다(근본 해결). */
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
-  /* ── 기본(라이트) 배경색. 순백 대신 살짝 어두운 회청색 톤으로 눈 편안하게.
+  /* ── 기본(라이트) 배경색. 순백 대신 차분한 회청색 톤으로 눈 편안하게.
      다크는 body.theme-dark 에서 #0b1020 로 덮어씀 ── */
-  background-color: #dfe4ee;
+  background-color: #bcc4d4;
 }
 
 /* ── 배경 고정 레이어 (라이트/다크 공통 뼈대) ──
@@ -61,11 +61,11 @@ body::before {
   height: var(--app-vh, 100vh);
   min-height: 100vh;
   z-index: -1;
-  /* 라이트 테마 기본 배경: 위는 옅은 회청색, 아래로 갈수록 살짝 밝아짐.
-     완전 백색보다 한 톤 어둡게 낮춰 눈부심 없이 차분한 밝은 화면. */
-  background-color: #dfe4ee;
+  /* 라이트 테마 기본 배경: 위는 차분한 회청색, 아래로 갈수록 살짝 밝아짐.
+     완전 백색보다 두 톤 어둡게 낮춰 눈부심 없이 차분한 화면. */
+  background-color: #bcc4d4;
   background-image:
-    linear-gradient(180deg, #d6dce9 0%, #dfe4ee 45%, #e9edf4 100%);
+    linear-gradient(180deg, #b2bbcd 0%, #bcc4d4 45%, #c6cdda 100%);
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -410,12 +410,12 @@ h4 {
    ▼ 기본(라이트): 밝은 배경 위에 은은한 흰색 유리 패널.
    ▼ 다크: 아래 body.theme-dark .hero-glass 에서 야경용 어두운 유리로 덮어씀. */
 .hero-glass {
-  /* 순백은 눈이 부셔서 살짝 낮춘 오프화이트(약한 회청빛)로. */
-  background: rgba(244, 247, 251, 0.86);
+  /* 순백은 눈이 부셔서 한 톤 더 낮춘 오프화이트(약한 회청빛)로. */
+  background: rgba(224, 230, 239, 0.90);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(20, 26, 40, 0.07);
-  box-shadow: 0 20px 60px rgba(20, 26, 40, 0.1);
+  border: 1px solid rgba(20, 26, 40, 0.08);
+  box-shadow: 0 20px 60px rgba(20, 26, 40, 0.12);
 }
 body.theme-dark .hero-glass {
   background: rgba(18, 23, 36, 0.55);
