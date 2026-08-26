@@ -5,7 +5,7 @@ import Editable from "@/components/Editable";
 
 export default function RefundPage() {
   return (
-    <LegalLayout pageKey="refund" title="환불정책" updatedAt="2026년 8월 2일">
+    <LegalLayout pageKey="refund" title="환불정책" updatedAt="2025년 3월 1일">
       <section id="refund-intro">
         <Editable id="refund-intro-body-v2" as="p">
           모두의사업친구(이하 &ldquo;회사&rdquo;)의 환불정책은 「전자상거래
