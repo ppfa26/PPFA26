@@ -41,7 +41,6 @@ import {
 import ExtraBenefitsSection from "@/components/report/ExtraBenefitsSection";
 import AccordionCard from "@/components/report/AccordionCard";
 import CollapsibleItem from "@/components/report/CollapsibleItem";
-import FavoriteStar from "@/components/report/FavoriteStar";
 import RelatedAnnouncements from "@/components/RelatedAnnouncements";
 import { loadDiagnosisRaw, saveDiagnosis, getDiagnosisOwner } from "@/lib/diagnosisStore";
 import { GRADUATION_CRITERIA, GRADUATION_EXCLUDED_NOTE } from "@/lib/graduationCriteria";
@@ -1059,11 +1058,6 @@ function AdvancedResult({
                 <CollapsibleItem
                   key={prog.id}
                   className="rounded-xl border border-gray-200 bg-white px-4 py-2.5"
-                  action={
-                    previewLock ? undefined : (
-                      <FavoriteStar title={prog.title} kind="정부지원제도" icon={prog.icon} />
-                    )
-                  }
                   header={
                     <>
                       {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 요약 안내 */}
@@ -1260,10 +1254,7 @@ function AdvancedResult({
                     <>
                       <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                         <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
-                        {/* 즐겨찾기 ⭐ - 잠금 해제(기관명 노출) 상태에서만 (미니앱 이식) */}
-                        {!previewLock && (
-                          <FavoriteStar title={m.institution} kind="정책자금·기관" icon="🏦" className="h-6 w-6 text-sm" />
-                        )}
+                        {/* 즐겨찾기 ⭐ 버튼 제거됨 (대표님 요청 · 관심 지원사업 기능 삭제) */}
                         {m.loan_type && (
                           <span
                             className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${natureBadgeCls(m.loan_type)}`}
