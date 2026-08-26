@@ -890,6 +890,16 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── 카카오 애드핏 광고 (CTA 박스 바로 아래 · 728x90) ──
+             (대표님 요청 · A안) 기존 하단 배너를 이곳으로 이동.
+             CTA 세로높이를 줄여 확보한 공간에 배치. 광고는 페이지당 1개(정책 안전).
+             CTA와 광고 사이 여백(pt-1)을 살짝 주고, 본문과 같은 max-w-3xl 폭으로 중앙 정렬. */}
+        <div className="px-4 pb-2 pt-1">
+          <div className="mx-auto max-w-3xl">
+            <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
+          </div>
+        </div>
+
         {/* 구간 구분 - 결과예시↔승인사례 (다른 구간과 동일하게 얇은 선으로 통일) */}
         <div className="section-divider" aria-hidden="true" />
         {/* ── 실제 자문 승인 사례 (reviews 내용 통합) ──
@@ -1073,17 +1083,9 @@ export default function Home() {
           </div>
         </section>
       </main>
-      {/* ── 카카오 애드핏 광고 (첫 페이지 하단 · 푸터 위) ──
-           광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬.
-           위 섹션들과 동일한 py-7 sm:py-9 리듬으로 통일해 광고 위아래 공백 균형(대표님 요청). */}
-      <div className="border-t border-brand-dark/5 px-4 py-7 sm:py-9">
-        <div className="mx-auto max-w-3xl">
-          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
-        </div>
-      </div>
-      {/* 광고 래퍼가 이미 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(대표님 요청) */}
-      <Footer topGap="mt-0" />
+      {/* (대표님 요청 · A안) 기존 하단 애드핏 광고는 CTA 박스 아래로 이동함.
+          → 한 페이지에 동일 광고단위 중복 노출(애드핏 정책 위반) 방지를 위해 여기선 제거. */}
+      <Footer topGap="mt-8" />
       {/* 오른쪽 하단 고정 - 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
       <InstallAppButton />
       <KakaoFloatingButton />
