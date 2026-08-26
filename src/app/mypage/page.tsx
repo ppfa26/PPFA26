@@ -12,7 +12,6 @@ import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
 import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
 import AdFitBanner from "@/components/AdFitBanner";
 import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
-import DiagnosisHistorySection from "@/components/mypage/DiagnosisHistorySection";
 
 type Payment = {
   order_id: string;
@@ -293,9 +292,7 @@ export default function MyPage() {
                 )}
               </section>
 
-              {/* 📚 내 진단 기록 (미니앱 → 홈페이지 이식) - 여러 번의 진단을 재조회 */}
-              <DiagnosisHistorySection />
-
+              {/* 📚 내 진단 기록 섹션 제거됨 (대표님 요청 · 위 "나의 진단 결과"로 확인 가능하여 중복 제거) */}
               {/* ⭐ 관심 지원사업 섹션 제거됨 (대표님 요청) */}
 
               {/* 추가 신청 (전문가 도움 요청) - 결제 내역 '위'로 배치 (대표님 요청) */}
