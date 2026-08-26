@@ -13,7 +13,10 @@ import InstallAppButton from "@/components/InstallAppButton";
 import StickyDiagnosisBar from "@/components/StickyDiagnosisBar";
 import TrustBadges from "@/components/home/TrustBadges";
 import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
+import {
+  ADFIT_UNIT_PC_728x90,
+  ADFIT_UNIT_PC_728x90_BOTTOM,
+} from "@/lib/adfitConfig";
 import SuccessCases from "@/components/SuccessCases";
 import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
@@ -890,11 +893,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 카카오 애드핏 광고 (CTA 박스 바로 아래 · 728x90) ──
-             (대표님 요청 · A안) 기존 하단 배너를 이곳으로 이동.
-             CTA 세로높이를 줄여 확보한 공간에 배치. 광고는 페이지당 1개(정책 안전).
-             CTA와 광고 사이 여백(pt-1)을 살짝 주고, 본문과 같은 max-w-3xl 폭으로 중앙 정렬. */}
-        <div className="px-4 pb-2 pt-1">
+        {/* ── 카카오 애드핏 광고 ("중간 배너" · CTA 박스 바로 아래 · 728x90) ──
+             (대표님 요청) CTA 세로높이를 줄여 확보한 공간에 배치.
+             상·하 여백을 동일하게(py-5) 맞춰 위아래 공백 균형. 본문과 같은 max-w-3xl 폭 중앙 정렬. */}
+        <div className="px-4 py-5">
           <div className="mx-auto max-w-3xl">
             <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
           </div>
@@ -1083,9 +1085,20 @@ export default function Home() {
           </div>
         </section>
       </main>
-      {/* (대표님 요청 · A안) 기존 하단 애드핏 광고는 CTA 박스 아래로 이동함.
-          → 한 페이지에 동일 광고단위 중복 노출(애드핏 정책 위반) 방지를 위해 여기선 제거. */}
-      <Footer topGap="mt-8" />
+      {/* ── 카카오 애드핏 광고 (첫 페이지 최하단 · 푸터 위 · 728x90) ──
+           (대표님 요청) 중간 배너와 별개의 "하단 배너" 광고단위 사용
+           → 한 페이지에 서로 다른 광고단위 2개라 중복 노출 정책 위반 아님.
+           중간 배너와 상·하 여백 리듬을 동일하게(py-7 sm:py-9) 맞춤. */}
+      <div className="px-4 py-7 sm:py-9">
+        <div className="mx-auto max-w-3xl">
+          <AdFitBanner
+            adUnitPc={ADFIT_UNIT_PC_728x90_BOTTOM}
+            className="!w-full !max-w-3xl"
+          />
+        </div>
+      </div>
+      {/* 광고 래퍼가 이미 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(대표님 요청) */}
+      <Footer topGap="mt-0" />
       {/* 오른쪽 하단 고정 - 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
       <InstallAppButton />
       <KakaoFloatingButton />
