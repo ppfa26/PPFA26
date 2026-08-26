@@ -37,18 +37,14 @@ body {
        승격시키지 않아 body 가 스크롤 컨테이너가 되지 않는다(근본 해결). */
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
-  /* ── 기본(라이트) 배경색. 순백 대신 차분한 회청색 톤으로 눈 편안하게.
-     다크는 body.theme-dark 에서 #0b1020 로 덮어씀 ── */
-  background-color: #aab3c6;
+  background-color: #0b1020;
 }
 
-/* ── 배경 고정 레이어 (라이트/다크 공통 뼈대) ──
+/* ── 다크 야경 테마 (완전 고정 배경 레이어) ──
    body에 직접 background-attachment:fixed 를 주면 iOS 사파리에서 스크롤 시
    배경이 떨리거나 튀는 버그가 있어, 뷰포트에 못 박히는 별도 고정 레이어(::before)로 분리.
    position:fixed + inset:0 로 화면 전체를 덮고, z-index:-1 로 콘텐츠 뒤에 깔린다.
-   이 방식은 PC·모바일 모두 스크롤해도 배경이 100% 고정된다.
-   ▼ 기본은 '라이트' 배경(은은한 밝은 그라데이션). 다크 야경은 아래
-     body.theme-dark::before 에서만 살아나므로, theme-dark 클래스만 떼면 즉시 라이트. */
+   이 방식은 PC·모바일 모두 스크롤해도 배경이 100% 고정된다. */
 body::before {
   content: "";
   position: fixed;
@@ -61,22 +57,6 @@ body::before {
   height: var(--app-vh, 100vh);
   min-height: 100vh;
   z-index: -1;
-  /* 라이트 테마 기본 배경: 위는 차분한 회청색, 아래로 갈수록 살짝 밝아짐.
-     완전 백색보다 두 톤 어둡게 낮춰 눈부심 없이 차분한 화면. */
-  background-color: #aab3c6;
-  background-image:
-    linear-gradient(180deg, #a0aabf 0%, #aab3c6 45%, #b4bccc 100%);
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  pointer-events: none;
-}
-
-/* ── 다크 야경 테마 (body.theme-dark 일 때만 배경 이미지가 살아난다) ── */
-body.theme-dark {
-  background-color: #0b1020;
-}
-body.theme-dark::before {
   background-color: #0b1020;
   /* (성능) WebP 우선 로드 + JPG 폴백. image-set 미지원 브라우저는 아래 url() 폴백 사용.
      WebP 변환으로 배경 용량 약 -51%(PC) / -58%(모바일) 감량 → 첫 화면 표시 속도 개선. */
@@ -91,11 +71,15 @@ body.theme-dark::before {
     linear-gradient(rgba(8, 12, 24, 0.78), rgba(8, 12, 24, 0.9)),
     image-set(url("/images/city-night-bg.webp") type("image/webp"),
       url("/images/city-night-bg.jpg") type("image/jpeg"));
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 /* 모바일은 가로가 좁으므로 세로 배경 이미지 사용 (오버레이는 살짝 더 어둡게) */
 @media (max-width: 640px) {
-  body.theme-dark::before {
+  body::before {
     background-image:
       linear-gradient(rgba(8, 12, 24, 0.82), rgba(8, 12, 24, 0.94)),
       url("/images/city-night-bg-mobile.jpg");
@@ -406,34 +390,24 @@ h4 {
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* 히어로 글래스 박스.
-   ▼ 기본(라이트): 밝은 배경 위에 은은한 흰색 유리 패널.
-   ▼ 다크: 아래 body.theme-dark .hero-glass 에서 야경용 어두운 유리로 덮어씀. */
+/* 히어로 글래스 박스 - 목업처럼 야경 위에 반투명 유리 패널 + 문구 */
 .hero-glass {
-  /* 순백은 눈이 부셔서 한 톤 더 낮춘 오프화이트(약한 회청빛)로. */
-  background: rgba(216, 223, 233, 0.92);
+  background: rgba(18, 23, 36, 0.55);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(20, 26, 40, 0.08);
-  box-shadow: 0 20px 60px rgba(20, 26, 40, 0.12);
-}
-body.theme-dark .hero-glass {
-  background: rgba(18, 23, 36, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
-/* 구간 구분용 얇은 가로줄.
-   ▼ 기본(라이트): 옅은 회색. ▼ 다크: 흰색 반투명. */
+/* 구간 구분용 얇은 회색 가로줄 (대표님 요청).
+   페이지 전체에 걸친 다른 섹션 테두리(border-gray-100)와 색·굵기를
+   동일하게 맞춰, 화면 폭 전체로 길게 통일한다. */
 .section-divider {
   width: 100%;
   height: 1px;
-  background: rgba(20, 26, 40, 0.08);
+  background: rgba(255, 255, 255, 0.14);
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
-}
-body.theme-dark .section-divider {
-  background: rgba(255, 255, 255, 0.14);
 }
 
 /* 섹션 제목/설명을 감싸는 반투명 글래스 패널 (대표님 요청: 목업처럼
