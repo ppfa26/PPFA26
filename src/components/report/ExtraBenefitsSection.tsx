@@ -374,24 +374,8 @@ function judge(b: ExtraBenefit, u: ExtraBenefitsUserInput): Verdict {
       };
     }
 
-    // ── 두루누리 사회보험료 지원 (10인 미만) ──
-    case "duruNuri": {
-      if (emp !== undefined && emp > 0 && emp < 10)
-        return {
-          status: "yes",
-          score: 74,
-          savingText: "고용·국민연금 보험료 최대 80% 지원",
-          note: "근로자 10명 미만 사업장 · 월보수 270만원 미만 직원 대상",
-        };
-      if (emp !== undefined && emp >= 10)
-        return { status: "no", score: 0, note: "근로자 10명 이상 (대상 아님)" };
-      return {
-        status: "condition",
-        score: 42,
-        savingText: "고용·국민연금 보험료 최대 80% 지원",
-        conditionText: "10인 미만 사업장에서 월보수 270만원 미만 직원을 채용하면 신청 가능합니다.",
-      };
-    }
+    // ※ 두루누리 사회보험료 지원은 정부지원제도(SUPPORT_PROGRAMS "duru")로 통합되어
+    //   💎 감면 혜택 목록에서는 제거됨 (중복 안내 방지, 대표님 요청 2026)
 
     // ── 착한 임대인 세액공제 (임차 소상공인) ──
     case "greenTaxCut": {

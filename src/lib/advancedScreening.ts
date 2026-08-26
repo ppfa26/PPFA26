@@ -211,6 +211,7 @@ export type CreditMatch = {
   step?: number; // 신청 권장 순서 (1이 가장 먼저)
   exclusiveNote?: string; // 중복 신청 불가 안내(신보·기보 둘다 자격일 때 등)
   alreadyUsing?: boolean; // 현재 이용 중인 기관(중복배제 판단 참고용)
+  switchNote?: string; // 이미 이용 중인 보증기관 → 전액 상환 시 다른 기관 전환 안내(대표님 요청)
 };
 
 // 업종 정규화: 다양한 표기를 대분류 키로 변환
@@ -550,6 +551,47 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       step: 9,
     });
   }
+
+  // ─────────────────────────────────────────────────────────────────
+  //  【상환→전환 안내】 (대표님 요청 2026)
+  //   신보·기보·재단은 같은 신용보증이라 한 곳을 '이용 중'이면 다른 곳에
+  //   신규 보증을 추가로 넣을 수 없다. 다만 이용 중인 곳 대출을 '전액 상환'하면
+  //   비게 되어 다른 보증기관으로 전환해 신규 신청이 가능해진다.
+  //   → 이미 이용 중(alreadyUsing)인 보증기관 카드에 이 안내를 붙인다.
+  //   ※ 대리대출(보증) 기관에만 적용. 중진공·소진공(직접대출)·무보(수출)는 별개라 제외.
+  const guaranteeInstitutions = matches.filter(
+    (m) =>
+      m.institution.includes("신용보증기금") ||
+      m.institution.includes("기술보증기금") ||
+      m.institution.includes("재단")
+  );
+  // 신보/기보 둘 다 자격이 열려 있으면 "재단 상환 시 2곳 중 1곳" 안내가 가능
+  const hasKoditMatch = guaranteeInstitutions.some((m) => m.institution.includes("신용보증기금"));
+  const hasKiboMatch = guaranteeInstitutions.some((m) => m.institution.includes("기술보증기금"));
+
+  matches.forEach((m) => {
+    if (!m.alreadyUsing) return;
+    if (m.institution.includes("재단")) {
+      // 재단 이용 중 → 신보·기보 추가 신청 불가. 재단 전액 상환 시 2곳 중 1곳 신청 가능.
+      //  신보·기보 중 실제로 자격이 열린 곳을 문구에 반영.
+      const eligibleTargets = [
+        hasKoditMatch ? "신용보증기금" : null,
+        hasKiboMatch ? "기술보증기금" : null,
+      ].filter(Boolean) as string[];
+      const targetText = eligibleTargets.length > 0 ? eligibleTargets.join("·") : "신용보증기금·기술보증기금";
+      const chooseText = eligibleTargets.length >= 2 ? " 중 1곳으로" : "으로";
+      m.switchNote =
+        `💡 이미 지역신용보증재단 보증을 이용 중이시라면, 그 상태로는 ${targetText}에 신규 보증을 '추가'로 넣을 수 없습니다(같은 신용보증이라 중복 제한). 다만 재단 대출을 전액 상환하면 한도가 비어, ${targetText}${chooseText} 전환해 신규 신청할 수 있습니다.`;
+    } else if (m.institution.includes("신용보증기금")) {
+      // 신보 이용 중 → 기보 신규 불가. 신보 전액 상환 시 기보로 전환 가능.
+      m.switchNote =
+        "💡 이미 신용보증기금 보증을 이용 중이시라면, 그 상태로는 기술보증기금에 신규 보증을 추가로 넣을 수 없습니다(2005년 업무협약상 중복 제한). 다만 신용보증기금 대출을 전액 상환하면 한도가 비어, 기술보증기금으로 전환해 신규 보증을 신청할 수 있습니다.";
+    } else if (m.institution.includes("기술보증기금")) {
+      // 기보 이용 중 → 신보 신규 불가. 기보 전액 상환 시 신보로 전환 가능.
+      m.switchNote =
+        "💡 이미 기술보증기금 보증을 이용 중이시라면, 그 상태로는 신용보증기금에 신규 보증을 추가로 넣을 수 없습니다(2005년 업무협약상 중복 제한). 다만 기술보증기금 대출을 전액 상환하면 한도가 비어, 신용보증기금으로 전환해 신규 보증을 신청할 수 있습니다.";
+    }
+  });
 
   // 대표님 지정 안내 순서로 항상 고정 정렬
   //  [대리대출] 지역신용보증재단 → 신용보증기금 → 기술보증기금

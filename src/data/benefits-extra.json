@@ -113,24 +113,6 @@
       "warning": "이후 인원이 줄면 공제받은 세액 일부를 추징(사후관리 2년)"
     },
     {
-      "id": "duruNuri",
-      "order": 7,
-      "phase": "직원 채용 시",
-      "urgency": "medium",
-      "title": "두루누리 사회보험료 지원",
-      "icon": "🤝",
-      "description": "근로자 10명 미만 사업장 (월보수 270만원 미만 직원 대상)",
-      "benefit": "월평균 보수 270만원 미만 직원의 고용보험·국민연금 보험료를 최대 80%까지 지원받아, 4대보험 부담을 크게 줄일 수 있습니다.",
-      "applyUrl": "https://insurancesupport.or.kr/",
-      "applyName": "두루누리 사회보험",
-      "requiredDocs": ["사업자등록증", "4대보험 가입 내역"],
-      "applyHow": "4대사회보험 정보연계센터 또는 관할 공단에 두루누리 지원신청서 제출 → 다음 달 보험료부터 차감",
-      "processingTime": "10분",
-      "duration": "신청 다음 달 보험료부터 차감 반영",
-      "deadline": "직원 신규 채용(4대보험 가입) 시",
-      "warning": "이미 지원받은 이력이 있으면 재지원 제한될 수 있음"
-    },
-    {
       "id": "greenTaxCut",
       "order": 8,
       "phase": "지역 요건",

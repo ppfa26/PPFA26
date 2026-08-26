@@ -248,7 +248,7 @@ export const SUPPORT_PROGRAMS: SupportProgram[] = [
     icon: "🚀",
     title: "혁신바우처",
     site: "www.mssmiv.com",
-    url: "https://www.mssmiv.com",
+    url: "https://www.kosmes.or.kr/nsh/SH/SBI/SHSBI094M0.do",
     desc: "제조 소기업(3년 평균 매출 120억원 이하)에 컨설팅·기술지원·마케팅을 최대 5,000만원 바우처로 지원합니다.",
     applyHow: "중소기업 혁신바우처 포털(mssmiv.com)에서 모집공고 확인 후 온라인 신청",
     applyTel: "1357",

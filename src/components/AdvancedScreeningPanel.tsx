@@ -1286,6 +1286,13 @@ function AdvancedResult({
                   </p>
                 )}
 
+                {/* 이미 이용 중인 보증기관 → 전액 상환 시 다른 기관 전환 안내 (대표님 요청) */}
+                {m.switchNote && (
+                  <p className="mt-2 whitespace-pre-line break-keep rounded-lg border border-brand-orange/30 bg-brand-orange/[0.07] px-2.5 py-1.5 text-[11px] font-semibold leading-relaxed text-brand-dark/80">
+                    {m.switchNote}
+                  </p>
+                )}
+
                 {/* ★ 기관 내 여러 상품 아코디언 - 클릭 시 펼쳐서 상품별로 신청 (대표님 요청) ★ */}
                 {products && products.length > 0 && (
                   <div className="mt-2">
