@@ -125,10 +125,15 @@ export default function Home() {
   //  · 평균 매칭 개수는 '21개'로 고정(대표님 요청).
   //  · SSR(서버)과 첫 렌더가 어긋나면(hydration mismatch) 경고가 나므로,
   //    초기값은 기준값(BASE_USERS/BASE_MATCH)으로 두고 마운트 후 useEffect 에서 실제 날짜로 반영한다.
-  // ★ 시간대(UTC/로컬) 차이로 "오늘"이 하루 밀려 +8이 조기 반영되던 문제 방지:
-  //   Date 객체 뺄셈 대신, 로컬 기준 '자정 타임스탬프'끼리 비교해 지난 '일수'만 센다.
-  const BASE_YMD = { y: 2026, m: 7, d: 26 }; // 2026-08-26 (월 0부터: 7=8월) → 이 날 딱 6,308
-  const BASE_USERS = 6308; // 오늘(기준일) 시작값 - 매출 역산 누적(대표님 지정)
+  // ★★ "한국시간(KST) 기준 오늘 딱 6,308" 을 100% 보장하는 방식 ★★
+  //   [지난 버그] Date 뺄셈은 '접속자 브라우저 시간대'를 따르는데, 서버는 UTC.
+  //   한국(UTC+9)에선 이미 다음날로 넘어가 있어 daysPassed 가 +1 → +8 이 조기 반영,
+  //   6,317 로 보였다. (실제로 KST 오늘은 UTC 오늘보다 하루 앞선다)
+  //   [확정 해결] 접속자 시간대와 무관하게 '한국시간(KST) 달력 날짜'로만 계산한다.
+  //     · BASE_YMD_KST = 카운터를 6,308 로 시작할 한국 날짜(오늘).
+  //     · 매일 한국시간 자정에 정확히 하루치(평균 +8)만 상승. 서버·브라우저 시간대 영향 0.
+  const BASE_YMD_KST = 20260827; // KST 이 날짜에 딱 6,308 (YYYYMMDD, 한국시간 오늘)
+  const BASE_USERS = 6308; // 시작값 - 매출 역산 누적(대표님 지정)
   const BASE_MATCH = 21; // 평균 매칭 개수(고정)
   const [usedCompanies, setUsedCompanies] = useState(BASE_USERS);
   const [avgMatch, setAvgMatch] = useState(BASE_MATCH);
@@ -139,11 +144,20 @@ export default function Home() {
       const x = Math.sin(n * 9973 + 12345) * 43758.5453;
       return x - Math.floor(x);
     };
-    const today = new Date();
-    // 둘 다 '로컬 자정' 타임스탬프로 맞춰서 계산 → 시간대에 따라 하루 밀리는 오차 제거.
-    const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-    const baseT = new Date(BASE_YMD.y, BASE_YMD.m, BASE_YMD.d).getTime();
-    const daysPassed = Math.max(0, Math.round((t0 - baseT) / 86400000));
+    // 접속자 시간대와 무관하게 '한국(KST=UTC+9) 달력 날짜'를 YYYYMMDD 정수로 뽑는다.
+    // (UTC epoch 에 +9h 를 더한 뒤 UTC 필드를 읽으면 곧 KST 벽시계 날짜가 된다.)
+    const kstNow = new Date(Date.now() + 9 * 3600000);
+    const todayYmdKst =
+      kstNow.getUTCFullYear() * 10000 +
+      (kstNow.getUTCMonth() + 1) * 100 +
+      kstNow.getUTCDate();
+    // YYYYMMDD 정수를 UTC 자정 Date 로 환산해 '달력상 일수 차'만 floor 로 센다.
+    const toUTCDate = (ymd: number) =>
+      Date.UTC(Math.floor(ymd / 10000), (Math.floor(ymd / 100) % 100) - 1, ymd % 100);
+    const daysPassed = Math.max(
+      0,
+      Math.floor((toUTCDate(todayYmdKst) - toUTCDate(BASE_YMD_KST)) / 86400000)
+    );
 
     // 지난 날짜만큼 하루치 증가폭(7~9, 평균 8)을 누적 - 천천히 꾸준히 상승(대표님 요청)
     let users = BASE_USERS;
