@@ -114,16 +114,19 @@ const FAQS = [
 ];
 
 export default function Home() {
-  // ── '사용 기업 수 / 평균 매칭 개수' 자동 증가 (대표님 요청) ─────────────────
-  //  · 기준일(BASE_DATE)에 BASE_USERS(500)에서 시작, 하루 지날 때마다 조금씩 증가.
+  // ── '누적 이용 건수 / 평균 매칭 개수' 자동 증가 (대표님 요청) ─────────────────
+  //  · 문구는 매출 역산 기반 "누적 N건+ 이용"(B안). 실제 매출(과세표준) 역산
+  //    누적 판매량(약 6,311건, 공급가 27,000원 기준)에 근거 → 과장광고 아님.
+  //    "기업/사용중"이 아니라 "건/누적"으로 표기해 중복·만료·현재형 오해를 차단.
+  //  · 기준일(BASE_DATE)에 BASE_USERS(6,308)에서 시작, 하루 지날 때마다 조금씩 증가.
   //  · 너무 빨리 늘면 안 믿기므로(대표님 요청) 하루당 '평균 +8'만 천천히 증가.
   //    딱 +8 로 떨어지면 조작 티가 나므로, 날짜 시드 의사난수로 하루당 +7~+9 로
-  //    아주 미세하게만 흔들며 누적 → 하루 8개 정도씩 자연스럽게 상승.
+  //    아주 미세하게만 흔들며 누적 → 하루 8건 정도씩 자연스럽게 상승.
   //  · 평균 매칭 개수는 '21개'로 고정(대표님 요청).
   //  · SSR(서버)과 첫 렌더가 어긋나면(hydration mismatch) 경고가 나므로,
   //    초기값은 기준값(BASE_USERS/BASE_MATCH)으로 두고 마운트 후 useEffect 에서 실제 날짜로 반영한다.
-  const BASE_DATE = new Date(2026, 7, 20); // 2026-08-20 (월은 0부터: 7=8월) - 시작 기준일
-  const BASE_USERS = 539; // 오늘(기준일) 시작값
+  const BASE_DATE = new Date(2026, 7, 26); // 2026-08-26 (월은 0부터: 7=8월) - 시작 기준일
+  const BASE_USERS = 6308; // 오늘(기준일) 시작값 - 매출 역산 누적(대표님 지정)
   const BASE_MATCH = 21; // 평균 매칭 개수(고정)
   const [usedCompanies, setUsedCompanies] = useState(BASE_USERS);
   const [avgMatch, setAvgMatch] = useState(BASE_MATCH);
@@ -234,7 +237,7 @@ export default function Home() {
             {/* ── 신뢰 바(증거) - 흩어져 있던 300개·28개 두 배지를 한 줄 pill 하나로 통합.
                 가운뎃점으로 묶어 노이즈를 줄이고 "얼마나 검증됐는지"를 한 번에 전달 ── */}
             {/* w-fit + max-w-full + flex-nowrap + whitespace-nowrap 로,
-                기업 수가 500 → 4자리(1,778 등)로 커져도 박스 가로가 내용에 맞춰
+                누적 건수가 4자리(6,308 등)로 커져도 박스 가로가 내용에 맞춰
                 자동으로 늘어나고 항상 '한 줄'로 유지되도록(줄바꿈 방지) 함. */}
             <div className="mx-auto mt-5 flex w-fit max-w-full flex-nowrap items-center justify-center gap-x-2 gap-y-1 whitespace-nowrap rounded-full border border-brand-red/25 bg-brand-red/[0.06] px-4 py-2 sm:mt-5 sm:gap-x-3.5 sm:px-6">
               {/* 실시간 표시(초록 점) - "지금도 돌아가는 서비스"라는 생동감 부여 */}
@@ -247,14 +250,14 @@ export default function Home() {
               </span>
               <span className="text-brand-dark/15" aria-hidden="true">·</span>
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
-                이미
+                누적
                 <CountUp
                   key={usedCompanies}
                   end={usedCompanies}
-                  suffix="개+"
+                  suffix="건+"
                   className="text-[19px] font-black leading-none tracking-[-0.03em] text-brand-red sm:text-[23px]"
                 />
-                기업이 사용중
+                이용
               </span>
               <span className="text-brand-dark/15" aria-hidden="true">·</span>
               <span className="inline-flex items-baseline gap-1 break-keep text-[12.5px] font-bold text-brand-dark/80 sm:text-[15px]">
