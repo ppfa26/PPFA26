@@ -39,7 +39,7 @@ body {
   -webkit-font-smoothing: antialiased;
   /* ── 기본(라이트) 배경색. 순백 대신 차분한 회청색 톤으로 눈 편안하게.
      다크는 body.theme-dark 에서 #0b1020 로 덮어씀 ── */
-  background-color: #bcc4d4;
+  background-color: #aab3c6;
 }
 
 /* ── 배경 고정 레이어 (라이트/다크 공통 뼈대) ──
@@ -63,9 +63,9 @@ body::before {
   z-index: -1;
   /* 라이트 테마 기본 배경: 위는 차분한 회청색, 아래로 갈수록 살짝 밝아짐.
      완전 백색보다 두 톤 어둡게 낮춰 눈부심 없이 차분한 화면. */
-  background-color: #bcc4d4;
+  background-color: #aab3c6;
   background-image:
-    linear-gradient(180deg, #b2bbcd 0%, #bcc4d4 45%, #c6cdda 100%);
+    linear-gradient(180deg, #a0aabf 0%, #aab3c6 45%, #b4bccc 100%);
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -411,7 +411,7 @@ h4 {
    ▼ 다크: 아래 body.theme-dark .hero-glass 에서 야경용 어두운 유리로 덮어씀. */
 .hero-glass {
   /* 순백은 눈이 부셔서 한 톤 더 낮춘 오프화이트(약한 회청빛)로. */
-  background: rgba(224, 230, 239, 0.90);
+  background: rgba(216, 223, 233, 0.92);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid rgba(20, 26, 40, 0.08);
