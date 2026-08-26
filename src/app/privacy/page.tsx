@@ -8,7 +8,7 @@ export default function PrivacyPage() {
     <LegalLayout
       pageKey="privacy"
       title="개인정보처리방침"
-      updatedAt="2026년 8월 2일"
+      updatedAt="2025년 3월 1일"
     >
       <section id="privacy-intro">
         <Editable id="privacy-intro-body-v2" as="p">
@@ -318,7 +318,7 @@ export default function PrivacyPage() {
           as="p"
           className="mt-6 text-sm text-brand-gray"
         >
-          ※ 본 개인정보처리방침은 2026년 8월 2일부터 시행됩니다. 관련 법령·서비스
+          ※ 본 개인정보처리방침은 2025년 3월 1일부터 시행됩니다. 관련 법령·서비스
           변경에 따라 내용이 추가·삭제·수정될 수 있으며, 변경 시 서비스 내
           공지사항 또는 본 페이지를 통해 사전에 고지합니다.
         </Editable>
