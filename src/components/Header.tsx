@@ -43,7 +43,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0b1020]/80 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 w-full border-b border-black/[0.06] bg-[#eef1f7]/85 backdrop-blur-lg">
       {/* 로고↔메뉴가 화면 양끝으로 과하게 벌어지지 않게 최대폭을 살짝 좁혀
           가운데로 모은다(대표님 요청). max-w-6xl→max-w-5xl */}
       <div className="mx-auto flex h-[68px] max-w-5xl items-center justify-between gap-1.5 pl-6 pr-6 xs:gap-2 xs:pl-8 xs:pr-7 sm:h-16 sm:gap-4 sm:px-12">
