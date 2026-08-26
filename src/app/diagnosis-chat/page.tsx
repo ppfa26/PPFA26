@@ -835,10 +835,19 @@ export default function DiagnosisChat() {
         body: JSON.stringify({ bno: digits }),
         signal: controller.signal,
       });
-      const data = await res.json();
+      // ★ 대표님 요청(오차단 방지 2026) ★
+      //   HTTP 200이 아니면(429 레이트리밋 / 500 / 502 국세청 장애 등) '우리 잘못이 아닌
+      //   상황'이므로 절대 차단하지 않고 미조회로 통과시킨다. 429 응답은 body에 ok/serverError가
+      //   없어서, 예전엔 'answered(등록 안 됨)'로 오판→정상 사업자를 차단하는 버그가 있었다.
+      if (!res.ok) return { kind: "serverDown" as const, data: { ok: false, serverError: true } };
+      const data = await res.json().catch(() => null);
+      if (!data) return { kind: "serverDown" as const, data: { ok: false, serverError: true } };
       if (data.ok && data.found) return { kind: "found" as const, data };
       if (data.serverError) return { kind: "serverDown" as const, data };
-      return { kind: "answered" as const, data };
+      // 오직 국세청이 명확히 "등록되지 않은 번호"라고 답한 경우(ok:true·found:false)만 차단.
+      if (data.ok === true && data.found === false) return { kind: "answered" as const, data };
+      // 그 밖의 애매한 응답(형식 미상 등)은 정상 고객 보호 차원에서 통과시킨다.
+      return { kind: "serverDown" as const, data: { ok: false, serverError: true } };
     } catch {
       return { kind: "serverDown" as const, data: { ok: false, serverError: true, message: BNO_TEXT.errorServer } };
     } finally {

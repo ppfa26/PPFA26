@@ -15,13 +15,26 @@ export async function POST(req: NextRequest) {
     // ── 남용 방지 ────────────────────────────────────────────────
     //  국세청 API 는 무료지만 일일 호출 한도가 있다. 봇이 사업자번호를
     //  대량 스캐닝하면 한도가 소진돼 정상 사용자도 조회 불가가 된다.
-    //  IP 기준 1분 15회로 제한(사람이 사업자 조회를 그보다 자주 하진 않음).
+    //  ★ 대표님 요청(오차단 방지 2026) ★ 공유 IP(회사망·카페 등)에서 여러 명이
+    //    진단하면 예전 1분 15회 한도가 쉽게 소진돼 정상 고객이 막혔다.
+    //    → 사람이 손으로 낼 수 있는 속도보다 훨씬 넉넉하게 1분 40회로 완화.
+    //    또한 한도 초과(429) 응답에도 serverError:true 를 실어 보내, 프론트가
+    //    '우리 잘못 아님 → 미조회로 통과'로 처리하게 한다(정상 사업자 차단 방지).
     const blocked = enforceRateLimit(
       req,
-      { namespace: "nts", windowMs: 60_000, max: 15 },
+      { namespace: "nts", windowMs: 60_000, max: 40 },
       "사업자 조회 요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요."
     );
-    if (blocked) return blocked;
+    if (blocked) {
+      return NextResponse.json(
+        {
+          ok: false,
+          serverError: true,
+          message: "사업자 조회 요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요.",
+        },
+        { status: 429 }
+      );
+    }
 
     const { bno } = await req.json();
 
