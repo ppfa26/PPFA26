@@ -30,6 +30,8 @@ import {
   savePartialLead,
   saveCompletedDiagnosis,
 } from "@/lib/diagnosisStore";
+import { saveDiagnosisRecord } from "@/lib/diagnosisHistory";
+import { countMatchedItems } from "@/lib/supportPrograms";
 import { trackFunnelStep, trackFunnelComplete } from "@/lib/funnelTracker";
 import {
   STEP1_FIELDS,
@@ -907,6 +909,10 @@ export default function DiagnosisChat() {
       try {
         saveDiagnosis(payload, user?.id ?? null);
         clearDiagnosisDraft();
+        // ⭐ 내 진단 기록 목록에도 1건 추가(미니앱 이식) — 나중에 재조회용
+        try {
+          saveDiagnosisRecord(payload, countMatchedItems(payload).total);
+        } catch { /* 기록 저장 실패해도 진단 흐름엔 영향 없음 */ }
         trackConversion("SubmitApplication");
       } catch { /* 로컬 저장 실패해도 이동은 계속 */ }
       // ★ A안(대표님 요청) ★ 완주(진단 끝) 익명 기록 — fire-and-forget.

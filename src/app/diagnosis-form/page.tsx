@@ -18,6 +18,8 @@ import {
   savePartialLead,
   saveCompletedDiagnosis,
 } from "@/lib/diagnosisStore";
+import { saveDiagnosisRecord } from "@/lib/diagnosisHistory";
+import { countMatchedItems } from "@/lib/supportPrograms";
 import {
   DIAGNOSIS_TEXT,
   BNO_TEXT,
@@ -395,6 +397,10 @@ export default function Diagnosis() {
         saveDiagnosis(form, user?.id ?? null);
         // 진단이 완료됐으니 진행중 초안은 정리
         clearDiagnosisDraft();
+        // ⭐ 내 진단 기록 목록에도 1건 추가(미니앱 이식) — 나중에 재조회용
+        try {
+          saveDiagnosisRecord(form, countMatchedItems(form).total);
+        } catch { /* 기록 저장 실패해도 진단 흐름엔 영향 없음 */ }
 
         // ★ 전환 추적 ★ 진단(설문) 제출 완료 = 서비스 신청 전환.
         trackConversion("SubmitApplication");
