@@ -392,7 +392,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="theme-dark">
+      <body className="">
         <ScrollToTop />
         {/* ★ 데스크톱(PC) 화면 강제는 viewport export(width:820)로 서버에서 고정한다.
             (기존 ViewportManager 는 경로 전환마다 initial-scale=0.439 를 런타임 삽입해,
