@@ -39,8 +39,8 @@ export default function LegalLayout({
           </div>
         </article>
 
-        {/* 카드 밖 전체폭 하단 슬롯(광고 등) - 728px 광고가 잘리지 않도록 */}
-        {bottomSlot && <div className="mx-auto mt-6 w-full">{bottomSlot}</div>}
+        {/* 카드 밖 하단 슬롯(광고 등) · 위아래 여백/가로폭은 슬롯 내부에서 제어(대칭) */}
+        {bottomSlot && <div className="w-full">{bottomSlot}</div>}
       </main>
       <Footer />
     </PageShell>

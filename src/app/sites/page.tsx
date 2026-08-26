@@ -11,7 +11,14 @@ export default function SitesPage() {
       pageKey="sites"
       title="정부지원사업 관련 공식 사이트 모음"
       updatedAt="2026년 8월 2일"
-      bottomSlot={<AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />}
+      bottomSlot={
+        // 하단 광고 · 가로폭(max-w-3xl)으로 제한 + 위아래 여백 동일(py-6)하게 정렬
+        <div className="px-4 py-6">
+          <div className="mx-auto max-w-3xl">
+            <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
+          </div>
+        </div>
+      }
     >
       <p className="text-sm leading-relaxed text-brand-gray">
         창업·정책자금·보증·인증·조회 등 실무에서 자주 쓰이는 공식 사이트를 분야별로 모았습니다.
