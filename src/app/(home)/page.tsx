@@ -895,8 +895,8 @@ export default function Home() {
 
         {/* ── 카카오 애드핏 광고 ("중간 배너" · CTA 박스 바로 아래 · 728x90) ──
              (대표님 요청) CTA 세로높이를 줄여 확보한 공간에 배치.
-             CTA 박스와 광고 박스 사이 공백을 조금 줄임(pt-2). 본문과 같은 max-w-3xl 폭 중앙 정렬. */}
-        <div className="px-4 pt-2 pb-5">
+             CTA 박스와 광고 박스 사이 공백을 더 줄임(pt-0). 본문과 같은 max-w-3xl 폭 중앙 정렬. */}
+        <div className="px-4 pt-0 pb-5">
           <div className="mx-auto max-w-3xl">
             <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
           </div>
@@ -1023,8 +1023,8 @@ export default function Home() {
         {/* 하단 CTA - 후기란 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청).
             위 FAQ·아래 광고 섹션과 세로 리듬을 광고 상하단 여백과 동일하게 균일화(대표님 요청): py-3 sm:py-4 → py-7 sm:py-9 */}
         <section className="px-4 py-7 sm:py-9">
-          {/* 박스 상하단 내부 여백 축소(대표님 요청): 좌우(px)는 유지, 상하 여백을 광고 하단 공백 수준으로 균일하게 줄임(py-5 sm:py-7 → py-4 sm:py-5) */}
-          <div className="reveal hover-lift mx-auto max-w-3xl rounded-3xl bg-brand-dark px-6 py-4 text-center shadow-card sm:px-8 sm:py-5">
+          {/* 박스 상하단 내부 여백 확대(대표님 요청): 내용이 위로 몰리고 아래 빈 공간이 남던 문제 해결 → 세로 여백을 늘려 콘텐츠를 세로 중앙으로 채움(py-4 sm:py-5 → py-8 sm:py-10) */}
+          <div className="reveal hover-lift mx-auto max-w-3xl rounded-3xl bg-brand-dark px-6 py-8 text-center shadow-card sm:px-8 sm:py-10">
             <Editable
               id="home-cta-title"
               as="h2"
