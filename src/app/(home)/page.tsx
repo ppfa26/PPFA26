@@ -840,7 +840,7 @@ export default function Home() {
             레드 진단 CTA + 카카오톡 상담(다크 글래스) 2단 + 하단 보조 링크.
             (대표님 요청) 상단 여백을 하단과 비슷하게 줄이고(py-6→py-5), 박스 가로폭을 넓힘(max-w-xl→max-w-3xl). */}
         <section className="px-4 py-5 sm:py-6">
-          <div className="reveal hover-lift mx-auto flex max-w-3xl flex-col items-center gap-3 rounded-3xl bg-brand-dark/95 px-6 py-7 text-center shadow-card sm:px-8">
+          <div className="reveal hover-lift mx-auto flex max-w-3xl flex-col items-center gap-2.5 rounded-3xl bg-brand-dark/95 px-6 py-5 text-center shadow-card sm:px-8">
             {/* (대표님 요청) 하단 CTA처럼 버튼 위에 짧은 유도 문구 추가 */}
             <Editable
               id="result-sample-cta-title"
@@ -862,7 +862,7 @@ export default function Home() {
                 id="result-sample-cta"
                 as="a"
                 href="/diagnosis-chat"
-                className="btn-red w-full whitespace-nowrap rounded-full px-6 py-3.5 text-center text-[16px] font-extrabold tracking-[-0.02em] sm:w-auto sm:px-10 sm:py-4 sm:text-[17px]"
+                className="btn-red w-full whitespace-nowrap rounded-full px-6 py-3 text-center text-[16px] font-extrabold tracking-[-0.02em] sm:w-auto sm:px-10 sm:py-3.5 sm:text-[17px]"
               >
                 지금 내 지원사업 확인하기
               </Editable>
@@ -873,7 +873,7 @@ export default function Home() {
                 href="http://pf.kakao.com/_VxfWxan/chat"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full whitespace-nowrap rounded-full border border-white/20 bg-white/5 px-6 py-3.5 text-center text-[16px] font-bold text-white transition hover:bg-white/10 sm:w-auto sm:px-10 sm:py-4 sm:text-[17px]"
+                className="w-full whitespace-nowrap rounded-full border border-white/20 bg-white/5 px-6 py-3 text-center text-[16px] font-bold text-white transition hover:bg-white/10 sm:w-auto sm:px-10 sm:py-3.5 sm:text-[17px]"
               >
                 💬 1:1 카카오톡 상담하기
               </Editable>
