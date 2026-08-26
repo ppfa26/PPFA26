@@ -895,8 +895,8 @@ export default function Home() {
 
         {/* ── 카카오 애드핏 광고 ("중간 배너" · CTA 박스 바로 아래 · 728x90) ──
              (대표님 요청) CTA 세로높이를 줄여 확보한 공간에 배치.
-             상·하 여백을 동일하게(py-5) 맞춰 위아래 공백 균형. 본문과 같은 max-w-3xl 폭 중앙 정렬. */}
-        <div className="px-4 py-5">
+             CTA 박스와 광고 박스 사이 공백을 조금 줄임(pt-2). 본문과 같은 max-w-3xl 폭 중앙 정렬. */}
+        <div className="px-4 pt-2 pb-5">
           <div className="mx-auto max-w-3xl">
             <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
           </div>
@@ -914,31 +914,21 @@ export default function Home() {
           <SuccessCases variant="section" />
         </section>
 
-        {/* 구간 구분 - 승인사례↔중간CTA */}
+        {/* 구간 구분 - 승인사례↔하단광고 */}
         <div className="section-divider" aria-hidden="true" />
-        {/* ── 중간 진단 유도 배너 (대표님 요청 · 디자인 미세조정) ──
-            긴 랜딩 중간(성공사례 직후)에 부담 없는 얇은 배너형 CTA 배치.
-            하단 대형 CTA와 톤은 통일하되 높이를 낮춰 중복감을 줄임. */}
-        <section className="px-4 py-6 sm:py-8">
-          <div className="reveal hover-lift mx-auto flex max-w-xl flex-col items-center gap-4 rounded-3xl bg-brand-dark px-6 py-6 text-center shadow-card sm:flex-row sm:justify-between sm:px-8 sm:text-left">
-            <div className="min-w-0">
-              <p className="break-keep text-base font-black tracking-[-0.02em] text-white sm:text-lg">
-                내 사업장은 어떤 지원사업을 받을 수 있을까?
-              </p>
-              <p className="mt-1.5 break-keep text-[13px] font-medium text-gray-300 sm:text-sm">
-                무료 베타 진행 중 · 1분이면 확인됩니다.
-              </p>
-            </div>
-            <a
-              href="/diagnosis-chat"
-              className="btn-red w-full shrink-0 rounded-full px-7 py-3 text-sm font-bold sm:w-auto sm:text-base"
-            >
-              1분 무료 진단 시작
-            </a>
+        {/* ── 카카오 애드핏 광고 ("하단 배너" · 가격표(서비스 이용 플랜) 위 · 728x90) ──
+            (대표님 요청) 기존 "1분 무료 진단 시작" CTA 박스를 이 위치의 광고로 교체.
+            중간 배너(ekOom)와 서로 다른 광고단위(7Vtz)라 동일 광고단위 중복 노출 정책 위반 아님. */}
+        <div className="px-4 py-6 sm:py-8">
+          <div className="mx-auto max-w-3xl">
+            <AdFitBanner
+              adUnitPc={ADFIT_UNIT_PC_728x90_BOTTOM}
+              className="!w-full !max-w-3xl"
+            />
           </div>
-        </section>
+        </div>
 
-        {/* 구간 구분 - 중간CTA↔가격표 (둘 다 다크 body라 얇은 선으로만 구분) */}
+        {/* 구간 구분 - 하단광고↔가격표 (둘 다 다크 body라 얇은 선으로만 구분) */}
         <div className="section-divider" aria-hidden="true" />
         {/* 가격표 */}
         <section
@@ -1085,20 +1075,9 @@ export default function Home() {
           </div>
         </section>
       </main>
-      {/* ── 카카오 애드핏 광고 (첫 페이지 최하단 · 푸터 위 · 728x90) ──
-           (대표님 요청) 중간 배너와 별개의 "하단 배너" 광고단위 사용
-           → 한 페이지에 서로 다른 광고단위 2개라 중복 노출 정책 위반 아님.
-           중간 배너와 상·하 여백 리듬을 동일하게(py-7 sm:py-9) 맞춤. */}
-      <div className="px-4 py-7 sm:py-9">
-        <div className="mx-auto max-w-3xl">
-          <AdFitBanner
-            adUnitPc={ADFIT_UNIT_PC_728x90_BOTTOM}
-            className="!w-full !max-w-3xl"
-          />
-        </div>
-      </div>
-      {/* 광고 래퍼가 이미 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(대표님 요청) */}
-      <Footer topGap="mt-0" />
+      {/* (대표님 요청) 기존 최하단(푸터 위) 하단 배너 광고는 가격표 위로 이동함.
+          → 동일 광고단위(7Vtz)가 한 페이지에 2번 노출되지 않도록 여기서는 제거. */}
+      <Footer topGap="mt-8 sm:mt-10" />
       {/* 오른쪽 하단 고정 - 앱 설치 버튼(위) + 카카오톡 1:1 상담 버튼(아래) */}
       <InstallAppButton />
       <KakaoFloatingButton />
