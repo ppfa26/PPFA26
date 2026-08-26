@@ -198,13 +198,13 @@ export default function RelatedAnnouncements({
                       {it.title}
                     </span>
                     {it.support_scale && (
-                      <span className="shrink-0 break-keep rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
+                      <span className="shrink-0 break-keep rounded-full bg-purple-100 px-2 py-0.5 text-[11px] font-bold text-purple-700">
                         {it.support_scale}
                       </span>
                     )}
                   </div>
                   {it.deadline && (
-                    <span className="mt-2 inline-block shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                    <span className="mt-2 inline-block shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[11px] font-bold text-brand-dark">
                       🗓️ {it.deadline}
                     </span>
                   )}

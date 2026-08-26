@@ -545,16 +545,16 @@ export default function ExtraBenefitsSection({ userInput, previewLock = false, o
                         {b.title}
                       </span>
                       {v.savingText && (
-                        <span className={`break-keep rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-bold text-brand-orange ${lockText}`}>
+                        <span className={`break-keep rounded-full bg-brand-orange/10 px-2 py-0.5 text-[11px] font-bold text-brand-orange ${lockText}`}>
                           {v.savingText}
                         </span>
                       )}
                       {isYes ? (
-                        <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                        <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">
                           신청 가능
                         </span>
                       ) : (
-                        <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                        <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[11px] font-bold text-white">
                           조건 충족 시 가능
                         </span>
                       )}

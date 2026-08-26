@@ -63,7 +63,7 @@ export default function Header() {
             </span>
             {/* 브랜드명 폭에 맞춰 서브라인을 양끝정렬 → 두 줄 가로폭 통일(모바일·PC 공통) */}
             <span
-              className="mt-[2px] block w-full whitespace-nowrap text-[9.5px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray/90 xs:text-[10.5px] sm:mt-[3px] sm:text-[11px]"
+              className="mt-[2px] block w-full whitespace-nowrap text-[11px] font-semibold leading-tight tracking-[-0.01em] text-brand-gray/90 sm:mt-[3px]"
               style={{ textAlignLast: "justify" }}
             >
               정부지원사업 통합 매칭 플랫폼

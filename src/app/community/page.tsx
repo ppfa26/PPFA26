@@ -282,7 +282,7 @@ export default function Page() {
                 <p className="whitespace-nowrap text-lg font-extrabold leading-none text-brand-dark xs:text-xl sm:text-2xl">
                   {s.value}
                 </p>
-                <p className="mt-1.5 whitespace-nowrap text-[10px] font-medium leading-none text-brand-gray xs:text-[11px] sm:text-xs">
+                <p className="mt-1.5 whitespace-nowrap text-[11px] font-medium leading-none text-brand-gray sm:text-xs">
                   {s.label}
                 </p>
               </div>
@@ -367,7 +367,7 @@ export default function Page() {
                 <div className="flex items-center justify-between gap-2">
                   <Stars n={r.rating} />
                   <span
-                    className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold ${channelStyle[r.channel]}`}
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${channelStyle[r.channel]}`}
                   >
                     {r.channel}
                   </span>
@@ -503,7 +503,7 @@ function LiveReviews() {
       <div className="text-center">
         <p className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider text-brand-orange">
           Live
-          <span className="rounded-full bg-brand-green/10 px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-brand-green">
+          <span className="rounded-full bg-brand-green/10 px-2 py-0.5 text-[11px] font-bold normal-case tracking-normal text-brand-green">
             실시간
           </span>
         </p>

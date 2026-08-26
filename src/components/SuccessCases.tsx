@@ -330,7 +330,7 @@ export default function SuccessCases({
               <p className="mt-2 break-keep text-[11.5px] font-bold leading-[1.35] tracking-[-0.01em] text-white/95 sm:text-[13.5px]">
                 {m.sector}
               </p>
-              <p className="mt-auto break-keep pt-1.5 text-[9.5px] font-medium leading-[1.4] text-white/40 sm:text-[10.5px]">
+              <p className="mt-auto break-keep pt-1.5 text-[11px] font-medium leading-[1.4] text-white/40">
                 {m.org}
               </p>
             </div>
@@ -409,7 +409,7 @@ export default function SuccessCases({
               💬 1:1 채널톡 상담하기
             </a>
           </div>
-          <p className="mx-auto mt-7 max-w-md break-keep text-[10.5px] leading-[1.7] text-gray-400/70 sm:text-[11.5px]">
+          <p className="mx-auto mt-7 max-w-md break-keep text-[11px] leading-[1.7] text-gray-400/70 sm:text-[11.5px]">
             ※ 본 사례는 실제 승인 사례를 기반으로 하며, 기업 정보는 익명 처리했습니다.
             <br />
             승인 여부·금액·기간은 기업별 상황에 따라 달라질 수 있으며 동일한 결과를 보장하지 않습니다.
@@ -445,7 +445,7 @@ function Step({
     <div className="mx-auto flex w-full max-w-[38rem] flex-col items-start text-left">
       <div className="flex items-center gap-2.5">
         <span
-          className={`rounded-md px-2.5 py-[3px] text-[10px] font-extrabold uppercase tracking-[0.1em] ${toneMap[tone]}`}
+          className={`rounded-md px-2.5 py-[3px] text-[11px] font-extrabold uppercase tracking-[0.1em] ${toneMap[tone]}`}
         >
           {label}
         </span>

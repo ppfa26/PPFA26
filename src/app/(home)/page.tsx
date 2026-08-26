@@ -472,7 +472,7 @@ export default function Home() {
                           <b className="text-5xl font-black leading-none text-brand-orange sm:text-6xl">28</b>
                           <b className="pb-0.5 text-xl font-extrabold text-brand-orange sm:text-2xl">개</b>
                         </span>
-                        <span className="mt-1 break-keep text-[10px] font-bold text-brand-dark/50 sm:text-[11px]">
+                        <span className="mt-1 break-keep text-[11px] font-bold text-brand-dark/50">
                           매칭 완료 🎉
                         </span>
                       </div>
@@ -612,7 +612,7 @@ export default function Home() {
                           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                             <span className="text-base">{g.icon}</span>
                             <span className="text-[14px] font-extrabold text-brand-dark">{g.t}</span>
-                            <span className={`shrink-0 break-keep rounded-full ${g.badgeCls} px-2 py-0.5 text-[10px] font-bold text-white`}>{g.badge}</span>
+                            <span className={`shrink-0 break-keep rounded-full ${g.badgeCls} px-2 py-0.5 text-[11px] font-bold text-white`}>{g.badge}</span>
                           </div>
                           <p className="mt-1 break-keep text-[12px] font-semibold leading-relaxed text-brand-green">
                             💡 {g.hook}
@@ -654,8 +654,8 @@ export default function Home() {
                           <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                             <div className="flex flex-wrap items-center gap-1.5">
                               <span className="break-keep text-sm font-extrabold text-brand-dark">💰 {b.t}</span>
-                              <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${b.cCls}`}>{b.c}</span>
-                              <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">신청 가능</span>
+                              <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${b.cCls}`}>{b.c}</span>
+                              <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">신청 가능</span>
                             </div>
                             <p className="mt-1.5 break-keep text-[12px] font-bold text-brand-green">📉 {b.saving}</p>
                             <p className="mt-1 break-keep text-[11px] font-semibold text-brand-orange">💡 {b.hook}</p>
@@ -709,8 +709,8 @@ export default function Home() {
                         <div key={i} className="py-4 first:pt-0">
                           <div className="flex flex-wrap items-center gap-1.5">
                             <span className="text-[14px] font-extrabold text-brand-dark">{m.inst}</span>
-                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${m.natCls}`}>{m.nature}</span>
-                            <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">✅ 신청 가능</span>
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${m.natCls}`}>{m.nature}</span>
+                            <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">✅ 신청 가능</span>
                           </div>
                           <p className="mt-1 break-keep text-[11px] leading-relaxed text-brand-dark/55">
                             <b className="text-brand-dark/70">ℹ️ {m.nature}</b> · {m.natDesc}
@@ -765,9 +765,9 @@ export default function Home() {
                         <div key={i} className="rounded-xl border border-gray-200 bg-white p-4">
                           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                             <span className="break-keep text-[14px] font-extrabold leading-snug text-brand-dark">{it.title}</span>
-                            <span className="shrink-0 break-keep rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">{it.scale}</span>
+                            <span className="shrink-0 break-keep rounded-full bg-purple-100 px-2 py-0.5 text-[11px] font-bold text-purple-700">{it.scale}</span>
                           </div>
-                          <span className="mt-2 inline-block shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[10px] font-bold text-brand-dark">🗓️ {it.deadline}</span>
+                          <span className="mt-2 inline-block shrink-0 break-keep rounded-full bg-brand-yellow/30 px-2 py-0.5 text-[11px] font-bold text-brand-dark">🗓️ {it.deadline}</span>
                           <div className="mt-2 flex items-center justify-between gap-2">
                             <p className="min-w-0 flex-1 truncate text-[12px] leading-relaxed text-brand-gray">
                               🏛️ {it.org}<span className="mx-1.5 text-brand-dark/25">·</span>

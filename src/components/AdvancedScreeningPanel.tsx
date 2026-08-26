@@ -467,7 +467,7 @@ export default function AdvancedScreeningPanel({
             <span className="flex items-center gap-2">
               <span className="text-xl">🔬</span>
               <span className="text-sm font-extrabold text-brand-dark sm:text-base">정밀 추가진단</span>
-              <span className="rounded-full bg-brand-red px-2 py-0.5 text-[10px] font-bold text-white">필수</span>
+              <span className="rounded-full bg-brand-red px-2 py-0.5 text-[11px] font-bold text-white">필수</span>
             </span>
             <span className="text-xs font-bold text-brand-gray">
               {step + 1} / {totalSteps}
@@ -1065,11 +1065,11 @@ function AdvancedResult({
                         <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
                         <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
                         {isEligible ? (
-                          <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[10px] font-bold text-white">
+                          <span className="shrink-0 break-keep rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-bold text-white">
                             신청 가능
                           </span>
                         ) : (
-                          <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                          <span className="shrink-0 break-keep rounded-full bg-brand-orange/90 px-2 py-0.5 text-[11px] font-bold text-white">
                             조건 충족 시 가능
                           </span>
                         )}
@@ -1256,14 +1256,14 @@ function AdvancedResult({
                         <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
                         {m.loan_type && (
                           <span
-                            className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${natureBadgeCls(m.loan_type)}`}
+                            className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${natureBadgeCls(m.loan_type)}`}
                           >
                             {m.loan_type}
                           </span>
                         )}
                         {/* 이미 이용 중인 기관 표시 (중복배제 참고 - 대표님 요청) */}
                         {m.alreadyUsing && (
-                          <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                          <span className="shrink-0 rounded-full bg-brand-dark/10 px-2 py-0.5 text-[11px] font-bold text-brand-dark">
                             현재 이용 중
                           </span>
                         )}
@@ -1336,7 +1336,7 @@ function AdvancedResult({
                               <>
                                 {/* ★ 이 기관에서 가장 먼저 신청하면 좋은 상품 - 체크 포인트 (대표님 요청) */}
                                 {isTop && (
-                                  <span className={`mb-1.5 inline-flex items-center gap-1 break-keep rounded-full bg-brand-green px-2.5 py-0.5 text-[10px] font-extrabold text-white ${lockTextSoft}`}>
+                                  <span className={`mb-1.5 inline-flex items-center gap-1 break-keep rounded-full bg-brand-green px-2.5 py-0.5 text-[11px] font-extrabold text-white ${lockTextSoft}`}>
                                     승인 가능성 높음 · 먼저 신청 추천
                                   </span>
                                 )}
@@ -1354,20 +1354,20 @@ function AdvancedResult({
                                     return natures.map((nature) => (
                                       <span
                                         key={nature}
-                                        className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${natureBadgeCls(nature)}`}
+                                        className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[11px] font-bold ${natureBadgeCls(nature)}`}
                                       >
                                         {nature}
                                       </span>
                                     ));
                                   })()}
                                   {prod.amount && (
-                                    <span className="break-keep rounded-full bg-brand-dark/10 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
+                                    <span className="break-keep rounded-full bg-brand-dark/10 px-2 py-0.5 text-[11px] font-bold text-brand-dark">
                                       {prod.amount}
                                     </span>
                                   )}
                                   {prod.approval && (
                                     <span
-                                      className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                      className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[11px] font-bold ${
                                         prod.approval === "high"
                                           ? "bg-green-100 text-brand-green"
                                           : prod.approval === "mid"
@@ -1465,7 +1465,7 @@ function AdvancedResult({
                                           </tbody>
                                         </table>
                                       </div>
-                                      <p className="mt-2 break-keep text-[10px] leading-relaxed text-brand-gray">
+                                      <p className="mt-2 break-keep text-[11px] leading-relaxed text-brand-gray">
                                         ※ {GRADUATION_EXCLUDED_NOTE}
                                       </p>
                                     </div>
@@ -1634,7 +1634,7 @@ function AdvancedResult({
             </p>
             {hasDae && (
               <div className="mt-3">
-                <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
+                <span className="inline-block rounded-full bg-purple-100 px-2 py-0.5 text-[11px] font-bold text-purple-700">
                   대리대출 (보증서 → 재단/신보/기보/무보)
                 </span>
                 <p className={`mt-1.5 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>
@@ -1647,7 +1647,7 @@ function AdvancedResult({
             )}
             {hasDirect && (
               <div className="mt-3">
-                <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-bold text-blue-700">
                   직접대출 (공단이 직접 실행 → 소진공/중진공)
                 </span>
                 <p className={`mt-1.5 break-keep text-xs leading-relaxed text-brand-dark ${lockText}`}>

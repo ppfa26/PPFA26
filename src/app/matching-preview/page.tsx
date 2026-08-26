@@ -944,7 +944,7 @@ export default function MatchingPreview() {
                     개
                   </b>
                 </span>
-                <span className="mt-1 break-keep text-[10px] font-bold text-brand-dark/60 sm:text-xs">
+                <span className="mt-1 break-keep text-[11px] font-bold text-brand-dark/60 sm:text-xs">
                   매칭 완료 🎉
                 </span>
               </div>

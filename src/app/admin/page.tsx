@@ -1973,7 +1973,7 @@ export default function AdminPage() {
                                       {ip}
                                       {shared ? ` ⚠️${emailCountByIp(ip)}` : ""}
                                       {hits > 0 && (
-                                        <span className="rounded-sm bg-white/70 px-1 text-[10px] font-semibold text-gray-500">
+                                        <span className="rounded-sm bg-white/70 px-1 text-[11px] font-semibold text-gray-500">
                                           {hits}회
                                         </span>
                                       )}
@@ -1986,7 +1986,7 @@ export default function AdminPage() {
                                           e.stopPropagation();
                                           doUnblock("ip", ip);
                                         }}
-                                        className="rounded border border-gray-300 bg-white px-1.5 py-0.5 text-[10px] font-bold text-gray-600 transition hover:bg-gray-50"
+                                        className="rounded border border-gray-300 bg-white px-1.5 py-0.5 text-[11px] font-bold text-gray-600 transition hover:bg-gray-50"
                                         title={`${ip} 차단 해제`}
                                       >
                                         해제하기
@@ -1997,7 +1997,7 @@ export default function AdminPage() {
                                           e.stopPropagation();
                                           doBlock("ip", ip);
                                         }}
-                                        className="rounded border border-gray-300 bg-white px-1.5 py-0.5 text-[10px] font-bold text-gray-600 transition hover:bg-gray-50"
+                                        className="rounded border border-gray-300 bg-white px-1.5 py-0.5 text-[11px] font-bold text-gray-600 transition hover:bg-gray-50"
                                         title={`${ip} 접속 차단`}
                                       >
                                         차단하기
@@ -2081,7 +2081,7 @@ export default function AdminPage() {
                                 {(() => {
                                   const b = utmBadge(c.utmSource);
                                   return (
-                                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${b.cls}`}>
+                                    <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-bold ${b.cls}`}>
                                       {b.label}
                                     </span>
                                   );
@@ -3019,7 +3019,7 @@ export default function AdminPage() {
                           <span>{r.ip}</span>
                           {cls.isDataCenter && (
                             <span
-                              className="ml-1.5 inline-flex items-center gap-0.5 whitespace-nowrap rounded-md bg-rose-100 px-1.5 py-0.5 align-middle text-[10px] font-bold text-rose-600"
+                              className="ml-1.5 inline-flex items-center gap-0.5 whitespace-nowrap rounded-md bg-rose-100 px-1.5 py-0.5 align-middle text-[11px] font-bold text-rose-600"
                               title={`${cls.provider ?? "데이터센터"} 서버 대역입니다. 실제 사람이 아니라 자동 봇/스캐너일 가능성이 높습니다.`}
                             >
                               🤖 봇 의심{cls.provider ? ` · ${cls.provider}` : ""}
@@ -3147,7 +3147,7 @@ export default function AdminPage() {
                           <span>{a.ip || "-"}</span>
                           {cls.isDataCenter && (
                             <span
-                              className="ml-1 inline-block rounded bg-rose-100 px-1 py-0.5 text-[10px] font-bold text-rose-600"
+                              className="ml-1 inline-block rounded bg-rose-100 px-1 py-0.5 text-[11px] font-bold text-rose-600"
                               title={`${cls.provider ?? "데이터센터"} 서버 대역 · 봇 의심`}
                             >
                               🤖
