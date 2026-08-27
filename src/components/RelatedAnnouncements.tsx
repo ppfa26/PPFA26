@@ -283,8 +283,15 @@ export default function RelatedAnnouncements({
   }
 
   // 기본(그 외/📢): 독립 아코디언 카드
+  //  미리보기 한 줄(대표님 요청): 앞의 3개 카드처럼 '✓ 실시간 공고 N건'.
+  //  이 지점(line 166 통과)에 도달하면 items는 1건 이상이 보장됨(0건이면 위에서 null 반환).
+  //  fallback(딱 맞는 공고 부족→참고용)일 때는 '실시간 공고' 대신 '최근 공고'로 정확히 표기.
+  const count = items ? items.length : 0;
+  const cardPeek = count > 0
+    ? `${fallback ? "최근" : "실시간"} 공고 ${count}건`
+    : undefined;
   return (
-    <AccordionCard emoji={meta.emoji} title={meta.title} subtitle={meta.subtitle}>
+    <AccordionCard emoji={meta.emoji} title={meta.title} subtitle={meta.subtitle} peek={cardPeek}>
       {list}
     </AccordionCard>
   );
