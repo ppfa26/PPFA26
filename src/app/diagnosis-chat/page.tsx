@@ -932,13 +932,23 @@ export default function DiagnosisChat() {
           );
         }
       } catch { /* 진행도 기록 실패는 무시(진단 방해 금지) */ }
-      // 서버 저장은 기다리지 않고 백그라운드로만 시도(실패해도 결과엔 영향 없음)
+      // ★★ [완료+중단 2건 중복 근본 차단] 서버 '완료 저장'을 먼저 확정한다 ★★
+      //   기존엔 완료 저장을 fire-and-forget 으로 던져서, 마지막 단계의 savePartial(중단 저장)과
+      //   '거의 동시에' 실행됐다. 그 경쟁(race)으로 서버가 completed 와 partial 을 각각 새로
+      //   insert → 관리자 화면에 "완료 1건 + 중단 1건" 2건이 쌓였다.
+      //   → 완료 저장을 await 로 '먼저' 끝내면 이후 어떤 partial 이 와도 서버 RPC(save_partial_lead)가
+      //     "이미 completed 있음 → 새로 안 만듦"으로 막는다. (순서 보장이 핵심)
+      //   ※ 단, 저장이 느려도 결과 화면 진입이 멈추면 안 되므로 2.5초 타임아웃을 건다.
+      //     타임아웃돼도 결과 화면(matching-preview)이 자체적으로 다시 동기화하므로 유실 없음.
       try {
         if (!isStatsExcludedEmail(user?.email)) {
-          void saveCompletedDiagnosis(payload, user?.id ?? null);
+          await Promise.race([
+            saveCompletedDiagnosis(payload, user?.id ?? null),
+            new Promise<void>((resolve) => setTimeout(resolve, 2500)),
+          ]);
         }
-      } catch { /* noop */ }
-      // 즉시 결과(또는 회원가입)로 이동 → 더 이상 멈추지 않는다
+      } catch { /* 저장 실패/지연은 무시 — 결과 이동은 계속 */ }
+      // 결과(또는 회원가입)로 이동
       if (user) { router.push(RESULT_URL); }
       else { router.push(`/signup?next=${encodeURIComponent(RESULT_URL)}`); }
     })();
