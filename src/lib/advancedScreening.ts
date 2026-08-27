@@ -512,13 +512,13 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       reasons.push("만 39세 이하·업력 3년 미만이라 청년 전용 창업자금 대상이에요");
     else if (youthFundSpecialMaybe)
       reasons.push("만 39세 이하라, 특례(창업성공패키지·기보 청년보증 등)를 받으면 업력 7년 미만까지 청년 전용 창업자금을 신청할 수 있어요");
-    if (isManufacturingCore) reasons.push("제조업이라 유리해요");
-    if (company.is_innovation_area) reasons.push("혁신성장 유형에 해당돼요");
-    if (isExport) reasons.push("수출기업이라 유리해요");
-    if (!reasons.length && employees >= 5) reasons.push("직원이 5명 이상이라 대상이에요");
+    if (isManufacturingCore) reasons.push("제조업 유리");
+    if (company.is_innovation_area) reasons.push("혁신성장 유형");
+    if (isExport) reasons.push("수출기업 유리");
+    if (!reasons.length && employees >= 5) reasons.push("직원 5명 이상");
     matches.push({
       institution: "중소벤처기업진흥공단",
-      criteria: `${reasons.join(" · ")} · 위 보증기관 대출과 '같이' 받을 수 있어요.\n매출보다 성장 계획·자금 쓸 곳·대표님 의지를 종합해서 봐요.`,
+      criteria: `${reasons.join(" · ")} · 위 보증기관 대출과 '같이' 받을 수 있어요. 매출보다 성장 계획·자금 쓸 곳·대표님 의지를 종합해서 봅니다.`,
       priority: "HIGH",
       loan_type: "직접대출",
       step: 2,
