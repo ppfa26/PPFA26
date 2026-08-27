@@ -14,12 +14,15 @@ export default function AccordionCard({
   emoji,
   title,
   subtitle,
+  peek,
   defaultOpen = false,
   children,
 }: {
   emoji?: string;
   title: ReactNode;
   subtitle?: ReactNode;
+  /** 접힌 상태에서도 보이는 '미리보기 한 줄' (예: "청년창업사관학교 외 4건"). 펼치면 사라짐 */
+  peek?: ReactNode;
   defaultOpen?: boolean;
   children: ReactNode;
 }) {
@@ -45,6 +48,17 @@ export default function AccordionCard({
           {subtitle && (
             <span className="mt-0.5 block break-keep text-[12px] leading-relaxed text-brand-dark/50">
               {subtitle}
+            </span>
+          )}
+          {/* 미리보기 한 줄 (대표님 요청: 접어놓되 뭐가 들었는지 감 잡히게).
+              접힌 상태에서만 노출 → 펼치면 실제 내용이 나오므로 중복 방지 */}
+          {peek && !open && (
+            <span className="mt-1.5 flex items-center gap-1.5 break-keep text-[12px] font-semibold leading-relaxed text-brand-orange">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <circle cx="12" cy="12" r="9" />
+                <polyline points="9 12 11 14 15 10" />
+              </svg>
+              <span className="min-w-0">{peek}</span>
             </span>
           )}
         </span>

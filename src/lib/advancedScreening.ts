@@ -376,7 +376,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
       {
         institution: "소상공인시장진흥공단",
         criteria:
-          "재도전 전용 안내 - 재도전특별자금(재창업·채무조정 성실상환자)이 대상입니다. 일반 정책자금·보증은 면책·인가 후 3년이 경과해야 가능하며, 해당 기관이 채권자였던 경우에는 제한될 수 있습니다.",
+          "재도전 전용 자금 안내예요 - 다시 창업하시거나 빚을 성실히 갚아온 분을 위한 '재도전특별자금'이 대상이에요. 일반 정책자금·보증은 면책·인가 후 3년이 지나야 받을 수 있고, 그 기관에 갚을 빚이 있었다면 제한될 수 있어요.",
         priority: "MEDIUM",
         loan_type: "직접대출",
         step: 1,
@@ -415,8 +415,8 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "기술보증기금",
       criteria: isManufacturingCore
-        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다.\n기업 인증 등 가점사항이 없어도 우선 신청 후, 부결 시 특허·벤처·이노비즈를 보완해서 재신청하세요."
-        : "기술력(특허·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증이라, 매출이 낮아도 보증이 가능합니다.",
+        ? "제조업이라 기술보증기금이 딱 맞아요. 여기는 매출이 적어도 '기술'을 보고 판단해서, 이제 막 시작한 곳도 승인 가능성이 있어요.\n특허·인증이 없어도 일단 신청해 보시고, 떨어지면 특허·벤처·이노비즈를 보완해 다시 넣으면 돼요."
+        : "특허·연구소·벤처 인증 같은 '기술력'이 있으면 기술보증기금이 유리해요. 매출이 적어도 기술을 보고 판단하거든요.",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
@@ -425,7 +425,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     });
     matches.push({
       institution: "신용보증기금",
-      criteria: "제조·혁신성장 기업이면서 매출·규모 요건도 충족해 신용보증기금도 자격이 됩니다(한도가 큰 편).\n단, 기술보증기금과 둘 중 1곳만 선택해 신청하세요.",
+      criteria: "제조·기술 기업인데다 매출·규모까지 갖춰서, 한도가 더 큰 신용보증기금도 받을 수 있어요.\n다만 기술보증기금과 둘 중 '한 곳만' 골라 신청하셔야 해요.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -437,8 +437,8 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "기술보증기금",
       criteria: isManufacturingCore
-        ? "제조업은 기술보증기금부터 접근하는 것이 유리합니다. 기술평가 기반이라 매출이 낮아도 보증이 가능합니다.\n기업 인증 등 가점사항이 없어도 우선 신청 후, 부결 시 특허·벤처·이노비즈를 보완해서 재신청하세요."
-        : "기술력(특허·상표·연구소·벤처·이노비즈·혁신성장·대표 경력) 기반 보증입니다. 매출이 낮아도 승인 가능성이 있습니다(신용보증기금·재단과 중복 불가).",
+        ? "제조업이라 기술보증기금이 딱 맞아요. 여기는 매출이 적어도 '기술'을 보고 판단해서, 이제 막 시작한 곳도 승인 가능성이 있어요.\n특허·인증이 없어도 일단 신청해 보시고, 떨어지면 특허·벤처·이노비즈를 보완해 다시 넣으면 돼요."
+        : "특허·상표·연구소·벤처 인증 같은 '기술력'이 있으면 기술보증기금이 유리해요. 매출이 적어도 승인 가능성이 있어요. (신용보증기금·재단과는 한 곳만 선택)",
       priority: "TECH_BASED",
       loan_type: "대리대출",
       step: 1,
@@ -448,7 +448,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     // ── 비기술 + 매출 5억↑ + (재단 우선 취급업종 아님) → 신보 우선 (기보·재단 X) ──
     matches.push({
       institution: "신용보증기금",
-      criteria: "연매출 5억원 이상·신용점수 양호하면 신용보증기금이 우선입니다(재단과 중복 불가).\n매출 기반 보증이라 한도가 큰 편이며, 직원 수가 많을수록 유리합니다(필수는 아님).",
+      criteria: "매출이 연 5억 원을 넘고 신용점수도 괜찮으면 신용보증기금이 유리해요. 매출 규모를 보고 판단해서 한도가 큰 편이에요.\n직원이 많으면 더 좋지만 꼭 필요한 건 아니에요. (재단과는 한 곳만 선택)",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -463,7 +463,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "신용보증기금",
       criteria:
-        "연매출 5억원 이상이면 생계형 업종이어도 신용보증기금 신청 자격이 됩니다.\n신용보증기금이 한도가 더 크므로 '먼저' 신청해 보는 것이 유리합니다.\n※ 재단을 먼저 받으면 중복 제한(신보·재단 동시 불가)으로 신보는 심사조차 못 볼 수 있으니, 큰 곳(신보)부터 두드리는 것이 순서입니다.",
+        "매출이 연 5억 원을 넘으면 소매·음식 같은 생계형 업종이어도 신용보증기금을 신청할 수 있어요.\n여기가 한도가 더 크니 '먼저' 넣어보는 게 유리해요.\n※ 재단을 먼저 받으면 규정상 신용보증기금은 심사조차 못 볼 수 있어요. 큰 곳(신용보증기금)부터 두드리는 게 순서예요.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -472,7 +472,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "지역신용보증재단",
       criteria:
-        "신용보증기금이 부결되면(생계형 업종은 재단으로 안내되는 경우가 많음) 지역신용보증재단으로 진행하세요.\n신보→재단은 '큰 곳 먼저, 안 되면 안전망' 순서입니다(신보·재단 중복 불가).\n창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
+        "신용보증기금에서 떨어지면(생계형 업종은 재단으로 안내되는 경우가 많아요) 지역신용보증재단으로 진행하세요.\n'큰 곳 먼저, 안 되면 안전망' 순서예요. (신용보증기금·재단은 한 곳만 선택)\n장사 시작 3개월·월매출 100만 원만 넘어도 특례보증을 받을 수 있어요.",
       priority: "MEDIUM",
       loan_type: "대리대출",
       step: 2,
@@ -484,7 +484,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "지역신용보증재단",
       criteria:
-        "소매·생계형운송·음식·숙박·가계서비스 등은 지역신용보증재단 우선 취급대상입니다.\n연매출 5억원 미만 소상공인은 신보 규모 요건에 못 미치므로 처음부터 재단이 맞습니다(신보·기보와 중복 불가).\n창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
+        "소매·음식·숙박·운송·서비스 같은 동네 사업은 지역신용보증재단이 딱 맞아요.\n매출이 연 5억 원 미만이면 신용보증기금 기준에 못 미치니, 처음부터 재단으로 가는 게 맞아요. (신용보증기금·기술보증기금과는 한 곳만 선택)\n장사 시작 3개월·월매출 100만 원만 넘어도 특례보증을 받을 수 있어요.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -494,7 +494,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     // ── 소상공인·소액 → 재단 우선 (신보·기보 X) ──
     matches.push({
       institution: "지역신용보증재단",
-      criteria: "소상공인·소액(3천~5천만원)은 지역신용보증재단이 우선입니다(신보·기보와 중복 불가).\n사업장이 있으면 승인율이 높은 편이고, 창업 3개월·월매출 100만원 이상이면 특례보증도 가능합니다.",
+      criteria: "3천~5천만 원 정도의 소액이 필요한 소상공인은 지역신용보증재단이 우선이에요. (신용보증기금·기술보증기금과는 한 곳만 선택)\n가게(사업장)가 있으면 승인 가능성이 높은 편이고, 장사 시작 3개월·월매출 100만 원만 넘어도 특례보증을 받을 수 있어요.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 1,
@@ -509,16 +509,16 @@ export function matchInstitutions(company: Company): CreditMatch[] {
   if (qualifiesJungjin) {
     const reasons: string[] = [];
     if (qualifiesYouthFund)
-      reasons.push("만 39세 이하·업력 3년 미만(청년전용창업자금 자격)");
+      reasons.push("만 39세 이하·업력 3년 미만이라 청년 전용 창업자금 대상이에요");
     else if (youthFundSpecialMaybe)
-      reasons.push("만 39세 이하(창업성공패키지·기보 청년보증 등 특례 시 업력 7년 미만까지 청년전용창업자금 신청 가능)");
-    if (isManufacturingCore) reasons.push("제조업");
-    if (company.is_innovation_area) reasons.push("혁신성장 유형");
-    if (isExport) reasons.push("수출기업");
-    if (!reasons.length && employees >= 5) reasons.push("상시직원 5명 이상");
+      reasons.push("만 39세 이하라, 특례(창업성공패키지·기보 청년보증 등)를 받으면 업력 7년 미만까지 청년 전용 창업자금을 신청할 수 있어요");
+    if (isManufacturingCore) reasons.push("제조업이라 유리해요");
+    if (company.is_innovation_area) reasons.push("혁신성장 유형에 해당돼요");
+    if (isExport) reasons.push("수출기업이라 유리해요");
+    if (!reasons.length && employees >= 5) reasons.push("직원이 5명 이상이라 대상이에요");
     matches.push({
       institution: "중소벤처기업진흥공단",
-      criteria: `${reasons.join(" · ")} · 대리대출과 병행이 가능합니다.\n성장 계획·자금 사용처·대표 의지를 종합 심사를 진행합니다.`,
+      criteria: `${reasons.join(" · ")} · 위 보증기관 대출과 '같이' 받을 수 있어요.\n매출보다 성장 계획·자금 쓸 곳·대표님 의지를 종합해서 봐요.`,
       priority: "HIGH",
       loan_type: "직접대출",
       step: 2,
@@ -532,7 +532,7 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "소상공인시장진흥공단",
       criteria:
-        "중진공 직접대출을 이미 받은 기업도 병행할 수 있으며, 소진공 대리대출도 함께 진행할 수 있습니다.\n※ 지역별 편차가 크며, 실제 승인 여부는 대표자의 신용·매출·상환여력을 종합해 판단합니다.",
+        "중진공 대출을 이미 받았어도 소상공인시장진흥공단 자금은 '같이' 받을 수 있어요.\n※ 지역마다 조건 차이가 커요. 실제 승인은 대표님 신용·매출·갚을 여력을 종합해서 정해져요.",
       priority: "MEDIUM",
       loan_type: "직접대출",
       step: 3,
@@ -544,8 +544,8 @@ export function matchInstitutions(company: Company): CreditMatch[] {
     matches.push({
       institution: "한국무역보험공사",
       criteria: isBizCorp
-        ? "수출실적증명원을 발급받은 법인은 선적전·선적후 수출신용보증을 신청할 수 있습니다.\n기업등급 BB+ 이상이면 승인율이 높은 편이며, 그 아래 등급도 신청은 가능합니다.\n※ 신보·기보 등 다른 기관의 한도와 별개로 병행 활용할 수 있습니다."
-        : "수출실적증명원을 발급받으면 신청할 수 있습니다 (법인을 선호합니다).\n※ 다른 기관의 한도와 별개로 병행 활용할 수 있습니다.",
+        ? "수출실적증명원만 발급받으면 법인은 수출 자금 보증을 신청할 수 있어요.\n기업등급 BB+ 이상이면 승인 가능성이 높고, 그 아래여도 신청은 가능해요.\n※ 다른 보증기관 한도와 '따로' 쓸 수 있어서 같이 활용하면 좋아요."
+        : "수출실적증명원만 발급받으면 신청할 수 있어요 (법인이면 더 유리해요).\n※ 다른 기관 한도와 '따로' 쓸 수 있어서 같이 활용하면 좋아요.",
       priority: "HIGH",
       loan_type: "대리대출",
       step: 9,
@@ -919,6 +919,42 @@ export type InstitutionProduct = {
   //   없으면(=조건 미지정) 그 기관에 해당되는 모든 고객에게 항상 노출(기본 상품).
   eligibleWhen?: (c: Company) => boolean;
 };
+
+// D) 자금명 → 소상공인 눈높이 '쉬운 한 줄 뜻' 사전 (대표님 요청).
+//   정부 자금은 이름만 봐선 뭔지 알 수 없어("혁신성장촉진자금(사회연대경제조직)" 등),
+//   상품명 아래에 "= 쉬운 뜻"을 붙여 준다. 부분 일치(포함)로 매칭.
+//   ⚠️ 승인·보장 뉘앙스 금지(금융알선/대출보장/승인보장 X). 단순 '무슨 돈인지' 설명만.
+const FUND_PLAIN_MEANINGS: { match: string; plain: string }[] = [
+  { match: "소공인특화자금", plain: "제조·수리 등 '손으로 만드는' 소공인 전용 자금이에요" },
+  { match: "신성장기반자금", plain: "설비·공장을 키우려는 성장기 기업용 자금이에요" },
+  { match: "신시장진출지원자금", plain: "수출·새 시장에 도전하는 기업용 자금이에요" },
+  { match: "신용취약자금", plain: "신용점수가 낮아 은행 문턱이 높은 분을 위한 자금이에요" },
+  { match: "일반경영안정자금", plain: "장사가 어려울 때 버티는 데 쓰는 운영비 자금이에요" },
+  { match: "재도전특별자금", plain: "사업을 접었다 다시 도전하는 분을 위한 재기 자금이에요" },
+  { match: "졸업후보기업자금", plain: "정책자금 졸업을 앞둔, 자리 잡은 기업용 자금이에요" },
+  { match: "창업기반지원자금", plain: "이제 막 시작한 창업 초기 기업용 기반 자금이에요" },
+  { match: "청년전용창업자금", plain: "만 39세 이하 청년 대표님을 위한 창업 자금이에요" },
+  { match: "혁신창업사업화자금", plain: "기술·아이디어를 사업으로 키우는 창업 자금이에요" },
+  { match: "혁신성장촉진자금 (일반형)", plain: "키오스크·스마트기기를 들인 소상공인용 성장 자금이에요" },
+  { match: "혁신성장촉진자금 (혁신형)", plain: "매출이 쑥쑥 크는 성장형 소상공인용 자금이에요" },
+  { match: "중소기업_정책자금", plain: "중소기업이 운영비·설비에 쓰는 대표 정책자금이에요" },
+  { match: "기술보증 (시설자금)", plain: "기술력으로 보증받아 공장·설비에 쓰는 자금이에요" },
+  { match: "기술보증 (운전자금)", plain: "기술력으로 보증받아 운영비에 쓰는 자금이에요" },
+  { match: "일반보증 (시설자금)", plain: "보증서를 받아 공장·설비에 쓰는 자금이에요" },
+  { match: "일반보증 (운전자금)", plain: "보증서를 받아 운영비(재료비·인건비 등)에 쓰는 자금이에요" },
+];
+
+/**
+ * D) 자금명(상품명)에 맞는 '쉬운 한 줄 뜻'을 돌려준다. 없으면 null.
+ *   긴 키워드부터 검사해 더 구체적인 뜻이 우선 매칭되게 한다.
+ */
+export function plainFundMeaning(name: string): string | null {
+  if (!name) return null;
+  const hit = [...FUND_PLAIN_MEANINGS]
+    .sort((a, b) => b.match.length - a.match.length)
+    .find((e) => name.includes(e.match));
+  return hit ? hit.plain : null;
+}
 
 // 상품 목록을 고객 조건으로 필터링 (eligibleWhen 없으면 항상 포함)
 //  ★ 대표님 요청: 해당되지 않는 상품은 아예 숨겨서 "내 것만" 보이게 ★

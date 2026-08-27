@@ -29,6 +29,7 @@ import {
   loanNatureOf,
   PRE_FOUNDER_PROGRAMS,
   isPreFounderEligible,
+  plainFundMeaning,
   type InstitutionProduct,
 } from "@/lib/advancedScreening";
 import {
@@ -53,6 +54,16 @@ type SupportItem = { prog: SupportProgram; status: SupportStatus };
 function natureBadgeCls(nature: string): string {
   if (nature === "보험") return "bg-orange-100 text-orange-700";
   return "bg-purple-100 text-purple-700"; // 대리대출·직접대출 (보라색 통일)
+}
+
+// A) 접힌 아코디언 카드 '미리보기 한 줄' 문자열 생성 (대표님 요청).
+//   예: ["청년창업사관학교","예비창업패키지","신사업창업사관학교"] → "청년창업사관학교 외 2건"
+//   항목이 하나면 이름만, 없으면 null(미리보기 미표시).
+function makePeek(names: (string | undefined | null)[]): string | null {
+  const clean = names.filter((n): n is string => !!n && n.trim().length > 0);
+  if (clean.length === 0) return null;
+  if (clean.length === 1) return clean[0];
+  return `${clean[0]} 외 ${clean.length - 1}건`;
 }
 
 // 업종 - 기타업종 포함 (판독 로직에서 미매핑 업종은 자동으로 서비스업 비율(0.1) 적용됨)
@@ -910,11 +921,18 @@ function AdvancedResult({
       {/* ⓪ 예비·초기·청년창업자 정부지원사업 (대표님 요청) - 모든 고객에게 노출.
              결과창 '맨 위'(정부지원제도 위). 대출이 아닌 사업화 자금(무상) 중심.
              중진공 청년창업자금(대출)은 정책금융상품 아코디언에 그대로 유지. */}
-      {(
+      {(() => {
+        // A) 미리보기 1줄 (대표님 요청): 접힌 카드에도 '뭐가 들었는지' 보이게.
+        const preFounderEligibles = PRE_FOUNDER_PROGRAMS.filter((p) =>
+          isPreFounderEligible(p.eligKey, relatedProfile),
+        );
+        const preFounderPeek = makePeek(preFounderEligibles.map((p) => p.name));
+        return (
         <AccordionCard
           emoji="🌱"
           title="예비·초기·청년 사업자 지원금"
           subtitle="안 갚아도 되는 예비·초기·청년 지원금이에요"
+          peek={preFounderPeek}
         >
           <div className="rounded-xl border border-brand-green/30 bg-brand-green/5 px-4 py-3">
             <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
@@ -1020,7 +1038,8 @@ function AdvancedResult({
             <RelatedAnnouncements profile={relatedProfile} bucket="startup" variant="inline" />
           )}
         </AccordionCard>
-      )}
+        );
+      })()}
 
       {/* ① 정부지원제도 + 감면혜택 - 최상단 배치 (대표님 요청: 두 아코디언 완전 통합)
              성격이 유사(신청해서 챙기는 혜택)하여 하나의 아코디언으로 묶고,
@@ -1031,6 +1050,10 @@ function AdvancedResult({
           emoji="🏅"
           title="내 혜택·감면 모두 챙기기"
           subtitle="신청 가능한 혜택과 세금 감면을 모았어요"
+          peek={makePeek([
+            ...eligibleSupport.map((s) => s.prog.title),
+            ...(benefitsCount && benefitsCount > 0 ? [`세금·부담금 감면 ${benefitsCount}가지`] : []),
+          ])}
         >
           {/* ── 신청 가능한 정부지원제도 (제도가 있을 때만) ── */}
           {eligibleSupport.length > 0 && (
@@ -1178,6 +1201,7 @@ function AdvancedResult({
         emoji="💳"
         title="사업자 정책자금 대출"
         subtitle="낮은 금리로 받는 정부 자금이에요"
+        peek={makePeek(creditMatches.map((m) => displayInstitutionName(m.institution, company?.region)))}
       >
         <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
           <p className="break-keep text-xs leading-relaxed text-brand-dark/80">
@@ -1254,6 +1278,19 @@ function AdvancedResult({
                     <>
                       <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                         <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{m.institution}</span>
+                        {/* C) 승인 가능성 배지 - 무료(previewLock)에서도 '블러 없이' 미리 보여줌 (대표님 요청).
+                             기관명·상품명 같은 결제 정보가 아니라 '가능성 요약'이라 공개해도 무방.
+                             priority HIGH/TECH_BASED = 가능성 높음, MEDIUM = 도전해볼 만함. */}
+                        {(m.priority === "HIGH" || m.priority === "TECH_BASED") ? (
+                          <span className="shrink-0 inline-flex items-center gap-0.5 rounded-full bg-brand-green px-2 py-0.5 text-[11px] font-extrabold text-white">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                            가능성 높음
+                          </span>
+                        ) : m.priority === "MEDIUM" ? (
+                          <span className="shrink-0 rounded-full bg-brand-orange/15 px-2 py-0.5 text-[11px] font-extrabold text-brand-orange">
+                            도전해볼 만해요
+                          </span>
+                        ) : null}
                         {/* 즐겨찾기 ⭐ 버튼 제거됨 (대표님 요청 · 관심 지원사업 기능 삭제) */}
                         {m.loan_type && (
                           <span
@@ -1384,6 +1421,17 @@ function AdvancedResult({
                                     </span>
                                   )}
                                 </span>
+                                {/* D) 자금명 쉬운 한 줄 뜻 (대표님 요청): 암호 같은 이름 아래 '= 쉬운 뜻'.
+                                     header에 넣어 상품을 펼치지 않아도 항상 보이게. previewLock에서도 공개 정보라 블러 없음. */}
+                                {(() => {
+                                  const plain = plainFundMeaning(prod.name);
+                                  return plain ? (
+                                    <span className="mt-1 flex items-start gap-1 break-keep text-[12px] font-semibold leading-relaxed text-brand-orange">
+                                      <span className="shrink-0" aria-hidden>=</span>
+                                      <span className="min-w-0">{plain}</span>
+                                    </span>
+                                  ) : null;
+                                })()}
                               </>
                             }
                           >
