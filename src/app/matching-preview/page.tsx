@@ -317,11 +317,14 @@ export default function MatchingPreview() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData, adminView, paid]);
 
-  // ── [어뷰징 차단 #1] 유효하지 않은 사업자번호면 결과 열람 차단 (대표님 요청) ──
-  //   가짜/오타 사업자번호로 결과를 열람하는 것을 서버(국세청 조회)에서 다시 막는다.
+  // ── [어뷰징 차단 #1] 사업자번호 형식만 확인 (대표님 요청: 국세청 오차단 제거 2026) ──
+  //   ★ 변경 이유 ★ 국세청(공공데이터포털) 조회 API 가 점검·장애·지연되는 시간대에는
+  //     정상 사업자(대표님 본인 597-12-02897 포함)까지 "등록되지 않은 번호" 화면이 잘못 떴다.
+  //     진단 입력 단계(diagnosis-chat)에서 이미 국세청 조회로 가짜/오타 번호를 거르므로,
+  //     결과 화면에서 '국세청 재조회'까지 하면 오차단 위험만 크고 실익이 적다.
+  //   → 결과 화면에서는 국세청 재조회를 하지 않는다. '사업자번호 10자리 형식'만 확인하고,
+  //     형식이 맞으면 국세청 상태와 무관하게 무조건 통과시킨다(오차단 0).
   //   · 예비창업자(사업자번호 없음)는 대상 아님 → 통과.
-  //   · 10자리 사업자번호가 국세청에 '등록됨(found)'이면 통과, '미등록'이면 차단.
-  //   · 국세청 서버 장애/타임아웃 등 '우리 잘못이 아닌 경우'는 정상 고객 보호 위해 통과.
   //   · 관리자 열람(?admin=1)은 제외.
   useEffect(() => {
     if (adminView) return;
@@ -330,37 +333,12 @@ export default function MatchingPreview() {
     const isPre = (profileData as any).businessType === "예비";
     if (isPre) return; // 예비창업자는 사업자번호 검증 대상 아님
     const bnoDigits = String((profileData as any).bno ?? "").replace(/[^0-9]/g, "");
-    // 사업자번호 자체가 없거나 10자리가 아니면 → 진단 자체를 다시 받도록 차단
+    // 사업자번호 자체가 없거나 10자리가 아니면 → 진단 자체를 다시 받도록 안내
     if (bnoDigits.length !== 10) {
       setGate("invalidBno");
       return;
     }
-    let cancelled = false;
-    (async () => {
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 3500);
-        const res = await fetch("/api/business-status", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ bno: bnoDigits }),
-          signal: controller.signal,
-        });
-        clearTimeout(timer);
-        const data = await res.json();
-        // found=false 이고 서버오류가 아니면 → 국세청 미등록(가짜/오타) → 차단
-        if (!cancelled && data && data.ok && data.found === false) {
-          setGate("invalidBno");
-        }
-        // found=true(정상) / serverError(장애) 는 통과(오탐 방지)
-      } catch {
-        /* 네트워크·타임아웃 등은 국세청 장애로 간주 → 통과 */
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-    // profileData 도착 시 1회 검증하면 충분.
+    // 10자리 형식이 맞으면 국세청 조회 없이 통과(장애 시간대 오차단 방지).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData, adminView]);
 
