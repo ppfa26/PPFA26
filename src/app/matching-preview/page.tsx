@@ -36,9 +36,14 @@ import { supabase } from "@/lib/supabaseClient";
 import { checkFreeView, fetchViewStatus } from "@/lib/viewCredits";
 import { isStatsExcludedEmail } from "@/lib/admin";
 
+// ── 광고 무료 열람 유효 시간 (대표님 요청 2026: 10분 제한) ──
+//   광고를 1번 시청하면 '10분 동안' 결과를 볼 수 있고, 10분이 지나면
+//   자동으로 다시 블러 처리 → 광고를 다시 시청해야 열람 가능.
+const AD_UNLOCK_TTL_MS = 10 * 60 * 1000; // 10분
+
 // ── 광고 무료 열람(옵션 A) 세션 키 ──
 //   진단 프로필의 '사업자 지문'(사업자번호 우선, 없으면 상호+업종)으로 고유 키를 만든다.
-//   같은 진단이면 같은 키 → 세션 동안 열림 유지. 새 진단이면 다른 키 → 다시 블러(광고 재시청).
+//   같은 진단이면 같은 키 → (10분 이내면) 열림 유지. 새 진단이면 다른 키 → 다시 블러(광고 재시청).
 function adUnlockKeyOf(profile: Record<string, unknown> | null): string {
   if (!profile) return "";
   const p = profile as any;
@@ -299,21 +304,47 @@ export default function MatchingPreview() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adminView]);
 
-  // ── [광고 무료 열람] 세션 복원 (대표님 확정: 옵션 A) ──
-  //   진단 프로필(사업자 지문)마다 고유 키를 만들어 sessionStorage 에 저장한다.
-  //   같은 진단이면 새로고침해도 열려 있고, 새 진단(다른 사업자번호)이면 키가 달라 다시 잠긴다.
+  // ── [광고 무료 열람] 세션 복원 + 10분 만료 처리 (대표님 요청 2026: 10분 제한) ──
+  //   진단 프로필(사업자 지문)마다 고유 키를 만들어 sessionStorage 에 '해제 시각(ms)'을 저장한다.
+  //   · 저장된 해제 시각으로부터 10분 이내면 → 열림 유지(새로고침해도 남은 시간 동안 열림).
+  //   · 10분이 지났으면 → 다시 블러(광고 재시청 필요)하고 저장값을 지운다.
+  //   · 열려 있는 동안엔 '남은 시간' 뒤에 자동으로 다시 잠기는 타이머를 건다.
+  //   · 새 진단(다른 사업자번호)이면 키가 달라 처음부터 잠겨 있다.
   //   ※ 결제(paid)/관리자/베타는 애초에 블러가 없으므로 여기서 신경 쓸 필요 없다.
   useEffect(() => {
     if (adminView || BETA_FREE || paid) return;
     if (!profileData) return;
+    let timer: ReturnType<typeof setTimeout> | null = null;
     try {
       const key = adUnlockKeyOf(profileData);
-      if (key && sessionStorage.getItem(key) === "1") {
-        setAdUnlocked(true);
+      if (key) {
+        const saved = sessionStorage.getItem(key);
+        const unlockedAt = saved ? parseInt(saved, 10) : NaN;
+        if (Number.isFinite(unlockedAt)) {
+          const elapsed = Date.now() - unlockedAt;
+          if (elapsed < AD_UNLOCK_TTL_MS) {
+            // 아직 10분 이내 → 열림 유지 + 남은 시간 뒤 자동 재잠금
+            setAdUnlocked(true);
+            const remain = AD_UNLOCK_TTL_MS - elapsed;
+            timer = setTimeout(() => {
+              setAdUnlocked(false);
+              try {
+                sessionStorage.removeItem(key);
+              } catch {}
+            }, remain);
+          } else {
+            // 10분 경과 → 만료 처리(다시 블러)
+            setAdUnlocked(false);
+            sessionStorage.removeItem(key);
+          }
+        }
       }
     } catch {
       /* sessionStorage 접근 불가 시 무시 */
     }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData, adminView, paid]);
 
@@ -1111,10 +1142,20 @@ export default function MatchingPreview() {
           setAdUnlocked(true);
           try {
             const key = adUnlockKeyOf(profileData);
-            if (key) sessionStorage.setItem(key, "1");
+            // ★ 10분 제한(대표님 요청) ★ '1' 대신 해제 시각(ms)을 저장한다.
+            //   → 세션 복원 시 이 시각 기준으로 10분 경과 여부를 판단.
+            if (key) sessionStorage.setItem(key, String(Date.now()));
           } catch {
             /* sessionStorage 접근 불가 시 무시 (상태는 이미 열림) */
           }
+          // 지금부터 10분 뒤 자동으로 다시 블러(광고 재시청 유도).
+          window.setTimeout(() => {
+            setAdUnlocked(false);
+            try {
+              const key = adUnlockKeyOf(profileData);
+              if (key) sessionStorage.removeItem(key);
+            } catch {}
+          }, AD_UNLOCK_TTL_MS);
           setAdGateOpen(false);
         }}
       />
