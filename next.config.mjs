@@ -24,6 +24,22 @@ const nextConfig = {
     ],
   },
 
+  // ── 구(舊) 후기 페이지 정리 ────────────────────────────────────
+  //  후기 콘텐츠는 홈 하단 후기 섹션(#success-cases)으로 이관되었다.
+  //  더 이상 사용하지 않는 /community 는 홈으로 영구(308) 이동시켜
+  //  기존 검색/외부 유입을 살리고, 검색엔진이 새 위치로 재평가하도록 유도한다.
+  //  ※ 해시(#success-cases)는 서버 리다이렉트로 보존되지 않으므로,
+  //    홈 도착 후 클라이언트에서 해당 섹션으로 스크롤 처리한다.
+  async redirects() {
+    return [
+      {
+        source: "/community",
+        destination: "/?ref=community#success-cases",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     // 보안 헤더는 모든 경로 공통. (캐시 정책만 자산/문서에 따라 다르게 적용)
     const securityHeaders = [

@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/pricing", priority: 0.9, freq: "weekly" },
     { path: "/business-info", priority: 0.8, freq: "weekly" },
     { path: "/sites", priority: 0.8, freq: "weekly" },
-    { path: "/community", priority: 0.7, freq: "daily" },
+    // /community 는 홈 후기 섹션(#success-cases)으로 이관되어 사이트맵에서 제외함
     { path: "/terms", priority: 0.4, freq: "monthly" },
     { path: "/privacy", priority: 0.4, freq: "monthly" },
     { path: "/refund", priority: 0.4, freq: "monthly" },

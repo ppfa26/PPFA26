@@ -299,16 +299,7 @@ const structuredData = {
         "내 사업장에 딱 맞는 정부지원사업을 매칭하고 신청 방법까지 한번에 안내 AI 매칭 플랫폼",
       inLanguage: "ko-KR",
       publisher: { "@id": `${SITE_URL}/#organization` },
-      // ★ 사이트링크 검색창(Sitelinks Searchbox) ★
-      //  실제 검색이 동작하는 커뮤니티 경로로 지정 (검색어는 q 파라미터로 전달).
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: `${SITE_URL}/community?q={search_term_string}`,
-        },
-        "query-input": "required name=search_term_string",
-      },
+      // (구 /community 기반 사이트링크 검색창은 해당 페이지 폐지로 제거함)
     },
     {
       // 검색결과 사이트링크용 주요 메뉴
@@ -328,7 +319,8 @@ const structuredData = {
         `${SITE_URL}/pricing`,
         `${SITE_URL}/business-info`,
         `${SITE_URL}/sites`,
-        `${SITE_URL}/community`,
+        // '후기'는 홈 하단 후기 섹션으로 이관됨
+        `${SITE_URL}/#success-cases`,
         `${SITE_URL}/terms`,
       ],
     },

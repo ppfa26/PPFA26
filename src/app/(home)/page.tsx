@@ -138,6 +138,25 @@ export default function Home() {
   const [usedCompanies, setUsedCompanies] = useState(BASE_USERS);
   const [avgMatch, setAvgMatch] = useState(BASE_MATCH);
 
+  // ── 구(舊) /community → 홈 후기 섹션 이관 스크롤 보강 ─────────────
+  //  /community 는 next.config 에서 홈(/?ref=community#success-cases)으로 308 이동한다.
+  //  해시(#success-cases)만으로도 대부분 스크롤되지만, 초기 렌더/레이아웃 타이밍상
+  //  스크롤이 누락될 수 있어 ?ref=community 또는 #success-cases 진입 시 확실히 스크롤한다.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const wantsSuccess =
+      params.get("ref") === "community" ||
+      window.location.hash === "#success-cases";
+    if (!wantsSuccess) return;
+    // 렌더 완료 후 섹션이 존재하면 부드럽게 스크롤
+    const t = setTimeout(() => {
+      const el = document.getElementById("success-cases");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+    return () => clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     // 하루 단위 시드 의사난수(0~1). 같은 날이면 항상 같은 값 → 새로고침해도 안 흔들림.
     const seeded = (n: number) => {
@@ -906,7 +925,7 @@ export default function Home() {
             <Editable
               id="result-sample-cta-more"
               as="a"
-              href="/community"
+              href="#success-cases"
               className="inline-flex items-center gap-1 text-[13px] font-semibold text-gray-300 underline-offset-4 transition hover:text-white hover:underline sm:text-sm"
             >
               🔎 모두의사업친구 더 알아보기
