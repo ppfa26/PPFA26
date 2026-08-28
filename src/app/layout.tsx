@@ -76,11 +76,13 @@ export const metadata: Metadata = {
     // 구글 서치콘솔 사이트 소유확인
     google: "WfXpXS_N-fRjTPx_hn7HUuh9smkrJf_F8GtW2rR9dl4",
     // 네이버 서치어드바이저 사이트 소유확인
-    // (모두의사업친구.kr + www.모두의사업친구.kr 둘 다 확인용 2개 등록)
+    // (한글 도메인 2개 + 영문 도메인 www.mosachin.co.kr 확인용)
     other: {
       "naver-site-verification": [
         "66c4c240bdd1a1611d4ed4e2d34a96c8d0d11ba8",
         "71235ff2f43163f95db43a9c88126b768f7a4997",
+        // 영문 도메인(대표) www.mosachin.co.kr 소유확인 - 대표님 신규 등록
+        "1b430ccb4a2a5b21cf97156ddf4342097c354575",
       ],
     },
   },
