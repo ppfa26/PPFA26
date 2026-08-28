@@ -29,6 +29,8 @@ const ALLOWED_HOSTS = [
   "xn--2e0br4kgyfb0gp4gbrcj9s.kr", // '모두의사업친구.kr' 퓨니코드 (브라우저 hostname 반환값)
   "www.모두의사업친구.kr",
   "www.xn--2e0br4kgyfb0gp4gbrcj9s.kr",
+  "mosachin.co.kr", // 영문 도메인(대표) - 대표님 신규 연결
+  "www.mosachin.co.kr",
 ];
 
 // 허용 도메인 접미사(서브도메인/미리보기 도메인 포함 매칭)
@@ -36,6 +38,7 @@ const ALLOWED_SUFFIXES = [
   ".vercel.app", // Vercel 프리뷰·프로덕션
   ".모두의사업친구.kr",
   ".xn--2e0br4kgyfb0gp4gbrcj9s.kr",
+  ".mosachin.co.kr", // 영문 도메인(대표) 서브도메인 대비
   ".sandbox.novita.ai", // 개발용 미리보기(임시). 실배포에도 남겨둬도 무해하나 원치 않으면 제거 가능.
 ];
 
