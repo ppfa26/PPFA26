@@ -74,7 +74,12 @@ export const metadata: Metadata = {
   },
   verification: {
     // 구글 서치콘솔 사이트 소유확인
-    google: "WfXpXS_N-fRjTPx_hn7HUuh9smkrJf_F8GtW2rR9dl4",
+    // (기존 한글 도메인 + 영문 도메인 www.mosachin.co.kr 확인용 2개)
+    google: [
+      "WfXpXS_N-fRjTPx_hn7HUuh9smkrJf_F8GtW2rR9dl4",
+      // 영문 도메인(대표) www.mosachin.co.kr 소유확인 - 대표님 신규 등록
+      "erMDGlBFdu_j_hP6gwWElFnrggw8_-sNd6V-yJAcGDI",
+    ],
     // 네이버 서치어드바이저 사이트 소유확인
     // (한글 도메인 2개 + 영문 도메인 www.mosachin.co.kr 확인용)
     other: {
