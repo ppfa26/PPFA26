@@ -42,7 +42,7 @@ const ALLOWED_SUFFIXES = [
   ".sandbox.novita.ai", // 개발용 미리보기(임시). 실배포에도 남겨둬도 무해하나 원치 않으면 제거 가능.
 ];
 
-const CANONICAL_URL = "https://모두의사업친구.kr";
+const CANONICAL_URL = "https://www.mosachin.co.kr";
 
 function isAllowedHost(host: string): boolean {
   const h = (host || "").toLowerCase();

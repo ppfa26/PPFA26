@@ -9,7 +9,7 @@ import FontLoader from "@/components/FontLoader";
 import KarrotPixel from "@/components/KarrotPixel";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.모두의사업친구.kr";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.mosachin.co.kr";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
