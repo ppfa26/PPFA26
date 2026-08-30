@@ -390,11 +390,16 @@ h4 {
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* 히어로 글래스 박스 - 목업처럼 야경 위에 반투명 유리 패널 + 문구 */
+/* 히어로 글래스 박스 - 목업처럼 야경 위에 반투명 유리 패널 + 문구.
+   ★ 크로스 브라우저 가독성(대표님 요청 2026) ★
+   삼성 인터넷 등 일부 브라우저는 backdrop-filter: blur 를 '글자까지' 뿌옇게
+   렌더링하는 버그가 있다. → blur 의존도를 낮추고, 배경 불투명도를 높여
+   (0.55 → 0.82) blur 가 약하거나 미적용이어도 모든 브라우저에서 문구가
+   또렷하게 읽히도록 한다. (크롬 기준 외형은 거의 동일) */
 .hero-glass {
-  background: rgba(18, 23, 36, 0.55);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(18, 23, 36, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
@@ -965,11 +970,18 @@ body.theme-dark {
    ============================================================ */
 @media (max-width: 768px) {
   .glass-card,
-  .glass-card-strong,
-  .hero-glass {
+  .glass-card-strong {
     /* 14~18px → 8px 수준으로 경량화 (체감 차이 최소, 성능 이득 큼) */
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
+  }
+  /* ★ 히어로 패널(모바일) — 삼성 인터넷 글자 번짐 방지 ★
+     모바일에서는 blur 를 거의 끄고(4px), 배경을 더 진하게(0.9) 만들어
+     어떤 모바일 브라우저에서도 큰 제목이 크롬처럼 또렷하게 보이도록 한다. */
+  .hero-glass {
+    background: rgba(18, 23, 36, 0.9) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
   }
   /* 스크롤 등장 모션 완료 후에도 남던 will-change 힌트를 모바일에선 짧게 유지
      (레이어 상시 승격으로 인한 메모리 부담 완화) */
