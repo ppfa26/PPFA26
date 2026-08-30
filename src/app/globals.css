@@ -371,12 +371,9 @@ h4 {
    → blur 가 안 먹는 브라우저 기준으로 배경 검정을 더 옅게(0.55→0.42) 낮춰
      양쪽 밝기를 비슷하게 맞춘다. (크롬에선 살짝 더 투명해질 뿐 이질감 없음) */
 .glass-card {
-  /* 밝은 네이비 베이스(46,54,74) + blur 최소화.
-     blur 가 크면 크롬이 어두운 야경을 박스 안으로 빨아들여 오히려 어두워지고,
-     삼성 인터넷은 blur 무시로 밝게 남아 '역전' 현상이 생김.
-     → blur 를 아주 약하게(4px) 두면 크롬도 순수 네이비색이 살아나
-       양쪽 브라우저 밝기가 비슷해진다. */
-  background: rgba(46, 54, 74, 0.62);
+  /* 예전 어두운 딴 차콜 베이스로 복구(대표님 요청).
+     blur 는 약하게(4px) 유지해 삼성 인터넷과 밝기 차이를 줄인다. */
+  background: rgba(23, 28, 42, 0.44);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -385,7 +382,7 @@ h4 {
 
 /* 조금 더 진한 글래스 - 폼/입력 영역처럼 대비가 더 필요한 곳 */
 .glass-card-strong {
-  background: rgba(44, 51, 70, 0.74);
+  background: rgba(20, 25, 38, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -410,8 +407,8 @@ h4 {
 .hero-glass {
   background: linear-gradient(
     180deg,
-    rgba(46, 54, 74, 0.72) 0%,
-    rgba(40, 47, 66, 0.66) 100%
+    rgba(18, 23, 36, 0.52) 0%,
+    rgba(18, 23, 36, 0.46) 100%
   );
   /* blur 를 아주 약하게(3px) — 크롬이 야경을 덜 빨아들여 어두워지지 않도록.
      삼성 인터넷과 밝기 차이를 최소화한다. */
@@ -1000,8 +997,8 @@ body.theme-dark {
   .hero-glass {
     background: linear-gradient(
       180deg,
-      rgba(46, 54, 74, 0.74) 0%,
-      rgba(40, 47, 66, 0.68) 100%
+      rgba(18, 23, 36, 0.54) 0%,
+      rgba(18, 23, 36, 0.48) 100%
     ) !important;
     backdrop-filter: blur(3px) !important;
     -webkit-backdrop-filter: blur(3px) !important;
