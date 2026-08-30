@@ -371,7 +371,8 @@ h4 {
    → blur 가 안 먹는 브라우저 기준으로 배경 검정을 더 옅게(0.55→0.42) 낮춰
      양쪽 밝기를 비슷하게 맞춘다. (크롬에선 살짝 더 투명해질 뿐 이질감 없음) */
 .glass-card {
-  background: rgba(23, 28, 42, 0.42);
+  /* 밝은 네이비 베이스(46,54,74) — blur 미지원 브라우저도 크롬처럼 밝게 */
+  background: rgba(46, 54, 74, 0.6);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -380,7 +381,7 @@ h4 {
 
 /* 조금 더 진한 글래스 - 폼/입력 영역처럼 대비가 더 필요한 곳 */
 .glass-card-strong {
-  background: rgba(15, 19, 32, 0.58);
+  background: rgba(38, 45, 63, 0.72);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -396,18 +397,17 @@ h4 {
 }
 
 /* 히어로 글래스 박스 - 목업처럼 야경 위에 반투명 유리 패널 + 문구.
-   ★ 크로스 브라우저 가독성 + 크롬 유리 느낌 유지(대표님 요청 2026) ★
-   삼성 인터넷 등 일부 브라우저는 backdrop-filter: blur 를 '글자까지' 뿌옇게
-   렌더링하는 버그가 있다. 그렇다고 배경을 완전 불투명하게 하면 크롬에서 보이던
-   '야경이 은은히 비치는 유리 느낌'이 사라진다(대표님은 크롬 쪽을 선호).
-   → 해법: 배경을 반투명(0.6)으로 낮춰 야경이 비치게 유지하되, blur 는 약하게(6px)
-     걸고, 위→아래 세로 그라데이션으로 '글자 뒤쪽만' 살짝 더 진하게 깔아
-     backdrop-filter 가 안 먹는 브라우저에서도 문구 가독성을 확보한다. */
+   ★ 크로스 브라우저 밝기 매칭(대표님 요청 2026) ★
+   크롬은 backdrop-filter blur 가 '밝은 야경 불빛'을 박스 안으로 끌어와 섞어
+   박스가 밝은 네이비로 보인다. 삼성 인터넷은 blur 를 무시해 '어두운 검정 반투명'만
+   깔려 훨씬 어둡게 보였다(투명도만 낮춰선 밝기가 안 따라옴 — 배경 야경 자체가 어두워서).
+   → 해법: 베이스 색을 어두운 검정(18,23,36)이 아니라 '밝은 네이비(46,54,74)'로 올려,
+     blur 가 안 되는 브라우저에서도 크롬의 blur 결과(밝은 톤)와 비슷하게 만든다. */
 .hero-glass {
   background: linear-gradient(
     180deg,
-    rgba(18, 23, 36, 0.5) 0%,
-    rgba(18, 23, 36, 0.44) 100%
+    rgba(46, 54, 74, 0.72) 0%,
+    rgba(40, 47, 66, 0.66) 100%
   );
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -993,8 +993,8 @@ body.theme-dark {
   .hero-glass {
     background: linear-gradient(
       180deg,
-      rgba(18, 23, 36, 0.52) 0%,
-      rgba(18, 23, 36, 0.46) 100%
+      rgba(46, 54, 74, 0.74) 0%,
+      rgba(40, 47, 66, 0.68) 100%
     ) !important;
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
