@@ -364,9 +364,14 @@ h4 {
    야경 배경이 은은하게 비쳐 보이면서도 안의 글자는 또렷하게 읽힌다.
    ============================================================ */
 
-/* 기본 글래스 카드 - 흰 카드(bg-white, shadow-card) 대체용 */
+/* 기본 글래스 카드 - 흰 카드(bg-white, shadow-card) 대체용.
+   ★ 크로스 브라우저 밝기(대표님 요청 2026) ★
+   크롬은 backdrop-filter blur 로 뒤 야경이 섞여 밝게 보이지만, 삼성 인터넷은
+   blur 를 무시해 '반투명 검정'만 그대로 깔려 더 어둡게 보인다.
+   → blur 가 안 먹는 브라우저 기준으로 배경 검정을 더 옅게(0.55→0.42) 낮춰
+     양쪽 밝기를 비슷하게 맞춘다. (크롬에선 살짝 더 투명해질 뿐 이질감 없음) */
 .glass-card {
-  background: rgba(23, 28, 42, 0.55);
+  background: rgba(23, 28, 42, 0.42);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -375,7 +380,7 @@ h4 {
 
 /* 조금 더 진한 글래스 - 폼/입력 영역처럼 대비가 더 필요한 곳 */
 .glass-card-strong {
-  background: rgba(15, 19, 32, 0.72);
+  background: rgba(15, 19, 32, 0.58);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -401,8 +406,8 @@ h4 {
 .hero-glass {
   background: linear-gradient(
     180deg,
-    rgba(18, 23, 36, 0.66) 0%,
-    rgba(18, 23, 36, 0.58) 100%
+    rgba(18, 23, 36, 0.5) 0%,
+    rgba(18, 23, 36, 0.44) 100%
   );
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -988,8 +993,8 @@ body.theme-dark {
   .hero-glass {
     background: linear-gradient(
       180deg,
-      rgba(18, 23, 36, 0.68) 0%,
-      rgba(18, 23, 36, 0.6) 100%
+      rgba(18, 23, 36, 0.52) 0%,
+      rgba(18, 23, 36, 0.46) 100%
     ) !important;
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
