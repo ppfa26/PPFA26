@@ -92,6 +92,33 @@ export function clearDiagnosisDraft(): void {
  */
 export function saveDiagnosis(profile: unknown, ownerId?: string | null): void {
   try {
+    // ── [개선안 A · 대표님 요청 2026] 반쪽(불완전) 진단서 저장 방어 ──────────────
+    //   ★ 문제 ★ 진단을 끝까지 안 한 채(사업자번호 미입력 등) 저장된 '반쪽 진단서'가
+    //     결과 화면에서 bno 10자리 판정에 걸려 "🧾 사업자등록번호를 확인해 주세요"를
+    //     반복 노출했다(테스트 중 특히). 횟수와 무관하며, 원인은 bno 누락 데이터.
+    //   ★ 해결 ★ 예비창업자가 '아닌데도' bno 가 10자리가 아니면 = 불완전 진단서로 보고,
+    //     이미 저장돼 있던 '온전한(bno 10자리) 진단서'를 이 반쪽 데이터로 덮어쓰지 않는다.
+    //     (기존에 온전한 데이터가 없을 때만 그대로 저장 → 흐름 자체는 막지 않음)
+    try {
+      const p = (profile ?? {}) as any;
+      const isPre = p.businessType === "예비";
+      const newBnoLen = String(p.bno ?? "").replace(/[^0-9]/g, "").length;
+      const incomingIncomplete = !isPre && newBnoLen !== 10;
+      if (incomingIncomplete) {
+        const prevRaw = localStorage.getItem(STORAGE_KEY);
+        if (prevRaw) {
+          const prev = JSON.parse(prevRaw);
+          const prevPre = prev?.businessType === "예비";
+          const prevBnoLen = String(prev?.bno ?? "").replace(/[^0-9]/g, "").length;
+          const prevComplete = prevPre || prevBnoLen === 10;
+          // 기존이 '온전'하고 새 데이터가 '반쪽'이면 → 덮어쓰지 않고 종료(기존 유지)
+          if (prevComplete) return;
+        }
+      }
+    } catch {
+      /* 방어 로직 실패해도 아래 정상 저장은 그대로 진행 */
+    }
+    // ───────────────────────────────────────────────────────────────────────────
     localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
     localStorage.setItem(STAMP_KEY, String(Date.now()));
     // 소유자 기록 - 나중에 다른 계정으로 로그인하면 이 값과 달라 무시된다.
