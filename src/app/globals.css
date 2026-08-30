@@ -371,19 +371,23 @@ h4 {
    → blur 가 안 먹는 브라우저 기준으로 배경 검정을 더 옅게(0.55→0.42) 낮춰
      양쪽 밝기를 비슷하게 맞춘다. (크롬에선 살짝 더 투명해질 뿐 이질감 없음) */
 .glass-card {
-  /* 밝은 네이비 베이스(46,54,74) — blur 미지원 브라우저도 크롬처럼 밝게 */
-  background: rgba(46, 54, 74, 0.6);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  /* 밝은 네이비 베이스(46,54,74) + blur 최소화.
+     blur 가 크면 크롬이 어두운 야경을 박스 안으로 빨아들여 오히려 어두워지고,
+     삼성 인터넷은 blur 무시로 밝게 남아 '역전' 현상이 생김.
+     → blur 를 아주 약하게(4px) 두면 크롬도 순수 네이비색이 살아나
+       양쪽 브라우저 밝기가 비슷해진다. */
+  background: rgba(46, 54, 74, 0.62);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 /* 조금 더 진한 글래스 - 폼/입력 영역처럼 대비가 더 필요한 곳 */
 .glass-card-strong {
-  background: rgba(38, 45, 63, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(44, 51, 70, 0.74);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
 }
@@ -409,8 +413,10 @@ h4 {
     rgba(46, 54, 74, 0.72) 0%,
     rgba(40, 47, 66, 0.66) 100%
   );
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  /* blur 를 아주 약하게(3px) — 크롬이 야경을 덜 빨아들여 어두워지지 않도록.
+     삼성 인터넷과 밝기 차이를 최소화한다. */
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
@@ -982,9 +988,10 @@ body.theme-dark {
 @media (max-width: 768px) {
   .glass-card,
   .glass-card-strong {
-    /* 14~18px → 8px 수준으로 경량화 (체감 차이 최소, 성능 이득 큼) */
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
+    /* blur 를 아주 약하게(4px) — 크롬이 어두운 야경을 덜 빨아들여
+       삼성 인터넷과 밝기가 비슷해지고, 스크롤 성능도 확보된다. */
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
   }
   /* ★ 히어로 패널(모바일) — 크롬 유리 느낌 유지 + 삼성 인터넷 대응 ★
      반투명(야경 비침) 그라데이션은 유지하고 blur 만 살짝 낮춰(4px) 성능 확보.
@@ -996,8 +1003,8 @@ body.theme-dark {
       rgba(46, 54, 74, 0.74) 0%,
       rgba(40, 47, 66, 0.68) 100%
     ) !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(3px) !important;
+    -webkit-backdrop-filter: blur(3px) !important;
   }
   /* 스크롤 등장 모션 완료 후에도 남던 will-change 힌트를 모바일에선 짧게 유지
      (레이어 상시 승격으로 인한 메모리 부담 완화) */
