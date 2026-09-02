@@ -233,12 +233,10 @@ function SignupInner() {
     const go = (isNewSignup = false) => {
       if (done) return;
       done = true;
-      // ★ 자동 무료진단 진입(대표님 요청) ★
-      //   결제(tier)도 진단결과(next)도 없이 '순수 회원가입'만 한 신규 가입자는
-      //   마이페이지 대신 곧바로 무료진단으로 보낸다. → "가입만 하고 진단 안 함" 방지.
-      //   · 기존 회원 재로그인(isNewSignup=false)은 진단을 이미 했을 수 있으니
-      //     기존대로 마이페이지로.
-      const defaultDest = isNewSignup ? "/diagnosis-chat" : "/mypage";
+      // ★ 가입/로그인 완료 후 홈 첫 페이지로 이동(대표님 요청 2026) ★
+      //   결제(tier)나 진단결과(next) 같은 '가던 목적지'가 있으면 그쪽을 우선하고,
+      //   그 외 순수 회원가입/재로그인은 마이페이지가 아니라 홈 첫 페이지("/")로 보낸다.
+      const defaultDest = "/";
       const dest = tier ? `/payment?tier=${tier}` : nextPath || defaultDest;
       // 목적지로 이동하는 순간 next 백업은 소임을 다했으니 정리(다음 로그인에 오염 방지)
       try {
