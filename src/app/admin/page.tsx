@@ -2143,27 +2143,6 @@ export default function AdminPage() {
                             </div>
                           )}
 
-                          {/* ①-b 비회원 안내 - 회원 계정(이메일)이 없어 조회권을 줄 대상이 없는 경우.
-                               결과 페이지 열람은 '로그인 세션' 기준이라, 로그인 계정이 없으면
-                               조회권을 지급해도 볼 방법이 없다 → 먼저 회원가입이 필요함을 안내. */}
-                          {!c.email && (
-                            <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
-                              <p className="text-[11px] font-bold text-amber-700">
-                                ⚠️ 비회원(진단서만 있음) — 조회권 지급 불가
-                              </p>
-                              <p className="mt-1 text-[11px] leading-relaxed text-amber-700/80">
-                                이 고객은 <b>로그인 회원 계정이 없어</b> 조회권을 지급할 대상이 없습니다.
-                                결과 열람은 로그인 계정 기준이므로, <b>먼저 회원가입(로그인)</b>을 하셔야
-                                조회권 지급·환불이 가능해집니다.
-                                {c.phone && (
-                                  <>
-                                    {" "}가입을 안내하려면 <b>{c.phone}</b> 로 연락해 주세요.
-                                  </>
-                                )}
-                              </p>
-                            </div>
-                          )}
-
                           {/* ② 진단서 */}
                           <p className="mb-1.5 mt-1 text-[11px] font-bold text-gray-400">진단서</p>
                           {c.diagList.length === 0 ? (
