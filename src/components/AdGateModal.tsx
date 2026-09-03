@@ -2,6 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ADFIT_UNIT_RESULT_GATE_300x250 } from "@/lib/adfitConfig";
+import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+
+// 결과 게이트 모달에 함께 노출하는 쿠팡 파트너스 다이나믹 배너(ID 1012210).
+//  · 애드핏(클릭·노출 수익)은 그대로 유지하고, 그 아래에 쿠팡(구매 수익)을 추가한다.
+//  · diagnosis-form 과 동일한 iframe 방식(발급 코드). trackingCode=AF6135516.
+const COUPANG_GATE_IFRAME_SRC =
+  "https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=300&height=140&tsource=";
 
 // ════════════════════════════════════════════════════════════════
 //  결과 조회 "전면 광고" 게이트 모달 (카카오 애드핏 300x250)
@@ -147,11 +154,20 @@ export default function AdGateModal({
         </div>
 
         {/* 애드핏 300x250 광고 */}
-        <div className="flex justify-center px-5 py-4">
+        <div className="flex justify-center px-5 pt-4">
           <div
             ref={adBoxRef}
             className="flex items-center justify-center overflow-hidden rounded-xl bg-gray-50"
             style={{ width: 300, height: 250, maxWidth: "100%" }}
+          />
+        </div>
+
+        {/* 쿠팡 파트너스 다이나믹 배너 (애드핏 아래 · 구매 수익 추가) */}
+        <div className="px-5 pb-1 pt-3">
+          <CoupangPartnersBanner
+            iframeSrc={COUPANG_GATE_IFRAME_SRC}
+            iframeHeight={140}
+            className="!max-w-none !px-3 !py-2"
           />
         </div>
 
