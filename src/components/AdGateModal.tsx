@@ -10,6 +10,11 @@ import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 const COUPANG_GATE_IFRAME_SRC =
   "https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=300&height=140&tsource=";
 
+// 쿠팡 골드박스 고정 링크(대표님 발급 · 간편 링크).
+//  · 자동 추천 배너가 가끔 만료 상품으로 "사용권한 없음" 에러가 날 때를 대비한
+//    "항상 열리는" 안전한 대안 버튼. 골드박스는 매일 특가 상품이 갱신된다.
+const COUPANG_GOLDBOX_LINK = "https://link.coupang.com/a/gJy0X7anUy";
+
 // ════════════════════════════════════════════════════════════════
 //  결과 조회 "전면 광고" 게이트 모달 (카카오 애드핏 300x250)
 //
@@ -168,6 +173,18 @@ export default function AdGateModal({
             iframeHeight={140}
             className="!max-w-none !px-3 !py-2"
           />
+        </div>
+
+        {/* 쿠팡 골드박스 고정 버튼 (항상 열리는 안전 대안 · 위 배너 에러 대비) */}
+        <div className="px-5 pt-2">
+          <a
+            href={COUPANG_GOLDBOX_LINK}
+            target="_blank"
+            rel="nofollow sponsored noopener noreferrer"
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-brand-orange/40 bg-brand-orange/[0.06] px-4 py-2.5 text-center text-[13px] font-bold text-brand-dark transition hover:bg-brand-orange/10"
+          >
+            🎁 쿠팡 골드박스 오늘의 특가 보러가기 <span aria-hidden>↗</span>
+          </a>
         </div>
 
         {/* 결과 보기 / 대기 버튼 */}
