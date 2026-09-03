@@ -176,7 +176,7 @@ export default function AdGateModal({
         </div>
 
         {/* 쿠팡 골드박스 고정 버튼 (항상 열리는 안전 대안 · 위 배너 에러 대비) */}
-        <div className="px-5 pt-2">
+        <div className="px-5 pb-3 pt-2">
           <a
             href={COUPANG_GOLDBOX_LINK}
             target="_blank"
