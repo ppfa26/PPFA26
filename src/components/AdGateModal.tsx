@@ -29,11 +29,12 @@ const COUPANG_GATE_IFRAME_SRC =
 
 const ADFIT_SCRIPT_SRC = "https://t1.kakaocdn.net/kas/static/ba.min.js";
 
-// 광고를 클릭하지 않아도 이 시간(초)이 지나면 "결과 보기"를 열 수 있게 한다.
+// 광고를 클릭하지 않아도 이 시간이 지나면 "결과 보기"를 열 수 있게 한다.
 //  (클릭 강요 방지 · 정책 안전). 광고를 클릭하고 복귀하면 즉시 활성화.
-//  대기 8초: 너무 빠르면 광고를 볼 새 없이 넘어가 클릭이 안 나오므로,
-//  사용자 시선이 광고에 머물며 클릭을 고려할 시간을 확보(대표님 요청).
-const MIN_WATCH_SEC = 8;
+//  대기 4.5초(대표님 요청). 소수점이라 마감 시각(deadline) 기준으로 계산하고,
+//  화면 표시는 남은 시간을 올림(ceil)해 정수로 보여준다(5→4→3→2→1).
+const MIN_WATCH_MS = 4500;
+const MIN_WATCH_SEC_LABEL = Math.ceil(MIN_WATCH_MS / 1000); // 초기 표시값(5)
 
 export default function AdGateModal({
   open,
@@ -45,7 +46,7 @@ export default function AdGateModal({
   onUnlock: () => void;
 }) {
   const adBoxRef = useRef<HTMLDivElement>(null);
-  const [countdown, setCountdown] = useState(MIN_WATCH_SEC);
+  const [countdown, setCountdown] = useState(MIN_WATCH_SEC_LABEL);
   const [canView, setCanView] = useState(false);
   // 광고를 클릭해 탭을 이탈했다가 돌아왔는지(=광고 시청 신호)
   const clickedAwayRef = useRef(false);
