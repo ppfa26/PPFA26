@@ -31,10 +31,8 @@ const ADFIT_SCRIPT_SRC = "https://t1.kakaocdn.net/kas/static/ba.min.js";
 
 // 광고를 클릭하지 않아도 이 시간이 지나면 "결과 보기"를 열 수 있게 한다.
 //  (클릭 강요 방지 · 정책 안전). 광고를 클릭하고 복귀하면 즉시 활성화.
-//  대기 4.5초(대표님 요청). 소수점이라 마감 시각(deadline) 기준으로 계산하고,
-//  화면 표시는 남은 시간을 올림(ceil)해 정수로 보여준다(5→4→3→2→1).
-const MIN_WATCH_MS = 4500;
-const MIN_WATCH_SEC_LABEL = Math.ceil(MIN_WATCH_MS / 1000); // 초기 표시값(5)
+//  대기 5초(대표님 요청).
+const MIN_WATCH_SEC = 5;
 
 export default function AdGateModal({
   open,
@@ -46,7 +44,7 @@ export default function AdGateModal({
   onUnlock: () => void;
 }) {
   const adBoxRef = useRef<HTMLDivElement>(null);
-  const [countdown, setCountdown] = useState(MIN_WATCH_SEC_LABEL);
+  const [countdown, setCountdown] = useState(MIN_WATCH_SEC);
   const [canView, setCanView] = useState(false);
   // 광고를 클릭해 탭을 이탈했다가 돌아왔는지(=광고 시청 신호)
   const clickedAwayRef = useRef(false);
@@ -131,7 +129,7 @@ export default function AdGateModal({
       aria-modal="true"
       aria-label="결과 조회 전 광고"
     >
-      <div className="w-full max-w-[360px] overflow-hidden rounded-3xl bg-white shadow-2xl">
+      <div className="w-full max-w-[400px] overflow-hidden rounded-3xl bg-white shadow-2xl">
         {/* 헤더 */}
         <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
           <span className="inline-flex items-center gap-1 rounded-md bg-gray-800 px-2 py-0.5 text-[11px] font-bold text-white">
@@ -183,8 +181,8 @@ export default function AdGateModal({
             disabled={!canView}
             className={
               canView
-                ? "btn-red block w-full rounded-full py-3 text-center text-[15px] font-bold"
-                : "block w-full rounded-full bg-gray-200 py-3 text-center text-[15px] font-bold text-gray-500"
+                ? "btn-red block w-full rounded-full py-3.5 text-center text-[16px] font-bold"
+                : "block w-full rounded-full bg-gray-200 py-3.5 text-center text-[16px] font-bold text-gray-500"
             }
           >
             {canView ? "✅ PRO AI 진단 리포트 결과 확인하기" : `PRO AI 진단 리포트 결과 확인하기 (${countdown}초)`}

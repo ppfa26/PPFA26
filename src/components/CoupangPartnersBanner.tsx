@@ -38,8 +38,9 @@ type Props = {
 };
 
 // 공정위 필수 대가성 문구 (변경 금지 성격)
-const DISCLOSURE =
-  "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.";
+//  · 화면에는 "일환으로," 뒤에서 줄바꿈해 깔끔하게 2줄로 노출한다.
+const DISCLOSURE_LINE1 = "이 포스팅은 쿠팡 파트너스 활동의 일환으로,";
+const DISCLOSURE_LINE2 = "이에 따른 일정액의 수수료를 제공받습니다.";
 
 const COUPANG_SCRIPT_SRC = "https://ads-partners.coupang.com/g.js";
 
@@ -190,9 +191,11 @@ export default function CoupangPartnersBanner({
         </div>
       )}
 
-      {/* ── 대가성(수수료) 문구 — 공정위 필수 ── */}
+      {/* ── 대가성(수수료) 문구 — 공정위 필수 (2줄 고정 줄바꿈) ── */}
       <p className="mt-2 break-keep text-center text-[11px] leading-relaxed text-brand-gray">
-        {DISCLOSURE}
+        {DISCLOSURE_LINE1}
+        <br />
+        {DISCLOSURE_LINE2}
       </p>
     </aside>
   );
