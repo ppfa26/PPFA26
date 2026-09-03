@@ -152,9 +152,9 @@ export default function AdGateModal({
             결과를 <span className="text-brand-orange">무료</span>로 확인할 수 있어요
           </p>
           <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray">
-            <span className="font-bold text-brand-orange">👆 광고를 클릭</span>하고 돌아오시면 <span className="font-bold text-brand-orange">즉시</span> 열려요!
+            광고를 확인하고 돌아오시면 결과가 열려요.
             <br />
-            그냥 기다리시면 20초 후에 열립니다.
+            잠시 기다리셔도 20초 후 자동으로 열립니다.
           </p>
         </div>
 
