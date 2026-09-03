@@ -36,8 +36,9 @@ const ADFIT_SCRIPT_SRC = "https://t1.kakaocdn.net/kas/static/ba.min.js";
 
 // 광고를 클릭하지 않아도 이 시간이 지나면 "결과 보기"를 열 수 있게 한다.
 //  (클릭 강요 방지 · 정책 안전). 광고를 클릭하고 복귀하면 즉시 활성화.
-//  대기 5초(대표님 요청).
-const MIN_WATCH_SEC = 5;
+//  대기 20초(대표님 요청) — 기다리기보다 광고 클릭을 자연 유도해 수익↑.
+//  ※ "클릭하면 즉시 열림" 을 강조해 정책(클릭 강요 금지)에 안전하게 맞춘다.
+const MIN_WATCH_SEC = 20;
 
 export default function AdGateModal({
   open,
@@ -151,9 +152,9 @@ export default function AdGateModal({
             결과를 <span className="text-brand-orange">무료</span>로 확인할 수 있어요
           </p>
           <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray">
-            광고를 클릭해 확인 후 돌아오시거나,
+            <span className="font-bold text-brand-orange">👆 광고를 클릭</span>하고 돌아오시면 <span className="font-bold text-brand-orange">즉시</span> 열려요!
             <br />
-            기다리시면 결과 보기 버튼이 열립니다.
+            그냥 기다리시면 20초 후에 열립니다.
           </p>
         </div>
 
