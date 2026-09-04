@@ -173,11 +173,12 @@ function SignupInner() {
   const [agreePrivacy, setAgreePrivacy] = useState(false);// [필수] 개인정보 수집·이용
   const [agreeThird, setAgreeThird] = useState(false);    // [필수] 개인정보 제3자 제공
   const [marketingAgree, setMarketingAgree] = useState(false); // [선택] 마케팅·홍보 수신 (개인정보보호법상 선택 동의는 기본 해제)
+  const [channelAgree, setChannelAgree] = useState(false); // [선택] 카카오톡 채널 추가 (카카오 로그인 시에만 적용, 기본 해제)
   // 미동의 상태에서 소셜/가입 버튼을 눌렀을 때 동의 영역을 잠깐 강조(주황 테두리)해 시선을 유도
   const [highlightConsent, setHighlightConsent] = useState(false);
 
   const allRequiredChecked = agreeAge && agreeTerms && agreePrivacy && agreeThird;
-  const allChecked = allRequiredChecked && marketingAgree;
+  const allChecked = allRequiredChecked && marketingAgree && channelAgree;
 
   // 전체 동의 토글
   const setAllAgree = (v: boolean) => {
@@ -186,6 +187,7 @@ function SignupInner() {
     setAgreePrivacy(v);
     setAgreeThird(v);
     setMarketingAgree(v);
+    setChannelAgree(v);
   };
 
   // 가입 시 필수 동의 검사 - 개인정보보호법상 동의는 이용자가 '직접' 체크해야 유효하므로
@@ -338,10 +340,11 @@ function SignupInner() {
         typeof window !== "undefined"
           ? `${window.location.origin}/signup${qs}`
           : undefined;
-      // 카카오싱크: 로그인 시 '모두의사업친구' 채널(_VxfWxan) 추가 동의 화면을 함께 노출
-      // (구글 등 다른 provider에는 영향 없음 - 카카오일 때만 queryParams 부여)
+      // 카카오싱크: 사용자가 [선택] '카카오톡 채널 추가'에 동의한 경우에만
+      // 로그인 시 '모두의사업친구' 채널(_VxfWxan) 추가 동의 화면을 함께 노출한다.
+      // (구글 등 다른 provider에는 영향 없음 - 카카오 + channelAgree일 때만 queryParams 부여)
       const options =
-        provider === "kakao"
+        provider === "kakao" && channelAgree
           ? {
               redirectTo,
               queryParams: { channel_public_id: "_VxfWxan" },
@@ -559,7 +562,7 @@ function SignupInner() {
             </label>
             {/* 개인정보보호법·정보통신망법 준수 - 선택 동의는 강요 금지, 미동의해도 이용 가능함을 명시 */}
             <p className="mt-2 break-keep text-[11px] leading-relaxed text-brand-gray">
-              전체 동의는 선택 항목(마케팅 정보 수신)을 포함하고 있으며,
+              전체 동의는 선택 항목(마케팅 정보 수신, 카카오톡 채널 추가)을 포함하고 있으며,
               선택 항목에 동의하지 않아도 서비스를 이용하실 수 있습니다.
             </p>
 
@@ -638,6 +641,19 @@ function SignupInner() {
                 />
                 <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
                   <b className="text-brand-gray">[선택]</b> 마케팅·홍보 정보 수신에 동의합니다.
+                </span>
+              </label>
+
+              {/* [선택] 카카오톡 채널 추가 (카카오 로그인 시에만 적용) */}
+              <label className="flex cursor-pointer items-start gap-2.5">
+                <input
+                  type="checkbox"
+                  checked={channelAgree}
+                  onChange={(e) => setChannelAgree(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+                />
+                <span className="break-keep text-[13px] leading-relaxed text-brand-dark/80">
+                  <b className="text-brand-gray">[선택]</b> 카카오톡 채널(모두의사업친구) 추가에 동의합니다.
                 </span>
               </label>
             </div>
