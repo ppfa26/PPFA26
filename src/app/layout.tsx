@@ -255,7 +255,7 @@ const structuredData = {
         "https://map.naver.com/p/entry/place/1118269039",
         "https://www.instagram.com/ppfa25",
         "https://www.threads.com/@ppfa25",
-        "https://link.inpock.co.kr/ppfa25",
+        "https://link.inpock.co.kr/mosachin",
         "https://pf.kakao.com/_VxfWxan",
         "https://www.daangn.com/kr/local-profile/8j96yjujtkqy/",
       ] as string[],

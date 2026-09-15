@@ -351,7 +351,7 @@ export default function Home() {
               <Editable
                 id="hero-review-link-v2"
                 as="a"
-                href="https://link.inpock.co.kr/ppfa25"
+                href="https://link.inpock.co.kr/mosachin"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 break-keep text-[13px] font-bold text-brand-dark/70 underline decoration-brand-dark/25 underline-offset-4 transition hover:text-brand-red sm:text-sm"
@@ -1105,7 +1105,7 @@ export default function Home() {
             <Editable
               id="home-cta-learnmore-link-v2"
               as="a"
-              href="https://link.inpock.co.kr/ppfa25"
+              href="https://link.inpock.co.kr/mosachin"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex items-center gap-1 break-keep text-[13px] font-bold text-gray-300 underline decoration-gray-500 underline-offset-4 transition hover:text-white"

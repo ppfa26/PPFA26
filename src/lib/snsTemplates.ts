@@ -29,7 +29,7 @@ export const DEFAULT_INPUT: SnsInput = {
   amount: "최대 5천만원",
   amountExtra: "신용보증서 방식은 2천만원 한도",
   caution: "금리, 신청기간, 문의처는 공고문에 별도 안내됩니다. 신청 전 공고문 원문을 꼭 확인하세요.",
-  linkInpock: "https://link.inpock.co.kr/ppfa25",
+  linkInpock: "https://link.inpock.co.kr/mosachin",
   linkHome: "https://모두의사업친구.kr",
   hashtags: "인천소상공인 소상공인정책자금 소진공융자 인천창업 모두의사업친구",
 };
