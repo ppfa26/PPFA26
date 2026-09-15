@@ -1063,6 +1063,64 @@ export default function MatchingPreview() {
 
           {/* ── (대표님 요청) 오픈 베타(무료) 안내 한 줄 문구 삭제 ── */}
 
+          {/* ── 🤝 전문가 도움(유료 자문) 박스 (대표님 요청) ──
+               '알아두면 좋은 정부 사이트' 박스(AdvancedScreeningPanel 맨 아래) 아래,
+               '더 궁금한 점이 있으신가요?' CTA 위 사이에 삽입.
+               마이페이지 '전문가 도움' 박스와 동일한 6개 서비스·디자인. */}
+          <section className="mt-6 px-0 pb-0">
+            <div className="mx-auto max-w-3xl rounded-3xl border border-gray-200 bg-white p-5 shadow-card">
+              <h2 className="text-base font-extrabold text-brand-dark sm:text-lg">
+                🤝 전문가 도움이 더 필요하신가요?
+              </h2>
+              <p className="mt-1.5 break-keep text-sm leading-relaxed text-brand-gray">
+                직접 하기 어려운 부분을 아래 항목과 같이 구분하고{" "}
+                <b className="text-brand-dark">신청을 원하시는 분에 한해</b> 별도로 상담을 진행합니다.
+              </p>
+
+              <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                {[
+                  { icon: "📊", name: "회사 IR 자료 제작", price: "30만원", accent: true },
+                  { icon: "📝", name: "사업계획서 첨삭", price: "30만원", accent: true },
+                  { icon: "📑", name: "IR + 사업계획서 첨삭", price: "50만원", accent: true },
+                  { icon: "💰", name: "정부지원사업 정식자문", price: "문의", accent: false },
+                  { icon: "🧾", name: "세무조사 · 기장", price: "문의", accent: false },
+                  { icon: "🌏", name: "수출 관세 상담", price: "문의", accent: false },
+                ].map((s) => (
+                  <a
+                    key={s.name}
+                    href="http://pf.kakao.com/_VxfWxan/chat"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-2.5 rounded-2xl border border-gray-200 bg-gray-50/60 px-3.5 py-3 transition duration-150 hover:scale-[1.02] hover:border-brand-orange hover:bg-brand-orange/5 active:scale-[0.98]"
+                  >
+                    <span className="flex min-w-0 flex-1 items-center gap-2">
+                      <span className="shrink-0 text-base">{s.icon}</span>
+                      <span className="min-w-0 flex-1 truncate whitespace-nowrap text-[14px] font-bold leading-snug text-brand-dark">
+                        {s.name}
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-1.5">
+                      <span
+                        className={`whitespace-nowrap text-[13px] font-extrabold ${
+                          s.accent ? "text-brand-orange" : "text-brand-gray"
+                        }`}
+                      >
+                        {s.price}
+                      </span>
+                      <span className="whitespace-nowrap rounded-full bg-brand-dark px-2.5 py-1 text-[11px] font-bold text-white transition group-hover:opacity-90">
+                        신청 문의
+                      </span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+
+              <p className="mt-3 break-keep text-[11px] leading-relaxed text-brand-gray">
+                ※ 위 서비스는 AI 진단 리포트에 포함되지 않는 <b>별도 유료 서비스</b>입니다.
+              </p>
+            </div>
+          </section>
+
           {/* ── 결과창 맨 하단 CTA - 홈 하단과 동일한 어두운 카드 디자인으로 통일 (대표님 요청) ──
               (대표님 요청) CTA 카드 위·아래 세로 공백을 동일하게(mt-6=아래 구분선 mt-6) 균형 배치 */}
           <section className="mt-6 px-0 pb-0 sm:mt-6">
