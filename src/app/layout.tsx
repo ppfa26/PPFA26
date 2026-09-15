@@ -253,8 +253,8 @@ const structuredData = {
       sameAs: [
         "https://blog.naver.com/biospartners",
         "https://map.naver.com/p/entry/place/1118269039",
-        "https://www.instagram.com/ppfa25",
-        "https://www.threads.com/@ppfa25",
+        "https://www.instagram.com/mosachin",
+        "https://www.threads.com/@mosachin",
         "https://link.inpock.co.kr/mosachin",
         "https://pf.kakao.com/_VxfWxan",
         "https://www.daangn.com/kr/local-profile/8j96yjujtkqy/",
