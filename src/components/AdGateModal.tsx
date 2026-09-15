@@ -105,9 +105,13 @@ export default function AdGateModal({
     return () => window.clearInterval(timer);
   }, [open]);
 
-  // ── 광고 클릭 후 복귀 감지 ──
+  // ── 광고 클릭 후 복귀 감지 (대표님 요청: 복귀하면 '바로' 결과 열림) ──
   //   광고를 클릭하면 브라우저가 광고주 페이지로 이동(탭이 백그라운드로 감).
-  //   다시 우리 탭으로 돌아오면 hidden→visible 전환 → 광고를 봤다고 간주하고 즉시 활성화.
+  //   다시 우리 탭으로 돌아오면 hidden→visible 전환 → 광고를 봤다고 간주하고
+  //   ★ 버튼을 누를 필요 없이 자동으로 onUnlock() 실행 + 모달을 닫는다. ★
+  //   (단, 광고를 '클릭해서 실제로 갔다 온 경우'에만 자동 오픈. 20초 대기 자동활성화는
+  //    사용자가 버튼을 눌러 여는 기존 방식 유지 → 광고 안 본 사람에게 모달이 저절로
+  //    사라지는 혼란 방지.)
   useEffect(() => {
     if (!open) return;
 
@@ -116,15 +120,19 @@ export default function AdGateModal({
         // 탭을 떠남 = 광고(또는 새 탭)로 이동한 것으로 표시
         clickedAwayRef.current = true;
       } else if (document.visibilityState === "visible" && clickedAwayRef.current) {
-        // 광고 갔다가 복귀 → 즉시 결과 열람 가능
+        // 광고 갔다가 복귀 → 즉시 결과 열람 + 모달 자동 닫힘 (버튼 클릭 불필요)
         setCanView(true);
         setCountdown(0);
+        // 복귀 직후 살짝 지연을 줘서(탭 전환 애니메이션과 겹침 방지) 자연스럽게 연다.
+        window.setTimeout(() => {
+          onUnlock();
+        }, 250);
       }
     }
 
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, [open]);
+  }, [open, onUnlock]);
 
   if (!open) return null;
 
@@ -152,9 +160,9 @@ export default function AdGateModal({
             결과를 <span className="text-brand-orange">무료</span>로 확인할 수 있어요
           </p>
           <p className="mt-1.5 break-keep text-[12px] leading-relaxed text-brand-gray">
-            광고를 확인하고 돌아오시면 결과가 열려요.
+            광고를 확인하고 돌아오시면 <b className="text-brand-dark">바로 결과가 열려요.</b>
             <br />
-            잠시 기다리셔도 20초 후 자동으로 열립니다.
+            잠시 기다리셔도 20초 후 확인하실 수 있습니다.
           </p>
         </div>
 
