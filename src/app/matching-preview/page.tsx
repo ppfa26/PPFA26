@@ -24,7 +24,7 @@ const AdvancedScreeningPanel = dynamic(
     ),
   }
 );
-import { countMatchedItems, getMatchedTitles, type MatchedTitle } from "@/lib/supportPrograms";
+import { countMatchedItems } from "@/lib/supportPrograms";
 import {
   getPaymentBlockReasons,
   PAYMENT_BLOCK_TEXT,
@@ -81,7 +81,6 @@ export default function MatchingPreview() {
   // ★ 비회원 게이트 '맛보기'용: 실제 매칭된 항목 제목 리스트(기관명 등).
   //   개수는 counts/total로, 이 리스트에서 앞 3개만 흐리게 보여줘 "이렇게 많다"를 체감시킨다.
   //   (스코어링 값은 그대로 - 표시만 부분 공개)
-  const [matchedTitles, setMatchedTitles] = useState<MatchedTitle[]>([]);
   const [counts, setCounts] = useState<{
     total: number;
     institutions: number;
@@ -181,11 +180,6 @@ export default function MatchingPreview() {
         );
         setBlockReasons(getPaymentBlockReasons(profile));
         setCounts(countMatchedItems(profile));
-        try {
-          setMatchedTitles(getMatchedTitles(profile));
-        } catch {
-          setMatchedTitles([]);
-        }
         setProfileData(profile);
 
         // ★ 카카오 알림톡 발송(대표님 요청) ★
@@ -414,7 +408,7 @@ export default function MatchingPreview() {
   const total = shownSupports + shownProducts + shownBenefits + shownAnnouncements;
   const isBlocked = blockReasons.length > 0;
 
-  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 6.0초 후 ready) ──
+  // ── 'AI 분석 중' 연출 진행 (analyzing → 약 3.0초 후 ready) ──
   //  · 상단 진행률(%)이 0→100 으로 부드럽게 차오르고,
   //  · 4단계 카드가 순차 점등되며,
   //  · 1줄 안내 문구가 회전한다.  끝나면 결과 공개 + '본 적 있음' 표시.
@@ -424,9 +418,9 @@ export default function MatchingPreview() {
     setAnalyzePct(0);
     setAnalyzeMsgIdx(0);
 
-    const DURATION = 3250; // 전체 연출 시간(ms) - 3.25초(대표님 요청)
+    const DURATION = 3000; // 전체 연출 시간(ms) - 3.0초(대표님 요청: 더 빠르게)
 
-    // (1) 진행률(%) 부드럽게 증가 - 약 60ms 간격으로 목표치까지 이동
+    // (1) 진행률(%) 부드럽게 증가 - 약 50ms 간격으로 목표치까지 이동
     //     실제 완료 전엔 96%에서 잠깐 멈춘 듯 보이다가, 마지막에 100%로 채워 '완료' 쾌감을 준다.
     const startedAt = Date.now();
     const pctTimer = setInterval(() => {
@@ -436,17 +430,17 @@ export default function MatchingPreview() {
       const eased = 1 - Math.pow(1 - ratio, 2);
       const pct = Math.min(Math.round(eased * 100), 96);
       setAnalyzePct((prev) => (pct > prev ? pct : prev));
-    }, 60);
+    }, 50);
 
-    // (2) 4단계 카드 순차 점등 (연출시간 3.25초에 맞춰 비율 조정)
-    const t1 = setTimeout(() => setAnalyzeStep(1), 780);
-    const t2 = setTimeout(() => setAnalyzeStep(2), 1580);
-    const t3 = setTimeout(() => setAnalyzeStep(3), 2380);
+    // (2) 4단계 카드 순차 점등 (연출시간 3.0초에 맞춰 비율 조정)
+    const t1 = setTimeout(() => setAnalyzeStep(1), 700);
+    const t2 = setTimeout(() => setAnalyzeStep(2), 1420);
+    const t3 = setTimeout(() => setAnalyzeStep(3), 2150);
 
-    // (3) 1줄 안내 문구 회전(약 0.8초마다 교체)
-    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 780);
-    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 1690);
-    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 2600);
+    // (3) 1줄 안내 문구 회전(약 0.75초마다 교체)
+    const m1 = setTimeout(() => setAnalyzeMsgIdx(1), 700);
+    const m2 = setTimeout(() => setAnalyzeMsgIdx(2), 1500);
+    const m3 = setTimeout(() => setAnalyzeMsgIdx(3), 2300);
 
     // (4) 완료 - 100% 채우고 결과 공개
     const done = setTimeout(() => {

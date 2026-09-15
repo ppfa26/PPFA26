@@ -90,7 +90,9 @@ export default function KarrotPixel() {
     <Script
       id="karrot-pixel"
       src="https://karrot-pixel.business.daangn.com/karrot-pixel.js"
-      strategy="afterInteractive"
+      // (성능) 전환 추적 픽셀은 첫 화면 렌더에 필수가 아니므로 lazyOnload 로 미뤄
+      //   초기 로딩 속도를 높인다. 로드 완료 후 init + 첫 ViewPage 를 전송하므로 추적 누락 없음.
+      strategy="lazyOnload"
       onLoad={() => {
         // 스크립트 로드 완료 후 초기화 + 첫 조회 전송
         if (typeof window !== "undefined" && window.karrotPixel) {

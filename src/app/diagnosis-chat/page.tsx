@@ -37,7 +37,6 @@ import {
   STEP1_FIELDS,
   STEP2_FIELDS,
   STEP3_FIELDS,
-  STEP3_CONDITIONAL_FIELDS,
   CONTACT_TEXT,
   BNO_TEXT,
   getPaymentBlockReasons,
@@ -481,6 +480,28 @@ export default function DiagnosisChat() {
       }
     })();
   }, []);
+
+  // ── (F-2 · 대표님 요청) 진단 이탈 방지 ──────────────────────────────
+  //   진단을 '시작'했지만 아직 '완료'하지 않은 상태에서 새로고침·탭닫기·창닫기
+  //   등으로 페이지를 벗어나려 하면, 브라우저 기본 확인창("변경 내용이 저장되지
+  //   않을 수 있습니다")을 띄워 실수 이탈을 막는다.
+  //   · stepIdx > 0  = 인트로/첫 화면을 지나 실제 답변을 시작한 상태
+  //   · !finished    = 아직 결과까지 못 감
+  //   · submitting 중(제출 진행)에는 정상 페이지 이동이므로 경고하지 않는다.
+  //   ※ beforeunload 는 커스텀 문구가 무시되고 브라우저 표준 확인창이 뜨는 것이
+  //     표준 동작이다(스팸 방지). 우리는 '한 번 더 확인'만 얻으면 충분하다.
+  useEffect(() => {
+    const shouldWarn = stepIdx > 0 && !finished && !submitting;
+    if (!shouldWarn) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      // 일부 브라우저는 returnValue 가 설정돼야 확인창을 띄운다.
+      e.returnValue = "";
+      return "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [stepIdx, finished, submitting]);
 
   // 인트로 자동 시작
   useEffect(() => {

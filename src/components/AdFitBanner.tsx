@@ -36,10 +36,37 @@ function AdFitUnit({
   onFail: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // (성능) 광고는 대부분 화면 하단에 있으므로, 실제로 화면에 보일 때만
+  //   ba.min.js 스크립트를 주입한다 → 초기 로딩 속도 개선(불필요한 조기 다운로드 방지).
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    if (inView) return; // 이미 보이는 것으로 판정됐으면 옵저버 불필요
+    // IntersectionObserver 미지원 환경은 즉시 로드로 폴백
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      // 화면에 들어오기 200px 전에 미리 로드해 스크롤 시 빈칸이 안 보이게 한다.
+      { rootMargin: "200px 0px" }
+    );
+    io.observe(container);
+    return () => io.disconnect();
+  }, [inView]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    if (!inView) return; // 화면에 보이기 전엔 광고 스크립트를 주입하지 않음
 
     container.innerHTML = "";
 
@@ -79,7 +106,7 @@ function AdFitUnit({
       }
       container.innerHTML = "";
     };
-  }, [adUnit, width, height, onFail]);
+  }, [adUnit, width, height, onFail, inView]);
 
   // 지정 크기(728x90)를 확보하되, 화면(모바일)보다 넓으면 폭을 넘치지 않게 제한한다.
   //  · height 는 광고 실제 높이(90px)만 확보 → 위아래 불필요한 빈 공백 방지.

@@ -45,6 +45,13 @@ import CollapsibleItem from "@/components/report/CollapsibleItem";
 import RelatedAnnouncements from "@/components/RelatedAnnouncements";
 import { loadDiagnosisRaw, saveDiagnosis, getDiagnosisOwner } from "@/lib/diagnosisStore";
 import { GRADUATION_CRITERIA, GRADUATION_EXCLUDED_NOTE } from "@/lib/graduationCriteria";
+// (D-2 / D-3 · 대표님 요청) 매칭 근거 한 줄 + 우선순위 뱃지 유틸
+import {
+  buildMatchReason,
+  priorityBadge,
+  priorityFromScore,
+} from "@/lib/matchReason";
+import type { DiagnosisProfile } from "@/lib/matching";
 
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
 type SupportItem = { prog: SupportProgram; status: SupportStatus };
@@ -1077,6 +1084,14 @@ function AdvancedResult({
             //    상세 페이지로 가는 이동은 하단 '상세·소요기간·연락처' 버튼(Link)으로 분리.
             const renderSupportCard = ({ prog, status }: SupportItem, idx: number) => {
               const isEligible = status === "eligible";
+              // (D-3) 우선순위 뱃지: 지금 바로 신청 가능(eligible)=강력추천, 조건부=추천
+              const badge = priorityBadge(
+                priorityFromScore(undefined, { eligible: isEligible })
+              );
+              // (D-2) 매칭 근거 한 줄: 대표님 프로필 특징 기반
+              const reason = buildMatchReason(
+                relatedProfile as DiagnosisProfile | null
+              );
               return (
                 <CollapsibleItem
                   key={prog.id}
@@ -1085,6 +1100,10 @@ function AdvancedResult({
                     <>
                       {/* 기관 박스 항목과 동일한 구조: 제목+뱃지 한 줄 → 요약 안내 */}
                       <span className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                        {/* (D-3) 우선순위 뱃지 - 제목 맨 앞에 */}
+                        <span className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[11px] font-bold ${badge.className}`}>
+                          {badge.label}
+                        </span>
                         <span className={`text-base ${isEligible ? "" : "opacity-60"}`}>{prog.icon}</span>
                         <span className={`text-[14px] font-extrabold text-brand-dark ${lockTextSoft}`}>{prog.title}</span>
                         {isEligible ? (
@@ -1103,6 +1122,11 @@ function AdvancedResult({
                         }`}
                       >
                         {isEligible ? prog.eligibleNote : prog.ineligibleNote}
+                      </span>
+                      {/* (D-2) 매칭 근거 한 줄 - '왜 나에게 왔는지' */}
+                      <span className={`mt-1 flex items-start gap-1 break-keep text-[11px] leading-relaxed text-brand-dark/45 ${lockTextSoft}`}>
+                        <span aria-hidden>🎯</span>
+                        <span>{reason}</span>
                       </span>
                     </>
                   }
@@ -1313,6 +1337,11 @@ function AdvancedResult({
                         )}
                       </div>
                       <p className="mt-1.5 whitespace-pre-line break-keep text-[12px] leading-relaxed text-brand-gray">{m.criteria}</p>
+                      {/* (D-2 · 대표님 요청) 매칭 근거 한 줄 - '왜 나에게 왔는지' */}
+                      <span className={`mt-1 flex items-start gap-1 break-keep text-[11px] leading-relaxed text-brand-dark/45 ${lockTextSoft}`}>
+                        <span aria-hidden>🎯</span>
+                        <span>{buildMatchReason(relatedProfile as DiagnosisProfile | null)}</span>
+                      </span>
                     </>
                   );
                 })()}

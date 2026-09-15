@@ -36,8 +36,10 @@ const config: Config = {
         "brand-grad": "linear-gradient(135deg, #FFD500 0%, #FF9500 100%)",
       },
       boxShadow: {
-        card: "0 4px 24px rgba(0,0,0,0.08)",
-        cardHover: "0 8px 32px rgba(255,149,0,0.18)",
+        // (B-2 대표님 요청) 다층 그림자로 더 부드럽고 고급스럽게.
+        //   가까운 그림자(윤곽) + 넓은 그림자(부양감)를 겹쳐 종이가 살짝 떠 있는 느낌.
+        card: "0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.07)",
+        cardHover: "0 4px 12px rgba(0,0,0,0.06), 0 12px 36px rgba(255,149,0,0.16)",
       },
     },
   },

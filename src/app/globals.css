@@ -122,12 +122,14 @@ h4 {
   background: linear-gradient(135deg, #ffd500 0%, #ff9500 100%);
   color: #191919;
   font-weight: 700;
-  transition: all 0.2s ease;
+  /* (B-3 대표님 요청) 고급 이지베지에 곑선으로 부드럽게 전환 */
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
 }
 .btn-brand:hover {
   /* 살짝 떠오르며 살짝 커지는 통일 모션 (대표님 요청) */
-  transform: translateY(-1px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(255, 149, 0, 0.35);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 28px rgba(255, 149, 0, 0.4);
 }
 .btn-brand:active {
   /* 무료진단 톤 통일: 누를 때 살짝 눌리는 눌림감 */
@@ -139,14 +141,16 @@ h4 {
   background-image: linear-gradient(135deg, #e11d2e 0%, #8e1420 100%);
   color: #ffffff;
   font-weight: 700;
-  transition: all 0.2s ease;
+  /* (B-3 대표님 요청) 고급 이지베지 곑선 전환 */
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1), filter 0.2s ease;
 }
 .btn-red * {
   color: #ffffff;
 }
 .btn-red:hover {
-  transform: translateY(-1px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(225, 29, 46, 0.35);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 28px rgba(225, 29, 46, 0.4);
 }
 .btn-red:active {
   /* 무료진단 톤 통일: 누를 때 살짝 눌리는 눌림감 */
@@ -159,13 +163,16 @@ h4 {
   color: #191919;
   border: 2px solid #191919;
   font-weight: 700;
-  transition: all 0.2s ease;
+  /* (B-3 대표님 요청) 고급 이지베지 곑선 전환 */
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.2s ease, color 0.2s ease, box-shadow 0.22s ease;
 }
 .btn-outline:hover {
   background: #191919;
   color: #ffffff;
-  /* 살짝 커지는 통일 모션 (대표님 요청) */
-  transform: scale(1.03);
+  /* 살짝 떠오르며 커지는 통일 모션 (대표님 요청) */
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 22px rgba(25, 25, 25, 0.18);
 }
 .btn-outline:active {
   /* 무료진단 톤 통일: 누를 때 살짝 눌리는 눌림감 */
@@ -348,13 +355,15 @@ h4 {
   transform: translateY(0);
 }
 
-/* 카드 hover 살짝 떠오르는 인터랙션 */
+/* 카드 hover 살짝 떠오르는 인터랙션 (B-2/B-3 대표님 요청: 고급 곡선) */
 .hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .hover-lift:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+  /* 다층 그림자로 더 부드럽고 고급스러운 부양감 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05), 0 16px 32px rgba(0, 0, 0, 0.09);
 }
 
 /* ============================================================
