@@ -41,6 +41,68 @@ export type DiagnosisProfile = {
   email?: string;
 };
 
+// ── 프로필 안전 정규화 (방어 코드 · 대표님 요청 검증에서 발견) ──────────────
+//  진단 폼은 항상 문자열/배열을 넣지만, 옛 localStorage 데이터·서버 응답·관리자
+//  입력 등에서 값이 숫자/null/객체로 들어오면 아래 .replace()/.includes() 호출이
+//  터져(예: "(p.revenue||'').replace is not a function") 결과 화면이 통째로
+//  하얗게 크래시할 수 있다. 매칭 진입점에서 모든 문자열 필드를 문자열로,
+//  배열 필드를 문자열 배열로 강제 변환해 어떤 입력이 와도 안전하게 만든다.
+function asStr(v: unknown): string | undefined {
+  if (v == null) return undefined;
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  return undefined; // 객체 등은 매칭 대상 아님 → 무시
+}
+function asStrArr(v: unknown): string[] | undefined {
+  if (v == null) return undefined;
+  if (Array.isArray(v)) {
+    const arr = v
+      .map((x) => asStr(x))
+      .filter((x): x is string => typeof x === "string");
+    return arr;
+  }
+  const s = asStr(v);
+  return s != null ? [s] : undefined;
+}
+export function normalizeProfile(p: DiagnosisProfile): DiagnosisProfile {
+  const src = (p || {}) as Record<string, unknown>;
+  return {
+    ...p,
+    businessType: asStr(src.businessType),
+    industry: asStr(src.industry),
+    industries: asStrArr(src.industries),
+    revenue: asStr(src.revenue),
+    years: asStr(src.years),
+    age: asStr(src.age),
+    region: asStr(src.region),
+    smartTech: asStr(src.smartTech),
+    smartDevice: asStr(src.smartDevice),
+    purposes: asStrArr(src.purposes),
+    desiredAmount: asStr(src.desiredAmount),
+    interests: asStrArr(src.interests),
+    credit: asStr(src.credit),
+    certifications: asStrArr(src.certifications),
+    innovation: asStrArr(src.innovation),
+    currentInstitutions: asStrArr(src.currentInstitutions),
+    collateral: asStr(src.collateral),
+    bankruptcy: asStr(src.bankruptcy),
+    taxDelinquent: asStr(src.taxDelinquent),
+    capitalImpairment: asStr(src.capitalImpairment),
+    insurance: asStr(src.insurance),
+    employees: asStr(src.employees),
+    revenueGrowth2y: asStr(src.revenueGrowth2y),
+    smartFactory: asStr(src.smartFactory),
+    govSelected: asStr(src.govSelected),
+    policyFundGood: asStr(src.policyFundGood),
+    reFounder: asStr(src.reFounder),
+    wantsRefinance: asStr(src.wantsRefinance),
+    privateInvestment: asStr(src.privateInvestment),
+    name: asStr(src.name),
+    phone: asStr(src.phone),
+    email: asStr(src.email),
+  };
+}
+
 // 프로필 → 매칭 태그 집합 생성
 function profileTags(p: DiagnosisProfile): Set<string> {
   const tags = new Set<string>();
@@ -174,7 +236,9 @@ export type MatchResult = {
   reasons: string[];
 };
 
-export function matchPrograms(p: DiagnosisProfile): MatchResult[] {
+export function matchPrograms(pRaw: DiagnosisProfile): MatchResult[] {
+  // 어떤 형태의 입력이 와도 안전하도록 먼저 정규화(문자열/배열 강제 변환).
+  const p = normalizeProfile(pRaw);
   const tags = profileTags(p);
   const interests = new Set(
     (p.interests || []).map((x) => x.replace(/\s/g, ""))

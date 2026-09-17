@@ -58,7 +58,7 @@ export function computeSupportStatus(p: DiagnosisProfile): Record<string, Suppor
   // 예정 대상(potential): 지금 조건은 아니지만 채용/수출/사업 확장 시 대상이 되는 제도.
   //  대부분의 사업장이 채용·수출 가능성이 있으므로, eligible이 아니면 potential로 넓게 안내.
   //  (혁신바우처만 제조업 전용이라 제조 아닌 곳은 굳이 예정 대상으로 띄우지 않음)
-  const inds = p.industries || [];
+  const inds = (p.industries || []).filter((s): s is string => typeof s === "string");
   const isManufacturing = inds.some((s) => s.includes("제조"));
   const isExportInd = inds.some((s) => s.includes("수출"));
   const rev = String(p.revenue || "").replace(/\s/g, "");
@@ -95,7 +95,7 @@ export function computeSupportStatus(p: DiagnosisProfile): Record<string, Suppor
 
 // 진단 프로필 → 각 제도별 자격(eligible) 판정
 export function computeSupportEligibility(p: DiagnosisProfile): Record<string, boolean> {
-  const inds = p.industries || [];
+  const inds = (p.industries || []).filter((s): s is string => typeof s === "string");
   const emp = String(p.employees || "").replace(/\s/g, "");
   const rev = String(p.revenue || "").replace(/\s/g, "");
   // ⚠️ "10명이상".includes("0명")==true 버그 방지: '0명'은 정확히 '0명'일 때만 직원 없음.
@@ -386,7 +386,8 @@ export function profileToCompany(p: DiagnosisProfile): Company {
   //      · "5명 이하" → 3      · "0명" → 0          · "기타" → 미판정(undefined)
   let empCount: number | undefined;
   if (p.employees) {
-    const e = p.employees.replace(/\s/g, "");
+    // 방어: 숫자 등 비문자열이 들어와도 안전하게(String 강제 변환).
+    const e = String(p.employees).replace(/\s/g, "");
     if (e.includes("300명이상")) empCount = 300; // 과거 라벨 하위호환
     else if (e.includes("50명이상")) empCount = 50;
     else if (e.includes("10명이상")) empCount = 12; // 과거 라벨 하위호환

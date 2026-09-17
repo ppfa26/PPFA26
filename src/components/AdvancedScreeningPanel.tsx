@@ -52,6 +52,8 @@ import {
   priorityFromScore,
 } from "@/lib/matchReason";
 import type { DiagnosisProfile } from "@/lib/matching";
+// 프로필 안전 정규화(문자열/배열 강제 변환) - 옛 데이터·이상 입력에도 결과 화면이 안 터지게.
+import { normalizeProfile } from "@/lib/matching";
 
 // 지원제도 + 상태(대상/예정대상)를 함께 담는 표시용 타입
 type SupportItem = { prog: SupportProgram; status: SupportStatus };
@@ -120,7 +122,7 @@ export default function AdvancedScreeningPanel({
     const recompute = () => {
       try {
         const raw = loadDiagnosisRaw();
-        const p = raw ? JSON.parse(raw) : {};
+        const p = normalizeProfile(raw ? JSON.parse(raw) : {});
         const status = computeSupportStatus(p);
         // 대상(eligible)을 먼저, 예정대상(potential)을 뒤로 정렬해 노출
         const items: SupportItem[] = SUPPORT_PROGRAMS
@@ -176,7 +178,7 @@ export default function AdvancedScreeningPanel({
     try {
       const raw = loadDiagnosisRaw();
       if (!raw) return;
-      const p = JSON.parse(raw);
+      const p = normalizeProfile(JSON.parse(raw));
       let touched = false;
 
       // 사업자 유형
@@ -207,8 +209,9 @@ export default function AdvancedScreeningPanel({
         "5억 이상": "5", "5억미만": "3", "5억 미만": "3",
         "1억 미만": "0.5", "1억미만": "0.5",
       };
-      if (p.revenue && revMap[p.revenue.trim?.() || p.revenue]) {
-        setRevenue억(revMap[p.revenue.trim?.() || p.revenue]);
+      const revKey = (p.revenue || "").trim();
+      if (revKey && revMap[revKey]) {
+        setRevenue억(revMap[revKey]);
         touched = true;
       }
 
@@ -217,7 +220,7 @@ export default function AdvancedScreeningPanel({
         "창업 예정": "0", "창업예정": "0", "1년 미만": "0.5", "1년미만": "0.5",
         "3년 미만": "2", "3년미만": "2", "7년 미만": "5", "7년미만": "5", "7년 이상": "10", "7년이상": "10",
       };
-      const yv = yMap[(p.years || "").trim?.() || p.years];
+      const yv = yMap[(p.years || "").trim()];
       if (yv) { setYears(yv); touched = true; }
 
       // 직원수 (2026 개정 라벨: 0명 / 5명 이하 / 5명 이상 / 50명 이상 / 300명 이상 / 기타)
@@ -268,7 +271,7 @@ export default function AdvancedScreeningPanel({
     if (!autoRun) return;
     try {
       const raw = loadDiagnosisRaw();
-      const p = raw ? JSON.parse(raw) : {};
+      const p = normalizeProfile(raw ? JSON.parse(raw) : {});
 
       // 기본 질문지(mpp_diagnosis) → Company 스키마 변환은 공용 함수로 통일한다.
       //  (마이페이지 개수 계산과 100% 동일한 변환을 쓰도록 하여 불일치·버그 재발 방지)
