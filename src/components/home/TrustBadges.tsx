@@ -21,7 +21,8 @@ export default function TrustBadges({ badges }: { badges: Badge[] }) {
 
   return (
     <>
-      <div className="flex flex-wrap justify-center gap-3 sm:justify-start">
+      {/* 스크롤 진입 시 배지가 하나씩 순차 등장(대표님 요청) */}
+      <div className="reveal stagger-on-reveal flex flex-wrap justify-center gap-3 sm:justify-start">
         {badges.map((b, i) => {
           // 모바일에서 접힘 상태이고, 핵심 개수를 넘어가는 배지는 숨김.
           // (PC=sm 이상에서는 항상 보이도록 sm:flex 로 되돌림)

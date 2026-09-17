@@ -301,6 +301,41 @@ h4 {
   animation: fadeUp 0.6s ease both;
 }
 
+/* ── 순차 등장(stagger) 유틸 (대표님 요청: 체크칩·서비스안내 카드가 하나씩 톡톡 등장) ──
+   부모에 .stagger-in 을 주면 직계 자식들이 왼쪽/위부터 순서대로 fadeUp 으로 나타난다.
+   · 은은하고 빠르게(0.45s) — 과하지 않게, 모바일에서도 가볍게.
+   · 최대 10개까지 지연 단계 지정(그 이상은 마지막 지연 유지).
+   · prefers-reduced-motion 사용자는 애니메이션 없이 즉시 표시(접근성). */
+@keyframes staggerFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.stagger-in > * {
+  animation: staggerFadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger-in > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.16s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.22s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.28s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.34s; }
+.stagger-in > *:nth-child(7) { animation-delay: 0.40s; }
+.stagger-in > *:nth-child(8) { animation-delay: 0.46s; }
+.stagger-in > *:nth-child(9) { animation-delay: 0.52s; }
+.stagger-in > *:nth-child(n + 10) { animation-delay: 0.58s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-in > * {
+    animation: none;
+  }
+}
+
 @keyframes pulseGlow {
   0%,
   100% {
@@ -353,6 +388,37 @@ h4 {
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ── 스크롤 진입 시 자식 순차 등장 (대표님 요청: 서비스 안내 카드가 하나씩 등장) ──
+   부모에 .stagger-on-reveal 을 주면, 스크롤로 보일 때(.is-visible) 직계 자식들이
+   위/왼쪽부터 순서대로 fadeUp 으로 나타난다. (ScrollReveal 의 .is-visible 과 결합)
+   · 부모 자체의 이동은 끄고(자식이 움직이므로), 자식만 순차 등장시킨다. */
+.reveal.stagger-on-reveal {
+  transform: none;
+}
+.reveal.stagger-on-reveal > * {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.reveal.stagger-on-reveal.is-visible > * {
+  animation: staggerFadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.reveal.stagger-on-reveal.is-visible > *:nth-child(1) { animation-delay: 0.05s; }
+.reveal.stagger-on-reveal.is-visible > *:nth-child(2) { animation-delay: 0.12s; }
+.reveal.stagger-on-reveal.is-visible > *:nth-child(3) { animation-delay: 0.19s; }
+.reveal.stagger-on-reveal.is-visible > *:nth-child(4) { animation-delay: 0.26s; }
+.reveal.stagger-on-reveal.is-visible > *:nth-child(5) { animation-delay: 0.33s; }
+.reveal.stagger-on-reveal.is-visible > *:nth-child(6) { animation-delay: 0.40s; }
+.reveal.stagger-on-reveal.is-visible > *:nth-child(7) { animation-delay: 0.47s; }
+.reveal.stagger-on-reveal.is-visible > *:nth-child(n + 8) { animation-delay: 0.54s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal.stagger-on-reveal > * {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
 }
 
 /* 카드 hover 살짝 떠오르는 인터랙션 (B-2/B-3 대표님 요청: 고급 곡선) */

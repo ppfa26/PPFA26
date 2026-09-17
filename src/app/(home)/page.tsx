@@ -255,7 +255,7 @@ export default function Home() {
 
             {/* ── 서비스 범위(무엇을 해주는지) - 체크칩 3개를 서브카피 바로 아래에 배치해
                 "이 회사가 뭘 해주는 곳인지"를 첫눈에 인지시킴 ── */}
-            <ul className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-5 sm:gap-x-3">
+            <ul className="stagger-in mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:mt-5 sm:gap-x-3">
               {["맞춤 AI 매칭", "신청 가능 사업만", "서류·신청까지 안내"].map(
                 (t, i) => (
                   <li
@@ -424,8 +424,8 @@ export default function Home() {
               <span className="h-px w-6 bg-brand-orange/40" aria-hidden="true" />
             </div>
 
-            {/* 해드리는 것 4칸 (VALUES) */}
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 sm:gap-4">
+            {/* 해드리는 것 4칸 (VALUES) - 스크롤 진입 시 하나씩 순차 등장(대표님 요청) */}
+            <div className="reveal stagger-on-reveal mt-4 grid gap-3 sm:grid-cols-2 sm:gap-4">
               {VALUES.map((v, i) => (
                 <div
                   key={i}
