@@ -176,6 +176,14 @@ function SignupInner() {
   const [channelAgree, setChannelAgree] = useState(false); // [선택] 카카오톡 채널 추가 (카카오 로그인 시에만 적용, 기본 해제)
   // 미동의 상태에서 소셜/가입 버튼을 눌렀을 때 동의 영역을 잠깐 강조(주황 테두리)해 시선을 유도
   const [highlightConsent, setHighlightConsent] = useState(false);
+  // ★ 약관 동의 유도 흐름(대표님 요청) ★
+  //  · 사용자가 미동의 상태에서 로그인 버튼을 눌러 약관으로 내려간 뒤,
+  //    필수 약관에 동의를 '완료'하면 → 자동으로 로그인 버튼 영역으로 다시 올라오며
+  //    버튼을 잠깐 펄스로 강조해 "이제 눌러서 시작하세요"를 자연스럽게 안내한다.
+  //  · pendingLoginNudge: 로그인 버튼을 눌렀지만 미동의로 막힌 '대기' 상태.
+  //  · highlightLogin: 로그인 버튼을 잠깐 강조(펄스)하는 상태.
+  const [pendingLoginNudge, setPendingLoginNudge] = useState(false);
+  const [highlightLogin, setHighlightLogin] = useState(false);
 
   const allRequiredChecked = agreeAge && agreeTerms && agreePrivacy && agreeThird;
   const allChecked = allRequiredChecked && marketingAgree && channelAgree;
@@ -211,10 +219,34 @@ function SignupInner() {
       }
       setHighlightConsent(true);
       setTimeout(() => setHighlightConsent(false), 2200);
+      // 로그인 버튼을 눌렀지만 막혔음 → 동의 완료 시 버튼으로 다시 올려보내기 위해 대기 표시
+      setPendingLoginNudge(true);
       return false;
     }
     return true;
   };
+
+  // ★ 동의 완료 → 로그인 버튼으로 다시 스크롤 + 강조 (대표님 요청) ★
+  //  로그인 버튼을 눌러 약관으로 내려간 사용자가(pendingLoginNudge=true)
+  //  필수 약관에 모두 동의하는 순간, 로그인 버튼 영역으로 부드럽게 올라오며
+  //  버튼을 펄스로 잠깐 강조한다. (동의를 되돌리면 대기 상태 해제)
+  useEffect(() => {
+    if (!pendingLoginNudge) return;
+    if (!allRequiredChecked) return;
+    // 동의 완료 → 안내 메시지 갱신 + 로그인 버튼으로 스크롤/강조
+    setPendingLoginNudge(false);
+    setMsg("이제 원하는 방법으로 로그인해 시작하세요! 👇");
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        document
+          .getElementById("signup-login-actions")
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 80);
+    }
+    setHighlightLogin(true);
+    const t = setTimeout(() => setHighlightLogin(false), 2600);
+    return () => clearTimeout(t);
+  }, [pendingLoginNudge, allRequiredChecked]);
 
   // 이미 로그인된 경우 이동:
   //  · 결제 진행 중(tier 있음) → 결제 페이지
@@ -450,7 +482,15 @@ function SignupInner() {
         </div>
 
         {/* 소셜 로그인 (간편 가입) - 섹션 간격은 부모 space-y-4 가 관리(대표님 요청: 균일한 여백) */}
-        <div className="space-y-2">
+        {/* id: 약관 동의 완료 후 이 영역으로 다시 스크롤해 로그인 버튼을 강조(대표님 요청) */}
+        <div
+          id="signup-login-actions"
+          className={`space-y-2 rounded-2xl transition-all duration-500 ${
+            highlightLogin
+              ? "animate-pulseGlow ring-2 ring-brand-orange ring-offset-2 ring-offset-transparent"
+              : ""
+          }`}
+        >
           <button
             type="button"
             disabled={loading}
