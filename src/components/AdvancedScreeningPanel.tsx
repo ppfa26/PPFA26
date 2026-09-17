@@ -964,14 +964,27 @@ function AdvancedResult({
                 key={p.name}
                 className="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm"
                 header={
+                  <>
                   <span className="flex flex-wrap items-center justify-between gap-2">
                     {/* ★ 다이어트(대표님 요청) ★ 카드 제목에 이미 '무상 사업화 자금'이라 적혀 있어
                         항목마다 반복되던 '사업화 자금' 배지는 삭제. 대신 금액을 크고 선명하게. */}
-                    <span className={`flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>
-                      {p.name}
+                    <span className="flex items-center gap-1.5">
+                      {/* (D-3) 창업 사업화 자금은 자격자 대상이라 우선순위 강력추천 */}
+                      <span className={`shrink-0 break-keep rounded-full px-2 py-0.5 text-[11px] font-bold ${priorityBadge("strong").className}`}>
+                        {priorityBadge("strong").label}
+                      </span>
+                      <span className={`flex items-center gap-2 break-keep text-sm font-extrabold text-brand-dark ${lockTextSoft}`}>
+                        {p.name}
+                      </span>
                     </span>
                     <span className="shrink-0 break-keep text-sm font-black text-brand-green">{p.amount}</span>
                   </span>
+                  {/* (D-2) 매칭 근거 한 줄 */}
+                  <span className={`mt-1 flex items-start gap-1 break-keep text-[11px] leading-relaxed text-brand-dark/45 ${lockTextSoft}`}>
+                    <span aria-hidden>🎯</span>
+                    <span>{buildMatchReason(relatedProfile as DiagnosisProfile | null)}</span>
+                  </span>
+                  </>
                 }
               >
                 <p className="break-keep text-xs leading-relaxed text-brand-dark/70">
