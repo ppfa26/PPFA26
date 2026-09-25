@@ -12,7 +12,7 @@ const COUPANG_GATE_IFRAME_SRC =
 // 쿠팡 골드박스 고정 링크(대표님 발급 · 간편 링크).
 //  · 자동 추천 배너가 가끔 만료 상품으로 "사용권한 없음" 에러가 날 때를 대비한
 //    "항상 열리는" 안전한 대안 버튼. 골드박스는 매일 특가 상품이 갱신된다.
-const COUPANG_GOLDBOX_LINK = "https://link.coupang.com/a/gJy0X7anUy";
+const COUPANG_GOLDBOX_LINK = "https://link.coupang.com/a/hkGw52HpTM";
 
 // ════════════════════════════════════════════════════════════════
 //  결과 조회 "전면 광고" 게이트 모달 (쿠팡 파트너스 · 대표님 요청으로 애드핏 제거)
