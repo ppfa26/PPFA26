@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 
-// 결과 게이트 모달에 노출하는 쿠팡 파트너스 다이나믹 배너(ID 1012210).
+// 결과 게이트 모달에 노출하는 쿠팡 파트너스 다이나믹 배너(ID 1032887).
 //  · (대표님 요청) 카카오 애드핏은 제거하고 쿠팡 파트너스만 노출한다.
 //  · diagnosis-form 과 동일한 iframe 방식(발급 코드). trackingCode=AF6135516.
 const COUPANG_GATE_IFRAME_SRC =
-  "https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=300&height=140&tsource=";
+  "https://ads-partners.coupang.com/widgets.html?id=1032887&template=carousel&trackingCode=AF6135516&subId=&width=300&height=140&tsource=";
 
 // 쿠팡 골드박스 고정 링크(대표님 발급 · 간편 링크).
 //  · 자동 추천 배너가 가끔 만료 상품으로 "사용권한 없음" 에러가 날 때를 대비한
