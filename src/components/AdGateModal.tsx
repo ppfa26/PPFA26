@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ADFIT_UNIT_RESULT_GATE_300x250 } from "@/lib/adfitConfig";
 import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 
-// 결과 게이트 모달에 함께 노출하는 쿠팡 파트너스 다이나믹 배너(ID 1012210).
-//  · 애드핏(클릭·노출 수익)은 그대로 유지하고, 그 아래에 쿠팡(구매 수익)을 추가한다.
+// 결과 게이트 모달에 노출하는 쿠팡 파트너스 다이나믹 배너(ID 1012210).
+//  · (대표님 요청) 카카오 애드핏은 제거하고 쿠팡 파트너스만 노출한다.
 //  · diagnosis-form 과 동일한 iframe 방식(발급 코드). trackingCode=AF6135516.
 const COUPANG_GATE_IFRAME_SRC =
   "https://ads-partners.coupang.com/widgets.html?id=1012210&template=carousel&trackingCode=AF6135516&subId=&width=300&height=140&tsource=";
@@ -16,28 +15,16 @@ const COUPANG_GATE_IFRAME_SRC =
 const COUPANG_GOLDBOX_LINK = "https://link.coupang.com/a/gJy0X7anUy";
 
 // ════════════════════════════════════════════════════════════════
-//  결과 조회 "전면 광고" 게이트 모달 (카카오 애드핏 300x250)
+//  결과 조회 "전면 광고" 게이트 모달 (쿠팡 파트너스 · 대표님 요청으로 애드핏 제거)
 //
-//  ★ 동작(대표님 확정 방식) ★
+//  ★ 동작 ★
 //   1) 결과 블러 상태에서 "🎬 광고 보고 무료로 결과 보기" 버튼 → 이 모달이 뜬다.
-//   2) 모달 안에 애드핏 300x250 배너를 노출한다. ("광고" 라벨 명시)
-//   3) 고객이 광고를 클릭 → 광고주 사이트로 이동(탭 이탈).
-//   4) 다시 우리 사이트로 복귀(visibilitychange)하면 "결과 보기" 버튼이 활성화되고,
-//      누르면 onUnlock() 으로 그 진단 결과의 블러가 해제된다.
-//   · 강제 클릭 유도가 아니라, 최소 시청 시간(카운트다운) 뒤에도 열 수 있게 해
-//     애드핏 정책(클릭 강요 금지)에 안전하게 맞춘다.
-//
-//  ※ 애드핏 SDK(ba.min.js)는 로드 시점에 앞의 <ins> 를 스캔하므로,
-//    모달이 열릴 때마다 <ins> 를 새로 만들고 스크립트를 새로 주입한다.
-//    (AdFitBanner.tsx 와 동일한 검증 방식)
+//   2) 모달 안에 쿠팡 파트너스 배너(+ 골드박스 버튼)를 노출한다.
+//   3) 광고를 확인하고(클릭 후 복귀) 돌아오면 자동으로 결과가 열리고,
+//      기다리기만 해도 20초 후 "결과 보기" 버튼이 활성화된다.
 // ════════════════════════════════════════════════════════════════
 
-const ADFIT_SCRIPT_SRC = "https://t1.kakaocdn.net/kas/static/ba.min.js";
-
-// 광고를 클릭하지 않아도 이 시간이 지나면 "결과 보기"를 열 수 있게 한다.
-//  (클릭 강요 방지 · 정책 안전). 광고를 클릭하고 복귀하면 즉시 활성화.
-//  대기 20초(대표님 요청) — 기다리기보다 광고 클릭을 자연 유도해 수익↑.
-//  ※ "클릭하면 즉시 열림" 을 강조해 정책(클릭 강요 금지)에 안전하게 맞춘다.
+// 이 시간이 지나면 "결과 보기"를 열 수 있게 한다(대기 20초). 광고 클릭 후 복귀하면 즉시 활성화.
 const MIN_WATCH_SEC = 20;
 
 export default function AdGateModal({
@@ -49,40 +36,10 @@ export default function AdGateModal({
   onClose: () => void;
   onUnlock: () => void;
 }) {
-  const adBoxRef = useRef<HTMLDivElement>(null);
   const [countdown, setCountdown] = useState(MIN_WATCH_SEC);
   const [canView, setCanView] = useState(false);
   // 광고를 클릭해 탭을 이탈했다가 돌아왔는지(=광고 시청 신호)
   const clickedAwayRef = useRef(false);
-
-  // ── 광고 <ins> + 스크립트 주입 ──
-  useEffect(() => {
-    if (!open) return;
-    const box = adBoxRef.current;
-    if (!box) return;
-
-    box.innerHTML = "";
-    const ins = document.createElement("ins");
-    ins.className = "kakao_ad_area";
-    ins.style.display = "none";
-    ins.style.width = "300px";
-    ins.style.height = "250px";
-    ins.setAttribute("data-ad-unit", ADFIT_UNIT_RESULT_GATE_300x250);
-    ins.setAttribute("data-ad-width", "300");
-    ins.setAttribute("data-ad-height", "250");
-    box.appendChild(ins);
-
-    const script = document.createElement("script");
-    script.src = ADFIT_SCRIPT_SRC;
-    script.async = true;
-    script.type = "text/javascript";
-    script.charset = "utf-8";
-    box.appendChild(script);
-
-    return () => {
-      box.innerHTML = "";
-    };
-  }, [open]);
 
   // ── 카운트다운(최소 시청) ──
   useEffect(() => {
@@ -149,7 +106,7 @@ export default function AdGateModal({
           <span className="inline-flex items-center gap-1 rounded-md bg-gray-800 px-2 py-0.5 text-[11px] font-bold text-white">
             광고
           </span>
-          <span className="text-[11px] font-medium text-gray-400">Kakao AdFit</span>
+          <span className="text-[11px] font-medium text-gray-400">쿠팡 파트너스</span>
         </div>
 
         {/* 안내 문구 */}
@@ -166,17 +123,8 @@ export default function AdGateModal({
           </p>
         </div>
 
-        {/* 애드핏 300x250 광고 */}
-        <div className="flex justify-center px-5 pt-4">
-          <div
-            ref={adBoxRef}
-            className="flex items-center justify-center overflow-hidden rounded-xl bg-gray-50"
-            style={{ width: 300, height: 250, maxWidth: "100%" }}
-          />
-        </div>
-
-        {/* 쿠팡 파트너스 다이나믹 배너 (애드핏 아래 · 구매 수익 추가) */}
-        <div className="px-5 pb-1 pt-3">
+        {/* 쿠팡 파트너스 다이나믹 배너 (대표님 요청: 애드핏 제거, 쿠팡만 노출) */}
+        <div className="px-5 pb-1 pt-4">
           <CoupangPartnersBanner
             iframeSrc={COUPANG_GATE_IFRAME_SRC}
             iframeHeight={140}
