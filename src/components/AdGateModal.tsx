@@ -2,17 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import { coupangBannerSrc, COUPANG_GOLDBOX_LINK } from "@/lib/coupangConfig";
 
-// 결과 게이트 모달에 노출하는 쿠팡 파트너스 다이나믹 배너(ID 1032887).
+// 결과 게이트 모달용 쿠팡 파트너스 다이나믹 배너 (좁은 모달이라 width=300).
 //  · (대표님 요청) 카카오 애드핏은 제거하고 쿠팡 파트너스만 노출한다.
-//  · diagnosis-form 과 동일한 iframe 방식(발급 코드). trackingCode=AF6135516.
-const COUPANG_GATE_IFRAME_SRC =
-  "https://ads-partners.coupang.com/widgets.html?id=1032887&template=carousel&trackingCode=AF6135516&subId=&width=300&height=140&tsource=";
-
-// 쿠팡 골드박스 고정 링크(대표님 발급 · 간편 링크).
-//  · 자동 추천 배너가 가끔 만료 상품으로 "사용권한 없음" 에러가 날 때를 대비한
-//    "항상 열리는" 안전한 대안 버튼. 골드박스는 매일 특가 상품이 갱신된다.
-const COUPANG_GOLDBOX_LINK = "https://link.coupang.com/a/hkGw52HpTM";
+//  · 배너 ID/추적코드는 @/lib/coupangConfig 에서 한 곳으로 관리한다.
+const COUPANG_GATE_IFRAME_SRC = coupangBannerSrc(300, 140);
 
 // ════════════════════════════════════════════════════════════════
 //  결과 조회 "전면 광고" 게이트 모달 (쿠팡 파트너스 · 대표님 요청으로 애드핏 제거)

@@ -8,9 +8,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
-import AdFitBanner from "@/components/AdFitBanner";
+import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 import AdGateModal from "@/components/AdGateModal";
-import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
+import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
 // (성능) 결과 상세 패널은 페이지에서 가장 무거운 컴포넌트(약 1.6천 줄).
 //  next/dynamic 으로 별도 청크로 분리해 초기 First Load JS 를 줄인다.
 //  ssr: true(기본) 유지 → SEO·초기 콘텐츠·결과 계산 로직은 100% 동일.
@@ -1164,14 +1164,12 @@ export default function MatchingPreview() {
                결제 박스는 상단(요약 배너 아래)에 이미 있으므로 중복 제거. ── */}
         </div>
 
-        {/* ── 카카오 애드핏 광고 (결과 하단 · 푸터 위) ──
-             광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-             (대표님 요청) 억지 트릭(mt-auto) 없이, 광고 배너 위·아래에 적당하고 균일한
-             여백(py-6)만 둬서 CTA 카드 아래 자연스럽게 이어지게 한다. 화면이 짧아 푸터가
-             위로 올라와도 이 균일 여백 덕에 어색하지 않게 보인다. */}
+        {/* ── 쿠팡 파트너스 광고 (결과 하단 · 푸터 위) ──
+             (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체.
+             광고 배너 위·아래에 균일한 여백(py-6)을 둬 CTA 카드 아래 자연스럽게 이어지게 한다. */}
         <div className="px-4 py-6">
           <div className="mx-auto max-w-3xl">
-            <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
+            <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
           </div>
         </div>
       </main>

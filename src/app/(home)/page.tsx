@@ -12,11 +12,8 @@ import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
 import StickyDiagnosisBar from "@/components/StickyDiagnosisBar";
 import TrustBadges from "@/components/home/TrustBadges";
-import AdFitBanner from "@/components/AdFitBanner";
-import {
-  ADFIT_UNIT_PC_728x90,
-  ADFIT_UNIT_PC_728x90_BOTTOM,
-} from "@/lib/adfitConfig";
+import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
 import SuccessCases from "@/components/SuccessCases";
 import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
@@ -933,12 +930,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 카카오 애드핏 광고 ("중간 배너" · CTA 박스 바로 아래 · 728x90) ──
-             (대표님 요청) CTA 세로높이를 줄여 확보한 공간에 배치.
-             CTA 박스와 광고 박스 사이 공백을 더 줄임(pt-0). 본문과 같은 max-w-3xl 폭 중앙 정렬. */}
+        {/* ── 쿠팡 파트너스 광고 ("중간 배너" · CTA 박스 바로 아래) ──
+             (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체. 본문과 같은 max-w-3xl 폭 중앙 정렬. */}
         <div className="px-4 pt-0 pb-5">
           <div className="mx-auto max-w-3xl">
-            <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
+            <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
           </div>
         </div>
 
@@ -956,13 +952,12 @@ export default function Home() {
 
         {/* 구간 구분 - 승인사례↔하단광고 */}
         <div className="section-divider" aria-hidden="true" />
-        {/* ── 카카오 애드핏 광고 ("하단 배너" · 가격표(서비스 이용 플랜) 위 · 728x90) ──
-            (대표님 요청) 기존 "1분 무료 진단 시작" CTA 박스를 이 위치의 광고로 교체.
-            중간 배너(ekOom)와 서로 다른 광고단위(7Vtz)라 동일 광고단위 중복 노출 정책 위반 아님. */}
+        {/* ── 쿠팡 파트너스 광고 ("하단 배너" · 가격표(서비스 이용 플랜) 위) ──
+            (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체. */}
         <div className="px-4 py-6 sm:py-8">
           <div className="mx-auto max-w-3xl">
-            <AdFitBanner
-              adUnitPc={ADFIT_UNIT_PC_728x90_BOTTOM}
+            <CoupangPartnersBanner
+              iframeSrc={COUPANG_BANNER_SRC}
               className="!w-full !max-w-3xl"
             />
           </div>

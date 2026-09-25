@@ -10,8 +10,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
 import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
-import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
+import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
 
 type Payment = {
   order_id: string;
@@ -399,13 +399,12 @@ export default function MyPage() {
         </div>
       </main>
 
-      {/* ── 카카오 애드핏 광고 (마이페이지 하단 · 푸터 위) ──
-           광고단위 ID(DAN-...)는 src/lib/adfitConfig.ts 에서 관리.
-           광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬.
-           하단 흐름의 세로 공백을 py-6(24px)으로 균일화(대표님 요청). */}
+      {/* ── 쿠팡 파트너스 광고 (마이페이지 하단 · 푸터 위) ──
+           (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체.
+           본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬. */}
       <div className="border-t border-brand-dark/5 px-4 py-6">
         <div className="mx-auto max-w-3xl">
-          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
+          <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
         </div>
       </div>
 

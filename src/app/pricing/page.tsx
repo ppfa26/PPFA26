@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
-import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
+import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
 
 const PRICING_FAQ = [
   {
@@ -132,13 +132,12 @@ export default function PricingPage() {
         </section>
       </main>
 
-      {/* ── 카카오 애드핏 광고 (요금 안내 하단 · 푸터 위) ──
-          광고(728px)를 본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬 →
-          요금·FAQ 콘텐츠와 세로 라인이 맞아 깔끔하게 이어진다.
-          광고 위·아래 여백 축소(대표님 요청): py-6 sm:py-8 → py-3 sm:py-4 */}
+      {/* ── 쿠팡 파트너스 광고 (요금 안내 하단 · 푸터 위) ──
+          (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체.
+          본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬. */}
       <div className="border-t border-brand-dark/5 px-4 py-3 sm:py-4">
         <div className="mx-auto max-w-3xl">
-          <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} />
+          <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
         </div>
       </div>
 

@@ -2,8 +2,8 @@
 
 import LegalLayout from "@/components/LegalLayout";
 import { USEFUL_SITE_CATEGORIES } from "@/lib/usefulSites";
-import AdFitBanner from "@/components/AdFitBanner";
-import { ADFIT_UNIT_PC_728x90 } from "@/lib/adfitConfig";
+import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
+import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
 
 export default function SitesPage() {
   return (
@@ -12,10 +12,10 @@ export default function SitesPage() {
       title="정부지원사업 관련 공식 사이트 모음"
       updatedAt="2026년 8월 2일"
       bottomSlot={
-        // 하단 광고 · 가로폭(max-w-3xl)으로 제한 + 위아래 여백 동일(py-6)하게 정렬
+        // 하단 광고(쿠팡 파트너스) · 가로폭(max-w-3xl)으로 제한 + 위아래 여백 동일(py-6)
         <div className="px-4 py-6">
           <div className="mx-auto max-w-3xl">
-            <AdFitBanner adUnitPc={ADFIT_UNIT_PC_728x90} className="!w-full !max-w-3xl" />
+            <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
           </div>
         </div>
       }
