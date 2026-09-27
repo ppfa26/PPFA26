@@ -131,7 +131,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
 
           {/* 모바일: 항목별 줄바꿈(좁은 폭 → 가독성) */}
           <address className="mt-3 space-y-0.5 not-italic text-gray-500 sm:hidden">
-            <p>상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신주엽</p>
+            <p>상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신도윤</p>
             <p>사업자등록번호 : 597-12-02897</p>
             <p>통신판매업신고 : 제2026-인천서해-0109호</p>
             <p>주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호</p>
@@ -143,7 +143,7 @@ export default function Footer({ topGap = "mt-8" }: { topGap?: string } = {}) {
           {/* PC: 2줄로 묶어 간결하게(가운뎃점) */}
           <address className="mt-3 hidden space-y-0.5 not-italic text-gray-500 sm:block">
             <p>
-              상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신주엽 <span className="text-white/15">·</span> 사업자등록번호 : 597-12-02897 <span className="text-white/15">·</span> 통신판매업신고 : 제2026-인천서해-0109호
+              상호명 : 모두의사업친구 <span className="text-white/15">·</span> 대표자 : 신도윤 <span className="text-white/15">·</span> 사업자등록번호 : 597-12-02897 <span className="text-white/15">·</span> 통신판매업신고 : 제2026-인천서해-0109호
             </p>
             <p>
               주소 : 인천광역시 서해구 청라커낼로288번길 26, 285호 <span className="text-white/15">·</span> 대표번호 : 1551-7886 <span className="text-white/15">·</span> 문의 : biospartners@naver.com <span className="text-white/15">·</span> <span className="text-gray-600">© 모두의사업친구. All rights reserved.</span>

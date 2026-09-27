@@ -304,7 +304,7 @@ export default function PrivacyPage() {
           <br />
           상호: 모두의사업친구
           <br />
-          개인정보 보호책임자: 신주엽
+          개인정보 보호책임자: 신도윤
           <br />
           이메일: biospartners@naver.com
           <br />

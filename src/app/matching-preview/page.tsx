@@ -131,7 +131,7 @@ export default function MatchingPreview() {
         // ★ 관리자 결과보기 ★ 새 탭은 sessionStorage 를 공유하지 않으므로,
         //   관리자가 localStorage 임시 키(mpp_diagnosis_admin)에 심어둔 '그 고객'의 진단을
         //   이 탭의 sessionStorage(mpp_diagnosis)로 복사해, 하위 컴포넌트(AdvancedScreeningPanel)까지
-        //   전부 동일한 '그 고객' 데이터를 읽게 한다. → 이름이 대표님(신주엽)으로 섞이는 버그 방지.
+        //   전부 동일한 '그 고객' 데이터를 읽게 한다. → 이름이 대표님(신도윤)으로 섞이는 버그 방지.
         if (isAdmin) {
           const adminRaw = loadAdminDiagnosisRaw();
           if (adminRaw) {
