@@ -12,8 +12,6 @@ import KakaoFloatingButton from "@/components/KakaoFloatingButton";
 import InstallAppButton from "@/components/InstallAppButton";
 import StickyDiagnosisBar from "@/components/StickyDiagnosisBar";
 import TrustBadges from "@/components/home/TrustBadges";
-import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
-import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
 import SuccessCases from "@/components/SuccessCases";
 import { BETA_FREE, OFFICIAL_PRICE_LABEL } from "@/lib/betaConfig";
 
@@ -930,13 +928,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── 쿠팡 파트너스 광고 ("중간 배너" · CTA 박스 바로 아래) ──
-             (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체. 본문과 같은 max-w-3xl 폭 중앙 정렬. */}
-        <div className="px-4 pt-0 pb-5">
-          <div className="mx-auto max-w-3xl">
-            <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
-          </div>
-        </div>
+        {/* ── (대표님 요청) 중간 광고 제거 - 모든 광고 삭제 ── */}
 
         {/* 구간 구분 - 결과예시↔승인사례 (다른 구간과 동일하게 얇은 선으로 통일) */}
         <div className="section-divider" aria-hidden="true" />
@@ -952,16 +944,7 @@ export default function Home() {
 
         {/* 구간 구분 - 승인사례↔하단광고 */}
         <div className="section-divider" aria-hidden="true" />
-        {/* ── 쿠팡 파트너스 광고 ("하단 배너" · 가격표(서비스 이용 플랜) 위) ──
-            (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체. */}
-        <div className="px-4 py-6 sm:py-8">
-          <div className="mx-auto max-w-3xl">
-            <CoupangPartnersBanner
-              iframeSrc={COUPANG_BANNER_SRC}
-              className="!w-full !max-w-3xl"
-            />
-          </div>
-        </div>
+        {/* ── (대표님 요청) 하단 광고 제거 - 모든 광고 삭제 ── */}
 
         {/* 구간 구분 - 하단광고↔가격표 (둘 다 다크 body라 얇은 선으로만 구분) */}
         <div className="section-divider" aria-hidden="true" />

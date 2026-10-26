@@ -10,8 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { countMatchedItems } from "@/lib/supportPrograms";
 import { fetchViewStatus, type ViewStatus } from "@/lib/viewCredits";
 import { loadDiagnosisRaw, getDiagnosisExpiry, clearDiagnosisIfNotOwner, adoptDiagnosisIfOwnerless, loadDiagnosisFromServer } from "@/lib/diagnosisStore";
-import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
-import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
+
 
 type Payment = {
   order_id: string;
@@ -399,14 +398,7 @@ export default function MyPage() {
         </div>
       </main>
 
-      {/* ── 쿠팡 파트너스 광고 (마이페이지 하단 · 푸터 위) ──
-           (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체.
-           본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬. */}
-      <div className="border-t border-brand-dark/5 px-4 py-6">
-        <div className="mx-auto max-w-3xl">
-          <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
-        </div>
-      </div>
+      {/* ── (대표님 요청) 마이페이지 하단 광고 제거 - 모든 광고 삭제 ── */}
 
       {/* 광고 래퍼가 이미 하단 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(첫 페이지와 동일). */}
       <Footer topGap="mt-0" />

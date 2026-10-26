@@ -8,9 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
-import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
 import AdGateModal from "@/components/AdGateModal";
-import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
 // (성능) 결과 상세 패널은 페이지에서 가장 무거운 컴포넌트(약 1.6천 줄).
 //  next/dynamic 으로 별도 청크로 분리해 초기 First Load JS 를 줄인다.
 //  ssr: true(기본) 유지 → SEO·초기 콘텐츠·결과 계산 로직은 100% 동일.
@@ -1164,14 +1162,7 @@ export default function MatchingPreview() {
                결제 박스는 상단(요약 배너 아래)에 이미 있으므로 중복 제거. ── */}
         </div>
 
-        {/* ── 쿠팡 파트너스 광고 (결과 하단 · 푸터 위) ──
-             (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체.
-             광고 배너 위·아래에 균일한 여백(py-6)을 둬 CTA 카드 아래 자연스럽게 이어지게 한다. */}
-        <div className="px-4 py-6">
-          <div className="mx-auto max-w-3xl">
-            <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
-          </div>
-        </div>
+        {/* ── (대표님 요청) 결과 하단 광고 제거 - 모든 광고 삭제 ── */}
       </main>
 
       {/* 오픈 베타(무료) 기간에는 하단 고정 바 없이 깔끔하게 둔다. */}

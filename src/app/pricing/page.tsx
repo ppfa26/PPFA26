@@ -5,8 +5,7 @@ import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
 import Editable from "@/components/Editable";
 import PricingCards from "@/components/PricingCards";
-import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
-import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
+
 
 const PRICING_FAQ = [
   {
@@ -132,14 +131,7 @@ export default function PricingPage() {
         </section>
       </main>
 
-      {/* ── 쿠팡 파트너스 광고 (요금 안내 하단 · 푸터 위) ──
-          (대표님 요청) 카카오 애드핏 제거 → 쿠팡 파트너스로 교체.
-          본문과 동일한 max-w-3xl 폭 안에서 중앙 정렬. */}
-      <div className="border-t border-brand-dark/5 px-4 py-3 sm:py-4">
-        <div className="mx-auto max-w-3xl">
-          <CoupangPartnersBanner iframeSrc={COUPANG_BANNER_SRC} className="!w-full !max-w-3xl" />
-        </div>
-      </div>
+      {/* ── (대표님 요청) 요금 안내 하단 광고 제거 - 모든 광고 삭제 ── */}
 
       <Footer />
     </PageShell>

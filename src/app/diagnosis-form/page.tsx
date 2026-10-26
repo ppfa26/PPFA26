@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageShell from "@/components/PageShell";
-import CoupangPartnersBanner from "@/components/CoupangPartnersBanner";
-import { COUPANG_BANNER_SRC } from "@/lib/coupangConfig";
+
 import { trackConversion } from "@/components/KarrotPixel";
 import { supabase } from "@/lib/supabaseClient";
 import { isStatsExcludedEmail } from "@/lib/admin";
@@ -1002,13 +1001,7 @@ export default function Diagnosis() {
           </p>
         </div>
       </main>
-      {/* ── 쿠팡 파트너스 광고 (무료진단 1·2·3 단계 하단 · 푸터 위) ── */}
-      <div className="border-t border-brand-dark/5 px-4 py-2.5">
-        <CoupangPartnersBanner
-          iframeSrc={COUPANG_BANNER_SRC}
-          iframeHeight={140}
-        />
-      </div>
+      {/* ── (대표님 요청) 진단 하단 광고 제거 - 모든 광고 삭제 ── */}
       <Footer />
     </PageShell>
   );
