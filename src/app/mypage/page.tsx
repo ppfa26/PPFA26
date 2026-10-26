@@ -400,7 +400,8 @@ export default function MyPage() {
 
       {/* ── (대표님 요청) 마이페이지 하단 광고 제거 - 모든 광고 삭제 ── */}
 
-      {/* 광고 래퍼가 이미 하단 여백을 갖고 있어 푸터 상단 간격은 줄여 붙인다(첫 페이지와 동일). */}
+      {/* (대표님 요청) 광고 제거로 콘텐츠가 푸터에 너무 붙어, 하단 여백 보강용 스페이서 추가 */}
+      <div className="h-8 sm:h-10" aria-hidden="true" />
       <Footer topGap="mt-0" />
     </PageShell>
   );

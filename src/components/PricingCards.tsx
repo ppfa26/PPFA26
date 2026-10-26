@@ -71,7 +71,15 @@ export default function PricingCards({ prefix = "home" }: { prefix?: string }) {
           왼쪽 = 🎬 무료 이용(광고 보고 열람) · 오른쪽 = 🎯 광고 제거(29,700원/1개월).
           두 박스의 '유일한 차이 = 결과 조회 전 전면 광고 유무'임을 명확히 보여준다.
           (결과 내용 자체는 100% 동일 — 결제를 강요하지 않고 선택지를 이해시키는 목적) */}
-      <div className="mx-auto grid max-w-3xl items-stretch gap-4 sm:grid-cols-2">
+      {/* ★ 폭 정렬(대표님 요청) ★ 베타(BETA_FREE)엔 왼쪽 '무료 이용' 박스가 숨겨져
+          오른쪽 박스 1개만 남는다. 2칸 그리드면 절반 폭이라 하단 안내 박스보다 좁게
+          튀어 보이므로, 단일 박스일 땐 1칸 그리드로 전환해 가로폭을 하단 안내 박스
+          (max-w-3xl)와 동일하게 꽉 채운다. */}
+      <div
+        className={`mx-auto grid max-w-3xl items-stretch gap-4 ${
+          BETA_FREE ? "grid-cols-1" : "sm:grid-cols-2"
+        }`}
+      >
         {/* ──────────── 왼쪽: 🎬 무료 이용 박스 ──────────── */}
         {/* ★ 대표님 요청 ★ 두 박스의 높낮이·위치를 완전히 동일하게(대칭) 맞춘다.
             큰 제목("무료 이용")은 삭제하고 작은 설명만 남긴다.

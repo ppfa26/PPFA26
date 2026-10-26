@@ -942,11 +942,9 @@ export default function Home() {
           <SuccessCases variant="section" />
         </section>
 
-        {/* 구간 구분 - 승인사례↔하단광고 */}
-        <div className="section-divider" aria-hidden="true" />
         {/* ── (대표님 요청) 하단 광고 제거 - 모든 광고 삭제 ── */}
 
-        {/* 구간 구분 - 하단광고↔가격표 (둘 다 다크 body라 얇은 선으로만 구분) */}
+        {/* 구간 구분 - 승인사례↔가격표 (광고 제거로 중복됐던 구분선 1줄로 통일, 대표님 요청) */}
         <div className="section-divider" aria-hidden="true" />
         {/* 가격표 */}
         <section
